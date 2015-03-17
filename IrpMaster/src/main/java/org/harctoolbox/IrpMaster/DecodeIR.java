@@ -41,6 +41,7 @@ public class DecodeIR {
     public final static String appName = "DecodeIR";
 
     private static final String libraryName = "DecodeIR";
+    private static final String libraryProperty = "harc.decodeir.library.path";
     private static boolean libIsLoaded = false;
 
     public static DecodeIR newDecodeIR(int[] data, int lengthRepeat, int lengthEnding, int frequency) {
@@ -96,9 +97,8 @@ public class DecodeIR {
         return success;
     }
 
-    // First try the com.hifiremote.LoadLibrary way, i.e. with local,
-    // architecture dependent subdirectories...
-    private static boolean localLoadLibrary() {
+    // Return system dependent path to library using arch-specific subdirectory.
+    private static File defaultLibraryFile() {
         String folderName = (System.getProperty("os.name").startsWith("Windows")
                                 ? "Windows"
                                 : System.getProperty("os.name")
@@ -107,9 +107,17 @@ public class DecodeIR {
         // Mac: it appears that Snow Leopard says "X64_64" while Mountain Lion says "x86_64".
 
         String mappedName = System.mapLibraryName(libraryName);
-        File libraryFile = new File(folderName, mappedName).getAbsoluteFile();
-        //System.err.println( "Loading " + libraryFile.getAbsolutePath() );
-        //libraryFile.exists();
+        return new File(folderName, mappedName).getAbsoluteFile();
+    }
+
+    // First try the com.hifiremote.LoadLibrary way, i.e. with local,
+    // architecture dependent subdirectories... If the system property
+    // libraryProperty is set, use that instead.
+    private static boolean localLoadLibrary() {
+        String propertyPath = System.getProperty(libraryProperty);
+        File libraryFile =
+            propertyPath != null ? new File(propertyPath) : defaultLibraryFile();
+        libraryFile = libraryFile.getAbsoluteFile();
         try {
             System.load(libraryFile.getAbsolutePath());
             Debug.debugDecodeIR("Loaded " + libraryFile.getAbsolutePath());
