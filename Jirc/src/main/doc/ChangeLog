@@ -1,0 +1,5 @@
+2014-08-10  Bengt Martensson
+
+	* ../grammar/org/harctoolbox/jirc/ConfigFile.g: disallow | in
+	"name" (caused flags RC5|CONST_LENGTH to be erroneously parsed)
+

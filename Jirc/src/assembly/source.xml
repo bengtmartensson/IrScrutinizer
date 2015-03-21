@@ -1,0 +1,26 @@
+<assembly>
+  <id>sources</id>
+  <formats>
+    <format>tar.gz</format>
+    <!--format>tar.bz2</format>
+    <format>zip</format-->
+  </formats>
+
+  <fileSets>
+    <fileSet>
+      <includes>
+        <include>gpltxt</include>
+        <include>pom.xml</include>
+        <include>build.xml</include>
+        <include>locations.xml</include>
+        <include>manifest.mf</include>
+        <include>build-sources.xml</include>
+        <include>Makefile</include>
+      </includes>
+      <lineEnding>unix</lineEnding>
+    </fileSet>
+    <fileSet> <directory>grammar</directory> </fileSet>
+    <fileSet> <directory>doc</directory> </fileSet>
+    <fileSet> <directory>lib</directory> </fileSet>
+  </fileSets>
+</assembly>
