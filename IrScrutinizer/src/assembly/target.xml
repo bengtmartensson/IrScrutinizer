@@ -11,7 +11,7 @@
 
     <fileSets>
         <fileSet>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory/>
             <includes>
                 <include>*.txt</include>
                 <!--include>target/*.jar</include-->
@@ -20,7 +20,7 @@
         </fileSet>
         <fileSet>
             <directory>target</directory>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory/>
             <includes>
                 <include>*jar-with-dependencies.jar</include>
                 <include>*.ini</include>
@@ -32,7 +32,7 @@
         </fileSet>
         <fileSet>
             <directory>native</directory>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory/>
             <includes>
                 <include>*/*</include>
             </includes>
@@ -55,7 +55,7 @@
     <files>
         <file>
             <source>../Crystal-Clear-Icons/src/main/resources/icons/Crystal-Clear/64x64/apps/babelfish.png</source>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory/>
         </file>
         <file>
             <source>../schemas/girr.xsd</source>
