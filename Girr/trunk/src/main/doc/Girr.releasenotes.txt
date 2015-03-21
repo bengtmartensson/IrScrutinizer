@@ -1,0 +1,23 @@
+new function Remote.getCommand(String) 
+
+2014-09-27: Version 1.0.2
+
+new function Remote.hasThisProtocol
+
+XmlExport.printDOM now takes a "binary" argument; if true, a
+postprocessing step will be invoked making <byte> element write their
+content as raw bytes.
+
+2014-06-14: Version 1.0.1
+
+If command/@master is empty, do not assume "raw", but try, in order,
+parameters, raw, ccf, if one of them makes sense.
+
+API change: IrpMasterException is now thrown in few places for silly input data,
+e.g. in the constructor for Command.
+
+Use LinkedHashMap for the implementation of a few HashMaps to preserve
+ordering of e.g. Commands.  Get stylesheet link and initial comment in
+XML export before root element.
+
+2014-02-04: Version 1.0.0 released.

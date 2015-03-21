@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This file is in the Girr (General IR Remote) format, see http://www.harctoolbox.org/girr-->
+<?xml-stylesheet type="text/xsl" href="simplehtml.xsl"?>
+<remotes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         girrVersion="1.0" title="IrScrutinizer parametric export" xsi:noNamespaceSchemaLocation="../schemas/girr.xsd">
+    <adminData>
+        <creationData creatingUser="Bengt Martensson" creationDate="2013-12-14_10:25:29" source="hand written"/>
+        <notes>Source was the protocol manual for VPL-VW95ES. A version for the present model does not appear to be available.</notes>
+        <notes xml:lang="de">Quelle war das Protocol manual für VPL-VW95ES. Eine Version für das gegenwärtige Model scheint nicht erhältlich zu sein.</notes>
+    </adminData>
+    <remote girrVersion="1.0" name="Sony VLP HW50ES" manufacturer="Sony" model="VLP HW50ES" deviceClass="projector" remoteName="RM-PJ23">
+        <commandSet name="sony15">
+            <parameters protocol="sony15">
+                <parameter name="D" value="84"/>
+            </parameters>
+
+            <command name="picture_mute"	F="36"	comment="toggle" />
+            <command name="status_on"		F="37"	comment="" />
+            <command name="status_off"          F="38"	comment="" />
+            <command name="menu"		F="41"	comment="" />
+            <command name="input_A"		F="43"	comment="vga input" />
+            <command name="component"	        F="44"	comment="" />
+            <command name="power_on"	        F="46"	comment="discrete" />
+            <command name="reset"		F="123"	comment="" />
+            <command name="HDMI_2"		F="112"	comment="" />
+            <command name="HDMI_1"		F="111"	comment="" />
+            <command name="enter"		F="90"	comment="" />
+            <command name="input_select"	F="87"	comment="cyclic" />
+            <command name="down"		F="54"	comment="" />
+            <command name="up"                  F="53"	comment="" />
+            <command name="left"		F="52"	comment="" />
+            <command name="right"		F="51"	comment="" />
+            <command name="power_off"	        F="47"	comment="discrete" />
+            <command name="sharpness-"          F="35"	comment="" />
+            <command name="sharpness+"          F="34"	comment="" />
+            <command name="hue-"		F="33"	comment="->purple" />
+            <command name="hue+"		F="32"	comment="->green" />
+            <command name="brightness-"         F="31"	comment="" />
+            <command name="brightness+"         F="30"	comment="" />
+            <command name="color-"		F="27"	comment="" />
+            <command name="color+"		F="26"	comment="" />
+            <command name="contrast-"	        F="25"	comment="" />
+            <command name="contrast+"	        F="24"	comment="" />
+            <command name="black_insertion"	F="8"	comment="toggle, Film projection in menu" />
+            <command name="black_level"         F="7" />
+            <command name="motion_enhancer"	F="5"	comment="cyclic" />
+        </commandSet>
+
+        <commandSet name="sony20">
+            <parameters protocol="sony20">
+                <parameter name="D" value="26"/>
+                <parameter name="S" value="42"/>
+            </parameters>
+            <command name="gamma"	        F="94"	comment="cyclic" />
+            <command name="picture mode game"	F="86"	comment="" />
+            <command name="picture mode reference" F="85"	comment="cinema3 on VW95" />
+            <command name="picture mode user"	F="84"	comment="cinema2 on VW95" />
+            <command name="picture mode film1"  F="83"	comment="cinema1 on VW95" />
+            <command name="picture mode TV"	F="82"	comment="standard on VW95" />
+            <command name="picture mode bright TV" F="81"	comment="dynamic on VW95" />
+            <command name="reality creation"	F="76"	comment="menu, only HW50" />
+            <command name="color space"         F="75"	comment="cyclic" />
+            <command name="rcp"                 F="8"	comment="menu" />
+            <command name="color temperature"	F="92"	comment="cyclic" />
+            <command name="picture mode"	F="91"	comment="cyclic" />
+            <command name="picture mode Bright Cinema" F="89"	comment="user2 on VW95" />
+            <command name="picture mode film2"  F="88"	comment="user1 on VW95" />
+            <command name="picture mode photo"  F="87"	comment="" />
+            <command name="iris mode"		F="95"	comment="cyclic" />
+            <command name="aspect"		F="110"	comment="cyclic, 'wide mode' on VW95" />
+            <command name="lens toggle/pattern" F="120"	comment="toggle" />
+            <command name="3D"                  F="59"	comment="menu" />
+            <command name="vertical keystone"	F="58"	comment="menu" />
+            <command name="vertical keystone-"  F="1"	comment="" />
+            <command name="vertical keystone+"  F="0"	comment="" />
+        </commandSet>
+    </remote>
+</remotes>
