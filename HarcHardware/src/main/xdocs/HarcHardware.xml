@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="xdoc2html.xsl"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "dtds/document-v20.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
     <title>HarcHardware</title>
