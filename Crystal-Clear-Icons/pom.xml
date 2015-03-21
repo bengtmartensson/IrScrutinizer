@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.harctoolbox</groupId>
+    <artifactId>Crystal-Clear-Icons</artifactId>
+    <packaging>jar</packaging>
+    <version>20070620</version>
+    <name>Crystal-Clear-Icons</name>
+    <parent>
+        <groupId>org.harctoolbox</groupId>
+        <artifactId>harctoolbox</artifactId>
+        <version>1.0.0</version>
+        <relativePath>..</relativePath>
+    </parent>
+    <licenses>
+        <license>
+            <name>LGPLv2+</name>
+            <url>http://www.gnu.org/licenses/lgpl2.1.html</url>
+        </license>
+    </licenses>
+    <description>Bundled subset of crystal icons.</description>
+    <url>http://www.everaldo.com</url>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+</project>
