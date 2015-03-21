@@ -1,0 +1,11 @@
+IrScrutinizer can now be started by selecting it from the start menu,
+or by double clicking the icon.
+
+Provided the option "Add installation directory to path" has been selected,
+the command line program IrpMaster can be started from a so-called
+DOS-box using the command name "irpmaster". (Otherwise the full path
+name will have to be used.)
+
+Documentation is available through the Help menu, entry
+Content. Please address feedback, bugreports, suggestions etc to the
+JP1-Forum: http://www.hifi-remote.com/forums/
