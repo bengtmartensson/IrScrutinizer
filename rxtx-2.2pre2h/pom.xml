@@ -16,7 +16,7 @@
         </license>
     </licenses>
     <description></description>
-        <url>http://xxxx</url>
+        <url>http://rxtx.qbang.org</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -32,6 +32,5 @@
             </plugin>
         </plugins>
     </build>
-
     <dependencies/>
 </project>
