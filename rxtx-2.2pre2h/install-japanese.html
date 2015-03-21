@@ -1,0 +1,111 @@
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+</head>
+<body><DIV ALIGN=LEFT>
+<br><b>Software</b>
+Taken with permission from Masayuki "Tencho" Yamashita's home <a href="http://www.geocities.co.jp/Technopolis/4789/settei.htm#id1">page</a>. 
+<hr>
+<br><a NAME="id1"></a><font size=+1>[java communication toolをLinux上で動かすための設定]</font>
+<br>英語をすんなり読める方は、<a href="http://www.frii.com/~jarvi/rxtx/">RXTX:
+The Prescription for Transmission</a>へアクセスし、プログラムをダウンロードして頂いて
+<br>解凍したあとに「INSTALL」ファイルを見てください。
+<p>ここからは私が実際に行ったインストール作業です。
+<br>（パソコンの環境が異なっている場合もあるので必ずしも成功するとは限らないことをご了承ください）
+<br>インストールを行った環境は下記の通りです。
+<br>[ Linux Kernel version ] <font color="#009900">2.2.12</font>
+<br>[ Linux distribution ] <font color="#009900">Vine1.1(RedHat Linux 5.2
+&amp; glibc6 based)</font>
+<br>[ RXTX version ] <font color="#009900">1.3.8</font>
+<p>インストールを行うために下記のファイルを用意しました。
+<ul>
+<li>
+<a href="http://java.sun.com/products/jdk/1.2/ja/install-solaris.html">jdk-1.2pre-v2.tar.bz2</a>
+(JAVA Development Kit 1.2 glibc2.0版)</li>
+
+<li>
+<a href="http://www.frii.com/~jarvi/rxtx/">rxtx_1.3.8.tar.gz</a> （Java
+開発ツールキット（ JDK ）にシリアル、パラレル通信を提供するライブラリ）</li>
+
+<li>
+<a href="http://java.sun.com/products/javacomm/index.html">javacomm20-x86-tar.Z</a>
+(Solaris用のCommAPI )</li>
+</ul>
+これらのファイルの保存先を以後/hogehogeとしておきます。
+<p>まず、JDK1.2をインストールしている方はここを読み飛ばしてステップ5へ進んで下さい。
+<br>1. JDK1.2をインストールするために/usr/localに移動しました。
+<br>&nbsp;&nbsp;&nbsp;&nbsp; #<font color="#999900">cd /usr/local</font>
+<p>2. jdk-1.2pre-v2.tar.bz2ファイルを解凍します。
+<br>&nbsp;&nbsp;&nbsp; #<font color="#999900">bzip2 -dc /hogehoge/jdk1.2pre-v2.tar.bz2
+| tar xvf -</font>
+<p>3.PATH変数の編集を行います。
+<br>&nbsp;&nbsp; homeディレクトリに.bash_profileという起動ファイルがあるので(ls
+-aで確認できます)
+<br>&nbsp;&nbsp; 適当なエディタを使ってこのファイルを開きます。
+<br>&nbsp;&nbsp; 最下行のところに
+<br>&nbsp;&nbsp; <font color="#999900">PATH=$PATH:/usr/local/jdk1.2/bin</font>
+<br>&nbsp; を記入して保存してください。
+<br>&nbsp; その後、起動ファイルをロードします。 #. <font color="#999900">$HOME/.bash_profile</font>
+<br>&nbsp; 一度logoutしてまたloginします。
+<br>&nbsp; javaコマンドが使えるかどうか"<font color="#999900">which java</font>"と打って確かめて下さい。
+<p>4.このままでもコンパイルできるのですが、コンパイルした後になにやら Sun製JITコンパイラのエラー表示がでます。
+<br>&nbsp; 気になる方は JITコンパイラのパーミッションが下記のようになっているので
+<br>&nbsp; jdk1.2/jre/lib/i386/libsunwjit.so -rw-r-----
+<p>&nbsp; #<font color="#999900">chmod 755 jdk1.2/jre/lib/i386/libsunwjit.so</font>
+<br>&nbsp; と入力しておいてください。
+<br>&nbsp; ただ、JITコンパイラ自体に多少問題を抱えているらしいとの情報があるらしいです。
+<p>5. javacomm20-x86-tar.Zを解凍します。(カレントディレクトリは/usr/local/jdk1.2です)
+<br>&nbsp; #<font color="#999900">uncompress &lt; /hogehoge/javacomm20-x86-tar.Z
+| tar -xf -</font>
+<br>&nbsp; commapiというディレクトリが作成されているか確認します（#<font color="#999900">ls</font>　）。
+<p>6. commapiの中にcomm.jar(Solaris用)とjavax.comm.propertiesがあるので
+<br>&nbsp; 所定のディレクトリにコピーします。
+<p>&nbsp; #<font color="#999900">cp /usr/local/jdk1.2/commapi/comm.jar
+/usr/local/jdk1.2/jre/lib/ext/</font>
+<br>&nbsp; #<font color="#999900">cp /usr/local/jdk1.2/commapi/javax.comm.properties
+/usr/local/jdk1.2/jre/lib/</font><font color="#999900"></font>
+<p><font color="#999900">&nbsp; </font><font color="#000000">余談ですが私はwin32用のcomm.jarを入れたことに気がつかなくて相当悩んでた時期がありました(^
+^;。</font>
+<p>7. javax.comm.propertiesを編集します。
+<br>&nbsp;&nbsp; デフォルトで、"Driver=com.sun.commSolarisDriver"と書かれているので
+<br>&nbsp;&nbsp; この行をコメントアウトするなり削除して
+<br>&nbsp;&nbsp; "<font color="#999900">Driver=gnu.io.RXTXCommDriver</font>"
+という文字を記述して上書き保存してください。
+<p>8. rxtx_1.3.8.tar.gzを解凍します。(カレントディレクトリは/usr/local/jdk1.2です)
+<br>&nbsp;&nbsp; #<font color="#999900">tar zxvf /hogehoge/rxtx_1.3.8.tar.gz</font>
+<p>9. #<font color="#999900">cd /usr/local/jdk1.2/rxtx-1.3.8/</font>
+<p>10. buildディレクトリを作成します。
+<br>&nbsp;&nbsp;&nbsp;&nbsp; #<font color="#999900">mkdir build</font>
+<p>11. #<font color="#999900">cd build</font>
+<p>12. #<font color="#999900">../cofigure --prefix=/usr</font>
+<p>13. #<font color="#999900">make</font>
+<p>14. #<font color="#999900">make install</font>
+<p>きちんと組み込まれているか実際にsample fileを使ってみます。
+<br>今回は/usr/local/jdk1.2/commapi/samples/SerialDemo/を用いました。
+<br>javaコマンドのPATHを通してない場合は下記のように打てばlogoutするまで有効です。
+<br>#<font color="#999900">export PATH=/usr/local/jdk1.2/bin:$PATH</font>
+<br>このままSerialDemo.classを起動させようと
+<br>#<font color="#999900">java SerialDemo</font>
+<br>と打っても実行しません。
+<br>これは読み取り属性のままになっているからなので、
+<br>/usr/local/jdk1.2/commapi/samples/SerialDemo/以下の
+<br>すべてのクラスファイル属性に実行権限を与えるようにしないと動きません。
+<br>#<font color="#999900">cd /usr/local/jdk1.2/commapi/samples/SerialDemo/</font>
+<br>#<font color="#999900">chmod 755 AlertDialog.class</font>
+<br>.
+<br>.省略
+<br>.
+<br>#<font color="#999900">chmod 755 SerialParameters.class</font>
+<p>これで実行(#<font color="#999900">java</font> <font color="#999900">SerialDemo)</font>すると、
+<br>"Font specified in font.properties not found"という表示がズラズラとでますが
+無事アプリケーションが立ち上がりました。
+<p>以上、root上での作業を話してきましたが
+<br>user権限でもシリアルポートを使いたいという方は、 /dev/ttyS0 の属性を変える必要があります。
+<br>#<font color="#999900">chmod o+rw /dev/ttyS0</font>
+<br>とすればシリアルポートを制御することができますが、個人レベルでなら問題ないですが
+<br>公共あるいはインターネットに接続しているようなマシンには十分セキュリティ対策を行ってください。
+<div align=right>（99/11/30 執筆）</div>
+<br>
+<hr WIDTH="100%"></div>
+</body>
+</html>

@@ -1,0 +1,750 @@
+This is ChangeLog
+Fri Sep 11 10:09:30 UTC 2009
+
+
+rxtx-2.1 and rxtx-2.0 changes are kept in the same file.  skip to the version
+you downloaded.
+
+2.2 ???
+		Deamon Monitor thread.
+		http://mailman.qbang.org/pipermail/rxtx/2009-November/5481981.html
+		Ivan Maidanski <ivmai@mail.ru>
+
+		64 bit/ 32 bit fallback of loadlibrary
+		Nathan A. Sweet <nate@n4te.com>
+
+		http://mailman.qbang.org/pipermail/rxtx/2009-November/5482004.html
+		regenerated gnu_io_RXTXPort.h and gnu_io_RXTXCommDriver.h;
+		changed version string returned nativeGetVersion();
+		moved nativeGetVersion() to RXTXVersion;
+		added native_psmisc_report_owner() (same as for Win32);
+		removed unnecessary GetLastError() calls;
+		added explicit WCHAR-to-jchar casts (and vice versa) where the
+		compiler complains (same for LPWSTR and for "const" qualifier);
+		adjusted some debugging messages (to also print returned error
+		code);
+		wrapped remaining printed error messages (and MessageBeep) into
+		IF_DEBUG();
+		made printj() defined only if DEBUG;
+		replaced trailing "\n" with "\r\n" in printj();
+		replaced "I" type char with "J" one for "eis" field;
+		replaced get_java_int_var() with get_java_var_long();
+		changed nativeSetSerialPortParams() returned type to jboolean;
+		added nativeClearCommInput() and readTerminatedArray()
+		stubs (these should be implemented in future);
+		removed "MonitorThreadCloseLock" field usage in eventLoop();
+		commented out unused throw_java_exception(),
+		get_java_boolean_var2() and removed get_java_boolean_var();
+		replaced Sleep(0) call with Sleep(1) one in CommEventThread() (
+		to make yielding a bit "more reliable" among threads with
+		different priorities);
+		replaced named event with an unnamed one in
+		InitialiseEventInfoStruct() (see the note below);
+		added new JAVAXCOMM_FRONTEND macro for convenience (if defined
+		then PortInUseException and UnsupportedCommOperationException
+		are used "javax.comm" package (old behavior) else from
+		"gnu.io." one (default));
+		commented out DllMain() definition (since it does no action,
+		only consumes resources);
+		updated Readme.
+		WinCE compilation fixes an updates
+		readArray() simplified loop/fix pointer 
+		Ivan Maidanski <ivmai@mail.ru>
+		http://mailman.qbang.org/pipermail/rxtx/2009-November/5411487.html
+		http://mailman.qbang.org/pipermail/rxtx/2009-November/5411492.html
+		http://mailman.qbang.org/pipermail/rxtx/2009-November/5411490.html
+		http://mailman.qbang.org/pipermail/rxtx/2009-November/5411496.html
+
+		Windows build improvements (MinGW32, MSVC and LCC)
+		Ilkka Myller <ilkka@myller.com>
+		http://mailman.qbang.org/pipermail/rxtx/2009-September/4822418.html
+		
+		Implemented return value to checking to file I/O calls
+		Ilkka Myller <ilkka@myller.com>
+		http://mailman.qbang.org/pipermail/rxtx/2009-September/4822416.html
+		
+		Removed unused MathWorks MATLAB timing debug (DEBUG_MW) 
+		Fixed DEBUG_TIMING
+		Ilkka Myller <ilkka@myller.com>
+		http://mailman.qbang.org/pipermail/rxtx/2009-September/4822414.html
+		
+		Fix build on Linux systems without UTS_RELEASE (linux/utsrelease.h)
+		Ilkka Myller <ilkka@myller.com>
+		http://mailman.qbang.org/pipermail/rxtx/2009-September/4816749.html
+	
+		Apple Xcode 3.x project
+		Ilkka Myller <ilkka@myller.com>
+		http://mailman.qbang.org/pipermail/rxtx/2009-September/4811084.html
+		
+		YACK() debug overflow fix for windows
+		Steffen DETTMER <Steffen.DETTMER@ingenico.com>
+
+		Multiport fix for Windows
+		Ilkka Myller <ilkka@myller.com>
+		http://mailman.qbang.org/pipermail/rxtx/2009-February/3989441.html
+
+		Fix for SIGSEGV at SerialImp.c Solaris/mac/*bsd
+		Ilkka Myller <ilkka@myller.com> 
+		http://mailman.qbang.org/pipermail/rxtx/2009-February/4810504.html
+
+		Let people know which port is in use on windows.
+		WriteFile fix for Parallel ports on windows.
+		Johnny Luong <johnny.luong@trustcommerce.com>
+
+		Solaris static libgcc link configure fix.
+
+		64 bit JNI Fixes  <dan.sandberg.lists@gmail.com>
+		Dan Sandberg
+		http://mailman.qbang.org/pipermail/rxtx/2007-June/3676251.html
+
+	 	Maintain DTR=false during setSerialPortParams	
+		Beat Arnet <beat.arnet@gmail.com>
+		http://mailman.qbang.org/pipermail/rxtx/2009-January/3682508.html
+		http://bugzilla.qbang.org/show_bug.cgi?id=104
+		
+		Avoid debug sprintf overflows on win32.
+		http://mailman.qbang.org/pipermail/rxtx/2009-January/3682496.html
+		Luis Pires <lpdev@ruabrasil.org>
+
+		disable dcb.fDtrControl to avoid unexpected behavior.
+		Beat Arnet <beat.arnet@gmail.com>
+		http://bugzilla.qbang.org/show_bug.cgi?id=104
+
+		threshold fix
+		Alexandre Rusev <cyberflex@mail.ru>
+		http://bugzilla.qbang.org/show_bug.cgi?id=85
+
+                RXTX close deadlocks in REXTXPort.finalize
+		Joachim Buechse <joachim@buechse.de>
+		http://bugzilla.qbang.org/show_bug.cgi?id=53
+
+		Add ACM serial devices to all known ports.
+		Duncan Pierce <duncan.pierce@syntropy.co.uk>
+		http://bugzilla.qbang.org/show_bug.cgi?id=51
+
+		Concurrency fixes for SMP/multicore systems
+		U. George <netbeans@gatworks.com>
+		http://bugzilla.qbang.org/show_bug.cgi?id=100
+
+		Fixes for MAC systems with no drivers installed.
+		1.5 stop bit fix
+
+		Enable universal library builds for Mac OS X
+		Andre-John Mas ajmas@sympatico.ca 
+		http://mailman.qbang.org/pipermail/rxtx/2007-December/1793319.html
+
+		Do not remove and ignore interrupts.
+		Joachim Buechse <joachim@buechse.de>
+		http://bugzilla.qbang.org/show_bug.cgi?id=45
+
+                find ports which were added after program startup on Mac OS X.
+                Martin Oberhuber <martin.oberhuber@windriver.com> 
+		http://bugzilla.qbang.org/show_bug.cgi?id=48
+
+		Clean up CommPort Ownership code, avoid possible deadlocks,
+		fix lost commport ownership events.
+                Martin Oberhuber <martin.oberhuber@windriver.com> 
+		http://bugzilla.qbang.org/show_bug.cgi?id=83
+
+		rxtx does not compile against JDK-1.6
+		Neboj¿a <nebojsa@anja.ig3.net>
+		http://bugzilla.qbang.org/show_bug.cgi?id=84
+
+		configure script failed at line UTS_RELEASE
+		megov <megov@mail.ru>
+		http://bugzilla.qbang.org/show_bug.cgi?id=80
+
+		code cleanup patch (extra ';' creates bug for if statements
+		+ new String() calls removed)
+		Xavier Le Vourch <xavier@brittanysoftware.com>
+		http://bugzilla.qbang.org/show_bug.cgi?id=77
+
+		Wont compile on linux ppc with glibc 2.5 - no sys/io.h
+		Brian Johnson <site-rxtx.org@sherbang.com>
+		http://bugzilla.qbang.org/show_bug.cgi?id=72
+
+		rxtx overwrites System properties
+		Andrew Gillett <asgillett@gmail.com>
+		Nektarios K. Papadopoulos <npapadop@inaccessnetworks.com>
+		Neboj¿a <nebojsa@anja.ig3.net>
+		http://bugzilla.qbang.org/show_bug.cgi?id=64
+
+		Solaris ACM port support
+		Dave Cleal <dc@cleal.com>
+		http://bugzilla.qbang.org/show_bug.cgi?id=59
+
+		Setting of non-standard baud rate fails.
+		Andrew Prunicki <aprunicki@yahoo.com>
+		http://bugzilla.qbang.org/show_bug.cgi?id=58
+
+		RXTX uses lockfiles on MacOS X (instead of ioctl TIOCEXCL)
+		Joachim Buechse <joachim@buechse.de>
+		http://bugzilla.qbang.org/show_bug.cgi?id=50
+
+		JavaDoc fixes
+		Joachim Buechse <joachim@buechse.de>
+		http://bugzilla.qbang.org/show_bug.cgi?id=49
+
+		need to review:
+
+		http://bugzilla.qbang.org/show_bug.cgi?id=53
+		http://bugzilla.qbang.org/show_bug.cgi?id=46
+		http://bugzilla.qbang.org/show_bug.cgi?id=41
+		
+
+2.1-7 Jan 29 2006
+		Mac OS X x86/universal binaries/install fixes
+		Dmitry Markman <dmarkman@mac.com>
+		http://mailman.qbang.org/pipermail/rxtx/20060128/002169.html
+		catch exceptions on flush() so close() works.
+		Adam Walsh <adam@grummen.net>
+		http://mailman.qbang.org/pipermail/rxtx/20060118/002131.html
+		more close() performance fixes
+		Øyvind Harboe <oyvind.harboe@zylin.com> 
+		http://mailman.qbang.org/pipermail/rxtx/20060119/002135.html
+
+		Blue Tooth Support
+		cleanup writeByte so close works, send the original exceptions
+		so people can see the exception.
+		Paul <ideiglenes1@freemail.hu>
+		http://mailman.qbang.org/pipermail/rxtx/20051229/002014.html
+		http://mailman.qbang.org/pipermail/rxtx/20060108/002053.html
+		%s/\`which java\`/\\\`which java\\\`/g in configure.in
+		Takeshi "Ken" Hamasaki <hama@cyberonix.co.jp>
+		http://mailman.qbang.org/pipermail/rxtx/20060105/002039.html
+		System.gc() slows down close() too much.
+		Øyvind Harboe <oyvind.harboe@zylin.com> 
+		http://mailman.qbang.org/pipermail/rxtx/20060103/002025.html
+		Configure.java message correction
+		User serial_close and serial_open in termios.c
+		JNI_OnLoad and JNI_OnUnload are in SerialImp.c now so remove
+		them from init.c
+		Gerrit Telkamp <g.telkamp@domologic.de>
+		http://mailman.qbang.org/pipermail/rxtx/20051230/002018.html 
+2.1-7pre22 Mar 25 2005
+		CNI retry on EINTR <mark@panonet.net>
+		CNI Ignore SIGXCPU as GCJ garbage collection uses this too.
+		Mark Anderson <mark@panonet.net>
+		CNI Patch to avoid having the SIGPWR signal interrupt select()
+		Mark Anderson <mark@panonet.net>
+		CNI debug message cleanups and fd fix
+		Mark Anderson <mark@panonet.net>
+		Dont override system properties 
+		Klaus Kierer <klaus.kierer@tiscover.com>
+		W32 build fixes and Locking fixes
+		Dave Acker <dacker@nomadio.net>
+
+		Mac OS X auto* build fixes
+		liblockdev support
+
+2.1-7pre21 Oct 16 2004
+		dereferencing type-punned pointer will break strict-aliasing
+		rules.  Fixed.
+2.1-7pre20 Oct 16 2004
+		x86_64 Linux Fixes fixes BlackBox Serial now runs
+		switch to JNI_VERSION_1_2 -- many people are still using
+		1.3 JREs
+2.1-7pre19 Oct 12 2004
+		Thread safer nativeDrain()/flush() method.
+		Philip Gladstone <philip@gladstonefamily.net>
+		Don't look for unexpected lockfiles in expected places
+		Philip Gladstone <philip@gladstonefamily.net>
+		adding the new properties gnu.io.rxtx.SerialPorts and
+		gnu.io.rxtx.ParallelPorts insead of overriding the system
+		properties and uses them only as default values
+		Klaus Kierer <klaus.kierer@tiscover.com>
+2.1-7pre18 Oct 11 2004
+		release locks when device is unavailable.
+		Tico Ballagas <ballagas@cs.rwth-aachen.de>
+		J2SE java.util.loggin and property file to match
+		Stephane Cachat <stephane@cachat.org>
+		termios stack overflow fix for Linux caused by including
+		termbits.h
+		Bill Holmes <weh@super.org>
+		Support for USB frobs in Linux (reports are that this does not
+		work exactly as expected with some kernels)
+		Christopher R. Wren <wren@merl.com>
+		configure fix for jdk 1.5
+2.1-7pre17 Oct 17, 2003
+		merged with 2.0 and took small changes from cvs.
+2.1-7pre16 Mar 27, 2003
+		remove debug "Condition" warnings used to debug NT4 issues.
+2.1-7pre15a
+		build without requiring rxtxZystem.dll.  Add back the
+		TIOCGICOUNT #define for breaks.
+2.1-7pre15
+		100 fold speedup of read(byte) and read(byte[] ...)
+		10 fold speedup of available()
+		implementented read(byte[],offset,length,terminator[2]);
+		-- not tested.
+2.1-7pre14
+		select fix that could cause crashes in read and the
+		eventLoop
+		-- cleaner patch is pending but not tested  as
+		mentioned to Melissa and Jauhar.
+
+		Tried to cause exceptions for possible NT4SP6 writes
+		-- this was the "Three Blind Mice" test
+
+		Changed build tool chain for XP problems (?).
+		-- "XP Blows up"
+
+		Support for COM1-256
+
+		port reenumeration for people that change win32
+		port assignments CommPortIdentifier:getPortIdentifiers()
+2.1-7pre13
+		Isolated lockup on w32 read.
+		Added possible fix for w32 write lockups
+		throw error on impossible write situations.
+		- small input buffer, large writes.
+2.1-7pre12
+		All input stream methods are synchronized now. 
+		I had this in before cleaning up but thought it
+		was not needed (nothing failed here).	
+		read() will toss an IOException (caught in the
+		examples below but not in this library) if read
+		thinks there will be a deadlock.
+		Some small fixes found while merging with rxtx 2.0
+		for public release.  Just sanity checks for library
+		versions and such.
+
+		- everything is in synch with the public CVS and
+		public prerelease bins are out and being tested.
+2.1-7pre11
+		fix for lockup found.
+		removed Python and Cygwin code (ZystemImp.c)
+		removed extra attempts to fix lockup
+		removed previous attempts to fix tcrash
+		- the solution before was to avoid using the
+		API but now it appears to work with it -crazy
+
+2.1-7pre10
+		wrote Zystem (probably will be a seperate
+		library) for logging over the network. Some
+		attempts to fix lockup bugs.
+		-pedantic compile passes.
+2.1-7pre9
+		termios.c cleanup (w32)
+2.1-7pre8
+		More LPT support for w32
+2.1-7pre7
+		initial LPT support for w32
+2.1-7pre6
+		tlockup.m does not lock but fails (?) (W2K SP2)
+		tcrash.m does not crash (W2K SP2)
+		suite serial passes (W2K SP2)
+		debug for flow control and parity switched off.
+2.1-7pre5
+		Later stage tinkering with flowcontrol and parity
+		fixes.  Possibly bugs (w32 has many ways this can
+		be setup).
+2.1-7pre4
+		testRead() now uses //./COM9 to verify port is
+		usable (fixes bug introduced in pre3)
+		build used java/jar/javac 1.3.1_06-b01
+		-- initial tinkering with parity --
+2.1-7pre3
+		fixed //./COM?? so matlab can do s=serial('COM16')
+		-- needed to test tcrash.m
+2.1-7pre2
+		support for COM1-16 on w32 using //./COM??
+2.1-7pre1
+		Mark/Space parity fixes on w332
+2.1-6
+		Solaris Enumeration fixes
+
+2.1-6 Sep  7, 2002    read(byte) does not timeout
+		      read(byte[]) returns 0 on timeout (Fixes DalSemi iButtons)
+		      Dave Dribin <dave@dribin.org>
+		      QNX Port Bill Smith <bsmith@tridium.com>
+		      read() fixes - should be the same as Sun's CommAPI now.
+		      timout and threshold fixes for above
+		      Bill Smith <bsmith@tridium.com>
+		      All QA tests passed.
+		      Debian lock file fix
+		      "Villa Valerio" <valerio.villa@siemens.com>
+		      HP-UX port enumeration fixes.
+		      Sheikh, Awais <awais.sheikh@hp.com>
+2.1-5 Aug 15, 2002    AM_MAINTAINER_MODE for auto* fixes
+2.1-[2-4] Aug 13, 2002 A series of minor bug fixes compile fixes
+		      Custom speed fixes
+		      Unix control of buadbase and divisor
+		      updated tools for builds
+		      First release since the QA.
+2.1-1  Apr 5, 2002    'Works for me' release.  Results of QA.
+		      Win CE port Michal Hobot <Michal_Hobot@drq.pl>
+		      Mac OS X fixes Dmitry Markman <dmarkman@mac.com>
+		      Multiple runtime fixes.
+		      timeout fixes and other fixes <wroberts1@home.com>
+		      lock file server
+		      more portable output buffer empty detection
+		      Compile fixes for jdk 1.3+
+1.5-8  Dec  4, 2001   True64 Port Finbarr O'Kane <finbarr@e-merge.ie>
+		      FreeBSD fixes Peter C. Verhage <peter@no-nonsense.org>
+		      UnixWare and OpenUNIX fixes, fixes for Unexpected Lock
+		      files
+		      Jonathan Schilling <jls@caldera.com>
+		      --disable-lockfiles fixed.
+		      Same exception messages as Sun's CommAPI for baudrate
+		      errors.
+		      pthread writes for OS's other than Linux and Win32
+		      OUTPUT_BUFFER_EMPTY for OS's other than Linux and Win32
+		      Win32 port enumeration fixes for COM1-8
+		      Win32 speed fixes.
+		      More thread fixes.
+		      fixes for applications not using Monitor Threads.
+		      lock file support for Redhat 7.2.
+		      Full CommAPI support for Win32, Linux and Solaris.
+		      Many more forgotten.
+		      Several days worth of testing (ongoing).
+1.5-7  Nov 2, 2001    UnixWare and OpenUNIX ports
+		      Jonathan Schilling <jls@caldera.com>
+		      autotool support for Mac OS X
+		      Dmitry Markman <dmarkman@mac.com>
+		      Asynch write fixes
+		      setParityErrorChar() and setEndOfInputChar() added 
+		      getParityErrorChar() and getEndOfInputChar() added 
+		      Lots of tickles a few wacks more error debug info
+		      fixes by the buckets.
+		      Thread fixes for open/close/monitorthread/native code
+		      win32 fixes for NT and win9?
+1.5-6  Oct 14, 2001   Mac OS X port to Code Warrier
+		      Documentation of the above
+		      possible double deletion fix
+		      all by Dmitry Markman <dmarkman@mac.com>
+		      Specified port fixes
+		      Santiago Nicolau <nicolaus@ing.unlpam.edu.ar>
+		      Merged with rxtx-1.4
+		      comm.jar renamed to RXTXcomm.jar to avoid confusion.
+		      port enumeration fixes
+		      multiple win32 fixes
+		      lockfile fixes for native threads
+		      thread fixes, thread test added.
+		      user defined lock directory support.
+		      Many more forgotten.
+1.5-5 Oct  4, 2001    Lock file fixes and other <wroberts1@home.com>
+                      null termination of strings in lock_file
+		      <rob@pitman.co.za>
+		      If you had problems with green threads jdk the above will
+		      probably help.
+                      Documentation of libsecure issues while running as root
+		      Vadim Tkachenko <vt@freehold.crocodile.org>
+		      Code Warrior build files for Mac OS X 
+		      Dmitry Markman <dimitry.markman@verizon.net>
+		      win32 fixes and enhancments.
+		      win32 fixes <wroberts1@home.com>
+		      Initial Solaris port
+		      initial Mac OS X port
+		      Joseph Goldstone <joseph@lp.com>
+                      Paul Tokarchuk <ptokarchuk@sympatico.ca>
+		      package renamed to gnu.io
+		      Memory leak Cleanups
+		      cross-compile fixes
+		      more windows fixes.
+		      more ioctl support for windows
+		      more fcntl suppport for windows
+		      misc changes to windows
+		      Makefile for building on mingw32 systems in DOS
+		      uucp_lock file support
+		      Many thanks to Mathworks for Making it happen.
+		      symbolic link lock files now work (Mandrake)
+		      peter.beelen@philips.com
+		      Configure.in fixes for permission issues
+		      Vadim Tkachenko <vt@freehold.crocodile.org>
+		      Closed memleaks on open()/close()
+                      registered port support.
+		      Joseph Goldstone <joseph@lp.com>
+1.5-4  Jan 26, 2001   Irix build fixes (still needs CFLAGS fixed?)
+		      Michael Delgadillo <delgadil@ymi.com>
+		      Windows build support with lcc
+		      Valentin Pavlov <v_valchev@prosyst.bg>
+		      Windows build fixes with mingw (both need more code)
+		      put enough support into win32 termios to allow BlackBox
+		      to run but not work
+		      BeOS opens and closes serial ports
+		      hpux build fixes merged
+		      merge with rxtx-1.4 fixes and features
+		      backed out Vector port enumeration
+		      Futher Documentation
+1.5-3  Oct  4, 2000   Initial BeOS Support 
+		      Brian D. Hindman <bjhindman@yahoo.com>
+		      Win32 cross build fixes <jcbernard@free.fr>
+		      Documentation changes D. Bahi <dbahi@tenornetworks.com>
+		      Kaffe Support
+		      freebsd build fixes
+		      Makefile fixes
+		      Merged changes from 1.4-5
+1.5-2  Jul 16, 2000   Merged changes from 1.4-4
+		      Added RawIO classes and read/write/open/close functions.
+		      Jim Garvin <jgarvin@gardelsoftware.com>
+1.5-1  Mar  7, 2000   RS485 write support.  comm.jar implemented.
+		      Stallion Card support
+		      Greg Luck <gluck@tempo-services.com.au>
+		      CommPort enumeration with rxtx's comm.jar
+2.0-7 Oct 17, 2003    see rxtx-2.1-7
+2.0-6                 skipped to sync with 2.1
+2.0-5 Sep 7, 2002     see rxtx-2.1-6
+2.0-4 Aug 15, 2002    see rxtx-2.1-5
+2.0-[23] Aug 13, 2002 see rxtx-2.1-[2-4]
+2.0-1  Apr 5, 2002    see rxtx-2.1-1
+1.4-15 Dec 4, 2001    see rxtx-1.5-8
+1.4-14 Oct 18, 2001   see rxtx-1.5-7
+1.4-13 Oct 14, 2001   see rxtx-1.5-6
+1.4-12 Oct 10, 2001   see rxtx-1.5-6
+1.4-11 Oct  4, 2001   see rxtx-1.5-6
+1.4-10 Aug 31, 2001   see rxtx-1.5-5
+1.4-9  Jun 21, 2001   Steve Drach <drach@eng.sun.com>
+                      Minor fix of error reporting in lockfiles
+		      Mac OS X port Joseph Goldstone <joseph@lp.com>
+		      enumeration speedups Wayne Roberts <wroberts1@home.com>
+		      Documentation changes for lockfiles
+		      build fixes for jdk 1.1.8, kaffe 0.61
+		      automation of build tests with support for $JAVA_HOME
+		      sync with 1.5
+1.4-8  Jan  8, 2001   irix build fixes (fine tuning required)
+		      Tom Mander <tom@proximity.com.au>
+		      more lockfile code with testing from
+		      "Roberto" <rwaissma@mathworks.com> and
+		      Chris Portal <cportal@mathworks.com>
+		      bsd and linux default to lockfile support
+		      some documentaion clarifications.
+1.4-7  Nov 13, 2000   HP-UX fixes for port enumeration
+		      Cathrine Guiollot <catherine_guiollot@hp.com>
+		      CLASSPATH build fixes
+		      Dale Seaburg <kg5lt@earthlink.net>
+1.4-6  Oct 26, 2000   support for explicitly-specified lists of ports
+		      Martin Pool <mbp@linuxcare.com>
+		      Documentation for explicitly-specified lists of ports
+		      Martin Pool <mbp@linuxcare.com>
+		      Clarification of accessReadWrite()
+		      Martin Pool <mbp@linuxcare.com>
+		      RXTXVersion.java was added
+		      HP-UX fixes for Serial Support
+		      (it may need some fine tuning)
+		      Cathrine Guiollot <catherine_guiollot@hp.com>
+		      Documentation of RXTX lantency frantz 
+		      <fcapiez@club-internet.fr>
+		      Filesystem Hierarchy Standard 2.1 sec 5.6 lock files.
+		      UUCP style lock support is needed.
+		      removed extra files not used in 1.4
+		      merged config/Makefile fixes from 1.5
+		      merged win32 fixes from 1.5
+		      cleanup of ParallelImp.c eventLoop (more needed)
+		      merged documentation changes from 1.5 that are related.
+1.4-5  Aug 18, 2000   RXTXPort constructor to set the name to the port being 
+		      opened.  RXTXPort.removeEventListener() fixes/work arounds
+		      all by Chris Hamlett <chris.hamlett@securelogix.com>
+		      SGI Irix build fixes 
+		      Thorsten Schmidt <thorstens@cologne.sgi.com>
+		      Corrected SerialPortEvent.getNewValue()
+		      open()/close() fixes.
+		      Chris Hamlett <chris.hamlett@securelogix.com>
+		      SerialPortInstructions.txt contributed by 
+		      Vaibhav Andleigh/Athena <andleigh@mit.edu>
+		      inputBuffer does not dictate read size.  Makefile cleanup.
+		      1.5 stop bit support.
+1.4-4  Jun 15, 2000   An attempt to get eventLoop() to exit properly.
+		      Chris Portal <cportal@mathworks.com>
+		      data accessed by multiple threads declared volatile.
+1.4-3  Jun 14, 2000   synchronization fixes(?) 
+		      Chris Portal <cportal@mathworks.com>
+		      get rid of annoying kenrel version messages
+		      Joey Armstrong <joeya@mathworks.com>
+		      Allow Event loop to die silently after closing the fd.
+		      LPRPort open() throws PortInUseException not IOException
+		      cleanup of LPRPort java variable access.
+1.4-2  Jun 13, 2000   Documentation changes Bryce Nesbitt <bryce@nextbus.com>
+1.4-1  Jun  6, 2000   HP-UX build fixes (still a messed up compile flag I think)
+		      "Peter Pastrnak" <praktfp1@hpbbm.bbn.hp.com>
+		      if you get HP-UX working please let peter know.
+		      redo of RXTXPort's read()
+		      "Bertrand Renuart" <bertrand.renuart@itma.lu>
+		      Many println's replaced with appropriate exceptions
+		      "Bertrand Renuart" <bertrand.renuart@itma.lu>
+		      Suse build fixes.
+		      Jean-Francois Fels <Jean-Francois.Fels@cnes.fr>
+		      jdk-1.3 build fix (lost the email that pointed this out) 
+		      took out extra code from 1.5 development to simplify 
+		      the package.
+1.3-13 Mar 26, 2000   patches for Cyclades support and other multi-port cards
+		      that do not support TIOCGICOUNT or TIOCSERGETLSR
+		      Jac Kersing <J.Kersing@the-box.com>
+		      Stallion Card Support
+		      Greg Luck  <gluck@tempo-services.com.au>
+		      ~20 additions devices added for linux.
+1.3-12 Mar  7, 2000   Added Calls to DeleteLocalRef to functions get_java_var 
+		      and throw_java_exception to avoid FATAL ERROR in native 
+		      method: Out of memory when expanding local ref table 
+		      beyond capacity W. Craig Trader <ct7@vitelinc.com> and
+		      Gareth Lee <gareth@ee.uwa.edu.au>
+		      fixed flush() for printer ports.
+		      Robert Perry <rlperry@paradigmsys.com> 
+		      work around for missed DSR events (incomplete?).
+		      Ken Eisner <devel01@novex.ns.ca> 
+		      readArray behavior fix Gareth Lee <gareth@ee.uwa.edu.au>
+1.3-11 Jan 28, 2000   Added notification of output buffer empty. 
+		      Chris Portal <cportal@mathworks.com>
+		      tracked down a bug in open() (introduced in rxtx-1.3-10)
+		      Tim Groner <tgroner@cs.umanitoba.ca> 
+		      Ken Eisner <019769e@dragon.acadiau.ca>
+		      Fix for people reporting lost bytes.
+		      Wayne Robers <wroberts2@home.com>
+		      Douglas Baker <dbaker@connix.com>
+1.3-10 Jan 16, 2000   Tracked down threshold bugs and Linux configure fixes.  
+		      Brent J. Nordquist <bhn@visi.com>
+		      Moxa Driver Support read/write examples libc5 build fixes.
+		      Peter Bennett <bencom@bencom.co.nz>
+		      Free-BSD configure and compile fixes 
+		      Soren Dayton <dayton@overx.com>
+		      Tracked down racing event loops.
+		      Alejandro P. Revilla <apr@cs.com.uy>
+1.3-9	Dec  1, 1999  Japanese install instructions  Thanks to Masayuki "Tencho"
+		      Yamashita <tencho@venus.kanazawa-it.ac.jp>
+		      IBM JDK support.  Thanks for bug reports from Herber Carl
+		      Meyer <hcMeyer@mediaone.net> and Scott Simms 
+		      <scott@beacon.com.au> 
+		      Warning messages when kernel does not match headers 
+		      Alejandro P. Revilla <apr@cs.com.uy>
+		      Documentation of libc5 bugs. Peter Bennett 
+		      <bencom@bencom.co.nz>
+		      Warning when there are multiple jni include file paths.
+		      Win32 code now builds.  Thanks to Wayne Roberts  for the
+		      changes to termios.c.
+		      Free-BSD serial comm is working.
+1.3-8   Oct 25, 1999  Introduced Wayne Roberts Win32 code. 
+		      CLOCAL added to c_cflags.  (How did it get out?)
+		      -thanks to Bertrand Renuart <bertrand.renuart@itma.lu>
+		      Several configure fixes for common problems.
+		      -thanks to  Andrew Baerst <abaerst@yahoo.com> for comments
+		      fixes for larger writes.  Mark Lindsey <mlindsey@att.net>
+		      Free-BSD fixes Stuart Anderson <anderson@metrolink.com>
+		      Linux port enumeration fixes.
+		      Several configure fixes for common problems.
+		      Parity fixes.  Wayne Roberts
+1.3-7   Aug 15, 1999  More Threshold and Timeout fixes.  Tried to get Printer
+		      support working with linux-2.2.11.   More work needed 
+		      there.  Comtrol card support by Ken Thompson 
+		      thompson@milestonesolutions.com.
+1.3-6   Aug 3, 1999   Threshold and Timeout typo fixes in SerialImp.c.  
+1.3-5   Jul 26, 1999  Threshold and Timeout implemented on native side.  default
+		      on open is to block.  Hope this doesn't fill the mailbox.
+1.3-4   Jul 26, 1999  Printer port fixes Holger Lehmann <holle@almaden.ibm.com>
+		      minor build fixes
+		      intelligent port identification
+		      merge of many small changes from cvs.
+		      moved to automake-1.4a libtool-1.2f make-3.77
+1.3-3   Apr 29, 1999  flow Control corrections Neil Darlow and Chris Kakris
+		      software flow control implementation Neil Darlow
+		      close fixes and exception cleanup Douglas Lau
+		      build modifications 
+		      Documentation updates
+		      counter roll over fixes for events Neil Darlow
+		      Minor changes to read 
+1.3-2   Mar 27, 1999  When throwing exceptions, include the method name in the 
+		      message string.  Douglas Lau
+		      fixes for close() drop DSR and DTR call super.close()
+		      Wayne Roberts and Douglas Lau
+		      fixes for readArray() used IndexArrayOutOfBoundsException
+		      return 0 on readArray(0);  Douglas Lau and Will Kassebaum
+		      <wrk@kassebaum.net>
+		      fix for drain().  retry on EINTR Daniel Lintjens 
+		      <lintjens@cme.nist.gov>
+		      fixes for configure.in/Makefile.am  using 
+		      System.getProperty
+		      ParallelImp.c implementation of isPaperOut,isPrinterBusy,
+		      isPrinterError,isPrinterSelected,isPrinterTimedOut,
+1.3-1   Mar 20, 1999  added Stubs for Printer Support and CommPortIdentifiers.
+		      Several minor Makefile Modifications for the above and
+		      some quirks that showed up in 1.1.7 javah.
+1.3     Mar 17, 1999  Imported Douglas Lau's changes Merged build files with
+		      1.2 tree.
+1.2BETA2Jan 31, 1999  RXTXPort.java:  Stop Bit fix Stephen Martin
+		      SerialImp.c: Set Speed fix.  Stephen Martin
+		      RXTXCommDriver.java:  Specialix card support.
+		      configure: remove -ansi for libc5 Linux
+		      hardware flow control error message fix.
+1.2BETA1Dec 28, 1998  extensive native code rewrite.
+1.2pre12Dec 20, 1998  SerialImp.c cleanup.  ASYNC is now default.  irix is
+		      running.  Thanks to Steve Swicord and Bob Carpenter.
+1.2pre11Dec 20, 1998  multi-port bug fix.  Event Notification (FE PE BI OE)
+1.2pre10Dec 11, 1998  public release of pre9 work.  
+1.2pre9 Dec 11, 1998  Series of non-public releases to work out sgi-irix build
+		      problems.  Thanks to Steve Swicord and Bob Carpenter for
+		      the feedback.  Some multi-port fixes.
+1.2pre8 Nov 30, 1998  Wayne Roberts Contributed read timeout fix
+		      binary read fix libtool-1.2b is now used
+		      multi-port use is in.
+		      Yeun-Ping Leung contributed Free-BSD support
+1.2pre7 Oct 14, 1998  Various Fixes
+1.2pre6 Oct  6, 1998  cleaned up documentation.  Pulled out win32 support.
+		      Makefile.am remove full path from JAR command.
+1.2pre5 Aug 12, 1998  Added David Atkinson's support for which implements event
+		      notification, hardware flow control (tested with a modem),
+		      multiple bytes reads etc.  Needs to be converted back to
+		      termios calls.  Claims to work with blackbox.
+		      .cvsignore - Added to ignore generated files such as 
+		      "config.h".  It just cleans up CVS reports of what's new 
+		      and different.
+		      Makefile.am - Add a "jcl.jar" target to make a JAR file 
+		      for JCL.
+		      SerialImp.c - Implemented SerialInputStream_skip().  If 
+		      it runs out of memory it uses a slower algorithm which 
+		      uses almost no memory.  
+		      - Support for baud rates of 38400.  - Rename get_speed to 
+		      bps2speed_t (bits-per-second to speed_t constant) to 
+		      remove ambiguity.  
+		      - The GetSpeed functions now correctly return the bps 
+		      speed rather than the speed_t constant.  This means JCL 
+		      will now return the correct speed.
+		      - Add speed_t2bps to be the reverse of bps2speed_t.
+		      - Fix the spelling of "receive".
+		      Added /dev/modem to the list of ports because it's very 
+		      common.  Added comments from Suns NullDriver sample, 
+		      giving credit where necessary.  (Sheldon Young - 
+		      sheldon_young@yahoo.com)
+		      Commented SerialImp.c (taj@www.linux.org.uk)
+1.2pre4 Aug 12, 1998  The CommAPI has changed in the newest beta from Sun,
+		      now named "javacomm20-ea".  I have attached RXTXPort.java,
+		      which I have modified so it now compiles.
+		      Sheldon Young sheldon@intergate.bc.ca
+1.2pre3 July 5, 1998  libtool 1.0h, automake 1.3, (redhat-5.1 defaults)
+		      added JDK_HOME as and option to configure.
+		      missing string control to termios (in progress).
+		      documentation changes/updates 
+		      (doc and JDK_HOME changes suggested by 
+		      fred@rodan.moremagic.com)
+		      IOExeption work.
+1.2pre2 Jun  5, 1998  termios control from java (overdue)
+1.2pre1 May 19, 1998  CommAPI start <kevinh@acm.org (Kevin Hester)>
+1.1.5   Mar 17, 1998  mingw (win32) support
+1.1.3p7 Feb 26, 1998  change how configure.in finds JAVANATINC
+1.1.3p6 Feb 24, 1998  SunOS support (further) 
+		      thanks to Gilles Paquet Gilles.Paquet@ulb.ac.be 
+		      Added libtool support.  This should fix most Unix
+		      porting problems.  
+		      added automake.  I'm not convinced it was a good idea.
+1.1.3p4 Jan 30, 1998  SunOS support (initial) 
+		      thanks to Michael.Forte@Corp.Sun.COM
+		      makeraw() fix
+1.1.3p3 Jan 18, 1998  added termios(3) functions and FD class javadoc'ed
+1,1.3p2 Jan 16, 1998  Complete rewrite.  Now have SerialIn/Output.class's
+1,1.3p1 Jan 15, 1998  Speed was not being changed properly 
+1.1.3p0 Jan 13, 1998  jdk-1.1.3 fixes.
+1.1.1p2 May 23, 1997  Replaced termio with termios.
+1.1.1p1 May 22, 1997  obj dirs for different os's.  per request.
+1.1.1p0 May 21, 1997  Support for jdk 1.1.1.  Dropped support for 1.0.2
+		      because of the jni in 1.1.1.  The native code required 
+		      many changes.
+0.50    Mar 17, 1997  Buffered input/output use of FileDescriptors.  Removed 
+		      most of the native code.  deleted RO.java.  
+0.22    Mar 14, 1997  Everything is now controlled from Main.java.  renamed 
+		      classes for easier reading.  debug info for open(), 
+		      write().  prevent reading from bad fd.  dump hex for RX 
+		      as an example in RO.java.
+0.21    Mar 12, 1997  Removal of hard coded vars Makefile Removed the last 
+		      remnants of my GPS program.  Fixed Main.java by making it
+		      wait for TX to finish (thanks to oliver) Irix support. 
+		      (thanks to oliver)
+0.2     Mar 11, 1997  added autoconf ability
+0.1     Mar 10, 1997  Just tossed the stuff together

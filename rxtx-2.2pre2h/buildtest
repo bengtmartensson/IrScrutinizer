@@ -1,0 +1,50 @@
+#!/bin/sh
+echo buildtest started `date`
+MOUNT=/usr/local
+export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/java/jdk1.3/bin:/usr/local/cross-tools/i386-mingw32/bin/:/usr/local/cross-tools/i386-mingw32/bin
+unset JAVA_HOME
+
+
+mount 10.0.2.1:/usr/src/linux-2.2.14 /usr/src/linux
+mount 10.0.2.1:/mnt/hda3/local /usr/local
+
+echo -n building gcc-win32
+export PATH=/usr/local/cross-tools/i386-mingw32/bin/:/bin:/usr/bin:/usr/java/jdk1.3/bin/:
+export WIN32INCLUDE=/home/jarvi/RXTX/tools/win32-include
+../configure --target=i386-mingw32 --host=i386-redhat-linux > ../logs/configure-log-mingw32 2>&1  &&  make > ../logs/make-log-gcc-win32 2>&1
+echo "  build result=$?"
+rm -rf ../build/*
+unset WIN32INCLUDE
+export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/java/jdk1.3/bin:/usr/local/cross-tools/i386-mingw32/bin/:/usr/local/cross-tools/i386-mingw32/bin
+
+umount /usr/local
+mount 10.0.2.1:/mnt/hda3/local/kaffe/usr/local/ /usr/local
+echo -n building kaffe
+export JAVA_HOME=/usr/local
+../configure > ../logs/configure-log-kaffe 2>&1 && make > ../logs/make-log-kaffe 2>&1
+echo "  build result=$?"
+rm -rf ../build/*
+unset JAVA_HOME
+
+umount /usr/local
+mount 10.0.2.1:/mnt/hda3/local /usr/local
+
+for i in \
+j2sdk1.4.0 \
+jdk117_v2 \
+jdk118 \
+jdk118_v1 \
+jdk118_v3 \
+jdk1.2 \
+jdk1.2.2-006-sun \
+jdk1.3
+do export JAVA_HOME=$MOUNT/$i
+echo -n building with $JAVA_HOME
+../configure > ../logs/configure-log-$i 2>&1  && make > ../logs/make-log-$i 2>&1
+echo "  build result=$?"
+rm -rf ../build/*
+unset JAVA_HOME
+done
+umount /usr/local
+umount /usr/src/linux
+echo buildtest finished `date`

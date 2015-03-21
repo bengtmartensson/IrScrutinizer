@@ -1,0 +1,86 @@
+
+
+
+  Here's what I came up with as far as documentation.  First, I'm mainly a
+  windows person... ewww.. but, as such.. some things are probably not
+  solved optimally.
+
+  --- 
+  Getting the Comm API working on an Ipaq
+  Thomas O'Connell (thomas@cc.gatech.edu)
+
+  For the most part, things go pretty much according to the documents
+  provided by: http://www.interstice.com/~kevinh/linuxcomm.html
+
+  I'll just cover the gotchas:
+
+  1) Getting Java itself to run:  This was actually the most complicated
+  part (for me).  You can download a JRE 1.3 from Blackdown for the ARM
+  processor, but no JDK.  But you can tease a javac, jar, javah, etc.. out
+  of a tools.jar file from some other distro(i went with an i386 linux
+  sdk, same version as the JRE), and writing scripts to emulate the
+  behaviors (and adding tools.jar to your classpath).
+
+  Example:  
+  javac is: 
+  #! /bin/sh
+  java com.sun.tools.javac.Main $@
+
+  The rest can be created similarily.  I kept pulling as many as those out
+  until the .configure of rxtx stopped complaining.  
+
+  - include files: in addition to pulling tools.jar from another linux
+  jdk, I brought over the <jdk>\include files too.  Dumped it in the
+  <j2re1.3.1> directory.
+
+  - sim link: in the j2re1.3.1 directory, I created a jre sub directory,
+  and beneath that I sym linked a j2re1.3.1\jre\lib to j2re1.3.1\lib.
+  Also, both my JDK_HOME and JAVA_HOME were set to the j2re1.3.1 location.
+
+
+  After all this, the rxtx package built correctly.  I added jcl.jar to my
+  classpath as well.  
+
+  Your mileage may vary here, since I'm doing this all from recollection.
+  I imagine I'll have to reformat at some point and pay more attention the
+  next time I have to set it up.  Lots of trial and error here, and I'm no
+  script kiddie.. I imagine some of this could be fixed up internally.
+
+
+  2) Killing getty -  So there's the console terminal running on the comm
+  port.  You need to be able to kill this in order for the comm port to be
+  released.  Since you don't want to entirely kill getty (since,
+  networking is often flaky on these things), I just changed the
+  /etc/inittab with regards to getty.
+
+  Changed: T0:2:respawn:/sbin/getty -L tts/0 115200 vt100
+  To: T0:2:boot:/sbin/getty -L ttySA0 115200 vt100
+
+  This keeps the ipaq from respawning getty everytime you kill it, but
+  does activate it upon boot.  
+
+
+  3) Fixing RXTXCommDriver.java.   Based on OS, the code tried to find the
+  serial ports.  This will fail because of a naming convention that
+  Intimate/?Debian? uses for the com ports.  Need to add a prefix that
+  includes ttySA.  By default the code looks like:
+
+
+          if(osName.equals("Linux"))
+          {
+                  String[] Temp = {
+                  "ttyS" // linux Serial Ports
+                  };
+                  CandidatePortPrefixes=Temp;
+          }
+
+  4) Cable:  The hotsync cable that the ipaq comes with is a null modem
+  cable.  compaq does sell a RS-232 cable for the hotsync port, if you're
+  trying to control a serial device like me.  $26 though..
+
+  -- 
+  Thomas O'Connell               Georgia Institute of Technology
+  Aware Home Lab ManagerCollege of Computing
+  www.cc.gatech.edu/fce/ahri           www.cc.gatech.edu/~thomas 
+
+

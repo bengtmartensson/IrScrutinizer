@@ -1,0 +1,126 @@
+Thu Jan 18 15:59:35 MST 2001 removed jcl references for rxtx 1.5 Trent.
+
+The Following was contributed by Vaibhav Andleigh andleigh@mit.edu in hopes
+that it will make getting started easier for people new to commAPI.
+
+Feel free to contribute additional information in the same spirit.
+
+Hi Trent,
+
+I recently installed javax.comm and RxTx on a few systems and had to write
+a very detailed HOWTO on read/writing to your com ports on linux for
+beginners.  BTW, RxTx is a great tool! In any case, I've included the
+HOWTO with this email for the reference of other users.  Feel free to post
+it.
+
+------------------------
+
+SerialPortInstructions.txt
+
+To get serial port stuff running:
+
+Serial Connection without Java
+
+First, let's setup the serial connection without java and test it.
+Connect your computer to another computer/device via a null modem serial
+cable.  Be sure the other computer/device has software (i.e., minicom)
+to receive the signal.  For the purpose of these instructions, I'll
+assume you have a computer at each end, and will use minicom to 
+perform the connection testing.
+
+In the case of minicom (on the receiving machine), you'll probably have
+to run it as root (since the serial port is owned by root for security
+purposes).  It's not a good idea to change these permissions.  If this
+is the first time minicom is being run, you'll have to configure it
+first.  To do this, ssh to root (not su, anywhere in these instructions)
+and type 'minicom -s' without the quotes.  Arrow to option 3 and change
+the serial configuration device to '/dev/ttyS0' without the quotes.
+Exit minicom.  Then go and run minicom by typing 'minicom -m -c on'
+without the quotes.  Assuming you're running minicom on both machines,
+run a quick test of the serial connection.  Type Alt-Z (or whatever
+key-combo gives you help on special keys) and select "Local Echo"(E).
+Now type text on both minicom screens and see that the text is going
+back and forth.
+
+Java.comm and RxTx installation
+
+First install javax.comm api following Sun's instructions
+Be sure to follow the instructions about placing the comm.jar
+in the correct directories.  You can ignore the details of 
+the javax.comm.properties files since it'll be replaced by RxTx
+anyways.
+
+Then install rxtx-1.4-4 following instructions given in
+their install page.  They have a really useful bit of info
+in the INSTALL file talking about where the comm.jar,
+javax.comm.properties files(and its contents) are supposed to go 
+(and what other files (libSerial.so and libParallel.so)should
+have been created and where).  Verify this happened properly.
+Assuming you're using jdk-1.2, you can ignore the CLASSPATH
+stuff in their extra directions.   If you still have problems, they
+have a really useful COMMON PROBLEMS section further down in the
+INSTALL file.
+
+Running Trial Applications 
+
+We'll test two apps:  BlackBox and the Simple demos.  These are
+included in your .../java/commapi/samples directory.  Go to 
+.../java/commapi/samples/BlackBox/ and type javac *.java to compile 
+all the classes.
+
+Then create a run shell script as follows (substitute your own relative
+java location if necessary):
+
+runBlackBox.sh
+#!/bin/sh
+/usr/local/java/bin/java -classpath
+./:/usrlocal/java/jre/lib/ext/comm.jar:/usr/local/java/samples/BlackBox/BlackBox.jar
+BlackBox      
+
+Run this script as ROOT using ssh, not su!
+[or make sure permissions for the device files allow the user/group to read 
+them.  See also: lockfiles in INSTALL]
+
+It should put up a screen with a GUI of everything going on for each
+of your serial ports.  At the top of the screen, you can set the baud
+rate.  Unless you changed the settings on minicom, it should be expecting
+38400 so select that.  Go ahead and type in the first left text window
+and you should see the text appear in the receiving minicom window.
+
+If you choose to run the apps labeled as "Simple", go to the 
+.../java/commapi/samples/Simple/ directory and edit the SimpleWrite.java
+and SimpleRead.java files.  Convert the /dev/tty/a to /dev/ttyS0 in both
+files.  Compile both files using javac *.java .  Use a run script very
+similar to that above (deleting the path reference to BlackBox.jar and
+replacing BlackBox with SimpleRead/SimpleWrite as appropriate).  
+Set up minicom on the other machine and go ahead and run the script.
+It should all work.  I've attached the run scripts I used for both
+programs below:
+
+runSimpleRead.sh  
+#!/bin/sh
+/usr/local/java/bin/java -classpath
+./:/usrlocal/java/jre/lib/ext/comm.jar
+SimpleRead
+
+runSimpleWrite.sh 
+#!/bin/sh
+/usr/local/java/bin/java -classpath
+./:/usrlocal/java/jre/lib/ext/comm.jar
+SimpleWrite
+
+
+
+
+
+**********************************************
+Vaibhav Andleigh                                         
+andleigh@mit.edu     
+http://utopia1.mit.edu/vab/                                  
+------------------------------------------------------
+Ph.D. Student, Dept. Mat. Sci. & Engr
+MIT Room 13-5142      Ph:  617-258-8847
+Cambridge, MA         Fax: 530-348-8219
+**********************************************
+"Every man dies, not every man really lives." 
+--William Wallace, Braveheart
