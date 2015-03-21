@@ -1,0 +1,16 @@
+The icon used for the IrToy by DangerousPrototypes
+(http://dangerousprototypes.com) were derived from
+http://dangerousprototypes.com/docs/images/7/7e/DangerousPrototypes-art-25042012.zip
+
+readme.txt from that file:
+-------------------------------------------------------------------
+Artwork for DangerousPrototypes.com
+Creative Commons BY-SA
+C 2010 Ian Lesnet/WhereLabs LLC
+ian@dangerousprototypes.com
+
+art - logo in illustartor and 1200px .png
+art-text - logo and DangerousPrototypes.com text in illustator and 1200px .png
+
+Prefered spelling (note large D and P):
+DangerousPrototypes.com
