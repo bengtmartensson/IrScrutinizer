@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE version PUBLIC  "-//harctoolbox.org//version//en" "http://www.harctoolbox.org/dtds/version.dtd">
+<!--
+Copyright (C) 2013, 2014 Bengt Martensson.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at
+your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see http://www.gnu.org/licenses/.
+-->
+<version package = "org.harctoolbox.irscrutinizer"
+       appName = "IrScrutinizer"
+       mainVersion = "1"
+       subVersion = "1"
+       subminorVersion = "2"
+       versionSuffix = ""
+       homepageUrl = "http://www.harctoolbox.org">
+
+    <!-- Verbal description of the license of the current work. -->
+    <licenseString>Copyright (C) 2013, 2014 Bengt Martensson.\n\n
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.\n\n
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\n
+You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.</licenseString>
+
+    <!-- Verbal description of licenses of third-party components. -->
+    <thirdPartyString>
+ExchangeIR was written by Graham Dixon and published under GPL3 license. Its Analyze-function has been translated to Java by Bengt Martensson.
+DecodeIR was originally written by John S. Fine, with later contributions from others. It is free software with undetermined license.
+Icons from the Crystal project are used; these are released under the LGPL license.
+Serial communication is handeled by the RXTX library, licensed under the LGPL v 2.1 license.
+Command line decoding is done using the JCommander library by Cédric Beust http://jcommander.org/, licensed under the Apache 2.0 license.
+JSON handling is implemented using the \"fast and minimal JSON parser for Java\" by Ralf Sernberg, http://eclipsesource.com/blogs/2013/04/18/minimal-json-parser-for-java/, licensed under the Eclipse Eclipse Public License Version 1.0.
+LIRC is according to http://www.lirc.org copyright 1999 by Karsten Scheibler and Christoph Bartelmus (with contribution of may others), and is licensed under GPL2 or later. The parts used here have been translated to Java by Bengt Martensson.
+Tonto was written by Stewart Allen, and is licensed under the \"Artistic License\".
+The contained Arduino firmware contains code copyrighted by Michael Dreher (GPL2 or later) and Chris Young (LGPL).
+        </thirdPartyString>
+</version>
