@@ -8,6 +8,12 @@
     <packaging>jar</packaging>
     <version>0.9.3</version>
     <name>HarcHardware</name>
+    <parent>
+        <groupId>org.harctoolbox</groupId>
+        <artifactId>HarctoolboxBundle</artifactId>
+        <version>1.0.0</version>
+        <relativePath>..</relativePath>
+    </parent>
     <licenses>
         <license>
             <name>GPL 3+</name>
@@ -57,9 +63,9 @@
                                 ${project.build.directory}/generated-documents
                             </outputDir>
                             <includes>
-                                <include>IrpMaster.xml</include>
+                                <include>*.xml</include>
                             </includes>
-                            <stylesheet>src/main/tools/xdoc2html.xsl</stylesheet>
+                            <stylesheet>../tools/xdoc2html.xsl</stylesheet>
                             <fileMappers>
                                 <fileMapper implementation=
                  "org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">

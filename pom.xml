@@ -6,9 +6,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.harctoolbox</groupId>
-    <artifactId>harctoolbox</artifactId>
+    <artifactId>HarctoolboxBundle</artifactId>
     <version>1.0.0</version>
-    <name>harctoolbox</name>
+    <name>HarctoolboxBundle</name>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -17,8 +17,8 @@
         </license>
     </licenses>
     <description>
-        harctoolbox is a set of program to work with
-        infrared remote controls.
+        HarctoolboxBundle consists of IrScrutinizer and its
+	supporting libraries/programs.
     </description>
     <url>http://www.harctoolbox.org</url>
     <properties>
@@ -31,8 +31,9 @@
         <module>Girr</module>
         <module>Jirc</module>
         <module>HarcHardware</module>
+        <module>Crystal-Clear-Icons</module>
+        <module>rxtx-2.2pre2h</module>
     </modules>
-
     <build>
         <plugins>
             <!-- Source tarball from src/assembly/* file. -->

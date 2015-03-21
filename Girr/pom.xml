@@ -9,6 +9,12 @@
     <packaging>jar</packaging>
     <version>1.0.3</version>
     <name>Girr</name>
+    <parent>
+        <groupId>org.harctoolbox</groupId>
+        <artifactId>HarctoolboxBundle</artifactId>
+        <version>1.0.0</version>
+        <relativePath>..</relativePath>
+    </parent>
     <licenses>
         <license>
             <name>GPL 3+</name>
