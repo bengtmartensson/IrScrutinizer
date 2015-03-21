@@ -1,0 +1,6 @@
+IrpMaster
+	check API example
+
+check for Mac .dylib (DecodeIR, rxtx)
+
+check JNI loading on different systems
