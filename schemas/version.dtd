@@ -1,0 +1,20 @@
+<!-- Copying and distribution of this file, with or without modification,
+     are permitted in any medium without royalty provided the copyright
+     notice and this notice are preserved.  This file is offered as-is,
+     without any warranty.
+-->
+
+<!ELEMENT version (licenseString,thirdPartyString?)>
+<!ATTLIST version
+    homepageUrl CDATA #IMPLIED
+    versionSuffix CDATA #IMPLIED
+    subminorVersion CDATA #IMPLIED
+    subVersion CDATA #IMPLIED
+    mainVersion CDATA #IMPLIED
+    appName CDATA #REQUIRED
+    package CDATA #REQUIRED
+  >
+
+<!ELEMENT licenseString (#PCDATA)>
+
+<!ELEMENT thirdPartyString (#PCDATA)>

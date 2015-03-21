@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.harctoolbox</groupId>
+    <artifactId>harctoolbox</artifactId>
+    <version>1.0.0</version>
+    <name>harctoolbox</name>
+    <packaging>pom</packaging>
+    <licenses>
+        <license>
+            <name>GPL 3+</name>
+            <url>https://www.gnu.org/licenses/gpl.html</url>
+        </license>
+    </licenses>
+    <description>
+        harctoolbox is a set of program to work with
+        infrared remote controls.
+    </description>
+    <url>http://www.harctoolbox.org</url>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <modules>
+        <module>IrScrutinizer</module>
+        <module>IrpMaster</module>
+        <module>Girr</module>
+        <module>Jirc</module>
+        <module>HarcHardware</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <!-- Source tarball from src/assembly/* file. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5.3</version>
+                <!--configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.harctoolbox.irscrutinizer.IrScrutinizer</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <SplashScreen-Image>images/splash.png</SplashScreen-Image>
+                        </manifestEntries>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration-->
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly/source.xml</descriptor>
+                    </descriptors>
+                    <!--finalName>${project.name}-src-${project.version}</finalName-->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
