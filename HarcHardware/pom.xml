@@ -25,6 +25,36 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>gnu.io.</groupId>
+                    <artifactId>RXTX</artifactId>
+                    <version>2.2pre2h</version>
+                </dependency>
+            </dependencies>
+         </profile>
+        <profile>
+            <id>fedora</id>
+            <activation>
+                <file>
+                    <exists>/etc/fedora-release</exists>
+                </file>
+            </activation>
+            <dependencies>
+                <dependency>
+                     <groupId>org.rxtx</groupId>
+                     <artifactId>rxtx</artifactId>
+                     <version>2.2</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
     <build>
         <plugins>
             <!-- Generate Version.java from Version.xml using mkVersion.xsl. -->
@@ -153,18 +183,6 @@
             <groupId>org.harctoolbox</groupId>
             <artifactId>IrpMaster</artifactId>
             <version>1.0.3</version>
-        </dependency>
-        <!-- Use for Fedora, and ONLY for Fedora -->
-        <!--dependency>
-            <groupId>gnu.io</groupId>
-            <artifactId>RXTXcomm</artifactId>
-            <version>2.2</version>
-        </dependency-->
-        <!-- not Fedora -->
-        <dependency>
-            <groupId>gnu.io</groupId>
-            <artifactId>RXTX</artifactId>
-            <version>2.2pre2h</version>
         </dependency>
         <dependency>
             <groupId>de.moldaner</groupId>
