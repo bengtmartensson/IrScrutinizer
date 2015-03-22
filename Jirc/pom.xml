@@ -109,34 +109,35 @@
             </plugin>
 
             <!-- Source and binary tarballs from src/assembly/* files. -->
-            <!--plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-assembly-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>exec-bin</id>
-                  <configuration>
-                    <descriptor>src/assembly/target.xml</descriptor>
-                    <finalName>Jirc-${project.version}</finalName>
-                  </configuration>
-                  <phase>package</phase>
-                  <goals>
-                    <goal>single</goal>
-                  </goals>
-                </execution>
-                <execution>
-                  <id>exec-src</id>
-                  <configuration>
-                    <descriptor>src/assembly/source.xml</descriptor>
-                    <finalName>Jirc-${project.version}</finalName>
-                  </configuration>
-                  <phase>package</phase>
-                  <goals>
-                    <goal>single</goal>
-                  </goals>
-                </execution>
-              </executions>
-            </plugin-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.harctoolbox.irscrutinizer.IrScrutinizer</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <SplashScreen-Image>images/splash.png</SplashScreen-Image>
+                        </manifestEntries>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <descriptors>
+                        <descriptor>src/assembly/target.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>exec-bin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

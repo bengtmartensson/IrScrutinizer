@@ -9,6 +9,12 @@
     <packaging>jar</packaging>
     <version>1.0.3</version>
     <name>IrpMaster</name>
+    <parent>
+        <groupId>org.harctoolbox</groupId>
+        <artifactId>harctoolbox</artifactId>
+        <version>1.0.0</version>
+        <relativePath>..</relativePath>
+    </parent>
     <licenses>
         <license>
             <name>GPL 3+</name>
@@ -95,36 +101,55 @@
                 </dependencies>
             </plugin>
 
-            <!-- Source and binary tarballs from src/assembly/* files. -->
-            <!--plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-assembly-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>exec-bin</id>
-                  <configuration>
-                    <descriptor>src/assembly/target.xml</descriptor>
-                    <finalName>IrpMaster-${project.version}</finalName>
-                  </configuration>
-                  <phase>package</phase>
-                  <goals>
-                    <goal>single</goal>
-                  </goals>
-                </execution>
-                <execution>
-                  <id>exec-src</id>
-                  <configuration>
-                    <descriptor>src/assembly/source.xml</descriptor>
-                    <finalName>IrpMaster-src-${project.version}</finalName>
-                  </configuration>
-                  <phase>package</phase>
-                  <goals>
-                    <goal>single</goal>
-                  </goals>
-                </execution>
-              </executions>
-            </plugin-->
+            <!-- Binary tarballs from src/assembly*/ files. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.harctoolbox.IrpMaster.IrpMaster</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <descriptors>
+                        <descriptor>src/assembly/target.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>exec-bin</id>
+                        <phase>package</phase>
+                        <goals> <goal>single</goal> </goals>
+                    </execution>
+                   </executions>
+            </plugin>
 
+            <plugin>
+                <!-- Copy resources directly to target dir. -->
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/config</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
