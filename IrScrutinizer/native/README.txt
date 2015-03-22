@@ -1,8 +1,7 @@
 This the subdirectories of this directory contains compiled shared
 libraries for different systems.
 
-DecodeIR is version 2.45, except for the Linux-arm, which is version
-2.44. RXTX is version 2.2pre2.
+DecodeIR is version 2.45.
 
 Linux users should use librxtxSerial.so supplied by their Linux
 distrubution, if possible.
