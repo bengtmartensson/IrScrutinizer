@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <assembly>
-    <id>src</id>
+    <id>sources</id>
     <formats>
         <format>tar.gz</format>
         <!--format>tar.bz2</format>
@@ -13,12 +13,11 @@
                 <include>LICENSE.txt</include>
                 <include>README.txt</include>
                 <include>pom.xml</include>
-                <include>src/main/antlr3/Irp.g</include>
-                <include>src/main/data/IrpProtocols.ini</include>
                 <include>src/main/doc/*</include>
+                <include>src/main/java/**/*.java</include>
+                <include>src/main/schemas/*</include>
+                <include>src/main/stylesheets/*</include>
                 <include>src/main/xdocs/*</include>
-                <include>src/main/java/org/harctoolbox/girr/*.java</include>
-                <include>src/main/tools/*</include>
                 <include>src/main/xml/Version.*</include>
             </includes>
             <lineEnding>unix</lineEnding>

@@ -9,18 +9,16 @@
   <fileSets>
     <fileSet>
       <includes>
-        <include>gpltxt</include>
+        <include>src/main/antlr3/*.g</include>
+        <include>src/main/doc/*</include>
+        <include>src/main/java/**/*.java</include>
+        <include>src/main/wrappers/*</include>
+        <include>src/main/xdocs*.xml*</include>
+        <include>src/main/xml/*</include>
         <include>pom.xml</include>
-        <include>build.xml</include>
-        <include>locations.xml</include>
-        <include>manifest.mf</include>
-        <include>build-sources.xml</include>
-        <include>Makefile</include>
+        <include>*.txt</include>
       </includes>
       <lineEnding>unix</lineEnding>
     </fileSet>
-    <fileSet> <directory>grammar</directory> </fileSet>
-    <fileSet> <directory>doc</directory> </fileSet>
-    <fileSet> <directory>lib</directory> </fileSet>
   </fileSets>
 </assembly>
