@@ -1,10 +1,11 @@
 <assembly>
-  <id>deliverables</id>
+  <id>bin</id>
   <formats>
     <format>tar.gz</format>
     <!--format>tar.bz2</format>
     <format>zip</format-->
   </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
 
   <fileSets>
     <fileSet>
