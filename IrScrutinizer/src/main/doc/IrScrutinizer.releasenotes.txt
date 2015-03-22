@@ -1,4 +1,6 @@
 Version 1.1.2
+- Removed pdf files and the glossary -- makes distribution and
+packaging easier.
 - Use the (new?) Crystal-Clear icons instead of the (old?) crystal.
 - Removed a few unneeded documentation links under help.
 - Lirc exports now get the extension .lircd.conf, since that extension
