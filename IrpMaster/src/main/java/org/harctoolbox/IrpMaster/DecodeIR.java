@@ -41,6 +41,7 @@ public class DecodeIR {
     public final static String appName = "DecodeIR";
 
     private static final String libraryName = "DecodeIR";
+    private static final String libraryPathProperty = "harctoolbox.decodeir.library.path";
     private static boolean libIsLoaded = false;
 
     public static DecodeIR newDecodeIR(int[] data, int lengthRepeat, int lengthEnding, int frequency) {
@@ -75,13 +76,12 @@ public class DecodeIR {
 
     private boolean valid = false;
 
-    //private static final int invalid = -1;
-
     private static String version = null;
 
     /**
      * Call without argument to load the shared library either from a architecture dependent
      * subdirectory or from the system's java.library.path.
+     * If the system property harctoolbox.decodeir.library.path is set, use that instead.
      *
      * @return Success of loading.
      */
@@ -89,11 +89,26 @@ public class DecodeIR {
         if (libIsLoaded)
             return true;
 
-        boolean success = localLoadLibrary() || systemLoadLibrary();
+        String userSpecifiedPath = System.getProperty(libraryPathProperty);
+        boolean success = (userSpecifiedPath == null)
+                ? (localLoadLibrary() || systemLoadLibrary())
+                : loadAbsoluteLibrary(userSpecifiedPath);
         if (success)
             version = (new DecodeIRCaller()).getVersion();
 
         return success;
+    }
+
+    private static boolean loadAbsoluteLibrary(String path) {
+        try {
+            System.load((new File(path)).getAbsolutePath());
+            Debug.debugDecodeIR("Loaded file " + path);
+            libIsLoaded = true;
+            return true;
+        } catch (UnsatisfiedLinkError e) {
+            Debug.debugDecodeIR("Loading of file " + path + " failed");
+            return false;
+        }
     }
 
     // First try the com.hifiremote.LoadLibrary way, i.e. with local,
@@ -107,23 +122,23 @@ public class DecodeIR {
         // Mac: it appears that Snow Leopard says "X64_64" while Mountain Lion says "x86_64".
 
         String mappedName = System.mapLibraryName(libraryName);
-        File libraryFile = new File(folderName, mappedName).getAbsoluteFile();
-        //System.err.println( "Loading " + libraryFile.getAbsolutePath() );
-        //libraryFile.exists();
-        try {
-            System.load(libraryFile.getAbsolutePath());
-            Debug.debugDecodeIR("Loaded " + libraryFile.getAbsolutePath());
-            libIsLoaded = true;
+        String libraryFile = folderName  + File.separator + mappedName;
+        if (loadAbsoluteLibrary(libraryFile))
             return true;
-        } catch (UnsatisfiedLinkError e) {
-            Debug.debugDecodeIR("Loading of local " + libraryFile + " failed");
+
+        // Mac OS X changed the extension of JNI libs recently, give it another try in this case
+        if (System.getProperty("os.name").startsWith("Mac")) {
+            mappedName = System.mapLibraryName(libraryName).replaceFirst("\\.dylib", ".jnilib");
+            libraryFile = folderName + File.separator + mappedName;
+            return loadAbsoluteLibrary(libraryFile);
+        } else {
             return false;
         }
     }
 
+    // ... then try the system path
     private static boolean systemLoadLibrary() {
         try {
-            // ... then try the system path
             System.loadLibrary(libraryName);
             libIsLoaded = true;
             Debug.debugDecodeIR("Loading of " + libraryName + " from system path succeeded.");

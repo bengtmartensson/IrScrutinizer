@@ -27,7 +27,7 @@
 |   any confusion about linking to RXTX.   We want to allow in part what
 |   section 5, paragraph 2 of the LGPL does not permit in the special
 |   case of linking over a controlled interface.  The intent is to add a
-|   Java Specification Request or standards body defined interface in the 
+|   Java Specification Request or standards body defined interface in the
 |   future as another exception but one is not currently available.
 |
 |   http://www.fsf.org/licenses/gpl-faq.html#LinkingOverControlledInterface
@@ -62,18 +62,20 @@ import java.util.HashMap;
 import java.util.Locale;
 
 /**
-A class to keep the current version in
+A class to keep the current version in.
+* This is a version for IrScrutinizer. It is not to be used for other purposes.
+* It should not be used for rpm-packaging; which should use their own RXTX*.jar
 */
 
 public class RXTXVersion
 {
 /*------------------------------------------------------------------------------
-	RXTXVersion  
+	RXTXVersion
 	accept:       -
 	perform:      Set Version.
 	return:       -
 	exceptions:   Throwable
-	comments:     
+	comments:
 		      See INSTALL for details.
 ------------------------------------------------------------------------------*/
 	private static String Version;
@@ -98,35 +100,50 @@ public class RXTXVersion
         if (isLoaded.get(baseName) != null)
             return;
 
+        boolean success = systemLoadLibrary(baseName) || localLoadLibrary(baseName);
+    }
+
+    // First try the system path
+    private static boolean systemLoadLibrary(String baseName) {
         try {
-            // First try the system path
-            System.err.println("trying loadLibrary");
             System.loadLibrary(baseName);
-            System.err.println("loadLibrary succeeded");
             isLoaded.put(baseName, Boolean.TRUE);
-            return;
-        } catch (UnsatisfiedLinkError e) {
+            return true;
+        } catch (UnsatisfiedLinkError e1) {
+            return false;
         }
+    }
 
-        String mappedName = System.mapLibraryName(baseName);
-        if (System.getProperty("os.name").toLowerCase().contains("linux")) {
-            try {
-                String dir = System.getProperty("os.arch").equals("amd64") ? "/usr/lib64/rxtx/" : "/usr/lib/rxtx/";
-                System.load(dir + mappedName);
-                isLoaded.put(baseName, Boolean.TRUE);
-                return;
-            } catch (UnsatisfiedLinkError e1) {
-            }
-        }
-
-        // Then try the com.hifiremote.LoadLibrary way, i.e. with local,
-        // architecture dependent subdirectories...
+    // try the com.hifiremote.LoadLibrary way, i.e. with local,
+    // architecture dependent subdirectories...
+    private static boolean localLoadLibrary(String baseName) {
         String folderName = (System.getProperty("os.name").startsWith("Windows")
                 ? "Windows"
                 : System.getProperty("os.name")) + '-' + System.getProperty("os.arch").toLowerCase(Locale.US);
+        // supported values: Linux-{i386,amd64}, Mac OS X-{i386,x86_64}, Windows-{x86,amd64}
+        // Mac: it appears that Snow Leopard says "X64_64" while Mountain Lion says "x86_64".
+        String mappedName = System.mapLibraryName(baseName);
+        String libraryFile = folderName + File.separator + mappedName;
+        if (loadAbsoluteLibrary(baseName, libraryFile))
+            return true;
 
-        File libraryFile = new File(folderName, mappedName).getAbsoluteFile();
-        System.load(libraryFile.getAbsolutePath()); // throws UnsatisfiedLinkError
-        isLoaded.put(baseName, Boolean.TRUE);
+        // Mac OS X changed the extension of JNI libs recently, give it another try in this case
+        if (System.getProperty("os.name").startsWith("Mac")) {
+            mappedName = System.mapLibraryName(baseName).replaceFirst("\\.dylib", ".jnilib");
+            libraryFile = folderName + File.separator + mappedName;
+            return loadAbsoluteLibrary(baseName, libraryFile);
+        } else {
+            return false;
+        }
+    }
+
+    private static boolean loadAbsoluteLibrary(String baseName, String path) {
+        try {
+            System.load((new File(path)).getAbsolutePath());
+            isLoaded.put(baseName, Boolean.TRUE);
+            return true;
+        } catch (UnsatisfiedLinkError e) {
+            return false;
+        }
     }
 }

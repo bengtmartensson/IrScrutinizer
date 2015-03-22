@@ -112,6 +112,7 @@ public class CommPortIdentifier extends Object /* extends Vector? */
 			System.err.println(e + " thrown while loading " + "gnu.io.RXTXCommDriver");
 		}
 
+                // Do not load the library here, but rely on the loading in RXTXVersion.
 		/*String OS;
 
 		OS = System.getProperty("os.name");
