@@ -2,24 +2,37 @@
   <id>bin</id>
   <formats>
     <format>tar.gz</format>
-    <!--format>tar.bz2</format>
-    <format>zip</format-->
   </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
 
   <fileSets>
-    <fileSet>
-      <includes>
-        <include>*.txt</include>
-        <include>target/*.jar</include>
-      </includes>
-      <lineEnding>unix</lineEnding>
-    </fileSet>
-    <fileSet>
-      <directory>target</directory>
-      <outputDirectory>.</outputDirectory>
-      <includes>
-        <include>*.jar</include>
-      </includes>
-    </fileSet>
-  </fileSets>
+      <fileSet>
+          <directory>target</directory>
+          <outputDirectory>.</outputDirectory>
+          <includes>
+              <include>*.txt</include>
+              <include>*.jar</include>
+          </includes>
+      </fileSet>
+      <fileSet>
+          <directory>target/generated-documents</directory>
+          <outputDirectory>doc</outputDirectory>
+          <includes> <include>*</include> </includes>
+      </fileSet>
+      <fileSet>
+          <directory>src/main/schemas</directory>
+          <outputDirectory>.</outputDirectory>
+          <includes>
+              <include>girr.xsd</include>
+          </includes>
+      </fileSet>
+      <fileSet>
+          <directory>src/main/doc</directory>
+          <outputDirectory>doc</outputDirectory>
+          <includes>
+              <include>*releasenotes*</include>
+              <include>girr-schema-doc/*</include>
+          </includes>
+      </fileSet>
+   </fileSets>
 </assembly>
