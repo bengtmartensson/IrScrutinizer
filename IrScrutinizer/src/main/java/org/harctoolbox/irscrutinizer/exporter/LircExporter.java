@@ -171,7 +171,7 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         HashMap<String, Long> parameters = command.getParameters();
         long D = IrpUtils.reverse(parameters.get("D"), 8);
         long F = IrpUtils.reverse(parameters.get("F"), 8);
-        long S = IrpUtils.reverse(parameters.containsKey("S") ? parameters.get("S") : 255L - D, 8);
+        long S = IrpUtils.reverse(parameters.containsKey("S") ? parameters.get("S") : 255L - parameters.get("D"), 8);
         return (D << 24L) | (S << 16L) | (F << 8L) | ((~F) & 0xFFL) ;
     }
 
