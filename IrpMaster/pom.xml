@@ -20,6 +20,38 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.hifiremote</groupId>
+                    <artifactId>DecodeIRCaller</artifactId>
+                    <version>0.1</version>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+         </profile>
+        <profile>
+            <id>fedora</id>
+            <activation>
+                <file>
+                    <exists>/etc/fedora-release</exists>
+                </file>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.hifiremote</groupId>
+                    <artifactId>DecodeIRCaller</artifactId>
+                    <version>2.44</version>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
     <build>
         <plugins>
             <!-- Generate ConfigFileParser and ConfigFileLexer from
