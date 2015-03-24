@@ -1,0 +1,454 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 44;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		89D0F1C90F3B704E007831A7 /* RXTX */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 89D0F1D20F3B7080007831A7 /* Build configuration list for PBXAggregateTarget "RXTX" */;
+			buildPhases = (
+			);
+			dependencies = (
+				89D0F1D10F3B7062007831A7 /* PBXTargetDependency */,
+				89D0F1CF0F3B7062007831A7 /* PBXTargetDependency */,
+			);
+			name = RXTX;
+			productName = RXTX;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		440525E7105650A7005B8771 /* SerialImp.c in Sources */ = {isa = PBXBuildFile; fileRef = 440525E6105650A7005B8771 /* SerialImp.c */; };
+		44980CAA104EF6B900BEF8D2 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 44980CA9104EF6B900BEF8D2 /* config.h */; };
+		44980CC5104EF78200BEF8D2 /* fuserImp.c in Sources */ = {isa = PBXBuildFile; fileRef = 44980CB2104EF78100BEF8D2 /* fuserImp.c */; };
+		44980CD2104EF78200BEF8D2 /* SerialImp.h in Headers */ = {isa = PBXBuildFile; fileRef = 44980CC1104EF78200BEF8D2 /* SerialImp.h */; };
+		44980CF8104EFA3000BEF8D2 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44980CF7104EFA0000BEF8D2 /* CoreFoundation.framework */; };
+		44980D53104F098800BEF8D2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44980D52104F097F00BEF8D2 /* IOKit.framework */; };
+		89D0F0850F394066007831A7 /* JavaNativeFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 89D0F0840F394066007831A7 /* JavaNativeFoundation.framework */; };
+		89D0F1870F3A2442007831A7 /* JavaVM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 89D0F1860F3A2442007831A7 /* JavaVM.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		44980D71104F0B9C00BEF8D2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 89D0F0480F393A6F007831A7;
+			remoteInfo = "Compile Java";
+		};
+		89D0F1CE0F3B7062007831A7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 89D0F04F0F393AD9007831A7;
+			remoteInfo = "Compile Native";
+		};
+		89D0F1D00F3B7062007831A7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 89D0F0480F393A6F007831A7;
+			remoteInfo = "Compile Java";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		440525E6105650A7005B8771 /* SerialImp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SerialImp.c; path = ../../src/SerialImp.c; sourceTree = SOURCE_ROOT; };
+		44980C88104EF62E00BEF8D2 /* CommDriver.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = CommDriver.java; sourceTree = "<group>"; };
+		44980C89104EF62E00BEF8D2 /* CommPort.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = CommPort.java; sourceTree = "<group>"; };
+		44980C8A104EF62E00BEF8D2 /* CommPortEnumerator.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = CommPortEnumerator.java; sourceTree = "<group>"; };
+		44980C8B104EF62E00BEF8D2 /* CommPortIdentifier.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = CommPortIdentifier.java; sourceTree = "<group>"; };
+		44980C8C104EF62E00BEF8D2 /* CommPortOwnershipListener.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = CommPortOwnershipListener.java; sourceTree = "<group>"; };
+		44980C8D104EF62E00BEF8D2 /* Configure.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Configure.java; sourceTree = "<group>"; };
+		44980C8E104EF62E00BEF8D2 /* I2C.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = I2C.java; sourceTree = "<group>"; };
+		44980C8F104EF62E00BEF8D2 /* I2CPort.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = I2CPort.java; sourceTree = "<group>"; };
+		44980C90104EF62E00BEF8D2 /* I2CPortEvent.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = I2CPortEvent.java; sourceTree = "<group>"; };
+		44980C91104EF62E00BEF8D2 /* I2CPortEventListener.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = I2CPortEventListener.java; sourceTree = "<group>"; };
+		44980C92104EF62E00BEF8D2 /* LPRPort.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LPRPort.java; sourceTree = "<group>"; };
+		44980C93104EF62E00BEF8D2 /* NoSuchPortException.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = NoSuchPortException.java; sourceTree = "<group>"; };
+		44980C94104EF62E00BEF8D2 /* ParallelPort.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ParallelPort.java; sourceTree = "<group>"; };
+		44980C95104EF62E00BEF8D2 /* ParallelPortEvent.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ParallelPortEvent.java; sourceTree = "<group>"; };
+		44980C96104EF62E00BEF8D2 /* ParallelPortEventListener.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ParallelPortEventListener.java; sourceTree = "<group>"; };
+		44980C97104EF62E00BEF8D2 /* PortInUseException.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PortInUseException.java; sourceTree = "<group>"; };
+		44980C98104EF62E00BEF8D2 /* Raw.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Raw.java; sourceTree = "<group>"; };
+		44980C99104EF62E00BEF8D2 /* RawPort.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = RawPort.java; sourceTree = "<group>"; };
+		44980C9A104EF62E00BEF8D2 /* RawPortEvent.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = RawPortEvent.java; sourceTree = "<group>"; };
+		44980C9B104EF62E00BEF8D2 /* RawPortEventListener.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = RawPortEventListener.java; sourceTree = "<group>"; };
+		44980C9C104EF62E00BEF8D2 /* RS485.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = RS485.java; sourceTree = "<group>"; };
+		44980C9D104EF62E00BEF8D2 /* RS485Port.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = RS485Port.java; sourceTree = "<group>"; };
+		44980C9E104EF62E00BEF8D2 /* RS485PortEvent.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = RS485PortEvent.java; sourceTree = "<group>"; };
+		44980C9F104EF62E00BEF8D2 /* RS485PortEventListener.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = RS485PortEventListener.java; sourceTree = "<group>"; };
+		44980CA0104EF62E00BEF8D2 /* RXTXCommDriver.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = RXTXCommDriver.java; sourceTree = "<group>"; };
+		44980CA1104EF62F00BEF8D2 /* RXTXPort.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = RXTXPort.java; sourceTree = "<group>"; };
+		44980CA2104EF62F00BEF8D2 /* RXTXVersion.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = RXTXVersion.java; sourceTree = "<group>"; };
+		44980CA3104EF62F00BEF8D2 /* SerialPort.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = SerialPort.java; sourceTree = "<group>"; };
+		44980CA4104EF62F00BEF8D2 /* SerialPortEvent.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = SerialPortEvent.java; sourceTree = "<group>"; };
+		44980CA5104EF62F00BEF8D2 /* SerialPortEventListener.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = SerialPortEventListener.java; sourceTree = "<group>"; };
+		44980CA6104EF62F00BEF8D2 /* UnsupportedCommOperationException.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = UnsupportedCommOperationException.java; sourceTree = "<group>"; };
+		44980CA7104EF62F00BEF8D2 /* UnSupportedLoggerException.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = UnSupportedLoggerException.java; sourceTree = "<group>"; };
+		44980CA8104EF62F00BEF8D2 /* Zystem.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Zystem.java; sourceTree = "<group>"; };
+		44980CA9104EF6B900BEF8D2 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = src/config.h; sourceTree = "<group>"; };
+		44980CB2104EF78100BEF8D2 /* fuserImp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fuserImp.c; path = ../../src/fuserImp.c; sourceTree = SOURCE_ROOT; };
+		44980CC1104EF78200BEF8D2 /* SerialImp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SerialImp.h; path = ../../src/SerialImp.h; sourceTree = SOURCE_ROOT; };
+		44980CF7104EFA0000BEF8D2 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		44980D52104F097F00BEF8D2 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		44980D96104F0D0B00BEF8D2 /* RXTXcomm.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; name = RXTXcomm.jar; path = build/Default/RXTXcomm.jar; sourceTree = "<group>"; };
+		44980E50104F0D8000BEF8D2 /* build.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = build.xml; path = ant/build.xml; sourceTree = "<group>"; };
+		44980E51104F0D8800BEF8D2 /* find-classrefs.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "find-classrefs.sh"; path = "ant/find-classrefs.sh"; sourceTree = "<group>"; };
+		89B60E380F414DDB00C86CA9 /* Manifest */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Manifest; path = resources/Manifest; sourceTree = SOURCE_ROOT; };
+		89D0F0500F393AD9007831A7 /* librxtxSerial.jnilib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = librxtxSerial.jnilib; sourceTree = BUILT_PRODUCTS_DIR; };
+		89D0F0840F394066007831A7 /* JavaNativeFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaNativeFoundation.framework; path = /System/Library/Frameworks/JavaVM.framework/Versions/A/Frameworks/JavaNativeFoundation.framework; sourceTree = "<absolute>"; };
+		89D0F1860F3A2442007831A7 /* JavaVM.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaVM.framework; path = /System/Library/Frameworks/JavaVM.framework; sourceTree = "<absolute>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		89D0F04E0F393AD9007831A7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				89D0F0850F394066007831A7 /* JavaNativeFoundation.framework in Frameworks */,
+				89D0F1870F3A2442007831A7 /* JavaVM.framework in Frameworks */,
+				44980CF8104EFA3000BEF8D2 /* CoreFoundation.framework in Frameworks */,
+				44980D53104F098800BEF8D2 /* IOKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				44980D96104F0D0B00BEF8D2 /* RXTXcomm.jar */,
+				89D0F0500F393AD9007831A7 /* librxtxSerial.jnilib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* RXTX */ = {
+			isa = PBXGroup;
+			children = (
+				4463ECE210564A9E00E6DDB9 /* Sources */,
+				44980E4F104F0D6B00BEF8D2 /* Build scripts */,
+				89D0F0200F392F20007831A7 /* Resources */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+			);
+			name = RXTX;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				89D0F1860F3A2442007831A7 /* JavaVM.framework */,
+				89D0F0840F394066007831A7 /* JavaNativeFoundation.framework */,
+				44980CF7104EFA0000BEF8D2 /* CoreFoundation.framework */,
+				44980D52104F097F00BEF8D2 /* IOKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4463ECE210564A9E00E6DDB9 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				44980C84104EF5C900BEF8D2 /* Java sources */,
+				44980C85104EF5F700BEF8D2 /* Native sources */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		44980C84104EF5C900BEF8D2 /* Java sources */ = {
+			isa = PBXGroup;
+			children = (
+				44980C86104EF62E00BEF8D2 /* gnu */,
+			);
+			name = "Java sources";
+			sourceTree = "<group>";
+		};
+		44980C85104EF5F700BEF8D2 /* Native sources */ = {
+			isa = PBXGroup;
+			children = (
+				440525E6105650A7005B8771 /* SerialImp.c */,
+				44980CC1104EF78200BEF8D2 /* SerialImp.h */,
+				44980CB2104EF78100BEF8D2 /* fuserImp.c */,
+				44980CA9104EF6B900BEF8D2 /* config.h */,
+			);
+			name = "Native sources";
+			sourceTree = "<group>";
+		};
+		44980C86104EF62E00BEF8D2 /* gnu */ = {
+			isa = PBXGroup;
+			children = (
+				44980C87104EF62E00BEF8D2 /* io */,
+			);
+			name = gnu;
+			path = ../../src/gnu;
+			sourceTree = SOURCE_ROOT;
+		};
+		44980C87104EF62E00BEF8D2 /* io */ = {
+			isa = PBXGroup;
+			children = (
+				44980C88104EF62E00BEF8D2 /* CommDriver.java */,
+				44980C89104EF62E00BEF8D2 /* CommPort.java */,
+				44980C8A104EF62E00BEF8D2 /* CommPortEnumerator.java */,
+				44980C8B104EF62E00BEF8D2 /* CommPortIdentifier.java */,
+				44980C8C104EF62E00BEF8D2 /* CommPortOwnershipListener.java */,
+				44980C8D104EF62E00BEF8D2 /* Configure.java */,
+				44980C8E104EF62E00BEF8D2 /* I2C.java */,
+				44980C8F104EF62E00BEF8D2 /* I2CPort.java */,
+				44980C90104EF62E00BEF8D2 /* I2CPortEvent.java */,
+				44980C91104EF62E00BEF8D2 /* I2CPortEventListener.java */,
+				44980C92104EF62E00BEF8D2 /* LPRPort.java */,
+				44980C93104EF62E00BEF8D2 /* NoSuchPortException.java */,
+				44980C94104EF62E00BEF8D2 /* ParallelPort.java */,
+				44980C95104EF62E00BEF8D2 /* ParallelPortEvent.java */,
+				44980C96104EF62E00BEF8D2 /* ParallelPortEventListener.java */,
+				44980C97104EF62E00BEF8D2 /* PortInUseException.java */,
+				44980C98104EF62E00BEF8D2 /* Raw.java */,
+				44980C99104EF62E00BEF8D2 /* RawPort.java */,
+				44980C9A104EF62E00BEF8D2 /* RawPortEvent.java */,
+				44980C9B104EF62E00BEF8D2 /* RawPortEventListener.java */,
+				44980C9C104EF62E00BEF8D2 /* RS485.java */,
+				44980C9D104EF62E00BEF8D2 /* RS485Port.java */,
+				44980C9E104EF62E00BEF8D2 /* RS485PortEvent.java */,
+				44980C9F104EF62E00BEF8D2 /* RS485PortEventListener.java */,
+				44980CA0104EF62E00BEF8D2 /* RXTXCommDriver.java */,
+				44980CA1104EF62F00BEF8D2 /* RXTXPort.java */,
+				44980CA2104EF62F00BEF8D2 /* RXTXVersion.java */,
+				44980CA3104EF62F00BEF8D2 /* SerialPort.java */,
+				44980CA4104EF62F00BEF8D2 /* SerialPortEvent.java */,
+				44980CA5104EF62F00BEF8D2 /* SerialPortEventListener.java */,
+				44980CA6104EF62F00BEF8D2 /* UnsupportedCommOperationException.java */,
+				44980CA7104EF62F00BEF8D2 /* UnSupportedLoggerException.java */,
+				44980CA8104EF62F00BEF8D2 /* Zystem.java */,
+			);
+			path = io;
+			sourceTree = "<group>";
+		};
+		44980E4F104F0D6B00BEF8D2 /* Build scripts */ = {
+			isa = PBXGroup;
+			children = (
+				44980E50104F0D8000BEF8D2 /* build.xml */,
+				44980E51104F0D8800BEF8D2 /* find-classrefs.sh */,
+			);
+			name = "Build scripts";
+			sourceTree = "<group>";
+		};
+		89D0F0200F392F20007831A7 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				89B60E380F414DDB00C86CA9 /* Manifest */,
+			);
+			name = Resources;
+			path = resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		89D0F04C0F393AD9007831A7 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44980CAA104EF6B900BEF8D2 /* config.h in Headers */,
+				44980CD2104EF78200BEF8D2 /* SerialImp.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXLegacyTarget section */
+		89D0F0480F393A6F007831A7 /* Compile Java */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "-e -f \"${SRCROOT}/ant/build.xml\" -debug \"$ACTION\"";
+			buildConfigurationList = 89D0F04B0F393AB7007831A7 /* Build configuration list for PBXLegacyTarget "Compile Java" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/ant;
+			buildWorkingDirectory = "";
+			dependencies = (
+			);
+			name = "Compile Java";
+			passBuildSettingsInEnvironment = 1;
+			productName = "Compile Java";
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXNativeTarget section */
+		89D0F04F0F393AD9007831A7 /* Compile Native */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 89D0F0530F393AF8007831A7 /* Build configuration list for PBXNativeTarget "Compile Native" */;
+			buildPhases = (
+				89D0F1360F394748007831A7 /* Run javah */,
+				89D0F04C0F393AD9007831A7 /* Headers */,
+				89D0F04D0F393AD9007831A7 /* Sources */,
+				89D0F04E0F393AD9007831A7 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				44980D72104F0B9C00BEF8D2 /* PBXTargetDependency */,
+			);
+			name = "Compile Native";
+			productName = "Compile Native";
+			productReference = 89D0F0500F393AD9007831A7 /* librxtxSerial.jnilib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "RXTX" */;
+			compatibilityVersion = "Xcode 3.0";
+			hasScannedForEncodings = 1;
+			mainGroup = 29B97314FDCFA39411CA2CEA /* RXTX */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				89D0F1C90F3B704E007831A7 /* RXTX */,
+				89D0F0480F393A6F007831A7 /* Compile Java */,
+				89D0F04F0F393AD9007831A7 /* Compile Native */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		89D0F1360F394748007831A7 /* Run javah */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run javah";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# find the jar file to dig into\nJAR_TO_JAVAH=\"${BUILT_PRODUCTS_DIR}/RXTXcomm.jar\"\n\n# use a helper script to list all classes inside the jar, and all classes referenced by those classes\nCLASS_LIST=`\"${SRCROOT}/ant/find-classrefs.sh\" \"${JAR_TO_JAVAH}\" | xargs`\n\n# run javah for all classes inside the jar, and all classes referenced by those classes\njavah -verbose -jni -classpath \"${JAR_TO_JAVAH}\" -d \"${DERIVED_SOURCES_DIR}\" ${CLASS_LIST}";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		89D0F04D0F393AD9007831A7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44980CC5104EF78200BEF8D2 /* fuserImp.c in Sources */,
+				440525E7105650A7005B8771 /* SerialImp.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		44980D72104F0B9C00BEF8D2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 89D0F0480F393A6F007831A7 /* Compile Java */;
+			targetProxy = 44980D71104F0B9C00BEF8D2 /* PBXContainerItemProxy */;
+		};
+		89D0F1CF0F3B7062007831A7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 89D0F04F0F393AD9007831A7 /* Compile Native */;
+			targetProxy = 89D0F1CE0F3B7062007831A7 /* PBXContainerItemProxy */;
+		};
+		89D0F1D10F3B7062007831A7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 89D0F0480F393A6F007831A7 /* Compile Java */;
+			targetProxy = 89D0F1D00F3B7062007831A7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		89D0F0490F393A6F007831A7 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RXTXcomm;
+				RXTXSRC = ../../src;
+			};
+			name = Default;
+		};
+		89D0F0510F393ADA007831A7 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_EXTENSION = jnilib;
+				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_LIBRARY_DIR)/Frameworks/JavaVM.framework/Versions/A/Frameworks\"",
+				);
+				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/JavaVM.framework/Headers\"";
+				PREBINDING = NO;
+				PRODUCT_NAME = rxtxSerial;
+			};
+			name = Default;
+		};
+		89D0F1CA0F3B704F007831A7 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RXTX;
+			};
+			name = Default;
+		};
+		C01FCF4F08A954540054247B /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		89D0F04B0F393AB7007831A7 /* Build configuration list for PBXLegacyTarget "Compile Java" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				89D0F0490F393A6F007831A7 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		89D0F0530F393AF8007831A7 /* Build configuration list for PBXNativeTarget "Compile Native" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				89D0F0510F393ADA007831A7 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		89D0F1D20F3B7080007831A7 /* Build configuration list for PBXAggregateTarget "RXTX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				89D0F1CA0F3B704F007831A7 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "RXTX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4F08A954540054247B /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}

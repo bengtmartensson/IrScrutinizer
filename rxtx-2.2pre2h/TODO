@@ -1,0 +1,277 @@
+This is TODO  Tue Nov 13 14:54:06 MST 2001
+
+----------------------------------------------------------------------------
+
+	HIGH PRIORITY TODO's 
+
+----------------------------------------------------------------------------
+Win32 Frame Parity CD and RI events.  TIOCGICOUNT is commented out in
+win32termios.h to avoid SIG11's.  The source of these has not been
+identified.  I could not figure this one out.  If BlackBox is run on COM1
+and COM2 and you plug in a null modem cable between the ports things blow
+up.  I dont know if variables is on the native side get gc'd or if there
+is a bad pointer someplace.
+
+
+The next bug is also report using BlackBox on Win32:
+"Using all of the default settings, if I click auto-transmit it
+runs for about half a second and then crashes. I've attached the log file
+it gave. Sometimes it runs a little longer than others. If you enable and
+disable auto-transmit repeatedly it seems to help it crash faster. This
+looks like a fairly repeatable way to cause the problem so hopefully
+debugging would be easier."  I'm going to try looking at this tonight.
+
+And the final bug report is reported on FreeBSD 4.5 with some in house
+software:
+
+"Okay, now the application runs.  I don't get a sig11, but my application
+freezes when it tries to talk to the modem.  The user has access to the
+modem as minicom works on that modem.  This application works well under
+windows with the JavaComm from Sun."
+
+
+Sat Jul 28 09:55:37 MDT 2001
+
+----------------------------------------------------------------------------
+
+	REMAINING TODOS
+
+----------------------------------------------------------------------------
+
+The following TODO's are known to need work but will not be implmented in the
+near future.
+
+DSR does not work reliably for some people.  contrib/DSR-workaround.java
+contains a workaround the Ken Eisner contributed.  If you are able to reproduce
+the problem and find a fix for RXTX please let the maintainer know.
+
+Buffer Size is just a var.  No memory is allocated.  This was done to duplicate
+the behavior in the behavior table in javax.comm.CommPort.html.  Its not clear
+to me if the buffers are just mallocs or modem buffers.  Any experts there?
+(its probably refering to fopen()/fread()/fwrite()/fclose() which may or may
+not be of interest to someone)
+
+While looking through the blackdown mail list, it was obvious that some people
+really want printer support.  Here is a chance to put it in themselves.
+
+ParallelPort and CommPortIdentifier files are provided so you can start 
+implementing right away without worrying about how automake works.  They are 
+not written in stone.  If you want to do it differently feel free.
+The good side is the stuff compiles as is.  Write was tested on a printer.
+
+Currently (rxtx-1.4-5) sun's jdk (version 1.2.2_006) with native threads is 
+locking up with multiple open()/closes().  Its ugly.   The stack trace is 
+useless.  No insight from jdb.  The green threads are working.
+
+I'd suggest avoiding native threads with 1.2.2_006 unless you can figure out
+whats going wrong.
+
+----------------------------------------------------------------------------
+
+	Porting Status.
+
+----------------------------------------------------------------------------
+
+Irix SerialPort support
+	I've heard it works.  I didnt get an exact diff back but it should work.
+	rxtx-1.5 has not been tested.  Last report was that the library built
+	but there was unsatified link errors when an application was run.
+
+	The following showed up in the build:
+
+	/usr/include/standards.h:128: warning:  `_NO_POSIX' redifined
+	/usr/include/standars.h:156: warning: `_NO_XOPEN4' redefined
+	ld32: WARING 84: /usr/lib32/libc.so is not used for resolving any symbol
+
+*BSD SerialPort support
+	freebsd serial works.
+	kernel specific implementations
+	possibly a buggy event loop.
+
+AIX
+	It has not been confirmed that AIX works.  I've heard of people building
+	it though
+
+WinCE
+	WinCE should work now
+
+The following should work with Serial communication.  Sometimes breakage slips
+in.
+
+	Solaris (x86/Sparc), OpenUnix, UnixWare, Digital Unix, True64,
+	Mac OS X, HP-UX, Win32.
+
+If you would like to donate ssh access for any of these for compile tests before
+release contact taj@www.linux.org.uk.  We have Solaris x86 2.6 and 2.8.  Also
+a DEC UDB without an OS.  Binaries will be offered if access to build boxes is
+ provided.
+
+Win95/98/ME/NT/2K/XP with mingw32
+
+	Long story there.  Ever put together a few hundred lines of code for
+	fun and then have to support it 4 years later?
+	
+	It started as mentioned with some toy code while playing with cross
+	compilers.
+	The Wayne Roberts provided many improvements. 
+	Another big push was made after this.
+	The code should be fairly good now.
+	Some of the builds are hairy.
+
+	The library was tested  (rxtx-1.5-4).  The library built and installed
+	using lcc and mingw32(on windows and from linux)
+	The library passed multiple tests after rxtx-1.5-7.
+
+	files:
+		SerialImp.c   termios based JNI code
+		SerialImp.h            ""
+		termios.c      termios implementation for win32
+		win32termios.h         ""
+		init.c  lcc dll support
+		init.cc mingw32 dll support
+		fixup.c mingw32 dll support
+		Makefile.lcc  static Makefile for building with lcc
+		Makefile.cc   static Makefile for building with mingw32
+
+	The following other options are possible but not started
+
+		use cygwin.dll and release rxtx under the GPL
+		replace SerialImp.c/h with something that does not use termios.
+
+	win32 API documentation:
+		ftp://ftp.cs.virginia.edu/pub/lcc-win32/win32hlp.exe
+	Microsoft Online Library:
+		http://msdn.microsoft.com/
+	Serial API doc:
+		http://msdn.microsoft.com/library/techart/msdn_serial.htm
+
+BeOS
+	BeOS support is in the early stages.  It should read and write bytes
+	See the BeOS documentation for more information.  See rxtx-2.1 for 
+	details.  This effort is mostly abandoned.
+
+----------------------------------------------------------------------------
+
+	File specific thoughts
+
+----------------------------------------------------------------------------
+RXTXPort.java
+	framing control -?-
+	buffer control -?-
+	look for FIXME
+
+ParallelPort support.  Needs some code.
+	files:
+		ParallelImp.c stubs 
+                      A  large fraction of the stubs are filled in now.
+		ParallelImp.h
+		LPRPort.java similar to RXTXPort.java + stubs.
+	Printer support is working with simiple print tests.
+	Full support for printing will be put in when 2.4 linux kernels
+	are mainstream.
+	
+----------------------------------------------------------------------------
+	From This point on, You need to use rxtx 1.5.  All of this work is 
+	being done in the development branch of the cvs archive.
+
+	cvs checkout -r commapi-0-0-1 rxtx-devel 
+
+	gets the recent work.
+----------------------------------------------------------------------------
+
+RS485 Support
+
+	This is intended to be an rs232->rs485 driver.
+	The basic layout is in place with no native implementation.
+
+	devices are not coded into RXTXDriver.java see /dev/ttyS0 and gang
+	for examples.
+	Nothing is carved in stone.  Changes will probably be needed in
+	several of the files.
+
+	So far the only significant difference between RS485Imp.c and RXTXImp.c
+	is writeByte and writeArray raise and drop DTR as needed.  I've not
+	spent a large amount of time on this.  It compiles.  I need to find
+	an RS485 device to test this.
+
+	I could picture enumerating the devices on the bus similar to
+	enumerating ports with 232 comm.  It could be possible to build
+	the packets with vendor specific bits.
+
+	files:
+		RS485.java
+		RS485Port.java
+		RS485PortEvent.java
+		RS485PortEventListener.java
+I2C Support
+
+	The basic layout is in place with no native implementation.
+	devices are not coded into RXTXDriver.java see /dev/ttyS0 and gang
+	for examples.
+	Nothing is carved in stone.  Changes will probably be needed in
+	several of the files.
+
+	I want I2C support for a recycling infusion mash system (home brewery)
+	I'm looking at building.  Who said there isnt free beer?
+
+	files:
+		I2C.java
+		I2CPort.java
+		I2CPortEvent.java 
+		I2CPortEventListener.java
+
+	I'll be returning to this after I order the parts for dallas semi.
+
+CommPortIdentifier support. Needs some code.
+
+	This is starting to shape up.  Maybe 100 lines from a the full
+	montey.  Grep for FIXME for known bad spots.
+
+	Ownership needs work.  BlackBox fires up, finds the ports and
+	read/writes with the rxtx implemented comm.jar.
+
+	This has actually expanded to a complete comm.jar implementation.
+	Contact the maintainer if you have interest in working on this.
+	While automatic enumeration of ports needs some work you can
+	open specific ports.
+
+	Plenty of example code can be found in commapi/samples/porting
+	Please don't send in Sun's code.  
+
+	files:
+		CommDriver.java
+		CommPort.java
+		CommPortEnumerator.java
+		CommPortIdentifier.java
+		CommPortOwnershipListener.java
+		SerialPort.java
+		SerialPortEvent.java
+		SerialPortEventListener.java
+		UnsupportedCommOperationException.java
+		NoSuchPortException.java
+		OwnershipEventThread.java
+		ParallelPort.java
+		ParallelPortEvent.java
+		ParallelPortEventListener.java
+		PortInUseException.java
+	
+------------------
+backwards compatibility for older Linux systems.
+------------------
+non Linux specific implementations
+------------------
+allow the library to catch sigint so it can shut down the port properly when
+sent
+------------------
+Add more documentation.
+------------------
+
+----------------------------------------------------------------------------
+
+	IDEAS
+
+----------------------------------------------------------------------------
+
+Make rxtx apps capable of being spawned from mgetty.  <gluck@tempo-services.com.au>
+
+Lock file server for multiple users:  see src/lfd.

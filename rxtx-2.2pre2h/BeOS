@@ -1,0 +1,47 @@
+BeOS serial support is in the early stages.  configure and the resulting 
+Makefile should work properly.  Initial readbyte/writebyte type support is 
+included.
+
+Test.java in contrib/ works on BeOS.
+
+rxtx.proj in contrib/ is included for people using the IDE that BeOS uses.
+
+
+Initially we tried to use the standard POSIX functions to get BeOS working.  It
+became obvious the BeOS kernel API (See Serial.h on BeOS) would have to be 
+used to get Events working.  With simple build and read/write functionality 
+we are releasing the work in case anyone wants to help contribute to the
+project.
+
+src/SerialImp.cpp is the BeOS support.
+
+List of functions ported: (Thanks to Brian Hindman)
+
+=========================
+
+RXTXPort.open
+RXTXPort.nativeClose
+RXTXPort.nativeSetSerialPortParams
+translate_speed
+translate_data_bits
+translate_stop_bits
+translate_parity
+RXTXPort.writeByte
+RXTXPort.writeArray (untested)
+RXTXPort.drain
+RXTXPort.isDSR
+RXTXPort.isCD
+RXTXPort.isCTS
+RXTXPort.isRI
+RXTXPort.isRTS (not available in BeOS)
+RXTXPort.setRTS
+RXTXPort.setDSR (not available in BeOS)
+RXTXPort.isDTR (not available in BeOS)
+RXTXPort.setDTR
+RXTXPort.readByte (untested)
+RXTXPort.nativeavailable
+RXTXPort.setflowcontrol
+get_java_var
+throw_java_exception
+report
+

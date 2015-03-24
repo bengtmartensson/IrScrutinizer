@@ -1,0 +1,187 @@
+                          LOCK FILE PROTOCOL (LFP)
+
+
+Status of this Memo
+
+   This memo is a proposed specification for the Lock File Protocol (LPF).
+   Distribution of this memo is currently limited.
+
+   The following commands are currently in this edition of this specification.
+
+      LOCK (lock a resource), UNLOCK (unlock a resource), QUIT (disconnect)
+
+
+1.  INTRODUCTION
+
+    The objectives of LPF are 1) to make administration of machines with a
+    large number of users easier 2) to encourage a common mechanism for
+    applications to share resources 3) to provide a platform neutral
+    interface for applications.
+
+    This specification tries to outline the minimal required features for
+    a LPF.
+
+2.  OVERVIEW
+
+    Lock files can be located in as many as 10 different directories depending
+    on the OS.  Writing applications that handle all of the lock directories
+    is redundant and error prone.
+
+    By enabling three commands much of the redundant work can be eliminated and
+    a common locking scheme can be used.  The end result is a consistant easy
+    to use interface.
+
+2.1.  HISTORY
+
+    Lock files have been used for a long time.  For more information on
+    lock files see:
+
+         The File System Hierarchy Standard
+         http://www.pathname.com/fhs/
+         UUCP Lock Files
+         http://docs.freebsd.org/info/uucp/uucp.info.UUCP_Lock_Files.html
+         FSSTND
+         ftp://tsx-11.mit.edu/pub/linux/docs/linux-standards/fsstnd/
+         Proposed Changes to the File System Hierarchy Standard
+         ftp://scicom.alphacdc.com/pub/linux/devlock-0.X.tgz
+         "UNIX Network Programming", W. Richard Stevens,
+         Prentice-Hall, 1990, pages 96-101.
+
+2.2  TERMINOLOGY
+
+   lock file
+   lock directory
+   uucp lock
+   fhs lock
+
+2.3  THE LFP MODEL
+
+	lock
+        directory<----->Server<-----Client<---->User
+
+3.  LOCKFILE FUNCTIONS
+ 
+4.  LFP FUNCTIONS
+4.1  LFP COMMANDS
+
+   4.1.1   ACCEESS CONTROL COMMANDS
+
+	QUIT  The session is ended.
+
+   4.1.2   LOCK FILE CONTROL COMMANDS
+	
+	LOCK If the device that is trying to be locked and the pid of the
+             requesting application are passed, an attempt will be made to
+             lock the device.
+
+	UNLOCK If the pid of the application requesting to unlock a device
+             is passed an attempt will be made to unlock the device.
+
+Lock File Protocol                                              January 2001
+
+4.2  LFP REPLIES
+
+	The following replies exist and try to follow the same format as FTP
+        reply commands (rfc 959)
+
+	200 Command okay.
+	202 Command not implemented
+        220 hostname Lock File Server (Version rxtx-1.5-9) ready
+        221 Thank you for using the Lock File service on hostname
+        450 : File busy
+        500 'command': command not understood
+        550 : Permission denied.
+
+5.  DECLARATIVE SPECIFICATIONS
+      5.1 Minimum IMPLEMENTATION
+
+         The following commands must be in a minimum implementation
+         QUIT, LOCK, UNLOCK.
+
+      5.2  CONNECTIONS
+
+          Currently on connections assisted by inetd are supported.
+          Though not official, LFP currently listens on port 50001.
+          Only connections from localhost should be allowed.
+
+      5.3 COMMANDS
+
+	  5.3.1  LFP COMMANDS
+
+	     The following are the LFP COMMANDS
+
+	     QUIT <CRLF>
+             LOCK <SP> <device> <sp> <pid> <CRLF>
+             UNLOCK <SP> <device> <sp> <pid> <CRLF>
+
+          5.3.2  LFP COMMAND ARGUMENTS
+
+	     <device> ::= <string>
+	     <pid>    ::= any decimal integer
+
+      5.4.  SEQUENCING OF COMMANDS AND REPLIES
+		
+		Connection Establisment
+		LOCK
+		UNLOCK
+		QUIT
+
+6.  STATE DIAGRAMS
+
+
+   [ from rfc 959 ]
+
+   Here we present state diagrams for a very simple minded LFP
+   implementation.  Only the first digit of the reply codes is used.
+   There is one state diagram for each group of LFP commands or command
+   sequences.
+
+   The command groupings were determined by constructing a model for
+   each command then collecting together the commands with structurally
+   identical models.
+
+   For each command or command sequence there are three possible
+   outcomes: success (S), failure (F), and error (E).  In the state
+   diagrams below we use the symbol B for "begin", and the symbol W for
+   "wait for reply".
+
+Lock File Protocol                                              January 2001
+
+   We present the diagram that represents the largest group of LFP
+   commands:
+
+                               1,3    +---+
+                          ----------->| E |
+                         |            +---+
+                         |
+      +---+    cmd    +---+    2      +---+
+      | B |---------->| W |---------->| S |
+      +---+           +---+           +---+
+                         |
+                         |     4,5    +---+
+                          ----------->| F |
+                                      +---+
+
+      This diagram models the commands:
+	
+         QUIT, LOCK, UNLOCK.
+
+
+7.  TYPICAL LFP SCENARIO
+
+      $ telnet 127.0.0.1 50001
+      Trying 127.0.0.1...
+      Connected to 127.0.0.1.
+      Escape character is '^]'.
+      lock /dev/ttyS1 1234
+      200 Command okay.
+      unlock /dev/ttyS1 1234         
+      200 Command okay.
+      quit
+      221 Thank you for using the Lock File Service on servertrent.korpivaara.org.
+      Connection closed by foreign host.
+      $
+
+
+
+	

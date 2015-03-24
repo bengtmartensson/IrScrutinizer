@@ -1,0 +1,120 @@
+This is AUTHORS Sun Nov 18 09:29:52 MST 2007
+
+This package is not the result of one persons time.  Recognition is given
+to the following people for their assistance.
+
+Martin Oberhuber <martin.oberhuber@windriver.com> Has submitted several fixes for rxtx integration into Eclipse.
+
+Stephane Cachat <stephane@cachat.org> J2SE java.util.loggin and property file to match
+
+Sheikh, Awais <awais.sheikh@hp.com> HP-UX port enumeration fixes.
+
+Bill Smith <bsmith@tridium.com> QNX Port
+
+Michal Hobot MichalHobot@netscape.net http://www.mhobot.w.pl  WinCE port.
+
+Scott Burleigh <Scott.Burleigh@jpl.nasa.gov> Documentation of ThinkPad Serial Behavior and clairification of "No serial ports found!"
+
+Melissa Pike <mpike@mathworks.com>  Integration of rxtx into QA tests.
+
+Jauhar Ismail <jismail@mathworks.com> QA testing
+
+Joey Armstrong <joeya@mathworks.com> The amazing wonder pulling things together behind the scenes.
+
+Finbarr O'Kane <finbarr@e-merge.ie> True64 Port
+
+Peter C. Verhage <peter@no-nonsense.org> FreeBSD fixes
+
+Jonathan Schilling <jls@caldera.com> UnixWare and OpenUNIX ports
+
+Dmitry Markman <dmarkman@mac.com> Mac OS X builds with CW lots of
+fixes
+
+Joseph Goldstone <joseph@lp.com>  Mac OS X port.
+
+Brian Hindman  <bjhindman@yahoo.com>  Brian initiated the BeOS port and implemented most of the functions.
+
+Chris Portal <cportal@mathworks.com> Joey Armstrong <joeya@mathworks.com>
+did some intense testing and debugging of RS232 on Linux.
+
+"Bertrand Renuart" <bertrand.renuart@itma.lu> provided a java side read()
+which appears to have resolved many problems.
+
+W. Craig Trader <ct7@vitelinc.com> and Gareth Lee <gareth@ee.uwa.edu.au> Added
+Calls to DeleteLocalRef to functions get_java_var and throw_java_exception to 
+avoid FATAL ERROR in native method: Out of memory when expanding local ref 
+table beyond capacity
+
+Tim Groner <tgroner@cs.umanitoba.ca> Assistance tracking down an open() bug
+that was accidently introduced in rxtx-1.3-10.
+
+"Alejandro P. Revilla" <apr@cs.com.uy> Assistance tracking down event_loop
+races.
+
+Peter Bennett <bencom@bencom.co.nz> Moxa serial board support.  Bug hunting.
+Simple Read/Write example contributions.
+
+Masayuki "Tencho" Yamashita <tencho@venus.kanazawa-it.ac.jp> Japanese install instructions
+
+Stuart Anderson <anderson@metrolink.com>  Free-BSD port
+
+Ken Thompson <thompson@milestonesolutions.com>  Comtrol RocketPort serial boards
+   support.
+
+Holger Lehmann <holle@almaden.ibm.com> Printer support fixes
+
+Neil Darlow <neil@darlow.co.uk>
+   Flow Control Modifications/Implementation.
+
+Will Kassebaum <wrk@kassebaum.net>
+   Work on rxtx.spec
+
+Douglas Lau <douglau@earthlink.net>
+   Major Rewrite.  rxtx-1.3.  Multiple fixes and enhancements.
+
+Wayne Roberts  <wroberts1@home.com>
+   Win32 Enhancements (extensive)
+   Read Timeouts.  Thresholds.  event notification.   Linux kernel hacking.  
+   verification of rxtx with analysis equipment. 
+   Wayne has been invaluable to rxtx.  The project would be a 404 without him.
+
+Yuen-Ping Leung <yuenping@semiotek.com>
+   Fixes for FreeBSD support.
+
+David Atkinson david.atkinson@vf.vodafone.co.uk
+   Hardware event handling implementation.
+   Many fixes and contributions.
+
+Sheldon Young sheldon@intergate.bc.ca
+   JCL/CommAPI compatibility with "javacomm20-ea"
+   Many fixes and contributions.
+
+kevinh@acm.org (Kevin Hester) 
+   CommAPI support.  The Linux Comm Project 
+   http://www.interstice.com/~kevinh/linuxcomm.html
+   src/RXTXPort.java src/RXTXCommDriver.java
+
+karl@blackdown.org (Karl Asha)
+   Karl gave this package a web presence at www.blackdown.org
+   Debugging the autoconfig
+   Reminding me to upgrade to 1.1.1.
+ 
+oliver@io.aec.at (Oliver Frommel)
+   IRIX port
+   Fixed open() call so pins 4,5,6,8 and 20 don't need to be tied together.
+   Helped track down a problem with the threads that prevented the package
+   from working.
+   Multiple suggestions.
+   Verifying serial communication with the rs232 analyzer
+
+Michael.Forte@Corp.Sun.COM (Mike Forte)
+   SunOS port
+
+Gilles.Paquet@ulb.ac.be (Gilles Paquet)
+   SunOS port
+
+Martin Pool <mbp@linuxcare.com> 
+
+   Added support for explicitly-specified lists of ports
+
+Maintainer:  Trent Jarvi  taj@www.linux.org.uk.

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<jnlp spec="1.0+" codebase="http://localhost/~dima/jws" href="http://localhost/~dima/jws/rxtxinstaller/rxtxinstaller.jnlp">
+   <information> 
+      <title>RXTX Installer</title> 
+      <vendor>RXTX</vendor>
+      <homepage href="rxtxinstaller/index.html"/>
+      <description>RXTX Installer</description>
+      <description kind="short">RXTX Installer</description>
+      <offline-allowed/> 
+   </information> 
+   <resources>
+      <j2se version="1.4+"/>
+      <jar href="rxtxinstaller/RXTXInstaller.jar"/>
+   </resources>
+	<resources os="Mac OS X">
+        <nativelib href="rxtxinstaller/libnative.lib.jar"/>
+	</resources>
+   <security>
+      <all-permissions/>
+   </security>
+   <application-desc main-class="gnu.io.installer.RXTXInstaller">
+   </application-desc>
+</jnlp> 

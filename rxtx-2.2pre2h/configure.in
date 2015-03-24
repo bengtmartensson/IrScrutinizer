@@ -1,0 +1,905 @@
+###########################################################################
+#   RXTX License v 2.1 - LGPL v 2.1 + Linking Over Controlled Interface.
+#   RXTX is a native interface to serial ports in java.
+#   Copyright 1997-2008 by Trent Jarvi tjarvi@qbang.org and others who
+#   actually wrote it.  See individual source files for more information.
+#
+#   A copy of the LGPL v 2.1 may be found at
+#   http://www.gnu.org/licenses/lgpl.txt on March 4th 2007.  A copy is
+#   here for your convenience.
+#
+#   This library is free software; you can redistribute it and/or
+#   modify it under the terms of the GNU Lesser General Public
+#   License as published by the Free Software Foundation; either
+#   version 2.1 of the License, or (at your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#   Lesser General Public License for more details.
+#
+#   An executable that contains no derivative of any portion of RXTX, but
+#   is designed to work with RXTX by being dynamically linked with it,
+#   is considered a "work that uses the Library" subject to the terms and
+#   conditions of the GNU Lesser General Public License.
+#
+#   The following has been added to the RXTX License to remove
+#   any confusion about linking to RXTX.   We want to allow in part what
+#   section 5, paragraph 2 of the LGPL does not permit in the special
+#   case of linking over a controlled interface.  The intent is to add a
+#   Java Specification Request or standards body defined interface in the 
+#   future as another exception but one is not currently available.
+#
+#   http://www.fsf.org/licenses/gpl-faq.html#LinkingOverControlledInterface
+#
+#   As a special exception, the copyright holders of RXTX give you
+#   permission to link RXTX with independent modules that communicate with
+#   RXTX solely through the Sun Microsytems CommAPI interface version 2,
+#   regardless of the license terms of these independent modules, and to copy
+#   and distribute the resulting combined work under terms of your choice,
+#   provided that every copy of the combined work is accompanied by a complete
+#   copy of the source code of RXTX (the version of RXTX used to produce the
+#   combined work), being distributed under the terms of the GNU Lesser General
+#   Public License plus this exception.  An independent module is a
+#   module which is not derived from or based on RXTX.
+#
+#   Note that people who make modified versions of RXTX are not obligated
+#   to grant this special exception for their modified versions; it is
+#   their choice whether to do so.  The GNU Lesser General Public License
+#   gives permission to release a modified version without this exception; this
+#   exception also makes it possible to release a modified version which
+#   carries forward this exception.
+#
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with this library; if not, write to the Free
+#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#   All trademarks belong to their respective owners.
+############################################################################
+AC_INIT(src/SerialImp.c)
+AM_CONFIG_HEADER(config.h)
+AC_CANONICAL_SYSTEM
+AC_MSG_WARN(Trying libtool.  If the following fails install libtool)
+AC_PROG_CC
+# Comment these two lines out when compiling on SCO
+AC_DISABLE_STATIC
+AM_PROG_LIBTOOL
+# end of SCO fixes
+AM_INIT_AUTOMAKE(Serial,2.2pre1)
+AC_CHECK_HEADERS(fcntl.h)
+AC_CHECK_HEADERS(sys/fcntl.h)
+AC_CHECK_HEADERS(sys/file.h)
+AC_CHECK_HEADERS(sys/time.h)
+AC_CHECK_HEADERS(sys/signal.h)
+AC_CHECK_HEADERS(signal.h)
+AC_CHECK_HEADERS(termios.h)
+AC_CHECK_HEADERS(grp.h)
+AC_CHECK_HEADERS(pwd.h)
+AC_PROG_GCC_TRADITIONAL
+AC_SUBST(WINDOWS_JAVA_INCLUDE)
+AC_SUBST(JAVAINCLUDEDIR)
+AC_SUBST(JAVAINCLUDE)
+AC_SUBST(JAVANATINC)
+AC_SUBST(CLASSPATH)
+AC_SUBST(TOP)
+AC_SUBST(TARGETLIB)
+AC_SUBST(LDFLAG)
+AC_SUBST(CFLAGS)
+AC_SUBST(THREAD_FLAG)
+AC_SUBST(OS_NAME)
+AC_SUBST(OS_ARCH)
+AC_SUBST(OS_VERSION)
+AC_SUBST(JAVA_VERSION)
+AC_SUBST(JAVA_VENDOR)
+AC_SUBST(JAVA_HOME)
+AC_SUBST(JAVA_LIBRARY_PATH)
+AC_SUBST(JAVA_CLASS_PATH)
+AC_SUBST(JAVA_CLASS_VERSION)
+AC_SUBST(JAVAH_FIX)
+AC_SUBST(JPATH)
+AC_SUBST(JHOME)
+AC_SUBST(RXTX_PATH)
+AC_SUBST(JAVAH)
+AC_SUBST(JAVAC)
+AC_SUBST(JAR)
+AC_SUBST(JAVADOC)
+AC_SUBST(EXTENSION)
+AC_SUBST(LIBTOOL_FIX)
+AC_SUBST(LDFLAGS)
+AC_SUBST(LINK)
+AC_SUBST(COMPILE)
+AC_SUBST(OBJECT_EXTENSION)
+AC_SUBST(LIB_EXTENSION)
+AC_SUBST(GLIBTOOL)
+# ftsoy
+AM_MAINTAINER_MODE
+
+JHOME=
+RXTX_PATH=
+EXTENSION="c"
+OBJECT_EXTENSION="lo"
+LIB_EXTENSION="la"
+COMPILE="cc "
+TOP="`pwd`"
+GLIBTOOL="\$(SHELL) \$(TOP)/libtool"
+LINK="\$(GLIBTOOL) --mode=link \$(CC) \$(CFLAGS) \$(LDFLAGS) -release \$(VERSION) -o librxtx\$*.la -rpath \$(RXTX_PATH)"
+
+[case "$host_os" in
+	*-gnu)
+	CFLAGS=$CFLAGS" -D_POSIX_SOURCE";;
+	*);;
+esac]
+AC_ARG_ENABLE(PRINTER,
+	[  --enable-PRINTER        PRINTER support (experimental) [default=yes]],
+	echo $enable_PRINTER,
+	enable_PRINTER="yes"
+)
+	if test x$enable_PRINTER = xyes; then  
+		TARGETLIB="\$(target_triplet)/librxtxSerial.la \
+			\$(target_triplet)/librxtxParallel.la \
+			\$(target_triplet)/librxtxI2C.la \
+			\$(target_triplet)/librxtxRaw.la \
+			\$(target_triplet)/librxtxRS485.la"
+	else
+		TARGETLIB="\$(target_triplet)/librxtxSerial.la"
+	fi
+
+AC_ARG_ENABLE(lockfiles,
+	[  --disable-lockfiles     disable lock files (experimental) [default=no]],
+	if test x$lockfiles = xyes; then 
+		echo "Using lock files"
+	else
+		echo "Disabling lock files"
+		CFLAGS=$CFLAGS" -DDISABLE_LOCKFILES"
+	fi
+)
+AC_ARG_ENABLE(liblock,
+ 	[  --enable-liblock[=x]      enable liblock [default=no]],
+	if test "x$liblock" != "xno"; then 
+		echo "Using liblock"
+		CFLAGS=$CFLAGS" -DLIBLOCKDEV"
+		LDFLAGS=$LDFLAGS" -llockdev"
+	else
+		echo $liblock
+		echo "Disabling liblock"
+	fi
+)
+
+AC_ARG_ENABLE(lockfile_server,
+ 	[  --enable-lockfile_server   Enable interaction with a lock file server [default=no]],
+	if test x$enable_lockfile_server = xyes; then 
+		CFLAGS=$CFLAGS" -DLFS"
+	fi
+)
+AC_ARG_ENABLE(DEBUG,
+	[  --enable-DEBUG          Print debugging info from SerialImp.c [default=no]],
+	if test x$enable_DEBUG = xyes; then 
+		CFLAGS=$CFLAGS" -DDEBUG"
+	fi
+)
+AC_ARG_ENABLE(universallib,
+	[  --disable-universallib Disable building of universal libraries (MacOS X) [default=no]],
+	if test x$universallib = xyes; then
+		echo "Disabling universal lib"
+	fi
+)
+AC_PATH_PROG(XCODE_SELECT,xcode-select,no)
+
+find_java_native_include()
+{
+JAVANATINC="-I\$(JAVAINCLUDEDIR)/`cd $JAVAINCLUDEDIR; find . -name $1|sed s#$1##|head -n1`"
+if [ test `cd $JAVAINCLUDEDIR; find . -name $1|wc -l` != "1" ]; then
+	echo 1>&2
+	echo WARNING:  configure is having a hard time determining which  1>&2
+	echo directory contains the file $1.  Edit Makefile and fix the  1>&2
+	echo variable JAVANATINC to point to the correct directory. 1>&2
+	echo 1>&2
+	echo The following options are available: 1>&2
+	find $JAVAINCLUDEDIR -name $1|sed s#jni_md\.h## 1>&2
+	echo 1>&2
+	echo If there are more than one option available the first was selected.  1>&2
+	echo 1>&2
+fi
+}
+build_conftest()
+{
+cat > conftest.java << EOF
+/* this may be usefull for getting around java cobwebs during build */
+public class conftest 
+{
+	public static void main(String[[]] args) 
+	{
+		System.out.println(System.getProperty(args[[0]]));
+	}
+}
+EOF
+CLASSPATH=.:$CLASSPATH
+if test x$JAVA_HOME = x; then
+	javac -classpath .:$CLASSPATH: conftest.java
+else
+	$JAVA_HOME/bin/javac -classpath .:$CLASSPATH: conftest.java
+fi
+}
+
+run_conftest()
+{
+	echo $ECHO_N checking $1   " " 1>&6
+	if test x$JPATH = x; then
+		VAR=`java -classpath .:$CLASSPATH: conftest $1`
+	else
+		VAR=`$JPATH/bin/java -classpath .:$CLASSPATH: conftest $1`
+	fi
+	echo $VAR  1>&6
+	echo $VAR
+	return
+}
+
+build_conftest
+if test x$JAVA_HOME = x; then
+	JPATH=`run_conftest java.home| sed s#\/jre\\$##g`
+else	
+	JPATH=$JAVA_HOME
+	echo $JAVA_HOME
+	AC_MSG_WARN(using JAVA_HOME environmental variable)
+fi
+if test x$JPATH = x; then
+	AC_MSG_ERROR([Make sure java is in your path before running configure])
+fi
+echo adjusted java.home is $JPATH
+if test "$target_alias" = i386-mingw32 ;then
+	OS_NAME=WIN32
+else
+	OS_NAME=`run_conftest os.name`
+fi
+OS_ARCH=`run_conftest os.arch`
+#JAVA_CLASS_PATH=`run_conftest java.class.path`
+#JAVA_LIBRARY_PATH=`run_conftest java.library.path`
+JAVA_VENDOR=`run_conftest java.vendor`
+JAVA_VERSION=`run_conftest java.version`
+rm -f conftest.java
+rm -f conftest.class
+
+echo $ECHO_N checking os.version   " " 1>&6
+OS_VERSION=`uname -r`
+echo $OS_VERSION 1>&6
+
+check_prefix()
+{
+	if test $prefix != "/usr";then 
+		echo 1>&2
+		echo "WARNING:  configure was not run with option --prefix=/usr" 1>&2
+		echo "          Unless /usr/local/lib or the specified prefix is in"  1>&2
+		echo "          the linkers path this will cause problems later on." 1>&2
+		echo 1>&2
+	fi
+}
+# an attempt to compile on libc5 linux machines
+check_java_headers()
+{
+
+cat > conftest.c << EOF
+#include <features.h>
+#include <stdio.h>
+#include <stdlib.h>
+int main(int argc, char *argv[])
+{
+#if defined (__GLIBC__)
+        printf("%i\n",__GLIBC__);
+#else
+	printf("0\n");
+#endif
+	
+	exit(0);
+}
+EOF
+	cc conftest.c -o conftest
+	if [ test `./conftest` -lt 2 ];then 
+		echo 1>&2
+		echo "       WARNING:  Older libc on linux detected.  Patching a local copy of jni_md.h" 1>&2
+		echo 1>&2
+		ln -s `find $JAVAINCLUDEDIR -name jni.h` .
+		cp `find $JAVAINCLUDEDIR -name typedefs_md.h` .
+		# not pretty.  could be cleaned up
+		patch << EOF
+--- typedefs_md.h	Tue Jan 11 14:17:08 2000
++++ typedefs_md.h.patchtaj	Tue Jan 11 14:15:53 2000
+@@ -17,9 +17,6 @@
+  */
+ 
+ /* sbb: Johan Vos, why isn't this #ifndef inside the solaris header guard? */
+-#ifndef BITSPERCHAR
+-#define BITSPERCHAR 8
+-#endif
+ 
+ #ifndef _SOLARIS_TYPES_MD_H_
+ #define _SOLARIS_TYPES_MD_H_
+@@ -28,50 +25,19 @@
+ #include <sys/stat.h>
+ #include "bool.h"
+ 
+-#if defined(__alpha__)
+-typedef unsigned long ptr_int;
+-#define PTR_IS_64 1
+-#define LONG_IS_64 1
+-#else
+ typedef unsigned int ptr_int;
+ #define PTR_IS_32 1
+-#endif
+ 
+ /* don't redefine typedef's on Solaris 2.6 or Later */
+ 
+-#if !defined(_ILP32) && !defined(_LP64)
+-
+-#ifndef	_UINT64_T
+-#define	_UINT64_T
+-#ifdef LONG_IS_64
+-typedef unsigned long uint64_t;
+-#else
+ typedef unsigned long long uint64_t;
+-#endif
+-#define _UINT32_T
+ typedef unsigned int uint32_t;
+-#if defined(__linux__)
+ typedef unsigned int uint_t;
+-#endif
+-#endif
+ 
+-#ifndef __BIT_TYPES_DEFINED__
+-#ifdef (__i386__)
+-/* that should get Linux, at least */
+ #ifndef	_INT64_T
+ #define	_INT64_T
+-#ifdef LONG_IS_64
+-typedef long int64_t;
+-#else
+ typedef long long int64_t;
+-#endif
+-#define _INT32_T
+-typedef int int32_t;
+-#if defined(__linux__)
+-typdef int int_t;
+-#endif
+-#endif
+-#endif /* i386 */
++typedef int int_t;
+ #endif /* __BIT_TYPES_DEFINED__ */
+ 
+ #endif	/* !defined(_ILP32) && !defined(_LP64) */
+@@ -110,27 +76,15 @@
+ #endif
+ 
+ 
+-/* On Intel these conversions have to be method calls and not typecasts.
+-   See the win32 typedefs_md.h file */
+-#if ((defined(i386) || defined (__i386)) && defined(__solaris__)) || defined(__powerpc__)
+-
+-extern int32_t float2l(float f);
+-extern int32_t double2l(double d);
+-extern int64_t float2ll(float f);
+-extern int64_t double2ll(double d);
+-
+-#else /* not solaris x386 or linux powerpc*/
+-
+ #define float2l(f)	(f)
+ #define double2l(f)	(f)
+ #define float2ll(f)	((int64_t) (f))
+ #define double2ll(f)	((int64_t) (f))
+ 
+-#endif /* i386 */
+-
+ 
+ #define ll2float(a)	((float) (a))
+ #define ll2double(a)	((double) (a))
++#define double2ll(f)    ((int64_t) (f))
+ 
+ /* comparison operators */
+ #define ll_ltz(ll)	((ll)<0)
+@@ -148,13 +102,7 @@
+ 
+ extern void ll2str(int64_t a, char *s, char *limit);
+ 
+-#if defined(ppc) || defined(__ppc__) || defined(__alpha__) || defined(__sparc__)
+-#ifndef HAVE_ALIGNED_DOUBLES
++#if defined(ppc) || defined(__ppc__) || defined(__alpha__)
+ #define HAVE_ALIGNED_DOUBLES
+-#endif
+-#ifndef HAVE_ALIGNED_LONGLONGS
+ #define HAVE_ALIGNED_LONGLONGS
+ #endif
+-#endif
+-
+-#endif /* !_SOLARIS_TYPES_MD_H_ */
+EOF
+	fi
+	rm -f conftest.c
+	rm -f conftest
+}
+check_kernel_headers()
+{
+	cat > conftest.c << EOF
+
+#include <linux/version.h>
+#include <linux/utsrelease.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[])
+{
+	printf(UTS_RELEASE"\n");
+	exit(0);
+}
+EOF
+	cc conftest.c -o conftest
+	if [ test `uname -r` != `./conftest` ];then 
+		echo 1>&2
+		echo "       WARNING:  Kernel include files do not match the current kernel" 1>&2
+		echo 1>&2
+	fi
+	rm -f conftest.c
+	rm -f conftest
+}
+#fix_mac_groups()
+#{
+#this is what the Mac OS X installer does... untested
+#	sudo mkdir /var/spool/uucp
+#	sudo chmod 775 /var/spool/uucp
+#	sudo niutil -destroyval / /groups/uucp users `sudo id -p | grep 'login' | sed 's/login.//'`
+#	sudo niutil -appendprop / /groups/uucp users `sudo id -p | grep 'login' | sed 's/login.//'`
+#}
+fix_comm_jar()
+{
+	if [ test -f $1 ];then
+		echo "------------------------------------------------------" 1>&2
+		echo "WARNING:  A comm.jar file is already installed" 1>&2
+		echo "make sure your CLASSPATH points to RXTXcomm.jar!" 1>&2
+		echo 1>&2
+		echo $1
+		echo 1>&2
+		echo "------------------------------------------------------" 1>&2
+	fi;
+}
+[ case $OS_NAME in
+	Mac\ OS\ X)
+        JAVAINCLUDEDIR=$JPATH/../../../Headers
+        ;;
+	*)
+        JAVAINCLUDEDIR=$JPATH/include
+        ;;
+esac ]
+
+JAVAINCLUDE="-I\$(JAVAINCLUDEDIR)"
+if test "$CC" = "gcc" || test "$CC"="egcs"; then
+	case $JAVA_VENDOR in
+	Tran*)
+		find_java_native_include jni.h
+		JAVAH="\$(JPATH)/bin/kaffeh -classpath \$(CLASSPATH) -d \$(DEST) -jni"
+		JAVAC="\$(JPATH)/bin/javac -classpath \$(CLASSPATH) -d \$(TOP)/ -O -source 1.3 -target 1.3"
+		JAR="\$(JPATH)/bin/jar"
+		JAVADOC="\$(JPATH)/bin/javadoc -classpath \$(CLASSPATH)"
+		CFLAGS=$CFLAGS" -D_BSD_SOURCE"
+		JAVAINCLUDE=""
+		JAVAH_FIX="if test ! -d \$(target_triplet);then  mkdir \$(target_triplet);fi;"
+		JHOME=$JPATH"/share/kaffe/"
+		RXTX_PATH=$JPATH"/lib/kaffe/"
+		;;
+	*)
+		find_java_native_include jni_md.h
+		JAVAH="\$(JPATH)/bin/javah -classpath \$(CLASSPATH) -d \$(DEST) -jni"
+		JAVAC="\$(JPATH)/bin/javac -classpath \$(CLASSPATH) -d \$(TOP)/ -O -source 1.3 -target 1.3"
+		JAR="\$(JPATH)/bin/jar"
+		JAVADOC="\$(JPATH)/bin/javadoc"
+		CFLAGS=$CFLAGS" -D_BSD_SOURCE"
+		;;
+	esac
+fi
+if [ test -d $JPATH/share/kaffe/ ]
+	then fix_comm_jar $JPATH/share/kaffe/comm.jar
+elif [ test -d $JPATH/jre/lib/ext ]
+	then fix_comm_jar $JPATH/jre/lib/ext/comm.jar
+elif [ test -d $JPATH/lib/ext ]
+	then fix_comm_jar $JPATH/lib/ext/comm.jar
+elif [ test -d $JPATH/lib ] 
+	then fix_comm_jar $JPATH/lib/comm.jar
+fi
+
+#  http://www.tolstoy.com/samizdat/sysprops.html
+
+[ case $OS_NAME in 
+Linux)
+	LDFLAGS=$LDFLAGS" -lpthread"
+	#check_kernel_headers
+	check_java_headers
+	CFLAGS=$CFLAGS" -D__need_timespec"
+	case $JAVA_VERSION in
+
+	1.1*) 
+		CLASSPATH=".:\$(TOP):\$(TOP)/src:"` \
+			if [ -d $JPATH/share/kaffe/ ]; then
+				find $JPATH/share/kaffe/ -name [cK]lasses.[jz][ai][rp]
+			elif [ -d $JPATH/lib/ ]; then
+				find $JPATH/lib/ -name [cK]lasses.[jz][ai][rp]
+			fi`":"`
+			if [ -d $JPATH/share/kaffe/ ]; then
+				find $JPATH/share/kaffe/ -name RXTXcomm.jar
+			elif [ -d $JPATH/lib/ ]; then
+				find $JPATH/lib/ -name RXTXcomm.jar
+			fi`
+
+		if test x"$RXTX_PATH" = x;then
+			#  We are not using Kaffe
+			#fix_parameters $JPATH/lib/javax.comm.properties
+			check_prefix
+			RXTX_PATH="\$(prefix)/lib/"
+			JAVAH_FIX="if [ ! -d com ]; then if [ ! -f \$(JPATH)/lib/comm.jar ]; then echo \"Please install comm.jar from CommAPI in \$(JPATH)/java/lib/ 1>&2\"; else mkdir -p com/sun/comm;\$(JAR) -xf \$(JPATH)/lib/comm.jar;  fi; fi;";
+		else
+			# Kaffe
+			CLASSPATH=$CLASSPATH:`find $JHOME -name RXTXcomm.jar`	
+			echo "Warning!  Kaffe's comm.jar does not support rxtx"
+			echo "See INSTALL for details"
+		fi;
+		if test x"$JHOME" = x;then
+			JHOME=$JPATH/"lib"
+		fi
+	;;
+	*) 
+		#fix_parameters $JPATH/jre/lib/javax.comm.properties
+		CLASSPATH=".:\$(TOP):\$(TOP)/src:"`find $JPATH/ -name RXTXcomm.jar |head -n1`
+		JHOME=$JPATH"/jre/lib/ext"
+		RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
+	;;
+	esac 
+
+	# Cross Compilers
+		#echo ----------------------------
+		#echo $target_os
+		#echo ----------------------------
+	case $target_os in 
+	linux*)
+	;;
+	beos*)
+		TARGETLIB="\$(target_triplet)/librxtxSerial.la"
+		EXTENSION="cpp"
+		LDFLAGS=$LDFLAGS" -ldevice"
+		#echo ----------------------------
+		#echo $target_os
+		#echo ----------------------------
+	;;
+	freebsd*)
+	;;
+	solaris*)
+		TARGETLIB="\$(target_triplet)/librxtxSerial.la"
+		#echo ----------------------------
+		#echo $target_os
+		#echo ----------------------------
+	;;
+	esac
+;;
+
+*BSD)
+	LDFLAGS=$LDFLAGS" -lc_r"
+	JHOME=$JPATH/"lib"
+	CFLAGS=$CFLAGS" -D_NO_POSIX=1 -D_NO_XOPEN4=1"
+	TARGETLIB="\$(target_triplet)/librxtxSerial.la \
+			\$(target_triplet)/librxtxParallel.la"
+	case $JAVA_VERSION in
+	1.1*) 
+		check_prefix
+		#fix_parameters $JPATH/lib/javax.comm.properties
+		CLASSPATH=".:\$(TOP):\$(TOP)/src:"` \
+			if [ -d $JPATH/share/kaffe/ ]; then
+				find $JPATH/share/kaffe/ -name [cK]lasses.[jz][ai][rp]
+			elif [ -d $JPATH/lib/ ]; then
+				find $JPATH/lib/ -name [cK]lasses.[jz][ai][rp]
+			fi`":"`
+			if [ -d $JPATH/share/kaffe/ ]; then
+				find $JPATH/share/kaffe/ -name RXTXcomm.jar
+			elif [ -d $JPATH/lib/ ]; then
+				find $JPATH/lib/ -name RXTXcomm.jar
+			fi`
+
+		if test x"$RXTX_PATH" = x;then
+			#  We are not using Kaffe
+			#fix_parameters $JPATH/lib/javax.comm.properties
+			check_prefix
+			RXTX_PATH="\$(prefix)/lib/"
+			JAVAH_FIX="if [ ! -d com ]; then if [ ! -f \$(JPATH)/lib/comm.jar ]; then echo \"Please install comm.jar from CommAPI in \$(JPATH)/java/lib/ 1>&2\"; else mkdir -p com/sun/comm;\$(JAR) -xf \$(JPATH)/lib/comm.jar;  fi; fi;";
+		else
+			# Kaffe
+			CLASSPATH=$CLASSPATH:`find $JHOME -name RXTXcomm.jar`	
+			echo "Warning!  Kaffe's comm.jar does not support rxtx"
+			echo "See INSTALL for details"
+		fi;
+		RXTX_PATH="\$(prefix)/lib"
+		JHOME=$JPATH/"lib"
+	;;
+	*) 
+		#fix_parameters $JPATH/jre/lib/javax.comm.properties
+		CLASSPATH=".:\$(TOP):\$(TOP)/src:"`find $JPATH/ -name RXTXcomm.jar |head -n1`
+		RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
+		JHOME=$JPATH/"jre/lib/ext"
+	;;
+	esac
+;;
+
+Irix*)
+	JHOME=$JPATH/"lib"
+	CFLAGS=$CFLAGS" -I/usr/include"
+	CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
+	RXTX_PATH="\$(JPATH)/lib/\$(OS_ARCH)"
+	TARGETLIB="\$(target_triplet)/librxtxSerial.la"
+;;
+
+#  since the os.name is different for UnixWare and OpenUNIX we could use it to
+#  differentiate the lock files  See SerialImp.h for comments on the lock files
+#  in SCO.  Currently that would be a build time fix though.
+#  FIXME
+
+UnixWare|OpenUNIX)
+	LDFLAGS=$LDFLAGS" -lpthread_this_may_be_wrong__trent"
+	JHOME=$JPATH/"jre/lib"
+	CFLAGS=$CFLAGS" -D_NO_POSIX=1 -D_NO_XOPEN4=1 -D__unixware__"
+	CLASSPATH="-classpath .:\$(TOP):\$(TOP)/src:\$(JPATH)/jre/lib/rt.jar:\$(JPATH)/jre/lib/ext/comm.jar"
+	TARGETLIB="\$(target_triplet)/librxtxSerial.so \
+		\$(target_triplet)/librxtxParallel.so"
+	COMPILE="\$(CC) \$(INCLUDES) \$(CPPFLAGS) \$(CFLAGS) \$(VERBOSE_IOEXCEPTIONS) -c "
+	LINK="\$(CC) \$(CFLAGS) \$(LDFLAGS)"
+	echo "In UnixWare, CLASSPATH is $CLASSPATH"     
+;;
+
+HP-UX)
+	LDFLAGS=$LDFLAGS" -lpthread_this_may_be_wrong__trent"
+	CFLAGS=$CFLAGS" -g -Aa +e -D__hpux__ -D_HPUX_SOURCE -D_NO_POSIX=1 -D_NO_XOPEN4=1"
+	RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
+	TARGETLIB="\$(target_triplet)/librxtxSerial.la"
+	case $JAVA_VERSION in
+		HP-UX\ Java\ C.01.2*|HP-UX\ Java\ C.01.3*) 
+			#fix_parameters $JPATH/jre/lib/javax.comm.properties
+			JHOME=$JPATH"/jre/lib/ext"
+			CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/jre/lib/ext/RXTXcomm.jar:$CLASSPATH"
+			RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
+			echo WARNING $JAVA_VERSION is untested please email this message to taj@www.linux.org.uk and let me know if it works.
+		;;
+		HP-UX\ Java\ C.01.1*) 
+			#fix_parameters $JPATH/lib/javax.comm.properties
+			JHOME=$JPATH/"lib"
+			CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
+			RXTX_PATH="\$(prefix)/lib/"
+		;;
+		*)
+			#fix_parameters $JPATH/lib/javax.comm.properties
+			JHOME=$JPATH"/lib"
+			CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
+			RXTX_PATH="\$(prefix)/lib/"
+			echo WARNING $JAVA_VERSION is untested please email this message to taj@www.linux.org.uk and let me know if it works.
+		;;
+	esac
+	case $OS_ARCH in
+		PA-RISC)
+		;;
+		*)
+		;;
+	esac
+	case $OS_VERSION in
+		B.10.20)
+		;;
+		*)
+		;;
+	esac
+	case $JAVA_VENDOR in
+        	Hewlett\ Packard\ Co\.)
+		;;
+		*)
+		;;
+	esac
+;;
+
+BeOS)
+	echo WARNING: BeOS support is in RXTX-1.5
+	JHOME=$JPATH"/share/kaffe"
+	RXTX_PATH="\$(JPATH)/lib/"
+	CFLAGS=$CFLAGS" -D_NO_POSIX=1 -D_NO_XOPEN4=1"
+	CLASSPATH=".:\$(TOP):\$(TOP)/../src:\$(JPATH)/share/kaffe/Klasses.jar:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
+	TARGETLIB="\$(target_triplet)/librxtxSerial.la"
+	EXTENSION="cpp"
+	LDFLAGS=$LDFLAGS" -ldevice"
+#  sigh, from ltconfig 
+#  beos*)
+#     if $LD --help 2>&1 | egrep ': supported targets:.* elf' > /dev/null; then
+#       allow_undefined_flag=unsupported
+#       # Joseph Beckenbach <jrb3@best.com> says some releases of gcc
+#       # support --undefined.  This deserves some investigation.  FIXME
+
+	LIBTOOL_FIX="sed s/deplibs_check_method=\\\"unknown\\\"/deplibs_check_method=\\\"pass_all\\\"/1 libtool > libtool.tmp; sed s/allow_undefined_flag=\\\"unsupported\\\"/allow_undefined_flag=\\\"supported\\\"/1 libtool.tmp > libtool;rm libtool.tmp;"
+
+
+;;
+
+WIN32)
+	case $JAVA_VERSION in
+	1.1*)
+		CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
+		RXTX_PATH="\$(prefix)/lib/"
+		JHOME=$JPATH/"lib"
+	;;
+	*)
+		CLASSPATH=".:\$(TOP):\$(TOP)/src:`find $JPATH/ -name RXTXcomm.jar |head -n1`:$CLASSPATH"
+		JHOME=$JPATH"/jre/lib/ext"
+	;;
+	esac
+	if test x$WIN32INCLUDE = x; then
+	echo "We need to know what directory the windows java include files"
+	echo "are located in.  Please enter the directory now."
+	echo
+	echo "example /home/jarvi/win32java/include"
+	echo
+	read REPLY
+	WINDOWS_JAVA_INCLUDE="-I$REPLY -I$REPLY/win32"
+	else
+	WINDOWS_JAVA_INCLUDE="-I$WIN32INCLUDE -I$WIN32INCLUDE/win32"
+	fi
+	TARGETLIB="\$(target_triplet)/rxtxSerial.dll \$(target_triplet)/rxtxParallel.dll"
+	echo  "$WINDOWS_JAVA_INCLUDE" 
+;;
+
+Mac\ OS\ X)
+	#fix_mac_groups
+	#fix_parameters $JPATH/lib/javax.comm.properties
+	if test $XCODE_SELECT = no; then
+		SDKPATH="/Developer"
+	else
+		SDKPATH=`$XCODE_SELECT -print-path`
+	fi
+	SDK="$SDKPATH/SDKs/MacOSX10.4u.sdk"
+	if test "x$enable_universallib" != xno; then
+		if test -d "/Developer/SDKs/MacOSX10.5.sdk"; then
+			echo "library os.arch... universal (i386 x86_64 ppc)"
+			SDK="$SDKPATH/SDKs/MacOSX10.5.sdk"
+			CFLAGS="$CFLAGS -O -g -mmacosx-version-min=10.5 -isysroot $SDK -arch i386 -arch x86_64 -arch ppc"
+			LDFLAGS="$LDFLAGS -isysroot $SDK -arch i386 -arch x86_64 -arch ppc "
+		else	if test -d "/Developer/SDKs/MacOSX10.4u.sdk"; then
+			echo "library os.arch... universal (i386 ppc)"
+			CFLAGS="$CFLAGS -O -g -mmacosx-version-min=10.4 -isysroot $SDK -arch i386 -arch ppc"
+			LDFLAGS="$LDFLAGS -isysroot $SDK -arch i386 -arch ppc "
+			else
+			echo "Warning: no universal SDK, will not build universal"
+			echo "library os.arch... "${OS_ARCH}
+			fi
+		fi
+	else
+		echo "User disabled building of universal library"
+		echo "library os.arch... "${OS_ARCH}
+	fi
+
+	GLIBTOOL="\$(SHELL) glibtool"
+	LINK="cc $LDFLAGS -bundle -framework CoreFoundation -framework IOKit -o librxtx\$*.jnilib "
+	OBJECT_EXTENSION="o"
+	LIB_EXTENSION="jnilib"
+	TARGETLIB="\$(target_triplet)/librxtxSerial.jnilib"
+	RXTX_PATH="/usr/lib/java"
+	JHOME=$JPATH"/lib/ext"
+	CFLAGS=$CFLAGS" -bundle"
+ 	LDFLAGS=$LDFLAGS" -module -framework JavaVM -framework IOKit -framework CoreFoundation"
+	CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/ext/RXTXcomm.jar:$CLASSPATH"
+	#  email taj@www.linux.org.uk if you know a nicer fix.  Needed anymore?
+	#  this fix was really old taj 6/05
+	# LIBTOOL_FIX="sed s/echo\ so/echo\ jnilib/g libtool > tmp; mv tmp libtool; chmod +x libtool;"
+;;
+
+Solaris*)
++ 	LDFLAGS=$LDFLAGS" -lpthread"
+	TARGETLIB="\$(target_triplet)/librxtxSerial.la \
+		\$(target_triplet)/librxtxParallel.la"
+	JHOME=$JPATH/"lib"
+	CFLAGS=$CFLAGS" -D_NO_POSIX=1 -D_NO_XOPEN4=1"
+	CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
+
+	case $JAVA_VERSION in
+	1.1*)
+		RXTX_PATH="\$(JPATH)/lib/"
+	;;
+	*)
+		RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
+	;;
+	esac
+;;
+
+OS*2)
+# Place marker only
+	TARGETLIB="\$(target_triplet)/librxtxSerial.la"
+	RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
+	JHOME=$JPATH/"lib"
+	CFLAGS=$CFLAGS" -D_NO_POSIX=1 -D_NO_XOPEN4=1"
+	CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
+
+;;
+
+AIX)
+	TARGETLIB="\$(target_triplet)/librxtxSerial.la"
+	RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
+	JHOME=$JPATH/"lib"
+	CFLAGS=$CFLAGS" -D_NO_POSIX=1 -D_NO_XOPEN4=1"
+	CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
+
+;;
+
+Compaq\'s\ Digital\ Unix | OSF1 )
+	LDFLAGS=$LDFLAGS" -lpthread"
+	TARGETLIB="\$(target_triplet)/librxtxSerial.la"
+	RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
+	JHOME=$JPATH/"lib"
+	CFLAGS=$CFLAGS" -D_NO_POSIX=1 -D_NO_XOPEN4=1"
+	CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
+
+;;
+
+NetWare*)
+# Place marker only
+	TARGETLIB="\$(target_triplet)/librxtxSerial.la"
+	RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
+	JHOME=$JPATH/"lib"
+	CFLAGS=$CFLAGS" -D_NO_POSIX=1 -D_NO_XOPEN4=1"
+	CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
+
+;;
+
+MPE*)
+	TARGETLIB="\$(target_triplet)/librxtxSerial.la"
+	RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
+	JHOME=$JPATH/"lib"
+	CFLAGS=$CFLAGS" -D_NO_POSIX=1 -D_NO_XOPEN4=1"
+	CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
+;;
+
+
+#os.name reported "QNX"
+#java.vendor reported "IBM Corporation"
+#java.version reported "1.3.0 subset"
+#
+#Originally nothing was reported. javac is called j9c and java is called
+#j9 with the
+#j9 vm. I created symbolic links temporarily to get by that. Currently
+#I'm puking when
+#it tries to jar things up since j9 doesn't ship with a jar tool. 
+#All right. Here is how things stand on porting 2.1 to QNX. (This is were
+#I stumble and fall) 
+#I decided to try it without any mods initially. It made through
+#./configure fine except for
+#finding the java include dir. Since we are using j9, the include dir is
+#under bin. I set 
+#JAVANATINC to point to it in Makefile and then ran make. J9 then puked
+#on the -O arg to javac,
+#so I removed it. Now it is puking on importing java.awt. What is the
+#best way to filter out/
+#isolate the gui pieces since I won't be using them on qnx?
+
+QNX)
+	TARGETLIB="\$(target_triplet)/librxtxSerial.la"
+	RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
+	JHOME=$JPATH/"lib"
+	CFLAGS=$CFLAGS" -D_NO_POSIX=1 -D_NO_XOPEN4=1"
+	CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
+;;
+
+*)
+	TARGETLIB="\$(target_triplet)/librxtxSerial.la"
+	RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
+	JHOME=$JPATH/"lib"
+	CFLAGS=$CFLAGS" -D_NO_POSIX=1 -D_NO_XOPEN4=1"
+	CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
+;;
+esac ]
+
+AC_OUTPUT(Makefile)
+
+
+
+################################  END ########################################
+
+
+
+# Toys.  Gota lovem.
+#echo $ECHO_N checking java.library.path   " "
+#JAVA_LIBRARY_PATH=`java conftest "java.library.path"`
+#echo $JAVA_LIBRARY_PATH
+#echo $ECHO_N checking java.class.version   " "
+#JAVA_CLASS_VERSION=`java conftest "java.class.version"`
+#echo $JAVA_CLASS_VERSION

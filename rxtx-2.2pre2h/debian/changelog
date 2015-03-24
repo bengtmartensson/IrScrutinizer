@@ -1,0 +1,47 @@
+Mon Mar 11 15:18:22 MST 2002
+
+Note:
+
+Debian packages are not maintained in the rxtx tree.  For the latest package,
+please go to:
+
+ftp://ftp.debian.org/debian/pool/contrib/r/rxtx/
+
+Maintainer: Mario Joussen <joussen@debian.org>
+
+------------------- Old ChangeLog ----------------------------------
+
+rxtx (1.3.8-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Christian Leutloff <leutloff@debian.org>  Thu, 18 Nov 1999 21:23:57 +0100
+
+rxtx (1.3.3-4) unstable; urgency=low
+
+  * control: depends on jdk1.1 (>= 1.1.7v2)
+
+ -- Christian Leutloff <leutloff@debian.org>  Sun,  4 Jul 1999 12:48:05 +0200
+
+rxtx (1.3.3-3) unstable; urgency=low
+
+  * fixed package layout
+
+ -- Christian Leutloff <leutloff@debian.org>  Sun,  4 Jul 1999 12:47:06 +0200
+
+rxtx (1.3.3-2) unstable; urgency=low
+
+  * improve generation of the needed links (could be improved further) and
+    package layout
+
+ -- Christian Leutloff <leutloff@debian.org>  Wed, 30 Jun 1999 10:25:58 +0200
+
+rxtx (1.3.3-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Christian Leutloff <leutloff@debian.org>  Mon, 28 Jun 1999 11:47:41 +0200
+
+Local variables:
+mode: debian-changelog
+End:
