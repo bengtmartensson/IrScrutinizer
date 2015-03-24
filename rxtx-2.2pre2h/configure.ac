@@ -510,44 +510,11 @@ Linux)
 	#check_kernel_headers
 	check_java_headers
 	CFLAGS=$CFLAGS" -D__need_timespec"
-	case $JAVA_VERSION in
 
-	1.1*)
-		CLASSPATH=".:\$(TOP):\$(TOP)/src:"` \
-			if [ -d $JPATH/share/kaffe/ ]; then
-				find $JPATH/share/kaffe/ -name [cK]lasses.[jz][ai][rp]
-			elif [ -d $JPATH/lib/ ]; then
-				find $JPATH/lib/ -name [cK]lasses.[jz][ai][rp]
-			fi`":"`
-			if [ -d $JPATH/share/kaffe/ ]; then
-				find $JPATH/share/kaffe/ -name RXTXcomm.jar
-			elif [ -d $JPATH/lib/ ]; then
-				find $JPATH/lib/ -name RXTXcomm.jar
-			fi`
-
-		if test x"$RXTX_PATH" = x;then
-			#  We are not using Kaffe
-			#fix_parameters $JPATH/lib/javax.comm.properties
-			check_prefix
-			RXTX_PATH="\$(prefix)/lib/"
-			JAVAH_FIX="if [ ! -d com ]; then if [ ! -f \$(JPATH)/lib/comm.jar ]; then echo \"Please install comm.jar from CommAPI in \$(JPATH)/java/lib/ 1>&2\"; else mkdir -p com/sun/comm;\$(JAR) -xf \$(JPATH)/lib/comm.jar;  fi; fi;";
-		else
-			# Kaffe
-			CLASSPATH=$CLASSPATH:`find $JHOME -name RXTXcomm.jar`
-			echo "Warning!  Kaffe's comm.jar does not support rxtx"
-			echo "See INSTALL for details"
-		fi;
-		if test x"$JHOME" = x;then
-			JHOME=$JPATH/"lib"
-		fi
-	;;
-	*)
-		#fix_parameters $JPATH/jre/lib/javax.comm.properties
-		CLASSPATH=".:\$(TOP):\$(TOP)/src:"`find $JPATH/ -name RXTXcomm.jar |head -n1`
-		JHOME=$JPATH"/jre/lib/ext"
-		RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
-	;;
-	esac
+	#fix_parameters $JPATH/jre/lib/javax.comm.properties
+	CLASSPATH=".:\$(TOP):\$(TOP)/src:"`find $JPATH/ -name RXTXcomm.jar |head -n1`
+	JHOME=$JPATH"/jre/lib/ext"
+	RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
 
 	# Cross Compilers
 		#echo ----------------------------
@@ -581,44 +548,10 @@ Linux)
 	CFLAGS=$CFLAGS" -D_NO_POSIX=1 -D_NO_XOPEN4=1"
 	TARGETLIB="\$(target_triplet)/librxtxSerial.la \
 			\$(target_triplet)/librxtxParallel.la"
-	case $JAVA_VERSION in
-	1.1*)
-		check_prefix
-		#fix_parameters $JPATH/lib/javax.comm.properties
-		CLASSPATH=".:\$(TOP):\$(TOP)/src:"` \
-			if [ -d $JPATH/share/kaffe/ ]; then
-				find $JPATH/share/kaffe/ -name [cK]lasses.[jz][ai][rp]
-			elif [ -d $JPATH/lib/ ]; then
-				find $JPATH/lib/ -name [cK]lasses.[jz][ai][rp]
-			fi`":"`
-			if [ -d $JPATH/share/kaffe/ ]; then
-				find $JPATH/share/kaffe/ -name RXTXcomm.jar
-			elif [ -d $JPATH/lib/ ]; then
-				find $JPATH/lib/ -name RXTXcomm.jar
-			fi`
-
-		if test x"$RXTX_PATH" = x;then
-			#  We are not using Kaffe
-			#fix_parameters $JPATH/lib/javax.comm.properties
-			check_prefix
-			RXTX_PATH="\$(prefix)/lib/"
-			JAVAH_FIX="if [ ! -d com ]; then if [ ! -f \$(JPATH)/lib/comm.jar ]; then echo \"Please install comm.jar from CommAPI in \$(JPATH)/java/lib/ 1>&2\"; else mkdir -p com/sun/comm;\$(JAR) -xf \$(JPATH)/lib/comm.jar;  fi; fi;";
-		else
-			# Kaffe
-			CLASSPATH=$CLASSPATH:`find $JHOME -name RXTXcomm.jar`
-			echo "Warning!  Kaffe's comm.jar does not support rxtx"
-			echo "See INSTALL for details"
-		fi;
-		RXTX_PATH="\$(prefix)/lib"
-		JHOME=$JPATH/"lib"
-	;;
-	*)
-		#fix_parameters $JPATH/jre/lib/javax.comm.properties
-		CLASSPATH=".:\$(TOP):\$(TOP)/src:"`find $JPATH/ -name RXTXcomm.jar |head -n1`
-		RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
-		JHOME=$JPATH/"jre/lib/ext"
-	;;
-	esac
+	#fix_parameters $JPATH/jre/lib/javax.comm.properties
+	CLASSPATH=".:\$(TOP):\$(TOP)/src:"`find $JPATH/ -name RXTXcomm.jar |head -n1`
+	RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
+	JHOME=$JPATH/"jre/lib/ext"
 ;;
 
 Irix*)
@@ -715,17 +648,8 @@ BeOS)
 ;;
 
 WIN32)
-	case $JAVA_VERSION in
-	1.1*)
-		CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
-		RXTX_PATH="\$(prefix)/lib/"
-		JHOME=$JPATH/"lib"
-	;;
-	*)
-		CLASSPATH=".:\$(TOP):\$(TOP)/src:`find $JPATH/ -name RXTXcomm.jar |head -n1`:$CLASSPATH"
-		JHOME=$JPATH"/jre/lib/ext"
-	;;
-	esac
+	CLASSPATH=".:\$(TOP):\$(TOP)/src:`find $JPATH/ -name RXTXcomm.jar |head -n1`:$CLASSPATH"
+	JHOME=$JPATH"/jre/lib/ext"
 	if test x$WIN32INCLUDE = x; then
 	echo "We need to know what directory the windows java include files"
 	echo "are located in.  Please enter the directory now."
@@ -793,14 +717,7 @@ Solaris*)
 	CFLAGS=$CFLAGS" -D_NO_POSIX=1 -D_NO_XOPEN4=1"
 	CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
 
-	case $JAVA_VERSION in
-	1.1*)
-		RXTX_PATH="\$(JPATH)/lib/"
-	;;
-	*)
-		RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
-	;;
-	esac
+	RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
 ;;
 
 OS*2)
