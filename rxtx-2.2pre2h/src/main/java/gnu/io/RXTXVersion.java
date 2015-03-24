@@ -76,7 +76,7 @@ public class RXTXVersion
 
 	static {
 		RXTXVersion.loadLibrary( "rxtxSerial" );
-		Version = "RXTX-2.2";
+		Version = "RXTX-2.2pre2";
 	}
 	/**
 	*  static method to return the current version of RXTX
