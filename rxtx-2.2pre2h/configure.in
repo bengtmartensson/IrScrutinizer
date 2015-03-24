@@ -55,7 +55,8 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #   All trademarks belong to their respective owners.
 ############################################################################
-AC_INIT(src/SerialImp.c)
+AC_INIT([Serial],[2.2pre1])
+AC_CONFIG_MACRO_DIR([m4])
 AM_CONFIG_HEADER(config.h)
 AC_CANONICAL_SYSTEM
 AC_MSG_WARN(Trying libtool.  If the following fails install libtool)
@@ -64,7 +65,7 @@ AC_PROG_CC
 AC_DISABLE_STATIC
 AM_PROG_LIBTOOL
 # end of SCO fixes
-AM_INIT_AUTOMAKE(Serial,2.2pre1)
+AM_INIT_AUTOMAKE
 AC_CHECK_HEADERS(fcntl.h)
 AC_CHECK_HEADERS(sys/fcntl.h)
 AC_CHECK_HEADERS(sys/file.h)

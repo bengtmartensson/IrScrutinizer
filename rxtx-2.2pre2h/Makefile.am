@@ -27,7 +27,7 @@
 #   any confusion about linking to RXTX.   We want to allow in part what
 #   section 5, paragraph 2 of the LGPL does not permit in the special
 #   case of linking over a controlled interface.  The intent is to add a
-#   Java Specification Request or standards body defined interface in the 
+#   Java Specification Request or standards body defined interface in the
 #   future as another exception but one is not currently available.
 #
 #   http://www.fsf.org/licenses/gpl-faq.html#LinkingOverControlledInterface
@@ -55,12 +55,13 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #   All trademarks belong to their respective owners.
 ############################################################################
+ACLOCAL_AMFLAGS = -I m4
 srcdir = @srcdir@
 abs_srcdir=$(TOP)/@srcdir@
 VPATH = @srcdir@
 
 AUTOMAKE_OPTIONS = foreign
-INCLUDES= -I$(TOP) -I$(DEST) -I. $(JAVAINCLUDE) $(JAVANATINC)
+AM_CPPFLAGS = -I$(TOP) -I$(DEST) -I. $(JAVAINCLUDE) $(JAVANATINC)
 ####################### vars for rxtx-1.4->1.5 transition
 JARTARGET=RXTXcomm.jar
 CLASSDIR=gnu.io
