@@ -61,44 +61,54 @@ abs_srcdir=$(TOP)/@srcdir@
 VPATH = @srcdir@
 
 AUTOMAKE_OPTIONS = foreign
-AM_CPPFLAGS = -I$(TOP) -I$(DEST) -I. $(JAVAINCLUDE) $(JAVANATINC)
+AM_CPPFLAGS = -I$(TOP) -I$(DEST) -I. $(JAVAINCLUDE) $(JAVANATINC) -I$(JAVAINCLUDEDIR)
 ####################### vars for rxtx-1.4->1.5 transition
-JARTARGET=RXTXcomm.jar
+JARTARGET=target/RXTXcomm.jar
 CLASSDIR=gnu.io
 CLASSTOP=gnu
 CLASSDEST=gnu/io
 ####################### tools
-LIBTOOLC=$(GLIBTOOL) --mode=compile $(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(VERBOSE_IOEXCEPTIONS) -c
+LIBTOOLC=$(GLIBTOOL) --mode=compile $(CC) \
+    $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $(VERBOSE_IOEXCEPTIONS) -c
 LIBTOOL_INST=$(GLIBTOOL) --mode=install $(INSTALL_PROGRAM)
 ####################### dirs
-SPATH = $(abs_srcdir)/src
+JAVA_SRCDIR = $(abs_srcdir)/src/main/java
+C_SRCDIR = $(abs_srcdir)/src
 DEST=$(target_triplet)
 ####################### rules
-CLASSES = $(patsubst $(SPATH)/gnu/io/%.java,$(TOP)/$(CLASSDEST)/%.class,$(wildcard $(SPATH)/gnu/io/*.java))
-javafiles = $(wildcard $(SPATH)/gnu/io/*.java)
-javahfiles = $(patsubst $(SPATH)/gnu/io/%.java,%,$(wildcard $(SPATH)/gnu/io/*.java))
+
+CLASSES = $(patsubst $(JAVA_SRCDIR)/gnu/io/%.java,$(TOP)/$(CLASSDEST)/%.class,$(wildcard $(JAVA_SRCDIR)/gnu/io/*.java))
+javafiles = $(wildcard $(JAVA_SRCDIR)/gnu/io/*.java)
+javahfiles = $(patsubst $(JAVA_SRCDIR)/gnu/io/%.java,%,$(wildcard $(JAVA_SRCDIR)/gnu/io/*.java))
 
 #######################
-CLEANFILES = $(TOP)/*.class $(TOP)/$(CLASSDEST)/*.class $(TOP)/$(JARTARGET)
+CLEANFILES = $(TOP)/*.class $(TOP)/$(CLASSDEST)/*.class $(TOP)/$(JARTARGET) .mvn_compiled .javah_done
 
 # for SCO builds everything else is currently using lib%.la below
 # I'm thinking about taking libtool out completely.  See also Mac OS X builds.
-$(target_triplet)/lib%.so: $(SPATH)/%Imp.@EXTENSION@ $(CLASSES)
-	$(COMPILE) $(SPATH)/$*Imp.@EXTENSION@ -o $(TOP)/$(DEST)/$*Imp.o
+$(target_triplet)/lib%.so: $(C_SRCDIR)/%Imp.@EXTENSION@ $(CLASSES)
+	$(COMPILE) $(C_SRCDIR)/$*Imp.@EXTENSION@ -o $(TOP)/$(DEST)/$*Imp.o
 	$(LINK) -G -o lib$*.so $(TOP)/$(DEST)/$*Imp.o
 
 #  compile src/SerialImp.c and similar files into libraries.
 #  LIBTOOL_FIX handles problems encountered on some OS's.  See configure.in
 #  If a LIBTOOL_FIX is added be sure to provide a trailing ';' in configure.in
+#
+debug:
+	@echo CLASSES: $(CLASSES)
+	@echo javafiles: $(javafiles)
+	@echo javahfiles: $(javahfiles)
 
-$(target_triplet)/librxtx%.@LIB_EXTENSION@: $(SPATH)/%Imp.c $(CLASSES) $(SPATH)/%Imp.h
+compile: $(CLASSES)
+
+$(target_triplet)/librxtx%.@LIB_EXTENSION@: $(C_SRCDIR)/%Imp.c $(CLASSES) $(C_SRCDIR)/%Imp.h
 	(								\
 	$(LIBTOOL_FIX)							\
 	cd $(DEST); 							\
-	$(LIBTOOLC) $(SPATH)/$*Imp.@EXTENSION@ -o			\
+	$(LIBTOOLC) $(C_SRCDIR)/$*Imp.@EXTENSION@ -o			\
 		$(TOP)/$(DEST)/$*Imp.@OBJECT_EXTENSION@;		\
 	if [ "$*" = "Serial" ]; then 					\
-		$(LIBTOOLC) $(SPATH)/fuserImp.@EXTENSION@ -o		\
+		$(LIBTOOLC) $(C_SRCDIR)/fuserImp.@EXTENSION@ -o		\
 			$(TOP)/$(DEST)/fuserImp.@OBJECT_EXTENSION@;	\
 		@LINK@ $(TOP)/$(DEST)/$*Imp.@OBJECT_EXTENSION@  	\
 			$(TOP)/$(DEST)/fuserImp.@OBJECT_EXTENSION@; 	\
@@ -107,17 +117,22 @@ $(target_triplet)/librxtx%.@LIB_EXTENSION@: $(SPATH)/%Imp.c $(CLASSES) $(SPATH)/
 	fi;								\
 	)
 
-#  compile src/RXTXPort.java and similar files into classes
-#  then create the .jar file
-$(CLASSES): $(javafiles) $(TOP)/Makefile
+.mvn_compiled:
+	mvn compile
+	touch $@
+
+.javah_done:
 	$(JAVAH_FIX)
-	$(JAVAC) $(javafiles)
 	$(JAVAH) `(for i in $(javahfiles);do \
-		if grep > /dev/null native.*\( $(SPATH)/gnu/io/$$i.java; then \
+		if grep > /dev/null native.*\( $(JAVA_SRCDIR)/gnu/io/$$i.java; then \
 			echo $(CLASSDIR).$$i; \
 		fi; \
 	done)`
-	$(JAR) cf $(JARTARGET) $(CLASSTOP)/*
+	touch $@
+
+
+#  Invoke mvn compile and create the javah headers
+$(CLASSES): $(javafiles) $(TOP)/Makefile .mvn_compiled .javah_done
 
 #  install librxtxSerial.so into the proper directory and copy $(JARTARGET) to its
 #  proper location
@@ -143,10 +158,10 @@ docs: $(CLASSES)
 ################  WIN32 CrossCompiling from here down #######################
 
 $(DEST)/rxtxSerial.dll: $(CLASSES) $(TOP)/Makefile
-	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(SPATH)/SerialImp.c -o $(DEST)/SerialImp.o
-	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(SPATH)/termios.c -o $(DEST)/termios.o
-	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(SPATH)/fixup.c -o $(DEST)/fixup.o
-	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(SPATH)/init.cc -o $(DEST)/init.o
+	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(C_SRCDIR)/SerialImp.c -o $(DEST)/SerialImp.o
+	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(C_SRCDIR)/termios.c -o $(DEST)/termios.o
+	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(C_SRCDIR)/fixup.c -o $(DEST)/fixup.o
+	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(C_SRCDIR)/init.cc -o $(DEST)/init.o
 	ld --base-file $(DEST)/Serial.base --dll -o $(DEST)/rxtxSerial.dll $(DEST)/termios.o $(DEST)/SerialImp.o $(DEST)/fixup.o $(DEST)/init.o -luser32 -lgdi32 -lcomdlg32 -lkernel32 -ladvapi32 -lmingw32 -lmoldname -lcrtdll -e _dll_entry@12 --base-file $(DEST)/Serial.base
 	 echo EXPORTS >$(DEST)/Serial.def;for i in `nm $(DEST)/rxtxSerial.dll | grep "T _Java"|cut -b 13-`;do echo -n $$i|sed s#@.*##;echo "="$$i;done >> $(DEST)/Serial.def
 	dlltool -b$(DEST) --as=as --dllname $(DEST)/rxtxSerial.dll --def $(DEST)/Serial.def --base-file $(DEST)/Serial.base --output-exp $(DEST)/Serial.exp
@@ -155,10 +170,10 @@ $(DEST)/rxtxSerial.dll: $(CLASSES) $(TOP)/Makefile
 	ld $(DEST)/Serial.exp -dll -o $(DEST)/rxtxSerial.dll $(DEST)/termios.o $(DEST)/SerialImp.o $(DEST)/fixup.o $(DEST)/init.o -luser32 -lgdi32 -lcomdlg32 -lkernel32 -ladvapi32 -lmingw32 -lmoldname -lcrtdll -e _dll_entry@12 --base-file $(DEST)/Serial.base
 
 $(DEST)/rxtxParallel.dll: $(CLASSES) $(TOP)/Makefile
-	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(SPATH)/ParallelImp.c -o $(DEST)/ParallelImp.o
-	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(SPATH)/termios.c -o $(DEST)/termios.o
-	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(SPATH)/fixup.c -o $(DEST)/fixup.o
-	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(SPATH)/init.cc -o $(DEST)/init.o
+	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(C_SRCDIR)/ParallelImp.c -o $(DEST)/ParallelImp.o
+	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(C_SRCDIR)/termios.c -o $(DEST)/termios.o
+	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(C_SRCDIR)/fixup.c -o $(DEST)/fixup.o
+	gcc -DWIN32 -D __int64="long long" -mno-fp-ret-in-387 -b$(target_alias) -I $(TOP) -I $(DEST) -I . $(WINDOWS_JAVA_INCLUDE) -I $(SPATH) -Wall -c $(C_SRCDIR)/init.cc -o $(DEST)/init.o
 	ld --base-file $(DEST)/Parallel.base --dll -o $(DEST)/rxtxParallel.dll $(DEST)/termios.o $(DEST)/ParallelImp.o $(DEST)/fixup.o $(DEST)/init.o -luser32 -lgdi32 -lcomdlg32 -lkernel32 -ladvapi32 -lmingw32 -lmoldname -lcrtdll -e _dll_entry@12 --base-file $(DEST)/Parallel.base
 	 echo EXPORTS >$(DEST)/Parallel.def;for i in `nm $(DEST)/rxtxParallel.dll | grep "T _Java"|cut -b 13-`;do echo -n $$i|sed s#@.*##;echo "="$$i;done >> $(DEST)/Parallel.def
 	dlltool -b$(DEST) --as=as --dllname $(DEST)/rxtxParallel.dll --def $(DEST)/Parallel.def --base-file $(DEST)/Parallel.base --output-exp $(DEST)/Parallel.exp

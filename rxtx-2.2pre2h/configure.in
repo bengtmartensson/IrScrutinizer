@@ -889,6 +889,9 @@ QNX)
 ;;
 esac ]
 
+# Add maven class output dir
+CLASSPATH="target/classes:$CLASSPATH"
+
 AC_OUTPUT(Makefile)
 
 
