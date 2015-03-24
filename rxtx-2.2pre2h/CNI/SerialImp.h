@@ -27,7 +27,7 @@
 |   any confusion about linking to RXTX.   We want to allow in part what
 |   section 5, paragraph 2 of the LGPL does not permit in the special
 |   case of linking over a controlled interface.  The intent is to add a
-|   Java Specification Request or standards body defined interface in the 
+|   Java Specification Request or standards body defined interface in the
 |   future as another exception but one is not currently available.
 |
 |   http://www.fsf.org/licenses/gpl-faq.html#LinkingOverControlledInterface
@@ -119,7 +119,7 @@ struct event_info_struct
 	int fd;
 	/* flags for events */
 	int eventflags[11];
-	
+
 	int initialised;
 	int ret, change;
 	unsigned int omflags;
@@ -188,7 +188,7 @@ struct event_info_struct
 /* really this only fully works for OpenServer */
 #	define LOCKDIR "/var/spool/uucp/"
 #	define LOCKFILEPREFIX "LK."
-/* 
+/*
 this needs work....
 
 Jonathan Schilling <jls@caldera.com> writes:
@@ -198,7 +198,7 @@ two kinds of SCO operating systems.
 
 The one that most people want gnu.io for, including the guy who
 asked the mailing list about SCO support a few days ago, is Open Server
-(a/k/a "SCO UNIX"), which is SVR3-based.  This uses old-style uucp locks, 
+(a/k/a "SCO UNIX"), which is SVR3-based.  This uses old-style uucp locks,
 of the form LCK..tty0a.  That's what I implemented in the RXTX port I did,
 and it works correctly.
 
@@ -366,7 +366,7 @@ struct timeval snow, enow, seloop, eeloop;
 #elif defined(FHS)
 #	define LOCK fhs_lock
 #	define UNLOCK fhs_unlock
-#else 
+#else
 #	define LOCK system_does_not_lock
 #	define UNLOCK system_does_not_unlock
 #endif /* UUCP */
@@ -474,4 +474,4 @@ int printj(wchar_t *fmt, ...);
 
 #define UNEXPECTED_LOCK_FILE "RXTX Error:  Unexpected lock file: %s\n Please report to the RXTX developers\n"
 #define LINUX_KERNEL_VERSION_ERROR "\n\n\nRXTX WARNING:  This library was compiled to run with OS release %s and you are currently running OS release %s.  In some cases this can be a problem.  Try recompiling RXTX if you notice strange behavior.  If you just compiled RXTX make sure /usr/include/linux is a symbolic link to the include files that came with the kernel source and not an older copy.\n\n\npress enter to continue\n"
-#define UUCP_ERROR "\n\n\nRXTX WARNING:  This library requires the user running applications to be in\ngroup uucp.  Please consult the INSTALL documentation.  More information is\navaiable under the topic 'How can I use Lock Files with rxtx?'\n" 
+#define UUCP_ERROR "\n\n\nRXTX WARNING:  This library requires the user running applications to be in\ngroup uucp.  Please consult the INSTALL documentation.  More information is\navaiable under the topic 'How can I use Lock Files with rxtx?'\n"

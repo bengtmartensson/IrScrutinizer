@@ -5427,7 +5427,7 @@ int uucp_lock( const char *filename, int pid )
 	{
 		sprintf( message,
 			"RXTX uucp_lock() Error: opening lock file: %s: %s\n",
-			lockfilename, strerror(errno) );		
+			lockfilename, strerror(errno) );
 		report_error( message );
 		return 1;
 	}
@@ -5435,7 +5435,7 @@ int uucp_lock( const char *filename, int pid )
 	{
 		sprintf( message,
 			"RXTX uucp_lock() Error: writing lock file: %s: %s\n",
-			lockfilename, strerror(errno) );		
+			lockfilename, strerror(errno) );
 		report_error( message );
 		close( fd );
 		return 1;
@@ -5906,7 +5906,7 @@ int is_device_locked( const char *port_filename )
 			report_warning( message );
 			return 1;
 		}
-		if ( ( read( fd, pid_buffer, 11 ) ) < 0 ) 
+		if ( ( read( fd, pid_buffer, 11 ) ) < 0 )
 		{
 			sprintf( message,
 					"RXTX is_device_locked() Error: reading lock file: %s: %s\n",

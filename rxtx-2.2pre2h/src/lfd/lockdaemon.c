@@ -27,7 +27,7 @@
 |   any confusion about linking to RXTX.   We want to allow in part what
 |   section 5, paragraph 2 of the LGPL does not permit in the special
 |   case of linking over a controlled interface.  The intent is to add a
-|   Java Specification Request or standards body defined interface in the 
+|   Java Specification Request or standards body defined interface in the
 |   future as another exception but one is not currently available.
 |
 |   http://www.fsf.org/licenses/gpl-faq.html#LinkingOverControlledInterface
@@ -91,7 +91,7 @@ int check_lock_status( const char * );
 int check_lock_pid( const char *, int  );
 
 #define UNEXPECTED_LOCK_FILE "RXTX Error:  Unexpected lock file: %s\n Please report to the RXTX developers\n"
-#define UUCP_ERROR "\n\n\nRXTX WARNING:  This library requires the user running applications to be in\ngroup uucp.  Please consult the INSTALL documentation.  More information is\navaiable under the topic 'How can I use Lock Files with rxtx?'\n" 
+#define UUCP_ERROR "\n\n\nRXTX WARNING:  This library requires the user running applications to be in\ngroup uucp.  Please consult the INSTALL documentation.  More information is\navaiable under the topic 'How can I use Lock Files with rxtx?'\n"
 
 extern int errno;
 
@@ -125,7 +125,7 @@ int fhs_lock( const char *filename, int pid )
 
 	j = strlen( filename );
 	p = ( char * ) filename + j;
-	/*  FIXME  need to handle subdirectories /dev/cua/... 
+	/*  FIXME  need to handle subdirectories /dev/cua/...
 	    SCO Unix use lowercase all the time
 			taj
 	*/
@@ -162,11 +162,11 @@ int fhs_lock( const char *filename, int pid )
 /*----------------------------------------------------------
  uucp_lock
 
-   accept:     char * filename.  Device to be locked 
+   accept:     char * filename.  Device to be locked
    perform:    Try to get a uucp_lock
    return:     int 0 on success
-   exceptions: none 
-   comments: 
+   exceptions: none
+   comments:
 		The File System Hierarchy Standard
 		http://www.pathname.com/fhs/
 
@@ -208,7 +208,7 @@ int uucp_lock( const char *filename, int pid )
 	int fd;
 	struct stat buf;
 
-	sprintf( message, "uucp_lock( %s );\n", filename ); 
+	sprintf( message, "uucp_lock( %s );\n", filename );
 	syslog( LOG_INFO, message );
 
 	if ( check_lock_status( filename ) )
@@ -270,7 +270,7 @@ int uucp_lock( const char *filename, int pid )
    perform:     Make sure everything is sane
    return:      0 on success
    exceptions:  none
-   comments:    
+   comments:
 ----------------------------------------------------------*/
 int check_lock_status( const char *filename )
 {
@@ -298,10 +298,10 @@ int check_lock_status( const char *filename )
 	if ( is_device_locked( filename ) )
 	{
 		/* syslog( LOG_INFO, "check_lock_status: device is locked by another application\n" ); */
-		return 1;	
+		return 1;
 	}
 	return 0;
-	
+
 }
 
 /*----------------------------------------------------------
@@ -336,7 +336,7 @@ int fhs_unlock( const char *filename, int openpid )
 		return 0;
 	}
 #endif
-	if ( stat( filename, &buf ) != 0 ) 
+	if ( stat( filename, &buf ) != 0 )
 	{
 		/* hmm the file is not there? */
 		syslog( LOG_INFO, "uucp_unlock() no such device\n" );
@@ -359,11 +359,11 @@ int fhs_unlock( const char *filename, int openpid )
 /*----------------------------------------------------------
  uucp_unlock
 
-   accept:     char *filename the device that is locked      
-   perform:    remove the uucp lockfile if it exists 
-   return:     none 
-   exceptions: none 
-   comments:   http://docs.freebsd.org/info/uucp/uucp.info.UUCP_Lock_Files.html 
+   accept:     char *filename the device that is locked
+   perform:    remove the uucp lockfile if it exists
+   return:     none
+   exceptions: none
+   comments:   http://docs.freebsd.org/info/uucp/uucp.info.UUCP_Lock_Files.html
 ----------------------------------------------------------*/
 void uucp_unlock( const char *filename, int openpid )
 {
@@ -374,7 +374,7 @@ void uucp_unlock( const char *filename, int openpid )
 	sprintf( message, "uucp_unlock( %s );\n", filename );
 	syslog( LOG_INFO, message );
 
-	if ( stat( filename, &buf ) != 0 ) 
+	if ( stat( filename, &buf ) != 0 )
 	{
 		/* hmm the file is not there? */
 		syslog( LOG_INFO, "uucp_unlock() no such device\n" );
@@ -385,14 +385,14 @@ void uucp_unlock( const char *filename, int openpid )
 	 	(int) major( buf.st_rdev ),
 		(int) minor( buf.st_rdev )
 	);
-	if ( stat( file, &buf ) != 0 ) 
+	if ( stat( file, &buf ) != 0 )
 	{
 		/* hmm the file is not there? */
 		syslog( LOG_INFO, "uucp_unlock no such lockfile\n" );
 		return;
 	}
 	if( !check_lock_pid( file, openpid ) )
-	{ 
+	{
 		sprintf( message, "uucp_unlock: unlinking %s\n", file );
 		syslog( LOG_INFO, message );
 		unlink(file);
@@ -407,11 +407,11 @@ void uucp_unlock( const char *filename, int openpid )
 /*----------------------------------------------------------
  check_lock_pid
 
-   accept:     the name of the lockfile 
+   accept:     the name of the lockfile
    perform:    make sure the lock file is ours.
    return:     0 on success
    exceptions: none
-   comments:   
+   comments:
 ----------------------------------------------------------*/
 int check_lock_pid( const char *file, int openpid )
 {
@@ -451,9 +451,9 @@ int check_lock_pid( const char *file, int openpid )
 
    accept:     none
    perform:    check if the user is root or in group uucp
-   return:     0 on success 
-   exceptions: none 
-   comments:   
+   return:     0 on success
+   exceptions: none
+   comments:
 		This checks if the effective user is in group uucp so we can
 		create lock files.  If not we give them a warning and bail.
 		If its root we just skip the test.
@@ -486,7 +486,7 @@ int check_group_uucp()
 	{
 		while( group_count >= 0 && buf.st_gid != list[ group_count ] )
 		{
-  			group_count--; 
+  			group_count--;
 		}
 		if( buf.st_gid == list[ group_count ] )
 			return 0;
@@ -562,7 +562,7 @@ int is_device_locked( const char *port_filename )
 		"/var/spool/lock", "/var/spool/locks", "/var/spool/uucp",
 		LOCKDIR, NULL
 	};
-	const char *lockprefixes[] = { "LCK..", "lk..", "LK.", NULL }; 
+	const char *lockprefixes[] = { "LCK..", "lk..", "LK.", NULL };
 	char *p, file[80], pid_buffer[20], message[80];
 	int i = 0, j, k, fd , pid;
 	struct stat buf;
@@ -639,7 +639,7 @@ int is_device_locked( const char *port_filename )
 		Lets see if there any stale lock files that need to be
 		removed.
 	*/
-		 
+
 #ifdef FHS
 	/*  FHS standard locks */
 	i = strlen( port_filename );
@@ -652,7 +652,7 @@ int is_device_locked( const char *port_filename )
 		p--;
 	}
 	sprintf( file, "%s/%s%s", LOCKDIR, LOCKFILEPREFIX, p );
-#else 
+#else
 	/*  UUCP standard locks */
 	sprintf( file, "%s/LK.%03d.%03d.%03d",
 		LOCKDIR,
@@ -707,7 +707,7 @@ int init( void )
 	if(  ( pid = fork() ) < 0 )
 	{
 		return(-1);
-	} 
+	}
 	else if ( pid != 0 )
 	{
 		exit( 0 );
@@ -727,7 +727,7 @@ int process_requests( )
 		int ret;
 
 		ret = read( 1, str, 80 );
-		
+
 		if( ret < 80 && ret > 1 )
 			str[ret] = '\0';
 		else
@@ -752,7 +752,7 @@ int process_requests( )
 			}
 			*q = '\0';
 			q++;
-			r=q; 
+			r=q;
 			while( *r != '\n' && *r != '\0' )
 				r++;
 			if( *r == '\n' )
@@ -781,7 +781,7 @@ int process_requests( )
 			}
 			*q = '\0';
 			q++;
-			r=q; 
+			r=q;
 			while( *r != '\n' && *r != '\0' )
 				r++;
 			if( *r == '\n' )

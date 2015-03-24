@@ -27,7 +27,7 @@
 #   any confusion about linking to RXTX.   We want to allow in part what
 #   section 5, paragraph 2 of the LGPL does not permit in the special
 #   case of linking over a controlled interface.  The intent is to add a
-#   Java Specification Request or standards body defined interface in the 
+#   Java Specification Request or standards body defined interface in the
 #   future as another exception but one is not currently available.
 #
 #   http://www.fsf.org/licenses/gpl-faq.html#LinkingOverControlledInterface
@@ -133,7 +133,7 @@ AC_ARG_ENABLE(PRINTER,
 	echo $enable_PRINTER,
 	enable_PRINTER="yes"
 )
-	if test x$enable_PRINTER = xyes; then  
+	if test x$enable_PRINTER = xyes; then
 		TARGETLIB="\$(target_triplet)/librxtxSerial.la \
 			\$(target_triplet)/librxtxParallel.la \
 			\$(target_triplet)/librxtxI2C.la \
@@ -145,7 +145,7 @@ AC_ARG_ENABLE(PRINTER,
 
 AC_ARG_ENABLE(lockfiles,
 	[  --disable-lockfiles     disable lock files (experimental) [default=no]],
-	if test x$lockfiles = xyes; then 
+	if test x$lockfiles = xyes; then
 		echo "Using lock files"
 	else
 		echo "Disabling lock files"
@@ -154,7 +154,7 @@ AC_ARG_ENABLE(lockfiles,
 )
 AC_ARG_ENABLE(liblock,
  	[  --enable-liblock[=x]      enable liblock [default=no]],
-	if test "x$liblock" != "xno"; then 
+	if test "x$liblock" != "xno"; then
 		echo "Using liblock"
 		CFLAGS=$CFLAGS" -DLIBLOCKDEV"
 		LDFLAGS=$LDFLAGS" -llockdev"
@@ -166,13 +166,13 @@ AC_ARG_ENABLE(liblock,
 
 AC_ARG_ENABLE(lockfile_server,
  	[  --enable-lockfile_server   Enable interaction with a lock file server [default=no]],
-	if test x$enable_lockfile_server = xyes; then 
+	if test x$enable_lockfile_server = xyes; then
 		CFLAGS=$CFLAGS" -DLFS"
 	fi
 )
 AC_ARG_ENABLE(DEBUG,
 	[  --enable-DEBUG          Print debugging info from SerialImp.c [default=no]],
-	if test x$enable_DEBUG = xyes; then 
+	if test x$enable_DEBUG = xyes; then
 		CFLAGS=$CFLAGS" -DDEBUG"
 	fi
 )
@@ -204,9 +204,9 @@ build_conftest()
 {
 cat > conftest.java << EOF
 /* this may be usefull for getting around java cobwebs during build */
-public class conftest 
+public class conftest
 {
-	public static void main(String[[]] args) 
+	public static void main(String[[]] args)
 	{
 		System.out.println(System.getProperty(args[[0]]));
 	}
@@ -236,7 +236,7 @@ run_conftest()
 build_conftest
 if test x$JAVA_HOME = x; then
 	JPATH=`run_conftest java.home| sed s#\/jre\\$##g`
-else	
+else
 	JPATH=$JAVA_HOME
 	echo $JAVA_HOME
 	AC_MSG_WARN(using JAVA_HOME environmental variable)
@@ -264,7 +264,7 @@ echo $OS_VERSION 1>&6
 
 check_prefix()
 {
-	if test $prefix != "/usr";then 
+	if test $prefix != "/usr";then
 		echo 1>&2
 		echo "WARNING:  configure was not run with option --prefix=/usr" 1>&2
 		echo "          Unless /usr/local/lib or the specified prefix is in"  1>&2
@@ -287,12 +287,12 @@ int main(int argc, char *argv[])
 #else
 	printf("0\n");
 #endif
-	
+
 	exit(0);
 }
 EOF
 	cc conftest.c -o conftest
-	if [ test `./conftest` -lt 2 ];then 
+	if [ test `./conftest` -lt 2 ];then
 		echo 1>&2
 		echo "       WARNING:  Older libc on linux detected.  Patching a local copy of jni_md.h" 1>&2
 		echo 1>&2
@@ -304,18 +304,18 @@ EOF
 +++ typedefs_md.h.patchtaj	Tue Jan 11 14:15:53 2000
 @@ -17,9 +17,6 @@
   */
- 
+
  /* sbb: Johan Vos, why isn't this #ifndef inside the solaris header guard? */
 -#ifndef BITSPERCHAR
 -#define BITSPERCHAR 8
 -#endif
- 
+
  #ifndef _SOLARIS_TYPES_MD_H_
  #define _SOLARIS_TYPES_MD_H_
 @@ -28,50 +25,19 @@
  #include <sys/stat.h>
  #include "bool.h"
- 
+
 -#if defined(__alpha__)
 -typedef unsigned long ptr_int;
 -#define PTR_IS_64 1
@@ -324,9 +324,9 @@ EOF
  typedef unsigned int ptr_int;
  #define PTR_IS_32 1
 -#endif
- 
+
  /* don't redefine typedef's on Solaris 2.6 or Later */
- 
+
 -#if !defined(_ILP32) && !defined(_LP64)
 -
 -#ifndef	_UINT64_T
@@ -342,7 +342,7 @@ EOF
  typedef unsigned int uint_t;
 -#endif
 -#endif
- 
+
 -#ifndef __BIT_TYPES_DEFINED__
 -#ifdef (__i386__)
 -/* that should get Linux, at least */
@@ -362,12 +362,12 @@ EOF
 -#endif /* i386 */
 +typedef int int_t;
  #endif /* __BIT_TYPES_DEFINED__ */
- 
+
  #endif	/* !defined(_ILP32) && !defined(_LP64) */
 @@ -110,27 +76,15 @@
  #endif
- 
- 
+
+
 -/* On Intel these conversions have to be method calls and not typecasts.
 -   See the win32 typedefs_md.h file */
 -#if ((defined(i386) || defined (__i386)) && defined(__solaris__)) || defined(__powerpc__)
@@ -383,20 +383,20 @@ EOF
  #define double2l(f)	(f)
  #define float2ll(f)	((int64_t) (f))
  #define double2ll(f)	((int64_t) (f))
- 
+
 -#endif /* i386 */
 -
- 
+
  #define ll2float(a)	((float) (a))
  #define ll2double(a)	((double) (a))
 +#define double2ll(f)    ((int64_t) (f))
- 
+
  /* comparison operators */
  #define ll_ltz(ll)	((ll)<0)
 @@ -148,13 +102,7 @@
- 
+
  extern void ll2str(int64_t a, char *s, char *limit);
- 
+
 -#if defined(ppc) || defined(__ppc__) || defined(__alpha__) || defined(__sparc__)
 -#ifndef HAVE_ALIGNED_DOUBLES
 +#if defined(ppc) || defined(__ppc__) || defined(__alpha__)
@@ -429,7 +429,7 @@ int main(int argc, char *argv[])
 }
 EOF
 	cc conftest.c -o conftest
-	if [ test `uname -r` != `./conftest` ];then 
+	if [ test `uname -r` != `./conftest` ];then
 		echo 1>&2
 		echo "       WARNING:  Kernel include files do not match the current kernel" 1>&2
 		echo 1>&2
@@ -497,13 +497,13 @@ elif [ test -d $JPATH/jre/lib/ext ]
 	then fix_comm_jar $JPATH/jre/lib/ext/comm.jar
 elif [ test -d $JPATH/lib/ext ]
 	then fix_comm_jar $JPATH/lib/ext/comm.jar
-elif [ test -d $JPATH/lib ] 
+elif [ test -d $JPATH/lib ]
 	then fix_comm_jar $JPATH/lib/comm.jar
 fi
 
 #  http://www.tolstoy.com/samizdat/sysprops.html
 
-[ case $OS_NAME in 
+[ case $OS_NAME in
 Linux)
 	LDFLAGS=$LDFLAGS" -lpthread"
 	#check_kernel_headers
@@ -511,7 +511,7 @@ Linux)
 	CFLAGS=$CFLAGS" -D__need_timespec"
 	case $JAVA_VERSION in
 
-	1.1*) 
+	1.1*)
 		CLASSPATH=".:\$(TOP):\$(TOP)/src:"` \
 			if [ -d $JPATH/share/kaffe/ ]; then
 				find $JPATH/share/kaffe/ -name [cK]lasses.[jz][ai][rp]
@@ -532,7 +532,7 @@ Linux)
 			JAVAH_FIX="if [ ! -d com ]; then if [ ! -f \$(JPATH)/lib/comm.jar ]; then echo \"Please install comm.jar from CommAPI in \$(JPATH)/java/lib/ 1>&2\"; else mkdir -p com/sun/comm;\$(JAR) -xf \$(JPATH)/lib/comm.jar;  fi; fi;";
 		else
 			# Kaffe
-			CLASSPATH=$CLASSPATH:`find $JHOME -name RXTXcomm.jar`	
+			CLASSPATH=$CLASSPATH:`find $JHOME -name RXTXcomm.jar`
 			echo "Warning!  Kaffe's comm.jar does not support rxtx"
 			echo "See INSTALL for details"
 		fi;
@@ -540,19 +540,19 @@ Linux)
 			JHOME=$JPATH/"lib"
 		fi
 	;;
-	*) 
+	*)
 		#fix_parameters $JPATH/jre/lib/javax.comm.properties
 		CLASSPATH=".:\$(TOP):\$(TOP)/src:"`find $JPATH/ -name RXTXcomm.jar |head -n1`
 		JHOME=$JPATH"/jre/lib/ext"
 		RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
 	;;
-	esac 
+	esac
 
 	# Cross Compilers
 		#echo ----------------------------
 		#echo $target_os
 		#echo ----------------------------
-	case $target_os in 
+	case $target_os in
 	linux*)
 	;;
 	beos*)
@@ -581,7 +581,7 @@ Linux)
 	TARGETLIB="\$(target_triplet)/librxtxSerial.la \
 			\$(target_triplet)/librxtxParallel.la"
 	case $JAVA_VERSION in
-	1.1*) 
+	1.1*)
 		check_prefix
 		#fix_parameters $JPATH/lib/javax.comm.properties
 		CLASSPATH=".:\$(TOP):\$(TOP)/src:"` \
@@ -604,14 +604,14 @@ Linux)
 			JAVAH_FIX="if [ ! -d com ]; then if [ ! -f \$(JPATH)/lib/comm.jar ]; then echo \"Please install comm.jar from CommAPI in \$(JPATH)/java/lib/ 1>&2\"; else mkdir -p com/sun/comm;\$(JAR) -xf \$(JPATH)/lib/comm.jar;  fi; fi;";
 		else
 			# Kaffe
-			CLASSPATH=$CLASSPATH:`find $JHOME -name RXTXcomm.jar`	
+			CLASSPATH=$CLASSPATH:`find $JHOME -name RXTXcomm.jar`
 			echo "Warning!  Kaffe's comm.jar does not support rxtx"
 			echo "See INSTALL for details"
 		fi;
 		RXTX_PATH="\$(prefix)/lib"
 		JHOME=$JPATH/"lib"
 	;;
-	*) 
+	*)
 		#fix_parameters $JPATH/jre/lib/javax.comm.properties
 		CLASSPATH=".:\$(TOP):\$(TOP)/src:"`find $JPATH/ -name RXTXcomm.jar |head -n1`
 		RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
@@ -642,7 +642,7 @@ UnixWare|OpenUNIX)
 		\$(target_triplet)/librxtxParallel.so"
 	COMPILE="\$(CC) \$(INCLUDES) \$(CPPFLAGS) \$(CFLAGS) \$(VERBOSE_IOEXCEPTIONS) -c "
 	LINK="\$(CC) \$(CFLAGS) \$(LDFLAGS)"
-	echo "In UnixWare, CLASSPATH is $CLASSPATH"     
+	echo "In UnixWare, CLASSPATH is $CLASSPATH"
 ;;
 
 HP-UX)
@@ -651,14 +651,14 @@ HP-UX)
 	RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
 	TARGETLIB="\$(target_triplet)/librxtxSerial.la"
 	case $JAVA_VERSION in
-		HP-UX\ Java\ C.01.2*|HP-UX\ Java\ C.01.3*) 
+		HP-UX\ Java\ C.01.2*|HP-UX\ Java\ C.01.3*)
 			#fix_parameters $JPATH/jre/lib/javax.comm.properties
 			JHOME=$JPATH"/jre/lib/ext"
 			CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/jre/lib/ext/RXTXcomm.jar:$CLASSPATH"
 			RXTX_PATH="\$(JPATH)/jre/lib/\$(OS_ARCH)"
 			echo WARNING $JAVA_VERSION is untested please email this message to taj@www.linux.org.uk and let me know if it works.
 		;;
-		HP-UX\ Java\ C.01.1*) 
+		HP-UX\ Java\ C.01.1*)
 			#fix_parameters $JPATH/lib/javax.comm.properties
 			JHOME=$JPATH/"lib"
 			CLASSPATH=".:\$(TOP):\$(TOP)/src:\$(JPATH)/lib/classes.zip:\$(JPATH)/lib/RXTXcomm.jar:$CLASSPATH"
@@ -701,7 +701,7 @@ BeOS)
 	TARGETLIB="\$(target_triplet)/librxtxSerial.la"
 	EXTENSION="cpp"
 	LDFLAGS=$LDFLAGS" -ldevice"
-#  sigh, from ltconfig 
+#  sigh, from ltconfig
 #  beos*)
 #     if $LD --help 2>&1 | egrep ': supported targets:.* elf' > /dev/null; then
 #       allow_undefined_flag=unsupported
@@ -737,7 +737,7 @@ WIN32)
 	WINDOWS_JAVA_INCLUDE="-I$WIN32INCLUDE -I$WIN32INCLUDE/win32"
 	fi
 	TARGETLIB="\$(target_triplet)/rxtxSerial.dll \$(target_triplet)/rxtxParallel.dll"
-	echo  "$WINDOWS_JAVA_INCLUDE" 
+	echo  "$WINDOWS_JAVA_INCLUDE"
 ;;
 
 Mac\ OS\ X)
@@ -858,13 +858,13 @@ MPE*)
 #j9 with the
 #j9 vm. I created symbolic links temporarily to get by that. Currently
 #I'm puking when
-#it tries to jar things up since j9 doesn't ship with a jar tool. 
+#it tries to jar things up since j9 doesn't ship with a jar tool.
 #All right. Here is how things stand on porting 2.1 to QNX. (This is were
-#I stumble and fall) 
+#I stumble and fall)
 #I decided to try it without any mods initially. It made through
 #./configure fine except for
 #finding the java include dir. Since we are using j9, the include dir is
-#under bin. I set 
+#under bin. I set
 #JAVANATINC to point to it in Makefile and then ran make. J9 then puked
 #on the -O arg to javac,
 #so I removed it. Now it is puking on importing java.awt. What is the

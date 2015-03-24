@@ -12,7 +12,7 @@ JNIEXPORT jstring JNICALL Java_gnu_io_CommPortIdentifier_native_1psmisc_1report_
 #else
 /* loosly based on fuser.c by Werner Almesberger. */
 
-/* Copyright 1993-1998 Werner Almesberger. See file COPYING for details. 
+/* Copyright 1993-1998 Werner Almesberger. See file COPYING for details.
 psmisc (fuser, killall and pstree) program code, documentation and
 auxiliary programs are
 Copyright 1993-1998 Werner Almesberger.
@@ -119,7 +119,7 @@ static void add_file(const char *path,unsigned long device,unsigned long inode, 
 		found_item = 1;
 	    }
 	    this->u.proc.ref_set |= ref;
-	    if ((file->flags & (FLAG_UID | FLAG_VERB)) && this->u.proc.uid == UID_UNKNOWN && lstat(path,&st) >= 0) 
+	    if ((file->flags & (FLAG_UID | FLAG_VERB)) && this->u.proc.uid == UID_UNKNOWN && lstat(path,&st) >= 0)
 		this->u.proc.uid = st.st_uid;
 	}
     }
@@ -187,15 +187,15 @@ extern void show_user(const char tstring[],char *rs)
 
     parse_args(tstring);
     scan_fd();
-    if (seteuid(getuid()) < 0) { 
+    if (seteuid(getuid()) < 0) {
 	sprintf(rs, "%s", "Unknown Linux Application");
-	return; 
+	return;
     }
     self = getpid();
     if (!files->name || !(files->items || all))
     {
 	 sprintf(rs, "%s", "Unknown Linux Application");
-	 return; 
+	 return;
     }
     scan = files->name;
     strcat(returnstring," ");
@@ -227,7 +227,7 @@ extern void show_user(const char tstring[],char *rs)
     {
 	 for (scan = name; *scan; scan++)
 	 {
-	      if (*scan == '\\') 
+	      if (*scan == '\\')
 	      {
 		  sprintf(temp,"\\\\");
 		  strcat(returnstring,temp);
@@ -238,7 +238,7 @@ extern void show_user(const char tstring[],char *rs)
 		  returnstring[keeper]= *scan;
 		  returnstring[keeper+1]= '\0';
 	      }
-	      else { 
+	      else {
 			  sprintf(temp,"\\%03zo", (size_t) scan);
 		  strcat(returnstring,temp);
 	      }

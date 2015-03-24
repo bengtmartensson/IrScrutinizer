@@ -27,7 +27,7 @@
 |   any confusion about linking to RXTX.   We want to allow in part what
 |   section 5, paragraph 2 of the LGPL does not permit in the special
 |   case of linking over a controlled interface.  The intent is to add a
-|   Java Specification Request or standards body defined interface in the 
+|   Java Specification Request or standards body defined interface in the
 |   future as another exception but one is not currently available.
 |
 |   http://www.fsf.org/licenses/gpl-faq.html#LinkingOverControlledInterface
@@ -57,7 +57,7 @@
 --------------------------------------------------------------------------*/
 This is the INSTALL file for RXTX.  Thu Nov 27 18:32:26 CET 2008
 
-If, while following the instructions, you find this file unclear or incorrect 
+If, while following the instructions, you find this file unclear or incorrect
 please make a note and email the details to taj@www.linux.org.uk.
 
 A note about rxtx 2.1 and later:
@@ -73,11 +73,11 @@ If you would like to use javax.comm, use rxtx 1.4 with Sun's CommAPI.
 
 A note on Mac OS X:
 
-	Go to the README.OSX file for install instructions. 
+	Go to the README.OSX file for install instructions.
 
 1.  INSTALL INSTRUCTIONS IN OTHER LANGUAGES
 
-	A. Japanese 
+	A. Japanese
 
 2.  BUILDING COMMAPI SUPPORT
 
@@ -93,13 +93,13 @@ A note on Mac OS X:
 
 	A.  java.lang.UnsatisfiedLinkError: nSetOwner while loading driver
 	    gnu.io.RXTXCommDriver
-	B.  Exception in thread "main" java.lang.UnsatisfiedLinkError: 
+	B.  Exception in thread "main" java.lang.UnsatisfiedLinkError:
 	    no rxtxSerial in java.library.path
 	C.  I Can Not Open the Port.
 	D.  java.lang.NoClassDefFoundError: gnu/io/CommPort
 	E.  The Compiler Cannot Find Java Include Files
-	F.  Configure says 'unterminated sed command' and stops 
-	G.  Java Can Not Find libstdc++-libc6.0-1.so.2 
+	F.  Configure says 'unterminated sed command' and stops
+	G.  Java Can Not Find libstdc++-libc6.0-1.so.2
 	H.  BlackBox Can Not Handle all the ports!
 	I.  Illegal use of nonvirtal function call!
 	J.  My libc5 Linux system is generating SIGSEGV
@@ -107,8 +107,8 @@ A note on Mac OS X:
 	L.  Problems with RMISecurityManager()
 	M.  Which Wires Should be Connected?
 	N.  Which Device Should be Used?
-	O.  It Did Not Work! 
-	P.  Which jdk should be used? 
+	O.  It Did Not Work!
+	P.  Which jdk should be used?
 	Q.  How does rxtx detect ports?  Can I override it?
 	R.  How can I use Lock Files with rxtx?
 	S.  How can I tell which version of rxtx is installed?
@@ -130,18 +130,18 @@ A.  Japanese
 
 	http://www.geocities.co.jp/Technopolis/4789/settei.htm#id1
 	Thanks to Masayuki "Tencho" Yamashita <tencho@venus.kanazawa-it.ac.jp>
-	home page http://www.geocities.co.jp/Technopolis/4789/ 
+	home page http://www.geocities.co.jp/Technopolis/4789/
 
-	A copy of these install instructions is provided in 
+	A copy of these install instructions is provided in
 	install-japanese.html
-	
-	We will gladly include instructions in any language provided.  Tencho 
+
+	We will gladly include instructions in any language provided.  Tencho
 	was the first to contribute instructions in another language.
 
 2.  BUILDING COMMAPI SUPPORT
 
-	The following is concerned with building and installing commapi 
-	support with Sun's CommAPI package.  A full stand alone version of 
+	The following is concerned with building and installing commapi
+	support with Sun's CommAPI package.  A full stand alone version of
 	rxtx is in the CVS archive for interested developers.
 
 	A.  Quick Install
@@ -153,7 +153,7 @@ A.  Japanese
 		libtool-1.5.18
 		gnu make-3.79.1         On some systems like FreeBSD this is
 					called gmake
-		jdk 1.3 or newer	
+		jdk 1.3 or newer
 
 	With the packages installed, proceed to build and install rxtx.
 
@@ -166,7 +166,7 @@ A.  Japanese
 	One catch that has showed up... you cannot have spaces in the path.
 	for instance:  /home/jarvi/test build/rxtx/... will cause problems.
                                    ----^
-	If that does not work or you do not want a script messing with the 
+	If that does not work or you do not want a script messing with the
 	system, read on..
 
 	B.  Uninstalling Sun's comm.jar
@@ -176,7 +176,7 @@ A.  Japanese
 		while trying to build rxtx 2.1.
 
 		http://java.sun.com/products/javacomm/index.html
-		
+
 	C.  Installing javax.comm.properties.
 
 		javax.comm.properties is not currently required by rxtx-2.1
@@ -204,7 +204,7 @@ A.  Japanese
 				JAVA_HOME set to grab some java system
 				properties.
 		make    	to build RXTXcomm.jar and the libraries
-		make install 	to place the jar and libraries in the correct 
+		make install 	to place the jar and libraries in the correct
 				location
 
 		You may select the JDK you wish to build with using $JAVA_HOME
@@ -217,28 +217,28 @@ A.  Japanese
 		Lets assume the top java directory is /usr/local/java
 
 		jdk-1.2 the files go in
-		
+
 			/usr/local/java/jre/lib/ext/RXTXcomm.jar
 			/usr/local/java/jre/lib/$(ARCH)/librxtxSerial.so.
 			/usr/local/java/jre/lib/$(ARCH)/librxtxParallel.so.
 			/usr/local/java/jre/lib/$(ARCH)/lib/...
 
-		jdk-1.1.* the files go in 
+		jdk-1.1.* the files go in
 
 			/usr/local/java/lib/RXTXcomm.jar
 			/usr/lib/librxtxSerial.so.
 			/usr/lib/librxtxParallel.so.
 			/usr/lib/...
 
-			The librxtxSerial.so librxtxParallel.so are placed in 
-			/usr/lib so people don't have to change with their 
+			The librxtxSerial.so librxtxParallel.so are placed in
+			/usr/lib so people don't have to change with their
 			LD_LIBRARY_PATH.
 
 	G.  Compiling for Win32 support
 
-		Get the Sun CommAPI if you want a plug-in solution.  The code 
+		Get the Sun CommAPI if you want a plug-in solution.  The code
 		is provided for people that may have demanding needs and coding
-		ability. 
+		ability.
 
 		There is only serial port code at this time.
 
@@ -253,9 +253,9 @@ A.  Japanese
 		Install a jdk    http://java.sun.com/j2se
 		Install mingw32  http://www.mingw.org
 		Make sure the ming32\bin and jdk\bin directories are in your
-		path. Run a DOS command prompt (not MSYS!) in the rxtx top 
+		path. Run a DOS command prompt (not MSYS!) in the rxtx top
 		directory to the following:
-		
+
 		mkdir build-mingw
 		copy Makefile.mingw32 build-mingw\Makefile
 		cd build-mingw
@@ -263,14 +263,14 @@ A.  Japanese
 		execute the following:
 			mingw32-make SHELL=cmd
 			mingw32-make SHELL=cmd install
-		
+
 		-------------- MS Visual Studio in Windows -------------------
 
 		Install a jdk    http://java.sun.com/j2se
 		Install Visual Studio (Express edition will do)
 		Open a Visual Studio command prompt (with env.vars set)
 		In the rxtx top directory to the following:
-		
+
 		mkdir build-msvc
 		copy Makefile.msvc build-msvc\Makefile
 		cd build-msvc
@@ -278,7 +278,7 @@ A.  Japanese
 		execute the following:
 			nmake
 			nmake install
-		
+
 		----------------- lcc tools in DOS ---------------------------
 
 		Install a jdk    http://java.sun.com/j2se
@@ -320,10 +320,10 @@ A.  Japanese
 		prebuilt Binaries:
 		http://www.devolution.com/~slouken/SDL/Xmingw32/mingw32-linux-x86-glibc-2.1.tar.gz
 
-		I built the dll with jdk-1.2.2 for linux using jdk-1.2.2 
+		I built the dll with jdk-1.2.2 for linux using jdk-1.2.2
 		include files from the win32 JDK.
 
-		Make sure that ming32 bin dir is the first in your path (at 
+		Make sure that ming32 bin dir is the first in your path (at
 		least before /usr/bin/gcc)
 
 			$ export PATH=" \
@@ -358,7 +358,7 @@ A.  Japanese
 
 			rxtx-*/build/...
 
-		If you're looking at rxtx as an example of cross-compiling you 
+		If you're looking at rxtx as an example of cross-compiling you
 		may be interested in looking at the examples provided at:
 
 			ftp.xraylith.wisc.edu
@@ -375,7 +375,7 @@ A.  I get java.lang.UnsatisfiedLinkError: nSetOwner while loading driver
 
 	See Also: 2-B.  Installing Sun's comm.jar (IE its not needed at all)
 
-B.  Exception in thread "main" java.lang.UnsatisfiedLinkError: no rxtxSerial in 
+B.  Exception in thread "main" java.lang.UnsatisfiedLinkError: no rxtxSerial in
     java.library.path
 
 	librxtxSerial.so is located in the wrong directory.  Here is an example
@@ -412,7 +412,7 @@ B.  Exception in thread "main" java.lang.UnsatisfiedLinkError: no rxtxSerial in
 
 C.  I Can Not Open the Port.
 
-	If you're not able to open the port (read the errors carefully) then you 
+	If you're not able to open the port (read the errors carefully) then you
 	may not have permission to use the device.  Redhat Linux ships with the
 	following permissions:
 
@@ -420,9 +420,9 @@ C.  I Can Not Open the Port.
 
 	Users need to be able to read and write with serial communication...
 
-	chmod 666 /dev/ttyS? 
+	chmod 666 /dev/ttyS?
 
-	should fix the problem.  Be sure to check the file CommAPI for common 
+	should fix the problem.  Be sure to check the file CommAPI for common
 	mistakes.
 
 	Make sure that the user can create lock files see R.
@@ -448,16 +448,16 @@ E.  The Compiler Cannot Find Java Include Files
 	also check the classpath
 	CLASSPATH = ...
 
-F. Configure says 'unterminated sed command' and stops 
+F. Configure says 'unterminated sed command' and stops
 
-	Unterminated sed command errors usually result from `find` producing 
-	unexpected results.   If you are unsure remove all comm.jar and 
-	configure to place in in the correct place. 
+	Unterminated sed command errors usually result from `find` producing
+	unexpected results.   If you are unsure remove all comm.jar and
+	configure to place in in the correct place.
 
-G.  Java Can Not Find libstdc++-libc6.0-1.so.2 
+G.  Java Can Not Find libstdc++-libc6.0-1.so.2
 
 	jdk-1.2 on redhat systems may note that Java complains about not being
-	able to find libstdc++-libc6.0-1.so.2.  A symbolic link can be used to 
+	able to find libstdc++-libc6.0-1.so.2.  A symbolic link can be used to
 	get around this feature.
 
 	ln -s /usr/lib/libstdc++ /usr/lib/libstdc++-libc6.0-1.so.2
@@ -466,21 +466,21 @@ G.  Java Can Not Find libstdc++-libc6.0-1.so.2
 
 H.  BlackBox Can Not Handle all the ports!
 
-	BlackBox has a hard coded limit in BlackBox.java that prevents it from 
-	running if you don't specify a port.  We are considering alternative 
-	ways of handling the large number of port names in Unix.  The line in 
+	BlackBox has a hard coded limit in BlackBox.java that prevents it from
+	running if you don't specify a port.  We are considering alternative
+	ways of handling the large number of port names in Unix.  The line in
 	question
 
 	is:
 
 		portDisp = new SerialPortDisplay[50];
-		
+
 	just change 50 to say 256.
 
 I.  Illegal use of nonvirtal function call!
 
-	Exception in thread "main" java.lang.VerifyError: (class: 
-	gnu/io/RXTXPort$SerialOutputStream, method: flush signature: ()V) 
+	Exception in thread "main" java.lang.VerifyError: (class:
+	gnu/io/RXTXPort$SerialOutputStream, method: flush signature: ()V)
 	Illegal use of nonvirtual function call
 		at gnu.io.RXTXCommDriver.getCommPort(Compiled Code)
 		at gnu.io.CommPortIdentifier.open(Compiled Code)
@@ -497,14 +497,14 @@ I.  Illegal use of nonvirtal function call!
 
 	Louis"
 
-	In other words start with a fresh build directory, rebuild, and 
+	In other words start with a fresh build directory, rebuild, and
 	reinstall to avoid the problem.
 
 J.  My libc5 Linux system is generating SIGSEGV
 
-	Older Linux Systems (libc5) should upgrade to a glibc system with 
-	libpthread-0.7 or newer.  We have run into many problems with older 
-	libraries.  SIGSEGV was the most common symptom.  Reported by  Peter 
+	Older Linux Systems (libc5) should upgrade to a glibc system with
+	libpthread-0.7 or newer.  We have run into many problems with older
+	libraries.  SIGSEGV was the most common symptom.  Reported by  Peter
 	Bennett <bencom@bencom.co.nz>
 
 K.  AM_PROG_LIBTOOL not found in library
@@ -513,12 +513,12 @@ K.  AM_PROG_LIBTOOL not found in library
 	aclocal:configure.in: 23: macro 'AM_PROG_LIBTOOL' not found in library
 	make:***[aclocal.m4]Error 1
 
-	If you're positive things are setup right you may try the autogen.sh 
+	If you're positive things are setup right you may try the autogen.sh
 	script to try regenerating the scripts with your tools.
 
 L.  Problems with RMISecurityManager()
 
-	Please see the file RMISecurityManager.html 
+	Please see the file RMISecurityManager.html
 
 M.  Which Wires Should be Connected?
 
@@ -538,8 +538,8 @@ N.  Which Device Should be Used?
 	HP-UX uses tty0p? tty1p?
 	BeOS uses /dev/ports/serial?
 	Win32 uses COM?
-  
-O.  It Did Not Work! 
+
+O.  It Did Not Work!
 
 	There are sure to be bugs.  The goal is to make the install as painless
 	as possible.  Send back comments if something could be easier.
@@ -565,11 +565,11 @@ make --version
 		autoconf-2.53
 		automake-1.6.3
 		libtool-1.4.2
-		gnu make-3.79.1  
+		gnu make-3.79.1
 
 	mail any bugs to taj@www.linux.org.uk.
 
-P.  Which jdk should be used? 
+P.  Which jdk should be used?
 
 	Ideally any jdk would be fine.  Here is a list of jdk's tried on
 	RedHat 6.0/kernel 2.2.17pre13 with various versions of glibc.
@@ -587,7 +587,7 @@ glibc-2.1.2-17  | OK   | *1   | OK   | OK   | OK   | OK   |
 glibc-2.1.3-15  | OK   | *1   | OK   | OK   | OK   | OK   |
                 -------------------------------------------
 
-1)  BlackBox (a demo application shipped with CommAPI locks after multiple 
+1)  BlackBox (a demo application shipped with CommAPI locks after multiple
     open()/close()
 
 2) java wont start "Unable to load /usr/local/java/jre/bin/libhpi.so: symbol
@@ -600,7 +600,7 @@ version GLIBC_2.1 not defined in file libpthread.so.0 with link time reference"
 
 Conclusion?  Avoid Sun's native threads unless you can figure out whats going
 wrong.
- 
+
 Q.  How does rxtx detect ports?  Can I override it?
 
 rxtx tries to detect ports on by scanning /dev for files matching any
@@ -647,7 +647,7 @@ Lock files are used to prevent more than one program accessing a port at a
 time.  Lock files require a bit of sysadmin to work properly..
 
 Rxtx has support for lock files on Linux only.  It may work on other
-platforms but read the source before blindly trying it. 
+platforms but read the source before blindly trying it.
 
 Before you use lock files you need to do one of two things:
 
@@ -655,7 +655,7 @@ Before you use lock files you need to do one of two things:
 	2.  add the specific user that needs to use rxtx to the group uucp.
 	    (preferred)
 
-To add a user to the uucp group edit /etc/group as root and change the 
+To add a user to the uucp group edit /etc/group as root and change the
 following:
 	uucp::14:uucp
 to something like:
@@ -672,7 +672,7 @@ have /dev.
 	Still cant get things to run under a root account?
 
 	Vadim Tkachenko writes:
-	
+
 	"Maybe you remember - couple of months back I've run into inability to
 	run the JDK 1.3+ from under root account.
 
@@ -694,8 +694,8 @@ S.  How can I tell which version of rxtx is installed?
 Version information is not documented in Sun's CommAPI so this is probably
 unique to RXTX.
 
-As of rxtx-1.5-4 and rxtx-1.4-6 a class has been added to allow developers to 
-check which version of rxtx is installed.  The class is RXTXVersion.  
+As of rxtx-1.5-4 and rxtx-1.4-6 a class has been added to allow developers to
+check which version of rxtx is installed.  The class is RXTXVersion.
 
 The static method: System.out.println(RXTXVersion.getVersion());
 
@@ -729,35 +729,35 @@ T.  What Type of Latency can I expect with RXTX
 	have equipment to test changes.
 
 	He is going to look at this further.  He needs 20 ms or less latency.
-	
+
 U.  I got rxtx working on a new OS but I can't read from the port
 
 > Now my java program starts up nicely without complaining. However, it does
 > never read any data from the serial port. It looks like it can write data,
 > because if I start a terminal program after I tried to run my program, I get
 > all the return stuff from the modem that my program wrote.
-> 
+>
 > I hacked around abit and found out that it hangs in the select() call which
 > simply never returns.
-> 
+>
 On Sun, 28 Jan 2001, Baldur Norddahl wrote:
 > HPUX 11:
-> 
+>
 > As I wrote to the mailinglist I had some wierd problems where it apparently
 > could write data to the modem, but not read anything back. My terminal
 > programs had no problem using the port. A few days after I reported the
 > problem to the mailinglist, I had given up for now, but then I noticed that
 > it suddenly worked! So it remains a mystery what was wrong as I did not
 > change anything at all, neither in my program nor on the host.
-> 
+>
 > Baldur
-> 
+>
 
-I suspect two java applications had the port open.  Its easy to do while 
+I suspect two java applications had the port open.  Its easy to do while
 developing.  Perhaps <ctl> z instead of <ctl> c was entered.
 
 This is the reason for adding lockfile support to rxtx.  If another application
-has opened the port, a second application will appear to not be able to 
+has opened the port, a second application will appear to not be able to
 read or get only part of the data.  ..because the first one is reading.  Only
 one of the select()s are waken.
 
@@ -809,20 +809,20 @@ V.  My ThinkPad is Not Working!
 
 	Scott Burleigh <Scott.Burleigh@jpl.nasa.gov> writes:
 
-		For your files, and in case anybody asks in the 
+		For your files, and in case anybody asks in the
 		future, IBM Thinkpads ship with the external serial port
 		*disabled* by default.  The Thinkpad configuration utility
 		supplied with the machine (under Windows) says it's enabled,
 		and the device manager in the System dialog of the Control
 		panel says it's enabled, but they lie.  In order to enable the
-		port you have to use the old DOS ps2.exe bios configuration 
+		port you have to use the old DOS ps2.exe bios configuration
 		utility which, under Windows 2000, is in
 		c:\Program Files\Thinkpad\utilities:
 
 			ps2 sera enable
 
 		Until you do, "setserial -ga /dev/ttyS0" will always tell you
-		the UART is unknown.  
+		the UART is unknown.
 
 
 
@@ -850,19 +850,19 @@ prashantg10@yahoo.com asked:
 Son To <son@openbx.net> replied:
 
 	Java applets run withing the sandbox of the security manager.
-	Applets must be signed to access the com port, but for development 
+	Applets must be signed to access the com port, but for development
 	purposes you can put
 
 	user_pref("signed.applets.codebase_principal_support", true);
 
 	in your prefs.js located in ~/.mozilla/default/XYYrandomDirName
-	
+
 	I didn't use Java applet for my application. I used XUL and CSS for
 	the GUI development and used mozilla Javascript SOAP library to
 	communicate with apache Axis webservice backend which uses RXTX to
 	access the com port.
 
--- 
+--
 Trent Jarvi
 taj@www.linux.org.uk
 -------------------------------------------------------------------------------
