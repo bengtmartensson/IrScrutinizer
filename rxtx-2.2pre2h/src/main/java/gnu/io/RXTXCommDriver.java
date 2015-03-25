@@ -28,7 +28,7 @@
 |   any confusion about linking to RXTX.   We want to allow in part what
 |   section 5, paragraph 2 of the LGPL does not permit in the special
 |   case of linking over a controlled interface.  The intent is to add a
-|   Java Specification Request or standards body defined interface in the 
+|   Java Specification Request or standards body defined interface in the
 |   future as another exception but one is not currently available.
 |
 |   http://www.fsf.org/licenses/gpl-faq.html#LinkingOverControlledInterface
@@ -558,7 +558,7 @@ public class RXTXCommDriver implements CommDriver
 
 
 			/*  There are _many_ possible ports that can be used
-			    on Linux.  See below in the fake Linux-all-ports  
+			    on Linux.  See below in the fake Linux-all-ports
 			    case for a list.  You may add additional ports
 			    here but be warned that too many will significantly
 			    slow down port enumeration.  Linux 2.6 has udev
@@ -579,6 +579,7 @@ public class RXTXCommDriver implements CommDriver
 						"ttyUSB", // for USB frobs
 						"rfcomm",       // bluetooth serial device
 						"ttyircomm", // linux IrCommdevices (IrDA serial emu)
+						"ttyACM", // linux CDC ACM devices
 						};
 						CandidatePortPrefixes=Temp;
 					}
@@ -658,7 +659,7 @@ public class RXTXCommDriver implements CommDriver
 							"cuaF",    //Stallion Brumby (stli) dialout ports
 							"ttyR",    //Rocketport dialin ports
 							"cuaR",    //Rocketport dialout ports
-							"stl"      //Stallion EasyIO board or Brumby N 
+							"stl"      //Stallion EasyIO board or Brumby N
 						};
 						CandidatePortPrefixes=Temp;
 					}
@@ -857,7 +858,7 @@ public class RXTXCommDriver implements CommDriver
 				case CommPortIdentifier.PORT_SERIAL:
 					if(osName.toLowerCase().indexOf("windows") == -1 )
 					{
-					
+
 						return new RXTXPort( PortName );
 					}
 					else
