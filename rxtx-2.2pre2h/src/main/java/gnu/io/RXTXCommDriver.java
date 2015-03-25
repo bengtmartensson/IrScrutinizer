@@ -579,7 +579,6 @@ public class RXTXCommDriver implements CommDriver
 						"ttyUSB", // for USB frobs
 						"rfcomm",       // bluetooth serial device
 						"ttyircomm", // linux IrCommdevices (IrDA serial emu)
-                                                "ttyACM",// linux CDC ACM devices // BM
 						};
 						CandidatePortPrefixes=Temp;
 					}

@@ -112,8 +112,7 @@ public class CommPortIdentifier extends Object /* extends Vector? */
 			System.err.println(e + " thrown while loading " + "gnu.io.RXTXCommDriver");
 		}
 
-                // Do not load the library here, but rely on the loading in RXTXVersion.
-		/*String OS;
+		String OS;
 
 		OS = System.getProperty("os.name");
 		if(OS.toLowerCase().indexOf("linux") == -1)
@@ -121,7 +120,7 @@ public class CommPortIdentifier extends Object /* extends Vector? */
 			if (debug)
 				System.out.println("Have not implemented native_psmisc_report_owner(PortName)); in CommPortIdentifier");
 		}
-		System.loadLibrary( "rxtxSerial" );*/
+		System.loadLibrary( "rxtxSerial" );
 	}
 	CommPortIdentifier ( String pn, CommPort cp, int pt, CommDriver driver) 
 	{

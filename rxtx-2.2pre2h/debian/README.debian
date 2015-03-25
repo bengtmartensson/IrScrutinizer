@@ -1,0 +1,23 @@
+Mon Mar 11 15:18:22 MST 2002
+
+Note:
+
+Debian packages are not maintained in the rxtx tree.  For the latest package,
+please go to:
+
+ftp://ftp.debian.org/debian/pool/contrib/r/rxtx/
+
+Maintainer: Mario Joussen <joussen@debian.org>
+
+------------------------------ old README ------------------------------------
+
+The Debian Package rxtx
+-----------------------
+
+rxtx is a native interface to serial ports in java by Trent Jarvi
+<taj@parcelfarce.linux.theplanet.co.uk>. This is a native lib for jdk 1.1.*/1.2.*.  
+
+Copies of the latest RXTX will be on http://www.frii.com/~jarvi/rxtx/download.html
+The primary source for information/support is  http://www.frii.com/~jarvi/rxtx/.
+
+Christian Leutloff <leutloff@debian.org>, Mon, 28 Jun 1999 11:47:41 +0200

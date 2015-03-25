@@ -57,14 +57,8 @@
 --------------------------------------------------------------------------*/
 package gnu.io;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Locale;
-
 /**
-A class to keep the current version in.
-* This is a version for IrScrutinizer. It is not to be used for other purposes.
-* It should not be used for rpm-packaging; which should use their own RXTX*.jar
+A class to keep the current version in
 */
 
 public class RXTXVersion
@@ -79,11 +73,10 @@ public class RXTXVersion
 		      See INSTALL for details.
 ------------------------------------------------------------------------------*/
 	private static String Version;
-        private static HashMap<String, Boolean> isLoaded = new HashMap<String, Boolean>();
 
 	static {
 		RXTXVersion.loadLibrary( "rxtxSerial" );
-		Version = "RXTX-2.2pre2"; // was "RXTX-2.2";
+		Version = "RXTX-2.2pre2";
 	}
 	/**
 	*  static method to return the current version of RXTX
@@ -96,54 +89,28 @@ public class RXTXVersion
 	}
 	public static native String nativeGetVersion();
 
-    static void loadLibrary(String baseName) {
-        if (isLoaded.get(baseName) != null)
-            return;
+ 	static void loadLibrary (String baseName) {
+		if (System.getProperty("sun.arch.data.model", "").equals("64")) {
+			try {
+				System.loadLibrary(baseName + "64");
+			} catch (UnsatisfiedLinkError ex64) {
+				try {
+					System.loadLibrary(baseName);
+				} catch (UnsatisfiedLinkError ignored) {
+					throw ex64;
+				}
+			}
+		} else {
+			try {
+				System.loadLibrary(baseName);
+			} catch (UnsatisfiedLinkError ex32) {
+				try {
+					System.loadLibrary(baseName + "64");
+				} catch (UnsatisfiedLinkError ignored) {
+					throw ex32;
+				}
+			}
+		}
+	}
 
-        boolean success = systemLoadLibrary(baseName) || localLoadLibrary(baseName);
-    }
-
-    // First try the system path
-    private static boolean systemLoadLibrary(String baseName) {
-        try {
-            System.loadLibrary(baseName);
-            isLoaded.put(baseName, Boolean.TRUE);
-            return true;
-        } catch (UnsatisfiedLinkError e1) {
-            return false;
-        }
-    }
-
-    // try the com.hifiremote.LoadLibrary way, i.e. with local,
-    // architecture dependent subdirectories...
-    private static boolean localLoadLibrary(String baseName) {
-        String folderName = (System.getProperty("os.name").startsWith("Windows")
-                ? "Windows"
-                : System.getProperty("os.name")) + '-' + System.getProperty("os.arch").toLowerCase(Locale.US);
-        // supported values: Linux-{i386,amd64}, Mac OS X-{i386,x86_64}, Windows-{x86,amd64}
-        // Mac: it appears that Snow Leopard says "X64_64" while Mountain Lion says "x86_64".
-        String mappedName = System.mapLibraryName(baseName);
-        String libraryFile = folderName + File.separator + mappedName;
-        if (loadAbsoluteLibrary(baseName, libraryFile))
-            return true;
-
-        // Mac OS X changed the extension of JNI libs recently, give it another try in this case
-        if (System.getProperty("os.name").startsWith("Mac")) {
-            mappedName = System.mapLibraryName(baseName).replaceFirst("\\.dylib", ".jnilib");
-            libraryFile = folderName + File.separator + mappedName;
-            return loadAbsoluteLibrary(baseName, libraryFile);
-        } else {
-            return false;
-        }
-    }
-
-    private static boolean loadAbsoluteLibrary(String baseName, String path) {
-        try {
-            System.load((new File(path)).getAbsolutePath());
-            isLoaded.put(baseName, Boolean.TRUE);
-            return true;
-        } catch (UnsatisfiedLinkError e) {
-            return false;
-        }
-    }
 }
