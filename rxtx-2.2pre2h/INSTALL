@@ -147,20 +147,23 @@ A.  Japanese
 	A.  Quick Install
 
 	The following packages are used to build rxtx:
-
-		autoconf-2.59
-		automake-1.9.5
-		libtool-1.5.18
-		gnu make-3.79.1         On some systems like FreeBSD this is
-					called gmake
+                autoreconf with it's dependencies (last used version)
+                    autoconf (2.59)
+                    automake (1.14)
+                    libtool (2.4.2)
+		gnu make (4.0)		On some systems called gmake.
+                maven (3.2.2)
 		jdk 1.3 or newer
 
 	With the packages installed, proceed to build and install rxtx.
 
 		$ tar -xzvf rxtx-2.1.tar.gz
 		$ cd rxtx-2.1
+                $ ./autogen.sh
 		$ ./configure  (follow the instructions)
 		$ make install (gmake if your system uses that convention)
+                $ mvn package
+                $ Copy the jar file in target/ to a suitable location.
 		Read "R.  How can I use Lock Files with rxtx?"
 
 	One catch that has showed up... you cannot have spaces in the path.
@@ -197,20 +200,22 @@ A.  Japanese
 
 			No changes are needed.
 
-	E.  Build and Install the jar.
-
-		configure       configure supports build directories.
-				configure requires javac in its path or
+	E.  Build and Install libraries and the jar.
+                ./configure     configure requires javac in its path or
 				JAVA_HOME set to grab some java system
 				properties.
-		make    	to build RXTXcomm.jar and the libraries
-		make install 	to place the jar and libraries in the correct
+		make    	to build the libraries
+		make install 	to place the libraries in the correct
 				location
+                mvn package     to build the jar archive which ends up in
+                                the target/ directory.
 
 		You may select the JDK you wish to build with using $JAVA_HOME
 		For example:
 			export JAVA_HOME=/usr/local/java
-		Otherwise, configure grabs the JDK from your PATH.
+		Otherwise, configure grabs the JDK from your PATH. Modern
+                linux system uses /etc/alternatives for this; for those you
+                will not need to use JAVE_HOME
 
 	F.  Where did everything end up?
 
@@ -646,22 +651,39 @@ ports.
 Lock files are used to prevent more than one program accessing a port at a
 time.  Lock files require a bit of sysadmin to work properly..
 
+The lock files are created in a specific directory, usually /var/lock,
+/var/lock/lockdev or /var/spool/uucp. The configure scripts makes an
+educated guess which directory to use, but the safest way is to use the
+--with-lockdir argument to specify it. The directory is written to config.h
+as LOCKDIR.
+
 Rxtx has support for lock files on Linux only.  It may work on other
-platforms but read the source before blindly trying it.
+platforms but read the source before blindly trying it. In any case
+you need to understand the group that has write access to the lock files.
+Do a ls -ld <lock directory> to find out.
 
 Before you use lock files you need to do one of two things:
 
-	1.  Be the root or uucp user on your machine whenever you use rxtx
-	2.  add the specific user that needs to use rxtx to the group uucp.
+	1.  Be the root or the lock user on your machine whenever you use rxtx
+            (you don't want to do this).
+	2.  Add the specific user that needs to use rxtx to the lock group.
 	    (preferred)
 
 To add a user to the uucp group edit /etc/group as root and change the
-following:
+following if you have the usermod utility available:
+
+        sudo usermod -aG uucp jarvi
+
+Otherwise, edit /etc/group from something like
+
 	uucp::14:uucp
+
 to something like:
+
 	uucp::14:uucp,jarvi
-In this case jarvi is the login name for the user that needs to use lock files.
-Do not change the number (14).  Whatever is in your group file is correct.
+
+In this case jarvi is the login name for the user that needs to use lock files
+and uucp is the group owning the lockfiles. Your case will be different.
 
 User jarvi in this case can now use rxtx with lock files.
 
