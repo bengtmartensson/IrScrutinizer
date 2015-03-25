@@ -158,46 +158,37 @@ struct event_info_struct
 #	endif /* CMSPAR */
 #
 #	define DEVICEDIR "/dev/"
-#	define LOCKDIR "/var/lock"
 #	define LOCKFILEPREFIX "LCK.."
 #	define FHS
 #endif /* __linux__ */
 #if defined(__QNX__)
 #	define DEVICEDIR "/dev/"
-#	define LOCKDIR ""
 #	define LOCKFILEPREFIX ""
 #endif /* qnx */
 #if defined(__sgi__) || defined(sgi)
 #	define DEVICEDIR "/dev/"
-#	define LOCKDIR "/usr/spool/uucp"
 #	define LOCKFILEPREFIX "LK."
 #	define UUCP
 #endif /* __sgi__ || sgi */
 #if defined(__FreeBSD__)
 #	define DEVICEDIR "/dev/"
-#	define LOCKDIR "/var/spool/lock"
 #	define LOCKFILEPREFIX "LK.."
 #	define UUCP
 #endif /* __FreeBSD__ */
 #if defined(__APPLE__)
 #	define DEVICEDIR "/dev/"
-/*#	define LOCKDIR "/var/spool/uucp"*/
-#	define LOCKDIR "/var/lock"
 #	define LOCKFILEPREFIX "LK."
 /*#	define UUCP*/
 #	define OPEN_EXCL
 #endif /* __APPLE__ */
 #if defined(__NetBSD__)
 #	define DEVICEDIR "/dev/"
-#	define LOCKDIR "/var/lock"
-/*#	define LOCKDIR "/usr/spool/uucp"*/
 #	define LOCKFILEPREFIX "LK."
 #	define UUCP
 #endif /* __NetBSD__ */
 #if defined(__unixware__)
 #	define DEVICEDIR "/dev/"
 /* really this only fully works for OpenServer */
-#	define LOCKDIR "/var/spool/uucp/"
 #	define LOCKFILEPREFIX "LK."
 /*
 this needs work....

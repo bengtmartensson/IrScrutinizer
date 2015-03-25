@@ -74,7 +74,6 @@
 #define LOCKFILEPREFIX "LCK.."
 #define LOCK fhs_lock
 #define UNLOCK fhs_unlock
-#define LOCKDIR "/var/lock"
 
 char hostname[256];
 #define M200 "200 Command okay.\n"

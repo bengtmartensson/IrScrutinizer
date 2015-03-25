@@ -94,13 +94,6 @@ $(target_triplet)/lib%.so: $(C_SRCDIR)/%Imp.@EXTENSION@ $(CLASSES)
 #  LIBTOOL_FIX handles problems encountered on some OS's.  See configure.in
 #  If a LIBTOOL_FIX is added be sure to provide a trailing ';' in configure.in
 #
-debug:
-	@echo CLASSES: $(CLASSES)
-	@echo javafiles: $(javafiles)
-	@echo javahfiles: $(javahfiles)
-
-compile: $(CLASSES)
-
 $(target_triplet)/librxtx%.@LIB_EXTENSION@: $(C_SRCDIR)/%Imp.c $(CLASSES) $(C_SRCDIR)/%Imp.h
 	(								\
 	$(LIBTOOL_FIX)							\
@@ -116,6 +109,7 @@ $(target_triplet)/librxtx%.@LIB_EXTENSION@: $(C_SRCDIR)/%Imp.c $(CLASSES) $(C_SR
 		@LINK@ $(TOP)/$(DEST)/$*Imp.@OBJECT_EXTENSION@; 	\
 	fi;								\
 	)
+	ln -sf $(target_triplet)/.libs $(abs_builddir)
 
 .mvn_compiled:
 	mvn compile

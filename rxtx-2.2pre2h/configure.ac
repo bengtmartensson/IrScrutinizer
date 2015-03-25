@@ -76,6 +76,10 @@ AC_CHECK_HEADERS(termios.h)
 AC_CHECK_HEADERS(grp.h)
 AC_CHECK_HEADERS(pwd.h)
 AC_PROG_GCC_TRADITIONAL
+
+AH_TEMPLATE([LOCKDIR],
+        [Directory for device locks (usually /var/lock or /var/lock/lockdev)])
+
 AC_SUBST(WINDOWS_JAVA_INCLUDE)
 AC_SUBST(JAVAINCLUDEDIR)
 AC_SUBST(JAVAINCLUDE)
@@ -143,6 +147,21 @@ AC_ARG_ENABLE(PRINTER,
 	else
 		TARGETLIB="\$(target_triplet)/librxtxSerial.la"
 	fi
+
+if test -d "/var/spool/uucp"
+    lockdir_default="/var/spool/uucp"
+elif test -d "/var/lock/lockdev"
+    lockdir_default="/var/lock/lockdev"
+else
+    lockdir_default="/var/lock"
+fi
+
+AC_ARG_WITH(lockdir,
+  [  --with-lockdir=DIR      Device lock files in DIR (/var/lock)],
+  lockdir=${withval},
+  lockdir=${lockdir_default})
+AC_DEFINE_UNQUOTED(LOCKDIR, "$lockdir")
+
 
 AC_ARG_ENABLE(lockfiles,
 	[  --disable-lockfiles     disable lock files (experimental) [default=no]],
