@@ -18,7 +18,7 @@
     <url>http://www.harctoolbox.org</url>
     <parent>
         <groupId>org.harctoolbox</groupId>
-        <artifactId>harctoolbox</artifactId>
+        <artifactId>HarctoolboxBundle</artifactId>
         <version>1.0.0</version>
         <relativePath>..</relativePath>
     </parent>
