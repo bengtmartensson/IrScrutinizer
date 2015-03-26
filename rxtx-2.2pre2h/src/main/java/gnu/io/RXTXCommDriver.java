@@ -580,6 +580,7 @@ public class RXTXCommDriver implements CommDriver
 						"rfcomm",       // bluetooth serial device
 						"ttyircomm", // linux IrCommdevices (IrDA serial emu)
 						"ttyACM", // linux CDC ACM devices
+						"rxtxcomm", // Generic udev link target
 						};
 						CandidatePortPrefixes=Temp;
 					}
