@@ -148,9 +148,9 @@ AC_ARG_ENABLE(PRINTER,
 		TARGETLIB="\$(target_triplet)/librxtxSerial.la"
 	fi
 
-if test -d "/var/spool/uucp"
+if test -d "/var/spool/uucp"; then
     lockdir_default="/var/spool/uucp"
-elif test -d "/var/lock/lockdev"
+elif test -d "/var/lock/lockdev"; then
     lockdir_default="/var/lock/lockdev"
 else
     lockdir_default="/var/lock"
