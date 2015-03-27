@@ -11,7 +11,8 @@ distributor to port the Fedora packages ;-). Windows users probably
 prefers the Windows setup.exe version.
 
 To install, unpack in an empty directory of your choice, suggested is
-/usr/local/irscrutinizer. Inspect the wrapper, and make changes if necessary.
+/usr/local/irscrutinizer. Inspect the wrapper irscrutinizer.sh, and
+make changes if necessary.
 
 It is recommended to make links from a directory in the path to the
 wrapper script, e.g.
@@ -26,4 +27,4 @@ The JNI library libDecodeIR.so/DecodeIR.dll is contained in the
 distribution and should be found without problems.
 
 The desktop file irscrutinizer.desktop should, if desired, be
-installed in /usr/share/applications alternatively ~/Desktop.
+installed in /usr/local/share/applications alternatively ~/Desktop.
