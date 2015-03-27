@@ -17,12 +17,16 @@
                 <include>**/*</include>
             </includes>
             <excludes>
+                <exclude>IrScrutinizer/native/**</exclude>
+                <exclude>package/dist/**</exclude>
                 <exclude>**/*.patch</exclude>
                 <exclude>**/target/**</exclude>
                 <exclude>**/*.git*</exclude>
                 <exclude>**/test/**</exclude> <!-- Presently not ready -->
-                <exclude>**/Crystal-Clear/**</exclude> <!-- at least presently -->
-                <exclude>**~</exclude> <!-- just in case -->
+                <exclude>**/Crystal-Clear-Icons/**</exclude> <!-- at least presently -->
+                <exclude>**/*~</exclude> <!-- just in case -->
+                <exclude>**/*.o</exclude>
+                <exclude>**/Makefile.in</exclude>
             </excludes>
             <lineEnding>keep</lineEnding> <!-- do not change! -->
         </fileSet>
