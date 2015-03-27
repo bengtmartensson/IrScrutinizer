@@ -40,11 +40,11 @@
             </dependencies>
          </profile>
         <profile>
-            <id>fedora</id>
+            <id>buildingFedoraPackage</id>
             <activation>
-                <file>
-                    <exists>/etc/fedora-release</exists>
-                </file>
+                <property>
+                    <name>building_fedora_package</name>
+                </property>
             </activation>
             <dependencies>
                 <dependency>
