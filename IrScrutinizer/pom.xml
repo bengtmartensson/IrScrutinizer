@@ -119,6 +119,8 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <finalName>${project.name}</finalName>
+                    <!--appendAssemblyId>true</appendAssemblyId-->
                   <descriptors>
                       <descriptor>src/assembly/target.xml</descriptor>
                   </descriptors>

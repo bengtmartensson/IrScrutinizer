@@ -42,14 +42,14 @@ fi
 if [ `basename "$0"` = "irpmaster" ] ; then
     # Run IrpMaster from the current directory
     cd "${IRSCRUTINIZERHOME}"
-    exec "${JAVA}" -classpath "${IRSCRUTINIZERHOME}/IrScrutinizer.jar" org.harctoolbox.irscrutinizer.IrpMaster --config "${IRSCRUTINIZERHOME}/IrpProtocols.ini" "$@"
+    exec "${JAVA}" -classpath "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" org.harctoolbox.irscrutinizer.IrpMaster --config "${IRSCRUTINIZERHOME}/IrpProtocols.ini" "$@"
 elif [ `basename "$0"` = "irscrutinizer" -o `basename "$0"` = "irscrutinizer.sh" ] ; then
     # cd to the installation director to get the relative path names in
     # the default properties to fit, can be omitted if making file names
     # in the properties absolute.
 
     cd "${IRSCRUTINIZERHOME}"
-    exec "${JAVA}" ${LOAD_RXTX_PATH} ${RXTX_SERIAL_PORTS} -jar "${IRSCRUTINIZERHOME}/IrScrutinizer.jar" "$@"
+    exec "${JAVA}" ${LOAD_RXTX_PATH} ${RXTX_SERIAL_PORTS} -jar "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" "$@"
 
 else
     echo "Error, please investigate ${IRSCRUTINIZERHOME}/irscrutinizer.sh and the links to it."
