@@ -236,7 +236,7 @@
                             <executable>m4</executable>
                             <arguments>
                                 <argument>--define=VERSION=${project.version}</argument>
-                                <!--argument>-DFEDORA</argument-->
+                                <!--argument>-DPACKAGING</argument-->
                                 <argument>src/main/config/irscrutinizer.desktop.m4</argument>
                             </arguments>
                             <outputFile>${project.build.directory}/irscrutinizer.desktop</outputFile>
