@@ -73,9 +73,7 @@
                     <transformationSets>
                         <transformationSet>
                             <dir>src/main/xml</dir>
-                            <outputDir>
-                                ${project.build.directory}/generated-sources/xml
-                            </outputDir>
+                            <outputDir>${project.build.directory}/generated-sources/xml/org/harctoolbox/harchardware</outputDir>
                             <excludes>
                                 <exclude>*.dtd</exclude>
                             </excludes>
