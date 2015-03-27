@@ -1,0 +1,29 @@
+This is the generic binary distribution of IrScrutinizer. It runs on
+Linux, Windows, Macs, and probably on other similar systems as well.
+
+Users of Fedora Linux should probably use the Fedora package instead,
+available RSN. Installation will be, as root,
+
+yum install irscrutinizer
+
+Users of other Linux-es should preferably exert pressure on their
+distributor to port the Fedora packages ;-). Windows users probably
+prefers the Windows setup.exe version.
+
+To install, unpack in an empty directory of your choice, suggested is
+/usr/local/irscrutinizer. Inspect the wrapper, and make changes if necessary.
+
+It is recommended to make links from a directory in the path to the
+wrapper script, e.g.
+
+ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irscrutinizer
+ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irpmaster
+
+If your system supports the RXTX, you should preferably use that. See
+the comments in the wrapper irscrutinizer.sh.
+
+The JNI library libDecodeIR.so/DecodeIR.dll is contained in the
+distribution and should be found without problems.
+
+The desktop file irscrutinizer.desktop should, if desired, be
+installed in /usr/share/applications alternatively ~/Desktop.
