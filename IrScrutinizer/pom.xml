@@ -45,7 +45,7 @@
                         <transformationSet>
                             <dir>src/main/xml</dir>
                             <outputDir>
-                                ${project.build.directory}/generated-sources/xml
+                                ${project.build.directory}/generated-sources/xml/org/harctoolbox/irscrutinizer
                             </outputDir>
                             <includes>
                                 <include>Version.xml</include>
@@ -188,33 +188,17 @@
                             <resources>
                                 <resource>
                                     <directory>src/main/config</directory>
+                                    <filtering>true</filtering>
+                                    <excludes>
+                                        <exclude>**/*.m4</exclude>
+                                    </excludes>
                                 </resource>
                                 <resource>
                                     <directory>../IrpMaster/src/main/config</directory>
                                     <filtering>true</filtering>
                                 </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <!-- Copy resources  in src/main/config to target dir. -->
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.7</version>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/target</outputDirectory>
-                            <resources>
                                 <resource>
-                                    <directory>src/main/config</directory>
+                                    <directory>../Crystal-Clear-Icons/src/main/resources/icons/Crystal-Clear/64x64/apps</directory>
                                     <filtering>true</filtering>
                                 </resource>
                             </resources>
