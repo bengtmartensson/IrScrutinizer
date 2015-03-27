@@ -167,7 +167,7 @@ public class HarcletFrame extends javax.swing.JFrame {
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuItemActionPerformed
         JOptionPane.showMessageDialog(this, harclet.getHelpMessage(), harclet.getProgName() + " help",
                 JOptionPane.INFORMATION_MESSAGE,
-                new ImageIcon(HarcletFrame.class.getResource("/icons/Crystal-Clear/48x48/actions/agt_support.png")));
+                new ImageIcon(HarcletFrame.class.getResource("/icons/Crystal-Clear/48x48/actions/info.png")));
     }//GEN-LAST:event_helpMenuItemActionPerformed
 
     private void closeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeMenuItemActionPerformed

@@ -78,7 +78,7 @@ public class GuiUtils implements Serializable {
          if (usePopupsForErrors) {
             JOptionPane.showMessageDialog(frame, truncate(message), programName + " information",
                     JOptionPane.INFORMATION_MESSAGE,
-            new ImageIcon(GuiUtils.class.getResource("/icons/Crystal-Clear/48x48/mimetypes/info.png"))); // Not ideal...
+            new ImageIcon(GuiUtils.class.getResource("/icons/Crystal-Clear/48x48/actions/info.png")));
         } else {
             System.err.println(message);
         }
