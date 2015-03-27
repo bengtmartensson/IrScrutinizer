@@ -4,7 +4,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>org.harctoolbox</groupId>
     <artifactId>HarctoolboxBundle</artifactId>
     <version>1.0.0</version>
@@ -17,8 +16,8 @@
         </license>
     </licenses>
     <description>
-        HarctoolboxBundle consists of IrScrutinizer and its
-	supporting libraries/programs.
+        HarctoolboxBundle consists of IrScrutinizer bundled with its
+        supporting libraries and programs.
     </description>
     <url>http://www.harctoolbox.org</url>
     <properties>
@@ -37,34 +36,19 @@
     </modules>
     <build>
         <plugins>
-            <!-- Source tarball from src/assembly/* file. -->
+            <!-- Create source tarball from src/assembly/source.xml. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.5.3</version>
-                <!--configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>org.harctoolbox.irscrutinizer.IrScrutinizer</mainClass>
-                        </manifest>
-                        <manifestEntries>
-                            <SplashScreen-Image>images/splash.png</SplashScreen-Image>
-                        </manifestEntries>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration-->
                 <configuration>
                     <descriptors>
                         <descriptor>src/assembly/source.xml</descriptor>
                     </descriptors>
-                    <!--finalName>${project.name}-src-${project.version}</finalName-->
                 </configuration>
                 <executions>
                     <execution>
                         <id>make-assembly</id>
-
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
