@@ -148,7 +148,7 @@ A.  Japanese
 
 	The following packages are used to build rxtx:
                 autoreconf with it's dependencies (last used version)
-                    autoconf (2.59)
+                    autoconf (2.69)
                     automake (1.14)
                     libtool (2.4.2)
 		gnu make (4.0)		On some systems called gmake.
