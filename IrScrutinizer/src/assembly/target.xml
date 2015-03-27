@@ -5,8 +5,8 @@
     <id>bin</id>
     <formats>
         <format>tar.gz</format>
-        <!--format>tar.bz2</format>
-        <format>zip</format-->
+        <!--format>tar.bz2</format-->
+        <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
 
@@ -41,13 +41,22 @@
         <fileSet>
             <directory>src/main/doc</directory>
             <outputDirectory>doc</outputDirectory>
+            <excludes>
+                <exclude>INSTALL-binary.txt</exclude> <!-- installed in the parent dir -->
+                <exclude>pre_install.txt</exclude>  <!-- setup.exe only -->
+                <exclude>post_install.txt</exclude> <!-- setup.exe only -->
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/doc</directory>
+            <outputDirectory/>
             <includes>
-                <include>*</include>
+                <include>INSTALL-binary.txt</include>
             </includes>
         </fileSet>
         <fileSet>
-            <directory>arduino/GirsLite</directory>
-            <outputDirectory>arduino/GirsLite</outputDirectory>
+            <directory>arduino</directory>
+            <outputDirectory>arduino</outputDirectory>
             <includes>
                 <include>*</include>
             </includes>

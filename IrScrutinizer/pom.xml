@@ -206,6 +206,44 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-inno-config</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>m4</executable>
+                            <arguments>
+                                <argument>--define=VERSION=${project.version}</argument>
+                                <argument>src/main/config/IrScrutinizer_inno.m4</argument>
+                            </arguments>
+                            <outputFile>${project.build.directory}/IrScrutinizer_inno.iss</outputFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-desktop</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>m4</executable>
+                            <arguments>
+                                <argument>--define=VERSION=${project.version}</argument>
+                                <!--argument>-DFEDORA</argument-->
+                                <argument>src/main/config/irscrutinizer.desktop.m4</argument>
+                            </arguments>
+                            <outputFile>${project.build.directory}/irscrutinizer.desktop</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
