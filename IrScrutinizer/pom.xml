@@ -7,7 +7,7 @@
     <groupId>org.harctoolbox</groupId>
     <artifactId>IrScrutinizer</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.2</version>
+    <version>1.1.2beta</version>
     <name>IrScrutinizer</name>
     <parent>
         <groupId>org.harctoolbox</groupId>
@@ -218,7 +218,7 @@
                     </execution>
                     <execution>
                         <id>copy-resources-doc</id>
-                        <phase>validate</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -232,6 +232,28 @@
                                 <resource>
                                     <directory>../IrpMaster/src/main/doc</directory>
                                     <include>IrpMaster.releasenotes.txt</include>
+                                </resource>
+                                <resource>
+                                    <directory>../IrpMaster/target/generated-documents</directory>
+                                </resource>
+                                <resource>
+                                    <directory>target/generated-documents</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-linux64-so</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/Linux-amd64</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>native/Linux-amd64</directory>
+                                    <filtering>false</filtering>
                                 </resource>
                             </resources>
                         </configuration>
@@ -318,6 +340,21 @@
                                 <argument>${artifactId}.ico</argument>
                                 <argument>-c</argument>
                                 <argument>${artifactId}.png</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>make-wrapper-executable</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>chmod</executable>
+                            <workingDirectory>${project.build.directory}</workingDirectory>
+                            <arguments>
+                                <argument>+x</argument>
+                                <argument>irscrutinizer.sh</argument>
                             </arguments>
                         </configuration>
                     </execution>

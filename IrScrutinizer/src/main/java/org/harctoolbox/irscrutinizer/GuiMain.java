@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013, 2014 Bengt Martensson.
+Copyright (C) 2013, 2014, 2015 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -2089,6 +2089,7 @@ public class GuiMain extends javax.swing.JFrame {
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
         mainDocuMenuItem = new javax.swing.JMenuItem();
+        irpMasterDocuMenuItem = new javax.swing.JMenuItem();
         homePageMenuItem = new javax.swing.JMenuItem();
         releaseNotesMenuItem = new javax.swing.JMenuItem();
         protocolSpecMenuItem = new javax.swing.JMenuItem();
@@ -6231,6 +6232,14 @@ public class GuiMain extends javax.swing.JFrame {
         });
         helpMenu.add(mainDocuMenuItem);
 
+        irpMasterDocuMenuItem.setText("IrpMaster Documentation");
+        irpMasterDocuMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                irpMasterDocuMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(irpMasterDocuMenuItem);
+
         homePageMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/kfm_home.png"))); // NOI18N
         homePageMenuItem.setText("Project home page");
         homePageMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -7985,6 +7994,10 @@ public class GuiMain extends javax.swing.JFrame {
         unsetParameter("T");
     }//GEN-LAST:event_unsetTMenuItemActionPerformed
 
+    private void irpMasterDocuMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpMasterDocuMenuItemActionPerformed
+        guiUtils.browse(properties.getIrpMasterHelpfileUrl());
+    }//GEN-LAST:event_irpMasterDocuMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -8211,6 +8224,7 @@ public class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.irscrutinizer.importer.TreeImporter irdbTreeImporter;
     private javax.swing.JMenuItem irpFormatsIniReloadMenuItem;
     private org.harctoolbox.guicomponents.IrpMasterBean irpMasterBean;
+    private javax.swing.JMenuItem irpMasterDocuMenuItem;
     private javax.swing.JMenuItem irpProtocolsEditMenuItem;
     private javax.swing.JMenu irpProtocolsIniMenu;
     private javax.swing.JMenuItem irpProtocolsSelectMenuItem;

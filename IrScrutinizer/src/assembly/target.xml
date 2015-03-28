@@ -15,7 +15,6 @@
             <outputDirectory/>
             <includes>
                 <include>*.txt</include>
-                <!--include>target/*.jar</include-->
             </includes>
             <lineEnding>keep</lineEnding>
         </fileSet>
@@ -30,6 +29,7 @@
                 <include>*.sh</include>
                 <include>*.bat</include>
             </includes>
+            <lineEnding>keep</lineEnding>
         </fileSet>
         <fileSet>
             <directory>native</directory>
@@ -46,6 +46,7 @@
                 <exclude>pre_install.txt</exclude>  <!-- setup.exe only -->
                 <exclude>post_install.txt</exclude> <!-- setup.exe only -->
             </excludes>
+            <lineEnding>keep</lineEnding>
         </fileSet>
         <fileSet>
             <directory>src/main/doc</directory>

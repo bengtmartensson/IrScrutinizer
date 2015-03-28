@@ -60,6 +60,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="globalCacheTimeout" type="int" default='"3000"' doc='Socket timeout for GlobalCache'/>
     <property name="genericSerialPortDeviceName" type="string" default='ifWindows("COM2", "/dev/ttyS0")' doc="Port name for generic serial port"/>
     <property name="helpfileUrl" type="string" default='(new File(applicationHome + "doc" + File.separator + "IrScrutinizer.html")).toURI().toString()' doc='URL for help file.'/>
+    <property name="irpMasterHelpfileUrl" type="string" default='(new File(applicationHome + "doc" + File.separator + "IrpMaster.html")).toURI().toString()' doc='URL for IrpMaster help file.'/>
     <property name="releaseNotesUrl" type="string" default='(new File(applicationHome + "doc" + File.separator + "IrScrutinizer.releasenotes.txt")).toURI().toString()' doc='URL for release notes.'/>
     <property name="irTransIpName" type="string" default='IrTrans.defaultIrTransIP' doc='IP name or address of IRTrans unit.'/>
     <property name="transmitHardware" type="string" default='"Audio Port"' doc="Name of selected transmit hardware."/>

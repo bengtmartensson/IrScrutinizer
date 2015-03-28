@@ -60,7 +60,7 @@ Source: "..\..\schemas\*.xsd"; DestDir: "{app}\schemas"
 dnl Source: "schemas\*.dtd"; DestDir: "{app}\schemas"
 dnl Source: "..\..\Crystal-Clear-Icons\src\main\resources\icons\Crystal-Clear\64x64\apps\babelfish.png";  DestDir: "{app}"
 Source: "{#MyAppName}.ico";  DestDir: "{app}"
-dnl Source: "doc\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: isreadme
+Source: "..\..\IrpMaster\target\generated-documents\IrpMaster.html"; DestDir: "{app}\doc"
 Source: "generated-documents\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: isreadme
 
 
@@ -68,7 +68,7 @@ Source: "generated-documents\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: i
 dnl Name: "{group}\{#MyAppName} Easy"; Filename: "{app}\{#MyAppExeName}"; Parameters: "--easy"; IconFilename: "{app}\remote.ico";
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppName}.ico";
 dnl Name: "{group}\HTML-Doc\IrMaster"; Filename: "{app}\doc\IrMaster.html"
-dnl Name: "{group}\HTML-Doc\IrpMaster"; Filename: "{app}\doc\IrpMaster.html"
+Name: "{group}\HTML-Doc\IrpMaster"; Filename: "{app}\doc\IrpMaster.html"
 Name: "{group}\HTML-Doc\IrScrutinizer"; Filename: "{app}\doc\IrScrutinizer.html"
 dnl Name: "{group}\HTML-Doc\Glossary"; Filename: "{app}\doc\Glossary.html"
 dnl Name: "{group}\HTML-Doc\Release Notes"; Filename: "{app}\doc\IrMaster.releasenotes.txt"
