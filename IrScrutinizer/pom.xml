@@ -294,10 +294,5 @@
             <artifactId>Crystal-Clear-Icons</artifactId>
             <version>20070620</version>
         </dependency>
-        <dependency>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>1.4.0</version>
-        </dependency>
     </dependencies>
 </project>
