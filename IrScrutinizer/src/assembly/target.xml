@@ -66,6 +66,7 @@
         <file>
             <source>../Crystal-Clear-Icons/src/main/resources/icons/Crystal-Clear/64x64/apps/babelfish.png</source>
             <outputDirectory/>
+            <destName>${project.artifactId}.png</destName>
         </file>
         <file>
             <source>../schemas/girr.xsd</source>

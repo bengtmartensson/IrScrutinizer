@@ -213,10 +213,6 @@
                                     <directory>../IrpMaster/src/main/config</directory>
                                     <filtering>true</filtering>
                                 </resource>
-                                <resource>
-                                    <directory>../Crystal-Clear-Icons/src/main/resources/icons/Crystal-Clear/64x64/apps</directory>
-                                    <filtering>true</filtering>
-                                </resource>
                             </resources>
                         </configuration>
                     </execution>
@@ -256,6 +252,21 @@
                                 <argument>src/main/config/irscrutinizer.desktop.m4</argument>
                             </arguments>
                             <outputFile>${project.build.directory}/irscrutinizer.desktop</outputFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy icon</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cp</executable>
+                            <workingDirectory>${project.build.directory}</workingDirectory>
+                            <arguments>
+                                <argument>../../Crystal-Clear-Icons/src/main/resources/icons/Crystal-Clear/64x64/apps/babelfish.png</argument>
+                                <argument>${artifactId}.png</argument>
+                            </arguments>
                         </configuration>
                     </execution>
                 </executions>
