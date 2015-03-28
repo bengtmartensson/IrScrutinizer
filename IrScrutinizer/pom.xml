@@ -216,6 +216,26 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>copy-resources-doc</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/doc</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/doc</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                                <resource>
+                                    <directory>../IrpMaster/src/main/doc</directory>
+                                    <include>IrpMaster.releasenotes.txt</include>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -230,7 +250,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>m4</executable>
+                            <executable>m4</executable> <!-- Fedora pkg: m4 -->
                             <arguments>
                                 <argument>--define=VERSION=${project.version}</argument>
                                 <argument>src/main/config/IrScrutinizer_inno.m4</argument>
@@ -245,13 +265,28 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>m4</executable>
+                            <executable>m4</executable> <!-- Fedora pkg: m4 -->
                             <arguments>
                                 <argument>--define=VERSION=${project.version}</argument>
-                                <!--argument>-DPACKAGING</argument-->
                                 <argument>src/main/config/irscrutinizer.desktop.m4</argument>
                             </arguments>
                             <outputFile>${project.build.directory}/irscrutinizer.desktop</outputFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>sillify docs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>unix2dos</executable> <!-- Fedora pkg: dos2unix -->
+                            <workingDirectory>${project.build.directory}/doc</workingDirectory>
+                            <arguments>
+                                <argument>IrScrutinizer.releasenotes.txt</argument>
+                                <argument>IrpMaster.releasenotes.txt</argument>
+                                <argument>LICENSE_gpl.txt</argument>
+                            </arguments>
                         </configuration>
                     </execution>
                     <execution>
@@ -265,6 +300,23 @@
                             <workingDirectory>${project.build.directory}</workingDirectory>
                             <arguments>
                                 <argument>../../Crystal-Clear-Icons/src/main/resources/icons/Crystal-Clear/64x64/apps/babelfish.png</argument>
+                                <argument>${artifactId}.png</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>create-ico</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>icotool</executable> <!-- Fedora pkg: libicns-utils -->
+                            <workingDirectory>${project.build.directory}</workingDirectory>
+                            <arguments>
+                                <argument>-o</argument>
+                                <argument>${artifactId}.ico</argument>
+                                <argument>-c</argument>
                                 <argument>${artifactId}.png</argument>
                             </arguments>
                         </configuration>

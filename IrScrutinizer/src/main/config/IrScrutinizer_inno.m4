@@ -29,6 +29,7 @@ SolidCompression=yes
 OutputDir=.
 ChangesEnvironment=true
 PrivilegesRequired=none
+SetupIconFile={#MyAppName}.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -38,33 +39,34 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: modifypath; Description: &Add installation directory to path
 
 [Files]
-Source: "dist\IrScrutinizer.jar"; DestDir: "{app}"; Flags: ignoreversion; AfterInstall: CreateWrapper
-Source: "dist\lib\*"; DestDir: "{app}\lib"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "IrScrutinizer-jar-with-dependencies.jar"; DestName: "IrScrutinizer.jar"; DestDir: "{app}"; Flags: ignoreversion; AfterInstall: CreateWrapper
+dnl Source: "dist\lib\*"; DestDir: "{app}\lib"; Flags: ignoreversion recursesubdirs createallsubdirs
 dnl Source: "irps\*"; DestDir: "{app}\irps"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "native\Windows-x86\*"; DestDir: "{app}\Windows-x86"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "native\Windows-amd64\*"; DestDir: "{app}\Windows-amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\native\Windows-x86\*"; DestDir: "{app}\Windows-x86"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\native\Windows-amd64\*"; DestDir: "{app}\Windows-amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "IrpProtocols.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "protocols.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "exportformats.xml"; DestDir: "{app}"; Flags: ignoreversion
 dnl Source: "irscrutinizer.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: "doc\*.html"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "doc\*.pdf"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "generated-documents\*.html"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
+dnl Source: "doc\*.pdf"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "doc\*.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "arduino\GirsLite\*"; DestDir: "{app}\arduino\GirsLite"; Flags: ignoreversion recursesubdirs createallsubdirs
-dnl Source: "..\IrpMaster\doc\IrpMaster.releasenotes.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\IrpMaster\doc\IrpScrutinizer.releasenotes.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\arduino\*"; DestDir: "{app}\arduino"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "doc\IrpMaster.releasenotes.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "doc\IrScrutinizer.releasenotes.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 dnl Source: "doc\*.java"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 dnl Source: "doc\images\*"; DestDir: "{app}\doc\images"
-Source: "schemas\*.xsd"; DestDir: "{app}\schemas"
-Source: "schemas\*.dtd"; DestDir: "{app}\schemas"
-Source: "..\Icons\src\icons\crystal\64x64\apps\remote.ico";  DestDir: "{app}"
+Source: "..\..\schemas\*.xsd"; DestDir: "{app}\schemas"
+dnl Source: "schemas\*.dtd"; DestDir: "{app}\schemas"
+dnl Source: "..\..\Crystal-Clear-Icons\src\main\resources\icons\Crystal-Clear\64x64\apps\babelfish.png";  DestDir: "{app}"
+Source: "{#MyAppName}.ico";  DestDir: "{app}"
 dnl Source: "doc\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: isreadme
-Source: "doc\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: isreadme
+Source: "generated-documents\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: isreadme
 
 
 [Icons]
 dnl Name: "{group}\{#MyAppName} Easy"; Filename: "{app}\{#MyAppExeName}"; Parameters: "--easy"; IconFilename: "{app}\remote.ico";
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\remote.ico";
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppName}.ico";
 dnl Name: "{group}\HTML-Doc\IrMaster"; Filename: "{app}\doc\IrMaster.html"
 dnl Name: "{group}\HTML-Doc\IrpMaster"; Filename: "{app}\doc\IrpMaster.html"
 Name: "{group}\HTML-Doc\IrScrutinizer"; Filename: "{app}\doc\IrScrutinizer.html"
@@ -73,11 +75,11 @@ dnl Name: "{group}\HTML-Doc\Release Notes"; Filename: "{app}\doc\IrMaster.releas
 Name: "{group}\HTML-Doc\Release Notes IRPmaster"; Filename: "{app}\doc\IrpMaster.releasenotes.txt"
 Name: "{group}\HTML-Doc\Release Notes IrScrutinizer"; Filename: "{app}\doc\IrScrutinizer.releasenotes.txt"
 dnl Name: "{group}\PDF Doc\IrMaster"; Filename: "{app}\doc\IrMaster.pdf"
-Name: "{group}\PDF Doc\IrpMaster"; Filename: "{app}\doc\IrpMaster.pdf"
-Name: "{group}\PDF Doc\IrScrutinizer"; Filename: "{app}\doc\IrScrutinizer.pdf"
+dnl Name: "{group}\PDF Doc\IrpMaster"; Filename: "{app}\doc\IrpMaster.pdf"
+dnl Name: "{group}\PDF Doc\IrScrutinizer"; Filename: "{app}\doc\IrScrutinizer.pdf"
 Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename: "{app}\remote.ico";
+Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename: "{app}\{#MyAppName}.ico";
 dnl Name: "{commondesktop}\{#MyAppName} Easy"; Filename: "{app}\{#MyAppExeName}"; Parameters: "--easy"; Tasks: desktopicon; IconFilename: "{app}\remote.ico"
 dnl Name: "{commonstartmenu}\{#MyAppName}"; Filename: "{group}"
 dnl Name: "{commonstartmenu}\{#MyAppName} Ezy"; Filename: "{app}\{#MyAppExeName}";
@@ -136,4 +138,4 @@ begin
    Result[0] := ExpandConstant('{app}');
  end;
 
-#include "tools\modpath.iss"
+#include "..\..\tools\modpath.iss"
