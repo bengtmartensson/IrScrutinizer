@@ -126,7 +126,7 @@
                                         com.hifiremote:ExchangeIR
                                     </exclude>
                                     <exclude>
-                                        org.harctoolbox:harctoolbox
+                                        org.harctoolbox:HarctoolboxBundle
                                     </exclude>
                                 </excludes>
                             </artifactSet>
@@ -148,7 +148,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.harctoolbox</groupId>
-                                    <artifactId>harctoolbox</artifactId>
+                                    <artifactId>HarctoolboxBundle</artifactId>
                                     <version>1.0.0</version>
                                     <classifier>sources</classifier>
                                     <type>tar.gz</type>
@@ -237,7 +237,7 @@
         </dependency>
         <dependency>
             <groupId>org.harctoolbox</groupId>
-            <artifactId>harctoolbox</artifactId>
+            <artifactId>HarctoolboxBundle</artifactId>
             <version>1.0.0</version>
             <type>tar.gz</type>
             <classifier>sources</classifier>

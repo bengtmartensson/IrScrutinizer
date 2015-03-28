@@ -33,7 +33,7 @@
             </activation>
             <dependencies>
                 <dependency>
-                    <groupId>gnu.io.</groupId>
+                    <groupId>gnu.io</groupId>
                     <artifactId>RXTX</artifactId>
                     <version>2.2pre2h</version>
                 </dependency>
