@@ -80,7 +80,7 @@ public class LircExport {
                 null,
                 null,
                 Version.appName,
-                Version.mainVersion + "." + Version.subVersion + "." + Version.subminorVersion + Version.versionSuffix,
+                Version.version,
                 frequency);
     }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (C) 2011, 2012, 2013, 2014 Bengt Martensson.
+Copyright (C) 2011, 2012, 2013, 2014, 2015 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,6 +17,10 @@ this program. If not, see http://www.gnu.org/licenses/.
 -->
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+    <xsl:param name="version"/>
+    <xsl:param name="url"/>
+    <xsl:param name="appName"/>
+
     <xsl:output method="text"/>
 
     <xsl:template match="/version">/* This file was automatically generated, do not edit. Do not check in in version management. */
@@ -33,16 +37,12 @@ public class Version {
     /** Verbal description of licenses of third-party components. */
     public final static String thirdPartyString = "<xsl:value-of select="normalize-space(thirdPartyString/.)"/>";
 
-    public final static String appName = "<xsl:value-of select='@appName'/>";
-    public final static int mainVersion = <xsl:value-of select='@mainVersion'/>;
-    public final static int subVersion = <xsl:value-of select='@subVersion'/>;
-    public final static int subminorVersion = <xsl:value-of select='@subminorVersion'/>;
-    public final static String versionSuffix = "<xsl:value-of select='@versionSuffix'/>";
-    public final static String version = mainVersion + "." + subVersion + "." + subminorVersion + versionSuffix;
+    public final static String appName = "<xsl:value-of select='$appName'/>";
+    public final static String version = "<xsl:value-of select='$version'/>";
     public final static String versionString = appName + " version " + version;
 
     /** Project home page. */
-    public final static String homepageUrl = "<xsl:value-of select='@homepageUrl'/>";
+    public final static String homepageUrl = "<xsl:value-of select='$url'/>";
 
     /** URL containing current official version. */
     public final static String currentVersionUrl = homepageUrl + "/downloads/" + appName + ".version";

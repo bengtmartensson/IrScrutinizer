@@ -78,6 +78,20 @@
                                 <exclude>*.dtd</exclude>
                             </excludes>
                             <stylesheet>../tools/mkVersion.xsl</stylesheet>
+                            <parameters>
+                                <parameter>
+                                    <name>version</name>
+                                    <value>${project.version}</value>
+                                </parameter>
+                                <parameter>
+                                    <name>url</name>
+                                    <value>${project.url}</value>
+                                </parameter>
+                                <parameter>
+                                    <name>appName</name>
+                                    <value>${project.artifactId}</value>
+                                </parameter>
+                            </parameters>
                             <fileMappers>
                                 <fileMapper implementation=
                  "org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
