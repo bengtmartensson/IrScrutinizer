@@ -2852,7 +2852,7 @@ public class GuiMain extends javax.swing.JFrame {
                         .addComponent(transmitSignalButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(signalExportButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 276, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 196, Short.MAX_VALUE)
                         .addComponent(scrutinizeSignalHelpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())))
         );
@@ -2907,7 +2907,7 @@ public class GuiMain extends javax.swing.JFrame {
         irPlotter.setLayout(irPlotterLayout);
         irPlotterLayout.setHorizontalGroup(
             irPlotterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1062, Short.MAX_VALUE)
+            .addGap(0, 982, Short.MAX_VALUE)
         );
         irPlotterLayout.setVerticalGroup(
             irPlotterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2957,7 +2957,7 @@ public class GuiMain extends javax.swing.JFrame {
         cookedPanel.setLayout(cookedPanelLayout);
         cookedPanelLayout.setHorizontalGroup(
             cookedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(parameterTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1058, Short.MAX_VALUE)
+            .addComponent(parameterTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 984, Short.MAX_VALUE)
         );
         cookedPanelLayout.setVerticalGroup(
             cookedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2989,9 +2989,9 @@ public class GuiMain extends javax.swing.JFrame {
         rawPanel.setLayout(rawPanelLayout);
         rawPanelLayout.setHorizontalGroup(
             rawPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1058, Short.MAX_VALUE)
+            .addGap(0, 984, Short.MAX_VALUE)
             .addGroup(rawPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(rawTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1058, Short.MAX_VALUE))
+                .addComponent(rawTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 984, Short.MAX_VALUE))
         );
         rawPanelLayout.setVerticalGroup(
             rawPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3052,7 +3052,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scrutinizeRemoteHelpButton)
                 .addContainerGap())
-            .addComponent(rawCookedTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(rawCookedTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 992, Short.MAX_VALUE)
         );
 
         remoteScrutinizerPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {parametricOrRawExportButton, scrutinizeRemoteHelpButton, startStopToggleButton});
@@ -3161,7 +3161,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addGap(6, 6, 6)
                 .addGroup(generatePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
-                    .addComponent(irpMasterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 1058, Short.MAX_VALUE)
+                    .addComponent(irpMasterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 980, Short.MAX_VALUE)
                     .addGroup(generatePanelLayout.createSequentialGroup()
                         .addGroup(generatePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(generatePanelLayout.createSequentialGroup()
@@ -3326,7 +3326,7 @@ public class GuiMain extends javax.swing.JFrame {
                         .addComponent(apiKeyButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(globalCacheDBBrowseButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 160, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 164, Short.MAX_VALUE)
                         .addComponent(importGlobalCacheHelpButton)
                         .addContainerGap())))
         );
@@ -3394,21 +3394,21 @@ public class GuiMain extends javax.swing.JFrame {
             irdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(irdbPanelLayout.createSequentialGroup()
                 .addGroup(irdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(irdbManufacturerComboBox, 0, 396, Short.MAX_VALUE)
+                    .addComponent(irdbManufacturerComboBox, 0, 375, Short.MAX_VALUE)
                     .addComponent(jLabel45))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(irdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(irdbDeviceTypeComboBox, 0, 392, Short.MAX_VALUE)
+                    .addComponent(irdbDeviceTypeComboBox, 0, 369, Short.MAX_VALUE)
                     .addComponent(jLabel46))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(irdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(irdbPanelLayout.createSequentialGroup()
-                        .addComponent(irdbCodeSetComboBox, 0, 225, Short.MAX_VALUE)
+                        .addComponent(irdbCodeSetComboBox, 0, 204, Short.MAX_VALUE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jLabel49)))
             .addGroup(irdbPanelLayout.createSequentialGroup()
                 .addComponent(irdbTreeImporter, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 202, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
                 .addGroup(irdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(importIrdbHelpButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(irdbBrowseButton, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -3489,7 +3489,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(importGirrSignalHelpButton)
                 .addContainerGap())
-            .addComponent(girrFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+            .addComponent(girrFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
         );
 
         importTabbedPane.addTab("Girr", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/translate.png")), girrImportPanel); // NOI18N
@@ -3517,7 +3517,7 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(lircImportPanelLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(lircFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 220, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 147, Short.MAX_VALUE)
                 .addGroup(lircImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(importLircHelpButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jButton20, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -3528,7 +3528,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         lircImportPanelLayout.setVerticalGroup(
             lircImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lircFileImporterBean, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+            .addComponent(lircFileImporterBean, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lircImportPanelLayout.createSequentialGroup()
                 .addGap(53, 53, 53)
                 .addComponent(jButton20)
@@ -3580,7 +3580,7 @@ public class GuiMain extends javax.swing.JFrame {
                     .addGroup(rmduImportPanelLayout.createSequentialGroup()
                         .addComponent(jLabel29)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(protocolsIniTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 829, Short.MAX_VALUE)
+                        .addComponent(protocolsIniTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 758, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(selectProtocolIniButton))
                     .addGroup(rmduImportPanelLayout.createSequentialGroup()
@@ -3606,7 +3606,7 @@ public class GuiMain extends javax.swing.JFrame {
                     .addGroup(rmduImportPanelLayout.createSequentialGroup()
                         .addGap(56, 56, 56)
                         .addComponent(webRmduButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 203, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 199, Short.MAX_VALUE)
                         .addComponent(importRemoteMasterHelpButton)
                         .addContainerGap())
                     .addComponent(rmduImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
@@ -3639,7 +3639,7 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(irtransImportPanelLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(irTransFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 227, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 147, Short.MAX_VALUE)
                 .addGroup(irtransImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(importIrTransHelpButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(irTransWebButton, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -3647,7 +3647,7 @@ public class GuiMain extends javax.swing.JFrame {
         );
         irtransImportPanelLayout.setVerticalGroup(
             irtransImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(irTransFileImporterBean, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+            .addComponent(irTransFileImporterBean, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, irtransImportPanelLayout.createSequentialGroup()
                 .addGap(53, 53, 53)
                 .addComponent(irTransWebButton)
@@ -3672,7 +3672,7 @@ public class GuiMain extends javax.swing.JFrame {
             ccfImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ccfImportPanelLayout.createSequentialGroup()
                 .addComponent(ccfFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 242, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 170, Short.MAX_VALUE)
                 .addComponent(importProntoClassicHelpButton)
                 .addContainerGap())
         );
@@ -3682,7 +3682,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(importProntoClassicHelpButton)
                 .addContainerGap())
-            .addComponent(ccfFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+            .addComponent(ccfFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
         );
 
         importTabbedPane.addTab("Pronto Classic (.ccf)", ccfImportPanel);
@@ -3701,7 +3701,7 @@ public class GuiMain extends javax.swing.JFrame {
             xcfImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(xcfImportPanelLayout.createSequentialGroup()
                 .addComponent(xcfFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 242, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 170, Short.MAX_VALUE)
                 .addComponent(importProntoProfessionalHelpButton)
                 .addContainerGap())
         );
@@ -3711,7 +3711,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(importProntoProfessionalHelpButton)
                 .addContainerGap())
-            .addComponent(xcfFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+            .addComponent(xcfFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
         );
 
         importTabbedPane.addTab("Pronto Prof (.xcf)", xcfImportPanel);
@@ -3733,7 +3733,7 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(ictImportPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel15)
-                .addContainerGap(820, Short.MAX_VALUE))
+                .addContainerGap(749, Short.MAX_VALUE))
             .addGroup(ictImportPanelLayout.createSequentialGroup()
                 .addComponent(ictFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -3746,7 +3746,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addGap(6, 6, 6)
                 .addComponent(jLabel15)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ictFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE))
+                .addComponent(ictFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ictImportPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(importIctHelpButton)
@@ -3837,7 +3837,7 @@ public class GuiMain extends javax.swing.JFrame {
                         .addGroup(csvRawImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(csvRawSeparatorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel30))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 230, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 162, Short.MAX_VALUE)
                 .addComponent(importTextRawHelpButton)
                 .addContainerGap())
         );
@@ -3882,7 +3882,7 @@ public class GuiMain extends javax.swing.JFrame {
             rawLineCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rawLineCsvImportPanelLayout.createSequentialGroup()
                 .addComponent(rawLineCsvFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 230, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 162, Short.MAX_VALUE)
                 .addComponent(importTextRawLineBasedHelpButton)
                 .addContainerGap())
         );
@@ -3894,7 +3894,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(rawLineCsvImportPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(rawLineCsvFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE))
+                .addComponent(rawLineCsvFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE))
         );
 
         parametrizedRawTabbedPane.addTab("Raw, line-based", rawLineCsvImportPanel);
@@ -4035,7 +4035,7 @@ public class GuiMain extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
                         .addComponent(csvParametrizedFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 230, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 162, Short.MAX_VALUE)
                         .addComponent(importTextParametrizedHelpButton)))
                 .addContainerGap())
         );
@@ -4076,13 +4076,13 @@ public class GuiMain extends javax.swing.JFrame {
         csvImportPanelLayout.setHorizontalGroup(
             csvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(csvImportPanelLayout.createSequentialGroup()
-                .addComponent(parametrizedRawTabbedPane)
+                .addComponent(parametrizedRawTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 984, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
         csvImportPanelLayout.setVerticalGroup(
             csvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(csvImportPanelLayout.createSequentialGroup()
-                .addComponent(parametrizedRawTabbedPane)
+                .addComponent(parametrizedRawTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
@@ -4113,7 +4113,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addGroup(waveImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(waveImportPanelLayout.createSequentialGroup()
                         .addComponent(waveFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 242, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 170, Short.MAX_VALUE)
                         .addComponent(importWaveHelpButton))
                     .addComponent(importWaveDivideCarrierCheckBox1))
                 .addContainerGap())
@@ -4126,7 +4126,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addGap(0, 0, 0)
                 .addComponent(waveFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, waveImportPanelLayout.createSequentialGroup()
-                .addContainerGap(322, Short.MAX_VALUE)
+                .addContainerGap(318, Short.MAX_VALUE)
                 .addComponent(importWaveHelpButton)
                 .addContainerGap())
         );
@@ -4138,7 +4138,7 @@ public class GuiMain extends javax.swing.JFrame {
         importPanelLayout.setHorizontalGroup(
             importPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, importPanelLayout.createSequentialGroup()
-                .addComponent(importTabbedPane)
+                .addComponent(importTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 992, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
         importPanelLayout.setVerticalGroup(
@@ -4299,7 +4299,7 @@ public class GuiMain extends javax.swing.JFrame {
                         .addComponent(jLabel28)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(girrStylesheetUrlTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 409, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 342, Short.MAX_VALUE)
                         .addComponent(jLabel33)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(girrStylesheetTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -4347,7 +4347,7 @@ public class GuiMain extends javax.swing.JFrame {
         waveExportOptionsPanelLayout.setHorizontalGroup(
             waveExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(waveExportOptionsPanelLayout.createSequentialGroup()
-                .addContainerGap(964, Short.MAX_VALUE)
+                .addContainerGap(890, Short.MAX_VALUE)
                 .addComponent(exportWaveHelpButton)
                 .addContainerGap())
             .addGroup(waveExportOptionsPanelLayout.createSequentialGroup()
@@ -4419,7 +4419,7 @@ public class GuiMain extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(sendirCompressedCheckBox))
                     .addComponent(jLabel12))
-                .addContainerGap(777, Short.MAX_VALUE))
+                .addContainerGap(709, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sendirExportOptionsPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(exportSendirHelpButton)
@@ -4617,7 +4617,7 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(exportPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(exportSpecificOptionsTabbedPane)
+                    .addComponent(exportSpecificOptionsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 980, Short.MAX_VALUE)
                     .addGroup(exportPanelLayout.createSequentialGroup()
                         .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(exportPanelLayout.createSequentialGroup()
@@ -4953,7 +4953,7 @@ public class GuiMain extends javax.swing.JFrame {
                             .addGroup(capturingPanelLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(captureTestButton, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 205, Short.MAX_VALUE)))
+                        .addGap(0, 127, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         capturingPanelLayout.setVerticalGroup(
@@ -5280,7 +5280,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addGroup(sendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(sendingPanelLayout.createSequentialGroup()
                         .addComponent(sendingHardwareTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 853, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 205, Short.MAX_VALUE))
+                        .addGap(0, 127, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sendingPanelLayout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(sendingHardwareHelpButton)))
@@ -6272,7 +6272,7 @@ public class GuiMain extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(topLevelSplitPane)
+            .addComponent(topLevelSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
