@@ -27,4 +27,5 @@ The JNI library libDecodeIR.so/DecodeIR.dll is contained in the
 distribution and should be found without problems.
 
 The desktop file irscrutinizer.desktop should, if desired, be
-installed in /usr/local/share/applications alternatively ~/Desktop.
+installed in /usr/local/share/applications alternatively
+~/.local/share/applications.
