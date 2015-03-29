@@ -3218,7 +3218,6 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        globalCacheDBBrowseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/globalcache/favicon-1.png"))); // NOI18N
         globalCacheDBBrowseButton.setText("Web site");
         globalCacheDBBrowseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -3332,7 +3331,7 @@ public class GuiMain extends javax.swing.JFrame {
                         .addContainerGap())))
         );
 
-        importTabbedPane.addTab("GlobalCache Database", new javax.swing.ImageIcon(getClass().getResource("/icons/globalcache/favicon-1.png")), gcdbPanel); // NOI18N
+        importTabbedPane.addTab("GlobalCache Database", gcdbPanel);
 
         irdbBrowseButton.setText("Visit Web site");
         irdbBrowseButton.addActionListener(new java.awt.event.ActionListener() {
@@ -4784,7 +4783,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        capturingHardwareTabbedPane.addTab("Global Caché", new javax.swing.ImageIcon(getClass().getResource("/icons/globalcache/favicon-1.png")), captureGlobalCachePanel); // NOI18N
+        capturingHardwareTabbedPane.addTab("Global Caché", captureGlobalCachePanel);
 
         lircMode2CommandTextField.setText(properties.getLircMode2Command());
 
@@ -4920,7 +4919,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        capturingHardwareTabbedPane.addTab("Arduino", new javax.swing.ImageIcon(getClass().getResource("/icons/hicolor/16x16/apps/arduino.png")), captureArduinoPanel); // NOI18N
+        capturingHardwareTabbedPane.addTab("Arduino", captureArduinoPanel);
 
         captureTestButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_record.png"))); // NOI18N
         captureTestButton.setText("Test");
@@ -5009,7 +5008,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        sendingHardwareTabbedPane.addTab("Global Caché", new javax.swing.ImageIcon(getClass().getResource("/icons/globalcache/favicon-1.png")), globalCachePanel); // NOI18N
+        sendingHardwareTabbedPane.addTab("Global Caché", globalCachePanel);
 
         lircInternetHostPanel.setIpName(properties.getLircIpName());
         lircInternetHostPanel.setPortNumber(properties.getLircPort());
@@ -5191,7 +5190,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        sendingHardwareTabbedPane.addTab("Arduino", new javax.swing.ImageIcon(getClass().getResource("/icons/hicolor/16x16/apps/arduino.png")), arduinoPanel); // NOI18N
+        sendingHardwareTabbedPane.addTab("Arduino", arduinoPanel);
 
         sendingGenericSerialPortHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         sendingGenericSerialPortHelpButton.setText("Help");
