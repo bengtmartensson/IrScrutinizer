@@ -1,15 +1,17 @@
 For release 1.1.2:
 
-* IrpMaster: check API example
+* IrpMaster: check API example DONE
 
-* check JNI loading on different systems, integrate .dylib for mac
+* check JNI loading on different systems, integrate .dylib for mac DONE
 
-* Generic-bin
+* Generic-bin DONE
 
-* windows setup.exe
+* windows setup.exe DONE
 
 * icons: DP, IrTrans OK, GlobalCache, Arduino in pipeline. Still some
-  reorganization...
+  reorganization... DONE
+
+* Check installation on Mac
 
 * Update docu, releasenotes.
 

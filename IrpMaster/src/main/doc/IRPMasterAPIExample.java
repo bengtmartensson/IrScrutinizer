@@ -4,57 +4,55 @@
  */
 package irpmasterapiexample;
 
-import java.util.HashMap;
 import java.io.IOException;
-import java.net.UnknownHostException;
-import org.antlr.runtime.RecognitionException;
-import org.harctoolbox.globalcache;
-import IrpMaster.IrSignal;
-import IrpMaster.IrpMaster;
-import IrpMaster.IrpMasterException;
-import IrpMaster.Protocol;
+import java.util.HashMap;
+import org.harctoolbox.IrpMaster.IrSignal;
+import org.harctoolbox.IrpMaster.IrpMaster;
+import org.harctoolbox.IrpMaster.IrpMasterException;
+import org.harctoolbox.harchardware.ir.GlobalCache;
+import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 
 public class IRPMasterAPIExample {
-    // Parameters used to communicate with the particular GC (could also be read from the command line)
+    // Parameters used to communicate with the particular GC
     public static final String globalcacheIP = "192.168.1.70";
-    public static final int globalcachePort = 1;
-    
+
+    private static void usage() {
+        System.err.println("Usage:");
+        System.err.println("\tIRPMasterAPIExample IrpMaster.ini-path protocolname parameterassignments...");
+        System.exit(1);
+    }
+
     // Usage: IRPMasterAPIExample <configfilename> <protocolname> <device> <function>
-    public static void main(String[] args) throws RecognitionException {
-        
+    // Example: IRPMasterAPIExample /usr/local/irscrutinizer/IrpProtocols.ini rc5 D=0 F=12
+    public static void main(String[] args) {
         // This hashmap holds the actual parameter values used to render the signal
-        HashMap<String, Long> parameters = new HashMap<String, Long>();
-        
+        HashMap<String, Long> parameters = new HashMap<>();
+
+        if (args.length < 3)
+            usage();
+
         try {
-            int arg_i = 0;
-            
             // Create an IrpMaster instance from the configuration file
-            IrpMaster irpMaster = new IrpMaster(args[arg_i++]);
-            
-            String protocolName = args[arg_i++];
-            
-            // Create protocol, i.e. parse the IRP string
-            Protocol protocol = irpMaster.newProtocol(protocolName);
-            
-            // Fill the values into the parameter table
-            parameters.put("D", Long.parseLong(args[arg_i++]));
-            parameters.put("F", Long.parseLong(args[arg_i++]));
-            
-            // Render the signal using current actual parameters
-            IrSignal irSignal = protocol.renderIrSignal(parameters);
-            
+            IrpMaster irpMaster = new IrpMaster(args[0]);
+
+            String protocolName = args[1];
+
+            // parse the parameters and enter them into the dictionary
+            for (int i = 2; i < args.length; i++) {
+                String[] s = args[i].split("=");
+                parameters.put(s[0], Long.parseLong(s[1]));
+            }
+
+            // Render the signal using current parameters
+            IrSignal irSignal = new IrSignal(irpMaster, protocolName, parameters);
+
             // Create a GlobalCache object
-            globalcache globalCache = new globalcache(globalcacheIP, globalcache.gc_model.gc_100_06, true);
-            
-            // ... and send it the ccf version of the recently rendered IR signal
-            globalCache.send_ir(irSignal.ccfString(), globalcachePort);
+            GlobalCache globalCache = new GlobalCache(globalcacheIP, true);
+
+            // ... and send it the recently rendered IR signal
+            globalCache.sendIr(irSignal);
             // ... done!!
-        } catch (UnknownHostException ex) {
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        } catch (InterruptedException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IrpMasterException ex) {
+        } catch (IOException | IrpMasterException | NoSuchTransmitterException ex) {
             System.err.println(ex.getMessage());
         }
     }
