@@ -322,7 +322,7 @@
                             <workingDirectory>${project.build.directory}</workingDirectory>
                             <arguments>
                                 <argument>../../Crystal-Clear-Icons/src/main/resources/icons/Crystal-Clear/64x64/apps/babelfish.png</argument>
-                                <argument>${artifactId}.png</argument>
+                                <argument>${project.artifactId}.png</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -337,9 +337,9 @@
                             <workingDirectory>${project.build.directory}</workingDirectory>
                             <arguments>
                                 <argument>-o</argument>
-                                <argument>${artifactId}.ico</argument>
+                                <argument>${project.artifactId}.ico</argument>
                                 <argument>-c</argument>
-                                <argument>${artifactId}.png</argument>
+                                <argument>${project.artifactId}.png</argument>
                             </arguments>
                         </configuration>
                     </execution>

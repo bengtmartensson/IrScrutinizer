@@ -107,9 +107,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <descriptorRefs>
+                    <!--descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
+                    </descriptorRefs-->
                     <descriptors>
                         <descriptor>src/assembly/target.xml</descriptor>
                     </descriptors>

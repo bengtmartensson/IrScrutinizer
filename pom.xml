@@ -45,6 +45,8 @@
                     <descriptors>
                         <descriptor>src/assembly/source.xml</descriptor>
                     </descriptors>
+                    <!-- get rid of pesky warnings on long file names -->
+                    <tarLongFileMode>gnu</tarLongFileMode>
                 </configuration>
                 <executions>
                     <execution>
