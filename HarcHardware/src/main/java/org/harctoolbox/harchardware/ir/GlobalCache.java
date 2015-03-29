@@ -341,10 +341,9 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
     }
 
     private GlobalCacheIrTransmitter newGlobalCacheIrTransmitter(Transmitter trans) {
-         if (trans == null)
-             return new GlobalCacheIrTransmitter();
-
-         GlobalCacheIrTransmitter tr = (GlobalCacheIrTransmitter) trans;
+         GlobalCacheIrTransmitter tr = trans == null
+                 ? new GlobalCacheIrTransmitter()
+                 : (GlobalCacheIrTransmitter) trans;
          tr.normalize(firstIrModule);
          return tr;
     }
