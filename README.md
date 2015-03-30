@@ -12,6 +12,9 @@ software is available at the
 
 ## Dependencies and bundled software
 
+Despite of being a Java and Maven project, building is presently only
+supported on Linux-like systems.
+
 As a convenience, the following 3-rd party software is bundled by
 harctoolbox:
   - **crystal project icons**, also packaged for most linux distributions
@@ -34,7 +37,8 @@ maven in order for the build to work. The dependencies are
   - minimal-json from http://github.com/ralfstx/minimal-json.
   - The unix2dos and dos2unix utilities, sometimes in the dos2unix package.
   - The  icotool utility, sometimes in the icoutils package
-  - The m4 macro processor, packaged in all linux distros.
+  - For building the Windows setup.exe, the Inno Installer version 5
+    (http://www.jrsoftware.org/download.php/is.exe) is needed.
 
 Besides these, maven handled various dependencies  which are downloaded at
 build time.
@@ -48,13 +52,24 @@ which installs them in you local maven repository before building.
 ## Building
 
 Building is based on maven. `mvn install` creates some artifacts which can
-be used to run IrScrutinizer in the ```IrScrutinizer/target``` directory
+be used to run IrScrutinizer in the ```IrScrutinizer/target```
+directory.
+
+To build the Windows setup.exe file, preferrably the work area should
+be mounted from a Windows computer. Then open the generated file
+IrScrutinizer/target/IrScrutinizer_inno.iss with the Inno installer,
+and start the compile.
 
 ## Installation
 
-As of today there is no specific installation support. After running *mvn
-package* in the top directory there are installations artifacts (jars,
-documentation and configuration) in package/dist.
+As of today there is installation support like "make install". After
+running *mvn package* in the top directory there are installations
+artifacts (jars, documentation and configuration) in package/dist. For
+installing the generic-binary package
+(IrScrutinizer/target/IrScrutinizer-bin.tar.gz), see the instructions
+in INSTALL-binary.txt, located in IrScrutinizer/src/main/doc, and also
+in the mentioned tar file.
+
 
 The rxtx package has support for installing the so/dll libraries, see
 rxtx-2.2*/INSTALL.
