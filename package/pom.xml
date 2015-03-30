@@ -85,7 +85,24 @@
                             <overWriteSnapshots>true</overWriteSnapshots>
                         </configuration>
                     </execution>
-                </executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals> <goal> copy </goal> </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.harctoolbox</groupId>
+                                    <artifactId>HarctoolboxBundle</artifactId>
+                                    <version>1.0.0</version>
+                                    <classifier>sources</classifier>
+                                    <type>tar.gz</type>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>dist</outputDirectory>
+                        </configuration>
+                    </execution>
+                 </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -135,30 +152,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.10</version>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>package</phase>
-                        <goals> <goal> copy </goal> </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.harctoolbox</groupId>
-                                    <artifactId>HarctoolboxBundle</artifactId>
-                                    <version>1.0.0</version>
-                                    <classifier>sources</classifier>
-                                    <type>tar.gz</type>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>dist</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.7</version>
