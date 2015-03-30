@@ -31,6 +31,13 @@ maven in order for the build to work. The dependencies are
   - **DecodeIr** from hifiremote http://sourceforge.net/p/controlremote
   - **ExchangeIR** also from hifiremote.
   - **tonto** from http://mrallen.com/tonto/
+  - minimal-json from http://github.com/ralfstx/minimal-json.
+  - The unix2dos and dos2unix utilities, sometimes in the dos2unix package.
+  - The  icotool utility, sometimes in the icoutils package
+  - The m4 macro processor, packaged in all linux distros.
+
+Besides these, maven handled various dependencies  which are downloaded at
+build time.
 
 For Fedora users there are temporary RPM:s for the dependencies available at
 https://copr.fedoraproject.org/coprs/leamas/harctoolbox/.
