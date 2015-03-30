@@ -25,7 +25,26 @@
     <url>http://www.harctoolbox.org</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.nameLowercase>irscrutinizer</project.nameLowercase>
+        <project.icon>/usr/local/${project.nameLowercase}/${project.nameLowercase}.png</project.icon>
+        <project.exepath>/usr/local/bin/${project.nameLowercase}</project.exepath>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>buildingFedoraPackage</id>
+            <activation>
+                <property>
+                    <name>building_fedora_package</name>
+                </property>
+            </activation>
+            <properties>
+                <project.icon>${project.nameLowercase}</project.icon>
+                <project.exepath>/usr/bin/${project.nameLowercase}</project.exepath>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <!-- Generate Version.java from Version.xml using mkVersion.xsl. -->
@@ -92,7 +111,7 @@
                                 ${project.build.directory}/generated-documents
                             </outputDir>
                             <includes>
-                                <include>IrScrutinizer.xml</include>
+                                <include>${project.name}.xml</include>
                             </includes>
                             <stylesheet>../tools/xdoc2html.xsl</stylesheet>
                             <fileMappers>
@@ -124,7 +143,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.harctoolbox.irscrutinizer.IrScrutinizer</mainClass>
+                            <mainClass>${project.groupId}.${project.nameLowercase}.${project.name}</mainClass>
                         </manifest>
                         <manifestEntries>
                             <SplashScreen-Image>images/splash.png</SplashScreen-Image>
@@ -205,9 +224,6 @@
                                 <resource>
                                     <directory>src/main/config</directory>
                                     <filtering>true</filtering>
-                                    <excludes>
-                                        <exclude>**/*.m4</exclude>
-                                    </excludes>
                                 </resource>
                                 <resource>
                                     <directory>../IrpMaster/src/main/config</directory>
@@ -242,6 +258,7 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <!-- Allow execution from the target directory, Linux64 only :-) -->
                     <execution>
                         <id>copy-linux64-so</id>
                         <phase>prepare-package</phase>
@@ -266,36 +283,6 @@
                 <version>1.4.0</version>
                 <executions>
                     <execution>
-                        <id>generate-inno-config</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>m4</executable> <!-- Fedora pkg: m4 -->
-                            <arguments>
-                                <argument>--define=VERSION=${project.version}</argument>
-                                <argument>src/main/config/IrScrutinizer_inno.m4</argument>
-                            </arguments>
-                            <outputFile>${project.build.directory}/IrScrutinizer_inno.iss</outputFile>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-desktop</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>m4</executable> <!-- Fedora pkg: m4 -->
-                            <arguments>
-                                <argument>--define=VERSION=${project.version}</argument>
-                                <argument>src/main/config/irscrutinizer.desktop.m4</argument>
-                            </arguments>
-                            <outputFile>${project.build.directory}/irscrutinizer.desktop</outputFile>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>sillify docs</id>
                         <phase>package</phase>
                         <goals>
@@ -305,7 +292,7 @@
                             <executable>unix2dos</executable> <!-- Fedora pkg: dos2unix -->
                             <workingDirectory>${project.build.directory}/doc</workingDirectory>
                             <arguments>
-                                <argument>IrScrutinizer.releasenotes.txt</argument>
+                                <argument>${project.name}.releasenotes.txt</argument>
                                 <argument>IrpMaster.releasenotes.txt</argument>
                                 <argument>LICENSE_gpl.txt</argument>
                             </arguments>
@@ -354,7 +341,7 @@
                             <workingDirectory>${project.build.directory}</workingDirectory>
                             <arguments>
                                 <argument>+x</argument>
-                                <argument>irscrutinizer.sh</argument>
+                                <argument>${project.nameLowercase}.sh</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -365,22 +352,22 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.harctoolbox</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>IrpMaster</artifactId>
             <version>1.0.3</version>
         </dependency>
         <dependency>
-            <groupId>org.harctoolbox</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>HarcHardware</artifactId>
             <version>0.9.3</version>
         </dependency>
         <dependency>
-            <groupId>org.harctoolbox</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>Girr</artifactId>
             <version>1.0.3</version>
         </dependency>
         <dependency>
-            <groupId>org.harctoolbox</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>Jirc</artifactId>
             <version>0.3.1</version>
         </dependency>

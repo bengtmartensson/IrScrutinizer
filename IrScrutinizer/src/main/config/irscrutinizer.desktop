@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=${project.name} ${project.version}
+Comment=Capturing, generating, analyzing, importing, and exporting of infrared signals
+Exec=/bin/sh "${project.exepath}"
+Icon=${project.icon}
+Categories=AudioVideo;Java;
+Version=1.0
+Type=Application
+Terminal=false
+StartupNotify=true

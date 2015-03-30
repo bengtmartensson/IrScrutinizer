@@ -15,10 +15,7 @@
             <url>https://www.gnu.org/licenses/gpl.html</url>
         </license>
     </licenses>
-    <description>
-        HarctoolboxBundle consists of IrScrutinizer bundled with its
-        supporting libraries and programs.
-    </description>
+    <description>HarctoolboxBundle consists of IrScrutinizer bundled with its supporting libraries and programs.</description>
     <url>http://www.harctoolbox.org</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,8 +29,22 @@
         <module>HarcHardware</module>
         <module>Crystal-Clear-Icons</module>
         <module>rxtx-2.2pre2h</module>
-        <module>package</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>buildingFedoraPackage</id>
+            <activation>
+                <property>
+                    <name>building_fedora_package</name>
+                </property>
+            </activation>
+            <modules>
+                <module>package</module> <!-- Alec, OK? -->
+            </modules>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <!-- Create source tarball from src/assembly/source.xml. -->
