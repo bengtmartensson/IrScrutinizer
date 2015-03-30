@@ -3,3 +3,7 @@ target
 dist
 .project
 .classpath
+nb-configuration.xml
+nbactions.xml
+.DS_Store
+._.DS_Store
