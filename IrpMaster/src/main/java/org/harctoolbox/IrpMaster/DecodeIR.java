@@ -100,13 +100,14 @@ public class DecodeIR {
     }
 
     private static boolean loadAbsoluteLibrary(String path) {
+        String absolutePath = (new File(path)).getAbsolutePath();
         try {
-            System.load((new File(path)).getAbsolutePath());
-            Debug.debugDecodeIR("Loaded file " + path);
+            System.load(absolutePath);
+            Debug.debugDecodeIR("Loaded file " + absolutePath);
             libIsLoaded = true;
             return true;
         } catch (UnsatisfiedLinkError e) {
-            Debug.debugDecodeIR("Loading of file " + path + " failed");
+            Debug.debugDecodeIR("Loading of file " + absolutePath + " failed");
             return false;
         }
     }
