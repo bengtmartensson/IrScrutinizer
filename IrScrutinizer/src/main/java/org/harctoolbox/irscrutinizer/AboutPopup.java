@@ -70,7 +70,7 @@ public class AboutPopup extends javax.swing.JDialog {
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("About IrMaster"); // NOI18N
+        setTitle("About IrScrutinizer"); // NOI18N
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setResizable(false);
         addMouseListener(new java.awt.event.MouseAdapter() {
