@@ -125,6 +125,8 @@ public class RXTXVersion
         // Mac: it appears that Snow Leopard says "X64_64" while Mountain Lion says "x86_64".
         String mappedName = System.mapLibraryName(baseName);
         String libraryFile = folderName + File.separator + mappedName;
+        if (System.getProperty("harctoolbox.jniLibsHome") != null)
+            libraryFile = System.getProperty("harctoolbox.jniLibsHome") + File.separator + libraryFile;
         if (loadAbsoluteLibrary(baseName, libraryFile))
             return true;
 

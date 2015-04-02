@@ -124,6 +124,8 @@ public class DecodeIR {
 
         String mappedName = System.mapLibraryName(libraryName);
         String libraryFile = folderName  + File.separator + mappedName;
+        if (System.getProperty("harctoolbox.jniLibsHome") != null)
+            libraryFile = System.getProperty("harctoolbox.jniLibsHome") + File.separator + libraryFile;
         if (loadAbsoluteLibrary(libraryFile))
             return true;
 

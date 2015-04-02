@@ -228,6 +228,7 @@ public class GuiMain extends javax.swing.JFrame {
     public GuiMain(String applicationHome, String propsfilename, boolean verbose, int debug, int userlevel) throws ParserConfigurationException, SAXException, IOException, IncompatibleArgumentException, java.text.ParseException, URISyntaxException {
         this.debug = debug;
         this.applicationHome = applicationHome;
+        System.setProperty("harctoolbox.jniLibsHome", applicationHome);
 
         properties = new Props(propsfilename, this.applicationHome);
         if (verbose)
