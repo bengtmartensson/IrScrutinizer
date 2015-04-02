@@ -56,6 +56,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.xml.parsers.ParserConfigurationException;
+import org.harctoolbox.IrpMaster.Debug;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.DecodeIR.DecodeIrException;
 import org.harctoolbox.IrpMaster.DomainViolationException;
@@ -2079,6 +2080,7 @@ public class GuiMain extends javax.swing.JFrame {
         inquiryDeviceDataCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         debugMenu = new javax.swing.JMenu();
         offerStackTraceCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        debugCodeMenuItem = new javax.swing.JMenuItem();
         jSeparator22 = new javax.swing.JPopupMenu.Separator();
         toolsMenu = new javax.swing.JMenu();
         hexCalcMenuItem = new javax.swing.JMenuItem();
@@ -3052,7 +3054,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scrutinizeRemoteHelpButton)
                 .addContainerGap())
-            .addComponent(rawCookedTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 992, Short.MAX_VALUE)
+            .addComponent(rawCookedTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING)
         );
 
         remoteScrutinizerPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {parametricOrRawExportButton, scrutinizeRemoteHelpButton, startStopToggleButton});
@@ -4076,13 +4078,13 @@ public class GuiMain extends javax.swing.JFrame {
         csvImportPanelLayout.setHorizontalGroup(
             csvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(csvImportPanelLayout.createSequentialGroup()
-                .addComponent(parametrizedRawTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 984, Short.MAX_VALUE)
+                .addComponent(parametrizedRawTabbedPane)
                 .addGap(0, 0, 0))
         );
         csvImportPanelLayout.setVerticalGroup(
             csvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(csvImportPanelLayout.createSequentialGroup()
-                .addComponent(parametrizedRawTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
+                .addComponent(parametrizedRawTabbedPane)
                 .addGap(0, 0, 0))
         );
 
@@ -4617,7 +4619,7 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(exportPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(exportSpecificOptionsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 980, Short.MAX_VALUE)
+                    .addComponent(exportSpecificOptionsTabbedPane)
                     .addGroup(exportPanelLayout.createSequentialGroup()
                         .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(exportPanelLayout.createSequentialGroup()
@@ -6160,6 +6162,14 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
         debugMenu.add(offerStackTraceCheckBoxMenuItem);
+
+        debugCodeMenuItem.setText("Debug Code...");
+        debugCodeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                debugCodeMenuItemActionPerformed(evt);
+            }
+        });
+        debugMenu.add(debugCodeMenuItem);
 
         optionsMenu.add(debugMenu);
         optionsMenu.add(jSeparator22);
@@ -7997,6 +8007,16 @@ public class GuiMain extends javax.swing.JFrame {
         guiUtils.browse(properties.getIrpMasterHelpfileUrl());
     }//GEN-LAST:event_irpMasterDocuMenuItemActionPerformed
 
+    private void debugCodeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugCodeMenuItemActionPerformed
+        try {
+            Integer t = guiUtils.getIntegerInput("Debug Code", Debug.getDebug());
+            if (t != null)
+                Debug.setDebug(t);
+        } catch (NumberFormatException ex) {
+            guiUtils.error("Invalid number: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_debugCodeMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -8059,6 +8079,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel csvRawImportPanel;
     private javax.swing.JComboBox csvRawSeparatorComboBox;
     private javax.swing.JComboBox dColumnComboBox;
+    private javax.swing.JMenuItem debugCodeMenuItem;
     private javax.swing.JMenu debugMenu;
     private javax.swing.JMenuItem debugTableRowMenuItem;
     private javax.swing.JMenuItem debugTableRowMenuItem1;
