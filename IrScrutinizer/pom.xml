@@ -43,6 +43,51 @@
                 <project.exepath>/usr/bin/${project.nameLowercase}</project.exepath>
             </properties>
         </profile>
+
+        <!-- Build the Mac App, if possible -->
+        <profile>
+            <id>buildMacApp</id>
+            <activation>
+                <file>
+                    <!-- Provided by Apple XCode, proprietary -->
+                    <!-- /System/Library/Frameworks/JavaVM.framework/Versions/Current/Resources/MacOS/JavaApplicationStub -->
+                    <exists>${basedir}/JavaApplicationStub</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>osxappbundle-maven-plugin</artifactId>
+                        <version>1.0-alpha-2</version>
+                        <configuration>
+                            <mainClass>${project.groupId}.${project.nameLowercase}.${project.name}</mainClass>
+                            <javaApplicationStub>${basedir}/JavaApplicationStub</javaApplicationStub>
+                            <diskImageFile>plarf.dmg</diskImageFile>
+                            <iconFile>${basedir}/${project.name}.icns</iconFile>
+                            <additionalResources>
+                                <fileSet>
+                                    <directory>${project.build.directory}/doc</directory>
+                                    <includes>
+                                        <include>README*</include>
+                                        <include>LICENSE*</include>
+                                        <include>${project.name}*</include>
+                                    </includes>
+                                </fileSet>
+                            </additionalResources>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>bundle</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <build>

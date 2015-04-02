@@ -6,7 +6,7 @@ Welcome to harctoolbox. More info on this project is at the
 ## Copyright and license
 
 Unless otherwise stated in sub-projects this is copyright (c)
-Bengt Maartenson 2010-2015 and licensed under the GPL version
+Bengt Martenson 2010-2015 and licensed under the GPL version
 3 license.
 
 ## Status
@@ -122,9 +122,33 @@ be used to run IrScrutinizer in the ```IrScrutinizer/target```
 directory.
 
 To build the Windows setup.exe file, preferrably the work area should
-be mounted from a Windows computer. Then open the generated file
-IrScrutinizer/target/IrScrutinizer_inno.iss with the Inno installer,
-and start the compile.
+be mounted on a Windows computer. Then, on the Windows computer, open
+the generated file IrScrutinizer/target/IrScrutinizer_inno.iss with
+the Inno installer, and start the compile.
+
+For creation of Mac OS X apps, the build is unfortunately neither
+"free" in the strict sense, nor quite automatic. As a first step, the
+Apple binary file
+/System/Library/Frameworks/JavaVM.framework/Versions/Current/Resources/MacOS/JavaApplicationStub
+(distributed with XCode?)  has to be copied to the IrScrutinizer
+directory (Footnote 1). (Without this file, the MacOS part will be
+ignored by the build.) The Maven build creates a file
+IrScrutinizer-VERSION-app.zip. This file should be opened with a
+suitable archive manager, and the files IrpProtocols.ini,
+protocols.ini, exportformats.xml, as well as the directories
+IrScrutinizer/target/doc, IrScrutinizer/native/Mac OS X-x86_64 and
+IrScrutinizer/native/Mac OS X-i386 (with content) added to
+IrScrutinizer-VERSION/IrScrutinizer.app/Contents/Resources/Java/repo/org/harctoolbox/IrScrutinizer/VERSION/
+within the zip archive. After this, the zip file is unpacked by a Mac
+to a *local directory* on that Mac. The content of the unpacked
+directory will now be a few documentation files, and the generated
+"app". These files should be transferred to a "disk image" (.dsg)
+file, compressed, and distributed.
+
+The icon file IrScrutinizer.icns was produced from the Crystal-Clear
+icon babelfish.png in 128x128 resolution, using the procedure
+described in
+http://stackoverflow.com/questions/11770806/why-doesnt-icon-composer-2-4-support-the-1024x1024-size-icon-any-more.
 
 ## Installation
 
@@ -157,3 +181,11 @@ Invoke IrpMaster with
     cd IrpMaster
     java -jar target/IrpMaster-*-jar-with-dependencies.jar  --help
 ```
+
+Footnote 1. Apples "JavaApplication Stub Binary Module License" states
+that "...  Apple grants you a personal, non-exclusive license, under
+Apple's copyrights in this original Apple JavaApplicationStub binary
+module software (the `Apple Software'), to use, reproduce and
+redistribute the Apple Software in binary form only as part of your
+own software program." I interpret this so that I am not allowed to
+publish the file on Github. 
