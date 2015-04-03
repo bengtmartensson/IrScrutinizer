@@ -497,7 +497,7 @@ void init_send_buffer(void)
                     remote.min_remaining_gap = remote.min_gap() - send_buffer.sum;
                     remote.max_remaining_gap = remote.max_gap() - send_buffer.sum;
                 } else {
-                    logprintf(LOG_ERR, "too short gap: %u", remote.gap);
+                    logprintf(LOG_ERR, "too short gap: %d", remote.gap);
                     remote.min_remaining_gap = remote.min_gap();
                     remote.max_remaining_gap = remote.max_gap();
                     return false;
