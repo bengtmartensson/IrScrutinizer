@@ -88,6 +88,10 @@ public class Props {
         wasReset = true;
     }
 
+    public String getFilename() {
+        return filename;
+    }
+
     /**
      * Sets up a Props instance from system default file name.
      * @param applicationHome

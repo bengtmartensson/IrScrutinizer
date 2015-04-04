@@ -65,8 +65,12 @@ public class IrScrutinizer {
         @Parameter(names = {"-H", "--home", "--applicationhome", "--apphome"}, description = "Set application home (where files are located)")
         private String applicationHome = null;
 
+        @Parameter(names = {"--nuke-properties"}, description = "Get rid of present properties file")
+        private boolean nukeProperties = false;
+
         @Parameter(names = {"-p", "--properties"}, description = "Pathname of properties file")
         private String propertiesFilename = null;
+
 
         @Parameter(names = {"-V", "--version"}, description = "Display version information")
         private boolean versionRequested;
@@ -107,6 +111,14 @@ public class IrScrutinizer {
             System.exit(IrpUtils.exitSuccess);
         }
 
+        if (commandLineArgs.nukeProperties) {
+            Props properties = new Props(commandLineArgs.propertiesFilename, commandLineArgs.applicationHome);
+            String filename = properties.getFilename();
+            System.out.println("Deleting the properties file " + filename + ".");
+            (new File(filename)).deleteOnExit();
+            System.exit(IrpUtils.exitSuccess);
+        }
+
         String applicationHome =  commandLineArgs.applicationHome != null ? commandLineArgs.applicationHome : System.getenv("IRSCRUTINIZERHOME");
         if (applicationHome == null) {
             URL url = IrScrutinizer.class.getProtectionDomain().getCodeSource().getLocation();
@@ -131,7 +143,7 @@ public class IrScrutinizer {
             System.err.println("applicationHome = " + applicationHome);
 
         userLevel = commandLineArgs.experimental ? 1 : 0;
-        
+
         guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.debug, userLevel);
     }
 
