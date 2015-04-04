@@ -283,7 +283,7 @@ public class GuiUtils implements Serializable {
             current = line.trim();
             info(current.equals(versionString)
                     ? "You are using the latest version of " + programName + ", " + versionString
-                    : "Current version is " + current + ", your version is " + versionString);
+                    : "Current official version is " + current + ", your version is " + versionString + ".");
         } catch (IOException ex) {
             error("Problem getting current version: " + ex.getMessage());
         } finally {
