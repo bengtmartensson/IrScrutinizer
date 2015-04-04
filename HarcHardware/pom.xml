@@ -26,6 +26,13 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <distributionManagement>
+        <repository>
+            <id>repos</id>
+            <name>Repository</name>
+            <url>file:///${project.basedir}/../repos</url>
+        </repository>
+    </distributionManagement>
     <profiles>
         <profile>
             <id>default</id>

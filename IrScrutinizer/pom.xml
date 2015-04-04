@@ -29,6 +29,13 @@
         <project.icon>/usr/local/${project.nameLowercase}/${project.nameLowercase}.png</project.icon>
         <project.exepath>/usr/local/bin/${project.nameLowercase}</project.exepath>
     </properties>
+    <distributionManagement>
+        <repository>
+            <id>repos</id>
+            <name>Repository</name>
+            <url>file:///${project.basedir}/../repos</url>
+        </repository>
+    </distributionManagement>
 
     <profiles>
         <profile>
@@ -51,7 +58,7 @@
                 <file>
                     <!-- Provided by Apple XCode, proprietary -->
                     <!-- /System/Library/Frameworks/JavaVM.framework/Versions/Current/Resources/MacOS/JavaApplicationStub -->
-                    <exists>${basedir}/JavaApplicationStub</exists>
+                    <exists>${basedir}/../tools/JavaApplicationStub</exists>
                 </file>
             </activation>
             <build>
@@ -62,8 +69,7 @@
                         <version>1.0-alpha-2</version>
                         <configuration>
                             <mainClass>${project.groupId}.${project.nameLowercase}.${project.name}</mainClass>
-                            <javaApplicationStub>${basedir}/JavaApplicationStub</javaApplicationStub>
-                            <diskImageFile>plarf.dmg</diskImageFile>
+                            <javaApplicationStub>${basedir}/../tools/JavaApplicationStub</javaApplicationStub>
                             <iconFile>${basedir}/${project.name}.icns</iconFile>
                             <additionalResources>
                                 <fileSet>
@@ -314,7 +320,7 @@
                             <outputDirectory>${basedir}/target/Linux-amd64</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>native/Linux-amd64</directory>
+                                    <directory>../native/Linux-amd64</directory>
                                     <filtering>false</filtering>
                                 </resource>
                             </resources>
@@ -339,7 +345,7 @@
                             <arguments>
                                 <argument>${project.name}.releasenotes.txt</argument>
                                 <argument>IrpMaster.releasenotes.txt</argument>
-                                <argument>LICENSE_gpl.txt</argument>
+                                <argument>LICENSE.txt</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -387,6 +393,20 @@
                             <arguments>
                                 <argument>+x</argument>
                                 <argument>${project.nameLowercase}.sh</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-prog</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${project.basedir}/../tools/install-irscrutinizer.sh</executable>
+                            <workingDirectory>${project.basedir}</workingDirectory>
+                            <arguments>
+                                <argument>${project.installpath}</argument>
                             </arguments>
                         </configuration>
                     </execution>

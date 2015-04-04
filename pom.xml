@@ -19,7 +19,15 @@
     <url>http://www.harctoolbox.org</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <reposurl>${basedir}/repos</reposurl>
     </properties>
+    <distributionManagement>
+        <repository>
+            <id>repository</id>
+            <name>Repository</name>
+            <url>file:///${basedir}/repos</url>
+        </repository>
+    </distributionManagement>
 
     <modules>
         <module>IrScrutinizer</module>

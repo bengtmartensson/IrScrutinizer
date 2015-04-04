@@ -4,9 +4,9 @@
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
     <id>sources</id>
     <formats>
-        <format>tar.gz</format>
-        <!--format>tar.bz2</format>
-        <format>zip</format-->
+        <!--format>tar.gz</format-->
+        <!--format>tar.bz2</format-->
+        <format>zip</format>
     </formats>
 
     <fileSets>
@@ -27,6 +27,7 @@
                 <exclude>**/*~</exclude> <!-- just in case -->
                 <exclude>**/*.o</exclude>
                 <exclude>**/Makefile.in</exclude>
+                <exclude>**/JavaApplicationStub*</exclude>
             </excludes>
             <lineEnding>keep</lineEnding> <!-- do not change! -->
         </fileSet>

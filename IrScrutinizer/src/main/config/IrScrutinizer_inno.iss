@@ -19,7 +19,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-LicenseFile=doc\LICENSE_gpl.txt
+LicenseFile=doc\LICENSE.txt
 InfoBeforeFile=doc\pre_install.txt
 InfoAfterFile=doc\post_install.txt
 OutputBaseFilename={#MyAppName}-{#MyAppVersion}
@@ -39,8 +39,8 @@ Name: modifypath; Description: &Add installation directory to path
 
 [Files]
 Source: "IrScrutinizer-jar-with-dependencies.jar"; DestName: "IrScrutinizer.jar"; DestDir: "{app}"; Flags: ignoreversion; AfterInstall: CreateWrapper
-Source: "..\native\Windows-x86\*"; DestDir: "{app}\Windows-x86"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\native\Windows-amd64\*"; DestDir: "{app}\Windows-amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\native\Windows-x86\*"; DestDir: "{app}\Windows-x86"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\native\Windows-amd64\*"; DestDir: "{app}\Windows-amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "IrpProtocols.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "protocols.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "exportformats.xml"; DestDir: "{app}"; Flags: ignoreversion

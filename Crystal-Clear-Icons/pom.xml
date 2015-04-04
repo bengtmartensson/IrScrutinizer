@@ -26,4 +26,11 @@ http://maven.apache.org/maven-v4_0_0.xsd">
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <distributionManagement>
+        <repository>
+            <id>repos</id>
+            <name>Repository</name>
+            <url>file:///${project.basedir}/../repos</url>
+        </repository>
+    </distributionManagement>
 </project>
