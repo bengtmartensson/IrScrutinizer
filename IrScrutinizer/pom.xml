@@ -132,7 +132,7 @@
                                 </parameter>
                                 <parameter>
                                     <name>appName</name>
-                                    <value>${project.artifactId}</value>
+                                    <value>${project.name}</value>
                                 </parameter>
                             </parameters>
                             <fileMappers>
