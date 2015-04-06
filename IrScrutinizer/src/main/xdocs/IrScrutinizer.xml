@@ -38,6 +38,10 @@ not to hold the author responsible.</warning>
 	  <td>2014-09-21</td>
 	  <td>Version for release 1.1.1, some more fixes and enhancements.</td>
 	</tr>
+        <tr>
+	  <td>2015-04-04</td>
+	  <td>Version for release 1.1.2, installation issued reworked.</td>
+	</tr>
       </table>
 
 <section>
@@ -229,74 +233,99 @@ exception are DecodeIR and the native part of RXTX, which are written in C++
 and C respectively, and invoked as shared library
 (<code>.dll</code> in Windows, <code>.so</code> in Linux, etc). If DecodeIR or
 RXTX are
-not available on your platform it is not a major problem, as IrScrutinizer will
+not available on for a particular platform it is not a major problem, as IrScrutinizer will
 work fine without it; just the DecodeIR-related functions or the serial
 hardware access will be unavailable.</p>
 
-<p>There is unfortunately no good <code>make install</code> or such in
-the source distribution, so also source code distribution users are recommended
-to install the binary distribution. Also, all necessary third-party components
-are included in the binary distribution.</p>
-
-<p>Both under Windows as well as under other operating systems, IrScrutinizer behave civilized, in that they do not write in the installation
-directory after the initial installation. In both cases (in contrast to the
-source distribution), the distribution contains everything needed including
-third party libraries.
-</p></section>
-<section><title>Properties</title>
-<p>Under Windows, the properties are stored in
-<code><![CDATA[%LOCALAPPDATA%\IrScrutinizer\IrScrutinizer.properties.xml]]></code> using Windows
-Vista and later (on my Windows 7 system, this is <code>%HOME%\AppData\Local\IrScrutinizer\IrScrutinizer.properties.xml</code>), otherwise in
-<code>%APPDATA%\IrScrutinizer\IrScrutinizer.properties.xml</code>. Using other operating
-systems, it is stored under <code>$HOME/.IrScrutinizer.properties.xml</code>. It is
-not deleted by  un-install. (If weird problems appear when updating, try
-deleting this file.)</p>
-      </section>
+<p>In all versions, IrScrutinizer behave civilized, in that it dowa not write in the installation
+directory after the initial installation.
+</p>
+<p>As of version 1.1.2, there are five different way of installing the program, described next.</p>
+</section>
+<section>
+    <title>Fedora Linux</title>
+    <p>Thanks to a great job done by Alec Leamas of Fedora, Fedora rpm packages will
+        be available in the next future. Packages for other Linux distributions are likely to follow.</p>
+        <p>To install, the command <code>sudo yum install irscrutinizer</code> should be issued in a terminal window.
+        To uninstall, use the command  <code>sudo yum erase irscrutinizer</code>.</p>
+</section>
 <section><title>Windows</title>
 <p>Download the <a
 href="http://www.harctoolbox.org/downloads/IrScrutinizer.exe">Window setup
-file</a>, save, and double click. Select any installation
+file</a> and double click it. Select any installation
 directory you like; suggested is <code>C:\Program Files\IrScrutinizer</code>,
-unless you are installing from an account without administrator rights. Unless
+unless you can not install with administrator rights. Unless
 reason to do so, create the start menu folder, and the desktop
-icon. Administrator rights are not needed, unless  are
-installing in a directory like <code>Program Files</code>.
+icon. Administrator rights are needed only it installing in a directory like <code>Program Files</code> is desired.
 IrScrutinizer can now be started from <code>Start -> IrScrutinizer ->
 IrScrutinizer</code>, or from the desktop icon.</p>
 
-<p>To un-install, select the un-install option from the Start menu. Very pedantic
-people may like to delete the properties file too, see above.</p>
+<p>This will also install the command line program <a href="IrpMaster.html">IrpMaster</a>,
+which can be called as <code>irpmaster</code> from a so-called DOS box.</p>
+
+<p>To uninstall, select the uninstall option from the Start menu. Very pedantic
+people may like to delete the properties file too, see <a href="#Properties">properties</a>.</p>
 </section>
       <section>
-	<title>MacOSX</title>
-<p>Download and double click the <a
-href="downloads/IrScrutinizer-bin.zip">binary distribution</a>. Unpack it to a directory
-of your choice, e.g. on the desktop. Just double clicking the file IrScrutinizer.jar
-should now start the program. Otherwise, try the "Other systems" instructions
-and adapt the wrapper <code>irscrutinizer.sh</code>.</p>
+	<title>Mac OS X app</title>
+<p>Download the  <a
+    href="http://www.harctoolbox.org/downloads/IrScrutinizer.dmg.zip">compressed disk image</a>.
+    Uncompress it by double clicking, and mount it by double clicking the resulting file.
+    A mounted disk image "IrScrutinizer" will appear on the desktop. Opening it will show an app, and a few documention files.
+    The app can just be dragged to the desktop, to the tray, to "Applications" or any other location the user prefers.
+    The disk image can now unmounted, and deleted if so desired. IrScrutinizer now behaves like any other app in Mac OS X.</p>
+
+    <p>To unistall, just move the app to the trash.</p>
+    <p>The command line program <a href="IrpMaster.html">IrpMaster</a> is not supported in this mode.
+    (For this, the <a href="#Generic+Binary">generic binary</a> distribution has to be used.)    </p>
       </section>
-<section><title>Other systems (Linux etc)</title>
-<p>For some reason, double clicking an executable jar file in my Gnome
-installation does not start the program, but starts a browser for the jar file
-(which is really a form of Zip-Archive). Instead:</p>
-<p>Create an installation directory (suggestion;
-<code>/usr/local/irscrutinizer</code>), and unpack <a
-href="downloads/IrScrutinizer-bin.zip">the current binary distribution</a> therein.
-Examine the wrapper <code>irscrutinizer.sh</code>, and, if desired, make desired changes to
-it with your favorite text editor. Then make a symbolic links from a directory
-in the path (suggestion; <code>/usr/local/bin</code> to the newly installed
-<code>irscrutinizer.sh</code>, using the name <code>irscrutinizer</code>. Example (using the suggested directories)</p>
+
+<section><title>Generic Binary</title>
+<p>The <em>Generic Binary</em> version consists of all the java code packed in one executable jar file,
+together with supporting files, like all the compiled shared libraries for the different
+operating systems Linux, Windows, and Mac. It can be used on all those systems. (In other environments, the
+shared libraries may be compiled with moderate effort.)</p>
+
+<p>The generic binary distribution be used whenever using the rpm/setup.exe/app installation is not possible or not desired.</p>
+
+<p>To install, unpack in an empty directory of your choice, suggested is
+    <code>/usr/local/irscrutinizer</code>. Inspect the wrapper <code>irscrutinizer.sh</code>, and
+    make changes if necessary.</p>
+
+<p>It is recommended to make links from a directory in the path to the
+wrapper script, e.g.</p>
 <source>
-cd /usr/local/bin
-ln -s ../irscrutinizer/irscrutinizer.sh irscrutinizer
+ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irscrutinizer
+ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irpmaster
 </source>
-<p>(<code>su</code> (or <code>sudo</code>) may be necessary to install in the
-desired locations.)</p>
-<p>To un-install, just delete the files. Very pedantic
-people may like to delete the properties file too, see above.</p>
-</section>
+<p>If your system supports the RXTX, you should preferably use that. See
+    the comments in the wrapper <code>irscrutinizer.sh</code>.</p>
+
+    <p>The JNI libraries <code>libDecodeIR.so</code>/<code>DecodeIR.dll</code>/<code>libDecodeIR.jnilib</code> are contained in the
+    distribution and should be found by the program in the installed location.</p>
+
+    <p>The desktop file <code>irscrutinizer.desktop</code> should, if desired, be
+    installed in <code>/usr/local/share/applications</code> alternatively
+    <code>~/.local/share/applications</code>.</p>
+
+    <p>The program can now be started either as a desktop program, or by typing <code>irscrutinizer</code> on the command line.
+    Also the command line program <a href="IrpMaster.html">IrpMaster</a> can be started
+    by the command <code>irpmaster</code>. It is also possible to start the program by double clicking
+    on the jar file. In case this brings up the archive manager, the desktop needs to be taught
+    to open executable jar files with the "java" application. For this, select a jar file the file browser,
+    select the properties, and select "java" as the application to "open with". (The details might vary.)</p>
+
+<p>To uninstall, just delete the files. Very pedantic
+    people may like to delete the <a href="#Properties">properties file</a> too.</p>
 </section>
 
+<section>
+    <title>Source distribution</title>
+    <p>Compiling the sources is covered in the <a href="#Appendix.+Building+from+sources">Appendix</a>.
+    This allows to install the different components in a way compliant with e.g. the installation by the Gnu Autotools,
+    normally in subdirectories of <code>/usr/local</code>.</p>
+</section>
+</section>
 
 <section>
 <title>Concepts</title>
@@ -393,6 +422,19 @@ the already present formats as guide.</p>
 program, or by selecting Options -> Export formats database -> Reload.</p>
     </section>
 </section>
+<section>
+    <title>Properties</title>
+<p>Under Windows, the properties are stored in
+<code><![CDATA[%LOCALAPPDATA%\IrScrutinizer\IrScrutinizer.properties.xml]]></code> using Windows
+Vista and later (on my Windows 7 system, this is <code>%HOME%\AppData\Local\IrScrutinizer\IrScrutinizer.properties.xml</code>), otherwise in
+<code>%APPDATA%\IrScrutinizer\IrScrutinizer.properties.xml</code>. Using other operating
+systems, it is stored under <code>$HOME/.IrScrutinizer.properties.xml</code>. It is
+not deleted by  un-install. (If weird problems appear when updating, try
+deleting this file.)
+There is a command line option <code>--nuke-properties</code> that can be used to
+conveniently delete the present property file, without knowing its exact name.
+</p>
+      </section>
 <section>
 <title>GUI Elements walk through</title>
 <section>
@@ -1018,6 +1060,8 @@ the <code>--help</code>-command to see the complete list of command line paramet
 option set the verbose flag, causing commands like sending to IR
 hardware printing some messages in the console.</p>
 
+<p>The option <code>--nuke-properties</code> makes the program delete the property file, and exit immediately.</p>
+
 <!--p>The second form invokes IrpMaster as a the command line program  on the rest
 of the arguments. It is a convenience feature for just having one user entry
 point
@@ -1083,9 +1127,30 @@ wish list.
 </p></section>
 
 <section>
+    <title>Why can't I have a device opened <em>both</em> for capturing and sending?</title>
+    <p>This is unfortunately a fundamental design flaw, one that sits deep in the design.
+        A quick fix is therefore not likely. Sorry.
+        (However, it is possible to use two different instances of the hardware,
+        e.g. two IrToys; one for capturing and one for transmission.)</p>
+</section>
+
+<section>
+    <title>What about the "fishy" icon?</title>
+    <p>It is a
+        <a href="http://en.wikipedia.org/wiki/List_of_races_and_species_in_The_Hitchhiker%27s_Guide_to_the_Galaxy#Babel_fish">Babel fish</a>,
+        as found in <a href="http://en.wikipedia.org/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy">The Hitchhiker's Guide to the Galaxy</a>,
+        having the property, that
+        "... if you stick one in your ear, you can instantly understand anything said to you in any form of language".
+        This symbolizes the program's ability to "understand" a large number of different IR formats.
+    </p>
+</section>
+
+<section>
 <title>I did something funny, and now the program does not startup, with no
 visible error messages.</title>
-<p>Try deleting (or renaming) the <a href="Glossary.html#Properties">properties file</a>. If that does not help, try
+<p>Try deleting the <a href="#Properties">properties file</a>.
+(Note the command line option <code>--nuke-properties</code> which will do exactly that,
+without having to manually find the file or its name.) If that does not help, try
 starting the program from the command line, which may leave hopefully
 understandable error message on the console.</p></section>
 
@@ -1097,8 +1162,8 @@ gracefully "unsteal" file associations.)</p></section>
 <section><title>(Linux) I get error messages that lock files cannot be
 created, and then the Arduino and IrToy hardware do not
 work.</title><p>
-When starting IrScrutinizer, or press the "Refresh" button,
-error messages like</p>
+When starting IrScrutinizer, or by pressing the "Refresh" button,
+error messages occur like</p>
 <p>
 <code>
 check_group_uucp(): error testing lock file creation Error
@@ -1126,11 +1191,11 @@ using the one with IrScrutinizer. For example, on Fedora, the command
 is
 </p>
 <source>
-yum install rxtx
+sudo yum install rxtx
 </source>
-<p>which on a 64-bit system installs the library in
-<code>/usr/lib64/rxtx</code>. (Other distributions uses other
-commands, for example <code>apt-get</code> on Debian like systems.)
+<p>which installs the library in <code>/usr/lib/rxtx</code> or
+<code>/usr/lib64/rxtx</code>, depending on the operating system. (Other distributions uses other
+commands, for example <code>apt-get</code> on Debian-like systems.)
 Finally, the correct installation directory of the library
 (<code>librxtxSerial-2.2pre1.so</code>) has to be given to the JVM
 running IrScrutinizer. For this, see the wrapper
@@ -1138,6 +1203,166 @@ running IrScrutinizer. For this, see the wrapper
 necessary adaptations.
 </p>
       </section>
+      <section>
+          <title>Do you solicit or accept donations?</title>
+          <p>No.</p>
+      </section>
+</section>
+<section>
+    <title>Appendix. Building from sources</title>
+<p>"IrScrutinizer" is one subproject (corresponding to a Java package) within "harctooolbox.org".
+    It depends on several other subprojects within harctoolbox. The project "harctoolboxbundle" consists
+    of these subproject bundled together, with some dependent third-party components added.</p>
+
+<section>
+    <title>Dependencies</title>
+<p>
+As any program of substantial size, IrScrutinizer uses a number of third-party components.
+    All of these are also free software, carrying compatible licenses.
+The dependent packages need to be installed also in
+    maven in order for the build to work. With the dependencies available, the script <code>tools/install-deps.sh</code>
+can be used to install  them in the local maven repository before building.</p>
+
+<p>At the time of this writing, temporary Fedora RPMs for the dependencies are available at
+    <a href="https://copr.fedoraproject.org/coprs/leamas/harctoolbox/">this location</a>.</p>
+
+    <section>
+        <title>The Crystal icons</title>
+        <p>A subset of the Crystal icons are included, and will be included in a built jar.
+    Most Linux distributions contain these too, so a Linux packaging may like to use the system icons instead.</p>
+    </section>
+    <section>
+        <title>RXTX</title>
+<p>The serial communication packate RXTX is also included in the source package. This builds a shared library and a jar file.
+    If there is a system supported RXTX (librxtxSerial really), it should be preferred.
+    The distribution constains pre-compiled binaries for Linux, Windows, and Mac OS X, both in 32- and 64-bit versions.
+    To compile the C sources, see sub-directory rxtx-pre2h and the instructions therein.</p>
+
+    <p>Note that the system supplied RXTX jar on many system (e.g. Fedora 21) has some issues
+        (version number incompatible with the shared library, does not recognize
+        the <code>/dev/ttyACM*</code>-ports required by IrToy and many Arduinos, unflexible library loading),
+        so using our RXTX jar together with the system supplied shared library can be sensible.</p>
+    </section>
+
+    <section>
+        <title>DecodeIR</title>
+        <p>If the system supports DecodeIR, use the system version. On recent Fedora, this can be installed with the command
+            <code>sudo yum install DecodeIR</code>. This will install both the shared
+            library <code>libDecodeIR</code> as well as the jar file <code>DecodeIrCaller.jar</code>.
+To download and compile the sources, see (or execute) the script <code>tools/build-decodeir.sh</code>.</p>
+    </section>
+
+    <section>
+        <title>ExchangeIR</title>
+        <p>It the system supports ExchangeIR (java), use the system version. (On recent Fedora, use <code>sudo yum install ExchangeIR</code>.)
+        Otherwise, it can be downloaded and installed by the script <code>tools/build-exchangeir.sh</code>.</p>
+    </section>
+
+    <section>
+        <title>minimal-json</title>
+        <p>It the system supports minimal-json, use the system version. (On recent Fedora, use <code>sudo yum install minimal-json</code>.)
+        Otherwise, it can be downloaded and installed by the script <code>tools/build-minimal-json.sh</code>.</p>
+    </section>
+
+    <section>
+        <title>jcommander</title>
+        <p>It the system supports jcommander, use the system version. (On recent Fedora, use <code>sudo yum install beust-jcommander</code>.)
+        Otherwise, it can be downloaded and installed by the script <code>tools/build-jcommander.sh</code>.</p>
+    </section>
+
+    <section>
+        <title>Tonto</title>
+        <p>It the system support Tonto, use the system version. (On recent Fedora, use <code>sudo yum install tonto</code>.)
+        Otherwise, it can be downloaded and installed by the script <code>tools/build-tonto.sh</code>.</p>
+
+        <p>Note that the shared library <code>libjnijcomm</code>,
+        which is required by the program Tonto for communicating with a Pronto remote through a serial interface,
+        is not required for use with IrScrutinizer, and can therefore be left out.</p>
+</section>
+</section>
+<section>
+    <title>Building</title>
+    <p>As of version 1.1.2, the <a href="http://maven.apache.org/index.html">Maven</a> "software
+project management and comprehension tool" is used as building system.
+Modern IDEs like Netbeans and Eclips integrate Maven, so build etc can be initiated from the IDE.
+Of course, the shell command <code>mvn install</code> can also be used. It creates some artifacts which can
+be used to run IrScrutinizer in the <code>IrScrutinizer/target</code> directory.</p>
+
+<p>To prepare the Windows version, some shell tools are needed. These are:</p>
+<ul>
+    <li>The <code>unix2dos</code> and <code>dos2unix</code> utilities, typically in the <code>dos2unix</code> package.</li>
+    <li>The <code>icotool</code> utility, typically in the <code>icoutils</code> package</li>
+</ul>
+</section>
+
+<section>
+    <title>Windows setup.exe creation</title>
+    <p>For building the Windows setup.exe, the <a href="http://www.jrsoftware.org/download.php/is.exe">Inno Installer version 5</a>
+    is needed. To build the Windows setup.exe file, preferrably the work area should
+be mounted on a Windows computer. Then, on the Windows computer, open
+        the generated file <code>IrScrutinizer/target/IrScrutinizer_inno.iss</code> with
+        the Inno installer, and start the compile. This will generate the desired file
+        <code>IrScutinizer-</code><em><code>version</code></em><code>.exe</code>.</p>
+</section>
+
+<section>
+    <title>Mac OS X app creation</title>
+    <p>For creation of Mac OS X apps, the build is unfortunately neither
+"free" in the strict sense, nor quite automatic. As a first step, the
+Apple binary file <code>/System/Library/Frameworks/JavaVM.framework/Versions/Current/Resources/MacOS/JavaApplicationStub</code>
+(distributed with <a href="https://developer.apple.com/xcode/">XCode</a>)  has to be copied to the
+directory tools. (Apples "JavaApplication Stub Binary Module License" states
+that "...  Apple grants you a personal, non-exclusive license, under
+Apple's copyrights in this original Apple JavaApplicationStub binary
+module software (the `Apple Software'), to use, reproduce and
+redistribute the Apple Software in binary form only as part of your
+own software program." I interpret this so that I am not allowed to
+publish the file on Github.) (Without this file, the MacOS part will be
+ignored by the build.) The Maven build creates a file
+<code>IrScrutinizer-</code><em><code>version</code></em><code>-app.zip</code>. This file should be opened with a
+suitable archive manager, and the files <code>IrpProtocols.ini,
+protocols.ini, exportformats.xml</code>, as well as the directories
+<code>IrScrutinizer/target/doc, native/Mac OS X-x86_64</code> and
+<code>native/Mac OS X-i386</code> (with content) added to
+<code>IrScrutinizer-</code><em><code>version</code></em><code>/IrScrutinizer.app/Contents/Resources/Java/repo/org/harctoolbox/IrScrutinizer/</code><em><code>version</code></em><code>/</code>
+within the zip archive. After this, the zip file is unpacked by a Mac
+to a <em>local</em> directory on that Mac. The content of the unpacked
+directory will now be a few documentation files, and the generated
+"app". These files should be transferred to a disk image (<code>.dmg</code>)
+file, compressed, and distributed.</p>
+
+<p>The icon file <code>IrScrutinizer.icns</code> was produced from the Crystal-Clear
+icon <code>babelfish.png</code> in 128x128 resolution, using the procedure
+described
+<a href="http://stackoverflow.com/questions/11770806/why-doesnt-icon-composer-2-4-support-the-1024x1024-size-icon-any-more">here</a>.
+        </p>
+</section>
+
+<section>
+    <title>Test invocation</title>
+    <p>For testing purposes, the programs can be invoked from their different target directories.
+        IrScrutinizer can be invoked as</p>
+<source>$ cd IrScrutinizer
+$ java -jar target/IrScrutinizer-jar-with-dependencies.jar
+</source>
+<p>and IrpMaster as</p>
+    <source>$ cd IrpMaster
+$ java -jar target/IrpMaster-jar-with-dependencies.jar <em>[arguments...]</em>
+    </source>
+<p>IrScrutinizer can also be started by double clicking the mentioned jar file,
+    provided that the desktop has been configured to start executable jar with "java".</p>
+</section>
+
+<section>
+    <title>Installation</title>
+    <p>For reasons unclear to me, Maven does not support something like <code>make install</code> for installing a
+    recently build program on the local host. Instead, the supplied script <code>tools/install-irscrutinizer.sh</code>
+    installs the program to normal Linux/autotools locations.
+    (Actually, invoking Maven with the "deploy" target will invoke this script too.)
+    Alternativelly, the just created generic-binary package
+    (<code>IrScrutinizer/target/IrScrutinizer-bin.zip</code>) can be installed using <a href="#Generic+Binary">these instuctions</a>.</p>
+</section>
+
 </section>
     <section>
 <title>References</title>

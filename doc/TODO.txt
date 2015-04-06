@@ -1,22 +1,4 @@
-For release 1.1.2:
-
-* IrpMaster: check API example DONE
-
-* check JNI loading on different systems, integrate .dylib for mac DONE
-
-* Generic-bin DONE
-
-* windows setup.exe DONE
-
-* icons: DP, IrTrans OK, GlobalCache, Arduino in pipeline. Still some
-  reorganization... DONE
-
-* Check installation on Mac
-
-* Update docu, releasenotes.
-
-NOTE: Glossary and pdf files have been removed. They are available at
-harctoolbox.org.
+See issues at https://github.com/bengtmartensson/harctoolboxbundle/issues
 
 Open issues:
 java.awt.datatransfer.UnsupportedFlavorException: Unicode String

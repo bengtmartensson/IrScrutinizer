@@ -1,9 +1,20 @@
+DecodeIR.loadLibrary() searches the architecture dependent local
+libraries in subdirectories of system property
+harctoolbox.jniLibsHome, if it is defined. Improved debug messages by
+library loading. On request from Alec Leamasm it also now takes a
+system property harctoolbox.decodeir.library.path, from which, if
+defined, the library is unconditionally loaded.
+
+Bugfix GlobalCache.newGlobalCacheIrTransmitter(Transmitter): Make sure
+that it returns a usable GlobalCacheIrTransmitter even if called with
+argument null.
+
 New function ModulatedIrSequence(boolean alternatingSigns, boolean
 noSigns, String separator, boolean includeFrequency)
 
 IrpProtocols.ini: Changes to Blaupunkt, Kaseikyo (was
-Kaseikyo-???-???) and Kaseikyo56 (was Kasekeikyo56-???-???) for
-DecodedIR 2.45
+Kaseikyo-???-???) and Kaseikyo56 (was Kasekeikyo56-???-???), for
+compatibility with DecodedIR 2.45.
 
 new public API functions:Protocol.getParameterNames(),
 Protocol.hasParameterMemory(String name), ParameterSpec.hasMemory(),

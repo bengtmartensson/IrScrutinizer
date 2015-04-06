@@ -1,3 +1,5 @@
+This directory contains a subset of the Crystal icons, as distributed with Fedora 21.
+
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 This copyright and license notice covers the images in this directory.
 ************************************************************************

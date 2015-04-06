@@ -1,7 +1,19 @@
 Version 1.1.2
-- Removed pdf files and the glossary -- makes distribution and
-packaging easier.
+- On Unix-like systems, can now be installed on the local machen by
+  "mvn deploy". 
+- Now both Fedora rpm version and a Mac OS X app!
+- Sources available at Github
+  (https://github.com/bengtmartensson/harctoolboxbundle). Reorganized as
+  Maven project.
+- Now using the babelfish icon. Remove icons with unclear legal status.
+- New command line option --nuke-properties.
 - Use the (new?) Crystal-Clear icons instead of the (old?) crystal.
+- Fixed bug in Lirc/NEC1-exporter: when S was missing, replacement S
+  was being reversed twice.
+- Now the debug code can be set from GUI: Options -> Debug -> Debug Code...
+- Loading of the "local" jni libraries now from subdirs of apphome.
+- Removed pdf files and the glossary (at least for now) -- makes
+  distribution and packaging easier.
 - Removed a few unneeded documentation links under help.
 - Lirc exports now get the extension .lircd.conf, since that extension
   is now used by the Lirc project. Also, when importing Lirc files,

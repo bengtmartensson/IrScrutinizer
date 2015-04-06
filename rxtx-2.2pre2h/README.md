@@ -1,4 +1,10 @@
-The sources for rxtx are originally obtained from the qbang CVS
+This directory contains a private version of the RXTX sources, with some minor
+changes in the java code, including a Maven compatible directory re-organization
+(motivating the version suffix "h").
+The changed files are: CommPortIdentifier.java, RXTXCommDriver.java, RXTXVersion.java.
+These changes are found within the Git history.
+
+The sources for rxtx were originally obtained from the qbang CVS
 repository using something like
 
     $ export CVSROOT=:pserver:anonymous@qbang.org:/var/cvs/cvsroot

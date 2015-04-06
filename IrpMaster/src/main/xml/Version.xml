@@ -16,7 +16,7 @@ General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 this program. If not, see http://www.gnu.org/licenses/.
 -->
-<version package = "org.harctoolbox.IrpMaster">
+<version appName="IrpMaster" package="org.harctoolbox.IrpMaster">
 
     <!-- Verbal description of the license of the current work. -->
     <licenseString>Copyright (C) 2011, 2012, 2013, 2014, 2015 Bengt Martensson.\n\n
