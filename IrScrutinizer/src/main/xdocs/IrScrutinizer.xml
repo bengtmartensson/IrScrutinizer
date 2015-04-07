@@ -6,9 +6,8 @@
     <title>IrScrutinizer documentation</title>
   </header>
 <body>
-<!--figure src="../images/pupacon.gif" alt="Under construction..."/-->
-<note>This document is not finished yet. In particular, there
-<strong>are</strong> broken links. See the <a href="IrScrutinizer.releasenotes.txt">release notes</a>. Please ask questions in the JP1-forum.</note>
+<note>This document is not finished yet. See the <a href="IrScrutinizer.releasenotes.txt">release notes</a>.
+Please ask questions in the JP1-forum.</note>
     <warning>Sending undocumented IR commands to
 your equipment may damage or even destroy it. By using this program,
 you agree to take the responsibility for possible damages yourself, and
@@ -39,8 +38,8 @@ not to hold the author responsible.</warning>
 	  <td>Version for release 1.1.1, some more fixes and enhancements.</td>
 	</tr>
         <tr>
-	  <td>2015-04-04</td>
-	  <td>Version for release 1.1.2, installation issued reworked.</td>
+	  <td>2015-04-07</td>
+	  <td>Version for release 1.1.2, installation issued reworked. Misc. minor improvements.</td>
 	</tr>
       </table>
 
@@ -112,12 +111,10 @@ final version before the end of 2013 (slightly ironically called version
 copyright does not extend to the embedded "components" Analyze,
 Makehex, DecodeIR, and Jirc.  ExchangeIR was written by
 Graham Dixon and published under <a
- href="http://www.gnu.org/licenses/gpl.html">GPL3 license</a>. Its
-Analyze-function has been translated to Java by Bengt Martensson.
+ href="http://www.gnu.org/licenses/gpl.html">GPL3 license</a>. A subset has been translated to Java by Bengt Martensson.
 DecodeIR was originally written by John S. Fine, with later
 contributions from others.
-It is free software with undetermined
-license. IrpMaster is using ANTLR3.4 and depends on the run time functions of ANTLR3, which
+It is public domain software. IrpMaster is using ANTLR3.4 and depends on the run time functions of ANTLR3, which
 is <a href="http://www.antlr.org/license.html">free software with BSD license</a>.</p>
 <p>
 The "database file" IrpProtocols.ini is derived from <a
@@ -161,7 +158,7 @@ available <a href="Jirc.html">here</a>.</p>
 
 
 <p>Tonto was written by Stewart Allen, and is licensed under the
-<a href="Tonto-license.txt">"Artistic License"</a>.</p>
+<a href="Tonto-license.txt">"Clarified Artistic License"</a>.</p>
 
 <p>The contained Arduino firmware contains code copyrighted by Michael Dreher
 (<a
@@ -231,14 +228,14 @@ which means that it should run on every computer with a modern Java installed;
 Windows, Linux, Macintosh, etc. Java 1.6 or later is required. The two
 exception are DecodeIR and the native part of RXTX, which are written in C++
 and C respectively, and invoked as shared library
-(<code>.dll</code> in Windows, <code>.so</code> in Linux, etc). If DecodeIR or
+    (<code>.dll</code> in Windows, <code>.so</code> in Linux, <code>.jnilib</code> or <code>.dylib</code> in Mac OS X). If DecodeIR or
 RXTX are
-not available on for a particular platform it is not a major problem, as IrScrutinizer will
+not available on for a particular platform it is not a major problem, as most parts of IrScrutinizer will
 work fine without it; just the DecodeIR-related functions or the serial
 hardware access will be unavailable.</p>
 
-<p>In all versions, IrScrutinizer behave civilized, in that it dowa not write in the installation
-directory after the initial installation.
+<p>In all versions, IrScrutinizer behave civilized, in that the installation
+directory can be read only after the installation.
 </p>
 <p>As of version 1.1.2, there are five different way of installing the program, described next.</p>
 </section>
@@ -247,6 +244,8 @@ directory after the initial installation.
     <p>Thanks to a great job done by Alec Leamas of Fedora, Fedora rpm packages will
         be available in the next future. Packages for other Linux distributions are likely to follow.</p>
         <p>To install, the command <code>sudo yum install irscrutinizer</code> should be issued in a terminal window.
+        This will install IrScrutinizer as a desktop program, as well as the command line
+        commands <code>irscrutinizer</code> and <code>irpmaster</code>.
         To uninstall, use the command  <code>sudo yum erase irscrutinizer</code>.</p>
 </section>
 <section><title>Windows</title>
@@ -281,7 +280,7 @@ people may like to delete the properties file too, see <a href="#Properties">pro
       </section>
 
 <section><title>Generic Binary</title>
-<p>The <em>Generic Binary</em> version consists of all the java code packed in one executable jar file,
+<p>The generic binary version consists of all the java code packed in one executable jar file,
 together with supporting files, like all the compiled shared libraries for the different
 operating systems Linux, Windows, and Mac. It can be used on all those systems. (In other environments, the
 shared libraries may be compiled with moderate effort.)</p>
@@ -1204,16 +1203,27 @@ necessary adaptations.
 </p>
       </section>
       <section>
+          <title>What is on the splash screen?</title>
+          <p>From left to right, a <a href="http://www.globalcache.com/products/itachflex/">Global Caché iTach Flex</a>,
+          an <a href="http://www.seeedstudio.com/depot/usb-infrared-toy-v2-p-831.html?cPath=174">IrToy</a>,
+          and a low-cost clone of an <a href="http://arduino.cc/en/Main/ArduinoBoardNano">Arduino Nano</a>,
+          the latter equipped with a non-demodulating IR detector (TSMP4138) for capturing and an IR diode (SFH415) for sending.
+          These are all hardware which work well with IrScrutinizer, both for sending and capturing.</p>
+      </section>
+      <section>
           <title>Do you solicit or accept donations?</title>
           <p>No.</p>
       </section>
 </section>
 <section>
     <title>Appendix. Building from sources</title>
-<p>"IrScrutinizer" is one subproject (corresponding to a Java package) within "harctooolbox.org".
+<p>"IrScrutinizer" is one subproject (corresponding to a Java package) within "harctoolbox.org".
     It depends on several other subprojects within harctoolbox. The project "harctoolboxbundle" consists
     of these subproject bundled together, with some dependent third-party components added.</p>
 
+    <p>The released versions are found on the <a href="http://www.harctoolbox.org/downloads/index.html">download page</a>.
+    The development sources are maintained on <a href="https://github.com/bengtmartensson/harctoolboxbundle">my GitHub repository</a>.
+    Forking and pull requests are welcome!</p>
 <section>
     <title>Dependencies</title>
 <p>
@@ -1236,7 +1246,7 @@ can be used to install  them in the local maven repository before building.</p>
 <p>The serial communication packate RXTX is also included in the source package. This builds a shared library and a jar file.
     If there is a system supported RXTX (librxtxSerial really), it should be preferred.
     The distribution constains pre-compiled binaries for Linux, Windows, and Mac OS X, both in 32- and 64-bit versions.
-    To compile the C sources, see sub-directory rxtx-pre2h and the instructions therein.</p>
+    To compile the C sources, see the sub-directory <code>rxtx-pre2h</code> and the instructions therein.</p>
 
     <p>Note that the system supplied RXTX jar on many system (e.g. Fedora 21) has some issues
         (version number incompatible with the shared library, does not recognize

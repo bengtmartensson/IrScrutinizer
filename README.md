@@ -24,5 +24,6 @@ of rapid development. Previous versions are available on the
 ## Installation
 
 Installation, including dependencies, is covered in detail in the
-appendix of the manual IrScutinizer.html,
-also directly accessible [online](http://www.harctoolbox.org/IrScrutinizer.html#Appendix.+Building+from+sources).
+appendix of the manual IrScutinizer.html, which is built during the program build, and
+also directly accessible [online](http://www.harctoolbox.org/IrScrutinizer.html#Appendix.+Building+from+sources)
+(may be behind the version here.)
