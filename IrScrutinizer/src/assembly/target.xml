@@ -43,7 +43,6 @@
             <directory>src/main/doc</directory>
             <outputDirectory>doc</outputDirectory>
             <excludes>
-                <exclude>INSTALL-binary.txt</exclude> <!-- installed in the parent dir -->
                 <exclude>pre_install.txt</exclude>  <!-- setup.exe only -->
                 <exclude>post_install.txt</exclude> <!-- setup.exe only -->
             </excludes>
@@ -52,9 +51,6 @@
         <fileSet>
             <directory>src/main/doc</directory>
             <outputDirectory/>
-            <includes>
-                <include>INSTALL-binary.txt</include>
-            </includes>
         </fileSet>
         <fileSet>
             <directory>arduino</directory>

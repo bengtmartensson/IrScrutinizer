@@ -37,21 +37,8 @@
         <module>HarcHardware</module>
         <module>Crystal-Clear-Icons</module>
         <module>rxtx-2.2pre2h</module>
+        <module>package</module>
     </modules>
-
-    <profiles>
-        <profile>
-            <id>buildingFedoraPackage</id>
-            <activation>
-                <property>
-                    <name>building_fedora_package</name>
-                </property>
-            </activation>
-            <modules>
-                <module>package</module> <!-- Alec, OK? -->
-            </modules>
-        </profile>
-    </profiles>
 
     <build>
         <plugins>

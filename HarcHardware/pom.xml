@@ -33,36 +33,6 @@
             <url>file:///${project.basedir}/../repos</url>
         </repository>
     </distributionManagement>
-    <profiles>
-        <profile>
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>gnu.io</groupId>
-                    <artifactId>RXTX</artifactId>
-                    <version>2.2pre2h</version>
-                </dependency>
-            </dependencies>
-         </profile>
-        <profile>
-            <id>buildingFedoraPackage</id>
-            <activation>
-                <property>
-                    <name>building_fedora_package</name>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                     <groupId>org.rxtx</groupId>
-                     <artifactId>rxtx</artifactId>
-                     <version>2.2</version>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
     <build>
         <plugins>
             <!-- Generate Version.java from Version.xml using mkVersion.xsl. -->
@@ -213,6 +183,11 @@
             <groupId>com.eclipsesource.minimal-json</groupId>
             <artifactId>minimal-json</artifactId>
             <version>0.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>gnu.io</groupId>
+            <artifactId>RXTX</artifactId>
+            <version>2.2pre2h</version>
         </dependency>
     </dependencies>
 </project>

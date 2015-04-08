@@ -17,7 +17,8 @@
                 <include>**/*</include>
             </includes>
             <excludes>
-                <exclude>IrScrutinizer/native/**</exclude>
+                <exclude>native/**</exclude>
+                <exclude>repos/**</exclude>
                 <exclude>package/dist/**</exclude>
                 <exclude>**/*.patch</exclude>
                 <exclude>**/target/**</exclude>
@@ -27,7 +28,7 @@
                 <exclude>**/*~</exclude> <!-- just in case -->
                 <exclude>**/*.o</exclude>
                 <exclude>**/Makefile.in</exclude>
-                <exclude>**/JavaApplicationStub*</exclude>
+                <exclude>**/JavaApplicationStub*</exclude> <!-- proprietary -->
             </excludes>
             <lineEnding>keep</lineEnding> <!-- do not change! -->
         </fileSet>
