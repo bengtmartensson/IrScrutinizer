@@ -47,7 +47,7 @@
                                     <artifactId>IrScrutinizer</artifactId>
                                     <version>1.1.2beta</version>
                                     <classifier>bin</classifier>
-                                    <type>tar.gz</type>
+                                    <type>zip</type>
                                     <outputDirectory> dist </outputDirectory>
                                     <includes>
                                         *.xml,*.ini,*.desktop,doc/*
@@ -96,7 +96,7 @@
                                     <artifactId>HarctoolboxBundle</artifactId>
                                     <version>1.0.0</version>
                                     <classifier>sources</classifier>
-                                    <type>tar.gz</type>
+                                    <type>zip</type>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>dist</outputDirectory>
@@ -232,7 +232,7 @@
             <groupId>org.harctoolbox</groupId>
             <artifactId>HarctoolboxBundle</artifactId>
             <version>1.0.0</version>
-            <type>tar.gz</type>
+            <type>zip</type>
             <classifier>sources</classifier>
         </dependency>
     </dependencies>
