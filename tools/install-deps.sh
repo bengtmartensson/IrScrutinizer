@@ -7,7 +7,7 @@
 
 mvn install:install-file \
     -DgroupId=com.hifiremote \
-    -DartifactId=DecodeIrCaller \
+    -DartifactId=DecodeIRCaller \
     -Dversion=2.44 \
     -Dpackaging=jar \
     -Dfile=$( build-classpath com.hifiremote:DecodeIrCaller )
