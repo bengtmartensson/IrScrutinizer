@@ -1233,8 +1233,9 @@ The dependent packages need to be installed also in
     maven in order for the build to work. With the dependencies available, the script <code>tools/install-deps.sh</code>
 can be used to install  them in the local maven repository before building.</p>
 
-<p>At the time of this writing, temporary Fedora RPMs for the dependencies are available at
-    <a href="https://copr.fedoraproject.org/coprs/leamas/harctoolbox/">this location</a>.</p>
+<p>At the time of this writing Fedora RPMs are available for all dependencies.
+Installing the harctoolbox package will automatically pull in all dependencies, so
+the information in this chapter is not really useful in most cases.</p>
 
     <section>
         <title>The Crystal icons</title>
@@ -1297,6 +1298,9 @@ project management and comprehension tool" is used as building system.
 Modern IDEs like Netbeans and Eclips integrate Maven, so build etc can be initiated from the IDE.
 Of course, the shell command <code>mvn install</code> can also be used. It creates some artifacts which can
 be used to run IrScrutinizer in the <code>IrScrutinizer/target</code> directory.</p>
+<p>It also creates a <code>package/dist</code> directory which contains jars
+(without dependencies), docs and configurations files. This is designed as a
+packaging starting point.</p>
 
 <p>To prepare the Windows version, some shell tools are needed. These are:</p>
 <ul>
