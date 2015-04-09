@@ -6,7 +6,7 @@ This project consists of IrScrutinizer and dependent projects from
 harctoolbox.org. It also contains some supporting third-party projects.
 
 Author: Bengt Martensson.
-[Project home page](http://www.harctoolbox.org).
+See also the [project home page](http://www.harctoolbox.org).
 
 ## Copyright and License
 
@@ -24,6 +24,8 @@ of rapid development. Previous versions are available on the
 ## Installation
 
 Installation, including dependencies, is covered in detail in the
-appendix of the manual IrScutinizer.html, which is built during the program build, and
-also directly accessible [online](http://www.harctoolbox.org/IrScrutinizer.html#Appendix.+Building+from+sources)
+appendix of the manual IrScutinizer.html. This is built during the
+program build. It can also be build directly by the script
+tools/mk-irscrutinizer-html.sh.  It is also directly accessible
+[online](http://www.harctoolbox.org/IrScrutinizer.html#Appendix.+Building+from+sources)
 (may be behind the version here.)
