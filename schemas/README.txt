@@ -1,4 +1,4 @@
-This directory contains XML schemas and DTDs used by the harctoolbox project.
+This directory contains XML schemas and DTDs used by the Harctoolbox project.
 
 Author: Bengt Martensson
 License: Public domain

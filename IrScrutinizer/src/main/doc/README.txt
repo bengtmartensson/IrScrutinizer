@@ -16,8 +16,7 @@ which means that almost all IR protocols known to the Internet
 community can be generated.
 
 Written in Java (with the exception of two native libraries), most of
-the functionality of the program is available on every Java
-platform. The native libraries (DecodeIR and RXTX) are presently
-available for 32- and 64-bit versions of Windows, Linux (x86 and
-amd-64), and MacOsX, and can with moderate effort be compiled for
-other platforms.
+the functionality of the program is available on every Java platform.
+The native libraries (DecodeIR and RXTX) are presently available for
+32- and 64-bit versions of Windows, Linux (x86 and amd-64), and
+MacOsX, and can with moderate effort be compiled for other platforms.

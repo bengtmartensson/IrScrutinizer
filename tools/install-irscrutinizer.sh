@@ -2,7 +2,8 @@
 
 # Installs IrScrutinizer in a normal posix manner in PREFIX.
 
-# This script should be run with the rights required to write at the desired places.
+# This script should be run with the rights required to write
+# at the desired places. I.e. root a priori not necessary.
 
 MYPROG=IrScrutinizer
 
