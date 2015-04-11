@@ -22,7 +22,6 @@ this program. If not, see http://www.gnu.org/licenses/.
     <import class="org.harctoolbox.harchardware.ir.LircClient"/>
     <property name="bounds" type="rectangle" default='null' doc='Bounds of IrScrutinizer window.'/>
     <property name="outputFormatIndex" type="int" default='"1"' />
-    <property name="rmasterErrPath" type="string" default='System.getProperty("java.io.tmpdir") + File.separator + "rmaster.err"' doc="Filename of logfile for protocol.ini parse errors and warning"/>
     <property name="irWidgetCapturePortName" type="string" default='ifWindows("COM8","/dev/ttyUSB0")' doc='Name of device to use, e.g. COM8 or /dev/ttyUSB0.' />
     <property name="globalCacheCaptureIpName" type="string" default='""' doc="IP Name or Address of GlobalCache to use (capturing)."/>
     <property name="lircMode2Command" type="string" default='"mode2 -H serial"' doc='Command line for the LIRC mode2 command' />

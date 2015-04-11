@@ -734,14 +734,7 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private void loadProtocolsIni(String filename) throws IOException, java.text.ParseException {
-        PrintStream oldErr = System.err;
-        System.setErr(new PrintStream(properties.getRmasterErrPath(), IrpUtils.dumbCharsetName));
-
-        try {
-            protocolsIni = new ProtocolsIni(new File(properties.getProtocolsIniUrl()));
-        } finally {
-            System.setErr(oldErr);
-        }
+        protocolsIni = new ProtocolsIni(new File(properties.getProtocolsIniUrl()));
         if (rmduImporter == null)
             rmduImporter = new RmduImporter(protocolsIni);
         else

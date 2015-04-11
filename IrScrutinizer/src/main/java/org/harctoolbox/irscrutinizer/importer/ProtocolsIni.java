@@ -79,9 +79,8 @@ public class ProtocolsIni implements Serializable {
                         throw new ParseException("payload not defined", lineNo);
                     }
                     pid = Integer.parseInt(payload.replaceAll(" ", ""), 16);
-                    if (pidMap.containsKey(pid)) {
-                        System.err.println("Multiply defined PID: " + payload + " (" + currentProtocol.get("name") + ")");
-                    }
+                    // There are a number of multiply defined PIDs.
+                    // Leave out a check for simplicity, and just overwrite.
                     pidMap.put(pid, currentProtocol);
                 }
             }
