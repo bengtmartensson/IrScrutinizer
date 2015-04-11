@@ -1145,6 +1145,16 @@ wish list.
 </section>
 
 <section>
+    <title>Why supporting the old Global Caché but not the new (<a href="http://irdb.globalcache.com/">Control Tower</a>)?</title>
+    <p>Sad, really, it is a really nice data base. The reason is that API retrieval of codes is not allowed for the free accounts.
+        The data base can still be used with IrScrutinizer however: Log in with the web interface,
+        and have the codes mailed in CSV format (press "Send Code Set").
+        The mail received can be imported by the import text pane, raw subpane, Name col. = 1, Raw signal col = 2 (or 3),
+        Field separator: comma.
+    </p>
+</section>
+
+<section>
 <title>I did something funny, and now the program does not startup, with no
 visible error messages.</title>
 <p>Try deleting the <a href="#Properties">properties file</a>.
@@ -1233,9 +1243,9 @@ The dependent packages need to be installed also in
     maven in order for the build to work. With the dependencies available, the script <code>tools/install-deps.sh</code>
 can be used to install  them in the local maven repository before building.</p>
 
-<p>At the time of this writing Fedora RPMs are available for all dependencies.
-Installing the harctoolbox package will automatically pull in all dependencies, so
-the information in this chapter is not really useful in most cases.</p>
+<p>Presently, Fedora RPMs are available for all dependencies.
+    Installing the <code>harctoolbox</code> package will also install all dependencies, in which case
+the information in this chapter is not needed.</p>
 
     <section>
         <title>The Crystal icons</title>
@@ -1298,9 +1308,9 @@ project management and comprehension tool" is used as building system.
 Modern IDEs like Netbeans and Eclips integrate Maven, so build etc can be initiated from the IDE.
 Of course, the shell command <code>mvn install</code> can also be used. It creates some artifacts which can
 be used to run IrScrutinizer in the <code>IrScrutinizer/target</code> directory.</p>
-<p>It also creates a <code>package/dist</code> directory which contains jars
-(without dependencies), docs and configurations files. This is designed as a
-packaging starting point.</p>
+<p>It also creates a <code>package/dist</code> directory containing jars
+(without dependencies), docs, and configurations files. This is intened to support
+packaging.</p>
 
 <p>To prepare the Windows version, some shell tools are needed. These are:</p>
 <ul>

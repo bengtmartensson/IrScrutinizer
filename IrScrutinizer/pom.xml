@@ -359,6 +359,7 @@
                             <executable>cp</executable>
                             <workingDirectory>${project.build.directory}</workingDirectory>
                             <arguments>
+                                <argument>--force</argument>
                                 <argument>../../Crystal-Clear-Icons/src/main/resources/icons/Crystal-Clear/64x64/apps/babelfish.png</argument>
                                 <argument>${project.artifactId}.png</argument>
                             </arguments>
