@@ -3,7 +3,7 @@
 <remotes
          xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
          xmlns:html="http://www.w3.org/1999/xhtml"
-         xs:noNamespaceSchemaLocation="../schemas/girr.xsd"
+         xs:noNamespaceSchemaLocation="girr.xsd"
          girrVersion="1.0"
          title="Hand written example">
     <adminData>
@@ -12,12 +12,12 @@
                        tool2="decodeIr" tool2Version="2.44"/>
         <versioningData/>
         <notes xml:lang="en">Notes in English.</notes>
-        <notes xml:lang="de">Notitzen auf deutsch.</notes>
+        <notes xml:lang="de">Notizen auf deutsch.</notes>
         <notes xml:lang="sv">Notiser på svenska.</notes>
     </adminData>
     <remote name="test" comment="just a test">
-        <notes xml:lang="en">Notes in English</notes>
-        <notes xml:lang="de">Notitzen auf deutsch.</notes>
+        <notes xml:lang="en">Notes in English.</notes>
+        <notes xml:lang="de">Notizen auf deutsch.</notes>
         <notes xml:lang="sv">Notiser på svenska.</notes>
         <applicationData application="jp1">
             <notes/>

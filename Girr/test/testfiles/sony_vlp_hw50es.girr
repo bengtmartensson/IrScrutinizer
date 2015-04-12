@@ -2,7 +2,7 @@
 <!--This file is in the Girr (General IR Remote) format, see http://www.harctoolbox.org/girr-->
 <?xml-stylesheet type="text/xsl" href="simplehtml.xsl"?>
 <remotes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         girrVersion="1.0" title="IrScrutinizer parametric export" xsi:noNamespaceSchemaLocation="../schemas/girr.xsd">
+         girrVersion="1.0" title="IrScrutinizer parametric export" xsi:noNamespaceSchemaLocation="girr.xsd">
     <adminData>
         <creationData creatingUser="Bengt Martensson" creationDate="2013-12-14_10:25:29" source="hand written"/>
         <notes>Source was the protocol manual for VPL-VW95ES. A version for the present model does not appear to be available.</notes>

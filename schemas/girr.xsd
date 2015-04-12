@@ -374,14 +374,11 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:choice>
-                    <xs:element ref="intro"/>
-                    <xs:sequence>
-                        <xs:element ref="intro"  minOccurs="0"/>
-                        <xs:element ref="repeat" minOccurs="1"/>
-                        <xs:element ref="ending" minOccurs="0"/>
-                    </xs:sequence>
-                </xs:choice>
+                <xs:element ref="intro" minOccurs="0"/>
+                <xs:sequence minOccurs="0">
+                    <xs:element ref="repeat" minOccurs="1"/>
+                    <xs:element ref="ending" minOccurs="0"/>
+                </xs:sequence>
             </xs:sequence>
             <xs:attribute name="frequency" type="xs:nonNegativeInteger">
                 <xs:annotation>

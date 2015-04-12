@@ -1,33 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE remotes SYSTEM "girr.dtd">
-<remotes
-         xmlns="http://www.harctoolbox.org/girr"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns:html="http://www.w3.org/1999/xhtml">
-         <!--xsi:schemaLocation="http://www.harctoolbox.org/girr http://www.harctoolbox.org/schemas/girr.xsd"-->
-    <notes><html:p>This is <html:b>quite</html:b> nice.</html:p>
-    </notes>
-    <remote version="1.0" id="r1" name="tester" comment="just a test">
+<?xml-stylesheet type="text/xsl" href="simplehtml.xsl"?>
+<remotes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xsi:noNamespaceSchemaLocation="girr.xsd">
+    <adminData>
+    <notes>Blah? Blah!</notes>
+    </adminData>
+    <remote name="tester" comment="just a test">
         <notes/>
-        <application-data application="jp1">
+        <applicationData application="jp1">
             <notes/>
-            <parameter name="setup-code" value="1234"/>
-            <button-map>
+            <appParameter name="setup-code" value="1234"/>
+            <!--button-map>
                 <button name="play" display-name="Play" unshifted="cmd1" shifted="stop" metashifted="record"/>
-            </button-map>
-        </application-data>
-        <command-set id="c1" comment="">
-            <notes/>
-            <parameters id="p1" protocol="nec1">
+            </button-map-->
+        </applicationData>
+        <commandSet name="c1" comment="">
+            <parameters protocol="nec1">
                 <parameter name="D" value="0"/>
             </parameters>
-            <command id="cmd1" name="play" display-name="Play |>" comment="">
+            <command name="play" display-name="Play |>" comment="">
                 <notes/>
                 <parameters>
                     <parameter name="F" value="0"/>
                 </parameters>
                 <raw frequency="38400">
-                    <intro>+9024 -4512 +564 -564 +564 -564 +564 -564 +564 -564 +564 <!-- no ids on sequences -->
+                    <intro>+9024 -4512 +564 -564 +564 -564 +564 -564 +564 -564 +564
                         -564 +564 -564 +564 -564 +564 -564 +564 -1692 +564 -1692 +564 -1692 +564 -1692
                         +564 -1692 +564 -1692 +564 -1692 +564 -1692 +564 -564 +564 -564 +564 -564 +564
                         -564 +564 -564 +564 -564 +564 -564 +564 -564 +564 -1692 +564 -1692 +564 -1692
@@ -202,7 +200,7 @@
                 <ccf>0000 006C 0022 0002 015B 00AD 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0016 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0016 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 05F7 015B 0057 0016 0E6C</ccf>
                 <format name="uei-learned">00 00 2F 00 D0 06 11 A0 08 D0 01 1A 01 1A 01 1A 03 4E 01 1A 4D A6 11 A0 04 68 01 1A BB CE 22 01 11 11 11 12 22 22 22 21 21 11 11 12 12 22 22 23 82 45</format>
             </command>
-            <command F="3" name="stop" id="stop">
+            <command F="3" name="stop1">
                 <raw>
                     <intro>
                         <flash>9024</flash>
@@ -284,33 +282,33 @@
                 <ccf>0000 006C 0022 0002 015B 00AD 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 05F7 015B 0057 0016 0E6C</ccf>
                 <format name="uei-learned">00 00 2F 00 D0 06 11 A0 08 D0 01 1A 01 1A 01 1A 03 4E 01 1A 4D A6 11 A0 04 68 01 1A BB CE 22 01 11 11 11 12 22 22 22 22 21 11 11 11 12 22 22 23 82 45</format>
             </command>
-        </command-set>
+        </commandSet>
     </remote>
-    <remote>
-        <html:object data="oppo_remote.jpg" name="Picture of the OPPO remote"/>
-        <command-set name="commandset_1" display-name="BDP-83 code 1">
+    <remote name="oppo_remote">
+        <html:img src="oppo_remote.jpg" alt="Oppo remote"/>
+        <commandSet name="commandset_1" displayName="BDP-83 code 1">
             <parameters protocol="nec1">
                 <parameter name="D" value="73"/>
             </parameters>
-            <command-set id="oppo-just-f">
-                <command F="26" name="power"/>
-                <command F="27" name="eject"/>
-                </command-set>
-        </command-set>
+            <!--commandSet name="oppo-just-f"-->
+            <command F="26" name="power"/>
+            <command F="27" name="eject"/>
+            <!--/commandSet-->
+        </commandSet>
 
-        <command-set name="commandset_2" display-name="BDP-83 code 2">
+        <!--commandSet name="commandset_2" displayName="BDP-83 code 2">
             <parameters protocol="nec1">
                 <parameter name="D" value="97"/>
             </parameters>
             <command-set-ref command-set="oppo-just-f"/>
-        </command-set>
+        </commandSet>
 
-        <command-set name="commandset_3" display-name="BDP-83 code 3">
+        <commandSet name="commandset_3" displayName="BDP-83 code 3">
             <parameters protocol="nec1">
                 <parameter name="D" value="67"/>
             </parameters>
-            <command-set-ref command-set="oppo-just-f"/>
-        </command-set>
-    </remote>
 
+            <command-set-ref command-set="oppo-just-f"/>
+        </commandSet-->
+    </remote>
 </remotes>
