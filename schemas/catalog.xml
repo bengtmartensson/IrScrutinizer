@@ -5,4 +5,12 @@
          prefer="public">
     <public publicId="-//harctoolbox.org//version//en" uri="./version.dtd"/>
     <system systemId="http://www.harctoolbox.org/dtds/version.dtd" uri="./version.dtd"/>
+    <public publicId="-//harctoolbox.org//properties//en" uri="./properties.dtd"/>
+    <system systemId="http://www.harctoolbox.org/dtds/properties.dtd" uri="./properties.dtd"/>
+
+    <!-- Uncomment, possibly after adjusting, if the Apache document dtds are available locally -->
+    <!--
+    <public publicId="-//APACHE//DTD Documentation V2.0//EN" uri="/usr/local/apache-forrest-0.9/main/webapp/resources/schema/dtd/document-v20.dtd"/>
+    <system systemId="http://forrest.apache.org/dtd/document-v20.dtd" uri="/usr/local/apache-forrest-0.9/main/webapp/resources/schema/dtd/document-v20.dtd"/>
+    -->
 </catalog>
