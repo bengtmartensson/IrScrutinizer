@@ -4,7 +4,7 @@
  <metadata_license>CC0-1.0</metadata_license>
  <project_license>GPL-3.0+</project_license>
  <name>irscrutinizer</name>
- <summary>Tool to catch, analyse and create infrared remotes signals</summary>
+ <summary>Tool to capture, analyse and create infrared remotes signals</summary>
  <description>
   <p>
 IrScrutinizer is a powerful program for capturing, generating, analyzing,
@@ -26,7 +26,7 @@ of IR signal can thus be assembled and edited, and finally exported in one of
 the many supported formats.
 </p>
 <p>
-In addition, the program contains the powerful IrpMaster IR-renderer, which
+The program contains the powerful IrpMaster IR-renderer, which
 means that almost all IR protocols known to the Internet community can be
 generated.
 </p>
