@@ -20,6 +20,8 @@
                 <exclude>native/**</exclude>
                 <exclude>repos/**</exclude>
                 <exclude>package/dist/**</exclude>
+                <exclude>package/repos/**</exclude>
+                <exclude>package/dependency-reduced-pom.xml</exclude>
                 <exclude>**/*.patch</exclude>
                 <exclude>**/target/**</exclude>
                 <exclude>**/*.git*</exclude>
