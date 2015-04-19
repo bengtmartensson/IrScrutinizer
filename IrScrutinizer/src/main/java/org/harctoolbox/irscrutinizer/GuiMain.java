@@ -3943,7 +3943,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         jLabel21.setText("S");
 
-        parametrizedCsvSeparatorComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { ", (comma)", "; (semicolon)", "TAB", "WHITESPACE" }));
+        parametrizedCsvSeparatorComboBox.setModel(new DefaultComboBoxModel(CsvImporter.separatorsArray()));
         parametrizedCsvSeparatorComboBox.setSelectedIndex(properties.getParametricSeparatorIndex());
         parametrizedCsvSeparatorComboBox.setToolTipText("Separator between the fields");
         parametrizedCsvSeparatorComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -4023,7 +4023,7 @@ public class GuiMain extends javax.swing.JFrame {
                                 .addComponent(jLabel2))
                             .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(parametrizedCsvSeparatorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(parametrizedCsvSeparatorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel23)

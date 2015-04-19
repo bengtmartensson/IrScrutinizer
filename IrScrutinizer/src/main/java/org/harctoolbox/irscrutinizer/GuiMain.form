@@ -4016,7 +4016,7 @@
                                                       </Group>
                                                       <Group type="102" alignment="0" attributes="0">
                                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                                          <Component id="parametrizedCsvSeparatorComboBox" min="-2" max="-2" attributes="0"/>
+                                                          <Component id="parametrizedCsvSeparatorComboBox" min="-2" pref="161" max="-2" attributes="0"/>
                                                       </Group>
                                                   </Group>
                                                   <EmptySpace max="-2" attributes="0"/>
@@ -4229,13 +4229,8 @@
                                 </Component>
                                 <Component class="javax.swing.JComboBox" name="parametrizedCsvSeparatorComboBox">
                                   <Properties>
-                                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                                      <StringArray count="4">
-                                        <StringItem index="0" value=", (comma)"/>
-                                        <StringItem index="1" value="; (semicolon)"/>
-                                        <StringItem index="2" value="TAB"/>
-                                        <StringItem index="3" value="WHITESPACE"/>
-                                      </StringArray>
+                                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                                      <Connection code="new DefaultComboBoxModel(CsvImporter.separatorsArray())" type="code"/>
                                     </Property>
                                     <Property name="selectedIndex" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                                       <Connection code="properties.getParametricSeparatorIndex()" type="code"/>
