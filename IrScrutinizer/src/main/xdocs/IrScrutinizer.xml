@@ -91,7 +91,7 @@ notes</a>.</p>
 <section>
 <title>Background</title>
 <p>
-First, in 2011, I wrote an IR signal "engine"
+In 2011 I wrote an IR signal "engine"
 called <a href="IrpMaster.html">IrpMaster</a>. It can also be invoked as a
 command line program. Then a program
 called <a href="IrMaster.html">IrMaster</a> was released, which among other things
@@ -100,9 +100,9 @@ IrScrutinizer, is also based on IrpMaster, and adds functionality from
 IrMaster, in particular the possibility to collect IR signals, a vastly
 improved import and export facility, and edit collections of IR commands.
 
-IrScrutizer almost completely replaces IrMaster. It is planned to release a
-final version before the end of 2013 (slightly ironically called version
-1.0.0).  No further development is planned.</p>
+IrScrutizer almost completely replaces IrMaster.
+The final version was released in Febrary 2014, slightly ironically called version
+1.0.0.  No further development is planned.</p>
 </section>
 
 <section>
@@ -342,7 +342,7 @@ pop ups, but directs errors, warnings, and status outputs to the <em>console win
 taking up the lower third of the main window. This
 window is re-sizeable. There is a context menu for the
 console, accessible by pressing the right mouse button in it.</p>
-<p>In the upper row, there are four pull-down menus, named File,
+<p>In the upper row, there are six pull-down menus, named File,
 Edit, Actions, Options, Tools, and Help. Their usage is believed to be mainly
 self explanatory, with some the exceptions.</p>
 
@@ -838,8 +838,8 @@ the port number (e.g. <code>COM8</code>). On a Linux system, it likely shows up 
 like <code>/dev/ttyUSB0</code>. If the port does not show up, a suitable driver needs to be
 installed. If the correct port is already visible in the combo box, just
 press "Open". Otherwise, press "Refresh", which makes the program determine
-the available serial ports. Select the correct one. Press "Open". which should
-now remain "pressed". The port cam be closed again by a repeated press, but
+the currently available serial ports. Select the correct one. Press "Open". which should
+now remain "pressed". The port can be closed again by another press, but
 there is not much reason to do so, unless another capturing hardware should be
 used, or the IrWidget should be used from another program.</p>
 	</section>
@@ -884,7 +884,7 @@ reconnecting the device may help.</p>
 	</section>
 
 <section><title>IrToy</title>
-<p>After connecting the IrToy to an USB  port, select the virtual serial port in
+<p>After connecting the IrToy to a USB  port, select the the actual (virtual) serial port in
 the combo box, pressing "Refresh" if necessary. "Open" the port
 thereafter.</p>
 
