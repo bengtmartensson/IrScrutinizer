@@ -24,6 +24,7 @@ import gnu.io.PortInUseException;
 import gnu.io.RXTXPort;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -96,10 +97,14 @@ public abstract class LocalSerialPort implements IHarcHardware {
     }
 
     private static String nextPortName(String portName) {
-        final String pattern = "(.*)(\\D+)(\\d+)(:?)";
-        String dig = portName.replaceFirst(pattern, "$3");
-        int n = Integer.parseInt(dig);
-        return portName.replaceFirst(pattern, "$1$2" + Integer.toString(n+1) + "$4");
+        try {
+            final String pattern = "(.*)(\\D+)(\\d+)(:?)";
+            String dig = portName.replaceFirst(pattern, "$3");
+            int n = Integer.parseInt(dig);
+            return portName.replaceFirst(pattern, "$1$2" + Integer.toString(n+1) + "$4");
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     @Override
@@ -127,7 +132,7 @@ public abstract class LocalSerialPort implements IHarcHardware {
      */
     public void open(boolean iterate) throws HarcHardwareException, IOException {
         boolean success = false;
-        actualPortName = portName;
+        actualPortName = (new File(portName)).getCanonicalPath();
         int tries = 0;
         do {
             try {
@@ -137,6 +142,8 @@ public abstract class LocalSerialPort implements IHarcHardware {
                 if (!iterate)
                     throw new HarcHardwareException(ex);
                 actualPortName = nextPortName(actualPortName);
+                if (actualPortName == null)
+                    throw new HarcHardwareException(ex);
             } catch (PortInUseException ex) {
                 if (!iterate)
                     throw new HarcHardwareException(ex);
