@@ -132,6 +132,7 @@ public abstract class LocalSerialPort implements IHarcHardware {
      */
     public void open(boolean iterate) throws HarcHardwareException, IOException {
         boolean success = false;
+        // Resolve symbolic links (udev!!)
         actualPortName = (new File(portName)).getCanonicalPath();
         int tries = 0;
         do {
