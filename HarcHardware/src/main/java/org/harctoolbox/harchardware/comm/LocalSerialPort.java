@@ -141,10 +141,10 @@ public abstract class LocalSerialPort implements IHarcHardware {
                 success = true;
             } catch (NoSuchPortException ex) {
                 if (!iterate)
-                    throw new HarcHardwareException(ex);
+                    throw new HarcHardwareException("No such port: " + portName);
                 actualPortName = nextPortName(actualPortName);
                 if (actualPortName == null)
-                    throw new HarcHardwareException(ex);
+                    throw new HarcHardwareException("No such port: " + portName);
             } catch (PortInUseException ex) {
                 if (!iterate)
                     throw new HarcHardwareException(ex);
@@ -272,6 +272,16 @@ public abstract class LocalSerialPort implements IHarcHardware {
      */
     public String getActualPortName() {
         return actualPortName;
+    }
+    
+    /**
+     * Returns the nominal port name being used. May differ from one requested in
+     * the constructor if the device was opened with open(true), or if it is symlink
+     * (for example created by udev).
+     * @return port name used.
+     */
+    public String getPortName() {
+        return portName;
     }
 
     @Override
