@@ -27,7 +27,7 @@ You should have received a copy of the GNU General Public License along with thi
     <!-- Verbal description of licenses of third-party components. -->
     <thirdPartyString>
         HarcHardware uses the following uses the following software components:
-        Serial communication is handeled by the RXTX library, licensed under the LGPL v 2.1 license.
+        Serial communication is handled by the RXTX library, licensed under the LGPL v 2.1 license.
         Command line decoding is done using the JCommander library by Cédric Beust http://jcommander.org/, licensed under the Apache 2.0 license.
         JSON handling is implemented using the \"fast and minimal JSON parser for Java\" by Ralf Sernberg, http://eclipsesource.com/blogs/2013/04/18/minimal-json-parser-for-java/, lincensed under the Eclipse Eclipse Public License Version 1.0.
         </thirdPartyString>
