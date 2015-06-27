@@ -35,7 +35,7 @@ Substatial parts have been translated to Java by Bengt Martensson.
 DecodeIR was originally written by John S. Fine, with later contributions from others.
 It is public domain software.
 Icons from the Crystal project are used; these are released under the LGPL license.
-Serial communication is handeled by the RXTX library, licensed under the LGPL v 2.1 license.
+Serial communication is handled by the RXTX library, licensed under the LGPL v 2.1 license.
 Command line decoding is done using the JCommander library by Cédric Beust http://jcommander.org/,
 licensed under the Apache 2.0 license.
 JSON handling is implemented using the \"fast and minimal JSON parser for Java\" by Ralf Sernberg,
