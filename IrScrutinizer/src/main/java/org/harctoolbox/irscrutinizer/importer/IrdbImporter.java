@@ -159,7 +159,11 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     }
 
     private static long parseLong(String str) {
-        return ((str == null) || str.isEmpty()) ? invalid : Long.parseLong(str);
+        try {
+            return ((str == null) || str.isEmpty()) ? invalid : Long.parseLong(str);
+        } catch (NumberFormatException e) { // Do not treat "None" explicitly
+            return invalid;
+        }
     }
 
     private HashMap<String, HashMap<ProtocolDeviceSubdevice, HashMap<String, Long>>> deviceTypes;
