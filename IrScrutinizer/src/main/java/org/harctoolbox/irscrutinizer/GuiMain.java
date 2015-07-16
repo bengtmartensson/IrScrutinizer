@@ -34,7 +34,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -477,10 +476,6 @@ public class GuiMain extends javax.swing.JFrame {
         sendingHardwareManager.add(sendingGenericSerialPort);
         try {
             sendingHardwareManager.select(properties.getTransmitHardware());
-        } catch (ConnectException ex) {
-            guiUtils.error("Connection refused");
-        } catch (IOException ex) {
-            guiUtils.error(ex);
         } catch (HarcHardwareException ex) {
             guiUtils.error(ex);
         }
@@ -7362,10 +7357,6 @@ public class GuiMain extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ConnectException ex) {
-            guiUtils.error("Connection refused");
-        } catch (IOException ex) {
-            guiUtils.error(ex);
         } catch (HarcHardwareException ex) {
             guiUtils.error(ex);
         } finally {
