@@ -373,4 +373,12 @@ class HelpTexts {
 
     public static String sendingGenericSerialPortHelp
             = "This pane contains the controls for sending a signal in a general format to one of the serial ports available on the system.";
+
+    public static String sendingGirsHelp = "TODO";
+
+    public static String sendingCommandFusionHelp = "With this pane, a CommandFusion Learner can be used for transmitting IR signals.";
+
+    public static String capturingGirsHelp = "TODO";
+
+    public static String capturingCommandFusionHelp = "With this pane, a CommandFusion Learner can be used for capturing IR signals.";
 }

@@ -7,7 +7,7 @@
     <groupId>org.harctoolbox</groupId>
     <artifactId>IrScrutinizer</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.2</version>
+    <version>1.1.2dev</version>
     <name>IrScrutinizer</name>
     <parent>
         <groupId>org.harctoolbox</groupId>
