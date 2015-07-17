@@ -304,6 +304,8 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
         });
 
         moduleComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5" }));
+        moduleComboBox.setMinimumSize(new java.awt.Dimension(60, 24));
+        moduleComboBox.setPreferredSize(new java.awt.Dimension(60, 24));
         moduleComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 moduleComboBoxActionPerformed(evt);
@@ -311,6 +313,8 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
         });
 
         portComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3" }));
+        portComboBox.setMinimumSize(new java.awt.Dimension(60, 24));
+        portComboBox.setPreferredSize(new java.awt.Dimension(60, 24));
         portComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 portComboBoxActionPerformed(evt);
@@ -370,11 +374,11 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(moduleLabel)
-                            .addComponent(moduleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(moduleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(portComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(portComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(stopButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
