@@ -575,6 +575,16 @@ public class IrSignal {
     }
 
     /**
+     * Returns an IrSignal consisting of count repetitions (count semantic) as the intro sequence,
+     * while repeat and ending are empty.
+     * @param count Number of times to send signal. Must be > 0.
+     * @return IrSignal consisting of count repetitions (count semantic) as the intro sequence.
+     */
+    public IrSignal toOneShot(int count) {
+        return new IrSignal(frequency, dutyCycle, toModulatedIrSequence(count), null, null);
+    }
+
+    /**
      *
      * @return the intro sequence, as ModulatedIrSequence
      */
