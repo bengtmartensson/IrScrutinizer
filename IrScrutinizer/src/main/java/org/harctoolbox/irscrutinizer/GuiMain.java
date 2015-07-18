@@ -835,7 +835,7 @@ public class GuiMain extends javax.swing.JFrame {
             setCaptureWindow(irSignal);
         } else {
             capturedDataTextArea.setText(irSequence.toPrintString(true));
-            if (ueiLearnedRadioButtonMenuItem.isSelected() || ccfRadioButtonMenuItem.isSelected())
+            if (! rawRadioButtonMenuItem.isSelected())
                 guiUtils.warning("Outputting an uninterpreted IrSequence in the selected output format not possible, using raw format.");
         }
     }
@@ -2048,7 +2048,6 @@ public class GuiMain extends javax.swing.JFrame {
         outputFormatMenu = new javax.swing.JMenu();
         rawRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         ccfRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
-        ueiLearnedRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         analyzerBasisMenu = new javax.swing.JMenu();
         analyzerBase2RadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         analyzerBase8RadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -5935,14 +5934,6 @@ public class GuiMain extends javax.swing.JFrame {
         });
         outputFormatMenu.add(ccfRadioButtonMenuItem);
 
-        ueiLearnedRadioButtonMenuItem.setText("UEI Learned");
-        ueiLearnedRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ueiLearnedRadioButtonMenuItemActionPerformed(evt);
-            }
-        });
-        outputFormatMenu.add(ueiLearnedRadioButtonMenuItem);
-
         optionsMenu.add(outputFormatMenu);
 
         analyzerBasisMenu.setText("Preferred Number Basis");
@@ -6484,10 +6475,6 @@ public class GuiMain extends javax.swing.JFrame {
     private void ccfRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ccfRadioButtonMenuItemActionPerformed
         updateOutputFormat(1);
     }//GEN-LAST:event_ccfRadioButtonMenuItemActionPerformed
-
-    private void ueiLearnedRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ueiLearnedRadioButtonMenuItemActionPerformed
-        updateOutputFormat(2);
-    }//GEN-LAST:event_ueiLearnedRadioButtonMenuItemActionPerformed
 
     private void checkUpToDateMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkUpToDateMenuItemActionPerformed
         guiUtils.checkUpToDate(Version.currentVersionUrl, Version.versionString);
@@ -8656,7 +8643,6 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton transmitScrutinizedButton;
     private javax.swing.JButton transmitSignalButton;
     private javax.swing.JButton transmitSignalButton1;
-    private javax.swing.JRadioButtonMenuItem ueiLearnedRadioButtonMenuItem;
     private javax.swing.JMenuItem unsetTMenuItem;
     private javax.swing.JCheckBoxMenuItem useCleansedCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem usePopupsForErrorsCheckBoxMenuItem;
