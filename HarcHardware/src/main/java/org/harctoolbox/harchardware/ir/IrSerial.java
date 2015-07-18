@@ -44,7 +44,6 @@ public abstract class IrSerial<T extends LocalSerialPort> implements IHarcHardwa
     private LocalSerialPort.Parity parity;
     private LocalSerialPort.FlowControl flowControl;
     private final Class<T> clazz;
-    private static final String notSupported = "version unknown";
 
     /**
      * @param baudRate the baudRate to set
@@ -89,9 +88,11 @@ public abstract class IrSerial<T extends LocalSerialPort> implements IHarcHardwa
     }
 
     @Override
-    // Silly default version for hardware that does not support a sensible version.
+    // Default version for hardware that does not support a sensible version.
+    // NOTE: just return null, not something "user friendly"
+    // -- this is the task of the user interface.
     public String getVersion() throws IOException {
-        return notSupported;
+        return null;
     }
 
     @Override

@@ -36,27 +36,15 @@ import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.comm.LocalSerialPortRaw;
 
 /**
- * This class supports the CommandFusion Learner.
- * API Reference: https://docs.google.com/document/d/1BMRwD9RlUYtf4VeJNXgRwo6-lkkSAIVo8tczrynJ7CU/preview?pli=1
+ * This class implements capturing and sending support for the CommandFusion Learner.
+ * @see http://www.commandfusion.com/wiki2/hardware/cflink/ir-learner
+ * @see http://www.commandfusion.com/wiki2/hardware/cflink/ir-module
+ * @see https://docs.google.com/document/d/1BMRwD9RlUYtf4VeJNXgRwo6-lkkSAIVo8tczrynJ7CU/preview?pli=1
  */
-public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawIrSender, ICapture/*, IStringCommand*/ {
-
-    /**
-     * @see http://www.commandfusion.com/irdatabase
-     */
-
-    public static enum DeviceType {
-        /* 00 =*/ TV,
-        /* 01 =*/ Cable,
-        /* 02 =*/ Video_Accessory,
-        /* 03 =*/ Satellite_DSS,
-        /* 04 =*/ VCR,
-        /* 05 =*/ Not_Used,
-        /* 06 =*/ DVD,
-        /* 07 =*/ Receiver_Misc_Audio,
-        /* 08 =*/ Amplifier,
-        /* 09 =*/ CD
-    }
+public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawIrSender, ICapture {
+    // USB parameters:
+    //    VID = 0403
+    //    PID = 6001
 
     /*
     From http://www.commandfusion.com/wiki2/hardware/cflink/ir-module
@@ -86,9 +74,6 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         }
     }
 
-    // VID = 0403
-    // PID = 6001
-
     private int beginTimeout;
     private int middleTimeout;
     private int endingTimeout;
@@ -103,11 +88,13 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     private static final byte endingToken = (byte) 0xF5;
     private static final byte transmitToken = (byte) 'T';
     private static final byte receiveToken = (byte) 'R';
+    private static final byte queryToken = (byte) 'Q';
     private static final int commandLength = 3;
     private static final String learnerName = "IRL";
     private static final String sendCommand = "SND";
     private static final String captureCommand = "LIR";
     private static final String readCommand = "RIR";
+    private static final String versionCommand = "WHO";
     private static final String timeout = "TIMEOUT";
     private static final String start = "START";
     private static final String signal = "SIGNAL";
@@ -122,6 +109,7 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     private static final LocalSerialPort.FlowControl defaultFlowControl = LocalSerialPort.FlowControl.NONE;
     private boolean stopRequested = false;
     private int serialTimeout = 30000;//12345;
+    private String versionString = "n/a";
 
     public CommandFusion() throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         this(defaultPortName, defaultBaudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, false);
@@ -149,14 +137,24 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     @Override
     public void open() throws IOException, HarcHardwareException {
         super.open();
+        send(encode(versionCommand, "", queryToken));
+        byte[] response = readUntilTwoEndTokens();
+        Payload payload = decode(response, receiveToken);
+        if (verbose)
+            System.err.println("<Received " + payload);
+        if (payload.command.equals(versionCommand)) {
+            String s[] = payload.data.split(":");
+            versionString = s[2];
+        }
     }
 
     /**
+     * Sends an IR signal from the built-in, proprietary data base.
      *
      * @param deviceType
      * @param codeset
-     * @param key
-     * @return
+     * @param key function code
+     * @return success of operation
      * @throws IOException
      *
      * @see http://www.commandfusion.com/irdatabase
@@ -178,7 +176,7 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
 
     private Status expect(String command, String data) throws IOException {
         byte[] response = readUntilTwoEndTokens();// serialPort.readBytes(13 + data.length());
-        Payload payload = decode(response, false);
+        Payload payload = decode(response, receiveToken);
         if (verbose)
             System.err.println("<Received " + payload);
 
@@ -202,13 +200,14 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     // 1 = T (transmitted TO IR learner) or R (reply FROM IR learner)
     // 2-4 = IRL (signifying we are communicating with an IR Learner)
     // 5-7 = The command name. See below for available commands.
-    private Payload decode(byte[] data, boolean sending) {
+    private Payload decode(byte[] data, Byte token) {
         int index = 0;
         for (int i = 0; i < introBytes.length; i++)
             if (data[index++] != introBytes[i])
                 return null;
-        if (data[index++] != (sending ? transmitToken : receiveToken))
+        if (token != null && data[index] != token)
                 return null;
+        index++;
         for (int i = 0; i < learnerName.length(); i++)
             if (data[index++] != learnerName.charAt(i))
                 return null;
@@ -225,11 +224,15 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     }
 
     private byte[] encode(String cmd, String data) {
+        return encode(cmd, data, transmitToken);
+    }
+
+    private byte[] encode(String cmd, String data, byte token) {
         byte[] result = new byte[7 + learnerName.length() + cmd.length() + data.length()];
         int index = 0;
         for (int i = 0; i < introBytes.length; i++)
             result[index++] = introBytes[i];
-        result[index++] = transmitToken;
+        result[index++] = token;
         for (int i = 0; i < learnerName.length(); i++)
             result[index++] = (byte) learnerName.charAt(i);
         for (int i = 0; i < cmd.length(); i++)
@@ -264,7 +267,7 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
 
     private void send(byte[] buf) throws IOException {
         if (verbose) {
-            Payload payload = decode(buf, true);
+            Payload payload = decode(buf, null);
             if (payload != null)
                 System.err.println(">Sending " + payload);
         }
@@ -316,7 +319,7 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     ModulatedIrSequence readCapture() throws IOException, IncompatibleArgumentException {
         //IR Learner will send back a RIR reply with data in the format of IRCODE:<irdata>
         byte[] response = readUntilTwoEndTokens();
-        Payload payload = decode(response, false);
+        Payload payload = decode(response, receiveToken);
         if (verbose) {
             System.err.println("<Received " + payload);
         }
@@ -369,6 +372,11 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         //this.endingTimeout = endingTimeout;
     }
 
+    @Override
+    public String getVersion() {
+        return versionString;
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -376,10 +384,11 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         String portName = defaultPortName;
         CommandFusion commandFusion = null;
         boolean verbose = true;
-        boolean send = false;
+        boolean send = true;
         try {
             commandFusion = new CommandFusion(portName, verbose);
             commandFusion.open();
+            System.out.println("Version: " + commandFusion.getVersion());
             if (send) {
                 IrSignal irSignal = new IrSignal("/local/irscrutinizer/IrpProtocols.ini", "rc5", "D=0 F=0");
                 boolean success = commandFusion.sendIr(irSignal, 1, null);
