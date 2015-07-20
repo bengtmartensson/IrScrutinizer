@@ -19,6 +19,7 @@ package org.harctoolbox.girr;
 
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
@@ -230,6 +231,20 @@ public class Remote implements Serializable {
                 return false;
         }
         return true;
+    }
+
+    public static class compareNameCaseSensitive implements Comparator<Remote> {
+
+        public int compare(Remote o1, Remote o2) {
+            return o1.name.compareTo(o2.name);
+        }
+    }
+
+    public static class compareNameCaseInsensitive implements Comparator<Remote> {
+
+        public int compare(Remote o1, Remote o2) {
+            return o1.name.compareToIgnoreCase(o2.name);
+        }
     }
 
     public Command getCommand(String commandName) {

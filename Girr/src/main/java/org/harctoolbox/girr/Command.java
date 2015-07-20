@@ -284,6 +284,15 @@ public class Command implements Serializable {
         return str.toString();
     }
 
+    @Override
+    public String toString() {
+        try {
+            return toPrintString();
+        } catch (IrpMasterException ex) {
+            return name + ": (<erroneous signal>)";
+        }
+    }
+
     private void sanityCheck() throws IrpMasterException {
         boolean protocolOk = protocol != null && ! protocol.isEmpty();
         boolean parametersOk = parameters != null && ! parameters.isEmpty();
