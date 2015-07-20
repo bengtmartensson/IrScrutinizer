@@ -68,7 +68,7 @@ public abstract class Importer {
      * @return the invokeDecodeIr
      */
     protected boolean isInvokeDecodeIr() {
-        return properties.getInvokeDecodeIr();
+        return properties != null  && properties.getInvokeDecodeIr();
     }
 
     /**
@@ -93,7 +93,7 @@ public abstract class Importer {
      * @return the generateRaw
      */
     protected boolean isGenerateRaw() {
-        return properties.getGenerateRaw();
+        return properties != null && properties.getGenerateRaw();
     }
 
     /**
