@@ -19,7 +19,9 @@ package org.harctoolbox.irscrutinizer.importer;
 
 import java.awt.Component;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map.Entry;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -110,7 +112,10 @@ public class TreeImporter extends javax.swing.JPanel {
 
     private DefaultTreeModel newTreeModel() {
         root = new DefaultMutableTreeNode("Remotes");
-        for (Remote remote : remoteSet.getRemotes()) {
+        Collection<Remote> remotes = remoteSet.getRemotes();
+        ArrayList<Remote> remoteList = new ArrayList<Remote>(remotes);
+        Collections.sort(remoteList, new Remote.compareNameCaseInsensitive());
+        for (Remote remote : remoteList) {
             DefaultMutableTreeNode node = newRemoteNode(remote);
             root.add(node);
         }
