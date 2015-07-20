@@ -43,7 +43,7 @@ import org.xml.sax.SAXException;
 /**
  * Class for importing Pronto CCF files of the first generation.
  */
-public class XcfImporter extends RemoteSetImporter implements IFileImporter {
+public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
     private static final String xcfXmlFileName = "ConfigEdit.xml";
     private boolean translateProntoFont = true;
