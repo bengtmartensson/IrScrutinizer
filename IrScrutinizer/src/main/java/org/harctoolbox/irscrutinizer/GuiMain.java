@@ -621,8 +621,8 @@ public class GuiMain extends javax.swing.JFrame {
         guiUtils.setUsePopupsForErrors(properties.getUsePopupsForErrors());
         if (userlevel == 0) { // ! experimental
             sendingHardwareTabbedPane.remove(genericSerialPanel);
-            sendingHardwareTabbedPane.remove(girsSendingPanel);  // temporarily, not yet working
-            capturingHardwareTabbedPane.remove(captureGirsPanel);// temporarily, not yet working
+            //sendingHardwareTabbedPane.remove(girsSendingPanel);  // temporarily, not yet working
+            //capturingHardwareTabbedPane.remove(captureGirsPanel);// temporarily, not yet working
         }
     } // end of constructor
 
@@ -1566,6 +1566,7 @@ public class GuiMain extends javax.swing.JFrame {
         String irTransIp = irTransInternetHostPanel.getIpName();
         IrTransIRDB irTransIRDB = new IrTransIRDB(irTransIp, properties.getVerbose(), properties.getSendingTimeout());
         //irTrans = new IrTrans(irTransIp, properties.getVerbose(), properties.getStartTimeout());
+        irTransInternetHostPanel.setHardware(irTransIRDB);
         irTransNamedCommandLauncher.setHardware(irTransIRDB);
         properties.setIrTransIpName(irTransIp);
     }
@@ -1956,7 +1957,7 @@ public class GuiMain extends javax.swing.JFrame {
         arduinoSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoCapturePortName(),Arduino.defaultBaudRate, false);
         capturingArduinoHardwareHelpButton = new javax.swing.JButton();
         captureGirsPanel = new javax.swing.JPanel();
-        girsClientSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getGirsCapturePortName(),GirsClient.defaultBaudRate, false);
+        girsClientSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getGirsClientCapturePortName(),GirsClient.defaultBaudRate, false);
         capturingGirsHardwareHelpButton = new javax.swing.JButton();
         captureCommandFusionPanel = new javax.swing.JPanel();
         commandFusionSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionCapturePortName(),CommandFusion.defaultBaudRate, false);
@@ -1986,7 +1987,7 @@ public class GuiMain extends javax.swing.JFrame {
         arduinoSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoPortName(), Arduino.defaultBaudRate, false);
         sendingArduinoHelpButton = new javax.swing.JButton();
         girsSendingPanel = new javax.swing.JPanel();
-        girsSendingSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getGirsPortName(), GirsClient.defaultBaudRate, false);
+        girsSendingSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getGirsClientPortName(), GirsClient.defaultBaudRate, false);
         sendingGirsClientHelpButton = new javax.swing.JButton();
         commandFusionSendPanel = new javax.swing.JPanel();
         commandFusionSendingSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionPortName(), CommandFusion.defaultBaudRate, false);
@@ -5161,7 +5162,7 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(globalCachePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(globalCacheIrSenderSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(225, Short.MAX_VALUE))
+                .addContainerGap(216, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, globalCachePanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(sendingGlobalCacheHelpButton)
@@ -5197,23 +5198,26 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(lircPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(lircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lircNamedCommandLauncher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lircPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(sendingLircHelpButton))
                     .addGroup(lircPanelLayout.createSequentialGroup()
-                        .addComponent(lircInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 367, Short.MAX_VALUE)
-                        .addComponent(sendingLircHelpButton)))
+                        .addGroup(lircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lircNamedCommandLauncher, javax.swing.GroupLayout.PREFERRED_SIZE, 785, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lircInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 770, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 34, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         lircPanelLayout.setVerticalGroup(
             lircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(lircPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(lircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lircInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sendingLircHelpButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lircInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
                 .addComponent(lircNamedCommandLauncher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addComponent(sendingLircHelpButton)
+                .addContainerGap())
         );
 
         sendingHardwareTabbedPane.addTab("Lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), lircPanel); // NOI18N
@@ -5241,23 +5245,26 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(irTransPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(irTransNamedCommandLauncher, javax.swing.GroupLayout.DEFAULT_SIZE, 817, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, irTransPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(sendingIrTransHelpButton))
                     .addGroup(irTransPanelLayout.createSequentialGroup()
-                        .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(sendingIrTransHelpButton)))
+                        .addGroup(irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(irTransNamedCommandLauncher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 47, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         irTransPanelLayout.setVerticalGroup(
             irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(irTransPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sendingIrTransHelpButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
                 .addComponent(irTransNamedCommandLauncher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addComponent(sendingIrTransHelpButton)
+                .addContainerGap())
         );
 
         sendingHardwareTabbedPane.addTab("IrTrans", new javax.swing.ImageIcon(getClass().getResource("/icons/irtrans/favicon.png")), irTransPanel); // NOI18N

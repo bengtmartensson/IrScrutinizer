@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013, 2014 Bengt Martensson.
+Copyright (C) 2013, 2014, 2015 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.guicomponents;
 
+import java.awt.Cursor;
 import java.awt.Desktop;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -25,6 +26,7 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 import javax.swing.JPanel;
+import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ir.LircClient;
 
 public class InternetHostPanel extends JPanel {
@@ -33,6 +35,8 @@ public class InternetHostPanel extends JPanel {
     public static final String PROP_IP_NAME = "ipName";
     public static final String PROP_PORT_NUMBER = "portNumber";
     public static final String PROP_READY = "PROP_READY";
+    public static final String PROP_VERSION = "PROP_VERSION";
+    public static final String PROP_ISOPEN = "PROP_ISOPEN";
 
     public static final int defaultPingTimeOut = 5000;
     public static final String defaultIpName = "localhost";
@@ -47,8 +51,12 @@ public class InternetHostPanel extends JPanel {
     private String ipName;
     private int portNumber;
     private boolean ready;
+    private String version;
 
     private GuiUtils guiUtils;
+
+    private transient IHarcHardware hardware;
+    private boolean listenable;
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -161,6 +169,46 @@ public class InternetHostPanel extends JPanel {
         System.err.println(result);
     }
 
+    public void setHardware(IHarcHardware hardware) throws IOException {
+        this.hardware = hardware;
+        //openToggleButton.setEnabled(hardware != null);
+        //openToggleButton.setSelected(hardware.isValid());
+        setVersion();
+    }
+
+    /**
+     * @return the version
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    private void setVersion() throws IOException {
+        try {
+            setVersion(hardware.isValid() ? hardware.getVersion() : "<not connected>");
+        } catch (IOException ex) {
+            versionLabel.setText("<invalid>");
+            version = null;
+            throw ex;
+        }
+    }
+
+    public void setVersion(String version) {
+        java.lang.String oldVersion = this.version;
+        this.version = version;
+        //versionLabel.setEnabled(hardware.isValid());
+        //versionLiteralLabel.setEnabled(hardware.isValid());
+        versionLabel.setText(version);
+        propertyChangeSupport.firePropertyChange(PROP_VERSION, oldVersion, version);
+    }
+
+    //private void setVersion() {
+    //    try {
+    //        setVersion(hardware.isValid() ? hardware.getVersion() : "<not connected>");
+    //    } catch (IOException ex) {
+    //    }
+    //}
+
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         // just to be Javabeans safe
@@ -190,6 +238,8 @@ public class InternetHostPanel extends JPanel {
         pingButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         portLabel = new javax.swing.JLabel();
+        versionLiteralLabel = new javax.swing.JLabel();
+        versionLabel = new javax.swing.JLabel();
 
         ipNameTextField.setText(getIpName());
         ipNameTextField.setToolTipText("IP-Name or -address of host");
@@ -231,28 +281,41 @@ public class InternetHostPanel extends JPanel {
 
         portLabel.setText("Port");
 
+        versionLiteralLabel.setText("Ver:");
+        versionLiteralLabel.setToolTipText("Version of the firmware on the device, if supported by the device. Verifies that the connection is working.");
+
+        versionLabel.setText("no version available");
+        versionLabel.setToolTipText("Version of firmware on device. Verifies the connection.");
+        versionLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        versionLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(ipNameTextField))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(0, 0, 0)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(ipNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(portLabel)
                     .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(browseButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pingButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(versionLiteralLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(versionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(portLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -260,8 +323,10 @@ public class InternetHostPanel extends JPanel {
                     .addComponent(ipNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(browseButton)
-                    .addComponent(pingButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(pingButton)
+                    .addComponent(versionLiteralLabel)
+                    .addComponent(versionLabel))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {browseButton, ipNameTextField, pingButton, portTextField});
@@ -301,6 +366,41 @@ public class InternetHostPanel extends JPanel {
         isPingable();
     }//GEN-LAST:event_pingButtonActionPerformed
 
+    private void enableStuff(boolean isOpen) {
+        ipNameTextField.setEnabled(!isOpen);
+        portTextField.setEnabled(!isOpen);
+    }
+
+    private Cursor setBusyCursor() {
+        Cursor oldCursor = getCursor();
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        return oldCursor;
+    }
+
+    private void resetCursor(Cursor cursor) {
+        setCursor(cursor);
+    }
+/*
+    private void openClose(boolean opening) throws IOException, HarcHardwareException {
+        boolean oldIsOpen = hardware.isValid();
+        try {
+            if (opening) {
+                hardware.open();
+                listenable = true;
+                //openToggleButton.setSelected(hardware.isValid());
+                //refreshButton.setEnabled(!hardware.isValid());
+            } else {
+                listenable = false;
+                hardware.close();
+                //openToggleButton.setSelected(false);
+                //refreshButton.setEnabled(true);
+            }
+        } finally {
+            enableStuff(opening && hardware.isValid());
+            setVersion();
+            propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, hardware.isValid());
+        }
+    }*/
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;
     private javax.swing.JTextField ipNameTextField;
@@ -308,5 +408,7 @@ public class InternetHostPanel extends JPanel {
     private javax.swing.JButton pingButton;
     private javax.swing.JLabel portLabel;
     private javax.swing.JTextField portTextField;
+    private javax.swing.JLabel versionLabel;
+    private javax.swing.JLabel versionLiteralLabel;
     // End of variables declaration//GEN-END:variables
 }

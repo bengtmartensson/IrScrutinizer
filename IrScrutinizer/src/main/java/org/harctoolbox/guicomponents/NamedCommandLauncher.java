@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013 Bengt Martensson.
+Copyright (C) 2013-2015 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.ConnectException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
-import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ir.IRemoteCommandIrSender;
 //import org.harctoolbox.harchardware.ir.IRemoteCommandIrSenderStop;
 import org.harctoolbox.harchardware.ir.ITransmitter;
@@ -40,7 +39,6 @@ public class NamedCommandLauncher extends JPanel {
     private DefaultComboBoxModel remoteComboBoxModel;
     private DefaultComboBoxModel commandComboBoxModel;
     // TODO private boolean supportsStopIr;
-    private final static String versionPrefix = "Version: ";
 
     public NamedCommandLauncher() {
         this(null, null);
@@ -75,8 +73,12 @@ public class NamedCommandLauncher extends JPanel {
         if (hardware == null) {
             transmitterComboBoxModel = new javax.swing.DefaultComboBoxModel();//new String[]{"Tr. 1", "Tr. 2", "Tr. 3", "Tr. 4"});
             //transmitterComboBox.setEnabled(false;);
-            remoteComboBoxModel = new javax.swing.DefaultComboBoxModel(new String[]{"Device 1", "Device 2", "Device 3", "Device 4"});
-            commandComboBoxModel = new javax.swing.DefaultComboBoxModel(new String[]{"Command 1", "Command 2", "Command 3", "Command 4"});
+            remoteComboBoxModel = new javax.swing.DefaultComboBoxModel();
+            commandComboBoxModel = new javax.swing.DefaultComboBoxModel();
+            if (remoteComboBox != null)
+                remoteComboBox.setModel(remoteComboBoxModel);
+            if (commandComboBox != null)
+                commandComboBox.setModel(commandComboBoxModel);
         } else {
             load(); // may throw exception
             enableStuff();
@@ -96,7 +98,6 @@ public class NamedCommandLauncher extends JPanel {
     }
 
     private void load() throws IOException {
-        versionTextField.setText("--");
         if (ITransmitter.class.isInstance(hardware))
             transmitterComboBoxModel = new DefaultComboBoxModel(((ITransmitter) hardware).getTransmitterNames());
         else
@@ -104,8 +105,8 @@ public class NamedCommandLauncher extends JPanel {
         transmitterComboBox.setModel(transmitterComboBoxModel);
 
         try {
-            if (IHarcHardware.class.isInstance(hardware))
-                versionTextField.setText(versionPrefix + ((IHarcHardware) hardware).getVersion());
+            //if (IHarcHardware.class.isInstance(hardware))
+            //    versionTextField.setText(versionPrefix + ((IHarcHardware) hardware).getVersion());
             String[] remotes = hardware.getRemotes();
             if (remotes == null || remotes.length == 0) {
                 guiUtils.warning("No remotes present");
@@ -161,10 +162,6 @@ public class NamedCommandLauncher extends JPanel {
             return null;
     }
 
-    public String getVersion() {
-        return versionTextField.getText();
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -186,7 +183,6 @@ public class NamedCommandLauncher extends JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        versionTextField = new javax.swing.JTextField();
 
         noSendsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "7", "10", "15", "20", "30", "40", "50", "70", "100", "200", "500", "1000" }));
         noSendsComboBox.setToolTipText("Number of times to send command");
@@ -243,11 +239,6 @@ public class NamedCommandLauncher extends JPanel {
 
         jLabel4.setText("Command");
 
-        versionTextField.setEditable(false);
-        versionTextField.setText("Version: unknown");
-        versionTextField.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        versionTextField.setComponentPopupMenu(copyPopupMenu);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -255,31 +246,30 @@ public class NamedCommandLauncher extends JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(versionTextField)
+                    .addComponent(noSendsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(transmitterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(remoteComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(noSendsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(transmitterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(remoteComboBox, 0, 191, Short.MAX_VALUE)
-                            .addComponent(jLabel3))
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(commandComboBox, 0, 160, Short.MAX_VALUE)
-                                .addGap(10, 10, 10)
-                                .addComponent(sendButton)
-                                .addGap(10, 10, 10)
-                                .addComponent(stopButton)
-                                .addGap(10, 10, 10)
-                                .addComponent(reloadButton))
-                            .addComponent(jLabel4))))
-                .addGap(0, 0, 0))
+                        .addGap(51, 51, 51)
+                        .addComponent(jLabel4))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(commandComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(sendButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(stopButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(reloadButton)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -291,19 +281,17 @@ public class NamedCommandLauncher extends JPanel {
                     .addComponent(jLabel4))
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(noSendsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(noSendsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(transmitterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(remoteComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(commandComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sendButton)
-                    .addComponent(stopButton)
-                    .addComponent(reloadButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(versionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+                    .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(stopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(reloadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {commandComboBox, reloadButton, remoteComboBox, sendButton, stopButton, transmitterComboBox});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {commandComboBox, noSendsComboBox, reloadButton, remoteComboBox, sendButton, stopButton, transmitterComboBox});
 
     }// </editor-fold>//GEN-END:initComponents
 
@@ -362,6 +350,5 @@ public class NamedCommandLauncher extends JPanel {
     private javax.swing.JButton sendButton;
     private javax.swing.JButton stopButton;
     private javax.swing.JComboBox transmitterComboBox;
-    private javax.swing.JTextField versionTextField;
     // End of variables declaration//GEN-END:variables
 }

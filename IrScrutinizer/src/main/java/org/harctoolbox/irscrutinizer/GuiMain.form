@@ -5796,7 +5796,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.guicomponents.SerialPortSimpleBean" name="girsClientSerialPortSimpleBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getGirsCapturePortName(),GirsClient.defaultBaudRate, false)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getGirsClientCapturePortName(),GirsClient.defaultBaudRate, false)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="capturingGirsHardwareHelpButton">
@@ -5984,7 +5984,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="globalCacheIrSenderSelector" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="225" max="32767" attributes="0"/>
+                                  <EmptySpace pref="216" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
@@ -6039,14 +6039,19 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
+                              <Group type="102" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="lircNamedCommandLauncher" max="32767" attributes="0"/>
-                                      <Group type="102" attributes="0">
-                                          <Component id="lircInternetHostPanel" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace pref="367" max="32767" attributes="0"/>
+                                      <Group type="102" alignment="1" attributes="0">
+                                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                           <Component id="sendingLircHelpButton" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Group type="102" attributes="0">
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="lircNamedCommandLauncher" min="-2" pref="785" max="-2" attributes="0"/>
+                                              <Component id="lircInternetHostPanel" min="-2" pref="770" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace min="0" pref="34" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
@@ -6057,13 +6062,12 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="lircInternetHostPanel" min="-2" max="-2" attributes="0"/>
-                                      <Component id="sendingLircHelpButton" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="lircInternetHostPanel" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                                   <Component id="lircNamedCommandLauncher" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="31" max="32767" attributes="0"/>
+                                  <EmptySpace pref="21" max="32767" attributes="0"/>
+                                  <Component id="sendingLircHelpButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -6115,14 +6119,19 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="irTransNamedCommandLauncher" pref="817" max="32767" attributes="0"/>
-                                      <Group type="102" attributes="0">
-                                          <Component id="irTransInternetHostPanel" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="32767" attributes="0"/>
+                                      <Group type="102" alignment="1" attributes="0">
+                                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                           <Component id="sendingIrTransHelpButton" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Group type="102" attributes="0">
+                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                              <Component id="irTransNamedCommandLauncher" max="32767" attributes="0"/>
+                                              <Component id="irTransInternetHostPanel" max="32767" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace min="0" pref="47" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
@@ -6133,13 +6142,12 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="irTransInternetHostPanel" min="-2" max="-2" attributes="0"/>
-                                      <Component id="sendingIrTransHelpButton" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="irTransInternetHostPanel" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                                   <Component id="irTransNamedCommandLauncher" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="31" max="32767" attributes="0"/>
+                                  <EmptySpace pref="21" max="32767" attributes="0"/>
+                                  <Component id="sendingIrTransHelpButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -6386,7 +6394,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.guicomponents.SerialPortSimpleBean" name="girsSendingSerialPortBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getGirsPortName(), GirsClient.defaultBaudRate, false)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getGirsClientPortName(), GirsClient.defaultBaudRate, false)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="sendingGirsClientHelpButton">

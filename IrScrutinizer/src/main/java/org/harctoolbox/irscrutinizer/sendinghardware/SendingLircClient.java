@@ -73,6 +73,12 @@ public class SendingLircClient extends SendingHardware<LircCcfClient> implements
         String lircIp = internetHostPanel.getIpName();
         int lircPort = internetHostPanel.getPortNumber();
         rawIrSender = new LircCcfClient(lircIp, lircPort, properties.getVerbose(), properties.getSendingTimeout());
+        try {
+            internetHostPanel.setHardware(rawIrSender);
+        } catch (IOException ex) {
+            namedCommandLauncher.setHardware(null);
+            throw ex;
+        }
         namedCommandLauncher.setHardware(rawIrSender);
         properties.setLircIpName(lircIp);
         properties.setLircPort(lircPort);
