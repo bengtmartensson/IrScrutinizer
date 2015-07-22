@@ -270,6 +270,7 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
             return;
 
         Cursor oldCursor = getCursor();
+        repaint();
         try {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             try {

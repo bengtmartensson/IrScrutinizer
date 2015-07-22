@@ -116,6 +116,8 @@ import org.harctoolbox.irscrutinizer.exporter.TextExporter;
 import org.harctoolbox.irscrutinizer.exporter.UeiFormatter;
 import org.harctoolbox.irscrutinizer.exporter.WaveExporter;
 import org.harctoolbox.irscrutinizer.importer.CcfImporter;
+import org.harctoolbox.irscrutinizer.importer.CmlImporter;
+import org.harctoolbox.irscrutinizer.importer.CommandFusionImporter;
 import org.harctoolbox.irscrutinizer.importer.CsvImporter;
 import org.harctoolbox.irscrutinizer.importer.CsvParametrizedImporter;
 import org.harctoolbox.irscrutinizer.importer.CsvRawImporter;
@@ -159,6 +161,8 @@ public class GuiMain extends javax.swing.JFrame {
     private ProtocolsIni protocolsIni = null;
     private CcfImporter ccfImporter;
     private XcfImporter xcfImporter;
+    private CmlImporter cmlImporter;
+    private CommandFusionImporter commandFusionImporter;
     private CsvRawImporter csvRawImporter;
     private CsvParametrizedImporter csvParametrizedImporter;
     private RmduImporter rmduImporter;
@@ -253,6 +257,8 @@ public class GuiMain extends javax.swing.JFrame {
 
         lircImporter = new LircImporter();
         irTransImporter = new IrTransImporter();
+        cmlImporter = new CmlImporter();
+        commandFusionImporter = new CommandFusionImporter();
         ccfImporter = new CcfImporter();
         ccfImporter.setTranslateProntoFont(properties.getTranslateProntoFont());
         xcfImporter = new XcfImporter();
@@ -1299,7 +1305,13 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private <T extends IFileImporter & ICommandImporter> void importRemoteByFileSelector(T importer, boolean raw) {
+        Cursor oldCursor = setBusyCursor();
         try {
+            repaint();
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+            }
             boolean status = importer.loadFileSelector(this, "Select file for signal import", properties.getDefaultImportDir());
             if (status)
                 importCommands(importer.getCommands(), raw);
@@ -1309,6 +1321,8 @@ public class GuiMain extends javax.swing.JFrame {
             guiUtils.error(ex);
         } catch (java.text.ParseException ex) {
             guiUtils.error(ex);
+        } finally {
+            resetCursor(oldCursor);
         }
     }
 
@@ -1864,6 +1878,12 @@ public class GuiMain extends javax.swing.JFrame {
         waveFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<WaveImporter>(guiUtils, properties, waveImporter);
         importWaveDivideCarrierCheckBox1 = new javax.swing.JCheckBox();
         importWaveHelpButton = new javax.swing.JButton();
+        cmlImportPanel = new javax.swing.JPanel();
+        cmlFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<CmlImporter>(guiUtils, properties, cmlImporter);
+        importCmlHelpButton = new javax.swing.JButton();
+        commandFusionImportPanel = new javax.swing.JPanel();
+        commandFusionFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<CommandFusionImporter>(guiUtils, properties, commandFusionImporter);
+        importCommandFusionHelpButton = new javax.swing.JButton();
         exportPanel = new javax.swing.JPanel();
         exportFormatComboBox = new javax.swing.JComboBox();
         jLabel6 = new javax.swing.JLabel();
@@ -2008,6 +2028,8 @@ public class GuiMain extends javax.swing.JFrame {
         importCcfMenuItem1 = new javax.swing.JMenuItem();
         importXcfMenuItem1 = new javax.swing.JMenuItem();
         importRmduMenuItem1 = new javax.swing.JMenuItem();
+        importCmlMenuItem = new javax.swing.JMenuItem();
+        importCommandFusionMenuItem = new javax.swing.JMenuItem();
         importRawMenu = new javax.swing.JMenu();
         importGirrMenuItem = new javax.swing.JMenuItem();
         importIctMenuItem = new javax.swing.JMenuItem();
@@ -2015,6 +2037,8 @@ public class GuiMain extends javax.swing.JFrame {
         importCcfMenuItem = new javax.swing.JMenuItem();
         importXcfMenuItem = new javax.swing.JMenuItem();
         importRmduMenuItem = new javax.swing.JMenuItem();
+        importCmlMenuItem2 = new javax.swing.JMenuItem();
+        importCommandFusionMenuItem2 = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         savePropertiesMenuItem = new javax.swing.JMenuItem();
         savePropertiesAsMenuItem = new javax.swing.JMenuItem();
@@ -4154,6 +4178,64 @@ public class GuiMain extends javax.swing.JFrame {
 
         importTabbedPane.addTab("Wave", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_audio.png")), waveImportPanel); // NOI18N
 
+        importCmlHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        importCmlHelpButton.setText("Help");
+        importCmlHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importCmlHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout cmlImportPanelLayout = new javax.swing.GroupLayout(cmlImportPanel);
+        cmlImportPanel.setLayout(cmlImportPanelLayout);
+        cmlImportPanelLayout.setHorizontalGroup(
+            cmlImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(cmlImportPanelLayout.createSequentialGroup()
+                .addComponent(cmlFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 170, Short.MAX_VALUE)
+                .addComponent(importCmlHelpButton)
+                .addContainerGap())
+        );
+        cmlImportPanelLayout.setVerticalGroup(
+            cmlImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(cmlImportPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(importCmlHelpButton)
+                .addContainerGap())
+            .addComponent(cmlFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
+        );
+
+        importTabbedPane.addTab("CML (RTI)", cmlImportPanel);
+
+        importCommandFusionHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        importCommandFusionHelpButton.setText("Help");
+        importCommandFusionHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importCommandFusionHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout commandFusionImportPanelLayout = new javax.swing.GroupLayout(commandFusionImportPanel);
+        commandFusionImportPanel.setLayout(commandFusionImportPanelLayout);
+        commandFusionImportPanelLayout.setHorizontalGroup(
+            commandFusionImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(commandFusionImportPanelLayout.createSequentialGroup()
+                .addComponent(commandFusionFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 170, Short.MAX_VALUE)
+                .addComponent(importCommandFusionHelpButton)
+                .addContainerGap())
+        );
+        commandFusionImportPanelLayout.setVerticalGroup(
+            commandFusionImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(commandFusionImportPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(importCommandFusionHelpButton)
+                .addContainerGap())
+            .addComponent(commandFusionFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
+        );
+
+        importTabbedPane.addTab("CommandFusion", commandFusionImportPanel);
+
         javax.swing.GroupLayout importPanelLayout = new javax.swing.GroupLayout(importPanel);
         importPanel.setLayout(importPanelLayout);
         importPanelLayout.setHorizontalGroup(
@@ -5655,6 +5737,22 @@ public class GuiMain extends javax.swing.JFrame {
         });
         importParametricMenu.add(importRmduMenuItem1);
 
+        importCmlMenuItem.setText("CML");
+        importCmlMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importCmlMenuItemActionPerformed(evt);
+            }
+        });
+        importParametricMenu.add(importCmlMenuItem);
+
+        importCommandFusionMenuItem.setText("CommandFusion");
+        importCommandFusionMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importCommandFusionMenuItemActionPerformed(evt);
+            }
+        });
+        importParametricMenu.add(importCommandFusionMenuItem);
+
         loadMenu.add(importParametricMenu);
 
         importRawMenu.setText("Import as set of raw signals");
@@ -5706,6 +5804,22 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
         importRawMenu.add(importRmduMenuItem);
+
+        importCmlMenuItem2.setText("CML");
+        importCmlMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importCmlMenuItem2ActionPerformed(evt);
+            }
+        });
+        importRawMenu.add(importCmlMenuItem2);
+
+        importCommandFusionMenuItem2.setText("CommandFusion");
+        importCommandFusionMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importCommandFusionMenuItem2ActionPerformed(evt);
+            }
+        });
+        importRawMenu.add(importCommandFusionMenuItem2);
 
         loadMenu.add(importRawMenu);
 
@@ -8170,6 +8284,30 @@ public class GuiMain extends javax.swing.JFrame {
         HelpPopup.newHelpPopup(this, HelpTexts.capturingCommandFusionHelp);
     }//GEN-LAST:event_capturingCommandFusionHardwareHelpButtonActionPerformed
 
+    private void importCmlHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCmlHelpButtonActionPerformed
+        HelpPopup.newHelpPopup(this, HelpTexts.importCmlHelp);// TODO add your handling code here:
+    }//GEN-LAST:event_importCmlHelpButtonActionPerformed
+
+    private void importCommandFusionHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCommandFusionHelpButtonActionPerformed
+        HelpPopup.newHelpPopup(this, HelpTexts.importCommandFusionHelp);
+    }//GEN-LAST:event_importCommandFusionHelpButtonActionPerformed
+
+    private void importCmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCmlMenuItemActionPerformed
+        importRemoteByFileSelector(cmlImporter, false);
+    }//GEN-LAST:event_importCmlMenuItemActionPerformed
+
+    private void importCommandFusionMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCommandFusionMenuItemActionPerformed
+        importRemoteByFileSelector(commandFusionImporter, false);
+    }//GEN-LAST:event_importCommandFusionMenuItemActionPerformed
+
+    private void importCmlMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCmlMenuItem2ActionPerformed
+        importRemoteByFileSelector(cmlImporter, true);
+    }//GEN-LAST:event_importCmlMenuItem2ActionPerformed
+
+    private void importCommandFusionMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCommandFusionMenuItem2ActionPerformed
+        importRemoteByFileSelector(commandFusionImporter, true);
+    }//GEN-LAST:event_importCommandFusionMenuItem2ActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -8223,6 +8361,10 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem clearRawCommentMenuItem;
     private javax.swing.JMenuItem clearSignalMenuItem;
     private javax.swing.JMenuItem clonePlotMenuItem;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean cmlFileImporterBean;
+    private javax.swing.JPanel cmlImportPanel;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean commandFusionFileImporterBean;
+    private javax.swing.JPanel commandFusionImportPanel;
     private javax.swing.JPanel commandFusionSendPanel;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean commandFusionSendingSerialPortBean;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean commandFusionSerialPortSimpleBean;
@@ -8344,6 +8486,12 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu importCaptureMenu;
     private javax.swing.JMenuItem importCcfMenuItem;
     private javax.swing.JMenuItem importCcfMenuItem1;
+    private javax.swing.JButton importCmlHelpButton;
+    private javax.swing.JMenuItem importCmlMenuItem;
+    private javax.swing.JMenuItem importCmlMenuItem2;
+    private javax.swing.JButton importCommandFusionHelpButton;
+    private javax.swing.JMenuItem importCommandFusionMenuItem;
+    private javax.swing.JMenuItem importCommandFusionMenuItem2;
     private javax.swing.JMenuItem importGirrMenuItem;
     private javax.swing.JMenuItem importGirrMenuItem1;
     private javax.swing.JButton importGirrSignalHelpButton;

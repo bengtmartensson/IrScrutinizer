@@ -146,6 +146,22 @@ class HelpTexts {
             + fileImportHelp + "\n\n"
             + "When pressing the \"Load File\" button, " + treeHelp;
 
+    public static String importCmlHelp
+            = "Many CML files are available in Internet, in particular by RemoteCentral. "
+            + "Particularly noteworthy is the \"megalist\", http://files.remotecentral.com/collection/66-1/index.html. "
+            + "IrScrutinizer can import these files to its import tree, "
+            + "making every remote a nodes in the tree.\n\n"
+            + fileImportHelp + "\n\n"
+            + "When pressing the \"Load File\" button, " + treeHelp;
+
+    public static String importCommandFusionHelp
+            = "The native format for CommandFusion equipment (for example, their freely available IR Learner) "
+            + "is a Json based text format, having the file extension \".cfir\". "
+            + "IrScrutinizer can read in these files to its import tree, "
+            + "making every remote a nodes in the tree.\n\n"
+            + "When pressing one of the \"Load\", \"Load File/URL\", or \"Load from clipboard\" buttons, "
+            + treeHelp;
+
     public static String importIctHelpHelp
             = "The ICT format, introduced by Kevin Timmerman's  IrScope, contains one or many IR signals, "
             + "optionally with names.\n\n"

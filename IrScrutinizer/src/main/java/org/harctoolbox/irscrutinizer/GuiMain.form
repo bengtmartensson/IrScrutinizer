@@ -944,6 +944,22 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importRmduMenuItem1ActionPerformed"/>
                       </Events>
                     </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="importCmlMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="CML"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importCmlMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="importCommandFusionMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="CommandFusion"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importCommandFusionMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
                   </SubComponents>
                 </Menu>
                 <Menu class="javax.swing.JMenu" name="importRawMenu">
@@ -997,6 +1013,22 @@
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importRmduMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="importCmlMenuItem2">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="CML"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importCmlMenuItem2ActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="importCommandFusionMenuItem2">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="CommandFusion"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importCommandFusionMenuItem2ActionPerformed"/>
                       </Events>
                     </MenuItem>
                   </SubComponents>
@@ -4370,6 +4402,106 @@
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importWaveHelpButtonActionPerformed"/>
+                          </Events>
+                        </Component>
+                      </SubComponents>
+                    </Container>
+                    <Container class="javax.swing.JPanel" name="cmlImportPanel">
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                          <JTabbedPaneConstraints tabName="CML (RTI)">
+                            <Property name="tabTitle" type="java.lang.String" value="CML (RTI)"/>
+                          </JTabbedPaneConstraints>
+                        </Constraint>
+                      </Constraints>
+
+                      <Layout>
+                        <DimensionLayout dim="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="cmlFileImporterBean" min="-2" pref="734" max="-2" attributes="0"/>
+                                  <EmptySpace pref="170" max="32767" attributes="0"/>
+                                  <Component id="importCmlHelpButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                        <DimensionLayout dim="1">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="importCmlHelpButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="cmlFileImporterBean" alignment="0" pref="364" max="32767" attributes="0"/>
+                          </Group>
+                        </DimensionLayout>
+                      </Layout>
+                      <SubComponents>
+                        <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="cmlFileImporterBean">
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;CmlImporter&gt;(guiUtils, properties, cmlImporter)"/>
+                          </AuxValues>
+                        </Component>
+                        <Component class="javax.swing.JButton" name="importCmlHelpButton">
+                          <Properties>
+                            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                              <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Help"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importCmlHelpButtonActionPerformed"/>
+                          </Events>
+                        </Component>
+                      </SubComponents>
+                    </Container>
+                    <Container class="javax.swing.JPanel" name="commandFusionImportPanel">
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                          <JTabbedPaneConstraints tabName="CommandFusion">
+                            <Property name="tabTitle" type="java.lang.String" value="CommandFusion"/>
+                          </JTabbedPaneConstraints>
+                        </Constraint>
+                      </Constraints>
+
+                      <Layout>
+                        <DimensionLayout dim="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="commandFusionFileImporterBean" min="-2" pref="734" max="-2" attributes="0"/>
+                                  <EmptySpace pref="170" max="32767" attributes="0"/>
+                                  <Component id="importCommandFusionHelpButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                        <DimensionLayout dim="1">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="importCommandFusionHelpButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="commandFusionFileImporterBean" alignment="0" pref="364" max="32767" attributes="0"/>
+                          </Group>
+                        </DimensionLayout>
+                      </Layout>
+                      <SubComponents>
+                        <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="commandFusionFileImporterBean">
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;CommandFusionImporter&gt;(guiUtils, properties, commandFusionImporter)"/>
+                          </AuxValues>
+                        </Component>
+                        <Component class="javax.swing.JButton" name="importCommandFusionHelpButton">
+                          <Properties>
+                            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                              <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Help"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importCommandFusionHelpButtonActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>
