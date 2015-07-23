@@ -50,6 +50,7 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
     private static final String versionCommand = "version";
     public static final String defaultPortName = "/dev/ttyACM0";
     public static final String okString = "OK";
+    public static final String timeoutString = ".";
     private String lineEnding = "\r";
     private static final String separator = " ";
     //private String portName;
@@ -170,7 +171,7 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
             //open();
             String str = serialPort.readString(true);
             pendingCapture = false;
-            if (str == null || str.length() == 0 || str.startsWith("null"))
+            if (str == null || str.length() == 0 || str.startsWith("null") || str.startsWith(timeoutString))
                 return null;
 
             str = str.trim();
