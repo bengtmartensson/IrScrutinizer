@@ -123,6 +123,7 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Ver:"/>
         <Property name="toolTipText" type="java.lang.String" value="Version of the firmware on the device, if supported by the device. Verifies that the connection is working."/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="versionLabel">
@@ -134,6 +135,7 @@
             <BevelBorder bevelType="1"/>
           </Border>
         </Property>
+        <Property name="enabled" type="boolean" value="false"/>
         <Property name="horizontalTextPosition" type="int" value="2"/>
       </Properties>
     </Component>

@@ -194,11 +194,13 @@ public class InternetHostPanel extends JPanel {
     }
 
     public void setVersion(String version) {
-        java.lang.String oldVersion = this.version;
+        String oldVersion = this.version;
         this.version = version;
         //versionLabel.setEnabled(hardware.isValid());
         //versionLiteralLabel.setEnabled(hardware.isValid());
         versionLabel.setText(version);
+        versionLabel.setEnabled(true);
+        versionLiteralLabel.setEnabled(true);
         propertyChangeSupport.firePropertyChange(PROP_VERSION, oldVersion, version);
     }
 
@@ -283,10 +285,12 @@ public class InternetHostPanel extends JPanel {
 
         versionLiteralLabel.setText("Ver:");
         versionLiteralLabel.setToolTipText("Version of the firmware on the device, if supported by the device. Verifies that the connection is working.");
+        versionLiteralLabel.setEnabled(false);
 
         versionLabel.setText("no version available");
         versionLabel.setToolTipText("Version of firmware on device. Verifies the connection.");
         versionLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        versionLabel.setEnabled(false);
         versionLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
