@@ -29,3 +29,10 @@ program build. It can also be build directly by the script
 tools/mk-irscrutinizer-html.sh.  It is also directly accessible
 [online](http://www.harctoolbox.org/IrScrutinizer.html#Appendix.+Building+from+sources)
 (may be behind the version here.)
+
+## Sourceforge outage
+
+During to the current Soureforge outage, the
+[ExchangeIR](http://www.harctoolbox.org/downloads/exchangeir.tar.gz)  and the
+[DecodeIR](http://www.harctoolbox.org/downloads/decodeir.tar.gz) sources are
+available on www.harctoolbox.org.
