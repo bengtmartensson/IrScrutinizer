@@ -142,6 +142,10 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         Payload payload = decode(response, receiveToken);
         if (verbose)
             System.err.println("<Received " + payload);
+        if (payload == null) {
+            close();
+            throw new HarcHardwareException("Cannot open CommandFusion.");
+        }
         if (payload.command.equals(versionCommand)) {
             String s[] = payload.data.split(":");
             versionString = s[2];
@@ -275,7 +279,7 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     }
 
     @Override
-    public ModulatedIrSequence capture() throws IOException, HarcHardwareException {
+    public ModulatedIrSequence capture() throws IOException, IncompatibleArgumentException {
         //Send LIR command (Learn IR) to tell the learner we are ready to learn.
         send(encode(captureCommand));
 
@@ -305,11 +309,12 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         try {
             modulatedIrSequence = readCapture();
         } catch (IncompatibleArgumentException ex) {
-            throw new HarcHardwareException("Erroneous data received from CommandFusion");
+            throw ex;
+        } finally {
+            //Finally, the IR Learner will send back an LIR command with a data value END to signify the end of the IR
+            // Do this also in the case of an exception, to not lose sync.
+            status = expect(captureCommand, end);
         }
-
-        //Finally, the IR Learner will send back an LIR command with a data value END to signify the end of the IR
-        status = expect(captureCommand, end);
         if (status != Status.ok)
             return null;
 
@@ -323,7 +328,7 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         if (verbose) {
             System.err.println("<Received " + payload);
         }
-        if (!payload.command.equals(captureCommand))
+        if (payload == null || !payload.command.equals(captureCommand))
             return null;
 
         if (!payload.data.startsWith(ircode + ":"))
@@ -332,7 +337,7 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         double frequency = Pronto.getFrequency(Integer.parseInt(payload.data.substring(index, index+4), 16));
         index += 4;
         if ((payload.data.length() - index) % 4 != 0)
-            throw new IncompatibleArgumentException("");
+            throw new IncompatibleArgumentException("Receive length erroneous");
 
         ArrayList<Integer> durations = new ArrayList<Integer>(payload.data.length() - index);
         boolean lastState = false;
