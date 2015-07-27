@@ -30,9 +30,16 @@ tools/mk-irscrutinizer-html.sh.  It is also directly accessible
 [online](http://www.harctoolbox.org/IrScrutinizer.html#Appendix.+Building+from+sources)
 (may be behind the version here.)
 
-## Sourceforge outage
+## Dependencies backup
 
-During to the current Soureforge outage, the
-[ExchangeIR](http://www.harctoolbox.org/downloads/exchangeir.tar.gz)  and the
-[DecodeIR](http://www.harctoolbox.org/downloads/decodeir.tar.gz) sources are
-available on www.harctoolbox.org.
+"Inspired" by the recent Soureforge outage, I decided to make the sources of the
+dependencies available on www.harctoolbox.org. These are the
+github/sourceforge repositories, corresponding to the right tag or
+commit, but without any patches applies. These are:
+
+* [ExchangeIR](http://www.harctoolbox.org/downloads/exchangeir.tar.gz)
+* [DecodeIR](http://www.harctoolbox.org/downloads/decodeir.tar.gz)
+* [JCommander](http://www.harctoolbox.org/downloads/jcommander.tar.gz)
+* [Minimal-Json](http://www.harctoolbox.org/downloads/minimal-json.tar.gz)
+* [Tonto](http://www.harctoolbox.org/downloads/tonto.tar.gz)
+* [Wakeonlan](http://www.harctoolbox.org/downloads/wakeonlan-1.0.0.zip)
