@@ -33,10 +33,10 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="commandFusionPortBaudRate" type="int" default='"9600"' doc='Baudrate for CommandFusion serial (sending).' />
     <property name="commandFusionCapturePortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for capturing with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
     <property name="commandFusionCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (capturing).' />
-    <property name="girsPortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for sending IR with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
-    <property name="girsPortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (sending).' />
-    <property name="girsCapturePortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for capturing with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
-    <property name="girsCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (capturing).' />
+    <property name="girsClientPortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for sending IR with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
+    <property name="girsClientPortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (sending).' />
+    <property name="girsClientCapturePortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for capturing with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
+    <property name="girsClientCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (capturing).' />
     <property name="irToyPortName" type="string" default='ifWindows("COM13", "/dev/ttyACM0")' doc="Port name for IrToy"/>
     <property name="irToyPortBaudRate" type="int" default='"9600"' doc="Baudrate for IrToy (sending)"/>
     <property name="irToyCapturePortName" type="string" default='ifWindows("COM13", "/dev/ttyACM0")' doc='Name of device to use, e.g. COM1 or /dev/ttyUSB0.' />
