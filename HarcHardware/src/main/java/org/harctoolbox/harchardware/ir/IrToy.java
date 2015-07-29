@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013, 2014 Bengt Martensson.
+Copyright (C) 2013, 2014, 2015 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.comm.LocalSerialPortRaw;
 
 /**
- * This class ...
+ * This class contains a driver for Dangerous Prototype's IrToy.
  * @see <a href="http://www.dangerousprototypes.com/docs/USB_IR_Toy:_Sampling_mode">http://www.dangerousprototypes.com/docs/USB_IR_Toy:_Sampling_mode</a>
  *
  */
@@ -256,17 +256,15 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
     }
 
     private int[] recv() throws IOException  {
+        int[] result = null;
         try {
-            ArrayList<Integer> array = new ArrayList<Integer>();
+            ArrayList<Integer> array = new ArrayList<>();
             stopCaptureRequest = false;
             long maxLearnLengthMicroSeconds = maxLearnLength * 1000L;
             long sum = 0;
             setPin(receivePin, true);
             while (!stopCaptureRequest && sum <= maxLearnLengthMicroSeconds) { // if leaving here, reset is needed.
-                int val;
-
-                val = read2Bytes(); // throws TimeoutException
-
+                int val = read2Bytes(); // throws TimeoutException
                 int ms = (int) Math.round(val * period);
                 array.add(ms);
                 sum += ms;
@@ -274,16 +272,18 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
                     // Only way for timeout, 1.4 seconds. Too long for most use cases ... :-\
                     break;
             }
-            if (stopCaptureRequest)
+            if (stopCaptureRequest) {
+                setPin(receivePin, false);
                 return null;
-            int[] result = new int[array.size()];
+            }
+            result = new int[array.size()];
             for (int i = 0; i < array.size(); i++) {
                 result[i] = array.get(i);
             }
-            return result;
         } finally {
             setPin(receivePin, false);
         }
+        return result;
     }
 
     private double getFrequency(int onTimes) throws IOException {
@@ -491,11 +491,9 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
             if (args.length >= 1 && args[0].equals("-b"))
                 toy.bootloaderMode();
             else {
-
                 //int[] data = new int[]{889, 889, 1778, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 90886};
-
                 System.out.println(toy.getVersion());
-            //String result = toy.selftest();
+                //String result = toy.selftest();
                 //System.out.println(result);
                 toy.setLed(true);
                 toy.setLedMute(false);
@@ -510,18 +508,10 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
             }
         } catch (NoSuchPortException ex) {
             System.err.println("Port for IRToy " + portName + " was not found");
-        } catch (HarcHardwareException ex) {
-            System.err.println(ex.getMessage());
         } catch (PortInUseException ex) {
             System.err.println("Port for IRToy in use");
-        } catch (UnsupportedCommOperationException ex) {
+        } catch (HarcHardwareException | UnsupportedCommOperationException | IOException | IrpMasterException ex) {
             System.err.println(ex.getMessage());
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace();
-        } catch (IrpMasterException ex) {
-            System.err.println(ex.getMessage());
-            //ex.printStackTrace();
         } finally {
             if (toy != null) {
                 try {
