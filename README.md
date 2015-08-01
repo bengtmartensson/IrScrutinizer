@@ -42,4 +42,3 @@ commit, but without any patches applies. These are:
 * [JCommander](http://www.harctoolbox.org/downloads/jcommander.tar.gz)
 * [Minimal-Json](http://www.harctoolbox.org/downloads/minimal-json.tar.gz)
 * [Tonto](http://www.harctoolbox.org/downloads/tonto.tar.gz)
-* [Wakeonlan](http://www.harctoolbox.org/downloads/wakeonlan-1.0.0.zip)

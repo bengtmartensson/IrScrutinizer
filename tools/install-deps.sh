@@ -27,13 +27,6 @@ mvn install:install-file \
     -Dfile=$( build-classpath org.rxtx:rxtx )
 
 mvn install:install-file \
-    -DgroupId=de.moldaner \
-    -DartifactId=wakeonlan \
-    -Dversion=1.0.0 \
-    -Dpackaging=jar \
-    -Dfile=$( build-classpath de.moldaner:wakeonlan )
-
-mvn install:install-file \
     -DgroupId=com.mrallen \
     -DartifactId=tonto \
     -Dversion=1.44 \
