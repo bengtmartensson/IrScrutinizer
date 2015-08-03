@@ -1,1 +1,1 @@
-This directory contains developer information, not to be distributed to users.
+This directory contains developer information, not of interest for users.

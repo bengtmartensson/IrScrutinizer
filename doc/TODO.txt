@@ -14,13 +14,9 @@ Parse strings without spaces or commas, like
 Future:
 Export direct from Import tree view (Export all, export selected).
 Support for lirc-remotes web selection
-Arduino flasher/communicator.
 Shirriff IrLib export format
 Pronto for capturing/sending/exporting/importing
-cml/ir-import?
 General Girs (serial/IP) instead of Arduino. Possibility to use demodulating receiver.
-Command Fusion learner.
-Replace Graham's repeatfinder.
 Documentation
 Documentation system
 
@@ -28,6 +24,7 @@ Documentation system
 POSTPONED TO version 2
 replace decodeIR.
 replace Graham's Analyzer
+Replace Graham's repeatfinder.
 harmonyimport
 Girr: embedded IRP
 New command line function, replacing the one in IrpMaster.
@@ -39,6 +36,7 @@ Diffing signals
 Saving user's layout of a table as properties (??)
 
 REJECTED
+Arduino flasher/communicator.
 Hash function in export?
 GlobalCache Tower new DB
 Different icon from IrMaster
@@ -47,6 +45,8 @@ Makehex support
 Should "..." in file importers invoke the loading immediately? NO
 
 DONE:
+Command Fusion learner.
+cml/ir-import?
 Sharp{1} and Sharp{2} in IrpProtocols.ini
 mode2 import/export
 JVM version in about.
