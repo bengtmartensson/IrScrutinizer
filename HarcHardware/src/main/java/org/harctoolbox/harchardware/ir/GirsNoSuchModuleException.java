@@ -21,7 +21,7 @@ package org.harctoolbox.harchardware.ir;
  * This exception is thrown when a Girs server does not contain a required module.
  */
 @SuppressWarnings("serial")
-class GirsNoSuchModuleException extends Exception {
+public class GirsNoSuchModuleException extends Exception {
 
     public GirsNoSuchModuleException(String string) {
         super(string);
