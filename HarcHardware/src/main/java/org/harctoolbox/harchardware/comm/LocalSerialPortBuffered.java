@@ -149,28 +149,17 @@ public final class LocalSerialPortBuffered extends LocalSerialPort implements IS
 
     public static void main(String[] args) {
         ArrayList<String> names;
-        try {
+        try (LocalSerialPortBuffered port = new LocalSerialPortBuffered("/dev/ttyS0", 9600, 8, 1, Parity.NONE, FlowControl.NONE, 10000, true)) {
             names = getSerialPortNames(false);
-            for (String name : names) {
+            for (String name : names)
                 System.out.println(name);
-            }
 
-            LocalSerialPortBuffered port = null;
-
-            port = new LocalSerialPortBuffered(defaultPort, 38400, 8, 1, Parity.EVEN, FlowControl.NONE, 10000, true);
-            String cmd = "#QVR\r";
+            String cmd = "#POW\r";
+            port.open();
             port.sendString(cmd);
             System.out.println(port.readString());
 
-            port.close();
-
-        } catch (NoSuchPortException ex) {
-            System.err.println(ex.getMessage());
-        } catch (PortInUseException ex) {
-            System.err.println(ex.getMessage());
-        } catch (UnsupportedCommOperationException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IOException ex) {
+        } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException | HarcHardwareException ex) {
             System.err.println(ex.getMessage());
         }
     }
