@@ -149,15 +149,10 @@ public class NamedCommandLauncher extends JPanel {
         return Integer.parseInt((String) noSendsComboBox.getSelectedItem());
     }
 
-    public Transmitter getTransmitter() {
+    public Transmitter getTransmitter() throws NoSuchTransmitterException {
         if (ITransmitter.class.isInstance(hardware)) {
             ITransmitter tr = (ITransmitter) hardware;
-            try {
-                return tr.getTransmitter((String) transmitterComboBox.getSelectedItem());
-            } catch (NoSuchTransmitterException ex) {
-                guiUtils.error(ex);
-                return null;
-            }
+            return tr.getTransmitter((String) transmitterComboBox.getSelectedItem());
         } else
             return null;
     }

@@ -476,9 +476,9 @@ public class GuiMain extends javax.swing.JFrame {
                 arduinoSerialPortBean, properties, guiUtils);
         sendingHardwareManager.add(sendingArduino);
 
-        SendingSerial<GirsClient> sendingGirs = new SendingSerial<GirsClient>(GirsClient.class, girsSendingPanel,
-                girsSendingSerialPortBean, properties, guiUtils);
-        sendingHardwareManager.add(sendingGirs);
+        //SendingSerial<GirsClient> sendingGirs = new SendingSerial<GirsClient>(GirsClient.class, girsSendingPanel,
+        //        girsSendingSerialPortBean, properties, guiUtils);
+        //sendingHardwareManager.add(sendingGirs);
 
         SendingSerial<CommandFusion> sendingcommandFusion = new SendingSerial<CommandFusion>(CommandFusion.class, commandFusionSendPanel,
                 commandFusionSendingSerialPortBean, properties, guiUtils);
@@ -621,8 +621,8 @@ public class GuiMain extends javax.swing.JFrame {
         guiUtils.setUsePopupsForErrors(properties.getUsePopupsForErrors());
         if (userlevel == 0) { // ! experimental
             sendingHardwareTabbedPane.remove(genericSerialPanel);
-            //sendingHardwareTabbedPane.remove(girsSendingPanel);  // temporarily, not yet working
-            //capturingHardwareTabbedPane.remove(captureGirsPanel);// temporarily, not yet working
+            sendingHardwareTabbedPane.remove(girsSendingPanel);  // temporarily, not yet working
+            capturingHardwareTabbedPane.remove(captureGirsPanel);// temporarily, not yet working
         }
     } // end of constructor
 
@@ -1571,12 +1571,12 @@ public class GuiMain extends javax.swing.JFrame {
         properties.setIrTransIpName(irTransIp);
     }
 
-    public void transmit(IrSignal irSignal) throws NoSuchTransmitterException, IOException, IrpMasterException, HardwareUnavailableException, HarcHardwareException {
-        sendingHardwareManager.sendIr(irSignal, Integer.parseInt((String)noTransmitsComboBox.getSelectedItem()));
+    public boolean transmit(IrSignal irSignal) throws NoSuchTransmitterException, IOException, IrpMasterException, HardwareUnavailableException, HarcHardwareException {
+        return sendingHardwareManager.sendIr(irSignal, Integer.parseInt((String)noTransmitsComboBox.getSelectedItem()));
     }
 
-    public void transmit(Command command) throws IrpMasterException, NoSuchTransmitterException, IOException, HardwareUnavailableException, HarcHardwareException {
-        transmit(command.toIrSignal());
+    public boolean  transmit(Command command) throws IrpMasterException, NoSuchTransmitterException, IOException, HardwareUnavailableException, HarcHardwareException {
+        return transmit(command.toIrSignal());
     }
 
     public void selectImportPane(ImportType type) {
@@ -1987,8 +1987,8 @@ public class GuiMain extends javax.swing.JFrame {
         arduinoSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoPortName(), Arduino.defaultBaudRate, false);
         sendingArduinoHelpButton = new javax.swing.JButton();
         girsSendingPanel = new javax.swing.JPanel();
-        girsSendingSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getGirsClientPortName(), GirsClient.defaultBaudRate, false);
         sendingGirsClientHelpButton = new javax.swing.JButton();
+        tcpSerialComboBean = new org.harctoolbox.guicomponents.TcpSerialComboBean();
         commandFusionSendPanel = new javax.swing.JPanel();
         commandFusionSendingSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionPortName(), CommandFusion.defaultBaudRate, false);
         sendingCommandFusionHelpButton = new javax.swing.JButton();
@@ -5376,25 +5376,36 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
+        javax.swing.GroupLayout tcpSerialComboBeanLayout = new javax.swing.GroupLayout(tcpSerialComboBean);
+        tcpSerialComboBean.setLayout(tcpSerialComboBeanLayout);
+        tcpSerialComboBeanLayout.setHorizontalGroup(
+            tcpSerialComboBeanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        tcpSerialComboBeanLayout.setVerticalGroup(
+            tcpSerialComboBeanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout girsSendingPanelLayout = new javax.swing.GroupLayout(girsSendingPanel);
         girsSendingPanel.setLayout(girsSendingPanelLayout);
         girsSendingPanelLayout.setHorizontalGroup(
             girsSendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, girsSendingPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(763, Short.MAX_VALUE)
                 .addComponent(sendingGirsClientHelpButton)
                 .addContainerGap())
             .addGroup(girsSendingPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(girsSendingSerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addGap(20, 20, 20)
+                .addComponent(tcpSerialComboBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         girsSendingPanelLayout.setVerticalGroup(
             girsSendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(girsSendingPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(girsSendingSerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
+                .addGap(27, 27, 27)
+                .addComponent(tcpSerialComboBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
                 .addComponent(sendingGirsClientHelpButton)
                 .addContainerGap())
         );
@@ -7353,7 +7364,9 @@ public class GuiMain extends javax.swing.JFrame {
     private void transmitGenerateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitGenerateButtonActionPerformed
         Cursor old = setBusyCursor();
         try {
-            transmit(irpMasterBean.render());
+            boolean success = transmit(irpMasterBean.render());
+            if (!success)
+                guiUtils.error("Transmit failed.");
         } catch (IrpMasterException ex) {
             guiUtils.error(ex);
         } catch (NoSuchTransmitterException ex) {
@@ -8473,7 +8486,6 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton girrWebSiteButton;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean girsClientSerialPortSimpleBean;
     private javax.swing.JPanel girsSendingPanel;
-    private org.harctoolbox.guicomponents.SerialPortSimpleBean girsSendingSerialPortBean;
     private org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector globalCacheCaptureSelector;
     private javax.swing.JButton globalCacheDBBrowseButton;
     private org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector globalCacheIrSenderSelector;
@@ -8781,6 +8793,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JToggleButton startStopToggleButton;
     private javax.swing.JMenuItem startTimeoutMenuItem;
     private javax.swing.JButton stopMode2Button;
+    private org.harctoolbox.guicomponents.TcpSerialComboBean tcpSerialComboBean;
     private javax.swing.JMenuItem testSignalMenuItem;
     private javax.swing.JMenuItem timeFrequencyCalcMenuItem;
     private javax.swing.JMenu timeoutMenu;

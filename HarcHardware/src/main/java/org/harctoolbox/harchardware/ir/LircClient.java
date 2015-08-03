@@ -134,6 +134,8 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
 
     @Override
     public LircIrTransmitter getTransmitter(String port) throws NoSuchTransmitterException {
+        if (port.equals("default"))
+            return null;
         try {
             int portNo = Integer.parseInt(port);
             return getTransmitter(portNo);
@@ -144,8 +146,9 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
 
     @Override
     public String[] getTransmitterNames() {
-        String[] result = new String[portMax - portMin + 1];
+        String[] result = new String[portMax - portMin + 2];
         int index = 0;
+        result[index++] = "default";
         for (int i = portMin; i <= portMax; i++)
             result[index++] = Integer.toString(i);
 
@@ -326,15 +329,18 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
     public boolean sendIrCommand(String remote, String command, int count, Transmitter transmitter) throws IOException, NoSuchTransmitterException {
         this.lastRemote = remote;
         this.lastCommand = command;
-        boolean result = true;
-        if (!LircIrTransmitter.class.isInstance(transmitter))
-            throw new NoSuchTransmitterException(transmitter);
-        LircIrTransmitter trans = (LircIrTransmitter) transmitter;
-        if (trans.transmitters != null && (
-                this.lircIrTransmitter.transmitters == null ||
-                this.lircIrTransmitter.transmitters[0] != trans.transmitters[0]))
-            result = setTransmitters(transmitter);
-        return result && sendCommand("SEND_ONCE " + remote + " " + command + " " + (count - 1), false) != null;
+        if (transmitter != null) {
+            if (!LircIrTransmitter.class.isInstance(transmitter))
+                throw new NoSuchTransmitterException(transmitter);
+            LircIrTransmitter trans = (LircIrTransmitter) transmitter;
+            if (trans.transmitters != null /*&& (this.lircIrTransmitter.transmitters == null
+                    || this.lircIrTransmitter.transmitters[0] != trans.transmitters[0])*/) {
+                boolean result = setTransmitters(transmitter);
+                if (!result)
+                    throw new NoSuchTransmitterException("Error selecting transmitter " + transmitter);
+            }
+        }
+        return sendCommand("SEND_ONCE " + remote + " " + command + " " + (count - 1), false) != null;
     }
 
     public boolean sendIrCommand(String remote, String command, int count, int connector) throws IOException, NoSuchTransmitterException {
@@ -396,8 +402,8 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
         if (!LircIrTransmitter.class.isInstance(transmitter))
             throw new NoSuchTransmitterException(transmitter);
         LircIrTransmitter trans = (LircIrTransmitter) transmitter;
-            lircIrTransmitter = trans;
-            return setTransmitters();
+        lircIrTransmitter = trans;
+        return setTransmitters();
     }
 
     public boolean setTransmitters(int port) throws IOException, NoSuchTransmitterException {
@@ -414,11 +420,7 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
     private boolean setTransmitters(/*int[] trans*/) throws IOException {
         if (lircIrTransmitter.transmitters != null) {
             String s = "SET_TRANSMITTERS" + lircIrTransmitter.toString();
-            //try {
-                return sendCommand(s, false) != null;
-            //} catch (IOException ex) {
-            //    throw new HarcHardwareException(ex);
-            //}
+            return sendCommand(s, false) != null;
         }
         return true;
     }

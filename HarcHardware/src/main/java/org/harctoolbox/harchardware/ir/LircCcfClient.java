@@ -45,8 +45,12 @@ public class LircCcfClient extends LircClient implements IRawIrSender,IIrSenderS
     }
 
     public boolean sendCcf(String ccf, int count, Transmitter transmitter) throws IOException, NoSuchTransmitterException {
-            return setTransmitters(transmitter)
-                    && sendCommand("SEND_CCF_ONCE " + (count - 1) + " " + ccf, false) != null;
+        if (transmitter != null) {
+            boolean success = setTransmitters(transmitter);
+            if (!success)
+                throw new NoSuchTransmitterException(transmitter);
+        }
+        return sendCommand("SEND_CCF_ONCE " + (count - 1) + " " + ccf, false) != null;
     }
 
     public boolean sendCcf(String ccf, int count, int port) throws IOException, NoSuchTransmitterException {
