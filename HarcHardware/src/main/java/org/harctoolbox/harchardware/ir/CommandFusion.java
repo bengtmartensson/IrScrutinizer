@@ -311,7 +311,7 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         } catch (IncompatibleArgumentException ex) {
             throw ex;
         } finally {
-            //Finally, the IR Learner will send back an LIR command with a data value END to signify the end of the IR
+            // Finally, the IR Learner will send back an LIR command with a data value END to signify the end of the IR
             // Do this also in the case of an exception, to not lose sync.
             status = expect(captureCommand, end);
         }
