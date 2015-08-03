@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
-import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,9 +44,9 @@ import org.harctoolbox.irscrutinizer.Version;
 public class CmlImporter extends RemoteSetImporter implements IFileImporter, Serializable {
     private static final long serialVersionUID = 1L;
 
-    String charactersetName = "WINDOWS-1252";
-    Charset characterSet = Charset.forName(charactersetName);
-
+    // I have no idea of a/the correct character set in the CML files.
+    // Therefore, select the largest of the 8 bit character sets.
+    private final String charactersetName = "WINDOWS-1252";
     private static final int remoteToken = 0xbbbbbbbb;
     private static final int commandToken = 0xcccccccc;
     private static final int EOF = -1;
@@ -207,7 +206,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
 
     private String getString(InputStream in, int length) throws IOException {
         byte buf[] = getBytes(in, length);
-        String str = new String(buf, characterSet);
+        String str = new String(buf, charactersetName); //throws UnsupportedEncodingException, subclass of IOException
         int n = str.indexOf(0);
         return n == -1 ? str.trim() : str.substring(0, n).trim();
     }
