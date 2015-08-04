@@ -52,6 +52,8 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
     private DefaultMutableTreeNode root;
     private RemoteSet remoteSet;
 
+    private static final int maxRemotesForImportAll = 10;
+
     @Override
     public void treeExpanded(TreeExpansionEvent event) {
         DefaultMutableTreeNode remote = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
@@ -107,26 +109,30 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
     public void clear() {
         this.remoteSet = null;
-        DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode("Remotes"));
+        DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode("Remotes not yet loaded"));
         tree.setModel(treeModel);
         enableStuff(false);
     }
 
     private void enableStuff(boolean val) {
-        importAllButton.setEnabled(val);
+        importAllButton.setEnabled(val && enableImportAll());
         importSelectionButton.setEnabled(val);
         transmitSelectedButton.setEnabled(val);
         importSignalButton.setEnabled(val);
         importSelectionRawButton.setEnabled(val);
-        importAllRawButton.setEnabled(val);
+        importAllRawButton.setEnabled(val && enableImportAll());
 
         scrutinizeSignalMenuItem.setEnabled(val);
         printSignalMenuItem.setEnabled(val);
-        importAllMenuItem.setEnabled(val);
+        importAllMenuItem.setEnabled(val && enableImportAll());
         importSelectionMenuItem.setEnabled(val);
         transmitSignalMenuItem.setEnabled(val);
-        importSelectionRawMenuItem.setEnabled(val);
+        importSelectionRawMenuItem.setEnabled(val && enableImportAll());
         importAllRawMenuItem.setEnabled(val);
+    }
+
+    private boolean enableImportAll() {
+        return remoteSet == null || remoteSet.getRemotes().size() <= maxRemotesForImportAll;
     }
 
     @Override
@@ -352,7 +358,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         });
         popupMenu.add(importSelectionRawMenuItem);
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Remotes");
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Remotes not yet loaded");
         tree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         tree.setToolTipText("Select with left, right for popup menu.");
         tree.setComponentPopupMenu(popupMenu);
