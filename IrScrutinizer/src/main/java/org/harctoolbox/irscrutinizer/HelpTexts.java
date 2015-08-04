@@ -46,7 +46,9 @@ class HelpTexts {
             + "transfers all commands (the selected commands) to the \"Scrutinize remote\" pane, "
             + "sub-pane \"Parametric remote\" (without overwriting already present commands), while the buttons \"Import all/raw\" and \"Import "
             + "selected/raw\" transfer to the sub-pane \"Raw remote\"."
-            + "The key \"Transmit selected\" transmits the (single) selected signal to the selected sending hardware.";
+            + "The key \"Transmit selected\" transmits the (single) selected signal to the selected sending hardware."
+            + "\n\n"
+            + "The \"Import all\" and \"Import all/raw\" buttons are only enabled if there are at most 10 remotes in the tree.";
 
     private static final String fileUrlImportHelp
             = "There is a text field, named File/URL. Either a local file name or an URL can be "
@@ -101,8 +103,8 @@ class HelpTexts {
             + "When pressing the \"Load\" button, " + treeHelp;
 
     public static String importIrdbHelp
-            = "To use the IRDB data base, select, in order, a manufacturer, a device type, and a protocol &amp; parameter combination, the latter possibly by trial-and-error.\n\n"
-            + "Pressing the \"Load all\" button transfers all present protocol & parameters combinations to the tree.\n\n"
+            = "To use the IRDB data base, select, in order, a manufacturer, a device type, and a protocol/parameter combination, the latter possibly by trial-and-error.\n\n"
+            + "Pressing the \"Load all\" button transfers all present protocol/parameters combinations to the tree.\n\n"
             + "When pressing the \"Load\" button, " + treeHelp;
 
     public static String importGirrHelp

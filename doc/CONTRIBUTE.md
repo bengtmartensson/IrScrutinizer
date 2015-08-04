@@ -24,15 +24,15 @@ of a block discouraged.
 The format of text files follows the requirement of portability:
 
 * Text files that are only of interest for Windows (e.g.
-IrScrutinizer_inno.iss) should use CRLF,
-* Text filer that a Windows user may open with Textedit
-(e.g. IrpProtocols.ini)  should use CRLF, unless this creates other problems,
+<code>IrScrutinizer_inno.iss</code>) should use CRLF,
+* Text files that a Windows user may open with Textedit
+(e.g. <code>IrpProtocols.ini</code>)  should use CRLF, unless this creates other problems,
 * Otherwise LF.
 
 ## GUI files
 Most Java classes with GUI content are maintained with
-[Netbeans](http://www.netbeans.org). This is indicated by a .form file
-in parallel to the .java file. Contributions that breaks Netbeans
+[Netbeans](http://www.netbeans.org). This is indicated by a <code>.form</code> file
+in parallel to the <code>.java</code> file. Contributions that breaks Netbeans
 cannot be accepted -- as a rule of thumb, the parts of the code that
 belongs to Netbeans are clearly marked as such, and may not be hand
 edited. (Some GUI files has been initially created by Netbeans, but
