@@ -110,7 +110,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                 long F = (F6 << 6) | (payload & 0x3f);
                 long D = (payload >> 6) & 0x1f;
                 long T = (payload >> 11) & 1;
-                HashMap<String, Long> parameters = new HashMap<String, Long>();
+                HashMap<String, Long> parameters = new HashMap<>();
                 parameters.put("F", F);
                 parameters.put("D", D);
                 parameters.put("T", T);
@@ -121,7 +121,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                 long payload = Long.parseLong(data.substring(2), 2);
                 long F = payload & 0xff;
                 long D = (payload >> 8) & 0xff;
-                HashMap<String, Long> parameters = new HashMap<String, Long>();
+                HashMap<String, Long> parameters = new HashMap<>();
                 parameters.put("F", F);
                 parameters.put("D", D);
                 return new Command(name, null, "RC6", parameters);
@@ -176,7 +176,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
             return null; // EOF
         ArrayList<Timing> timings = parseTimings(reader);
         HashMap<String, IrTransCommand> parsedCommands = parseCommands(reader, timings);
-        HashMap<String, Command> commands = new LinkedHashMap<String, Command>();
+        HashMap<String, Command> commands = new LinkedHashMap<>();
         for (IrTransCommand cmd : parsedCommands.values()) {
             try {
                 Command command = cmd.toCommand();
@@ -194,6 +194,8 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         if (!success)
             return null;
         String line = reader.readLine();
+        if (line == null)
+            throw new ParseException("[NAME] not found.", reader.getLineNumber());
         String[] arr = line.trim().split("]");
         if (!arr[0].equals("[NAME"))
             throw new ParseException("[NAME] not found.", reader.getLineNumber());
@@ -202,7 +204,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
 
     private LinkedHashMap<String, IrTransCommand> parseCommands(LineNumberReader reader, ArrayList<Timing> timings) throws IOException, ParseException {
         gobbleTo(reader, "[COMMANDS]", true);
-        LinkedHashMap<String, IrTransCommand> commands = new LinkedHashMap<String, IrTransCommand>();
+        LinkedHashMap<String, IrTransCommand> commands = new LinkedHashMap<>();
         while (true) {
             String line = reader.readLine();
             if (line == null || line.trim().isEmpty())
@@ -211,10 +213,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
             try {
                 IrTransCommand command = parseCommand(line, timings, reader.getLineNumber());
                 commands.put(command.name, command);
-            } catch (ParseException ex) {
-                // just ignore unparsable command, go on reading
-                System.err.println("Command " + line + " (line " + reader.getLineNumber() + ") did not parse, ignored.");
-            } catch (NumberFormatException ex) {
+            } catch (ParseException | NumberFormatException ex) {
                 // just ignore unparsable command, go on reading
                 System.err.println("Command " + line + " (line " + reader.getLineNumber() + ") did not parse, ignored.");
             }
@@ -285,14 +284,14 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
     }
 
     private ArrayList<Timing> parseTimings(LineNumberReader reader) throws IOException, ParseException {
-        ArrayList<Timing> timings = new ArrayList<Timing>();
+        ArrayList<Timing> timings = new ArrayList<>();
         boolean hasTiming = gobbleTo(reader, "[TIMING]", false);
         if (!hasTiming)
             return null;
 
         while (true) {
             String line = reader.readLine();
-            if (line.trim().isEmpty())
+            if (line == null || line.trim().isEmpty())
                 break;
             String[] arr = line.trim().split("[\\[\\]]");
             int number = Integer.parseInt(arr[1]);
@@ -348,10 +347,10 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
     }
 
     @Override
-    public void load(Reader reader, String origin) throws IOException, ParseException, IrpMasterException {
+    public void load(Reader reader, String origin) throws IOException, ParseException {
         prepareLoad(origin);
         LineNumberReader bufferedReader = new LineNumberReader(reader);
-        HashMap<String, Remote> remotes = new HashMap<String, Remote>();
+        HashMap<String, Remote> remotes = new HashMap<>();
         while (true) {
             Remote remote = parseRemote(bufferedReader);
             if (remote == null)
@@ -393,8 +392,6 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
             System.err.println(ex.getMessage());
         } catch (ParseException ex) {
             System.err.println(ex.getMessage() + ex.getErrorOffset());
-        } catch (IrpMasterException ex) {
-            System.err.println(ex.getMessage());
         }
     }
 }

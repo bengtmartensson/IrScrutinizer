@@ -127,27 +127,33 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
                 continue;
 
             Element element = (Element) topThings.item(i);
-            if (element.getTagName().equals("Actions"))
-                setupActionIndex(element);
-            //else if (element.getTagName().equals("Strings"))
-            //    setupNamesIndex(element);
-            //else if (element.getTagName().equals("Items"))
-            //    itemIndex = mkIndex(element, "ITEM");
-            else if (element.getTagName().equals("Pages"))
-                pageIndex = mkIndex(element, "PAGE");
-            else if (element.getTagName().equals("ActionLists"))
-                actionListIndex = mkIndex(element, "ACTIONLIST");
-            else if (element.getTagName().equals("Modules"))
-                moduleIndex = mkIndex(element, "MODULE");
-            else
-                ;
+            switch (element.getTagName()) {
+                case "Actions":
+                    setupActionIndex(element);
+                    break;
+                case "Pages":
+                    pageIndex = mkIndex(element, "PAGE");
+                    break;
+                case "ActionLists":
+                    actionListIndex = mkIndex(element, "ACTIONLIST");
+                    break;
+                case "Modules":
+                    moduleIndex = mkIndex(element, "MODULE");
+                    break;
+                    //else if (element.getTagName().equals("Strings"))
+                    //    setupNamesIndex(element);
+                    //else if (element.getTagName().equals("Items"))
+                    //    itemIndex = mkIndex(element, "ITEM");
+                default:
+                    break;
+            }
         }
 
         if (moduleIndex == null)
             throw new ParseException("No Modules element present.", -1);
 
 
-        HashMap<String,Remote> remotes = new HashMap<String,Remote>();
+        HashMap<String,Remote> remotes = new HashMap<>();
 
         for (Element module : moduleIndex.values()) {
             Remote remote = loadModule(module);
@@ -170,7 +176,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         String nameId = ((Element) names.item(0)).getAttribute("id");
         String name = nameIndex.get(nameId);
         //System.out.println(id + "\t" + nameId + "\t" + name);
-        HashMap<String,Command> cmds = new HashMap<String,Command>();
+        HashMap<String,Command> cmds = new HashMap<>();
         NodeList firstPages = module.getElementsByTagName("FirstPage");
         Element page = firstPages.getLength() > 0 ? pageIndex.get(((Element) firstPages.item(0)).getAttribute("id")) : null;
         while (page != null) {
@@ -193,7 +199,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
     }
 
     private HashMap<String,Command> loadPage(Element page) {
-        HashMap<String,Command> cmds = new HashMap<String,Command>();
+        HashMap<String,Command> cmds = new HashMap<>();
         NodeList items = page.getElementsByTagName("Item");
         for (int i = 0; i < items.getLength(); i++) {
             Element item = (Element) items.item(i);
@@ -250,7 +256,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
     }
 
     private static HashMap<String, Element> mkIndex(Element element, String tagId) {
-        HashMap<String, Element> index = new LinkedHashMap<String, Element>();
+        HashMap<String, Element> index = new LinkedHashMap<>();
         NodeList things = element.getElementsByTagName(tagId);
         int length = things.getLength();
         for (int i = 0; i < length; i++) {
@@ -261,7 +267,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
     }
 
     private void setupNamesIndex(Element element) {
-        nameIndex = new HashMap<String, String>();
+        nameIndex = new HashMap<>();
         NodeList nl = element.getElementsByTagName("STRING");
         for (int i = 0; i < nl.getLength(); i++) {
             Element e = (Element) nl.item(i);
@@ -318,7 +324,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
     }
 
     @Override
-    public void load(Reader reader, String originName) throws IOException, FileNotFoundException, ParseException, IrpMasterException {
+    public void load(Reader reader, String originName) throws IOException, FileNotFoundException, ParseException {
         dumbLoad(reader, originName);
     }
 
@@ -335,11 +341,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
             }
         } catch (SAXException ex) {
             System.err.println(ex.getMessage());
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IrpMasterException ex) {
-            System.err.println(ex.getMessage());
-        } catch (ParseException ex) {
+        } catch (IOException | IrpMasterException | ParseException ex) {
             System.err.println(ex.getMessage());
         }
     }

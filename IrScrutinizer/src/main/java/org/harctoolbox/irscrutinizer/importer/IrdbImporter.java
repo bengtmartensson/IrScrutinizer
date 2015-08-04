@@ -190,7 +190,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     }
 
     private static void setupManufacturers(boolean verbose) throws IOException {
-        manufacturers = new ArrayList<String>();
+        manufacturers = new ArrayList<>();
         String path = String.format(urlFormatBrands, 1);
         for (int index = 1; index <= 100 && !path.isEmpty(); index++) {
             JsonObject o = getJsonObject(path, verbose);
@@ -213,7 +213,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         super(irdbOriginName);
         this.manufacturer = manufacturer;
         this.verbose = verbose;
-        deviceTypes = new LinkedHashMap<String, HashMap<ProtocolDeviceSubdevice, HashMap<String, Long>>>();
+        deviceTypes = new LinkedHashMap<>();
         String path = String.format(urlFormat, URLEncoder.encode(manufacturer, "utf-8"), 1);
         for (int index = 1; index <= 100 && !path.isEmpty(); index++) {
             JsonObject o = getJsonObject(path, verbose);
@@ -279,7 +279,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         if (map == null)
             return;
 
-        HashMap<String, Remote> remoteList = new LinkedHashMap<String, Remote>();
+        HashMap<String, Remote> remoteList = new LinkedHashMap<>();
 
         //HashMap<String,Command> cmds;
         for (Entry<ProtocolDeviceSubdevice, HashMap<String, Long>> kvp : map.entrySet()) {
@@ -303,7 +303,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     }
 
     private HashMap<String, Command> load(HashMap<String, Long> commandMap, ProtocolDeviceSubdevice pds, String deviceType) throws IrpMasterException {
-        HashMap<String,Command> cmds = new LinkedHashMap<String,Command>();
+        HashMap<String,Command> cmds = new LinkedHashMap<>();
         for (Entry<String, Long> kvp : commandMap.entrySet()) {
             //ParametrizedIrSignal paramSig = new ParametrizedIrSignal(pds.getProtocol(), pds.getDevice(), pds.subdevice,
             //        kvp.getValue().longValue(), kvp.getKey(),
@@ -348,9 +348,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
                 for (ProtocolDeviceSubdevice pds : irdb.getProtocolDeviceSubdevice(type))
                     System.out.println(irdb.getCommands(type, pds));
             }
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IrpMasterException ex) {
+        } catch (IOException | IrpMasterException ex) {
             System.err.println(ex.getMessage());
         }
     }

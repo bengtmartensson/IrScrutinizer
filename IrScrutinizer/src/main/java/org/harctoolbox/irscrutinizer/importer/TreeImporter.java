@@ -138,8 +138,8 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
     private DefaultTreeModel newTreeModel() {
         root = new DefaultMutableTreeNode("Remotes");
         Collection<Remote> remotes = remoteSet.getRemotes();
-        ArrayList<Remote> remoteList = new ArrayList<Remote>(remotes);
-        Collections.sort(remoteList, new Remote.compareNameCaseInsensitive());
+        ArrayList<Remote> remoteList = new ArrayList<>(remotes);
+        Collections.sort(remoteList, new Remote.CompareNameCaseInsensitive());
         for (Remote remote : remoteList) {
             DefaultMutableTreeNode node = newRemoteNode(remote);
             root.add(node);
@@ -515,13 +515,9 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         checkGuiMain();
         try {
             guiMain.transmit(command);
-        } catch (IrpMasterException ex) {
+        } catch (IrpMasterException | IOException | HardwareUnavailableException ex) {
             guiUtils.error(ex);
         } catch (NoSuchTransmitterException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (HardwareUnavailableException ex) {
             guiUtils.error(ex);
         } catch (HarcHardwareException ex) {
             guiUtils.error(ex);

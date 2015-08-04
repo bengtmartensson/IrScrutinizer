@@ -98,17 +98,14 @@ public class CsvParametrizedImporter extends CsvImporter {
     }
 
     @Override
-    public void load(File file, String origin) throws FileNotFoundException, IOException, ParseException, IrpMasterException {
-        FileInputStream stream = new FileInputStream(file);
-        try {
+    public void load(File file, String origin) throws FileNotFoundException, IOException, ParseException {
+        try (FileInputStream stream = new FileInputStream(file)) {
             load(stream, origin);
-        } finally {
-            stream.close();
         }
     }
 
     @Override
-    public void load(Reader reader, String origin) throws IOException, IrpMasterException {
+    public void load(Reader reader, String origin) throws IOException {
         prepareLoad(origin);
         lineNo = 1;
         BufferedReader bufferedReader = new BufferedReader(reader);
@@ -117,9 +114,13 @@ public class CsvParametrizedImporter extends CsvImporter {
             if (line == null)
                 break;
             String[] chunks = line.split(separator);
-            Command command = scrutinizeParameters(chunks, "Line " + lineNo + ", " + origin);
-            if (command != null) {
-                addCommand(command);
+            try {
+                Command command = scrutinizeParameters(chunks, "Line " + lineNo + ", " + origin);
+                if (command != null)
+                    addCommand(command);
+            } catch (IrpMasterException ex) {
+                if (isVerbose())
+                    System.err.println("Errors parsing line " + lineNo + ": \"" + line + "\": " + ex.getMessage());
             }
             lineNo++;
         }
@@ -128,11 +129,11 @@ public class CsvParametrizedImporter extends CsvImporter {
 
     private Command scrutinizeParameters(String[] chunks, String sourceAsComment) throws IrpMasterException {
         String[] nameArray = gobbleString(chunks, nameColumn, nameMultiColumn, numberBase, "-");
-        if (nameArray == null)
+        if (nameArray == null || nameArray.length == 0)
             return null;
         int offset = nameArray.length - 1;
         String name = join(nameArray);
-        HashMap<String, Long> parameters = new HashMap<String, Long>();
+        HashMap<String, Long> parameters = new HashMap<>();
         long F = gobbleLong(chunks, fColumn, "F", nameColumn < fColumn ? offset : 0);
         if (F == invalid)
             return null;
@@ -184,9 +185,7 @@ public class CsvParametrizedImporter extends CsvImporter {
             Collection<Command> signals = process(r,",", 1, false, args[0], true, 10, 3, -1, -1, -1);
             for (Command s : signals)
                 System.out.println(s.toString());
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IrpMasterException ex) {
+        } catch (IOException | IrpMasterException ex) {
             System.err.println(ex.getMessage());
         }
     }

@@ -28,7 +28,6 @@ import java.text.ParseException;
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.XmlUtils;
 import org.harctoolbox.girr.RemoteSet;
 import org.w3c.dom.Document;
@@ -57,7 +56,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
     /**
      * @param url the url to set
      */
-    
+
     public void setUrl(URL url) {
         this.url = url;
     }
@@ -65,7 +64,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
     public void setValidate(boolean validate) {
         this.validate = validate;
     }
-    
+
     public GirrImporter(boolean validate, URL url) {
         super();
         schema = null;
@@ -78,7 +77,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
             schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(url);
     }
 
-    private void load(Document doc, String origin) throws ParseException, IrpMasterException, MalformedURLException, SAXException {
+    private void load(Document doc, String origin) throws ParseException, MalformedURLException, SAXException {
         if (!doc.getDocumentElement().getTagName().equals("remotes")) {
             throw new UnsupportedOperationException("Import of Girr files with other root elements as remotes not yet implemented.");
         }
@@ -89,7 +88,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
     }
 
     @Override
-    public void load(InputStream inputStream, String origin) throws IOException, ParseException, IrpMasterException {
+    public void load(InputStream inputStream, String origin) throws IOException, ParseException {
         try {
             loadSchema();
             load(XmlUtils.openXmlStream(inputStream, validate ? schema : null, false, false), origin);
@@ -101,7 +100,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
     }
 
     @Override
-    public void load(Reader reader, String origin) throws IOException, ParseException, IrpMasterException {
+    public void load(Reader reader, String origin) throws IOException, ParseException {
         try {
             loadSchema();
             load(XmlUtils.openXmlReader(reader, validate ? schema : null, false, false), origin);
@@ -113,7 +112,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
     }
 
     @Override
-    public void load(File file, String origin) throws IOException, ParseException, IrpMasterException {
+    public void load(File file, String origin) throws IOException, ParseException {
         try {
             loadSchema();
             load(XmlUtils.openXmlFile(file, validate ? schema : null, false, false), origin);

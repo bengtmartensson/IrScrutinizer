@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.text.ParseException;
 import java.util.ArrayList;
-import org.harctoolbox.IrpMaster.IrpMasterException;
+import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 
 /**
@@ -33,9 +33,9 @@ public class Mode2Importer extends ReaderImporter implements IModulatedIrSequenc
     private ModulatedIrSequence sequence;
 
     @Override
-    public void load(Reader reader, String origin) throws IOException, ParseException, IrpMasterException {
+    public void load(Reader reader, String origin) throws IOException, ParseException {
         BufferedReader bufferedReader = new BufferedReader(reader);
-        ArrayList<Integer> data = new ArrayList<Integer>();
+        ArrayList<Integer> data = new ArrayList<>();
         boolean lastWasPulse = false;
         int lineNo = 0;
         while (true) {
@@ -72,7 +72,12 @@ public class Mode2Importer extends ReaderImporter implements IModulatedIrSequenc
         int i = 0;
         for (Integer duration : data)
             array[i++] = duration;
-        sequence = new ModulatedIrSequence(array, getFallbackFrequency());
+        try {
+            sequence = new ModulatedIrSequence(array, getFallbackFrequency());
+        } catch (IncompatibleArgumentException ex) {
+            throw new ParseException(ex.getMessage(), lineNo);
+            // TODO: invoke logger
+        }
     }
 
     @Override

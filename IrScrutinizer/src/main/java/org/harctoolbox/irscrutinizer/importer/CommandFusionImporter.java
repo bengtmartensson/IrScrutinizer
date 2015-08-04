@@ -65,7 +65,7 @@ public class CommandFusionImporter extends RemoteSetImporter implements IReaderI
         JsonObject remoteInfo = (JsonObject) jsonObject.get("RemoteInfo");
         JsonArray remoteFunctions = (JsonArray) jsonObject.get("RemoteFunctions");
 
-        HashMap<String, Command> commands = new LinkedHashMap<String, Command>();
+        HashMap<String, Command> commands = new LinkedHashMap<>();
         for (JsonValue c : remoteFunctions) {
             Command command = parseCommand((JsonObject) c);
             if (command != null)
@@ -116,11 +116,7 @@ public class CommandFusionImporter extends RemoteSetImporter implements IReaderI
         CommandFusionImporter importer = new CommandFusionImporter();
         try {
             importer.load(args[0]);
-        } catch (IOException ex) {
-            Logger.getLogger(CommandFusionImporter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(CommandFusionImporter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IrpMasterException ex) {
+        } catch (IOException | ParseException | IrpMasterException ex) {
             Logger.getLogger(CommandFusionImporter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

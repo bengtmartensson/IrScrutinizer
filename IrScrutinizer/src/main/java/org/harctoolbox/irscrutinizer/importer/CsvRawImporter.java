@@ -72,18 +72,15 @@ public class CsvRawImporter extends CsvImporter {
     }
 
     @Override
-    public void load(File file, String origin) throws IOException, ParseException, IrpMasterException {
-        FileInputStream stream = new FileInputStream(file);
-        try {
+    public void load(File file, String origin) throws IOException, ParseException {
+        try (FileInputStream stream = new FileInputStream(file)) {
             load(stream, origin);
-        } finally {
-            stream.close();
         }
     }
 
     private String[] csvSplit(String line, String separator) {
         StringBuilder str = new StringBuilder(line.trim());
-        ArrayList<String> chunks = new ArrayList<String>();
+        ArrayList<String> chunks = new ArrayList<>();
 
         while (str.length() > 0) {
             if (str.length() >= separator.length() && separator.equals(str.substring(0, separator.length())))
@@ -165,11 +162,7 @@ public class CsvRawImporter extends CsvImporter {
             Collection<Command> signals = process(new File(args[0]), " ", 3, false, 6, true, true, true, true);
             for (Command signal : signals)
                 System.out.println(signal.toPrintString());
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IrpMasterException ex) {
-            System.err.println(ex.getMessage());
-        } catch (ParseException ex) {
+        } catch (IOException | IrpMasterException | ParseException ex) {
             System.err.println(ex.getMessage());
         }
     }

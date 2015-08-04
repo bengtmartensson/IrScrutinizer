@@ -43,9 +43,9 @@ public abstract class FileImporter extends Importer {
         super();
     }
 
-    public abstract void load(File file, String origin) throws IOException, ParseException, IrpMasterException;
+    public abstract void load(File file, String origin) throws IOException, ParseException;
 
-    public final void load(File file) throws IOException, ParseException, IrpMasterException {
+    public final void load(File file) throws IOException, ParseException {
         load(file, file.getPath());
     }
 
@@ -58,7 +58,7 @@ public abstract class FileImporter extends Importer {
         return true;
     }
 
-    protected void dumbLoad(Reader reader, String origin) throws FileNotFoundException, IOException, ParseException, IrpMasterException {
+    protected void dumbLoad(Reader reader, String origin) throws FileNotFoundException, IOException, ParseException {
         FileOutputStream out = null;
         try {
             File file = File.createTempFile(Version.appName + origin, null);
@@ -81,7 +81,7 @@ public abstract class FileImporter extends Importer {
     // and the caller has to take responsibility for somehow closing the zip file.
     // A reasonably clean solution would be to have a protected class for the zip file
     // -- just not worth it.
-    public void possiblyZipLoad(File file) throws ParseException, IOException, IrpMasterException {
+    public void possiblyZipLoad(File file) throws ParseException, IOException {
         if (file.getName().toLowerCase(IrpUtils.dumbLocale).endsWith(".zip")) {
             String extension = getFileExtensions()[0][1];
             File tmpFile = unzipFirstMatch(file, extension);

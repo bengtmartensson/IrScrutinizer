@@ -67,7 +67,7 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
 
     private HashMap<String, String> getMap(String urlFragment, String keyName, String valueName) throws IOException {
         JsonArray array = getJsonArray(urlFragment);
-        HashMap<String,String> map = new HashMap<String, String>();
+        HashMap<String,String> map = new HashMap<>();
         for (JsonValue val : array) {
             JsonObject obj = val.asObject();
             map.put(obj.get(keyName).asString(), obj.get(valueName).asString());

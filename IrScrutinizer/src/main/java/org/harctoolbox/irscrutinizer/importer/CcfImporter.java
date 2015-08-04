@@ -69,7 +69,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
     private Remote loadDevice(CCFDevice dev) {
         boolean totalUniqueNames = true;
         String deviceName = dev.getName();
-        HashMap<java.lang.String,Command> commands = new HashMap<String,Command>();
+        HashMap<java.lang.String,Command> commands = new HashMap<>();
         for (CCFPanel panel = dev.getFirstPanel(); panel != null; panel = panel.getNextPanel()) {
             String panelName = panel.getName();
             ArrayList<Command> commandList = loadChildren(panel.getChildren(), deviceName, panelName);
@@ -93,7 +93,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
     }
 
     private ArrayList<Command> loadChildren(CCFChild children[], String deviceName, String panelName) {
-        ArrayList<Command> commandList = new ArrayList<Command>();
+        ArrayList<Command> commandList = new ArrayList<>();
         for (CCFChild child : children) {
             CCFButton button = child.getButton();
             String ccfString = null;
@@ -138,7 +138,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
     }
 
     @Override
-    public void load(Reader reader, String origin) throws IOException, FileNotFoundException, ParseException, IrpMasterException {
+    public void load(Reader reader, String origin) throws IOException, FileNotFoundException, ParseException {
         dumbLoad(reader, origin);
     }
 
@@ -152,7 +152,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
 
     private void load(CCF ccf, String origin) throws IOException {
         prepareLoad(origin);
-        HashMap<String,Remote> remotes = new HashMap<String,Remote>();
+        HashMap<String,Remote> remotes = new HashMap<>();
 
         for (CCFDevice dev = ccf.getFirstDevice(); dev != null; dev = dev.getNextDevice()) {
             Remote remote = loadDevice(dev);
@@ -195,9 +195,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
         try {
             RemoteSet remoteSet = importCcf(args[0], "The Creator");
             System.out.println(remoteSet);
-        } catch (IOException e) {
-        } catch (IrpMasterException e) {
-        } catch (ParseException ex) {
+        } catch (IOException | IrpMasterException | ParseException e) {
         }
     }
 }

@@ -49,8 +49,8 @@ public abstract class Importer {
     protected String origin = null;
 
     protected Importer() {
-        commands = new ArrayList<Command>();
-        commandIndex = new LinkedHashMap<String,Command>();
+        commands = new ArrayList<>();
+        commandIndex = new LinkedHashMap<>();
     }
 
     public static void setProperties(Props newProperties) {
