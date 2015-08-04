@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013 Bengt Martensson.
+Copyright (C) 2013, 2015 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * This class models a collection of Remote's, indexed by their names.
+ * This class models a collection of Remotes, indexed by their names.
  */
 public class RemoteSet implements Serializable {
 
@@ -72,10 +72,9 @@ public class RemoteSet implements Serializable {
      * This constructor is used to import an XML document.
      * @param doc W3C Document
      * @throws ParseException
-     * @throws org.harctoolbox.IrpMaster.IrpMasterException
      */
-    public RemoteSet(Document doc) throws ParseException, IrpMasterException {
-        remotes = new LinkedHashMap<String, Remote>();
+    public RemoteSet(Document doc) throws ParseException {
+        remotes = new LinkedHashMap<>();
 
         Element root = doc.getDocumentElement();
         NodeList nl = root.getElementsByTagName("adminData");
@@ -243,10 +242,9 @@ public class RemoteSet implements Serializable {
      * @param generateCcf
      * @param generateParameters
      * @return Element describing the RemoteSet
-     * @throws IrpMasterException
      */
     public Element xmlExport(Document doc, String title, boolean fatRaw, boolean createSchemaLocation,
-            boolean generateRaw, boolean generateCcf, boolean generateParameters) throws IrpMasterException {
+            boolean generateRaw, boolean generateCcf, boolean generateParameters) {
         Element element = doc.createElement("remotes");
         element.setAttribute("girrVersion", girrVersion);
         if (createSchemaLocation) {
@@ -297,11 +295,10 @@ public class RemoteSet implements Serializable {
      * @param generateCcf If true, the CCF ("Pronto hex") form will be generated.
      * @param generateParameters If true, the protocol/parameter description will be generated.
      * @return XmlExporter
-     * @throws IrpMasterException
      */
     public Document xmlExportDocument(String title, String stylesheetType, String stylesheetUrl,
             boolean fatRaw, boolean createSchemaLocation,
-            boolean generateRaw, boolean generateCcf, boolean generateParameters) throws IrpMasterException {
+            boolean generateRaw, boolean generateCcf, boolean generateParameters) {
         Element root = xmlExport(XmlExporter.newDocument(), title, fatRaw, createSchemaLocation,
             generateRaw, generateCcf, generateParameters);
         return XmlExporter.createDocument(root, stylesheetType, stylesheetUrl, createSchemaLocation);
@@ -324,7 +321,7 @@ public class RemoteSet implements Serializable {
      * @return ArrayList of the commands.
      */
     public ArrayList<Command> getAllCommands() {
-        ArrayList<Command> allCommands = new ArrayList<Command>();
+        ArrayList<Command> allCommands = new ArrayList<>();
         for (Remote remote : remotes.values())
             allCommands.addAll(remote.getCommands().values());
         return allCommands;
@@ -415,13 +412,7 @@ public class RemoteSet implements Serializable {
                     "xsl", "simplehtml.xsl", true, false, true, true, true);
             XmlExporter exporter = new XmlExporter(newdoc);
             exporter.printDOM(new File("junk.xml"));
-        } catch (SAXException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        } catch (ParseException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IrpMasterException ex) {
+        } catch (IOException | ParseException | SAXException ex) {
             System.err.println(ex.getMessage());
         }
     }

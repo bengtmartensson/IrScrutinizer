@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013 Bengt Martensson.
+Copyright (C) 2013, 2015 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -54,11 +54,10 @@ public class Remote implements Serializable {
      *
      * @param element Element to read from.
      * @throws ParseException
-     * @throws org.harctoolbox.IrpMaster.IrpMasterException
      */
-    public Remote(Element element) throws ParseException, IrpMasterException {
-        commands = new LinkedHashMap<String, Command>();
-        applicationParameters = new LinkedHashMap<String, HashMap<String, String>>();
+    public Remote(Element element) throws ParseException {
+        commands = new LinkedHashMap<>();
+        applicationParameters = new LinkedHashMap<>();
 
         name = element.getAttribute("name");
         manufacturer = element.getAttribute("manufacturer");
@@ -70,7 +69,7 @@ public class Remote implements Serializable {
         for (int i = 0; i < nl.getLength(); i++) {
             Element el = (Element) nl.item(i);
             NodeList nodeList = el.getElementsByTagName("appParameter");
-            HashMap<String, String> map = new HashMap<String, String>();
+            HashMap<String, String> map = new HashMap<>();
             for (int index = 0; index < nodeList.getLength(); index++) {
                 Element par = (Element) nodeList.item(index);
                 map.put(par.getAttribute("name"), par.getAttribute("value"));
@@ -164,10 +163,9 @@ public class Remote implements Serializable {
      * @param generateCcf
      * @param generateParameters
      * @return XML Element of gid "remote",
-     * @throws IrpMasterException
      */
     public Element xmlExport(Document doc, boolean fatRaw,
-            boolean generateRaw, boolean generateCcf, boolean generateParameters) throws IrpMasterException {
+            boolean generateRaw, boolean generateCcf, boolean generateParameters) {
         Element element = doc.createElement("remote");
         element.setAttribute("name", name);
         if (manufacturer != null)
@@ -202,9 +200,6 @@ public class Remote implements Serializable {
         CommandSet commandSet = new CommandSet(null, null, commands, protocol, parameters);
         element.appendChild(commandSet.xmlExport(doc, fatRaw, generateRaw, generateCcf, generateParameters));
 
-        //for (Command irCommand : commands.values()) {
-        //    element.appendChild(irCommand.xmlExport(doc));
-        //}
         return element;
     }
 
@@ -213,11 +208,14 @@ public class Remote implements Serializable {
      *
      * @param format
      * @param repeatCount
-     * @throws IrpMasterException
      */
-    public void addFormat(Command.CommandTextFormat format, int repeatCount) throws IrpMasterException {
+    public void addFormat(Command.CommandTextFormat format, int repeatCount) {
         for (Command command : commands.values())
-            command.addFormat(format, repeatCount);
+            try {
+                command.addFormat(format, repeatCount);
+            } catch (IrpMasterException ex) {
+                // TODO: invoke logger
+            }
     }
 
     /**
@@ -233,15 +231,19 @@ public class Remote implements Serializable {
         return true;
     }
 
-    public static class compareNameCaseSensitive implements Comparator<Remote> {
+    public static class CompareNameCaseSensitive implements Comparator<Remote>, Serializable {
+        private static final long serialVersionUID = 1L;
 
+        @Override
         public int compare(Remote o1, Remote o2) {
             return o1.name.compareTo(o2.name);
         }
     }
 
-    public static class compareNameCaseInsensitive implements Comparator<Remote> {
+    public static class CompareNameCaseInsensitive implements Comparator<Remote>, Serializable {
+        private static final long serialVersionUID = 1L;
 
+        @Override
         public int compare(Remote o1, Remote o2) {
             return o1.name.compareToIgnoreCase(o2.name);
         }

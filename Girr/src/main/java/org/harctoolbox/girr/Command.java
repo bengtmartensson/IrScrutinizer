@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2013, 2014 Bengt Martensson.
+ Copyright (C) 2013, 2014, 2015 Bengt Martensson.
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -41,6 +41,10 @@ import org.w3c.dom.NodeList;
 /**
  * This class models the command in Girr. A command is essentially an IR signal,
  * given either by protocol/parameters or timing data, and a name.
+ *
+ * The member functions of class may throw IrpMasterExceptions when they encounter
+ * erroneous data. The other classes in the package may not; they should just
+ * "ignore" individual unparseable commands.
  */
 public class Command implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -324,11 +328,11 @@ public class Command implements Serializable {
      * @param inheritProtocol
      * @param inheritParameters
      * @throws ParseException
-     * @throws org.harctoolbox.IrpMaster.IrpMasterException
+     * @throws IrpMasterException
      */
     public Command(Element element, String inheritProtocol, HashMap<String, Long> inheritParameters) throws ParseException, IrpMasterException {
         protocol = inheritProtocol;
-        parameters = new HashMap<String, Long>();
+        parameters = new HashMap<>();
         parameters.putAll(inheritParameters);
         name = element.getAttribute("name");
         comment = element.getAttribute("comment");
@@ -337,7 +341,7 @@ public class Command implements Serializable {
         } catch (IllegalArgumentException ex) {
             masterType = null;
         }
-        otherFormats = new HashMap<String, String>();
+        otherFormats = new HashMap<>();
         NodeList nl = element.getElementsByTagName("notes");
         if (nl.getLength() > 0)
             notes = ((Element) nl.item(0)).getTextContent();
@@ -508,7 +512,7 @@ public class Command implements Serializable {
     }
 
     public static HashMap<String,Command> toHashMap(Command command) {
-        HashMap<String,Command> result = new HashMap<String,Command>(1);
+        HashMap<String,Command> result = new HashMap<>(1);
         result.put(command.getName(), command);
         return result;
     }
@@ -581,7 +585,7 @@ public class Command implements Serializable {
 
     public void addFormat(String name, String value) {
         if (otherFormats == null)
-            otherFormats = new HashMap<String, String>();
+            otherFormats = new HashMap<>();
         otherFormats.put(name, value);
     }
 
@@ -705,10 +709,16 @@ public class Command implements Serializable {
                 if (nl.item(i).getNodeType() != Node.ELEMENT_NODE)
                     continue;
                 Element el = (Element) nl.item(i);
-                if (el.getTagName().equals("flash"))
-                    str.append(" +").append(el.getTextContent());
-                else if (el.getTagName().equals("gap"))
-                    str.append(" -").append(el.getTextContent());
+                switch (el.getTagName()) {
+                    case "flash":
+                        str.append(" +").append(el.getTextContent());
+                        break;
+                    case "gap":
+                        str.append(" -").append(el.getTextContent());
+                        break;
+                    default:
+                        throw new RuntimeException("Invalid tag name");
+                }
             }
             return str.substring(1);
         } else
@@ -727,9 +737,7 @@ public class Command implements Serializable {
             Element el = irCommand.xmlExport(doc, "A very silly title", args.length > 1, true, true, true);
             doc.appendChild(el);
             XmlUtils.printDOM(new File("junk.xml"), doc);
-        } catch (FileNotFoundException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IrpMasterException ex) {
+        } catch (FileNotFoundException | IrpMasterException ex) {
             System.err.println(ex.getMessage());
         }
     }
