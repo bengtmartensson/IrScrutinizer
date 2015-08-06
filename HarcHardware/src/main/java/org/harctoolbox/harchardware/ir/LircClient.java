@@ -232,7 +232,7 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
                             state = P_MESSAGE;
                             break;
                         case P_MESSAGE:
-                            if (!string.equals(packet)) {
+                            if (!string.trim().equalsIgnoreCase(packet)) {
                                 state = P_BEGIN;
                                 continue;
                             }
