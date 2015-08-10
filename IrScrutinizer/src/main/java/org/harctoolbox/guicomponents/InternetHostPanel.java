@@ -38,11 +38,11 @@ public class InternetHostPanel extends JPanel {
     public static final String PROP_VERSION = "PROP_VERSION";
     public static final String PROP_ISOPEN = "PROP_ISOPEN";
 
-    public static final int defaultPingTimeOut = 5000;
+    public static final int defaultPingTimeout = 5000;
     public static final String defaultIpName = "localhost";
     public static final int defaultPortNumber = LircClient.lircDefaultPort;
 
-    private int pingTimeOut = defaultPingTimeOut;
+    private int pingTimeout = defaultPingTimeout;
 
     private boolean usePort;
     private boolean usePing;
@@ -140,12 +140,12 @@ public class InternetHostPanel extends JPanel {
         }
     }
 
-    public int getPingTimeOut() {
-        return pingTimeOut;
+    public int getPingTimeout() {
+        return pingTimeout;
     }
 
-    public void setPingTimeOut(int val) {
-        pingTimeOut = val;
+    public void setPingTimeout(int val) {
+        pingTimeout = val;
     }
 
     public void setGuiUtils(GuiUtils guiUtils) {
@@ -156,7 +156,7 @@ public class InternetHostPanel extends JPanel {
         boolean success = false;
         String host = getIpName();
         try {
-            success = InetAddress.getByName(host).isReachable(pingTimeOut);
+            success = InetAddress.getByName(host).isReachable(pingTimeout);
             guiUtils.info(host + (success ? " is reachable" : " is not reachable (using Java's isReachable)"));
         } catch (IOException ex) {
             guiUtils.info(host + " is not reachable (using Java's isReachable): " + ex.getMessage());

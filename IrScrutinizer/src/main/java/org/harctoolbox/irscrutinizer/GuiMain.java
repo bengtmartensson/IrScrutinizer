@@ -8041,8 +8041,8 @@ public class GuiMain extends javax.swing.JFrame {
             Integer t = guiUtils.getIntegerInput("GlobalCache socket time-out in milliseconds", properties.getGlobalCacheTimeout());
             if (t != null) {
                 properties.setGlobalCacheTimeout(t);
-                globalCacheIrSenderSelector.setTimeOut(t);
-                globalCacheCaptureSelector.setTimeOut(t);
+                globalCacheIrSenderSelector.setTimeout(t);
+                globalCacheCaptureSelector.setTimeout(t);
             }
         } catch (NumberFormatException ex) {
             guiUtils.error("Invalid number: " + ex.getMessage());

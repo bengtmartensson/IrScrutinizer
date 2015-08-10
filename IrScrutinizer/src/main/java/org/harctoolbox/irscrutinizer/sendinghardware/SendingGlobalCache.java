@@ -45,12 +45,12 @@ public class SendingGlobalCache extends SendingHardware<GlobalCache> implements 
         super(panel, properties, gui);
         initialIp = properties.getGlobalCacheIpName();
         this.globalCacheIrSenderSelector = newGlobalCacheIrSenderSelector;
-        globalCacheIrSenderSelector.setTimeOut(properties.getGlobalCacheTimeout());
+        globalCacheIrSenderSelector.setTimeout(properties.getGlobalCacheTimeout());
         properties.addGlobalCacheTimeoutChangeListener(new Props.IPropertyChangeListener() {
 
             @Override
             public void propertyChange(String name, Object oldValue, Object newValue) {
-                globalCacheIrSenderSelector.setTimeOut((Integer) newValue);
+                globalCacheIrSenderSelector.setTimeout((Integer) newValue);
             }
         });
         this.globalCacheIrSenderSelector.addPropertyChangeListener(new PropertyChangeListener() {

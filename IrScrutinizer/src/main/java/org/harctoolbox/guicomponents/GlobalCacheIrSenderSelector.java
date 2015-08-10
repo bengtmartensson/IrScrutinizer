@@ -35,7 +35,7 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
     private GuiUtils guiUtils;
     private transient GlobalCache globalCache;
     private boolean verbose;
-    private int timeOut;
+    private int timeout;
 
     private InetAddress inetAddress;
     private int module;
@@ -50,10 +50,10 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
     private static final int defaultTimeout = 5000;
 
     /**
-     * @param timeOut the timeOut to set
+     * @param timeout the timeout to set
      */
-    public void setTimeOut(int timeOut) {
-        this.timeOut = timeOut;
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 
     private void setGlobalCache(InetAddress globalCacheInetAddress) throws UnknownHostException, IOException {
@@ -69,7 +69,7 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
         moduleComboBox.setEnabled(false);
         portComboBox.setEnabled(false);
 
-        globalCache = new GlobalCache(globalCacheInetAddress.getHostName(), verbose, timeOut);
+        globalCache = new GlobalCache(globalCacheInetAddress.getHostName(), verbose, timeout);
 
         if (!globalCache.isValid())
             throw new IOException("Set up of GlobalCache@" + globalCacheInetAddress.getHostName() + " failed.");
@@ -225,14 +225,14 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
      * Creates new form GlobalCacheIrSenderSelector
      * @param guiUtils
      * @param verbose
-     * @param timeOut
+     * @param timeout
      * @param senderSupport
      */
-    public GlobalCacheIrSenderSelector(final GuiUtils guiUtils, final boolean verbose, int timeOut, boolean senderSupport) {
+    public GlobalCacheIrSenderSelector(final GuiUtils guiUtils, final boolean verbose, int timeout, boolean senderSupport) {
         this.globalCache = null;
         this.guiUtils = guiUtils;
         this.verbose = verbose;
-        this.timeOut = timeOut;
+        this.timeout = timeout;
         this.senderSupport = senderSupport;
         initComponents();
         this.moduleLabel.setVisible(senderSupport);

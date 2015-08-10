@@ -70,7 +70,7 @@ public class GuiUtils implements Serializable {
     }
 
     private String truncate(String message) {
-        return message.length() <= maxGuiMessageLength  ? message
+        return message == null || message.length() <= maxGuiMessageLength  ? message
                 : message.substring(0, maxGuiMessageLength - 3) + "...";
     }
 
