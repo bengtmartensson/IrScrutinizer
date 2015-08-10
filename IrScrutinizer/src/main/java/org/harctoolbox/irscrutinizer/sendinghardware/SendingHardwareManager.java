@@ -138,7 +138,6 @@ public class SendingHardwareManager {
     /**
      *
      * @param hardware
-     * @throws IOException
      * @throws HarcHardwareException
      * @throws IllegalArgumentException
      */
@@ -148,11 +147,11 @@ public class SendingHardwareManager {
         try {
             hardware.setup();
             hardware.setVerbosity(properties.getVerbose());
+            selected = hardware;
+            properties.setTransmitHardware(hardware.getName());
         } catch (IOException ex) {
-            guiUtils.warning(ex.getMessage());
+            guiUtils.error(ex);
         }
-        selected = hardware;
-        properties.setTransmitHardware(hardware.getName());
 
         if (menu != null) {
             for (Component component : menu.getMenuComponents()) {
