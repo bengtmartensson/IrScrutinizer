@@ -67,6 +67,14 @@ public class UdpSocketPort implements IStringCommand, IHarcHardware {
     }
 
     @Override
+    public String readString(boolean wait) throws IOException {
+        if (wait)
+            return readString();
+
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
+    @Override
     public boolean isValid() {
         return udpSocketChannel != null && udpSocketChannel.isValid();
     }

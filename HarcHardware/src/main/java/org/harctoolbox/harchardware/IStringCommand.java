@@ -37,6 +37,15 @@ public interface IStringCommand extends IHarcHardware {
     String readString() throws IOException;
 
     /**
+     * Reads a line of text. A line is considered to be terminated by any one of a line feed ('\n'), a carriage return ('\r'), or a carriage return followed immediately by a linefeed.
+     *
+     * @param wait if true, wait until something arrives, otherwise return null if nothing there.
+     * @return A String containing the contents of the line, not including any line-termination characters, or null if no input available.
+     * @throws IOException
+     */
+    String readString(boolean wait) throws IOException;
+
+    /**
      * Tells whether this stream is ready to be read. A buffered character stream is ready if the buffer is not empty, or if the underlying character stream is ready.
      * @return True if the next read() is guaranteed not to block for input, false otherwise. Note that returning false does not guarantee that the next read will block.
      * @throws IOException  If an I/O error occurs

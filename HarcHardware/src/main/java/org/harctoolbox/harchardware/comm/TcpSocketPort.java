@@ -86,8 +86,13 @@ public class TcpSocketPort implements IStringCommand, IBytesCommand, IHarcHardwa
 
     @Override
     public String readString() throws IOException {
+        return readString(false);
+    }
+
+    @Override
+    public String readString(boolean wait) throws IOException {
         tcpSocketChannel.connect();
-        String result = tcpSocketChannel.getBufferedIn().readLine();
+        String result = tcpSocketChannel.readString(wait);
         tcpSocketChannel.close(false);
         return result;
     }
