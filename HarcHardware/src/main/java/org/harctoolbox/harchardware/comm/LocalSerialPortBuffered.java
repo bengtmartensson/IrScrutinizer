@@ -27,9 +27,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.IStringCommand;
+import org.harctoolbox.harchardware.ICommandLineDevice;
 
-public final class LocalSerialPortBuffered extends LocalSerialPort implements IStringCommand {
+public final class LocalSerialPortBuffered extends LocalSerialPort implements ICommandLineDevice {
 
     private BufferedReader bufferedInStream;
 
@@ -40,6 +40,10 @@ public final class LocalSerialPortBuffered extends LocalSerialPort implements IS
 
     public LocalSerialPortBuffered(String portName, int baud, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         this(portName, baud, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0, verbose);
+    }
+
+    public LocalSerialPortBuffered(String portName, int baud, int timeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this(portName, baud, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, timeout, verbose);
     }
 
     public LocalSerialPortBuffered(String portName) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
@@ -86,15 +90,25 @@ public final class LocalSerialPortBuffered extends LocalSerialPort implements IS
         return readString(false);
     }
 
+    @Override
     public String readString(boolean wait) throws IOException {
         if (!(wait || bufferedInStream.ready()))
             return null;
 
-        String result = bufferedInStream.readLine();
-        if (verbose)
-            System.err.println("LocalSerialPortBuffered.readString: received "
-                    + (result != null ? ("\"" + result + "\"") : "<null>"));
-        return result;
+        try {
+            String result = bufferedInStream.readLine();
+            if (verbose)
+                System.err.println("LocalSerialPortBuffered.readString: received "
+                        + (result != null ? ("\"" + result + "\"") : "<null>"));
+            return result;
+        } catch (IOException ex) {
+            if (ex.getMessage().equals("Underlying input stream returned zero bytes")) { // RXTX....
+                if (verbose)
+                    System.err.println("LocalSerialPortBuffered.readString: TIMEOUT");
+                return null;
+            } else
+                throw ex;
+        }
     }
 
     public void waitFor(String goal, String areUThere, int delay, int tries) throws IOException, HarcHardwareException {

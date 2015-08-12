@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.harchardware.comm.LocalSerialPortBuffered;
-import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
+import org.harctoolbox.harchardware.comm.ReadlineCommander;
 
 /**
  * Gives possibilities to invoke many of the functions from the command line. Demonstrates the interfaces.
@@ -66,10 +66,6 @@ public class MainString {
         StringBuilder str = new StringBuilder();
         argumentParser.usage(str);
 
-        str.append("\n"
-                + "parameters: <protocol> <deviceno> [<subdevice_no>] commandno [<toggle>]\n"
-                + "   or       <Pronto code>");
-
         (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
         doExit(exitcode);
     }
@@ -89,11 +85,20 @@ public class MainString {
         @Parameter(names = {"-#", "--count"}, description = "Number of times to send sequence")
         private int count = 1;
 
+        @Parameter(names = {"-a", "--appname"}, description = "Appname for readline.")
+        private String appName = "noname";
+
+        @Parameter(names = {"-b", "--baud"}, description = "Baud rate for the serial port")
+        private int baud = 115200; //9600;
+
         //@Parameter(names = {"-d", "--debug"}, description = "Debug code")
         //private int debug = 0;
 
         @Parameter(names = {"--delay"}, description = "Delay between commands in milliseconds")
         private int delay = 0;
+
+        @Parameter(names = {"-d", "--device"}, description = "Device name for serial device")
+        private String device = null;
 
         @Parameter(names = {"-g", "--globalcache"}, description = "Use GlobalCache")
         private boolean globalcache = false;
@@ -107,8 +112,8 @@ public class MainString {
         @Parameter(names = {"-i", "--ip"}, description = "IP address or name")
         private String ip = null;
 
-        //@Parameter(names = {"-I", "--irtrans"}, description = "Use IrTrans")
-        //private boolean irtrans = false;
+        @Parameter(names = {      "--opendelay"}, description = "Delay after opening, in milliseconds")
+        private int openDelay = 0;
 
         @Parameter(names = {"-m", "--myip"}, description = "For UPD only: IP number to listen to")
         private String myIp = null;
@@ -117,7 +122,13 @@ public class MainString {
         private int portNumber = defaultPortNumber;
 
         @Parameter(names = {"--prefix"}, description = "Prefix to be prepended to all sent commands.")
-        private String prefix = null;
+        private String prefix = "";
+
+        @Parameter(names = {"--prompt"}, description = "Readline prompt -- use `_' for SPACE.")
+        private String prompt = "--> ";
+
+        @Parameter(names = {"-n", "--newline"}, description = "Append a newline at the end of the command.")
+        private boolean appendNewline;
 
         @Parameter(names = {"-r", "--return"}, description = "Append a carrage return at the end of the command.")
         private boolean appendReturn;
@@ -126,16 +137,16 @@ public class MainString {
         private boolean serial;
 
         @Parameter(names = {"--suffix"}, description = "Sufffix to be appended to all sent commands.")
-        private String suffix = null;
+        private String suffix = "";
 
         @Parameter(names = {"-t", "--tcp"}, description = "Use tcp sockets")
         private boolean tcp;
 
         @Parameter(names = {"-T", "--timeout"}, description = "Timeout in milliseconds")
-        private int timeout = 2000;
+        private int timeout = 15000;
 
-        @Parameter(names = {"--telnet"}, description = "Go in interactive telnet mode")
-        private boolean telnet;
+        //@Parameter(names = {"--telnet"}, description = "Go in interactive telnet mode")
+        //private boolean telnet;
 
         @Parameter(names = {"-u", "--upper"}, description = "Translate commands to upper case.")
         private boolean toUpper;
@@ -150,7 +161,7 @@ public class MainString {
         private boolean verbose;
 
         @Parameter(description = "[parameters]")
-        private ArrayList<String> parameters = new ArrayList<String>();
+        private ArrayList<String> parameters = new ArrayList<>();
     }
 
     private static JCommander argumentParser;
@@ -189,13 +200,13 @@ public class MainString {
         TcpSocketPort tcpPort = null;
         UdpSocketPort udpPort = null;
         UrlPort urlPort = null;
-        IStringCommand harcHardware = null;
+        ICommandLineDevice hardware = null;
         String localIpAddress = commandLineArgs.myIp; // TODO: presently not used
 
         try {
             if (commandLineArgs.globalcache) {
                 globalCache = new GlobalCache(commandLineArgs.ip, commandLineArgs.verbose, commandLineArgs.timeout, false);
-                harcHardware = globalCache.getSerialPort(commandLineArgs.portNumber);
+                hardware = globalCache.getSerialPort(commandLineArgs.portNumber);
             } else if (commandLineArgs.url) {
                 if (commandLineArgs.ip == null) {
                     System.err.println("Must give a sensible hostname for URL.");
@@ -207,7 +218,7 @@ public class MainString {
                 urlPort = new UrlPort("http", commandLineArgs.ip, commandLineArgs.portNumber,
                         null /*commandLineArgs.prefix*/, null /*commandLineArgs.suffix*/,
                         commandLineArgs.timeout, commandLineArgs.verbose);
-                harcHardware = urlPort;
+                hardware = urlPort;
             } else if (commandLineArgs.tcp) {
                 if (commandLineArgs.portNumber == defaultPortNumber) {
                     System.err.println("Must give a sensible port number for TCP.");
@@ -218,7 +229,7 @@ public class MainString {
                     System.exit(IrpUtils.exitUsageError);
                 }
                 tcpPort = new TcpSocketPort(commandLineArgs.ip, commandLineArgs.portNumber, commandLineArgs.timeout, commandLineArgs.verbose, TcpSocketPort.ConnectionMode.keepAlive);
-                harcHardware = tcpPort;
+                hardware = tcpPort;
             } else if (commandLineArgs.udp) {
                 if (commandLineArgs.portNumber == defaultPortNumber) {
                     System.err.println("Must give a sensible port number for UDP.");
@@ -235,52 +246,63 @@ public class MainString {
                 }
 
                 udpPort = new UdpSocketPort(commandLineArgs.ip, commandLineArgs.portNumber, commandLineArgs.timeout, commandLineArgs.verbose);
-                harcHardware = udpPort;
+                hardware = udpPort;
             } else if (commandLineArgs.serial) {
-                localSerialPortBuffered = new LocalSerialPortBuffered(commandLineArgs.portNumber);
-                harcHardware = localSerialPortBuffered;
-            }
+                if (commandLineArgs.device == null) {
+                    System.err.println("Device name not given.");
+                    System.exit(IrpUtils.exitUsageError);
+                }
+                localSerialPortBuffered = new LocalSerialPortBuffered(commandLineArgs.device, commandLineArgs.baud,
+                        commandLineArgs.timeout, commandLineArgs.verbose);
+                hardware = localSerialPortBuffered;
+            } else
+                hardware = null;
 
-            StringCommander.Framer framer = new StringCommander.Framer(
-                    commandLineArgs.prefix + "{0}" + commandLineArgs.suffix + (commandLineArgs.appendReturn ? "\r" : ""),
+            FramedDevice.Framer framer = new FramedDevice.Framer(
+                    commandLineArgs.prefix + "{0}" + commandLineArgs.suffix
+                    + (commandLineArgs.appendReturn ? "\r" : "")
+                    + (commandLineArgs.appendNewline ? "\n" : ""),
                     commandLineArgs.toUpper);
 
             if (commandLineArgs.parameters.isEmpty() && didSomethingUseful)
                     System.exit(IrpUtils.exitSuccess);
 
-            if (commandLineArgs.parameters.isEmpty() || commandLineArgs.telnet) {
-                if (!commandLineArgs.telnet)
-                    System.err.println("No arguments given, going into interactive telnet mode.");
+            if (hardware == null) {
+                System.err.println("hardware not assigned.");
+                System.exit(IrpUtils.exitFatalProgramFailure);
+            }
 
-                System.err.println("Type quit to quit.");
-                StringCommander.telnet(harcHardware, framer);
+            hardware.open();
+            if (commandLineArgs.openDelay > 0) {
+                try {
+                    Thread.sleep(commandLineArgs.openDelay);
+                } catch (InterruptedException ex) {
+                }
+            }
+            FramedDevice stringCommander = new FramedDevice(hardware, framer);
+            int returnLines = commandLineArgs.oneLine ? 1
+                        : commandLineArgs.twoLines ? 2
+                                : 0;
+            if (commandLineArgs.parameters.isEmpty()) {
+                //if (!commandLineArgs.telnet)
+                System.err.println("No arguments given, going into interactive mode.");
+                System.err.println("Type EOL to quit.");
+                ReadlineCommander.init(null, ".rlhistory", commandLineArgs.prompt.replace('_', ' '), commandLineArgs.appName);
+                ReadlineCommander.readEvalPrint(stringCommander, commandLineArgs.openDelay, returnLines);
+                ReadlineCommander.close();
             } else {
                 String command = framer.frame(join(commandLineArgs.parameters, " "));
-                int returnLines = commandLineArgs.oneLine ? 1
-                        : commandLineArgs.twoLines ? 2
-                        : 0;
-                StringCommander stringCommander = new StringCommander(harcHardware);
-                String[] result = stringCommander.sendStringCommand(
-                        new String[]{ command }, commandLineArgs.count, returnLines, commandLineArgs.delay);
+                String[] result = stringCommander.sendString(
+                        new String[]{command}, commandLineArgs.count, returnLines, commandLineArgs.delay, 0);
                 for (String s : result)
                     System.out.println(s);
-                if (harcHardware != null)
-                    harcHardware.close();
             }
-        } catch (NoSuchTransmitterException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitFatalProgramFailure);
-        } catch (IOException ex) {
+            hardware.close();
+        } catch (IOException | PortInUseException | UnsupportedCommOperationException | HarcHardwareException ex) {
             System.err.println(ex.getMessage());
             System.exit(IrpUtils.exitFatalProgramFailure);
         } catch (NoSuchPortException ex) {
             System.err.println("No such port: " + ex.getMessage());
-            System.exit(IrpUtils.exitFatalProgramFailure);
-        } catch (PortInUseException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitFatalProgramFailure);
-        } catch (UnsupportedCommOperationException ex) {
-            System.err.println(ex.getMessage());
             System.exit(IrpUtils.exitFatalProgramFailure);
         }
     }

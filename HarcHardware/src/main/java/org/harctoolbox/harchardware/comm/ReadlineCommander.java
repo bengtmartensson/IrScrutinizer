@@ -25,8 +25,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.gnu.readline.Readline;
 import org.gnu.readline.ReadlineLibrary;
-import org.harctoolbox.harchardware.IStringCommand;
-import org.harctoolbox.harchardware.StringCommander;
+import org.harctoolbox.harchardware.FramedDevice;
+import org.harctoolbox.harchardware.ICommandLineDevice;
 
 /**
  * Wrapper around <a href="https://github.com/bengtmartensson/java-readline.git">java-readline</a>.
@@ -139,7 +139,7 @@ public class ReadlineCommander {
      * @param returnlines If >= 0 wait for this many return lines. If &lt; 0,
      * takes as many lines that are available within waitForAnswer milliseconds-
      */
-    public static void readEvalPrint(StringCommander stringCommander, int waitForAnswer, int returnlines) {
+    public static void readEvalPrint(FramedDevice stringCommander, int waitForAnswer, int returnlines) {
         while (true) {
 
             String line = null;
@@ -160,7 +160,7 @@ public class ReadlineCommander {
                     if (str != null)
                         System.out.println(str);
             } catch (IOException ex) {
-                Logger.getLogger(StringCommander.class.getName()).log(Level.SEVERE, null, ex); // FIXME
+                Logger.getLogger(ReadlineCommander.class.getName()).log(Level.SEVERE, null, ex); // FIXME
             }
         }
         System.out.println("Readline.readEvalPrint exited"); // ???
@@ -174,8 +174,8 @@ public class ReadlineCommander {
     public static void main(String[] args) {
         int waitForAnswer = 500;
         init("nosuchfile", ".rljunk", "$$$ ", "null");//".rljunk", "$$$ ");
-        try (IStringCommand denon = new TcpSocketPort("denon", 23, 2000, true, TcpSocketPort.ConnectionMode.keepAlive)) {
-            StringCommander stringCommander = new StringCommander(denon, "{0}\r", true);
+        try (ICommandLineDevice denon = new TcpSocketPort("denon", 23, 2000, true, TcpSocketPort.ConnectionMode.keepAlive)) {
+            FramedDevice stringCommander = new FramedDevice(denon, "{0}\r", true);
             readEvalPrint(stringCommander, waitForAnswer, -1);
         } catch (IOException ex) {
             System.err.println(ex.getMessage());

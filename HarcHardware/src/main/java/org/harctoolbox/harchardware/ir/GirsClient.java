@@ -33,14 +33,14 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
-import org.harctoolbox.harchardware.IStringCommand;
+import org.harctoolbox.harchardware.ICommandLineDevice;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.comm.LocalSerialPortBuffered;
 
 /**
  *
  */
-public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawIrSenderRepeat, IRemoteCommandIrSender, IIrSenderStop, ITransmitter, ICapture, IStringCommand {
+public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawIrSenderRepeat, IRemoteCommandIrSender, IIrSenderStop, ITransmitter, ICapture, ICommandLineDevice {
     private String version;
     private List<String> modules;
     private LocalSerialPortBuffered hardware; // FIXME

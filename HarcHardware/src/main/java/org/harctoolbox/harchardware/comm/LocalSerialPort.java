@@ -273,7 +273,7 @@ public abstract class LocalSerialPort implements IHarcHardware {
     public String getActualPortName() {
         return actualPortName;
     }
-    
+
     /**
      * Returns the nominal port name being used. May differ from one requested in
      * the constructor if the device was opened with open(true), or if it is symlink

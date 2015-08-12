@@ -28,7 +28,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import org.harctoolbox.IrpMaster.IrpUtils;
-import org.harctoolbox.harchardware.IStringCommand;
+import org.harctoolbox.harchardware.ICommandLineDevice;
 import org.harctoolbox.harchardware.Utils;
 
 /**
@@ -37,7 +37,7 @@ import org.harctoolbox.harchardware.Utils;
  * It is not meant to be inherited from, or exported.
  * It should therefore throw low-level exceptions, not HarcHardwareException.
  */
-public class TcpSocketChannel implements IStringCommand, IBytesCommand {
+public class TcpSocketChannel implements ICommandLineDevice, IBytesCommand {
     private InetAddress inetAddress = null;
     private int portNumber;
     private boolean verbose;
@@ -166,6 +166,16 @@ public class TcpSocketChannel implements IStringCommand, IBytesCommand {
 
     @Override
     public String readString() throws IOException {
+        return readString(true);
+    }
+
+    @Override
+    public String readString(boolean wait) throws IOException {
+        if (!wait && !bufferedInStream.ready()) {
+            if (verbose)
+                System.err.println("<(null)");
+            return null;
+        }
         String line = bufferedInStream.readLine();
         if (verbose)
             System.err.println("<" + line);
@@ -198,6 +208,6 @@ public class TcpSocketChannel implements IStringCommand, IBytesCommand {
 
     @Override
     public boolean ready() throws IOException {
-        return bufferedInStream.ready();
+        return bufferedInStream != null && bufferedInStream.ready();
     }
 }

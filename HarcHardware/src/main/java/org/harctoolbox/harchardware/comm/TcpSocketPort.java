@@ -22,10 +22,10 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.harchardware.IHarcHardware;
-import org.harctoolbox.harchardware.IStringCommand;
+import org.harctoolbox.harchardware.ICommandLineDevice;
 import org.harctoolbox.harchardware.Utils;
 
-public class TcpSocketPort implements IStringCommand, IBytesCommand, IHarcHardware {
+public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHardware {
 
     public final static int defaultTimeout = 2000;
 
@@ -86,7 +86,7 @@ public class TcpSocketPort implements IStringCommand, IBytesCommand, IHarcHardwa
 
     @Override
     public String readString() throws IOException {
-        return readString(false);
+        return readString(true);
     }
 
     @Override

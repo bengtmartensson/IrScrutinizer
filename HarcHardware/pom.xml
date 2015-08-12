@@ -112,34 +112,45 @@
             </plugin>
 
             <!-- Source and binary tarballs from src/assembly/* files. -->
-            <!--plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-assembly-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>exec-bin</id>
-                  <configuration>
-                    <descriptor>src/assembly/target.xml</descriptor>
-                    <finalName>${project.name}-${project.version}</finalName>
-                  </configuration>
-                  <phase>package</phase>
-                  <goals>
-                    <goal>single</goal>
-                  </goals>
-                </execution>
-                <execution>
-                  <id>exec-src</id>
-                  <configuration>
-                    <descriptor>src/assembly/source.xml</descriptor>
-                    <finalName>${project.name}-src-${project.version}</finalName>
-                  </configuration>
-                  <phase>package</phase>
-                  <goals>
-                    <goal>single</goal>
-                  </goals>
-                </execution>
-              </executions>
-            </plugin-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${project.groupId}.harchardware.MainString</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <finalName>${project.name}</finalName>
+                    <!--appendAssemblyId>true</appendAssemblyId-->
+                    <descriptors>
+                        <descriptor>src/assembly/target.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>exec-bin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                    <!--execution>
+                      <id>exec-src</id>
+                      <configuration>
+                        <descriptor>src/assembly/source.xml</descriptor>
+                        <finalName>${project.name}-src-${project.version}</finalName>
+                      </configuration>
+                      <phase>package</phase>
+                      <goals>
+                        <goal>single</goal>
+                      </goals>
+                    </execution-->
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -185,6 +196,12 @@
             <groupId>gnu.io</groupId>
             <artifactId>RXTX</artifactId>
             <version>2.2pre2h</version>
+        </dependency>
+        <dependency>
+            <groupId>org.gnu</groupId>
+            <artifactId>Readline</artifactId>
+            <version>0.8.2</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
 </project>

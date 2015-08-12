@@ -19,12 +19,17 @@ package org.harctoolbox.harchardware;
 
 import java.io.IOException;
 
-public interface IStringCommand extends IHarcHardware {
+/**
+ * This interface specifies a device that can be sent commands, and that can be queried for responses.
+ */
 
-    //public String sendStringCommand(String cmd, int count, int returnLines, int delay)
-    //        throws HarcHardwareException;
+public interface ICommandLineDevice extends IHarcHardware {
 
-    //public String sendStringCommand(String cmd, int returnLines) throws HarcHardwareException;
+    /**
+     * Sends a command (a String) to the instance.
+     * @param cmd Command string to be sent.
+     * @throws IOException
+     */
 
     void sendString(String cmd) throws IOException;
 

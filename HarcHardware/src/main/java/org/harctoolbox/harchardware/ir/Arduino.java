@@ -28,7 +28,7 @@ import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.IStringCommand;
+import org.harctoolbox.harchardware.ICommandLineDevice;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.comm.LocalSerialPortBuffered;
 
@@ -36,7 +36,7 @@ import org.harctoolbox.harchardware.comm.LocalSerialPortBuffered;
  * This class supports sending and capturing from an Arduino connected through a (virtual) serial port.
  * For sending, the sketch scrutinize_sender should be running, for receiving the sketch scrutinize_receiver.
  */
-public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIrSender, ICapture, IReceive, IStringCommand {
+public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIrSender, ICapture, IReceive, ICommandLineDevice {
 
     //private int beginTimeout;
     //private int middleTimeout;
@@ -247,12 +247,10 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
             //ex.printStackTrace();
         } catch (NoSuchPortException ex) {
             System.err.println("No such port: " + portName);
-        } catch (HarcHardwareException ex) {
+        } catch (HarcHardwareException | UnsupportedCommOperationException ex) {
             System.err.println(ex.getMessage());
         } catch (PortInUseException ex) {
             System.err.println("Port " + portName + " in use.");
-        } catch (UnsupportedCommOperationException ex) {
-            System.err.println(ex.getMessage());
         } finally {
             if (w != null)
                 try {
@@ -273,6 +271,7 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
         return serialPort.readString();
     }
 
+    @Override
     public String readString(boolean wait) throws IOException {
         return serialPort.readString(wait);
     }
