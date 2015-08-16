@@ -197,27 +197,22 @@
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr-runtime</artifactId>
-            <version>3.5.2</version>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>stringtemplate</artifactId>
-            <version>3.2.1</version>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>
-            <version>1.35</version>
         </dependency>
         <dependency>
             <groupId>org.harctoolbox</groupId>
             <artifactId>Girr</artifactId>
-            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.harctoolbox</groupId>
             <artifactId>IrpMaster</artifactId>
-            <version>1.0.3</version>
         </dependency>
     </dependencies>
 </project>

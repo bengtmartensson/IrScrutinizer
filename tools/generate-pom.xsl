@@ -25,12 +25,33 @@
         </xsl:copy>
     </xsl:template>
 
-    <xsl:template match="pom:artifactItem[pom:artifactId[text()='IrScrutinizer']]/pom:version
-| pom:dependency[pom:artifactId[text()='IrScrutinizer']]/pom:version">
-        <xsl:apply-templates select="document('../IrScrutinizer/pom.xml')/pom:project/pom:version"/>
+    <xsl:template match="pom:properties/pom:IrScrutinizer.version">
+        <xsl:copy>
+        <xsl:apply-templates select="document('../IrScrutinizer/pom.xml')/pom:project/pom:version/text()"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="pom:properties/pom:IrpMaster.version">
+        <xsl:copy>
+        <xsl:apply-templates select="document('../IrpMaster/pom.xml')/pom:project/pom:version/text()"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="pom:properties/pom:Girr.version">
+        <xsl:copy>
+        <xsl:apply-templates select="document('../Girr/pom.xml')/pom:project/pom:version/text()"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="pom:properties/pom:Jirc.version">
+        <xsl:copy>
+        <xsl:apply-templates select="document('../Jirc/pom.xml')/pom:project/pom:version/text()"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="pom:properties/pom:HarcHardware.version">
+        <xsl:copy>
+        <xsl:apply-templates select="document('../HarcHardware/pom.xml')/pom:project/pom:version/text()"/>
+        </xsl:copy>
     </xsl:template>
 
-    <xsl:template match="pom:artifactItem[pom:artifactId[text()='IrpMaster']]/pom:version
+    <!--xsl:template match="pom:artifactItem[pom:artifactId[text()='IrpMaster']]/pom:version
 | pom:dependency[pom:artifactId[text()='IrpMaster']]/pom:version">
         <xsl:apply-templates select="document('../IrpMaster/pom.xml')/pom:project/pom:version"/>
     </xsl:template>
@@ -49,7 +70,7 @@
 | pom:dependency[pom:artifactId[text()='HarctoolboxBundle']]/pom:version
 | pom:parent/pom:version">
         <xsl:apply-templates select="document('../pom.xml')/pom:project/pom:version"/>
-    </xsl:template>
+    </xsl:template-->
 
 
 </xsl:stylesheet>

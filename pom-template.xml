@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!--This is a generated file, do not edit.-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.harctoolbox</groupId>
@@ -100,11 +99,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <reposurl>${basedir}/repos</reposurl>
-        <IrScrutinizer.version>1.1.2dev</IrScrutinizer.version>
-        <IrpMaster.version>1.0.3</IrpMaster.version>
-        <Girr.version>1.0.3</Girr.version>
-        <Jirc.version>0.3.1</Jirc.version>
-        <HarcHardware.version>0.9.3</HarcHardware.version>
+        <IrScrutinizer.version></IrScrutinizer.version>
+        <IrpMaster.version></IrpMaster.version>
+        <Girr.version></Girr.version>
+        <Jirc.version></Jirc.version>
+        <HarcHardware.version></HarcHardware.version>
     </properties>
     <distributionManagement>
         <repository>

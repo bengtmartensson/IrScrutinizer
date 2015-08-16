@@ -422,32 +422,26 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>IrpMaster</artifactId>
-            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>HarcHardware</artifactId>
-            <version>0.9.3</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Girr</artifactId>
-            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Jirc</artifactId>
-            <version>0.3.1</version>
         </dependency>
         <dependency>
             <groupId>com.mrallen</groupId>
             <artifactId>tonto</artifactId>
-            <version>1.44</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Crystal-Clear-Icons</artifactId>
-            <version>20070620</version>
         </dependency>
     </dependencies>
 </project>
