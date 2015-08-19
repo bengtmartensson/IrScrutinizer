@@ -160,6 +160,9 @@ public class MainString {
         @Parameter(names = {"-V", "--verbose"}, description = "Turn on verbose reporting")
         private boolean verbose;
 
+        @Parameter(names = {"-w", "--waitforanswer"}, description = "Time to wait for answer in milli seconds")
+        private int waitForAnswer = 0;
+
         @Parameter(description = "[parameters]")
         private ArrayList<String> parameters = new ArrayList<>();
     }
@@ -288,7 +291,7 @@ public class MainString {
                 System.err.println("No arguments given, going into interactive mode.");
                 System.err.println("Type EOL to quit.");
                 ReadlineCommander.init(null, ".rlhistory", commandLineArgs.prompt.replace('_', ' '), commandLineArgs.appName);
-                ReadlineCommander.readEvalPrint(stringCommander, commandLineArgs.openDelay, returnLines);
+                ReadlineCommander.readEvalPrint(stringCommander, commandLineArgs.waitForAnswer, returnLines);
                 ReadlineCommander.close();
             } else {
                 String command = framer.frame(join(commandLineArgs.parameters, " "));
