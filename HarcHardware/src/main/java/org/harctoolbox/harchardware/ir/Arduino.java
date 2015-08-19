@@ -97,6 +97,10 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
         this(portName, defaultBaudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, false);
     }
 
+    public Arduino(String portName, int baudRate) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this(portName, baudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, false);
+    }
+
     public Arduino(String portName, int baudRate, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         this(portName, baudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, verbose);
     }
@@ -204,7 +208,37 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
 
     @Override
     public IrSequence receive() throws HarcHardwareException, IOException, IrpMasterException {
-        throw new UnsupportedOperationException("Not supported yet.");// TODO
+        if (stopRequested) // ???
+            return null;
+        if (!isValid())
+            throw new HarcHardwareException("Port not initialized");
+        //if (!pendingCapture) {
+        //    serialPort.sendString(captureCommand + lineEnding);
+        //    pendingCapture = true;
+        //}
+        IrSequence seq = null;
+        try {
+            //open();
+            String str = serialPort.readString(true);
+            //pendingCapture = false;
+            if (str == null || str.length() == 0 || str.startsWith("null") || str.startsWith(timeoutString))
+                return null;
+
+            str = str.trim();
+
+            //double frequency = fallbackFrequency;
+            seq = new IrSequence(str);
+        } catch (IOException ex) {
+            //close();
+            if (ex.getMessage().equals("Underlying input stream returned zero bytes")) //RXTX timeout
+                return null;
+            throw ex;
+        } catch (IncompatibleArgumentException ex) {
+            //close();
+            throw new HarcHardwareException(ex);
+        }
+        //close();
+        return seq;
     }
 
     @Override
