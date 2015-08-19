@@ -225,7 +225,10 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
 
     @Override
     public String[][] getFileExtensions() {
-        return new String[][]{new String[]{"CML files (*.cml)", "cml" }};
+        return new String[][]{
+            new String[] {"CML files (*.cml)", "cml" },
+            new String[] {"Zipped files (*.zip)", "zip" }
+        };
     }
 
     @Override
