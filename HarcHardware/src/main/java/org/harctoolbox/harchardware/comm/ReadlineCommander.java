@@ -157,13 +157,20 @@ public class ReadlineCommander {
             try {
                 result = stringCommander.sendString(line, returnlines <= 0 ? -1 : returnlines, waitForAnswer);
                 for (String str : result)
-                    if (str != null)
+                    if (str != null) {
                         System.out.println(str);
+                    }
+                if (result != null && result.length > 0 && result[result.length-1].equals("Bye!"))
+                    break;
             } catch (IOException ex) {
                 Logger.getLogger(ReadlineCommander.class.getName()).log(Level.SEVERE, null, ex); // FIXME
             }
         }
         System.out.println("Readline.readEvalPrint exited"); // ???
+    }
+
+    public static void readEvalPrint(ICommandLineDevice hardware, int waitForAnswer, int returnLines) {
+        readEvalPrint(new FramedDevice(hardware), waitForAnswer, returnLines);
     }
 
     /**
