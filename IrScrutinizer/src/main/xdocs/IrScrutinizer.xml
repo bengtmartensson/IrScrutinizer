@@ -6,8 +6,11 @@
     <title>IrScrutinizer documentation</title>
   </header>
 <body>
-<note>This document is not finished yet. See the <a href="IrScrutinizer.releasenotes.txt">release notes</a>.
-Please ask questions in the JP1-forum.</note>
+<note>This is a reference manual. It is written for completeness and correctness, not
+    for accessability. For an easier introduction, see
+    <a href="http://www.hifi-remote.com/wiki/index.php?title=IrScrutinizer_Guide">this tutorial</a>.
+</note>
+
     <warning>Sending undocumented IR commands to
 your equipment may damage or even destroy it. By using this program,
 you agree to take the responsibility for possible damages yourself, and
@@ -41,6 +44,10 @@ not to hold the author responsible.</warning>
 	  <td>2015-04-07</td>
 	  <td>Version for release 1.1.2, installation issued reworked. Misc. minor improvements.</td>
 	</tr>
+        <tr>
+	  <td>2015-08-19</td>
+	  <td>Version for release 1.1.3. Misc. minor improvements.</td>
+	</tr>
       </table>
 
 <section>
@@ -51,8 +58,8 @@ importing, and
 exporting of infrared (IR) signals. For capturing and sending IR signals
 several different hardware sensors and senders are supported. IR Signals can be
 imported not only by capturing from one of the supported hardware
-sensors (among others: IrWidget, Global Caché, and Arduino), but also from a
-number of different file formats (among others: LIRC, Wave, Pronto Classic and
+sensors (among others: IrWidget, Global Caché, Command Fusion, and Arduino), but also from a
+number of different file formats (among others: LIRC, Wave, CML, Pronto Classic and
 professional, RMDU (partially), and different text based formats; not only from
 files, but also from the clipboard, from URLs, and from file hierarchies), as
 well as the Internet IR Databases by Global Caché and by IRDB. Imported signals
@@ -82,9 +89,16 @@ depict the current program completely accurately. They come from different
 versions of  the program, using different platforms (Linux and Windows), and
 using different "look and feels".</p>
 
+<p>Sources are hosted on <a href="https://github.com/bengtmartensson/harctoolboxbundle">Github</a>.
+Bugreports are enhancement requests are welcome (e.g. as
+<a href="https://github.com/bengtmartensson/harctoolboxbundle/issues">issues</a>),
+as is contributions (code, documentation, use cases, protocols etc.).
+</p>
+
 <p>The present document is written more for completeness than for
-easy accessibility. Possibly, in the future, there will be a user's manual as
-well as a reference manual.</p>
+easy accessibility. For an easier introduction, see
+    <a href="http://www.hifi-remote.com/wiki/index.php?title=IrScrutinizer_Guide">this tutorial</a>.
+   </p>
 <p>Here are the current <a href="IrScrutinizer.releasenotes.txt">release
 notes</a>.</p>
 
@@ -241,12 +255,14 @@ directory can be read only after the installation.
 </section>
 <section>
     <title>Fedora Linux</title>
-    <p>Thanks to a great job done by Alec Leamas of Fedora, Fedora rpm packages will
-        be available in the next future. Packages for other Linux distributions are likely to follow.</p>
-        <p>To install, the command <code>sudo yum install irscrutinizer</code> should be issued in a terminal window.
+    <p>Fedora rpm packages are
+        available for the previous version 1.1.2.</p>
+        <p>To install, the command <code>sudo yum install harctoolbox harctoolbox-doc</code> should be issued in a terminal window.
         This will install IrScrutinizer as a desktop program, as well as the command line
         commands <code>irscrutinizer</code> and <code>irpmaster</code>.
-        To uninstall, use the command  <code>sudo yum erase irscrutinizer</code>.</p>
+        To uninstall, use the command  <code>sudo yum erase harctoolbox harctoolbox-doc</code>.</p>
+        <p>Unfortunatelly, the packaging contains a few semi-serious problems. These are reported, but stay unfixed.
+            Fedora users are recommended to use the generic binary package.</p>
 </section>
 <section><title>Windows</title>
 <p>Download the <a
@@ -268,11 +284,15 @@ people may like to delete the properties file too, see <a href="#Properties">pro
       <section>
 	<title>Mac OS X app</title>
 <p>Download the  <a
-    href="http://www.harctoolbox.org/downloads/IrScrutinizer.dmg.zip">compressed disk image</a>.
-    Uncompress it by double clicking, and mount it by double clicking the resulting file.
-    A mounted disk image "IrScrutinizer" will appear on the desktop. Opening it will show an app, and a few documention files.
+    href="http://www.harctoolbox.org/downloads/IrScrutinizer-app.zip">compressed app</a>.
+    Uncompress it by double clicking. Opening it will show an app, and a few documention files.
     The app can just be dragged to the desktop, to the tray, to "Applications" or any other location the user prefers.
-    The disk image can now unmounted, and deleted if so desired. IrScrutinizer now behaves like any other app in Mac OS X.</p>
+    IrScrutinizer now behaves like any other app in Mac OS X.</p>
+
+    <p>(The previous version was instead distrubuted as a <a
+    href="http://www.harctoolbox.org/downloads/IrScrutinizer.dmg.zip">compressed disk image</a>.
+    This should be uncompressed it by double clicking, and mounted by double clicking the resulting file.
+    A mounted disk image "IrScrutinizer" will appear on the desktop. Then proceed as above.)</p>
 
     <p>To unistall, just move the app to the trash.</p>
     <p>The command line program <a href="IrpMaster.html">IrpMaster</a> is not supported in this mode.
@@ -427,11 +447,10 @@ program, or by selecting Options -> Export formats database -> Reload.</p>
 <code><![CDATA[%LOCALAPPDATA%\IrScrutinizer\IrScrutinizer.properties.xml]]></code> using Windows
 Vista and later (on my Windows 7 system, this is <code>%HOME%\AppData\Local\IrScrutinizer\IrScrutinizer.properties.xml</code>), otherwise in
 <code>%APPDATA%\IrScrutinizer\IrScrutinizer.properties.xml</code>. Using other operating
-systems, it is stored under <code>$HOME/.IrScrutinizer.properties.xml</code>. It is
-not deleted by  un-install. (If weird problems appear when updating, try
-deleting this file.)
-There is a command line option <code>--nuke-properties</code> that can be used to
-conveniently delete the present property file, without knowing its exact name.
+systems, it is stored under <code>$HOME/.config/IrScrutinizer/properties.xml</code>. It is
+not deleted by  un-install. (If weird problems appear, for example after an update, try
+deleting this file. For this, there is a command line option <code>--nuke-properties</code> that can be used to
+conveniently delete the present property file, without knowing its exact name.)
 </p>
       </section>
 <section>
@@ -617,6 +636,21 @@ entire lirc.org database with over 100000 commands takes around 1 minute and 1GB
 of memory.)</p>
 	</section>
 
+        <section>
+            <title>CML</title>
+            <p>The CML format is the format used by the RTI Integration Designer software.
+Many CML files are available in Internet, in particular on
+                <a href="http://files.remotecentral.com/rti/index.html">RemoteCentral</a>.
+                Particularly noteworthy is the <a href="http://files.remotecentral.com/collection/66-1/index.html">"megalist" by Glackowitz</a>.
+                IrScrutinizer can import these files to its import tree, making every remote a nodes in the tree.
+                Note that there is no need to unzip such a file; IrScrutinizer will unzip it on the fly.
+            </p>
+        </section>
+
+        <section>
+            <title>Command Fusion</title>
+            <p>The native format that Command Fusion uses, file extension <code>.cfir</code>, can be imported here.</p>
+        </section>
 <section><title>RemoteMaster</title>
 <p>The <a href="Glossary.html#JP1">JP1 community</a> has a large data base of parametric IR
 commands. IrScrutinizer has support for importing RMDU files for
@@ -640,7 +674,7 @@ Central</a>. IrScrutinizer can read in these files to its import tree, even
 preserving the Pronto "devices" as nodes in the tree.</p>
 
 <p>Unfortunately, the <a href="Glossary.html#Tonto">Tonto library</a> used
-produces the warning message <code>Error loading JComm JNI library</code>. This
+produces the warning message <code>Error loading JComm JNI library</code>. This message
 should be ignored.</p>
 	</section>
 
@@ -896,7 +930,13 @@ optimal for most IR signal capture use cases.</p>
 <p>At least on Linux, the ACMX port may be finicky. Sometimes disconnecting and
 reconnecting the device may help.</p>
 	</section>
-</section>
+
+        <section>
+            <title>Command Fusion Learner</title>
+<p>After connecting the Command Fusion learner to a USB  port, select the the actual (virtual) serial port in
+the combo box, pressing "Refresh" if necessary. "Open" the port
+thereafter.</p>
+	</section>
       <section>
 <title>The "Sending HW" pane</title>
 <p>The sub-panes of this pane allows for the selection and configuration
@@ -971,7 +1011,13 @@ module is then accessed using the UDP text mode.</p>
 	</section>
 <section>
 <title>The "IrToy" Pane</title>
-<p>Using this pane, the IrToy (version 2) can be used to transmit IR signals.</p></section>
+<p>Using this pane, the IrToy (version 2) can be used to transmit IR signals.
+    To my knowledge, only the firmware version 2.2.2 works.</p>
+</section>
+<section>
+<title>The "CommandFusion" Pane</title>
+<p>Using this pane, the CommandFusion learner can be used to transmit IR signals.</p>
+</section>
 <section>
 <title>The "Arduino" Pane</title>
 <p>Using this pane, an Arduino equipped with a suitable IR Led can be used to
@@ -1035,13 +1081,15 @@ allocated. This is actually superfluous, since the send-functions make this
 automatically anyhow. It will possibly be removed in future versions.</p-->
       </section>
 
-<section>
+<!-- Disabled by default, therefore commented out here -->
+<!--section>
 <title>The "General Serial Port" Pane</title>
 <p>This pane contains the controls for sending a signal in a general format to
 one of the serial ports available on the system.</p>
- </section>
+    </section-->
       </section>
     </section>
+</section>
 <section>
 <title>Command line arguments</title>
 <p>Normal usage is just to double click on the jar-file, or possibly on
@@ -1145,7 +1193,7 @@ wish list.
 </section>
 
 <section>
-    <title>Why supporting the old Global Caché but not the new (<a href="http://irdb.globalcache.com/">Control Tower</a>)?</title>
+    <title>Why supporting the old Global Caché data base but not the new ("<a href="http://irdb.globalcache.com/">Control Tower</a>")?</title>
     <p>Sad, really, it is a really nice data base. The reason is that API retrieval of codes is not allowed for the free accounts.
         The data base can still be used with IrScrutinizer however: Log in with the web interface,
         and have the codes mailed in CSV format (press "Send Code Set").
@@ -1331,29 +1379,10 @@ be mounted on a Windows computer. Then, on the Windows computer, open
 
 <section>
     <title>Mac OS X app creation</title>
-    <p>For creation of Mac OS X apps, the build is unfortunately neither
-"free" in the strict sense, nor quite automatic. As a first step, the
-Apple binary file <code>/System/Library/Frameworks/JavaVM.framework/Versions/Current/Resources/MacOS/JavaApplicationStub</code>
-(distributed with <a href="https://developer.apple.com/xcode/">XCode</a>)  has to be copied to the
-directory tools. (Apples "JavaApplication Stub Binary Module License" states
-that "...  Apple grants you a personal, non-exclusive license, under
-Apple's copyrights in this original Apple JavaApplicationStub binary
-module software (the `Apple Software'), to use, reproduce and
-redistribute the Apple Software in binary form only as part of your
-own software program." I interpret this so that I am not allowed to
-publish the file on Github.) (Without this file, the MacOS part will be
-ignored by the build.) The Maven build creates a file
-<code>IrScrutinizer-</code><em><code>version</code></em><code>-app.zip</code>. This file should be opened with a
-suitable archive manager, and the files <code>IrpProtocols.ini,
-protocols.ini, exportformats.xml</code>, as well as the directories
-<code>IrScrutinizer/target/doc, native/Mac OS X-x86_64</code> and
-<code>native/Mac OS X-i386</code> (with content) added to
-<code>IrScrutinizer-</code><em><code>version</code></em><code>/IrScrutinizer.app/Contents/Resources/Java/repo/org/harctoolbox/IrScrutinizer/</code><em><code>version</code></em><code>/</code>
-within the zip archive. After this, the zip file is unpacked by a Mac
-to a <em>local</em> directory on that Mac. The content of the unpacked
-directory will now be a few documentation files, and the generated
-"app". These files should be transferred to a disk image (<code>.dmg</code>)
-file, compressed, and distributed.</p>
+    <p>The Maven build creates a file
+<code>IrScrutinizer-</code><em><code>version</code></em><code>-app.zip</code>.
+This file can be directly distributed to the users, to be installed according to
+<a href="http://localhost:8888/IrScrutinizer.html#Mac+OS+X+app">these instructions</a>.</p>
 
 <p>The icon file <code>IrScrutinizer.icns</code> was produced from the Crystal-Clear
 icon <code>babelfish.png</code> in 128x128 resolution, using the procedure

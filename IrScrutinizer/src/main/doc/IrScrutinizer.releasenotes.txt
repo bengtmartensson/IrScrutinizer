@@ -1,3 +1,33 @@
+Version 1.1.3
+- New implementation of MacOS App build, without proprietary stuff.
+- Cleaned up version management in poms.
+- SendingHardwareManager: handle exceptions in select better.
+- LircClient: nuke trailing (and leading) spaces before comparision.
+- Helptext and documentation update.
+- Made file/tree importer more intuitive: tree cleared when invalid.
+  "Import all" and "Import all/raw" disabled when more than 10 remotes in tree.
+- Importers now import remotes with some of the commands erroneous
+    or unparseable. These are just "ignored", instead of causing an abort.
+- Read CML files as WINDOWS-1252 (educated guess).
+- Removed external dependency of de.moldaner.wakeonlan
+- Robustness fix in AmxBeaconListener.
+- Explicitly set Java source and target version to 1.7.
+- Minor fixes in IrPlotter: Wrote help text. Clone plot now in popup
+  menu. New public function IrPlotter.createPopupClone().
+- Implemented Cml- and CommandFusion-import.
+- TreeImporter: when a remote node is expanded, decode its children,
+  i.e. its commands.
+- Sort the remotes in TreeImporter alphabetically.
+- Switch to busy cursor in FileImporterBean.loadFileButtonActionPerformed().
+- Removed Option -> Output text format -> UEI Learned.
+    Reason: Very little use, high confusion potential.
+- Support for the CommandFusion Learner, sending and capturing
+- Layout fix: increased width of module & port combos for global cache.
+- sometimes erroneous HardwareUnvailableException when using GlobalCache.
+- New protocol Roku-Official, contributed by mdavej.
+- Robustness improvement (resolve symlinks to device etc).
+- Fixed bug in Import/Text/Parametrized: Field separators erroneous.
+
 Version 1.1.2
 - On Unix-like systems, can now be installed on the local machen by
   "mvn deploy". 
