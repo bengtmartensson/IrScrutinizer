@@ -28,6 +28,7 @@ WORKDIR=${TARGETDIR}
 APPDIR=${WORKDIR}/${APPNAME}-${VERSION}
 REPODIR=${APPDIR}/${APPNAME}.app/Contents/Resources/Java/repo
 
+rm -rf ${APPDIR}/${APPNAME}.app
 mkdir -p ${REPODIR}
 mkdir -p ${APPDIR}/${APPNAME}.app/Contents/MacOS
 cp ${TARGETDIR}/doc/README* ${APPDIR}
