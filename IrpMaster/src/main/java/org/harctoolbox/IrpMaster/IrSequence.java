@@ -46,7 +46,7 @@ public class IrSequence implements Cloneable, Serializable {
      */
     protected double[] data;
     private static final double epsilon = 0.001;
-    private static final int dummySpaceDuration = 1;
+    private static final int dummySpaceDuration = 50; // should not translate to 0000 in Pronto
 
     /**
      * Returns the i'th value, a duration in micro seconds.
@@ -174,6 +174,9 @@ public class IrSequence implements Cloneable, Serializable {
             data = new double[0];
         } else {
             String[] strings = str.trim().split("[\\s,;]+");
+            if (strings.length == 1)
+                // Instead, try to break at "+" and "-" chars, preserving these
+                strings = str.trim().split("(?=\\+)|(?=-)");
             boolean hasAlternatingSigns = false;
             for (String string : strings) {
                 if (string.startsWith("-")) {
@@ -185,7 +188,12 @@ public class IrSequence implements Cloneable, Serializable {
             int[] tmplist = new int[strings.length + 1];
             int index = -1;
             for (String string : strings) {
+                if (string.isEmpty())
+                    continue; // be on the safe side
                 int x = Integer.parseInt(string.replaceFirst("\\+", ""));
+                if (index == -1 && x < 0)
+                    continue; // Ignore silly leading gaps
+
                 if (hasAlternatingSigns && index >= 0 && sameSign(tmplist[index], x))
                     tmplist[index] += x;
                 else
