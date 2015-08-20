@@ -159,12 +159,7 @@ public class ExchangeIR {
                 if (codes.length > 1)
                     return new IrSignal(fallbackFrequency, IrpUtils.invalid, codes[0], codes[1], codes.length > 2 ? codes[2] : null);
 
-                IrSequence irSequence = null;
-                try {
-                    irSequence = new IrSequence(str);
-                } catch (IncompatibleArgumentException ex) {
-                    throw new ParseException("Could not interpret string " + str);
-                }
+                IrSequence irSequence = new IrSequence(str, true);
                 return interpretIrSequence(irSequence, invokeRepeatFinder, invokeAnalyzer);
             } else {
                 int[] array = Pronto.parseString(str);
