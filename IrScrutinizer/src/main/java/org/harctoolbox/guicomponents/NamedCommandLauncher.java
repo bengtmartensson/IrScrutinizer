@@ -129,6 +129,8 @@ public class NamedCommandLauncher extends JPanel {
     private void loadCommands(String remote) {
         try {
             String[] commands = hardware.getCommands(remote);
+            if (commands == null)
+                commands = new String[0];
             java.util.Arrays.sort(commands, String.CASE_INSENSITIVE_ORDER);
             commandComboBoxModel = new DefaultComboBoxModel(commands);
             commandComboBox.setModel(commandComboBoxModel);
