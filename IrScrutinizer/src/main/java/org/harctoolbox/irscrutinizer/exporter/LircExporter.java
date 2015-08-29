@@ -157,7 +157,7 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         stream.println("\theader\t9041\t4507");
         stream.println("\tptrail\t573");
         stream.println("\trepeat\t9041\t2267");
-        stream.println("\tgap\t96193");
+        stream.println("\tgap\t36000");
         stream.println("\trepeat_bit\t0");
         stream.println("\t\tbegin codes");
         for (Map.Entry<String, Command> kvp : remote.getCommands().entrySet())
