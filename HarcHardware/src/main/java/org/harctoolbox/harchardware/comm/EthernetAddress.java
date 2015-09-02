@@ -58,7 +58,7 @@ public class EthernetAddress {
 
     public byte[] toBytes() {
         byte[] answer = new byte[noBytes];
-        System.arraycopy(data, noBytes, answer, 0, noBytes);
+        System.arraycopy(data, 0, answer, 0, noBytes);
         return answer;
     }
 
