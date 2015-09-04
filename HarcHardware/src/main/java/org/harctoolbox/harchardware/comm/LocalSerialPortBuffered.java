@@ -56,12 +56,7 @@ public final class LocalSerialPortBuffered extends LocalSerialPort implements IC
 
     @Override
     public void open() throws HarcHardwareException, IOException {
-        open(false);
-    }
-
-    @Override
-    public void open(boolean iterate) throws HarcHardwareException, IOException {
-        super.open(iterate);
+        super.open();
         bufferedInStream = new BufferedReader(new InputStreamReader(inStream, IrpUtils.dumbCharset));
     }
 

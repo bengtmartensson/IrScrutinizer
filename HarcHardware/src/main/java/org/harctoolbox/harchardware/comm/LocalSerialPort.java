@@ -24,7 +24,6 @@ import gnu.io.PortInUseException;
 import gnu.io.RXTXPort;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -66,7 +65,6 @@ public abstract class LocalSerialPort implements IHarcHardware {
     protected OutputStream outStream;
     private CommPort commPort;
     private final String portName;
-    private String actualPortName;
     private final int baud;
     private final int length;
     private final int stopBits;
@@ -82,7 +80,6 @@ public abstract class LocalSerialPort implements IHarcHardware {
         this.debug = 0;
         this.verbose = false;
         this.portName = portName;
-        this.actualPortName = null;
         this.baud = baud;
         this.length = length;
         this.stopBits = stopBits;
@@ -92,7 +89,7 @@ public abstract class LocalSerialPort implements IHarcHardware {
     }
 
     private void lowLevelOpen() throws NoSuchPortException, PortInUseException {
-        CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(actualPortName);
+        CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
         commPort = portIdentifier.open(this.getClass().getName(), msToWaitForPort);
     }
 
@@ -117,44 +114,25 @@ public abstract class LocalSerialPort implements IHarcHardware {
         this.debug = debug;
     }
 
-    @Override
-    public void open() throws HarcHardwareException, IOException {
-        open(false);
-    }
 
     /**
-     * This version of open tries, if its argument is true, to open the "following" device if opening of the requested device fails.
-     * Up to maxtries attempts are made, then a HarcHardwareException is thrown on failure.
+     * Opens the device.
      *
-     * @param iterate
-     * @throws HarcHardwareException
+     * @throws HarcHardwareException Bundles RXTX exceptions together.
      * @throws IOException
      */
-    public void open(boolean iterate) throws HarcHardwareException, IOException {
+    @Override
+    public void open() throws HarcHardwareException, IOException {
         boolean success = false;
-        // Resolve symbolic links (udev!!)
-        actualPortName = (new File(portName)).getCanonicalPath();
-        int tries = 0;
-        do {
-            try {
-                lowLevelOpen();
-                success = true;
-            } catch (NoSuchPortException ex) {
-                if (!iterate)
-                    throw new HarcHardwareException("No such port: " + portName);
-                actualPortName = nextPortName(actualPortName);
-                if (actualPortName == null)
-                    throw new HarcHardwareException("No such port: " + portName);
-            } catch (PortInUseException ex) {
-                if (!iterate)
-                    throw new HarcHardwareException(ex);
-                actualPortName = nextPortName(actualPortName);
-            }
-            tries++;
-        } while (!success && tries < maxtries);
+        try {
+            lowLevelOpen();
+            success = true;
+        } catch (NoSuchPortException | PortInUseException ex) {
+            throw new HarcHardwareException(ex);
+        }
 
         if (!success)
-            throw new HarcHardwareException("Could not open LocalSerialPort " + portName + (iterate ? (" -- " + actualPortName): ""));
+            throw new HarcHardwareException("Could not open LocalSerialPort " + portName);
 
         if (commPort instanceof gnu.io.SerialPort) {
             SerialPort serialPort = (SerialPort) commPort;
@@ -263,15 +241,6 @@ public abstract class LocalSerialPort implements IHarcHardware {
     @Override
     public String getVersion() {
         return "n/a";
-    }
-
-    /**
-     * Returns the actual port name being used. May differ from one requested in
-     * the constructor if the device was opened with open(true).
-     * @return Actual port name used.
-     */
-    public String getActualPortName() {
-        return actualPortName;
     }
 
     /**
