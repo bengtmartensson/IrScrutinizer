@@ -52,6 +52,42 @@
                 <project.exepath>/usr/bin/${project.nameLowercase}</project.exepath>
             </properties>
         </profile>
+
+        <!-- Build the Windows setup.exe, if possible -->
+        <profile>
+            <id>buildSetup.exe</id>
+            <activation>
+                <file>
+                    <exists>${basedir}/../../Inno Setup 5/ISCC.exe</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.4.0</version>
+                        <executions>
+                            <execution>
+                                <id>make-setup-exe</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>/usr/bin/wine</executable>
+                                    <workingDirectory>${project.build.directory}</workingDirectory>
+                                    <arguments>
+                                        <argument>${basedir}/../../Inno Setup 5/ISCC.exe</argument>
+                                        <argument>${project.artifactId}_inno.iss</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <build>
