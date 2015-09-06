@@ -85,7 +85,7 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
         serialPort.sendString(payload + lineEnding);
         if (verbose)
             System.err.println(payload);
-        String response = serialPort.readString();
+        String response = serialPort.readString(true);
         return response != null && response.trim().equals(okString);
     }
 
