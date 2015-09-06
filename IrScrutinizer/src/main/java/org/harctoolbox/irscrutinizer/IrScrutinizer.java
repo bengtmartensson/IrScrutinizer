@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
@@ -38,6 +40,7 @@ public class IrScrutinizer {
 
     /** Number indicating invalid value. */
     public final static long invalid = -1;
+    private final static String backupsuffix = "back";
 
     private IrScrutinizer() {
     }
@@ -112,10 +115,7 @@ public class IrScrutinizer {
         }
 
         if (commandLineArgs.nukeProperties) {
-            Props properties = new Props(commandLineArgs.propertiesFilename, commandLineArgs.applicationHome);
-            String filename = properties.getFilename();
-            System.out.println("Deleting the properties file " + filename + ".");
-            (new File(filename)).deleteOnExit();
+            nukeProperties(true);
             System.exit(IrpUtils.exitSuccess);
         }
 
@@ -147,6 +147,21 @@ public class IrScrutinizer {
         guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.debug, userLevel);
     }
 
+    private static String nukeProperties(boolean verbose) {
+        Props properties = new Props(commandLineArgs.propertiesFilename, commandLineArgs.applicationHome);
+        String filename = properties.getFilename();
+        String newFilename = filename + "." + backupsuffix;
+        if (verbose)
+            System.out.println("Renaming the properties file " + filename + " to " + newFilename + ".");
+        (new File(filename)).deleteOnExit();
+        try {
+            return Files.copy((new File(filename)).toPath(), (new File(newFilename)).toPath(), StandardCopyOption.REPLACE_EXISTING).toString();
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+            return null;
+        }
+    }
+
     private static void guiExecute(final String applicationHome, final String propsfilename, final boolean verbose, final int debug, final int userlevel) {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
@@ -154,18 +169,34 @@ public class IrScrutinizer {
             public void run() {
                 try {
                     new GuiMain(applicationHome, propsfilename, verbose, debug, userlevel).setVisible(true);
-                } catch (ParseException ex) {
-                    GuiUtils.fatal(ex, IrpUtils.exitConfigReadError);
+                } catch (ParseException | IOException | IncompatibleArgumentException | URISyntaxException ex) {
+                    GuiUtils.fatal(ex, IrpUtils.exitConfigReadError, new GuiUtils.EmergencyFixer () {
+                        private String backupfile;
+
+                        @Override
+                        public void fix() {
+                            backupfile = nukeProperties(false);
+                        }
+
+                        @Override
+                        public String getQuestion() {
+                            return "Remove the properites file?";
+                        }
+
+                        @Override
+                        public String getYesMessage() {
+                            return "Renamed the properties file to " + backupfile + ".";
+                        }
+
+                        @Override
+                        public String getNoMessage() {
+                            return null;
+                        }
+                    });
                 } catch (ParserConfigurationException ex) {
                     GuiUtils.fatal(ex, IrpUtils.exitInternalFailure);
                 } catch (SAXException ex) {
                     GuiUtils.fatal(ex, IrpUtils.exitXmlError);
-                } catch (IOException ex) {
-                    GuiUtils.fatal(ex, IrpUtils.exitConfigReadError);
-                } catch (IncompatibleArgumentException ex) {
-                    GuiUtils.fatal(ex, IrpUtils.exitConfigReadError);
-                } catch (URISyntaxException ex) {
-                    GuiUtils.fatal(ex, IrpUtils.exitConfigReadError);
                 }
             }
         });

@@ -489,7 +489,9 @@ public class GuiMain extends javax.swing.JFrame {
                 genericSerialSenderBean,
                 properties,
                 guiUtils);
-        sendingHardwareManager.add(sendingGenericSerialPort);
+        if (userlevel != 0)
+            sendingHardwareManager.add(sendingGenericSerialPort);
+
         try {
             sendingHardwareManager.select(properties.getTransmitHardware());
         } catch (HarcHardwareException ex) {
@@ -2135,6 +2137,7 @@ public class GuiMain extends javax.swing.JFrame {
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
         mainDocuMenuItem = new javax.swing.JMenuItem();
+        tutorialMenuItem = new javax.swing.JMenuItem();
         irpMasterDocuMenuItem = new javax.swing.JMenuItem();
         homePageMenuItem = new javax.swing.JMenuItem();
         releaseNotesMenuItem = new javax.swing.JMenuItem();
@@ -5380,11 +5383,11 @@ public class GuiMain extends javax.swing.JFrame {
         tcpSerialComboBean.setLayout(tcpSerialComboBeanLayout);
         tcpSerialComboBeanLayout.setHorizontalGroup(
             tcpSerialComboBeanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGap(0, 800, Short.MAX_VALUE)
         );
         tcpSerialComboBeanLayout.setVerticalGroup(
             tcpSerialComboBeanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGap(0, 80, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout girsSendingPanelLayout = new javax.swing.GroupLayout(girsSendingPanel);
@@ -6510,6 +6513,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         mainDocuMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
         mainDocuMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/mimetypes/man.png"))); // NOI18N
+        mainDocuMenuItem.setMnemonic('D');
         mainDocuMenuItem.setText("Program Documentation");
         mainDocuMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -6518,6 +6522,17 @@ public class GuiMain extends javax.swing.JFrame {
         });
         helpMenu.add(mainDocuMenuItem);
 
+        tutorialMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        tutorialMenuItem.setMnemonic('T');
+        tutorialMenuItem.setText("Tutorial");
+        tutorialMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tutorialMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(tutorialMenuItem);
+
+        irpMasterDocuMenuItem.setMnemonic('I');
         irpMasterDocuMenuItem.setText("IrpMaster Documentation");
         irpMasterDocuMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -6527,6 +6542,7 @@ public class GuiMain extends javax.swing.JFrame {
         helpMenu.add(irpMasterDocuMenuItem);
 
         homePageMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/kfm_home.png"))); // NOI18N
+        homePageMenuItem.setMnemonic('H');
         homePageMenuItem.setText("Project home page");
         homePageMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -6535,6 +6551,7 @@ public class GuiMain extends javax.swing.JFrame {
         });
         helpMenu.add(homePageMenuItem);
 
+        releaseNotesMenuItem.setMnemonic('R');
         releaseNotesMenuItem.setText("Release Notes");
         releaseNotesMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -8328,6 +8345,10 @@ public class GuiMain extends javax.swing.JFrame {
         importRemoteByFileSelector(commandFusionImporter, true);
     }//GEN-LAST:event_importCommandFusionMenuItem2ActionPerformed
 
+    private void tutorialMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tutorialMenuItemActionPerformed
+        guiUtils.browse(properties.getTutorialUrl());
+    }//GEN-LAST:event_tutorialMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -8811,6 +8832,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton transmitScrutinizedButton;
     private javax.swing.JButton transmitSignalButton;
     private javax.swing.JButton transmitSignalButton1;
+    private javax.swing.JMenuItem tutorialMenuItem;
     private javax.swing.JMenuItem unsetTMenuItem;
     private javax.swing.JCheckBoxMenuItem useCleansedCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem usePopupsForErrorsCheckBoxMenuItem;
