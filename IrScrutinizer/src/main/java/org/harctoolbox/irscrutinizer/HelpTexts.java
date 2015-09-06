@@ -315,7 +315,7 @@ class HelpTexts {
             + "Has been tested only on Linux, should however work on all systems.";
 
     public static String capturingArduinoHardwareHelp
-            = "To use the Arduino with a non-demodulating receiver for IR capture. The sketch ArduinoIrScrutinizer should be running on the Arduino.";
+            = "To use the Arduino with a non-demodulating receiver for IR capture. The sketch GirsLite (download source from https://github.com/bengtmartensson/AGirs) should be running on the Arduino.";
 
     public static String sendingHardwareHelp
             = "The sub-panes of this pane allows for the selection and configuration of the employed IR sending hardware. Note that selecting a sub-pane selects the associated hardware for sending, to the extent possible";
@@ -387,7 +387,7 @@ class HelpTexts {
 
     public static String sendingArduinoHelp
             = "Using this pane, an Arduino equipped with a suitable IR Led can be used to "
-            + "transmit IR signals. The sketch ArduinoIrScrutinizer should be running on the Arduino.";
+            + "transmit IR signals. The sketch GirsLite (download source from https://github.com/bengtmartensson/AGirs) should be running on the Arduino.";
 
     public static String sendingGenericSerialPortHelp
             = "This pane contains the controls for sending a signal in a general format to one of the serial ports available on the system.";

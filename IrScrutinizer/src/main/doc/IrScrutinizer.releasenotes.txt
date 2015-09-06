@@ -1,5 +1,9 @@
 Version 1.1.3
-- New implementation of MacOS App build, without proprietary stuff.
+- Removed "smart" incrementing of serial device, broke the USB serial
+devices on Windows, and had severed problems on the others.
+- Arduino sources no longer distributed with the program (they are
+available on https://github.com/bengtmartensson/AGirs).
+- New implementation of MacOS App build, without proprietary components.
 - Cleaned up version management in poms.
 - SendingHardwareManager: handle exceptions in select better.
 - LircClient: nuke trailing (and leading) spaces before comparision.
@@ -11,7 +15,7 @@ Version 1.1.3
 - Read CML files as WINDOWS-1252 (educated guess).
 - Removed external dependency of de.moldaner.wakeonlan
 - Robustness fix in AmxBeaconListener.
-- Explicitly set Java source and target version to 1.7.
+- Java version required is now 1.7 (source and target).
 - Minor fixes in IrPlotter: Wrote help text. Clone plot now in popup
   menu. New public function IrPlotter.createPopupClone().
 - Implemented Cml- and CommandFusion-import.
@@ -30,7 +34,7 @@ Version 1.1.3
 
 Version 1.1.2
 - On Unix-like systems, can now be installed on the local machen by
-  "mvn deploy". 
+  "mvn deploy".
 - Now both Fedora rpm version and a Mac OS X app!
 - Sources available at Github
   (https://github.com/bengtmartensson/harctoolboxbundle). Reorganized as
@@ -50,7 +54,7 @@ Version 1.1.2
   the extension .conf is possible.
 - (IrpProtocols.ini) "New" protocols Sharp{1} and Sharp{2}.
 - Removed dead command line options
-- Adhere to Freedesktop configuration files standards: 
+- Adhere to Freedesktop configuration files standards:
   http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
   (on other platforms than Windows).
 - New Menuitems Help->Release notes.
@@ -63,7 +67,7 @@ Version 1.1.1
 - Splash screen on startup.
 - Multiple decodes from DecodeIR are no longer "censored" (in all places).
 - Parametric remote -> Advanced -> "Set misc. parameters" now replaces
-all old parameters except D, S, F, and T. 
+all old parameters except D, S, F, and T.
 - Fixed unclear semantic of "count" sends of an IrSignal.
 - Fixed issue with sending by IrToy.
 

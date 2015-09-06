@@ -46,7 +46,6 @@ Source: "protocols.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "exportformats.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "generated-documents\*.html"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "doc\*.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\arduino\*"; DestDir: "{app}\arduino"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "doc\IrpMaster.releasenotes.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "doc\IrScrutinizer.releasenotes.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\schemas\*.xsd"; DestDir: "{app}\schemas"

@@ -239,7 +239,7 @@ parameters.</dd>
 <title>General</title>
 <p>IrScrutinizer, and all but two of its third-party additions, are written in Java,
 which means that it should run on every computer with a modern Java installed;
-Windows, Linux, Macintosh, etc. Java 1.6 or later is required. The two
+Windows, Linux, Macintosh, etc. Java 1.7 or later is required. The two
 exception are DecodeIR and the native part of RXTX, which are written in C++
 and C respectively, and invoked as shared library
     (<code>.dll</code> in Windows, <code>.so</code> in Linux, <code>.jnilib</code> or <code>.dylib</code> in Mac OS X). If DecodeIR or
@@ -305,7 +305,8 @@ together with supporting files, like all the compiled shared libraries for the d
 operating systems Linux, Windows, and Mac. It can be used on all those systems. (In other environments, the
 shared libraries may be compiled with moderate effort.)</p>
 
-<p>The generic binary distribution be used whenever using the rpm/setup.exe/app installation is not possible or not desired.</p>
+<p>The generic binary distribution be used whenever using the
+rpm/setup.exe/app installation is not possible, not up-to-date, or not desired.</p>
 
 <p>To install, unpack in an empty directory of your choice, suggested is
     <code>/usr/local/irscrutinizer</code>. Inspect the wrapper <code>irscrutinizer.sh</code>, and
@@ -1374,7 +1375,13 @@ packaging.</p>
 be mounted on a Windows computer. Then, on the Windows computer, open
         the generated file <code>IrScrutinizer/target/IrScrutinizer_inno.iss</code> with
         the Inno installer, and start the compile. This will generate the desired file
-        <code>IrScutinizer-</code><em><code>version</code></em><code>.exe</code>.</p>
+    <code>IrScutinizer-</code><em><code>version</code></em><code>.exe</code>.</p>
+    <p>Alternatively, the "compatibility layer capable of running
+    Windows applications" software application <a
+    href="https://www.winehq.org">Wine</a> (included in most Linux
+    distributions) can run the ISCC compiler of Inno. The Maven file
+    <code>IrScrutinizer/pom.xml</code> contains an experimental
+    invocation along these lines.</p> 
 </section>
 
 <section>
