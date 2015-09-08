@@ -1,4 +1,5 @@
 Version 1.1.3
+- Fixed broken CSV-import using regexp (e.g. "WHITESPACE").
 - Removed "smart" incrementing of serial device, broke the USB serial
 devices on Windows, and had severed problems on the others.
 - Arduino sources no longer distributed with the program (they are
