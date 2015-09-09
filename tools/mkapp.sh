@@ -39,15 +39,18 @@ cp ${TARGETDIR}/Info.plist ${APPDIR}/${APPNAME}.app/Contents
 cp ${TARGETDIR}/Launcher ${APPDIR}/${APPNAME}.app/Contents/MacOS
 chmod +x ${APPDIR}/${APPNAME}.app/Contents/MacOS/Launcher
 cp ${TOPDIR}/${APPNAME}/${APPNAME}.icns ${APPDIR}/${APPNAME}.app/Contents/Resources
-cp -r "${TOPDIR}/native/Mac OS X-x86_64" ${REPODIR}
-cp -r "${TOPDIR}/native/Mac OS X-i386"   ${REPODIR}
 
 ( cd ${APPDIR}/${APPNAME}.app/Contents/Resources/Java/repo; \
   unzip -q ${TARGETDIR}/${APPNAME}-bin.zip )
+
+# These may have been copied already by the unzip. But who cares? :-).
+cp -r "${TOPDIR}/native/Mac OS X-x86_64" ${REPODIR}
+cp -r "${TOPDIR}/native/Mac OS X-i386"   ${REPODIR}
 
 # Delete some files that are not relevant in the MacOs environment
 rm ${REPODIR}/doc/INSTALL-binary* ${REPODIR}/INSTALL-binary*
 rm ${REPODIR}/irscrutinizer.bat ${REPODIR}/irscrutinizer.desktop
 rm ${REPODIR}/*_install.txt
+rm -rf ${REPODIR}/Linux* ${REPODIR}/Windows*
 
 (cd ${WORKDIR}; zip -q -r ${TARGETDIR}/${APPNAME}-${VERSION}-app.zip ${APPNAME}-${VERSION})

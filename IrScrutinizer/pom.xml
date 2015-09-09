@@ -7,7 +7,7 @@
     <groupId>org.harctoolbox</groupId>
     <artifactId>IrScrutinizer</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.2dev</version>
+    <version>1.1.3</version>
     <name>IrScrutinizer</name>
     <parent>
         <groupId>org.harctoolbox</groupId>
@@ -51,6 +51,42 @@
                 <project.icon>${project.nameLowercase}</project.icon>
                 <project.exepath>/usr/bin/${project.nameLowercase}</project.exepath>
             </properties>
+        </profile>
+
+        <!-- Build the Windows setup.exe, if possible -->
+        <profile>
+            <id>buildSetup.exe</id>
+            <activation>
+                <file>
+                    <exists>${basedir}/../../Inno Setup 5/ISCC.exe</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.4.0</version>
+                        <executions>
+                            <execution>
+                                <id>make-setup-exe</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>/usr/bin/wine</executable>
+                                    <workingDirectory>${project.build.directory}</workingDirectory>
+                                    <arguments>
+                                        <argument>${basedir}/../../Inno Setup 5/ISCC.exe</argument>
+                                        <argument>${project.artifactId}_inno.iss</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
@@ -163,9 +199,9 @@
                     </descriptorRefs>
                     <finalName>${project.name}</finalName>
                     <!--appendAssemblyId>true</appendAssemblyId-->
-                  <descriptors>
-                      <descriptor>src/assembly/target.xml</descriptor>
-                  </descriptors>
+                    <descriptors>
+                        <descriptor>src/assembly/target.xml</descriptor>
+                    </descriptors>
                 </configuration>
                 <executions>
                     <execution>
@@ -291,6 +327,20 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.4.0</version>
                 <executions>
+                    <execution> <!-- there must be a better way... -->
+                        <id>copy-binfile-with-version</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cp</executable>
+                            <arguments>
+                                <argument>${basedir}/target/${project.artifactId}-bin.zip</argument>
+                                <argument>${basedir}/target/${project.artifactId}-${project.version}-bin.zip</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>sillify docs</id>
                         <phase>package</phase>

@@ -7,7 +7,7 @@
     <groupId>org.harctoolbox</groupId>
     <artifactId>IrpMaster</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.3</version>
+    <version>1.1.3</version>
     <name>IrpMaster</name>
     <parent>
         <groupId>org.harctoolbox</groupId>

@@ -52,23 +52,27 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
     private String lastRemote = null;
     private String lastCommand = null;
 
-    public LircClient(String hostname, int port, boolean verbose, int timeout) throws UnknownHostException {
+    private String version = null;
+
+    public LircClient(String hostname, int port, boolean verbose, int timeout) throws UnknownHostException, IOException {
         this.timeout = timeout;
         lircServerIp = (hostname != null) ? hostname : defaultLircIP;
         inetAddress = InetAddress.getByName(hostname);
         lircPort = port;
         this.verbose = verbose;
+        String[] result = sendCommand("VERSION", false);
+        version = (result == null || result.length == 0) ? null : result[0];
     }
 
-    public LircClient(String hostname, boolean verbose, int timeout) throws UnknownHostException {
+    public LircClient(String hostname, boolean verbose, int timeout) throws UnknownHostException, IOException {
         this(hostname, lircDefaultPort, verbose, timeout);
     }
 
-    public LircClient(String hostname, boolean verbose) throws UnknownHostException {
+    public LircClient(String hostname, boolean verbose) throws UnknownHostException, IOException {
         this(hostname, verbose, defaultTimeout);
     }
 
-    public LircClient(String hostname) throws UnknownHostException {
+    public LircClient(String hostname) throws UnknownHostException, IOException {
         this(hostname, false);
     }
 
@@ -427,8 +431,9 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
 
     @Override
     public String getVersion() throws IOException {
-        String[] result = sendCommand("VERSION", false);
-        return (result == null || result.length == 0) ? null : result[0];
+        return version;
+        //String[] result = sendCommand("VERSION", false);
+        //return (result == null || result.length == 0) ? null : result[0];
     }
 
     /**
@@ -437,6 +442,6 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
      */
     @Override
     public boolean isValid() {
-        return true;
+        return version != null;
     }
 }

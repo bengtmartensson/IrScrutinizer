@@ -66,11 +66,13 @@
                 <artifactId>RXTX</artifactId>
                 <version>2.2pre2h</version>
             </dependency>
+            <!-- Disabled for this version
             <dependency>
                 <groupId>org.gnu</groupId>
                 <artifactId>Readline</artifactId>
                 <version>0.8.2</version>
             </dependency>
+            -->
 
             <dependency>
                 <groupId>org.harctoolbox</groupId>
@@ -100,11 +102,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <reposurl>${basedir}/repos</reposurl>
-        <IrScrutinizer.version>1.1.2dev</IrScrutinizer.version>
-        <IrpMaster.version>1.0.3</IrpMaster.version>
-        <Girr.version>1.0.3</Girr.version>
-        <Jirc.version>0.3.1</Jirc.version>
-        <HarcHardware.version>0.9.3</HarcHardware.version>
+        <IrScrutinizer.version>1.1.3</IrScrutinizer.version>
+        <IrpMaster.version>1.1.3</IrpMaster.version>
+        <Girr.version>1.1.3</Girr.version>
+        <Jirc.version>1.1.3</Jirc.version>
+        <HarcHardware.version>1.1.3</HarcHardware.version>
     </properties>
     <distributionManagement>
         <repository>

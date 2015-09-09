@@ -25,6 +25,8 @@ import java.io.Reader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
@@ -78,9 +80,12 @@ public class CsvRawImporter extends CsvImporter {
         }
     }
 
+    // TODO: This is probably quite inefficient. Better would be to copy
+    // String.split and make the necessary fixes to it.
     private String[] csvSplit(String line, String separator) {
         StringBuilder str = new StringBuilder(line.trim());
         ArrayList<String> chunks = new ArrayList<>();
+        Pattern pattern = Pattern.compile(separator);
 
         while (str.length() > 0) {
             if (str.length() >= separator.length() && separator.equals(str.substring(0, separator.length())))
@@ -94,13 +99,14 @@ public class CsvRawImporter extends CsvImporter {
                 chunk = str.substring(1, n);
                 str.delete(0, n+1);
             } else {
-                int n = str.indexOf(separator);
-                if (n == -1) {
+                Matcher matcher = pattern.matcher(str);
+                boolean success = matcher.find();
+                if (success) {
+                    chunk = str.substring(0, matcher.start());
+                    str.delete(0, matcher.end());
+                } else {
                     chunk = str.toString();
                     str.setLength(0);
-                } else {
-                    chunk = str.substring(0, n);
-                    str.delete(0, n);
                 }
             }
             chunks.add(chunk.trim());

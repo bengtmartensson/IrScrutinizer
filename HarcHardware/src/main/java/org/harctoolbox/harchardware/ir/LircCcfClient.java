@@ -28,19 +28,19 @@ import org.harctoolbox.IrpMaster.IrSignal;
  */
 public class LircCcfClient extends LircClient implements IRawIrSender,IIrSenderStop {
 
-    public LircCcfClient(String hostname, int port, boolean verbose, int timeout) throws UnknownHostException {
+    public LircCcfClient(String hostname, int port, boolean verbose, int timeout) throws UnknownHostException, IOException {
         super(hostname, port, verbose, timeout);
     }
 
-    public LircCcfClient(String hostname, boolean verbose, int timeout) throws UnknownHostException {
+    public LircCcfClient(String hostname, boolean verbose, int timeout) throws UnknownHostException, IOException {
         super(hostname, verbose, timeout);
     }
 
-    public LircCcfClient(String hostname, boolean verbose) throws UnknownHostException {
+    public LircCcfClient(String hostname, boolean verbose) throws UnknownHostException, IOException {
         super(hostname, verbose);
     }
 
-    public LircCcfClient(String hostname) throws UnknownHostException {
+    public LircCcfClient(String hostname) throws UnknownHostException, IOException {
         super(hostname, false);
     }
 
@@ -69,32 +69,11 @@ public class LircCcfClient extends LircClient implements IRawIrSender,IIrSenderS
 
     @Override
     public boolean stopIr(Transmitter transmitter) throws IOException, NoSuchTransmitterException {
-        //try {
             return setTransmitters(transmitter)
                     && sendCommand("SEND_STOP", false) != null;
-        //} catch (IOException ex) {
-        //    throw new HarcHardwareException(ex);
-        //}
     }
 
     public boolean stopIr(int port) throws NoSuchTransmitterException, IOException {
         return stopIr(getTransmitter(port));
     }
-/*
-  public static void main(String[] args) {
-        LircClient l = new LircClient(args[0], args.length > 1 && args[1].equals("-v"));
-        try {
-            //  	dump_array(l.get_remote());
-            //  	dump_array(l.get_remote("rc5_cd"));
-            // 	System.out.println(l.getRemoteCommand("rc5_cd", "stop"));
-            // 	System.out.println(l.getVersion());
-            // 	System.out.println(l.get_ccf_remote_command("panasonic_dvd", "power_toggle"));
-            // 	dump_array(l.get_ccf_remote("panasonic_dvd"));
-
-        } catch (HarcHardwareException e) {
-            System.err.println(e.getMessage());
-            System.exit(IrpUtils.exitIoerror);
-        }
-    }
-    */
 }
