@@ -23,7 +23,7 @@ public class HexCalculator extends HarcPanel {
     private static final String versionString = "0.3.0";
     private static final String helpText =
             "This pane computes, for a number given in first row either as decimal or hexadecimal\n"
-            + "its (one-) complement (in 8, 16, or 32 bits), its \"reverse\" (java.lang.Integer.reverse():\n"
+            + "its (one-) complement (in 8, 16, or 32 bits), its \"reverse\" (java.lang.Integer.reverse()):\n"
             + "the value obtained by reversing the order of the bits in the two's complement binary\n"
             + "representation of the specified int value)."
             ;

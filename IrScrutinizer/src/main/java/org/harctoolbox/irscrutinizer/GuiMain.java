@@ -516,8 +516,8 @@ public class GuiMain extends javax.swing.JFrame {
         capturingHardwareManager.add(new CapturingSerial<Arduino>(Arduino.class, captureArduinoPanel, arduinoSerialPortSimpleBean,
                 properties, guiUtils, capturingHardwareManager));
 
-        capturingHardwareManager.add(new CapturingSerial<GirsClient>(GirsClient.class, captureGirsPanel, girsClientSerialPortSimpleBean,
-                properties, guiUtils, capturingHardwareManager));
+        //capturingHardwareManager.add(new CapturingSerial<GirsClient>(GirsClient.class, captureGirsPanel, girsClientSerialPortSimpleBean,
+        //        properties, guiUtils, capturingHardwareManager));
 
         capturingHardwareManager.add(new CapturingSerial<CommandFusion>(CommandFusion.class, captureCommandFusionPanel, commandFusionSerialPortSimpleBean,
                 properties, guiUtils, capturingHardwareManager));
