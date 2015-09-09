@@ -266,7 +266,8 @@ public class AmxBeaconListener /*implements Serializable*/ {
             HashMap<String, String> table = new HashMap<String, String>(pairs.length);
             for (String pair : pairs) {
                 String[] x = pair.split("=");
-                table.put(x[0], x[1]);
+                if (x.length >= 2)
+                    table.put(x[0], x[1]);
             }
 
             Node r = new Node(a, port, table);

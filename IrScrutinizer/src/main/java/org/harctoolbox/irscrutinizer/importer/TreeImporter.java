@@ -19,9 +19,14 @@ package org.harctoolbox.irscrutinizer.importer;
 
 import java.awt.Component;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Map.Entry;
 import javax.swing.JTree;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -41,11 +46,34 @@ import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
  */
 
 @SuppressWarnings("serial")
-public class TreeImporter extends javax.swing.JPanel {
+public class TreeImporter extends javax.swing.JPanel implements TreeExpansionListener {
     private GuiUtils guiUtils;
     private GuiMain guiMain = null;
     private DefaultMutableTreeNode root;
     private RemoteSet remoteSet;
+
+    private static final int maxRemotesForImportAll = 10;
+
+    @Override
+    public void treeExpanded(TreeExpansionEvent event) {
+        DefaultMutableTreeNode remote = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
+        if (!Remote.class.isInstance(remote.getUserObject())) // Just to be on the safe side...
+            return;
+
+        for (Enumeration e = remote.children(); e.hasMoreElements();) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
+            Command command = (Command) node.getUserObject();
+            try {
+                command.checkForParameters(); // decode the commands, if possible
+            } catch (IrpMasterException ex) {
+               // nothing to do...
+            }
+        }
+    }
+
+    @Override
+    public void treeCollapsed(TreeExpansionEvent event) {
+    }
 
     /**
      * Creates new form TreeImporter
@@ -53,6 +81,7 @@ public class TreeImporter extends javax.swing.JPanel {
     public TreeImporter() {
         initComponents();
         tree.setCellRenderer(new MyRenderer());
+        tree.addTreeExpansionListener(this);
     }
 
     /**
@@ -80,26 +109,30 @@ public class TreeImporter extends javax.swing.JPanel {
 
     public void clear() {
         this.remoteSet = null;
-        DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode("Remotes"));
+        DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode("Remotes not yet loaded"));
         tree.setModel(treeModel);
         enableStuff(false);
     }
 
     private void enableStuff(boolean val) {
-        importAllButton.setEnabled(val);
+        importAllButton.setEnabled(val && enableImportAll());
         importSelectionButton.setEnabled(val);
         transmitSelectedButton.setEnabled(val);
         importSignalButton.setEnabled(val);
         importSelectionRawButton.setEnabled(val);
-        importAllRawButton.setEnabled(val);
+        importAllRawButton.setEnabled(val && enableImportAll());
 
         scrutinizeSignalMenuItem.setEnabled(val);
         printSignalMenuItem.setEnabled(val);
-        importAllMenuItem.setEnabled(val);
+        importAllMenuItem.setEnabled(val && enableImportAll());
         importSelectionMenuItem.setEnabled(val);
         transmitSignalMenuItem.setEnabled(val);
-        importSelectionRawMenuItem.setEnabled(val);
+        importSelectionRawMenuItem.setEnabled(val && enableImportAll());
         importAllRawMenuItem.setEnabled(val);
+    }
+
+    private boolean enableImportAll() {
+        return remoteSet == null || remoteSet.getRemotes().size() <= maxRemotesForImportAll;
     }
 
     @Override
@@ -110,7 +143,10 @@ public class TreeImporter extends javax.swing.JPanel {
 
     private DefaultTreeModel newTreeModel() {
         root = new DefaultMutableTreeNode("Remotes");
-        for (Remote remote : remoteSet.getRemotes()) {
+        Collection<Remote> remotes = remoteSet.getRemotes();
+        ArrayList<Remote> remoteList = new ArrayList<>(remotes);
+        Collections.sort(remoteList, new Remote.CompareNameCaseInsensitive());
+        for (Remote remote : remoteList) {
             DefaultMutableTreeNode node = newRemoteNode(remote);
             root.add(node);
         }
@@ -322,7 +358,7 @@ public class TreeImporter extends javax.swing.JPanel {
         });
         popupMenu.add(importSelectionRawMenuItem);
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Remotes");
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Remotes not yet loaded");
         tree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         tree.setToolTipText("Select with left, right for popup menu.");
         tree.setComponentPopupMenu(popupMenu);
@@ -485,13 +521,9 @@ public class TreeImporter extends javax.swing.JPanel {
         checkGuiMain();
         try {
             guiMain.transmit(command);
-        } catch (IrpMasterException ex) {
+        } catch (IrpMasterException | IOException | HardwareUnavailableException ex) {
             guiUtils.error(ex);
         } catch (NoSuchTransmitterException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (HardwareUnavailableException ex) {
             guiUtils.error(ex);
         } catch (HarcHardwareException ex) {
             guiUtils.error(ex);

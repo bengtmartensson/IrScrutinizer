@@ -27,9 +27,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.IStringCommand;
+import org.harctoolbox.harchardware.ICommandLineDevice;
 
-public final class LocalSerialPortBuffered extends LocalSerialPort implements IStringCommand {
+public final class LocalSerialPortBuffered extends LocalSerialPort implements ICommandLineDevice {
 
     private BufferedReader bufferedInStream;
 
@@ -42,6 +42,10 @@ public final class LocalSerialPortBuffered extends LocalSerialPort implements IS
         this(portName, baud, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0, verbose);
     }
 
+    public LocalSerialPortBuffered(String portName, int baud, int timeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this(portName, baud, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, timeout, verbose);
+    }
+
     public LocalSerialPortBuffered(String portName) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         this(portName, 9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0, false);
     }
@@ -52,12 +56,7 @@ public final class LocalSerialPortBuffered extends LocalSerialPort implements IS
 
     @Override
     public void open() throws HarcHardwareException, IOException {
-        open(false);
-    }
-
-    @Override
-    public void open(boolean iterate) throws HarcHardwareException, IOException {
-        super.open(iterate);
+        super.open();
         bufferedInStream = new BufferedReader(new InputStreamReader(inStream, IrpUtils.dumbCharset));
     }
 
@@ -86,15 +85,25 @@ public final class LocalSerialPortBuffered extends LocalSerialPort implements IS
         return readString(false);
     }
 
+    @Override
     public String readString(boolean wait) throws IOException {
         if (!(wait || bufferedInStream.ready()))
             return null;
 
-        String result = bufferedInStream.readLine();
-        if (verbose)
-            System.err.println("LocalSerialPortBuffered.readString: received "
-                    + (result != null ? ("\"" + result + "\"") : "<null>"));
-        return result;
+        try {
+            String result = bufferedInStream.readLine();
+            if (verbose)
+                System.err.println("LocalSerialPortBuffered.readString: received "
+                        + (result != null ? ("\"" + result + "\"") : "<null>"));
+            return result;
+        } catch (IOException ex) {
+            if (ex.getMessage().equals("Underlying input stream returned zero bytes")) { // RXTX....
+                if (verbose)
+                    System.err.println("LocalSerialPortBuffered.readString: TIMEOUT");
+                return null;
+            } else
+                throw ex;
+        }
     }
 
     public void waitFor(String goal, String areUThere, int delay, int tries) throws IOException, HarcHardwareException {
@@ -149,28 +158,17 @@ public final class LocalSerialPortBuffered extends LocalSerialPort implements IS
 
     public static void main(String[] args) {
         ArrayList<String> names;
-        try {
+        try (LocalSerialPortBuffered port = new LocalSerialPortBuffered("/dev/ttyS0", 9600, 8, 1, Parity.NONE, FlowControl.NONE, 10000, true)) {
             names = getSerialPortNames(false);
-            for (String name : names) {
+            for (String name : names)
                 System.out.println(name);
-            }
 
-            LocalSerialPortBuffered port = null;
-
-            port = new LocalSerialPortBuffered(defaultPort, 38400, 8, 1, Parity.EVEN, FlowControl.NONE, 10000, true);
-            String cmd = "#QVR\r";
+            String cmd = "#POW\r";
+            port.open();
             port.sendString(cmd);
             System.out.println(port.readString());
 
-            port.close();
-
-        } catch (NoSuchPortException ex) {
-            System.err.println(ex.getMessage());
-        } catch (PortInUseException ex) {
-            System.err.println(ex.getMessage());
-        } catch (UnsupportedCommOperationException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IOException ex) {
+        } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException | HarcHardwareException ex) {
             System.err.println(ex.getMessage());
         }
     }

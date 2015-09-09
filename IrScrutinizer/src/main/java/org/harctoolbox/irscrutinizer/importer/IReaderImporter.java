@@ -69,5 +69,5 @@ public interface IReaderImporter extends IFileImporter {
      */
     public void load(String urlOrFilename) throws IOException, ParseException, IrpMasterException;
 
-    public void load(String urlOrFilename, boolean zip) throws IOException, ParseException, IrpMasterException;
+    public void load(String urlOrFilename, boolean zip) throws IOException, ParseException;
 }

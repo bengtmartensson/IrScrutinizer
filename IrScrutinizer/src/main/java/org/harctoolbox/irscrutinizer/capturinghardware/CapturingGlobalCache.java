@@ -43,12 +43,12 @@ public class CapturingGlobalCache extends CapturingHardware<GlobalCache> impleme
         super(panel, properties_, guiUtils, capturingHardwareManager);
         this.initialIp = hostname.isEmpty() ? null : hostname;
         this.globalCacheIrSenderSelector = globalCacheIrSenderSelector;
-        globalCacheIrSenderSelector.setTimeOut(properties.getCaptureStartTimeout());
+        globalCacheIrSenderSelector.setTimeout(properties.getCaptureStartTimeout());
         properties.addCaptureStartTimeoutChangeListener(new Props.IPropertyChangeListener() {
 
             @Override
             public void propertyChange(String name, Object oldValue, Object newValue) {
-                globalCacheIrSenderSelector.setTimeOut(properties.getCaptureStartTimeout());
+                globalCacheIrSenderSelector.setTimeout(properties.getCaptureStartTimeout());
             }
         });
         //setupHardwareCommonStart();

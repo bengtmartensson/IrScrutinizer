@@ -103,8 +103,6 @@ public class SendingHardwareManager {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     try {
                         select(hardware);
-                    } catch (IOException ex) {
-                        guiUtils.error(ex);
                     } catch (HarcHardwareException ex) {
                         guiUtils.error(ex);
                     }
@@ -125,11 +123,10 @@ public class SendingHardwareManager {
     /**
      *
      * @param name
-     * @throws IOException
      * @throws HarcHardwareException
      * @throws IllegalArgumentException
      */
-    public void select(String name) throws IOException, HarcHardwareException {
+    public void select(String name) throws HarcHardwareException {
         ISendingHardware<?> hardware = table.get(name);
         if (hardware == null)
             //throw new IllegalArgumentException(name + " does not exist in map.");
@@ -141,17 +138,20 @@ public class SendingHardwareManager {
     /**
      *
      * @param hardware
-     * @throws IOException
      * @throws HarcHardwareException
      * @throws IllegalArgumentException
      */
-    private void select(ISendingHardware<?> hardware) throws IOException, HarcHardwareException {
+    private void select(ISendingHardware<?> hardware) throws HarcHardwareException {
         tabbedPane.setSelectedComponent(hardware.getPanel()); // throws IllegalArgumentException
         selected = null;
-        hardware.setup();
-        hardware.setVerbosity(properties.getVerbose());
-        selected = hardware;
-        properties.setTransmitHardware(hardware.getName());
+        try {
+            hardware.setup();
+            hardware.setVerbosity(properties.getVerbose());
+            selected = hardware;
+            properties.setTransmitHardware(hardware.getName());
+        } catch (IOException ex) {
+            guiUtils.error(ex);
+        }
 
         if (menu != null) {
             for (Component component : menu.getMenuComponents()) {

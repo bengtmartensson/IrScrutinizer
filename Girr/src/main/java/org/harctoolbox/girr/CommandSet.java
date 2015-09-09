@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2013 Bengt Martensson.
+ Copyright (C) 2013, 2015 Bengt Martensson.
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -46,13 +46,12 @@ public class CommandSet {
      *
      * @param element
      * @throws ParseException
-     * @throws IrpMasterException
      */
-    CommandSet(Element element) throws ParseException, IrpMasterException {
+    CommandSet(Element element) throws ParseException {
         name = element.getAttribute("name");
         protocol = null;
-        commands = new LinkedHashMap<String, Command>();
-        parameters = new LinkedHashMap<String, Long>();
+        commands = new LinkedHashMap<>();
+        parameters = new LinkedHashMap<>();
         NodeList nl = element.getElementsByTagName("notes");
         if (nl.getLength() > 0)
             notes = ((Element) nl.item(0)).getTextContent();
@@ -75,8 +74,15 @@ public class CommandSet {
 
         nl = element.getElementsByTagName("command");
         for (int i = 0; i < nl.getLength(); i++) {
-            Command irCommand = new Command((Element) nl.item(i), protocol, parameters);
-            commands.put(irCommand.getName(), irCommand);
+            Command irCommand;
+            try {
+                irCommand = new Command((Element) nl.item(i), protocol, parameters);
+                commands.put(irCommand.getName(), irCommand);
+            } catch (IrpMasterException ex) {
+                // Ignore erroneous commands, continue parsing
+                // TODO: invoke logger
+            }
+
         }
     }
 
@@ -106,10 +112,9 @@ public class CommandSet {
      * @param generateCcf
      * @param generateParameters
      * @return newly constructed element, belonging to the doc Document.
-     * @throws IrpMasterException
      */
     public Element xmlExport(Document doc, boolean fatRaw,
-            boolean generateRaw, boolean generateCcf, boolean generateParameters) throws IrpMasterException {
+            boolean generateRaw, boolean generateCcf, boolean generateParameters) {
         Element element = doc.createElement("commandSet");
         element.setAttribute("name", name);
         if (notes != null) {
@@ -130,8 +135,13 @@ public class CommandSet {
         }
         if (commands != null) {
             for (Command command : commands.values()) {
-                element.appendChild(command.xmlExport(doc, null, fatRaw,
-                        generateRaw, generateCcf, generateParameters));
+                try {
+                    element.appendChild(command.xmlExport(doc, null, fatRaw,
+                            generateRaw, generateCcf, generateParameters));
+                } catch (IrpMasterException ex) {
+                    element.appendChild(doc.createComment("Could not export command: " + command.toString()));
+                    // TODO: invoke logger
+                }
             }
         }
         return element;
@@ -142,10 +152,13 @@ public class CommandSet {
      *
      * @param format
      * @param repeatCount
-     * @throws IrpMasterException
      */
-    public void addFormat(Command.CommandTextFormat format, int repeatCount) throws IrpMasterException {
+    public void addFormat(Command.CommandTextFormat format, int repeatCount) {
         for (Command command : commands.values())
-            command.addFormat(format, repeatCount);
+            try {
+                command.addFormat(format, repeatCount);
+            } catch (IrpMasterException ex) {
+                // TODO: invoke logger
+            }
     }
 }

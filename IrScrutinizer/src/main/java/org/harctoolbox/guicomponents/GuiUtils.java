@@ -44,6 +44,17 @@ public class GuiUtils implements Serializable {
     private final JFrame frame;
     boolean verbose = false;
 
+    public interface EmergencyFixer {
+        public void fix();
+
+        public String getQuestion();
+
+        public String getYesMessage();
+
+        public String getNoMessage();
+
+    }
+
     public GuiUtils(JFrame frame, String programName, int maxGuiMessageLength) {
         this.maxGuiMessageLength = maxGuiMessageLength;
         this.programName = programName;
@@ -70,7 +81,7 @@ public class GuiUtils implements Serializable {
     }
 
     private String truncate(String message) {
-        return message.length() <= maxGuiMessageLength  ? message
+        return message == null || message.length() <= maxGuiMessageLength  ? message
                 : message.substring(0, maxGuiMessageLength - 3) + "...";
     }
 
@@ -85,14 +96,30 @@ public class GuiUtils implements Serializable {
     }
 
     public static void fatal(Exception ex, int errorcode) {
-        fatal(ex.getClass().getSimpleName() + ": " + ex.getMessage(), errorcode);
+        fatal(ex, errorcode, null);
     }
 
-    public static void fatal(String message, int errorcode) {
-        if (System.console() == null)
-            JOptionPane.showMessageDialog(null, message, "Fatal error", JOptionPane.ERROR_MESSAGE);
-        else
+    public static void fatal(Exception ex, int errorcode, EmergencyFixer fixer) {
+        fatal(ex.getClass().getSimpleName() + ": " + ex.getMessage(), errorcode, fixer);
+    }
+
+    public static void fatal(String message, int errorcode, EmergencyFixer fixer) {
+        if (System.console() != null)
             System.err.println(message);
+
+        // Is headless an option?
+        JOptionPane.showMessageDialog(null, message, "Fatal error", JOptionPane.ERROR_MESSAGE);
+
+        if (fixer != null) {
+            boolean answer = confirm(null, fixer.getQuestion());
+            if (answer)
+                fixer.fix();
+            String finalMessage = answer ? fixer.getYesMessage() : fixer.getNoMessage();
+            if (finalMessage != null)
+                JOptionPane.showMessageDialog(null, finalMessage, null,
+                        JOptionPane.INFORMATION_MESSAGE,
+                        new ImageIcon(GuiUtils.class.getResource("/icons/Crystal-Clear/48x48/actions/info.png")));
+        }
         System.exit(errorcode);
     }
 
@@ -170,6 +197,10 @@ public class GuiUtils implements Serializable {
     }
 
     public boolean confirm(String message) {
+        return confirm(frame, message);
+    }
+
+    private static boolean confirm(JFrame frame, String message) {
         return JOptionPane.showConfirmDialog(frame, message, "Confirmation requested", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
     }
 
@@ -298,6 +329,6 @@ public class GuiUtils implements Serializable {
     }
 
     public static void main(String[] args) {
-        fatal("Nasty thing happened", 42);
+        fatal("Nasty thing happened", 42, null);
     }
 }

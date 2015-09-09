@@ -132,10 +132,13 @@ public class ExchangeIR {
 
     /**
      * Tries to interpret the string argument as one of our known formats, and return an IrSignal.
-     * If the string starts with "+", take it as raw. Then, if it contains more than on line, assume
+     * If the string starts with "[", interpret it as raw data, already split in intro-,
+     * repeat-, and ending sequences.
+     * If not try to interpret as Pronto Hex, or UEI learned.
+     * If not successful, it is assumed to be in raw format.
+     * If it contains more than on line, assume
      * that the caller has split it into intro, repeat, and ending sequences already.
-     * Otherwise invoke ExchangeIR to split it into constituents. If it does not start
-     * with "+", try to interpret as Pronto CCF and UEI learned.
+     * Otherwise invoke ExchangeIR to split it into constituents.
      *
      * @param str String to be interpreted.
      * @param fallbackFrequency Modulation frequency to use, if it cannot be inferred from the first parameter.
@@ -154,26 +157,27 @@ public class ExchangeIR {
                 String[] codes = str.trim().substring(1).split("[\\[\\]]+");
                 return new IrSignal(fallbackFrequency, IrpUtils.invalid, codes[0],
                         codes.length > 1 ? codes[1] : null, codes.length > 2 ? codes[2] : null);
-            } else if (str.trim().startsWith("+")) {
-                String[] codes = str.split("[\n\r]+");
-                if (codes.length > 1)
-                    return new IrSignal(fallbackFrequency, IrpUtils.invalid, codes[0], codes[1], codes.length > 2 ? codes[2] : null);
-
-                IrSequence irSequence = null;
-                try {
-                    irSequence = new IrSequence(str);
-                } catch (IncompatibleArgumentException ex) {
-                    throw new ParseException("Could not interpret string " + str);
-                }
-                return interpretIrSequence(irSequence, invokeRepeatFinder, invokeAnalyzer);
-            } else {
-                int[] array = Pronto.parseString(str);
-                try {
-                    return array != null ? Pronto.ccfSignal(array) : parseUeiLearned(str);
-                } catch (IllegalArgumentException ex) {
-                    throw new ParseException("Could not interpret string " + str + " (" + ex.getMessage() + ")");
-                }
             }
+
+            try {
+                int[] array = Pronto.parseString(str);
+                return array != null ? Pronto.ccfSignal(array) : parseUeiLearned(str);
+            } catch (IllegalArgumentException ex) {
+                return interpretRawString(str, fallbackFrequency, invokeRepeatFinder, invokeAnalyzer);
+            }
+        } catch (NumberFormatException ex) {
+            throw new ParseException("Could not interpret string " + str + " (" + ex.getMessage() + ")");
+        }
+    }
+
+    private static IrSignal interpretRawString(String str, double fallbackFrequency, boolean invokeRepeatFinder, boolean invokeAnalyzer) throws ParseException, IncompatibleArgumentException {
+        try {
+            String[] codes = str.split("[\n\r]+");
+            if (codes.length > 1)
+                return new IrSignal(fallbackFrequency, IrpUtils.invalid, codes[0], codes[1], codes.length > 2 ? codes[2] : null);
+
+            IrSequence irSequence = new IrSequence(str, true);
+            return interpretIrSequence(irSequence, invokeRepeatFinder, invokeAnalyzer);
         } catch (NumberFormatException ex) {
             throw new ParseException("Could not interpret string " + str + " (" + ex.getMessage() + ")");
         }

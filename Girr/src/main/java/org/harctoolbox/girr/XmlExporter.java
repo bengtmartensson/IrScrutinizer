@@ -194,13 +194,8 @@ public class XmlExporter {
         if (file == null)
             printDOM(System.out, doctypeSystemid);
         else {
-            FileOutputStream stream = null;
-            try {
-                stream = new FileOutputStream(file);
+            try (FileOutputStream stream = new FileOutputStream(file)) {
                 printDOM(stream, doctypeSystemid);
-            } finally {
-                if (stream != null)
-                    stream.close();
             }
         }
     }

@@ -42,7 +42,7 @@ import org.harctoolbox.IrpMaster.Pronto;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.comm.IBytesCommand;
 import org.harctoolbox.harchardware.IHarcHardware;
-import org.harctoolbox.harchardware.IStringCommand;
+import org.harctoolbox.harchardware.ICommandLineDevice;
 import org.harctoolbox.harchardware.comm.IWeb;
 import org.harctoolbox.harchardware.comm.TcpSocketChannel;
 import org.harctoolbox.harchardware.Utils;
@@ -111,7 +111,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
         }
     };
 
-    public class SerialPort implements IStringCommand, IBytesCommand {
+    public class SerialPort implements ICommandLineDevice, IBytesCommand {
         private int portIndex; // 0 or 1, i.e. zero based.
         private TcpSocketChannel tcpSocketChannel;
 
@@ -131,11 +131,16 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
         }
 
         @Override
-        public synchronized String readString() throws IOException {
+        public synchronized String readString(boolean wait) throws IOException {
             tcpSocketChannel.connect();
-            String result = tcpSocketChannel.getBufferedIn().readLine();
+            String result = tcpSocketChannel.readString(wait);
             tcpSocketChannel.close(false);
             return result;
+        }
+
+        @Override
+        public synchronized String readString() throws IOException {
+            return readString(false);
         }
 
         @Override
@@ -198,7 +203,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
     /**
      * Returns a serial port from the GlobalCache.
      * @param portNumber 1-based port  number, i.e. use 1 for first, not 0.
-     * @return serial port implementing IStringCommand
+     * @return serial port implementing ICommandLineDevice
      * @throws NoSuchTransmitterException
      */
     public synchronized SerialPort getSerialPort(int portNumber) throws NoSuchTransmitterException {
@@ -512,10 +517,13 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
             }
         } else {
             ArrayList<String> array = new ArrayList<String>();
-            array.add(tcpSocketChannel.readString());// may hang
-            while (tcpSocketChannel.getBufferedIn().ready()) {
-                String resp = tcpSocketChannel.readString();
-                array.add(resp);
+            String lineRead = tcpSocketChannel.readString(); // may hang
+            if (lineRead != null) {
+                array.add(lineRead);
+                while (tcpSocketChannel.getBufferedIn().ready()) {
+                    String resp = tcpSocketChannel.readString();
+                    array.add(resp);
+                }
             }
             result = array.toArray(new String[array.size()]);
         }

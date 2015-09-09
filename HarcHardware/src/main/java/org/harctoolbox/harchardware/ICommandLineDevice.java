@@ -19,12 +19,17 @@ package org.harctoolbox.harchardware;
 
 import java.io.IOException;
 
-public interface IStringCommand extends IHarcHardware {
+/**
+ * This interface specifies a device that can be sent commands, and that can be queried for responses.
+ */
 
-    //public String sendStringCommand(String cmd, int count, int returnLines, int delay)
-    //        throws HarcHardwareException;
+public interface ICommandLineDevice extends IHarcHardware {
 
-    //public String sendStringCommand(String cmd, int returnLines) throws HarcHardwareException;
+    /**
+     * Sends a command (a String) to the instance.
+     * @param cmd Command string to be sent.
+     * @throws IOException
+     */
 
     void sendString(String cmd) throws IOException;
 
@@ -35,6 +40,15 @@ public interface IStringCommand extends IHarcHardware {
      * @throws IOException
      */
     String readString() throws IOException;
+
+    /**
+     * Reads a line of text. A line is considered to be terminated by any one of a line feed ('\n'), a carriage return ('\r'), or a carriage return followed immediately by a linefeed.
+     *
+     * @param wait if true, wait until something arrives, otherwise return null if nothing there.
+     * @return A String containing the contents of the line, not including any line-termination characters, or null if no input available.
+     * @throws IOException
+     */
+    String readString(boolean wait) throws IOException;
 
     /**
      * Tells whether this stream is ready to be read. A buffered character stream is ready if the buffer is not empty, or if the underlying character stream is ready.

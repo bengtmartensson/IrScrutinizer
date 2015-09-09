@@ -21,9 +21,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.IStringCommand;
+import org.harctoolbox.harchardware.ICommandLineDevice;
 
-public class UrlPort implements IStringCommand {
+public class UrlPort implements ICommandLineDevice {
 
     String answer = null;
     private int timeout;
@@ -71,6 +71,11 @@ public class UrlPort implements IStringCommand {
         String s = answer;
         answer = null;
         return s;
+    }
+
+    @Override
+    public String readString(boolean wait) {
+        return readString();
     }
 
     /**

@@ -28,17 +28,21 @@ import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
 import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 
+// TODO: Generation of hardcopy, svg, postscript, etc.
+// TODO: Copy to clipboard.
+// TODO: Check scaling.
 /**
   * A plotter class, specialized for plotting IR signals. Not yet implemented: Printing, clipboard support.
   */
 @SuppressWarnings("serial")
 public class IrPlotter extends HarcPanel {
     private static final String versionString = "0.1.0";
-    private static final String helpText = "Helptext not yet available";
+    // FIXME: This help text is not really generically usable.
+    private static final String helpText = "This window shows a frozen copy of a signal originally shown in the plot window of IrScrutinizer.";
 
     private static final String aboutText =
             "IrPlotter version " + versionString + ".\n"
-            + "Copyright 2013 by Bengt Martensson.\n\n"
+            + "Copyright 2013-2015 by Bengt Martensson.\n\n"
             + "License: GPL3.\n\n"
             + "Project home page: http://www.harctoolbox.org";
 
@@ -435,6 +439,30 @@ public class IrPlotter extends HarcPanel {
         });
         plotterPopupMenu.add(resetMenuItem);
         plotterPopupMenu.add(plotterWidthsMenu);
+        JMenuItem cloneMenuItem = new JMenuItem();
+        cloneMenuItem.setText("Clone Plot");
+        cloneMenuItem.setToolTipText("Create a frozen clone of the current plot in a popup window.");
+        cloneMenuItem.setMnemonic('C');
+        cloneMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createPopupClone();
+            }
+        });
+        plotterPopupMenu.add(cloneMenuItem);
+    }
+
+    /**
+     * Create a read-only clone of the current plot in a new popup window.
+     */
+    public void createPopupClone() {
+        if (isEmpty()) {
+            //guiUtils.error("No plot to clone.");
+            return;
+        }
+        IrPlotter clone = new IrPlotter(this, false);
+        clone.setPreferredSize(getSize());
+        HarcletFrame.newHarcletFrame(this, clone, false, null);
     }
 
     private void initializePlotterWidthsMenu() {

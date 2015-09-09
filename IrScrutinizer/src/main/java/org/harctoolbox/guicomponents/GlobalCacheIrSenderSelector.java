@@ -35,7 +35,7 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
     private GuiUtils guiUtils;
     private transient GlobalCache globalCache;
     private boolean verbose;
-    private int timeOut;
+    private int timeout;
 
     private InetAddress inetAddress;
     private int module;
@@ -50,10 +50,10 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
     private static final int defaultTimeout = 5000;
 
     /**
-     * @param timeOut the timeOut to set
+     * @param timeout the timeout to set
      */
-    public void setTimeOut(int timeOut) {
-        this.timeOut = timeOut;
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 
     private void setGlobalCache(InetAddress globalCacheInetAddress) throws UnknownHostException, IOException {
@@ -69,7 +69,7 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
         moduleComboBox.setEnabled(false);
         portComboBox.setEnabled(false);
 
-        globalCache = new GlobalCache(globalCacheInetAddress.getHostName(), verbose, timeOut);
+        globalCache = new GlobalCache(globalCacheInetAddress.getHostName(), verbose, timeout);
 
         if (!globalCache.isValid())
             throw new IOException("Set up of GlobalCache@" + globalCacheInetAddress.getHostName() + " failed.");
@@ -225,14 +225,14 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
      * Creates new form GlobalCacheIrSenderSelector
      * @param guiUtils
      * @param verbose
-     * @param timeOut
+     * @param timeout
      * @param senderSupport
      */
-    public GlobalCacheIrSenderSelector(final GuiUtils guiUtils, final boolean verbose, int timeOut, boolean senderSupport) {
+    public GlobalCacheIrSenderSelector(final GuiUtils guiUtils, final boolean verbose, int timeout, boolean senderSupport) {
         this.globalCache = null;
         this.guiUtils = guiUtils;
         this.verbose = verbose;
-        this.timeOut = timeOut;
+        this.timeout = timeout;
         this.senderSupport = senderSupport;
         initComponents();
         this.moduleLabel.setVisible(senderSupport);
@@ -304,6 +304,8 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
         });
 
         moduleComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5" }));
+        moduleComboBox.setMinimumSize(new java.awt.Dimension(60, 24));
+        moduleComboBox.setPreferredSize(new java.awt.Dimension(60, 24));
         moduleComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 moduleComboBoxActionPerformed(evt);
@@ -311,6 +313,8 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
         });
 
         portComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3" }));
+        portComboBox.setMinimumSize(new java.awt.Dimension(60, 24));
+        portComboBox.setPreferredSize(new java.awt.Dimension(60, 24));
         portComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 portComboBoxActionPerformed(evt);
@@ -370,11 +374,11 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(moduleLabel)
-                            .addComponent(moduleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(moduleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(portComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(portComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(stopButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)

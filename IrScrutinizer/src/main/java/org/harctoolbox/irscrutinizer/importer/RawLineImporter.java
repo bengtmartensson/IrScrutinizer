@@ -82,11 +82,7 @@ public class RawLineImporter extends RemoteSetImporter implements IReaderImporte
             rli.load(new File(args[0]));
             for (Command command : rli.getCommands())
                 System.out.println(command.toPrintString());
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IrpMasterException ex) {
-            System.err.println(ex.getMessage());
-        } catch (java.text.ParseException ex) {
+        } catch (IOException | IrpMasterException | java.text.ParseException ex) {
             System.err.println(ex.getMessage());
         }
     }

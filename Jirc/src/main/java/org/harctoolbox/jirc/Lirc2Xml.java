@@ -34,7 +34,6 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import org.harctoolbox.IrpMaster.DecodeIR;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.XmlUtils;
 import org.harctoolbox.girr.RemoteSet;
@@ -208,8 +207,6 @@ public class Lirc2Xml {
             System.err.println(ex.getMessage() + " could not be found.");
             System.exit(IrpUtils.exitConfigReadError);
         } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IrpMasterException ex) {
             System.err.println(ex.getMessage());
         }
     }

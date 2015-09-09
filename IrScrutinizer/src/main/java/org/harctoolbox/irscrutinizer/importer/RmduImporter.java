@@ -131,12 +131,12 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
     @Override
     public void load(Reader reader, String origin) throws IOException, ParseException {
         prepareLoad(origin);
-        parameters = new LinkedHashMap<String, String>();
+        parameters = new LinkedHashMap<>();
         //commands = new LinkedHashMap<String,Command>();
         BufferedReader bufferedReader = new BufferedReader(reader);
-        HashMap<Integer,Long> functionHex = new HashMap<Integer,Long>();
-        HashMap<Integer,String> functionName = new HashMap<Integer, String>();
-        HashMap<Integer,String> functionNotes = new HashMap<Integer, String>();
+        HashMap<Integer,Long> functionHex = new HashMap<>();
+        HashMap<Integer,String> functionName = new HashMap<>();
+        HashMap<Integer,String> functionNotes = new HashMap<>();
         int lineNo = 0;
         while (true) {
             String line = bufferedReader.readLine();
@@ -184,7 +184,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
                 : null;
         if ((devParams == null || devParams.length == 0) && protocolsIni != null)
             devParams = protocolsIni.getDeviceParameters(Integer.parseInt(parameters.get("Protocol").replaceAll(" ", ""), 16));
-        HashMap<String,Long> protocolParams = new HashMap<String, Long>();
+        HashMap<String,Long> protocolParams = new HashMap<>();
         String protocolParamsString = parameters.get("ProtocolParms");
         String[] params = protocolParamsString != null ? protocolParamsString.split(" ") : new String[0];
         for (int i = 0; i < params.length; i++) {
@@ -198,7 +198,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
 
         for (Entry<Integer, String> kvp : functionName.entrySet()) {
             Integer functionNo = kvp.getKey();
-            HashMap<String, Long> commandParameters = new HashMap<String, Long>();
+            HashMap<String, Long> commandParameters = new HashMap<>();
             commandParameters.putAll(protocolParams);
             Long hexObject = functionHex.get(functionNo);
             long hex = hexObject != null ? hexObject : IrpUtils.invalid;
@@ -221,7 +221,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
             }
         }
 
-        HashMap<String,HashMap<String,String>> appParams = new HashMap<String,HashMap<String,String>>();
+        HashMap<String,HashMap<String,String>> appParams = new HashMap<>();
         appParams.put("rmdu", parameters);
         remote = new Remote(Utils.basename(origin),
                 null, // manufacturer,
@@ -280,7 +280,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
         @Parameter(names = {"-x", "--xslt"}, description = "Link to XSLT stylesheet")
         String stylesheetUrl = null;
         @Parameter(description = "[configfile]")
-        ArrayList<String> configfile = new ArrayList<String>();
+        ArrayList<String> configfile = new ArrayList<>();
     }
     private static JCommander argumentParser;
     private static CommandLineArgs commandLineArgs = new CommandLineArgs();
@@ -328,11 +328,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
                     rmdu.getRemote());
             Document doc = remoteSet.xmlExportDocument("Rmdu import of " + Utils.basename(configFilename), "xsl", commandLineArgs.stylesheetUrl, true, true, true, true, true);
             XmlUtils.printDOM(new File(commandLineArgs.outputfile), doc);
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        } catch (ParseException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IrpMasterException ex) {
+        } catch (IOException | ParseException | IrpMasterException ex) {
             System.err.println(ex.getMessage());
         }
     }

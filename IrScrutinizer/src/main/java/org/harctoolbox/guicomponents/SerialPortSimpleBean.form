@@ -38,11 +38,11 @@
                       <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                       <Component id="versionLiteralLabel" min="-2" pref="36" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="versionLabel" pref="266" max="32767" attributes="0"/>
+                      <Component id="versionLabel" pref="254" max="32767" attributes="0"/>
                   </Group>
                   <Component id="baudRateLabel" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

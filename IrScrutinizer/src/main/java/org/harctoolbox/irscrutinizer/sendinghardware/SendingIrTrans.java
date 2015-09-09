@@ -26,6 +26,7 @@ import org.harctoolbox.guicomponents.InternetHostPanel;
 import org.harctoolbox.guicomponents.NamedCommandLauncher;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.ir.IrTransIRDB;
+import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 import org.harctoolbox.harchardware.ir.Transmitter;
 import org.harctoolbox.irscrutinizer.Props;
 
@@ -67,7 +68,7 @@ public class SendingIrTrans extends SendingHardware<IrTransIRDB> implements ISen
     }
 
     @Override
-    public Transmitter getTransmitter() {
+    public Transmitter getTransmitter() throws NoSuchTransmitterException {
         return namedCommandLauncher.getTransmitter();
     }
 

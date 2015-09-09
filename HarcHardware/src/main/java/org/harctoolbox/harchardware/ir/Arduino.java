@@ -28,7 +28,7 @@ import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.IStringCommand;
+import org.harctoolbox.harchardware.ICommandLineDevice;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.comm.LocalSerialPortBuffered;
 
@@ -36,7 +36,7 @@ import org.harctoolbox.harchardware.comm.LocalSerialPortBuffered;
  * This class supports sending and capturing from an Arduino connected through a (virtual) serial port.
  * For sending, the sketch scrutinize_sender should be running, for receiving the sketch scrutinize_receiver.
  */
-public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIrSender, ICapture, IReceive, IStringCommand {
+public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIrSender, ICapture, IReceive, ICommandLineDevice {
 
     //private int beginTimeout;
     //private int middleTimeout;
@@ -50,6 +50,7 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
     private static final String versionCommand = "version";
     public static final String defaultPortName = "/dev/ttyACM0";
     public static final String okString = "OK";
+    public static final String timeoutString = ".";
     private String lineEnding = "\r";
     private static final String separator = " ";
     //private String portName;
@@ -84,7 +85,7 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
         serialPort.sendString(payload + lineEnding);
         if (verbose)
             System.err.println(payload);
-        String response = serialPort.readString();
+        String response = serialPort.readString(true);
         return response != null && response.trim().equals(okString);
     }
 
@@ -94,6 +95,10 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
 
     public Arduino(String portName) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         this(portName, defaultBaudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, false);
+    }
+
+    public Arduino(String portName, int baudRate) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this(portName, baudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, false);
     }
 
     public Arduino(String portName, int baudRate, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
@@ -170,7 +175,7 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
             //open();
             String str = serialPort.readString(true);
             pendingCapture = false;
-            if (str == null || str.length() == 0 || str.startsWith("null"))
+            if (str == null || str.length() == 0 || str.startsWith("null") || str.startsWith(timeoutString))
                 return null;
 
             str = str.trim();
@@ -203,7 +208,37 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
 
     @Override
     public IrSequence receive() throws HarcHardwareException, IOException, IrpMasterException {
-        throw new UnsupportedOperationException("Not supported yet.");// TODO
+        if (stopRequested) // ???
+            return null;
+        if (!isValid())
+            throw new HarcHardwareException("Port not initialized");
+        //if (!pendingCapture) {
+        //    serialPort.sendString(captureCommand + lineEnding);
+        //    pendingCapture = true;
+        //}
+        IrSequence seq = null;
+        try {
+            //open();
+            String str = serialPort.readString(true);
+            //pendingCapture = false;
+            if (str == null || str.length() == 0 || str.startsWith("null") || str.startsWith(timeoutString))
+                return null;
+
+            str = str.trim();
+
+            //double frequency = fallbackFrequency;
+            seq = new IrSequence(str);
+        } catch (IOException ex) {
+            //close();
+            if (ex.getMessage().equals("Underlying input stream returned zero bytes")) //RXTX timeout
+                return null;
+            throw ex;
+        } catch (IncompatibleArgumentException ex) {
+            //close();
+            throw new HarcHardwareException(ex);
+        }
+        //close();
+        return seq;
     }
 
     @Override
@@ -246,12 +281,10 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
             //ex.printStackTrace();
         } catch (NoSuchPortException ex) {
             System.err.println("No such port: " + portName);
-        } catch (HarcHardwareException ex) {
+        } catch (HarcHardwareException | UnsupportedCommOperationException ex) {
             System.err.println(ex.getMessage());
         } catch (PortInUseException ex) {
             System.err.println("Port " + portName + " in use.");
-        } catch (UnsupportedCommOperationException ex) {
-            System.err.println(ex.getMessage());
         } finally {
             if (w != null)
                 try {
@@ -272,6 +305,7 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
         return serialPort.readString();
     }
 
+    @Override
     public String readString(boolean wait) throws IOException {
         return serialPort.readString(wait);
     }

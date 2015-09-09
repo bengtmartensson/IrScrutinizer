@@ -29,6 +29,6 @@ You should have received a copy of the GNU General Public License along with thi
     <thirdPartyString>
 Girr uses the following uses the following software components:
 IrpMaster by Bengt Martensson, licensed under the GPL3 license.
-DecodeIR, originally written by John S. Fine, with later contributions from others. It is free software with undetermined license.
+DecodeIR, originally written by John S. Fine, with later contributions from others. It is public domain software.
     </thirdPartyString>
 </version>

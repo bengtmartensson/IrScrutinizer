@@ -63,7 +63,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
         lineNumber = 0;
         noSamples = 0;
         String name = "unnamed";
-        ArrayList<Integer> data = new ArrayList<Integer>();
+        ArrayList<Integer> data = new ArrayList<>();
         while (true) {
             String line = bufferedReader.readLine();
             if (line == null)

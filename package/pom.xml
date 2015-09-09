@@ -1,20 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.harctoolbox</groupId>
-    <artifactId>harc-package</artifactId>
-    <version>1.0.0</version>
-    <name>harc-package</name>
+    <artifactId>package</artifactId>
+    <name>package</name>
     <packaging>jar</packaging>
-    <description>
-        harctoolbox is a set of program to work with
-        infrared remote controls. The package subpackage
-        contains an aggregated installation setup
-    </description>
+    <description>The "package" subpackage contains an "aggregated installation setup".</description>
     <url>http://www.harctoolbox.org</url>
     <parent>
         <groupId>org.harctoolbox</groupId>
@@ -43,41 +36,43 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.harctoolbox</groupId>
+                                    <groupId>${project.groupId}</groupId>
                                     <artifactId>IrScrutinizer</artifactId>
-                                    <version>1.1.2</version>
                                     <classifier>bin</classifier>
                                     <type>zip</type>
-                                    <outputDirectory> dist </outputDirectory>
-                                    <includes>
-                                        *.xml,*.ini,*.desktop,doc/*
-                                    </includes>
+                                    <outputDirectory>dist</outputDirectory>
+                                    <includes>*.xml,*.ini,*.desktop,doc/*</includes>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.harctoolbox</groupId>
+                                    <groupId>${project.groupId}</groupId>
                                     <artifactId>IrpMaster</artifactId>
-                                    <version>1.0.3</version>
                                     <classifier>bin</classifier>
                                     <type>tar.gz</type>
-                                    <outputDirectory> dist </outputDirectory>
+                                    <outputDirectory>dist</outputDirectory>
                                     <includes>*.xml,*.ini,doc/*</includes>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.harctoolbox</groupId>
+                                    <groupId>${project.groupId}</groupId>
                                     <artifactId>Jirc</artifactId>
-                                    <version>0.3.1</version>
                                     <classifier>bin</classifier>
                                     <type>tar.gz</type>
-                                    <outputDirectory> dist </outputDirectory>
+                                    <outputDirectory>dist</outputDirectory>
                                     <includes>*.xml,*.ini</includes>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.harctoolbox</groupId>
+                                    <groupId>${project.groupId}</groupId>
                                     <artifactId>Girr</artifactId>
-                                    <version>1.0.3</version>
                                     <classifier>bin</classifier>
                                     <type>tar.gz</type>
-                                    <outputDirectory> dist </outputDirectory>
+                                    <outputDirectory>dist</outputDirectory>
+                                    <includes>*.xsd,doc/**/*</includes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>HarcHardware</artifactId>
+                                    <classifier>bin</classifier>
+                                    <type>tar.gz</type>
+                                    <outputDirectory>dist</outputDirectory>
                                     <includes>*.xsd,doc/**/*</includes>
                                 </artifactItem>
 -                           </artifactItems>
@@ -88,13 +83,15 @@
                     <execution>
                         <id>copy</id>
                         <phase>package</phase>
-                        <goals> <goal> copy </goal> </goals>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.harctoolbox</groupId>
+                                    <groupId>${project.groupId}</groupId>
                                     <artifactId>HarctoolboxBundle</artifactId>
-                                    <version>1.0.0</version>
+                                    <version>${project.version}</version>
                                     <classifier>sources</classifier>
                                     <type>zip</type>
                                 </artifactItem>
@@ -119,10 +116,6 @@
                             <filters>
                                  <filter>
                                      <artifact>*:*</artifact>
-                                     <excludes>
-                                         <!-- Bundled wakeonlan files. -->
-                                         <exclude>wol/**</exclude>
-                                     </excludes>
                                   </filter>
                             </filters>
                             <artifactSet>
@@ -133,18 +126,10 @@
                                     <exclude>org.rxtx</exclude>
                                     <exclude>com.beust:jcommander</exclude>
                                     <exclude>com.mrallen:tonto</exclude>
-                                    <exclude>
-                                        com.eclipsesource.minimal-json
-                                    </exclude>
-                                    <exclude>
-                                        com.hifiremote:DecodeIRCaller
-                                    </exclude>
-                                    <exclude>
-                                        com.hifiremote:ExchangeIR
-                                    </exclude>
-                                    <exclude>
-                                        org.harctoolbox:HarctoolboxBundle
-                                    </exclude>
+                                    <exclude>com.eclipsesource.minimal-json</exclude>
+                                    <exclude>com.hifiremote:DecodeIRCaller</exclude>
+                                    <exclude>com.hifiremote:ExchangeIR</exclude>
+                                    <exclude>org.harctoolbox:HarctoolboxBundle</exclude>
                                 </excludes>
                             </artifactSet>
                          </configuration>
@@ -160,7 +145,9 @@
                         <!-- Copy stuff into a fresh dist/ directory. -->
                         <id>copy-resources</id>
                         <phase>install</phase>
-                        <goals> <goal> copy-resources </goal> </goals>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
                         <configuration>
                             <outputDirectory>dist</outputDirectory>
                             <resources>
@@ -173,16 +160,14 @@
                                 <resource>
                                     <directory>${project.build.directory}</directory>
                                     <includes>
-                                        <include>
-                                            harctoolbox-${project.version}-sources.tar.gz
-                                        </include>
+                                        <include>harctoolbox-${project.version}-sources.tar.gz</include>
                                     </includes>
                                 </resource>
                                 <resource>
                                     <directory>${basedir}</directory>
                                     <includes>
-                                        <include> README* </include>
-                                        <include> LICENSE* </include>
+                                        <include>README*</include>
+                                        <include>LICENSE*</include>
                                     </includes>
                                 </resource>
                              </resources>
@@ -192,14 +177,16 @@
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version> 2.6.1 </version>
+                <version>2.6.1</version>
                 <configuration>
                     <filesets>
                         <fileset>
                             <directory>dist</directory>
-                            <includes> <include> **/* </include> </includes>
+                            <includes>
+                                <include>**/*</include>
+                            </includes>
                             <excludes>
-                                <exclude> .gitkeep </exclude>
+                                <exclude>.gitkeep</exclude>
                             </excludes>
                         </fileset>
                     </filesets>
@@ -209,29 +196,29 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>org.harctoolbox</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>IrpMaster</artifactId>
-            <version>1.0.3</version>
         </dependency>
         <dependency>
-            <groupId>org.harctoolbox</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>IrScrutinizer</artifactId>
-            <version>1.1.2</version>
         </dependency>
         <dependency>
-            <groupId>org.harctoolbox</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>Jirc</artifactId>
-            <version>0.3.1</version>
         </dependency>
         <dependency>
-            <groupId>org.harctoolbox</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>Girr</artifactId>
-            <version>1.0.3</version>
         </dependency>
         <dependency>
-            <groupId>org.harctoolbox</groupId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>HarcHardware</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>HarctoolboxBundle</artifactId>
-            <version>1.0.0</version>
+            <version>${project.version}</version>
             <type>zip</type>
             <classifier>sources</classifier>
         </dependency>

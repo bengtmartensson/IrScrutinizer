@@ -1,0 +1,8 @@
+For using Arduino in IrScrutinizer, checkout
+https://github.com/bengtmartensson/AGirs, compile and flash the
+GirsLite sketch in src/GirsLite. For this, the contained library src/GirsLib,
+should be copied/moved/linked to the Arduino library area, typically
+~/Arduino/libraries or C:\Arduino\libraries.
+
+Previous versions contained a directory IrScrutinizer/arduino. This
+has been deleted; is replaced by AGirs.

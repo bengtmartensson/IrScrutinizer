@@ -88,6 +88,9 @@ public abstract class IrSerial<T extends LocalSerialPort> implements IHarcHardwa
     }
 
     @Override
+    // Default version for hardware that does not support a sensible version.
+    // NOTE: just return null, not something "user friendly"
+    // -- this is the task of the user interface.
     public String getVersion() throws IOException {
         return null;
     }

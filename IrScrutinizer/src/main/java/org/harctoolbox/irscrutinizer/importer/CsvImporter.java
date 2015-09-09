@@ -117,19 +117,17 @@ public abstract class CsvImporter extends RemoteSetImporter implements IReaderIm
         if (column <= 0)
             return new String[]{ aPriori };
         if (column > chunks.length)
-            return null;
+            return new String[0];
 
-        StringBuilder str = new StringBuilder(chunks[column-1]);
-        if (str.length() > 0 && str.charAt(str.length()-1) == '"')
-            str.deleteCharAt(str.length()-1);
-        if (str.length() > 0 && str.charAt(0) == '"')
-            str.deleteCharAt(0);
+        String str = chunks[column-1];
+        if (str.startsWith("\"") && str.endsWith("\""))
+            str = str.substring(1, str.length()-1);
 
         if (!nameMultiColumn)
-            return new String[]{ str.toString() };
+            return new String[]{ str };
 
-        ArrayList<String> arrayList = new ArrayList<String>();
-        arrayList.add(str.toString());
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add(str);
         for (int index = column; index < chunks.length; index++) {
             boolean isNumber = false;
             String chunk = chunks[index];

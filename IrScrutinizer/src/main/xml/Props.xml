@@ -29,6 +29,14 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="arduinoPortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (sending).' />
     <property name="arduinoCapturePortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for capturing with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
     <property name="arduinoCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (capturing).' />
+    <property name="commandFusionPortName" type="string" default='ifWindows("COM14", "/dev/ttyUSB0")' doc='Name of device to use for sending IR with the CommandFusion, e.g. COM1 or /dev/ttyUSB0.' />
+    <property name="commandFusionPortBaudRate" type="int" default='"9600"' doc='Baudrate for CommandFusion serial (sending).' />
+    <property name="commandFusionCapturePortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for capturing with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
+    <property name="commandFusionCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (capturing).' />
+    <property name="girsClientPortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for sending IR with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
+    <property name="girsClientPortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (sending).' />
+    <property name="girsClientCapturePortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for capturing with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
+    <property name="girsClientCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (capturing).' />
     <property name="irToyPortName" type="string" default='ifWindows("COM13", "/dev/ttyACM0")' doc="Port name for IrToy"/>
     <property name="irToyPortBaudRate" type="int" default='"9600"' doc="Baudrate for IrToy (sending)"/>
     <property name="irToyCapturePortName" type="string" default='ifWindows("COM13", "/dev/ttyACM0")' doc='Name of device to use, e.g. COM1 or /dev/ttyUSB0.' />
@@ -61,6 +69,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="helpfileUrl" type="string" default='(new File(applicationHome + "doc" + File.separator + "IrScrutinizer.html")).toURI().toString()' doc='URL for help file.'/>
     <property name="irpMasterHelpfileUrl" type="string" default='(new File(applicationHome + "doc" + File.separator + "IrpMaster.html")).toURI().toString()' doc='URL for IrpMaster help file.'/>
     <property name="releaseNotesUrl" type="string" default='(new File(applicationHome + "doc" + File.separator + "IrScrutinizer.releasenotes.txt")).toURI().toString()' doc='URL for release notes.'/>
+    <property name="tutorialUrl" type="string" default='"http://www.hifi-remote.com/wiki/index.php?title=IrScrutinizer_Guide"' doc='URL for tutorial.'/>
     <property name="irTransIpName" type="string" default='IrTrans.defaultIrTransIP' doc='IP name or address of IRTrans unit.'/>
     <property name="transmitHardware" type="string" default='"Audio Port"' doc="Name of selected transmit hardware."/>
     <property name="lircIpName" type="string" default='LircClient.defaultLircIP' doc='IP name or address of LIRC server.'/>

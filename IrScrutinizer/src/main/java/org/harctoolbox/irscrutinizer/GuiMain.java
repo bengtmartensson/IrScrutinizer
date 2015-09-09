@@ -34,7 +34,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -89,6 +88,8 @@ import org.harctoolbox.guicomponents.TimeFrequencyCalculator;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.TimeoutException;
 import org.harctoolbox.harchardware.ir.Arduino;
+import org.harctoolbox.harchardware.ir.CommandFusion;
+import org.harctoolbox.harchardware.ir.GirsClient;
 import org.harctoolbox.harchardware.ir.IrToy;
 import org.harctoolbox.harchardware.ir.IrTrans;
 import org.harctoolbox.harchardware.ir.IrTransIRDB;
@@ -115,6 +116,8 @@ import org.harctoolbox.irscrutinizer.exporter.TextExporter;
 import org.harctoolbox.irscrutinizer.exporter.UeiFormatter;
 import org.harctoolbox.irscrutinizer.exporter.WaveExporter;
 import org.harctoolbox.irscrutinizer.importer.CcfImporter;
+import org.harctoolbox.irscrutinizer.importer.CmlImporter;
+import org.harctoolbox.irscrutinizer.importer.CommandFusionImporter;
 import org.harctoolbox.irscrutinizer.importer.CsvImporter;
 import org.harctoolbox.irscrutinizer.importer.CsvParametrizedImporter;
 import org.harctoolbox.irscrutinizer.importer.CsvRawImporter;
@@ -158,6 +161,8 @@ public class GuiMain extends javax.swing.JFrame {
     private ProtocolsIni protocolsIni = null;
     private CcfImporter ccfImporter;
     private XcfImporter xcfImporter;
+    private CmlImporter cmlImporter;
+    private CommandFusionImporter commandFusionImporter;
     private CsvRawImporter csvRawImporter;
     private CsvParametrizedImporter csvParametrizedImporter;
     private RmduImporter rmduImporter;
@@ -252,6 +257,8 @@ public class GuiMain extends javax.swing.JFrame {
 
         lircImporter = new LircImporter();
         irTransImporter = new IrTransImporter();
+        cmlImporter = new CmlImporter();
+        commandFusionImporter = new CommandFusionImporter();
         ccfImporter = new CcfImporter();
         ccfImporter.setTranslateProntoFont(properties.getTranslateProntoFont());
         xcfImporter = new XcfImporter();
@@ -469,18 +476,24 @@ public class GuiMain extends javax.swing.JFrame {
                 arduinoSerialPortBean, properties, guiUtils);
         sendingHardwareManager.add(sendingArduino);
 
+        //SendingSerial<GirsClient> sendingGirs = new SendingSerial<GirsClient>(GirsClient.class, girsSendingPanel,
+        //        girsSendingSerialPortBean, properties, guiUtils);
+        //sendingHardwareManager.add(sendingGirs);
+
+        SendingSerial<CommandFusion> sendingcommandFusion = new SendingSerial<CommandFusion>(CommandFusion.class, commandFusionSendPanel,
+                commandFusionSendingSerialPortBean, properties, guiUtils);
+        sendingHardwareManager.add(sendingcommandFusion);
+
         SendingGenericSerialPort sendingGenericSerialPort = new SendingGenericSerialPort(
                 genericSerialPanel,
                 genericSerialSenderBean,
                 properties,
                 guiUtils);
-        sendingHardwareManager.add(sendingGenericSerialPort);
+        if (userlevel != 0)
+            sendingHardwareManager.add(sendingGenericSerialPort);
+
         try {
             sendingHardwareManager.select(properties.getTransmitHardware());
-        } catch (ConnectException ex) {
-            guiUtils.error("Connection refused");
-        } catch (IOException ex) {
-            guiUtils.error(ex);
         } catch (HarcHardwareException ex) {
             guiUtils.error(ex);
         }
@@ -501,6 +514,12 @@ public class GuiMain extends javax.swing.JFrame {
                 captureLircMode2Panel, properties, guiUtils, capturingHardwareManager));
 
         capturingHardwareManager.add(new CapturingSerial<Arduino>(Arduino.class, captureArduinoPanel, arduinoSerialPortSimpleBean,
+                properties, guiUtils, capturingHardwareManager));
+
+        //capturingHardwareManager.add(new CapturingSerial<GirsClient>(GirsClient.class, captureGirsPanel, girsClientSerialPortSimpleBean,
+        //        properties, guiUtils, capturingHardwareManager));
+
+        capturingHardwareManager.add(new CapturingSerial<CommandFusion>(CommandFusion.class, captureCommandFusionPanel, commandFusionSerialPortSimpleBean,
                 properties, guiUtils, capturingHardwareManager));
 
         capturingHardwareManager.add(new CapturingSerial<IrToy>(IrToy.class, captureIrToyPanel, irToySerialPortSimpleBean,
@@ -602,8 +621,11 @@ public class GuiMain extends javax.swing.JFrame {
         console.setStdOut();
 
         guiUtils.setUsePopupsForErrors(properties.getUsePopupsForErrors());
-        if (userlevel == 0) // ! experimental
+        if (userlevel == 0) { // ! experimental
             sendingHardwareTabbedPane.remove(genericSerialPanel);
+            sendingHardwareTabbedPane.remove(girsSendingPanel);  // temporarily, not yet working
+            capturingHardwareTabbedPane.remove(captureGirsPanel);// temporarily, not yet working
+        }
     } // end of constructor
 
     private Command.CommandTextFormat[] setupExtraTextFormats() {
@@ -821,7 +843,7 @@ public class GuiMain extends javax.swing.JFrame {
             setCaptureWindow(irSignal);
         } else {
             capturedDataTextArea.setText(irSequence.toPrintString(true));
-            if (ueiLearnedRadioButtonMenuItem.isSelected() || ccfRadioButtonMenuItem.isSelected())
+            if (! rawRadioButtonMenuItem.isSelected())
                 guiUtils.warning("Outputting an uninterpreted IrSequence in the selected output format not possible, using raw format.");
         }
     }
@@ -1285,7 +1307,13 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private <T extends IFileImporter & ICommandImporter> void importRemoteByFileSelector(T importer, boolean raw) {
+        Cursor oldCursor = setBusyCursor();
         try {
+            repaint();
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+            }
             boolean status = importer.loadFileSelector(this, "Select file for signal import", properties.getDefaultImportDir());
             if (status)
                 importCommands(importer.getCommands(), raw);
@@ -1295,6 +1323,8 @@ public class GuiMain extends javax.swing.JFrame {
             guiUtils.error(ex);
         } catch (java.text.ParseException ex) {
             guiUtils.error(ex);
+        } finally {
+            resetCursor(oldCursor);
         }
     }
 
@@ -1538,16 +1568,17 @@ public class GuiMain extends javax.swing.JFrame {
         String irTransIp = irTransInternetHostPanel.getIpName();
         IrTransIRDB irTransIRDB = new IrTransIRDB(irTransIp, properties.getVerbose(), properties.getSendingTimeout());
         //irTrans = new IrTrans(irTransIp, properties.getVerbose(), properties.getStartTimeout());
+        irTransInternetHostPanel.setHardware(irTransIRDB);
         irTransNamedCommandLauncher.setHardware(irTransIRDB);
         properties.setIrTransIpName(irTransIp);
     }
 
-    public void transmit(IrSignal irSignal) throws NoSuchTransmitterException, IOException, IrpMasterException, HardwareUnavailableException, HarcHardwareException {
-        sendingHardwareManager.sendIr(irSignal, Integer.parseInt((String)noTransmitsComboBox.getSelectedItem()));
+    public boolean transmit(IrSignal irSignal) throws NoSuchTransmitterException, IOException, IrpMasterException, HardwareUnavailableException, HarcHardwareException {
+        return sendingHardwareManager.sendIr(irSignal, Integer.parseInt((String)noTransmitsComboBox.getSelectedItem()));
     }
 
-    public void transmit(Command command) throws IrpMasterException, NoSuchTransmitterException, IOException, HardwareUnavailableException, HarcHardwareException {
-        transmit(command.toIrSignal());
+    public boolean  transmit(Command command) throws IrpMasterException, NoSuchTransmitterException, IOException, HardwareUnavailableException, HarcHardwareException {
+        return transmit(command.toIrSignal());
     }
 
     public void selectImportPane(ImportType type) {
@@ -1850,6 +1881,12 @@ public class GuiMain extends javax.swing.JFrame {
         waveFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<WaveImporter>(guiUtils, properties, waveImporter);
         importWaveDivideCarrierCheckBox1 = new javax.swing.JCheckBox();
         importWaveHelpButton = new javax.swing.JButton();
+        cmlImportPanel = new javax.swing.JPanel();
+        cmlFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<CmlImporter>(guiUtils, properties, cmlImporter);
+        importCmlHelpButton = new javax.swing.JButton();
+        commandFusionImportPanel = new javax.swing.JPanel();
+        commandFusionFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<CommandFusionImporter>(guiUtils, properties, commandFusionImporter);
+        importCommandFusionHelpButton = new javax.swing.JButton();
         exportPanel = new javax.swing.JPanel();
         exportFormatComboBox = new javax.swing.JComboBox();
         jLabel6 = new javax.swing.JLabel();
@@ -1921,6 +1958,12 @@ public class GuiMain extends javax.swing.JFrame {
         captureArduinoPanel = new javax.swing.JPanel();
         arduinoSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoCapturePortName(),Arduino.defaultBaudRate, false);
         capturingArduinoHardwareHelpButton = new javax.swing.JButton();
+        captureGirsPanel = new javax.swing.JPanel();
+        girsClientSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getGirsClientCapturePortName(),GirsClient.defaultBaudRate, false);
+        capturingGirsHardwareHelpButton = new javax.swing.JButton();
+        captureCommandFusionPanel = new javax.swing.JPanel();
+        commandFusionSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionCapturePortName(),CommandFusion.defaultBaudRate, false);
+        capturingCommandFusionHardwareHelpButton = new javax.swing.JButton();
         captureTestButton = new javax.swing.JButton();
         capturingHardwareHelpButton = new javax.swing.JButton();
         sendingPanel = new javax.swing.JPanel();
@@ -1945,6 +1988,12 @@ public class GuiMain extends javax.swing.JFrame {
         arduinoPanel = new javax.swing.JPanel();
         arduinoSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoPortName(), Arduino.defaultBaudRate, false);
         sendingArduinoHelpButton = new javax.swing.JButton();
+        girsSendingPanel = new javax.swing.JPanel();
+        sendingGirsClientHelpButton = new javax.swing.JButton();
+        tcpSerialComboBean = new org.harctoolbox.guicomponents.TcpSerialComboBean();
+        commandFusionSendPanel = new javax.swing.JPanel();
+        commandFusionSendingSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionPortName(), CommandFusion.defaultBaudRate, false);
+        sendingCommandFusionHelpButton = new javax.swing.JButton();
         genericSerialPanel = new javax.swing.JPanel();
         genericSerialSenderBean = new org.harctoolbox.irscrutinizer.sendinghardware.GenericSerialSenderBean(guiUtils);
         sendingGenericSerialPortHelpButton = new javax.swing.JButton();
@@ -1982,6 +2031,8 @@ public class GuiMain extends javax.swing.JFrame {
         importCcfMenuItem1 = new javax.swing.JMenuItem();
         importXcfMenuItem1 = new javax.swing.JMenuItem();
         importRmduMenuItem1 = new javax.swing.JMenuItem();
+        importCmlMenuItem = new javax.swing.JMenuItem();
+        importCommandFusionMenuItem = new javax.swing.JMenuItem();
         importRawMenu = new javax.swing.JMenu();
         importGirrMenuItem = new javax.swing.JMenuItem();
         importIctMenuItem = new javax.swing.JMenuItem();
@@ -1989,6 +2040,8 @@ public class GuiMain extends javax.swing.JFrame {
         importCcfMenuItem = new javax.swing.JMenuItem();
         importXcfMenuItem = new javax.swing.JMenuItem();
         importRmduMenuItem = new javax.swing.JMenuItem();
+        importCmlMenuItem2 = new javax.swing.JMenuItem();
+        importCommandFusionMenuItem2 = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         savePropertiesMenuItem = new javax.swing.JMenuItem();
         savePropertiesAsMenuItem = new javax.swing.JMenuItem();
@@ -2022,7 +2075,6 @@ public class GuiMain extends javax.swing.JFrame {
         outputFormatMenu = new javax.swing.JMenu();
         rawRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         ccfRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
-        ueiLearnedRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         analyzerBasisMenu = new javax.swing.JMenu();
         analyzerBase2RadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         analyzerBase8RadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -2085,6 +2137,7 @@ public class GuiMain extends javax.swing.JFrame {
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
         mainDocuMenuItem = new javax.swing.JMenuItem();
+        tutorialMenuItem = new javax.swing.JMenuItem();
         irpMasterDocuMenuItem = new javax.swing.JMenuItem();
         homePageMenuItem = new javax.swing.JMenuItem();
         releaseNotesMenuItem = new javax.swing.JMenuItem();
@@ -3943,7 +3996,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         jLabel21.setText("S");
 
-        parametrizedCsvSeparatorComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { ", (comma)", "; (semicolon)", "TAB", "WHITESPACE" }));
+        parametrizedCsvSeparatorComboBox.setModel(new DefaultComboBoxModel(CsvImporter.separatorsArray()));
         parametrizedCsvSeparatorComboBox.setSelectedIndex(properties.getParametricSeparatorIndex());
         parametrizedCsvSeparatorComboBox.setToolTipText("Separator between the fields");
         parametrizedCsvSeparatorComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -4023,7 +4076,7 @@ public class GuiMain extends javax.swing.JFrame {
                                 .addComponent(jLabel2))
                             .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(parametrizedCsvSeparatorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(parametrizedCsvSeparatorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel23)
@@ -4128,6 +4181,64 @@ public class GuiMain extends javax.swing.JFrame {
         );
 
         importTabbedPane.addTab("Wave", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_audio.png")), waveImportPanel); // NOI18N
+
+        importCmlHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        importCmlHelpButton.setText("Help");
+        importCmlHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importCmlHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout cmlImportPanelLayout = new javax.swing.GroupLayout(cmlImportPanel);
+        cmlImportPanel.setLayout(cmlImportPanelLayout);
+        cmlImportPanelLayout.setHorizontalGroup(
+            cmlImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(cmlImportPanelLayout.createSequentialGroup()
+                .addComponent(cmlFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 170, Short.MAX_VALUE)
+                .addComponent(importCmlHelpButton)
+                .addContainerGap())
+        );
+        cmlImportPanelLayout.setVerticalGroup(
+            cmlImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(cmlImportPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(importCmlHelpButton)
+                .addContainerGap())
+            .addComponent(cmlFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
+        );
+
+        importTabbedPane.addTab("CML (RTI)", cmlImportPanel);
+
+        importCommandFusionHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        importCommandFusionHelpButton.setText("Help");
+        importCommandFusionHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importCommandFusionHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout commandFusionImportPanelLayout = new javax.swing.GroupLayout(commandFusionImportPanel);
+        commandFusionImportPanel.setLayout(commandFusionImportPanelLayout);
+        commandFusionImportPanelLayout.setHorizontalGroup(
+            commandFusionImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(commandFusionImportPanelLayout.createSequentialGroup()
+                .addComponent(commandFusionFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 170, Short.MAX_VALUE)
+                .addComponent(importCommandFusionHelpButton)
+                .addContainerGap())
+        );
+        commandFusionImportPanelLayout.setVerticalGroup(
+            commandFusionImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(commandFusionImportPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(importCommandFusionHelpButton)
+                .addContainerGap())
+            .addComponent(commandFusionFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
+        );
+
+        importTabbedPane.addTab("CommandFusion", commandFusionImportPanel);
 
         javax.swing.GroupLayout importPanelLayout = new javax.swing.GroupLayout(importPanel);
         importPanel.setLayout(importPanelLayout);
@@ -4917,6 +5028,72 @@ public class GuiMain extends javax.swing.JFrame {
 
         capturingHardwareTabbedPane.addTab("Arduino", captureArduinoPanel);
 
+        capturingGirsHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        capturingGirsHardwareHelpButton.setText("Help");
+        capturingGirsHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capturingGirsHardwareHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout captureGirsPanelLayout = new javax.swing.GroupLayout(captureGirsPanel);
+        captureGirsPanel.setLayout(captureGirsPanelLayout);
+        captureGirsPanelLayout.setHorizontalGroup(
+            captureGirsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureGirsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(girsClientSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(31, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureGirsPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(capturingGirsHardwareHelpButton)
+                .addContainerGap())
+        );
+        captureGirsPanelLayout.setVerticalGroup(
+            captureGirsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureGirsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(girsClientSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
+                .addComponent(capturingGirsHardwareHelpButton)
+                .addContainerGap())
+        );
+
+        capturingHardwareTabbedPane.addTab("Girs Client", captureGirsPanel);
+
+        capturingCommandFusionHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        capturingCommandFusionHardwareHelpButton.setText("Help");
+        capturingCommandFusionHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capturingCommandFusionHardwareHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout captureCommandFusionPanelLayout = new javax.swing.GroupLayout(captureCommandFusionPanel);
+        captureCommandFusionPanel.setLayout(captureCommandFusionPanelLayout);
+        captureCommandFusionPanelLayout.setHorizontalGroup(
+            captureCommandFusionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureCommandFusionPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(commandFusionSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(31, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureCommandFusionPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(capturingCommandFusionHardwareHelpButton)
+                .addContainerGap())
+        );
+        captureCommandFusionPanelLayout.setVerticalGroup(
+            captureCommandFusionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureCommandFusionPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(commandFusionSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
+                .addComponent(capturingCommandFusionHardwareHelpButton)
+                .addContainerGap())
+        );
+
+        capturingHardwareTabbedPane.addTab("CommandFusion", captureCommandFusionPanel);
+
         captureTestButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_record.png"))); // NOI18N
         captureTestButton.setText("Test");
         captureTestButton.setToolTipText("For testing the setup only.  Use \"Scrutinize signal\" or \"Scrutinize remote\" for deployment.");
@@ -4988,7 +5165,7 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(globalCachePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(globalCacheIrSenderSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(225, Short.MAX_VALUE))
+                .addContainerGap(216, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, globalCachePanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(sendingGlobalCacheHelpButton)
@@ -5024,23 +5201,26 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(lircPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(lircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lircNamedCommandLauncher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lircPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(sendingLircHelpButton))
                     .addGroup(lircPanelLayout.createSequentialGroup()
-                        .addComponent(lircInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 367, Short.MAX_VALUE)
-                        .addComponent(sendingLircHelpButton)))
+                        .addGroup(lircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lircNamedCommandLauncher, javax.swing.GroupLayout.PREFERRED_SIZE, 785, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lircInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 770, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 34, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         lircPanelLayout.setVerticalGroup(
             lircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(lircPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(lircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lircInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sendingLircHelpButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lircInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
                 .addComponent(lircNamedCommandLauncher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addComponent(sendingLircHelpButton)
+                .addContainerGap())
         );
 
         sendingHardwareTabbedPane.addTab("Lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), lircPanel); // NOI18N
@@ -5068,23 +5248,26 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(irTransPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(irTransNamedCommandLauncher, javax.swing.GroupLayout.DEFAULT_SIZE, 817, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, irTransPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(sendingIrTransHelpButton))
                     .addGroup(irTransPanelLayout.createSequentialGroup()
-                        .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(sendingIrTransHelpButton)))
+                        .addGroup(irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(irTransNamedCommandLauncher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 47, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         irTransPanelLayout.setVerticalGroup(
             irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(irTransPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sendingIrTransHelpButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
                 .addComponent(irTransNamedCommandLauncher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addComponent(sendingIrTransHelpButton)
+                .addContainerGap())
         );
 
         sendingHardwareTabbedPane.addTab("IrTrans", new javax.swing.ImageIcon(getClass().getResource("/icons/irtrans/favicon.png")), irTransPanel); // NOI18N
@@ -5187,6 +5370,85 @@ public class GuiMain extends javax.swing.JFrame {
         );
 
         sendingHardwareTabbedPane.addTab("Arduino", arduinoPanel);
+
+        sendingGirsClientHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        sendingGirsClientHelpButton.setText("Help");
+        sendingGirsClientHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sendingGirsClientHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout tcpSerialComboBeanLayout = new javax.swing.GroupLayout(tcpSerialComboBean);
+        tcpSerialComboBean.setLayout(tcpSerialComboBeanLayout);
+        tcpSerialComboBeanLayout.setHorizontalGroup(
+            tcpSerialComboBeanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 800, Short.MAX_VALUE)
+        );
+        tcpSerialComboBeanLayout.setVerticalGroup(
+            tcpSerialComboBeanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 80, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout girsSendingPanelLayout = new javax.swing.GroupLayout(girsSendingPanel);
+        girsSendingPanel.setLayout(girsSendingPanelLayout);
+        girsSendingPanelLayout.setHorizontalGroup(
+            girsSendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, girsSendingPanelLayout.createSequentialGroup()
+                .addContainerGap(763, Short.MAX_VALUE)
+                .addComponent(sendingGirsClientHelpButton)
+                .addContainerGap())
+            .addGroup(girsSendingPanelLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(tcpSerialComboBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        girsSendingPanelLayout.setVerticalGroup(
+            girsSendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(girsSendingPanelLayout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addComponent(tcpSerialComboBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                .addComponent(sendingGirsClientHelpButton)
+                .addContainerGap())
+        );
+
+        sendingHardwareTabbedPane.addTab("Girs Client", girsSendingPanel);
+
+        commandFusionSendingSerialPortBean.setBaudRate(115200);
+
+        sendingCommandFusionHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        sendingCommandFusionHelpButton.setText("Help");
+        sendingCommandFusionHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sendingCommandFusionHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout commandFusionSendPanelLayout = new javax.swing.GroupLayout(commandFusionSendPanel);
+        commandFusionSendPanel.setLayout(commandFusionSendPanelLayout);
+        commandFusionSendPanelLayout.setHorizontalGroup(
+            commandFusionSendPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, commandFusionSendPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(sendingCommandFusionHelpButton)
+                .addContainerGap())
+            .addGroup(commandFusionSendPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(commandFusionSendingSerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(31, Short.MAX_VALUE))
+        );
+        commandFusionSendPanelLayout.setVerticalGroup(
+            commandFusionSendPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(commandFusionSendPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(commandFusionSendingSerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
+                .addComponent(sendingCommandFusionHelpButton)
+                .addContainerGap())
+        );
+
+        sendingHardwareTabbedPane.addTab("CommandFusion", commandFusionSendPanel);
 
         sendingGenericSerialPortHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         sendingGenericSerialPortHelpButton.setText("Help");
@@ -5496,6 +5758,22 @@ public class GuiMain extends javax.swing.JFrame {
         });
         importParametricMenu.add(importRmduMenuItem1);
 
+        importCmlMenuItem.setText("CML");
+        importCmlMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importCmlMenuItemActionPerformed(evt);
+            }
+        });
+        importParametricMenu.add(importCmlMenuItem);
+
+        importCommandFusionMenuItem.setText("CommandFusion");
+        importCommandFusionMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importCommandFusionMenuItemActionPerformed(evt);
+            }
+        });
+        importParametricMenu.add(importCommandFusionMenuItem);
+
         loadMenu.add(importParametricMenu);
 
         importRawMenu.setText("Import as set of raw signals");
@@ -5547,6 +5825,22 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
         importRawMenu.add(importRmduMenuItem);
+
+        importCmlMenuItem2.setText("CML");
+        importCmlMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importCmlMenuItem2ActionPerformed(evt);
+            }
+        });
+        importRawMenu.add(importCmlMenuItem2);
+
+        importCommandFusionMenuItem2.setText("CommandFusion");
+        importCommandFusionMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importCommandFusionMenuItem2ActionPerformed(evt);
+            }
+        });
+        importRawMenu.add(importCommandFusionMenuItem2);
 
         loadMenu.add(importRawMenu);
 
@@ -5774,14 +6068,6 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
         outputFormatMenu.add(ccfRadioButtonMenuItem);
-
-        ueiLearnedRadioButtonMenuItem.setText("UEI Learned");
-        ueiLearnedRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ueiLearnedRadioButtonMenuItemActionPerformed(evt);
-            }
-        });
-        outputFormatMenu.add(ueiLearnedRadioButtonMenuItem);
 
         optionsMenu.add(outputFormatMenu);
 
@@ -6227,6 +6513,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         mainDocuMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
         mainDocuMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/mimetypes/man.png"))); // NOI18N
+        mainDocuMenuItem.setMnemonic('D');
         mainDocuMenuItem.setText("Program Documentation");
         mainDocuMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -6235,6 +6522,17 @@ public class GuiMain extends javax.swing.JFrame {
         });
         helpMenu.add(mainDocuMenuItem);
 
+        tutorialMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        tutorialMenuItem.setMnemonic('T');
+        tutorialMenuItem.setText("Tutorial");
+        tutorialMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tutorialMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(tutorialMenuItem);
+
+        irpMasterDocuMenuItem.setMnemonic('I');
         irpMasterDocuMenuItem.setText("IrpMaster Documentation");
         irpMasterDocuMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -6244,6 +6542,7 @@ public class GuiMain extends javax.swing.JFrame {
         helpMenu.add(irpMasterDocuMenuItem);
 
         homePageMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/kfm_home.png"))); // NOI18N
+        homePageMenuItem.setMnemonic('H');
         homePageMenuItem.setText("Project home page");
         homePageMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -6252,6 +6551,7 @@ public class GuiMain extends javax.swing.JFrame {
         });
         helpMenu.add(homePageMenuItem);
 
+        releaseNotesMenuItem.setMnemonic('R');
         releaseNotesMenuItem.setText("Release Notes");
         releaseNotesMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -6324,10 +6624,6 @@ public class GuiMain extends javax.swing.JFrame {
     private void ccfRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ccfRadioButtonMenuItemActionPerformed
         updateOutputFormat(1);
     }//GEN-LAST:event_ccfRadioButtonMenuItemActionPerformed
-
-    private void ueiLearnedRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ueiLearnedRadioButtonMenuItemActionPerformed
-        updateOutputFormat(2);
-    }//GEN-LAST:event_ueiLearnedRadioButtonMenuItemActionPerformed
 
     private void checkUpToDateMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkUpToDateMenuItemActionPerformed
         guiUtils.checkUpToDate(Version.currentVersionUrl, Version.versionString);
@@ -7085,7 +7381,9 @@ public class GuiMain extends javax.swing.JFrame {
     private void transmitGenerateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitGenerateButtonActionPerformed
         Cursor old = setBusyCursor();
         try {
-            transmit(irpMasterBean.render());
+            boolean success = transmit(irpMasterBean.render());
+            if (!success)
+                guiUtils.error("Transmit failed.");
         } catch (IrpMasterException ex) {
             guiUtils.error(ex);
         } catch (NoSuchTransmitterException ex) {
@@ -7362,10 +7660,6 @@ public class GuiMain extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ConnectException ex) {
-            guiUtils.error("Connection refused");
-        } catch (IOException ex) {
-            guiUtils.error(ex);
         } catch (HarcHardwareException ex) {
             guiUtils.error(ex);
         } finally {
@@ -7764,8 +8058,8 @@ public class GuiMain extends javax.swing.JFrame {
             Integer t = guiUtils.getIntegerInput("GlobalCache socket time-out in milliseconds", properties.getGlobalCacheTimeout());
             if (t != null) {
                 properties.setGlobalCacheTimeout(t);
-                globalCacheIrSenderSelector.setTimeOut(t);
-                globalCacheCaptureSelector.setTimeOut(t);
+                globalCacheIrSenderSelector.setTimeout(t);
+                globalCacheCaptureSelector.setTimeout(t);
             }
         } catch (NumberFormatException ex) {
             guiUtils.error("Invalid number: " + ex.getMessage());
@@ -8011,6 +8305,50 @@ public class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_debugCodeMenuItemActionPerformed
 
+    private void sendingGirsClientHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingGirsClientHelpButtonActionPerformed
+        HelpPopup.newHelpPopup(this, HelpTexts.sendingGirsHelp);
+    }//GEN-LAST:event_sendingGirsClientHelpButtonActionPerformed
+
+    private void sendingCommandFusionHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingCommandFusionHelpButtonActionPerformed
+        HelpPopup.newHelpPopup(this, HelpTexts.sendingCommandFusionHelp);
+    }//GEN-LAST:event_sendingCommandFusionHelpButtonActionPerformed
+
+    private void capturingGirsHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingGirsHardwareHelpButtonActionPerformed
+        HelpPopup.newHelpPopup(this, HelpTexts.capturingGirsHelp);
+    }//GEN-LAST:event_capturingGirsHardwareHelpButtonActionPerformed
+
+    private void capturingCommandFusionHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingCommandFusionHardwareHelpButtonActionPerformed
+        HelpPopup.newHelpPopup(this, HelpTexts.capturingCommandFusionHelp);
+    }//GEN-LAST:event_capturingCommandFusionHardwareHelpButtonActionPerformed
+
+    private void importCmlHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCmlHelpButtonActionPerformed
+        HelpPopup.newHelpPopup(this, HelpTexts.importCmlHelp);// TODO add your handling code here:
+    }//GEN-LAST:event_importCmlHelpButtonActionPerformed
+
+    private void importCommandFusionHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCommandFusionHelpButtonActionPerformed
+        HelpPopup.newHelpPopup(this, HelpTexts.importCommandFusionHelp);
+    }//GEN-LAST:event_importCommandFusionHelpButtonActionPerformed
+
+    private void importCmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCmlMenuItemActionPerformed
+        importRemoteByFileSelector(cmlImporter, false);
+    }//GEN-LAST:event_importCmlMenuItemActionPerformed
+
+    private void importCommandFusionMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCommandFusionMenuItemActionPerformed
+        importRemoteByFileSelector(commandFusionImporter, false);
+    }//GEN-LAST:event_importCommandFusionMenuItemActionPerformed
+
+    private void importCmlMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCmlMenuItem2ActionPerformed
+        importRemoteByFileSelector(cmlImporter, true);
+    }//GEN-LAST:event_importCmlMenuItem2ActionPerformed
+
+    private void importCommandFusionMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCommandFusionMenuItem2ActionPerformed
+        importRemoteByFileSelector(commandFusionImporter, true);
+    }//GEN-LAST:event_importCommandFusionMenuItem2ActionPerformed
+
+    private void tutorialMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tutorialMenuItemActionPerformed
+        guiUtils.browse(properties.getTutorialUrl());
+    }//GEN-LAST:event_tutorialMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -8034,6 +8372,8 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JCheckBox automaticExportFilenamesCheckBox;
     private javax.swing.JMenuItem beaconListenerMenuItem;
     private javax.swing.JPanel captureArduinoPanel;
+    private javax.swing.JPanel captureCommandFusionPanel;
+    private javax.swing.JPanel captureGirsPanel;
     private javax.swing.JPanel captureGlobalCachePanel;
     private javax.swing.JPanel captureIrToyPanel;
     private javax.swing.JPanel captureIrWidgetPanel;
@@ -8042,6 +8382,8 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JScrollPane capturedDataScrollPane;
     private javax.swing.JTextArea capturedDataTextArea;
     private javax.swing.JButton capturingArduinoHardwareHelpButton;
+    private javax.swing.JButton capturingCommandFusionHardwareHelpButton;
+    private javax.swing.JButton capturingGirsHardwareHelpButton;
     private javax.swing.JButton capturingGlobalCacheHardwareHelpButton;
     private javax.swing.JButton capturingHardwareHelpButton;
     private javax.swing.JTabbedPane capturingHardwareTabbedPane;
@@ -8060,6 +8402,13 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem clearRawCommentMenuItem;
     private javax.swing.JMenuItem clearSignalMenuItem;
     private javax.swing.JMenuItem clonePlotMenuItem;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean cmlFileImporterBean;
+    private javax.swing.JPanel cmlImportPanel;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean commandFusionFileImporterBean;
+    private javax.swing.JPanel commandFusionImportPanel;
+    private javax.swing.JPanel commandFusionSendPanel;
+    private org.harctoolbox.guicomponents.SerialPortSimpleBean commandFusionSendingSerialPortBean;
+    private org.harctoolbox.guicomponents.SerialPortSimpleBean commandFusionSerialPortSimpleBean;
     private org.harctoolbox.guicomponents.Console console;
     private javax.swing.JPanel cookedPanel;
     private javax.swing.JMenuItem copyConsoleToClipboardMenuItem;
@@ -8156,6 +8505,8 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JTextField girrStylesheetUrlTextField;
     private javax.swing.JCheckBoxMenuItem girrValidateCheckBoxMenuItem;
     private javax.swing.JButton girrWebSiteButton;
+    private org.harctoolbox.guicomponents.SerialPortSimpleBean girsClientSerialPortSimpleBean;
+    private javax.swing.JPanel girsSendingPanel;
     private org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector globalCacheCaptureSelector;
     private javax.swing.JButton globalCacheDBBrowseButton;
     private org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector globalCacheIrSenderSelector;
@@ -8175,6 +8526,12 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu importCaptureMenu;
     private javax.swing.JMenuItem importCcfMenuItem;
     private javax.swing.JMenuItem importCcfMenuItem1;
+    private javax.swing.JButton importCmlHelpButton;
+    private javax.swing.JMenuItem importCmlMenuItem;
+    private javax.swing.JMenuItem importCmlMenuItem2;
+    private javax.swing.JButton importCommandFusionHelpButton;
+    private javax.swing.JMenuItem importCommandFusionMenuItem;
+    private javax.swing.JMenuItem importCommandFusionMenuItem2;
     private javax.swing.JMenuItem importGirrMenuItem;
     private javax.swing.JMenuItem importGirrMenuItem1;
     private javax.swing.JButton importGirrSignalHelpButton;
@@ -8424,7 +8781,9 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem sendMenuItem;
     private javax.swing.JButton sendingArduinoHelpButton;
     private javax.swing.JButton sendingAudioHelpButton;
+    private javax.swing.JButton sendingCommandFusionHelpButton;
     private javax.swing.JButton sendingGenericSerialPortHelpButton;
+    private javax.swing.JButton sendingGirsClientHelpButton;
     private javax.swing.JButton sendingGlobalCacheHelpButton;
     private javax.swing.JButton sendingHardwareHelpButton;
     private javax.swing.JTabbedPane sendingHardwareTabbedPane;
@@ -8455,6 +8814,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JToggleButton startStopToggleButton;
     private javax.swing.JMenuItem startTimeoutMenuItem;
     private javax.swing.JButton stopMode2Button;
+    private org.harctoolbox.guicomponents.TcpSerialComboBean tcpSerialComboBean;
     private javax.swing.JMenuItem testSignalMenuItem;
     private javax.swing.JMenuItem timeFrequencyCalcMenuItem;
     private javax.swing.JMenu timeoutMenu;
@@ -8472,7 +8832,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton transmitScrutinizedButton;
     private javax.swing.JButton transmitSignalButton;
     private javax.swing.JButton transmitSignalButton1;
-    private javax.swing.JRadioButtonMenuItem ueiLearnedRadioButtonMenuItem;
+    private javax.swing.JMenuItem tutorialMenuItem;
     private javax.swing.JMenuItem unsetTMenuItem;
     private javax.swing.JCheckBoxMenuItem useCleansedCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem usePopupsForErrorsCheckBoxMenuItem;

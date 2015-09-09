@@ -43,8 +43,8 @@ public class ProtocolsIni implements Serializable {
     }
 
     public ProtocolsIni(Reader reader) throws IOException, ParseException {
-        pidMap = new LinkedHashMap<Integer, HashMap<String, String>>();
-        nameMap = new LinkedHashMap<String, HashMap<String, String>>();
+        pidMap = new LinkedHashMap<>();
+        nameMap = new LinkedHashMap<>();
 
         BufferedReader in = new BufferedReader(reader);
         HashMap<String, String> currentProtocol = null;//new HashMap<String, String>();
@@ -65,7 +65,7 @@ public class ProtocolsIni implements Serializable {
             } else if (line.startsWith("["))  {
                 // new protocol
                 String name = line.substring(1, line.length()-1);
-                currentProtocol = new LinkedHashMap<String,String>();
+                currentProtocol = new LinkedHashMap<>();
                 currentProtocol.put("name", name);
                 nameMap.put(name, currentProtocol);
                 pid = -1;
@@ -197,9 +197,7 @@ public class ProtocolsIni implements Serializable {
         try {
             ProtocolsIni protocolsIni = new ProtocolsIni(new File(args[0]));
             System.out.println(protocolsIni);
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        } catch (ParseException ex) {
+        } catch (IOException | ParseException ex) {
             System.err.println(ex.getMessage());
         }
     }

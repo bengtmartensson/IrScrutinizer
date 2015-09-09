@@ -7,7 +7,7 @@
     <groupId>org.harctoolbox</groupId>
     <artifactId>IrScrutinizer</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.2</version>
+    <version>1.1.3</version>
     <name>IrScrutinizer</name>
     <parent>
         <groupId>org.harctoolbox</groupId>
@@ -28,6 +28,8 @@
         <project.nameLowercase>irscrutinizer</project.nameLowercase>
         <project.icon>/usr/local/${project.nameLowercase}/${project.nameLowercase}.png</project.icon>
         <project.exepath>/usr/local/bin/${project.nameLowercase}</project.exepath>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
     <distributionManagement>
         <repository>
@@ -51,43 +53,35 @@
             </properties>
         </profile>
 
-        <!-- Build the Mac App, if possible -->
+        <!-- Build the Windows setup.exe, if possible -->
         <profile>
-            <id>buildMacApp</id>
+            <id>buildSetup.exe</id>
             <activation>
                 <file>
-                    <!-- Provided by Apple XCode, proprietary -->
-                    <!-- /System/Library/Frameworks/JavaVM.framework/Versions/Current/Resources/MacOS/JavaApplicationStub -->
-                    <exists>${basedir}/../tools/JavaApplicationStub</exists>
+                    <exists>${basedir}/../../Inno Setup 5/ISCC.exe</exists>
                 </file>
             </activation>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>osxappbundle-maven-plugin</artifactId>
-                        <version>1.0-alpha-2</version>
-                        <configuration>
-                            <mainClass>${project.groupId}.${project.nameLowercase}.${project.name}</mainClass>
-                            <javaApplicationStub>${basedir}/../tools/JavaApplicationStub</javaApplicationStub>
-                            <iconFile>${basedir}/${project.name}.icns</iconFile>
-                            <additionalResources>
-                                <fileSet>
-                                    <directory>${project.build.directory}/doc</directory>
-                                    <includes>
-                                        <include>README*</include>
-                                        <include>LICENSE*</include>
-                                        <include>${project.name}*</include>
-                                    </includes>
-                                </fileSet>
-                            </additionalResources>
-                        </configuration>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.4.0</version>
                         <executions>
                             <execution>
+                                <id>make-setup-exe</id>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>bundle</goal>
+                                    <goal>exec</goal>
                                 </goals>
+                                <configuration>
+                                    <executable>/usr/bin/wine</executable>
+                                    <workingDirectory>${project.build.directory}</workingDirectory>
+                                    <arguments>
+                                        <argument>${basedir}/../../Inno Setup 5/ISCC.exe</argument>
+                                        <argument>${project.artifactId}_inno.iss</argument>
+                                    </arguments>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -205,9 +199,9 @@
                     </descriptorRefs>
                     <finalName>${project.name}</finalName>
                     <!--appendAssemblyId>true</appendAssemblyId-->
-                  <descriptors>
-                      <descriptor>src/assembly/target.xml</descriptor>
-                  </descriptors>
+                    <descriptors>
+                        <descriptor>src/assembly/target.xml</descriptor>
+                    </descriptors>
                 </configuration>
                 <executions>
                     <execution>
@@ -333,6 +327,20 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.4.0</version>
                 <executions>
+                    <execution> <!-- there must be a better way... -->
+                        <id>copy-binfile-with-version</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cp</executable>
+                            <arguments>
+                                <argument>${basedir}/target/${project.artifactId}-bin.zip</argument>
+                                <argument>${basedir}/target/${project.artifactId}-${project.version}-bin.zip</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>sillify docs</id>
                         <phase>package</phase>
@@ -397,6 +405,22 @@
                             </arguments>
                         </configuration>
                     </execution>
+                    <!-- Build the MacOS App (unconditionally!) -->
+                    <execution>
+                        <id>make-macos-app</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${project.build.directory}/../../tools/mkapp.sh</executable>
+                            <workingDirectory>${project.build.directory}/../..</workingDirectory>
+                            <arguments>
+                                <argument>${project.artifactId}</argument>
+                                <argument>${project.version}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>install-prog</id>
                         <phase>deploy</phase>
@@ -420,32 +444,26 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>IrpMaster</artifactId>
-            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>HarcHardware</artifactId>
-            <version>0.9.3</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Girr</artifactId>
-            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Jirc</artifactId>
-            <version>0.3.1</version>
         </dependency>
         <dependency>
             <groupId>com.mrallen</groupId>
             <artifactId>tonto</artifactId>
-            <version>1.44</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Crystal-Clear-Icons</artifactId>
-            <version>20070620</version>
         </dependency>
     </dependencies>
 </project>

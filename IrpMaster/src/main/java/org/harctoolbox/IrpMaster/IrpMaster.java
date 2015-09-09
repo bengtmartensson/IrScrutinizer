@@ -270,8 +270,8 @@ public class IrpMaster implements Serializable {
                 } else if (currentProtocol != null && currentProtocol.documentation != null) {
                     // Everything is added to the documentation
                     currentProtocol.documentation += currentProtocol.documentation.isEmpty() ? line
-                            : line.isEmpty() ? "\n"
-                            : ("\n" + line);
+                            : line.isEmpty() ? "\n\n"
+                            : ((currentProtocol.documentation.endsWith("\n") ? "" : " ") + line);
                 } else if (line.equals("[documentation]")) {
                     if (currentProtocol != null)
                         currentProtocol.documentation = "";

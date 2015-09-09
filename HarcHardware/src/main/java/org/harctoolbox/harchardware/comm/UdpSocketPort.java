@@ -21,9 +21,9 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import org.harctoolbox.harchardware.IHarcHardware;
-import org.harctoolbox.harchardware.IStringCommand;
+import org.harctoolbox.harchardware.ICommandLineDevice;
 
-public class UdpSocketPort implements IStringCommand, IHarcHardware {
+public class UdpSocketPort implements ICommandLineDevice, IHarcHardware {
 
     UdpSocketChannel udpSocketChannel;
 
@@ -64,6 +64,14 @@ public class UdpSocketPort implements IStringCommand, IHarcHardware {
             //ex.printStackTrace();
         //    throw new HarcHardwareException(ex);
         //}
+    }
+
+    @Override
+    public String readString(boolean wait) throws IOException {
+        if (wait)
+            return readString();
+
+        throw new UnsupportedOperationException("Not supported.");
     }
 
     @Override

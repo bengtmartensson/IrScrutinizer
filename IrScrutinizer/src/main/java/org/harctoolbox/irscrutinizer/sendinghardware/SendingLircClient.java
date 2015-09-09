@@ -26,6 +26,7 @@ import org.harctoolbox.guicomponents.InternetHostPanel;
 import org.harctoolbox.guicomponents.NamedCommandLauncher;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.ir.LircCcfClient;
+import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 import org.harctoolbox.harchardware.ir.Transmitter;
 import org.harctoolbox.irscrutinizer.Props;
 
@@ -64,7 +65,7 @@ public class SendingLircClient extends SendingHardware<LircCcfClient> implements
     }
 
     @Override
-    public Transmitter getTransmitter() {
+    public Transmitter getTransmitter() throws NoSuchTransmitterException {
         return namedCommandLauncher.getTransmitter();
     }
 
@@ -73,6 +74,12 @@ public class SendingLircClient extends SendingHardware<LircCcfClient> implements
         String lircIp = internetHostPanel.getIpName();
         int lircPort = internetHostPanel.getPortNumber();
         rawIrSender = new LircCcfClient(lircIp, lircPort, properties.getVerbose(), properties.getSendingTimeout());
+        try {
+            internetHostPanel.setHardware(rawIrSender);
+        } catch (IOException ex) {
+            namedCommandLauncher.setHardware(null);
+            throw ex;
+        }
         namedCommandLauncher.setHardware(rawIrSender);
         properties.setLircIpName(lircIp);
         properties.setLircPort(lircPort);

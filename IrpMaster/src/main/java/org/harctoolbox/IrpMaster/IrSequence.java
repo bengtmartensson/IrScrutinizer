@@ -46,6 +46,7 @@ public class IrSequence implements Cloneable, Serializable {
      */
     protected double[] data;
     private static final double epsilon = 0.001;
+    private static final int dummySpaceDuration = 50; // should not translate to 0000 in Pronto
 
     /**
      * Returns the i'th value, a duration in micro seconds.
@@ -165,13 +166,17 @@ public class IrSequence implements Cloneable, Serializable {
      * Constructs an IrSequence from the parameter data.
      * This version does not require flashes and gaps to be interleaved (signs alternating).
      * @param str String of durations, possibly using signed numbers.
-     * @throws IncompatibleArgumentException If last duration is not a gap.
+     * @param fixOddSequences it true, odd sequences (ending with space) are silently fixed.
+     * @throws IncompatibleArgumentException If last duration is not a gap, and fixOddSequences false.
      */
-    public IrSequence(String str) throws IncompatibleArgumentException {
+    public IrSequence(String str, boolean fixOddSequences) throws IncompatibleArgumentException {
         if (str == null || str.trim().isEmpty()) {
             data = new double[0];
         } else {
             String[] strings = str.trim().split("[\\s,;]+");
+            if (strings.length == 1)
+                // Instead, try to break at "+" and "-" chars, preserving these
+                strings = str.trim().split("(?=\\+)|(?=-)");
             boolean hasAlternatingSigns = false;
             for (String string : strings) {
                 if (string.startsWith("-")) {
@@ -180,21 +185,40 @@ public class IrSequence implements Cloneable, Serializable {
                 }
             }
 
-            int[] tmplist = new int[strings.length];
+            int[] tmplist = new int[strings.length + 1];
             int index = -1;
             for (String string : strings) {
+                if (string.isEmpty())
+                    continue; // be on the safe side
                 int x = Integer.parseInt(string.replaceFirst("\\+", ""));
+                if (index == -1 && x < 0)
+                    continue; // Ignore silly leading gaps
+
                 if (hasAlternatingSigns && index >= 0 && sameSign(tmplist[index], x))
                     tmplist[index] += x;
                 else
                     tmplist[++index] = x;
             }
-            if (index % 2 == 0)
-                throw new IncompatibleArgumentException("IrSequence ends with a gap");
+            if (index % 2 == 0) {
+                if (fixOddSequences)
+                    tmplist[++index] = dummySpaceDuration;
+                else
+                    throw new IncompatibleArgumentException("IrSequence ends with a space");
+            }
             data = new double[index+1];
             for (int i = 0; i < index+1; i++)
                 data[i] = (double) tmplist[i];
         }
+    }
+
+    /**
+     * Constructs an IrSequence from the parameter data.
+     * This version does not require flashes and gaps to be interleaved (signs alternating).
+     * @param str String of durations, possibly using signed numbers.
+     * @throws IncompatibleArgumentException If last duration is not a gap.
+     */
+    public IrSequence(String str) throws IncompatibleArgumentException {
+        this(str, false);
     }
 
     private boolean sameSign(int x, int y) {

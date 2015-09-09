@@ -46,7 +46,9 @@ class HelpTexts {
             + "transfers all commands (the selected commands) to the \"Scrutinize remote\" pane, "
             + "sub-pane \"Parametric remote\" (without overwriting already present commands), while the buttons \"Import all/raw\" and \"Import "
             + "selected/raw\" transfer to the sub-pane \"Raw remote\"."
-            + "The key \"Transmit selected\" transmits the (single) selected signal to the selected sending hardware.";
+            + "The key \"Transmit selected\" transmits the (single) selected signal to the selected sending hardware."
+            + "\n\n"
+            + "The \"Import all\" and \"Import all/raw\" buttons are only enabled if there are at most 10 remotes in the tree.";
 
     private static final String fileUrlImportHelp
             = "There is a text field, named File/URL. Either a local file name or an URL can be "
@@ -101,8 +103,8 @@ class HelpTexts {
             + "When pressing the \"Load\" button, " + treeHelp;
 
     public static String importIrdbHelp
-            = "To use the IRDB data base, select, in order, a manufacturer, a device type, and a protocol &amp; parameter combination, the latter possibly by trial-and-error.\n\n"
-            + "Pressing the \"Load all\" button transfers all present protocol & parameters combinations to the tree.\n\n"
+            = "To use the IRDB data base, select, in order, a manufacturer, a device type, and a protocol/parameter combination, the latter possibly by trial-and-error.\n\n"
+            + "Pressing the \"Load all\" button transfers all present protocol/parameters combinations to the tree.\n\n"
             + "When pressing the \"Load\" button, " + treeHelp;
 
     public static String importGirrHelp
@@ -145,6 +147,22 @@ class HelpTexts {
             + "preserving the Pronto \"devices\" as nodes in the tree.\n\n"
             + fileImportHelp + "\n\n"
             + "When pressing the \"Load File\" button, " + treeHelp;
+
+    public static String importCmlHelp
+            = "Many CML files are available in Internet, in particular by RemoteCentral. "
+            + "Particularly noteworthy is the \"megalist\", http://files.remotecentral.com/collection/66-1/index.html. "
+            + "IrScrutinizer can import these files to its import tree, "
+            + "making every remote a nodes in the tree.\n\n"
+            + fileImportHelp + "\n\n"
+            + "When pressing the \"Load File\" button, " + treeHelp;
+
+    public static String importCommandFusionHelp
+            = "The native format for CommandFusion equipment (for example, their freely available IR Learner) "
+            + "is a Json based text format, having the file extension \".cfir\". "
+            + "IrScrutinizer can read in these files to its import tree, "
+            + "making every remote a nodes in the tree.\n\n"
+            + "When pressing one of the \"Load\", \"Load File/URL\", or \"Load from clipboard\" buttons, "
+            + treeHelp;
 
     public static String importIctHelpHelp
             = "The ICT format, introduced by Kevin Timmerman's  IrScope, contains one or many IR signals, "
@@ -297,7 +315,7 @@ class HelpTexts {
             + "Has been tested only on Linux, should however work on all systems.";
 
     public static String capturingArduinoHardwareHelp
-            = "To use the Arduino with a non-demodulating receiver for IR capture. The sketch ArduinoIrScrutinizer should be running on the Arduino.";
+            = "To use the Arduino with a non-demodulating receiver for IR capture. The sketch GirsLite (download source from https://github.com/bengtmartensson/AGirs) should be running on the Arduino.";
 
     public static String sendingHardwareHelp
             = "The sub-panes of this pane allows for the selection and configuration of the employed IR sending hardware. Note that selecting a sub-pane selects the associated hardware for sending, to the extent possible";
@@ -369,8 +387,16 @@ class HelpTexts {
 
     public static String sendingArduinoHelp
             = "Using this pane, an Arduino equipped with a suitable IR Led can be used to "
-            + "transmit IR signals. The sketch ArduinoIrScrutinizer should be running on the Arduino.";
+            + "transmit IR signals. The sketch GirsLite (download source from https://github.com/bengtmartensson/AGirs) should be running on the Arduino.";
 
     public static String sendingGenericSerialPortHelp
             = "This pane contains the controls for sending a signal in a general format to one of the serial ports available on the system.";
+
+    public static String sendingGirsHelp = "TODO";
+
+    public static String sendingCommandFusionHelp = "With this pane, a CommandFusion Learner can be used for transmitting IR signals.";
+
+    public static String capturingGirsHelp = "TODO";
+
+    public static String capturingCommandFusionHelp = "With this pane, a CommandFusion Learner can be used for capturing IR signals.";
 }

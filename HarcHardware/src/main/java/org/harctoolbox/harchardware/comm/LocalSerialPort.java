@@ -65,7 +65,6 @@ public abstract class LocalSerialPort implements IHarcHardware {
     protected OutputStream outStream;
     private CommPort commPort;
     private final String portName;
-    private String actualPortName;
     private final int baud;
     private final int length;
     private final int stopBits;
@@ -81,7 +80,6 @@ public abstract class LocalSerialPort implements IHarcHardware {
         this.debug = 0;
         this.verbose = false;
         this.portName = portName;
-        this.actualPortName = null;
         this.baud = baud;
         this.length = length;
         this.stopBits = stopBits;
@@ -91,15 +89,19 @@ public abstract class LocalSerialPort implements IHarcHardware {
     }
 
     private void lowLevelOpen() throws NoSuchPortException, PortInUseException {
-        CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(actualPortName);
+        CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
         commPort = portIdentifier.open(this.getClass().getName(), msToWaitForPort);
     }
 
     private static String nextPortName(String portName) {
-        final String pattern = "(.*)(\\D+)(\\d+)(:?)";
-        String dig = portName.replaceFirst(pattern, "$3");
-        int n = Integer.parseInt(dig);
-        return portName.replaceFirst(pattern, "$1$2" + Integer.toString(n+1) + "$4");
+        try {
+            final String pattern = "(.*)(\\D+)(\\d+)(:?)";
+            String dig = portName.replaceFirst(pattern, "$3");
+            int n = Integer.parseInt(dig);
+            return portName.replaceFirst(pattern, "$1$2" + Integer.toString(n+1) + "$4");
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     @Override
@@ -112,41 +114,25 @@ public abstract class LocalSerialPort implements IHarcHardware {
         this.debug = debug;
     }
 
-    @Override
-    public void open() throws HarcHardwareException, IOException {
-        open(false);
-    }
 
     /**
-     * This version of open tries, if its argument is true, to open the "following" device if opening of the requested device fails.
-     * Up to maxtries attempts are made, then a HarcHardwareException is thrown on failure.
+     * Opens the device.
      *
-     * @param iterate
-     * @throws HarcHardwareException
+     * @throws HarcHardwareException Bundles RXTX exceptions together.
      * @throws IOException
      */
-    public void open(boolean iterate) throws HarcHardwareException, IOException {
+    @Override
+    public void open() throws HarcHardwareException, IOException {
         boolean success = false;
-        actualPortName = portName;
-        int tries = 0;
-        do {
-            try {
-                lowLevelOpen();
-                success = true;
-            } catch (NoSuchPortException ex) {
-                if (!iterate)
-                    throw new HarcHardwareException(ex);
-                actualPortName = nextPortName(actualPortName);
-            } catch (PortInUseException ex) {
-                if (!iterate)
-                    throw new HarcHardwareException(ex);
-                actualPortName = nextPortName(actualPortName);
-            }
-            tries++;
-        } while (!success && tries < maxtries);
+        try {
+            lowLevelOpen();
+            success = true;
+        } catch (NoSuchPortException | PortInUseException ex) {
+            throw new HarcHardwareException(ex);
+        }
 
         if (!success)
-            throw new HarcHardwareException("Could not open LocalSerialPort " + portName + (iterate ? (" -- " + actualPortName): ""));
+            throw new HarcHardwareException("Could not open LocalSerialPort " + portName);
 
         if (commPort instanceof gnu.io.SerialPort) {
             SerialPort serialPort = (SerialPort) commPort;
@@ -258,12 +244,13 @@ public abstract class LocalSerialPort implements IHarcHardware {
     }
 
     /**
-     * Returns the actual port name being used. May differ from one requested in
-     * the constructor if the device was opened with open(true).
-     * @return Actual port name used.
+     * Returns the nominal port name being used. May differ from one requested in
+     * the constructor if the device was opened with open(true), or if it is symlink
+     * (for example created by udev).
+     * @return port name used.
      */
-    public String getActualPortName() {
-        return actualPortName;
+    public String getPortName() {
+        return portName;
     }
 
     @Override

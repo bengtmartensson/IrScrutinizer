@@ -21,6 +21,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.JPanel;
+import org.harctoolbox.IrpMaster.IrSignal;
+import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.ir.GlobalCache;
@@ -43,12 +45,12 @@ public class SendingGlobalCache extends SendingHardware<GlobalCache> implements 
         super(panel, properties, gui);
         initialIp = properties.getGlobalCacheIpName();
         this.globalCacheIrSenderSelector = newGlobalCacheIrSenderSelector;
-        globalCacheIrSenderSelector.setTimeOut(properties.getGlobalCacheTimeout());
+        globalCacheIrSenderSelector.setTimeout(properties.getGlobalCacheTimeout());
         properties.addGlobalCacheTimeoutChangeListener(new Props.IPropertyChangeListener() {
 
             @Override
             public void propertyChange(String name, Object oldValue, Object newValue) {
-                globalCacheIrSenderSelector.setTimeOut((Integer) newValue);
+                globalCacheIrSenderSelector.setTimeout((Integer) newValue);
             }
         });
         this.globalCacheIrSenderSelector.addPropertyChangeListener(new PropertyChangeListener() {
@@ -72,6 +74,13 @@ public class SendingGlobalCache extends SendingHardware<GlobalCache> implements 
                 }
             }
         });
+    }
+
+    @Override
+    public boolean sendIr(IrSignal irSignal, int count) throws NoSuchTransmitterException, IrpMasterException, IOException, HardwareUnavailableException, HarcHardwareException {
+        if (rawIrSender == null)
+            throw new HardwareUnavailableException("No Global Caché unit selected.");
+        return super.sendIr(irSignal, count);
     }
 
     @Override

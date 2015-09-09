@@ -40,10 +40,10 @@ public abstract class ReaderImporter extends FileImporter {
         super();
     }
 
-    public abstract void load(Reader reader, String origin) throws IOException, ParseException, IrpMasterException;
+    public abstract void load(Reader reader, String origin) throws IOException, ParseException;
 
     @Override
-    public void load(File file, String origin) throws IOException, ParseException, IrpMasterException {
+    public void load(File file, String origin) throws IOException, ParseException {
         load(new InputStreamReader(new FileInputStream(file), IrpUtils.dumbCharset), origin);
     }
 
@@ -51,7 +51,7 @@ public abstract class ReaderImporter extends FileImporter {
         load(System.in, "<STDIN>");
     }
 
-    public void load(InputStream inputStream, String origin) throws IOException, ParseException, IrpMasterException {
+    public void load(InputStream inputStream, String origin) throws IOException, ParseException {
         load(new InputStreamReader(inputStream, IrpUtils.dumbCharset), origin);
     }
 
@@ -60,7 +60,7 @@ public abstract class ReaderImporter extends FileImporter {
         load(new ByteArrayInputStream(payload.getBytes(IrpUtils.dumbCharset)), origin);
     }
 
-    public void load(String urlOrFilename, boolean zip) throws IOException, ParseException, IrpMasterException {
+    public void load(String urlOrFilename, boolean zip) throws IOException, ParseException {
         if (urlOrFilename == null || urlOrFilename.isEmpty())
             throw new IOException("Empty file name/URL");
         try {

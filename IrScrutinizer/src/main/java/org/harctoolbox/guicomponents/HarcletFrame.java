@@ -17,10 +17,10 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.guicomponents;
 
+import java.awt.Component;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -62,7 +62,7 @@ public class HarcletFrame extends javax.swing.JFrame {
         }
     }
 
-    public static HarcletFrame newHarcletFrame(JFrame parent, HarcPanel panel, boolean exitOnClose, String lafClassName) {
+    public static HarcletFrame newHarcletFrame(Component parent, HarcPanel panel, boolean exitOnClose, String lafClassName) {
         HarcletFrame harcletFrame = new HarcletFrame(panel, exitOnClose, lafClassName);
         harcletFrame.setLocationRelativeTo(parent);
         harcletFrame.setVisible(true);

@@ -49,8 +49,8 @@ public abstract class Importer {
     protected String origin = null;
 
     protected Importer() {
-        commands = new ArrayList<Command>();
-        commandIndex = new LinkedHashMap<String,Command>();
+        commands = new ArrayList<>();
+        commandIndex = new LinkedHashMap<>();
     }
 
     public static void setProperties(Props newProperties) {
@@ -68,7 +68,7 @@ public abstract class Importer {
      * @return the invokeDecodeIr
      */
     protected boolean isInvokeDecodeIr() {
-        return properties.getInvokeDecodeIr();
+        return properties != null  && properties.getInvokeDecodeIr();
     }
 
     /**
@@ -93,7 +93,7 @@ public abstract class Importer {
      * @return the generateRaw
      */
     protected boolean isGenerateRaw() {
-        return properties.getGenerateRaw();
+        return properties != null && properties.getGenerateRaw();
     }
 
     /**
