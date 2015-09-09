@@ -199,9 +199,9 @@
                     </descriptorRefs>
                     <finalName>${project.name}</finalName>
                     <!--appendAssemblyId>true</appendAssemblyId-->
-                  <descriptors>
-                      <descriptor>src/assembly/target.xml</descriptor>
-                  </descriptors>
+                    <descriptors>
+                        <descriptor>src/assembly/target.xml</descriptor>
+                    </descriptors>
                 </configuration>
                 <executions>
                     <execution>
@@ -327,6 +327,20 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.4.0</version>
                 <executions>
+                    <execution> <!-- there must be a better way... -->
+                        <id>copy-binfile-with-version</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cp</executable>
+                            <arguments>
+                                <argument>${basedir}/target/${project.artifactId}-bin.zip</argument>
+                                <argument>${basedir}/target/${project.artifactId}-${project.version}-bin.zip</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>sillify docs</id>
                         <phase>package</phase>

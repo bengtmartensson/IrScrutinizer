@@ -6,6 +6,4 @@ the command line program IrpMaster can be started from a so-called
 DOS-box using the command name "irpmaster". (Otherwise the full path
 name will have to be used.)
 
-Documentation is available through the Help menu, entry
-Content. Please address feedback, bugreports, suggestions etc to the
-JP1-Forum: http://www.hifi-remote.com/forums/
+Documentation is available through the Help menu.

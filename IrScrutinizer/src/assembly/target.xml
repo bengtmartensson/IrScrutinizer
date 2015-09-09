@@ -17,7 +17,7 @@
             <includes>
                 <include>*.txt</include>
             </includes>
-            <lineEnding>keep</lineEnding>
+            <lineEnding>keep</lineEnding> <!-- see CONTRIBUTE.md for rationale -->
         </fileSet>
         <fileSet>
             <directory>target</directory>
@@ -33,7 +33,7 @@
             <lineEnding>keep</lineEnding>
         </fileSet>
         <fileSet>
-            <directory>native</directory>
+            <directory>../native</directory>
             <outputDirectory/>
             <includes>
                 <include>*/*</include>
@@ -51,13 +51,6 @@
         <fileSet>
             <directory>src/main/doc</directory>
             <outputDirectory/>
-        </fileSet>
-        <fileSet>
-            <directory>arduino</directory>
-            <outputDirectory>arduino</outputDirectory>
-            <includes>
-                <include>*</include>
-            </includes>
         </fileSet>
     </fileSets>
     <files>

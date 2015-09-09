@@ -10,12 +10,10 @@ RES="${HERE}/../Resources/Java/repo"
 JAVA=$(which java)
 
 if [ -f "$JAVA" ] && [ -x "$JAVA" ] ; then
+    cd ${RES}
     exec "${JAVA}" -Xdock:icon="${RES}/${project.artifactId}.icns" -Xdock:name="${project.artifactId}" -jar "${RES}/${project.artifactId}-jar-with-dependencies.jar" -p "${HOME}/.config/${project.artifactId}/properties.xml"
 else
     # display error message with applescript
-    osascript -e "tell application \"System Events\" to display dialog \"Error launching ${project.artifactId}.\n\nYou need to have Java installed.\nVisit http://java.com for more information...\" with title \"${project.artifactId}\" buttons {\" OK \"} default button 1"
-    # and open java.com
-    #open http://java.com
-    # exit with error
+    osascript -e "tell application \"System Events\" to display dialog \"Error launching ${project.artifactId}.\n\nJava JDK (not just JRE) is needed.\nVisit http://java.com for more information...\" with title \"${project.artifactId}\" buttons {\" OK \"} default button 1"
     exit 1
 fi

@@ -1,4 +1,11 @@
 Version 1.1.3
+
+Open Issue: MacOS 10.10.5: Crash in RXTX when closing serial USB device,
+(https://github.com/bengtmartensson/harctoolboxbundle/issues/64).
+
+- Offers to nuke properties if fatal error during startup (#62).
+- Reset properties makes backup (#59).
+- Link to tutorial under help menu.
 - Fixed broken CSV-import using regexp (e.g. "WHITESPACE").
 - Removed "smart" incrementing of serial device, broke the USB serial
 devices on Windows, and had severed problems on the others.
