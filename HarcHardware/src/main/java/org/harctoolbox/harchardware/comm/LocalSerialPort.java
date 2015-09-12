@@ -186,7 +186,7 @@ public abstract class LocalSerialPort implements IHarcHardware {
 
     /**
      * Returns all serial port names found in the system.
-     * @param useCached
+     * @param useCached If true, use previously acquired list, if available
      * @return ArrayList&lt;String&gt;
      * @throws IOException
      */
