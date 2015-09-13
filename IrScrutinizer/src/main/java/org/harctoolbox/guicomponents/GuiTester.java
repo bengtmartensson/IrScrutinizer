@@ -88,9 +88,7 @@ public class GuiTester extends javax.swing.JFrame {
     public GuiTester() {
         try {
             this.irpMaster = new IrpMaster("../IrpMaster/data/IrpProtocols.ini");
-        } catch (FileNotFoundException ex) {
-            guiUtils.error(ex);
-        } catch (IncompatibleArgumentException ex) {
+        } catch (FileNotFoundException | IncompatibleArgumentException ex) {
             guiUtils.error(ex);
         }
         try {

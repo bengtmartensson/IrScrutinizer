@@ -527,9 +527,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         try {
             capturingHardwareManager.select(properties.getCaptureDevice(), true);
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (HarcHardwareException ex) {
+        } catch (IOException | HarcHardwareException ex) {
             guiUtils.error(ex);
         }
         properties.addVerboseChangeListener(new Props.IPropertyChangeListener() {
@@ -989,11 +987,7 @@ public class GuiMain extends javax.swing.JFrame {
             File file = saveCommands(parameterTableModel, Version.appName + " parametric export", exporter);
             if (file != null)
                 guiUtils.message("File " + file + " was successfully written.");
-        } catch (IrpMasterException ex) {
-            guiUtils.error(ex);
-        } catch (FileNotFoundException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
+        } catch (IrpMasterException | IOException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1003,13 +997,7 @@ public class GuiMain extends javax.swing.JFrame {
             File file = saveCommands(rawTableModel, Version.appName + " raw export", exporter);
             if (file != null)
                 guiUtils.message("File " + file + " was successfully written.");
-        } catch (IrpMasterException ex) {
-            guiUtils.error(ex);
-        } catch (FileNotFoundException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (IllegalArgumentException ex) {
+        } catch (IrpMasterException | IllegalArgumentException | IOException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1071,11 +1059,7 @@ public class GuiMain extends javax.swing.JFrame {
         try {
             File savedFile = saveSignal(commandTableSelectedRow(table), title, newExporter());
             guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
-        } catch (IrpMasterException ex) {
-            guiUtils.error(ex);
-        } catch (FileNotFoundException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
+        } catch (IrpMasterException | IOException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1083,8 +1067,7 @@ public class GuiMain extends javax.swing.JFrame {
     private double getFrequency() {
         try {
             return Double.parseDouble(frequencyLabel.getText());
-        } catch (NumberFormatException ex) {
-        } catch (NullPointerException ex) {
+        } catch (NumberFormatException | NullPointerException ex) {
         }
         int f = properties.getFallbackFrequency();
         return f > 0 ? (double) f : IrpUtils.defaultFrequency;
@@ -1122,19 +1105,7 @@ public class GuiMain extends javax.swing.JFrame {
             File savedFile = saveSignal(command, "IrScrutinizer scrutinized signal", exporter);
             if (savedFile != null)
                 guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
-        } catch (FileNotFoundException ex) {
-            guiUtils.error(ex);
-        } catch (ParseException ex) {
-            guiUtils.error(ex);
-        } catch (IncompatibleArgumentException ex) {
-            guiUtils.error(ex);
-        } catch (UnassignedException ex) {
-            guiUtils.error(ex);
-        } catch (DomainViolationException ex) {
-            guiUtils.error(ex);
-        } catch (InvalidRepeatException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
+        } catch (ParseException | IncompatibleArgumentException | UnassignedException | DomainViolationException | InvalidRepeatException | IOException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1146,15 +1117,7 @@ public class GuiMain extends javax.swing.JFrame {
                 guiUtils.error("Nothing to scrutinize");
             else
                 scrutinizeIrSignal(irSignal);
-        } catch (IncompatibleArgumentException ex) {
-            guiUtils.error(ex.getMessage());
-        } catch (DomainViolationException ex) {
-            guiUtils.error(ex);
-        } catch (ParseException ex) {
-            guiUtils.error(ex);
-        } catch (UnassignedException ex) {
-            guiUtils.error(ex);
-        } catch (InvalidRepeatException ex) {
+        } catch (DomainViolationException | ParseException | UnassignedException | InvalidRepeatException | IncompatibleArgumentException ex) {
             guiUtils.error(ex);
         } catch (RuntimeException ex) {
             // likely a bug in ExchangeIR was encountered.
@@ -1173,9 +1136,7 @@ public class GuiMain extends javax.swing.JFrame {
             File file = exporter.export(capturedDataTextArea.getText().trim(),
                     properties.getExportAutomaticFilenames(), this, new File(properties.getExportDir()));
             guiUtils.message("File " + file.getPath() + " successfully written.");
-        } catch (IrpMasterException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
+        } catch (IrpMasterException | IOException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1283,11 +1244,7 @@ public class GuiMain extends javax.swing.JFrame {
             boolean status = importer.loadFileSelector(this, "Select file for signal import", properties.getDefaultImportDir());
             if (status)
                 importSequence(importer);
-        } catch (IrpMasterException ex) {
-            guiUtils.error(ex);
-        } catch (java.text.ParseException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
+        } catch (IrpMasterException | java.text.ParseException | IOException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1297,11 +1254,7 @@ public class GuiMain extends javax.swing.JFrame {
             boolean status = importer.loadFileSelector(this, "Select file for signal import", properties.getDefaultImportDir());
             if (status)
                 processIr(importer.getModulatedIrSequence());
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (java.text.ParseException ex) {
-            guiUtils.error(ex);
-        } catch (IrpMasterException ex) {
+        } catch (IOException | java.text.ParseException | IrpMasterException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1317,11 +1270,7 @@ public class GuiMain extends javax.swing.JFrame {
             boolean status = importer.loadFileSelector(this, "Select file for signal import", properties.getDefaultImportDir());
             if (status)
                 importCommands(importer.getCommands(), raw);
-        } catch (IrpMasterException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (java.text.ParseException ex) {
+        } catch (IrpMasterException | IOException | java.text.ParseException ex) {
             guiUtils.error(ex);
         } finally {
             resetCursor(oldCursor);
@@ -1414,13 +1363,7 @@ public class GuiMain extends javax.swing.JFrame {
                             registerParameterSignal(irSignal, null, null);
                         }
                     }
-                } catch (IOException ex) {
-                    guiUtils.error(ex);
-                    startStopToggleButton.setSelected(false);
-                } catch (HarcHardwareException ex) {
-                    guiUtils.error(ex);
-                    startStopToggleButton.setSelected(false);
-                } catch (IrpMasterException ex) {
+                } catch (IOException | HarcHardwareException | IrpMasterException ex) {
                     guiUtils.error(ex);
                     startStopToggleButton.setSelected(false);
                 }
@@ -7287,9 +7230,7 @@ public class GuiMain extends javax.swing.JFrame {
         try {
             loadProtocolsIni(protocolsIniTextField.getText());
             properties.setProtocolsIniUrl(protocolsIniTextField.getText());
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (java.text.ParseException ex) {
+        } catch (IOException | java.text.ParseException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_protocolsIniTextFieldActionPerformed
@@ -7363,17 +7304,8 @@ public class GuiMain extends javax.swing.JFrame {
         try {
             IrSignal irSignal = irpMasterBean.render();
             generateTextArea.setText(formatIrSignal(irSignal));
-        } catch (UnassignedException ex) {
-            guiUtils.error(ex.getMessage());
-        } catch (ParseException ex) {
-            guiUtils.error(ex);
-        } catch (UnknownProtocolException ex) {
-            guiUtils.error(ex.getMessage());
-        } catch (IncompatibleArgumentException ex) {
-            guiUtils.error(ex.getMessage());
-        } catch (DomainViolationException ex) {
-            guiUtils.error(ex);
-        } catch (InvalidRepeatException ex) {
+        } catch (UnassignedException | UnknownProtocolException | IncompatibleArgumentException
+                | ParseException | DomainViolationException | InvalidRepeatException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_generateButtonActionPerformed
@@ -7384,15 +7316,7 @@ public class GuiMain extends javax.swing.JFrame {
             boolean success = transmit(irpMasterBean.render());
             if (!success)
                 guiUtils.error("Transmit failed.");
-        } catch (IrpMasterException ex) {
-            guiUtils.error(ex);
-        } catch (NoSuchTransmitterException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (HardwareUnavailableException ex) {
-            guiUtils.error(ex);
-        } catch (HarcHardwareException ex) {
+        } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException ex) {
             guiUtils.error(ex);
         } finally {
             resetCursor(old);
@@ -7412,10 +7336,6 @@ public class GuiMain extends javax.swing.JFrame {
         try {
             Collection<Command> commands = irpMasterBean.getCommands().values();
             registerRawCommands(commands);
-        } catch (UnassignedException ex) {
-            guiUtils.error(ex);
-        } catch (ParseException ex) {
-            guiUtils.error(ex);
         } catch (IrpMasterException ex) {
             guiUtils.error(ex);
         } finally {
@@ -7561,11 +7481,7 @@ public class GuiMain extends javax.swing.JFrame {
     private void generateExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateExportButtonActionPerformed
         try {
             saveSignals(irpMasterBean.getCommands());
-        } catch (IrpMasterException ex) {
-            guiUtils.error(ex);
-        } catch (FileNotFoundException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
+        } catch (IrpMasterException | IOException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_generateExportButtonActionPerformed
@@ -7618,11 +7534,7 @@ public class GuiMain extends javax.swing.JFrame {
     private void exportFormatsReloadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportFormatsReloadMenuItemActionPerformed
         try {
             loadExportFormats();
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (SAXException ex) {
-            guiUtils.error(ex);
-        } catch (ParserConfigurationException ex) {
+        } catch (IOException | SAXException | ParserConfigurationException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_exportFormatsReloadMenuItemActionPerformed
@@ -7639,8 +7551,6 @@ public class GuiMain extends javax.swing.JFrame {
     private void irTransInternetHostPanelPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_irTransInternetHostPanelPropertyChange
         try {
             setupIrTrans();
-        } catch (UnknownHostException ex) {
-            guiUtils.error(ex);
         } catch (IOException ex) {
             guiUtils.error(ex);
         }
@@ -7689,9 +7599,7 @@ public class GuiMain extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (HarcHardwareException ex) {
+        } catch (IOException | HarcHardwareException ex) {
             guiUtils.error(ex);
         } finally {
             resetCursor(oldCursor);
@@ -7732,11 +7640,7 @@ public class GuiMain extends javax.swing.JFrame {
                 guiUtils.error("No signal received.");
         } catch (TimeoutException ex) {
             guiUtils.error("Timeout capturing signal");
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (HarcHardwareException ex) {
-            guiUtils.error(ex);
-        } catch (IrpMasterException ex) {
+        } catch (IOException | HarcHardwareException | IrpMasterException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_captureTestButtonActionPerformed
@@ -7795,14 +7699,9 @@ public class GuiMain extends javax.swing.JFrame {
         properties.setExportFormatFilePath(f.getAbsolutePath());
         try {
             loadExportFormats();
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (ParserConfigurationException ex) {
-            guiUtils.error(ex);
-        } catch (SAXException ex) {
+        } catch (IOException | ParserConfigurationException | SAXException ex) {
             guiUtils.error(ex);
         }
-        //exportFormatComboBox.setModel(new DefaultComboBoxModel(exportFormats.keySet().toArray(new String[exportFormats.size()])));
     }//GEN-LAST:event_exportFormatsSelectMenuItemActionPerformed
 
     private void irpFormatsIniReloadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpFormatsIniReloadMenuItemActionPerformed
@@ -7884,15 +7783,7 @@ public class GuiMain extends javax.swing.JFrame {
         Cursor old = setBusyCursor();
         try {
             transmit(irSignal);
-        } catch (IrpMasterException ex) {
-            guiUtils.error(ex);
-        } catch (NoSuchTransmitterException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (HardwareUnavailableException ex) {
-            guiUtils.error(ex);
-        } catch (HarcHardwareException ex) {
+        } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException ex) {
             guiUtils.error(ex);
         } finally {
             resetCursor(old);
@@ -7919,11 +7810,7 @@ public class GuiMain extends javax.swing.JFrame {
                 processIr(modulatedIrSequence);
             } else
                 guiUtils.message("no signal received");
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (HarcHardwareException ex) {
-            guiUtils.error(ex);
-        } catch (IrpMasterException ex) {
+        } catch (IOException | HarcHardwareException | IrpMasterException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_startButtonActionPerformed
@@ -7943,10 +7830,6 @@ public class GuiMain extends javax.swing.JFrame {
         try {
             Collection<Command> commands = irpMasterBean.getCommands().values();
             registerParameterSignal(commands);
-        } catch (UnassignedException ex) {
-            guiUtils.error(ex);
-        } catch (ParseException ex) {
-            guiUtils.error(ex);
         } catch (IrpMasterException ex) {
             guiUtils.error(ex);
         } finally {
@@ -7957,15 +7840,9 @@ public class GuiMain extends javax.swing.JFrame {
     private void transmitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitMenuItemActionPerformed
         try {
             transmitTableSelectedRow(parameterTable);
-        } catch (IrpMasterException ex) {
-            guiUtils.error(ex);
-        } catch (NoSuchTransmitterException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
-            guiUtils.error(ex);
         } catch (HardwareUnavailableException ex) {
             guiUtils.error("Transmitting hardware not selected or not ready.");
-        } catch (HarcHardwareException ex) {
+        } catch (IrpMasterException | IOException | HarcHardwareException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_transmitMenuItemActionPerformed
@@ -7973,15 +7850,7 @@ public class GuiMain extends javax.swing.JFrame {
     private void sendMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendMenuItemActionPerformed
         try {
             transmitTableSelectedRow(rawTable);
-        } catch (IrpMasterException ex) {
-            guiUtils.error(ex);
-        } catch (NoSuchTransmitterException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (HardwareUnavailableException ex) {
-            guiUtils.error(ex);
-        } catch (HarcHardwareException ex) {
+        } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_sendMenuItemActionPerformed
@@ -8001,8 +7870,6 @@ public class GuiMain extends javax.swing.JFrame {
             parameterTableAddMissingF();
         } catch (IrpMasterException ex) {
             guiUtils.error(ex);
-        } catch (IllegalArgumentException ex) {
-            guiUtils.error(ex.getMessage());
         }
     }//GEN-LAST:event_addMissingFsMenuItemActionPerformed
 

@@ -302,9 +302,7 @@ public class NamedCommandLauncher extends JPanel {
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
         try {
             hardware.sendIrCommand(getRemote(), getCommand(), getNoSends(), getTransmitter());
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (NoSuchTransmitterException ex) {
+        } catch (IOException | NoSuchTransmitterException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_sendButtonActionPerformed

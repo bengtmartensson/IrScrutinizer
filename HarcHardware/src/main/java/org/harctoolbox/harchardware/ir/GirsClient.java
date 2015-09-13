@@ -423,12 +423,10 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
             //ex.printStackTrace();
         } catch (NoSuchPortException ex) {
             System.err.println("No such port: " + portName);
-        } catch (HarcHardwareException ex) {
+        } catch (HarcHardwareException | UnsupportedCommOperationException ex) {
             System.err.println(ex.getMessage());
         } catch (PortInUseException ex) {
             System.err.println("Port " + portName + " in use.");
-        } catch (UnsupportedCommOperationException ex) {
-            System.err.println(ex.getMessage());
         } finally {
             if (w != null)
                 try {

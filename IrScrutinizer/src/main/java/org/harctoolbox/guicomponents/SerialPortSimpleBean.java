@@ -67,10 +67,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
         try {
             ArrayList<String> portList = LocalSerialPort.getSerialPortNames(true);
             model = new DefaultComboBoxModel<String>(portList.toArray(new String[portList.size()]));
-        } catch (IOException ex) {
-            model =  new DefaultComboBoxModel<String>(new String[]{ initialPort != null ? initialPort : notInitialized });
-        } catch (LinkageError ex) {
-            // Just to make Javabeans safe
+        } catch (IOException | LinkageError ex) {
             model =  new DefaultComboBoxModel<String>(new String[]{ initialPort != null ? initialPort : notInitialized });
         }
 
@@ -380,9 +377,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
         boolean opening = openToggleButton.isSelected();
         try {
             openClose(opening);
-        } catch (HarcHardwareException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
+        } catch (HarcHardwareException | IOException ex) {
             guiUtils.error(ex);
         } finally {
             openToggleButton.setSelected(hardware.isValid());

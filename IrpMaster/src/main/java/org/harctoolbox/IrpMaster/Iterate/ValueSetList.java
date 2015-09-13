@@ -112,9 +112,7 @@ public class ValueSetList implements Iterable<Long> {
         ValueSetList vsl = null;
         try {
             vsl = new ValueSetList(0L, 255L, args[arg_i]);
-        } catch (ParseException ex) {
-            System.err.println(ex.getMessage());
-        } catch (UnassignedException ex) {
+        } catch (ParseException | UnassignedException ex) {
             System.err.println(ex.getMessage());
         }
 

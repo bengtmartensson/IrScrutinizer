@@ -35,7 +35,7 @@ public class BitField extends PrimaryIrStreamItem {
      * Max length of a BitField in this implementation.
      */
     public static final int maxWidth = Long.SIZE - 1; // = 63
-    
+
     private boolean complement;
     boolean reverse;
     boolean infinite;
@@ -43,11 +43,11 @@ public class BitField extends PrimaryIrStreamItem {
     int width = maxWidth;
     int skip = 0;
     long value;
-    
+
     //private long evaluatePrimaryItem(String s, long deflt) {
     //    return (s == null || s.isEmpty()) ? deflt : Long.parseLong(s);
     //}
-    
+
     public BitField(Protocol p, boolean complement, boolean reverse, boolean infinite, long data, long width, long skip) throws DomainViolationException {
         super(p);
         if (width > maxWidth)
@@ -88,21 +88,17 @@ public class BitField extends PrimaryIrStreamItem {
             if (debug)
                 System.out.println(AST.toStringTree());
             return ASTTraverser.bitfield(env, AST);
-        } catch (RecognitionException ex) {
-            System.err.println(ex.getMessage());
-        } catch (UnassignedException ex) {
-            System.err.println(ex.getMessage());
-        } catch (DomainViolationException ex) {
+        } catch (RecognitionException | UnassignedException | DomainViolationException ex) {
             System.err.println(ex.getMessage());
         }
         return null;
     }
-    
+
     @Override
     public final String toString() {
         return (complement ? "~" : "") + data + ":" + (reverse ? "-" : "") + (infinite ? "" : width) + ":" + skip;
     }
-    
+
     private void compute() {
         long x = data >> skip;
         if (complement)
@@ -114,7 +110,7 @@ public class BitField extends PrimaryIrStreamItem {
         value = x;
         //lsb_value = environment.getBitDirection() == BitDirection.msb ? IrpUtils.reverse(value, width) : value;
     }
-    
+
     public String evaluateAsString() {
         String padding = value >= 0
                 ? "0000000000000000000000000000000000000000000000000000000000000000"
@@ -126,15 +122,15 @@ public class BitField extends PrimaryIrStreamItem {
             s = padding.substring(0, width - s.length()) + s;
         return s;
     }
-    
+
     public long toLong() {
         return value;
     }
-    
+
     public long evaluate() {
         return value;
     }
-    
+
     public int getWidth() {
         return width;
     }
@@ -142,13 +138,13 @@ public class BitField extends PrimaryIrStreamItem {
     public boolean isInfinite() {
         return infinite;
     }
-    
+
     private static void usage(int code) {
         System.out.println("Usage:");
         System.out.println("\tBitfield [-d]? <bitfield> [<name>=<value>|{<name>=<value>}]*");
         System.exit(code);
     }
-    
+
     public static void main(String[] args) {
         boolean debug = false;
         if (args.length == 0)

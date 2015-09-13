@@ -126,9 +126,7 @@ public class CapturingHardwareManager {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     try {
                         select(hardware, true);
-                    } catch (IOException ex) {
-                        guiUtils.error(ex);
-                    } catch (HarcHardwareException ex) {
+                    } catch (IOException | HarcHardwareException ex) {
                         guiUtils.error(ex);
                     }
                 }

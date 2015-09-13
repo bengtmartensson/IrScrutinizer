@@ -30,7 +30,7 @@ import org.antlr.runtime.tree.CommonTree;
 public class Expression {
 
     private static boolean debug;
-    
+
     public static long evaluate(Protocol env, String str) throws UnassignedException, DomainViolationException {
         IrpLexer lex = new IrpLexer(new ANTLRStringStream(str));
         CommonTokenStream tokens = new CommonTokenStream(lex);
@@ -47,11 +47,11 @@ public class Expression {
         }
         return 0L;
     }
-    
+
     public static long evaluate(Protocol env, CommonTree AST) throws UnassignedException, DomainViolationException {
         return ASTTraverser.expression(env, AST);
     }
-    
+
     private static void usage(int code) {
         System.out.println("Usage:");
         System.out.println("\tExpression [-d]? <expression> [<name>=<value>|{<name>=<expression>}]*");
@@ -84,9 +84,7 @@ public class Expression {
             expression = '(' + expression + ')';
         try {
             System.out.println(evaluate(prot, expression));
-        } catch (UnassignedException ex) {
-            System.err.println(ex.getMessage());
-        } catch (DomainViolationException ex) {
+        } catch (UnassignedException | DomainViolationException ex) {
             System.err.println(ex.getMessage());
         }
     }

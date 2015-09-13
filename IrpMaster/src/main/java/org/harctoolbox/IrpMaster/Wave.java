@@ -577,16 +577,7 @@ parameters: <em>protocol</em> <em>deviceno</em> [<em>subdevice_no</em>] <em>comm
                  if (commandLineArgs.play)
                      wave.play();
              }
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitFatalProgramFailure);
-        } catch (UnsupportedAudioFileException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitFatalProgramFailure);
-        } catch (LineUnavailableException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitFatalProgramFailure);
-        } catch (IrpMasterException ex) {
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException | IrpMasterException ex) {
             System.err.println(ex.getMessage());
             System.exit(IrpUtils.exitFatalProgramFailure);
         }

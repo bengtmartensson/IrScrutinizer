@@ -79,9 +79,7 @@ public class Protocol {
     public long evaluateName(String name, long dflt) {
         try {
             return evaluateName(name);
-        } catch (UnassignedException ex) {
-            return dflt;
-        } catch (DomainViolationException ex) {
+        } catch (UnassignedException | DomainViolationException ex) {
             return dflt;
         }
     }
@@ -523,13 +521,10 @@ public class Protocol {
                         break;
                 }
                 //done = true;
-             } catch (IOException ex) {
+             } catch (IOException | IrpMasterException ex) {
                 userComm.errorMsg(ex.getMessage());
                 done = true;
-             } catch (IrpMasterException ex) {
-                userComm.errorMsg(ex.getMessage());
-                done = true;
-            }
+             }
         }
     }
 

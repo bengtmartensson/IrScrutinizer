@@ -415,11 +415,9 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
             //ex.printStackTrace();
         } catch (NoSuchPortException ex) {
             System.err.println("No such port: " + portName);
-        } catch (HarcHardwareException ex) {
-            System.err.println(ex.getMessage());
         } catch (PortInUseException ex) {
             System.err.println("Port " + portName + " in use.");
-        } catch (UnsupportedCommOperationException ex) {
+        } catch (HarcHardwareException | UnsupportedCommOperationException ex) {
             System.err.println(ex.getMessage());
         } catch (IrpMasterException ex) {
             Logger.getLogger(CommandFusion.class.getName()).log(Level.SEVERE, null, ex);

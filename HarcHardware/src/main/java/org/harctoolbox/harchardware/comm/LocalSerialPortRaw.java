@@ -89,13 +89,7 @@ public final class LocalSerialPortRaw extends LocalSerialPort implements IBytesC
                 }
                 port.close();
             }
-        } catch (NoSuchPortException ex) {
-            System.err.println(ex.getMessage());
-        } catch (PortInUseException ex) {
-            System.err.println(ex.getMessage());
-        } catch (UnsupportedCommOperationException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IOException ex) {
+        } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException ex) {
             System.err.println(ex.getMessage());
         }
     }

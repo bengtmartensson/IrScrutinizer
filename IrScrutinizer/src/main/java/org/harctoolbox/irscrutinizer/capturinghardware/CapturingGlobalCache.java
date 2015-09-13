@@ -63,9 +63,7 @@ public class CapturingGlobalCache extends CapturingHardware<GlobalCache> impleme
                         //rawIrSender = globalCacheIrSenderSelector.getGlobalCache();
                         properties.setGlobalCacheCaptureIpName((String) evt.getNewValue());
                     }
-                } catch (IOException ex) {
-                    Logger.getLogger(CapturingGlobalCache.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (HarcHardwareException ex) {
+                } catch (IOException | HarcHardwareException ex) {
                     Logger.getLogger(CapturingGlobalCache.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }

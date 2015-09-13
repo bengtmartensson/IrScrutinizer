@@ -40,17 +40,12 @@ public class CopyClipboardText implements ClipboardOwner {
     public void toClipboard(String str) {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(str), this);
     }
-    
+
     // FIXME: java.awt.datatransfer.UnsupportedFlavorException: Unicode String
     public String fromClipboard() {
         try {
             return (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this).getTransferData(DataFlavor.stringFlavor);
-        } catch (UnsupportedFlavorException ex) {
-            if (guiUtils != null)
-                guiUtils.error(ex);
-            else
-                System.err.println(ex);
-        } catch (IOException ex) {
+        } catch (UnsupportedFlavorException | IOException ex) {
             if (guiUtils != null)
                 guiUtils.error(ex);
             else

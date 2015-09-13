@@ -340,11 +340,7 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
             }
             lircMode2.close();
             Thread.sleep(3000);
-        } catch (InterruptedException ex) {
-            System.err.println(ex);
-        } catch (IOException ex) {
-            System.err.println(ex);
-        } catch (HarcHardwareException ex) {
+        } catch (InterruptedException | IOException | HarcHardwareException ex) {
             System.err.println(ex);
         }
     }

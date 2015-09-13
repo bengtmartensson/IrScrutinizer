@@ -31,19 +31,19 @@ import org.antlr.runtime.tree.CommonTree;
 public class Duration extends PrimitiveIrStreamItem {
 
     private DurationType durationType;
-    
+
     private double us = IrpUtils.invalid;
     private double time_periods = IrpUtils.invalid;
     private double time_units = IrpUtils.invalid;
-    
+
     public static Duration newDuration(Protocol env, double time, String unit, DurationType durationType) {
         return durationType == DurationType.extent ? new Extent(env, time, unit) : new Duration(env, time, unit, durationType);
     }
-    
+
     public Duration(Protocol env, double time, DurationType dt) {
         this(env, time, "u", dt);
     }
-    
+
     public Duration(Protocol env, double time, String unit, DurationType dt) {
         super(env);
         //if (time == 0)
@@ -58,11 +58,11 @@ public class Duration extends PrimitiveIrStreamItem {
         else if (unit.equals("u"))
             us = time;
     }
-    
+
     public double evaluate_sign(double elapsed) throws ArithmeticException, IncompatibleArgumentException {
         return (durationType == DurationType.flash) ? evaluate(elapsed) : -evaluate(elapsed);
     }
-    
+
     public double evaluate(double elapsed) throws ArithmeticException, IncompatibleArgumentException {
         if (time_periods != IrpUtils.invalid) {
             if (environment.getFrequency() > 0) {
@@ -80,9 +80,9 @@ public class Duration extends PrimitiveIrStreamItem {
             return us;
         }
     }
-    
+
     /** Returns a new Duration instance by invoking the parser on the second argument.
-     * 
+     *
      * @param env Protocol, containing GeneralSpec and NameEngine
      * @param str String to be parsed
      * @return newly constructed Duration instance.
@@ -96,28 +96,24 @@ public class Duration extends PrimitiveIrStreamItem {
             r = parser.duration();
             CommonTree AST = (CommonTree) r.getTree();
             return ASTTraverser.duration(env, AST);
-        } catch (RecognitionException ex) {
-            System.err.println(ex.getMessage());
-        } catch (UnassignedException ex) {
-            System.err.println(ex.getMessage());
-        } catch (DomainViolationException ex) {
+        } catch (RecognitionException | UnassignedException | DomainViolationException ex) {
             System.err.println(ex.getMessage());
         }
         return null;
     }
-    
+
     public DurationType getDurationType() {
         return durationType;
     }
-    
+
     @Override
     public ArrayList<PrimitiveIrStreamItem> evaluate(BitSpec bitSpec) {
         debugBegin();
         ArrayList<PrimitiveIrStreamItem> list = new ArrayList<PrimitiveIrStreamItem>(1);
         list.add(this);
-        return list; 
+        return list;
     }
-        
+
     @Override
     public String toString() {
         return durationType + ":" + (us != IrpUtils.invalid ? (us + "u") : time_periods != IrpUtils.invalid  ? (time_periods + "p") : (this.time_units + "u"));
@@ -127,21 +123,21 @@ public class Duration extends PrimitiveIrStreamItem {
         Duration d = newDuration(protocol, str);
         System.out.println(d + "\t" + Math.round(d.evaluate_sign(0.0)));
     }
-    
+
     private static void test(String str) throws ArithmeticException, IncompatibleArgumentException {
         test(new Protocol(), str);
     }
-    
+
     private static void test(String gs, String str) throws ArithmeticException, IncompatibleArgumentException {
         test(new Protocol(new GeneralSpec(gs)), str);
     }
-    
+
     private static void usage(int code) {
         System.out.println("Usage:");
         System.out.println("\tDuration [<generalSpec>] <duration> [<variable>=<value>]*");
         System.exit(code);
     }
-    
+
     public static void main(String[] args) {
         try {
             switch (args.length) {
@@ -164,9 +160,7 @@ public class Duration extends PrimitiveIrStreamItem {
                     }
                     test(prot, args[1]);
             }
-        } catch (ArithmeticException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IncompatibleArgumentException ex) {
+        } catch (ArithmeticException | IncompatibleArgumentException ex) {
             System.err.println(ex.getMessage());
         }
     }

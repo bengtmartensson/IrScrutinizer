@@ -552,9 +552,7 @@ public class IrpMaster implements Serializable {
                     if (invokeAnalyzeIR)
                         System.out.println("AnalyzeIR: " + ExchangeIR.newAnalyzer(irSignal).getIrpWithAltLeadout());
 
-                } catch (NumberFormatException ex) {
-                    System.err.println(ex);
-                } catch (IrpMasterException ex) {
+                } catch (NumberFormatException | IrpMasterException ex) {
                     System.err.println(ex);
                 }
                 System.exit(IrpUtils.exitSuccess);
@@ -808,11 +806,6 @@ public class IrpMaster implements Serializable {
             printStream.close();
             if (logFile != null)
                 logFile.close();
-        } catch (FileNotFoundException ex) {
-            if (irpMaster != null)
-                irpMaster.userComm.exceptionMsg(ex);
-            else
-                UserComm.exception(ex);
         } catch (IrpParseException ex) {
             if (irpMaster != null) {
                 irpMaster.userComm.errorMsg("IRP parse error: ");
@@ -823,7 +816,7 @@ public class IrpMaster implements Serializable {
                 UserComm.print(irpString);
                 UserComm.print(IrpUtils.spaces(ex.charPositionInLine) + "^");
             }
-        } catch (IrpMasterException ex) {
+        } catch (FileNotFoundException | IrpMasterException ex) {
             if (irpMaster != null)
                 irpMaster.userComm.exceptionMsg(ex);
             else
@@ -846,8 +839,7 @@ public class IrpMaster implements Serializable {
         IrpMaster irpMaster = null;
         try {
             irpMaster = new IrpMaster(configFilename);
-        } catch (FileNotFoundException ex) {
-        } catch (IncompatibleArgumentException ex) {
+        } catch (FileNotFoundException | IncompatibleArgumentException ex) {
         }
         return irpMaster == null ? null : irpMaster.getIrp(protocolName);
     }
@@ -887,9 +879,7 @@ public class IrpMaster implements Serializable {
         IrpMaster irpMaster;
         try {
             irpMaster = new IrpMaster(configFileName);
-        } catch (FileNotFoundException ex) {
-            return null;
-        } catch (IncompatibleArgumentException ex) {
+        } catch (FileNotFoundException | IncompatibleArgumentException ex) {
             return null;
         }
 
@@ -943,17 +933,11 @@ public class IrpMaster implements Serializable {
                 out.println(preamble);
 
             out.println(ccf);
-        } catch (IncompatibleArgumentException ex) {
-            status = -3;
-        } catch (InvalidRepeatException ex) {
-            status = -3;
-        } catch (DomainViolationException ex) {
+        } catch (IncompatibleArgumentException | InvalidRepeatException | DomainViolationException ex) {
             status = -3;
         } catch (FileNotFoundException ex) {
            status = 0;
-        } catch (UnassignedException ex) {
-            status = -2;
-        } catch (ParseException ex) {
+        } catch (UnassignedException | ParseException ex) {
             status = -2;
         } finally {
             if (out != null)
@@ -973,11 +957,7 @@ public class IrpMaster implements Serializable {
     public static String makeHexIRP(String irp, int device, int subdevice, int obc) {
         try {
             return makeHexIRPPriv(irp, device, subdevice, obc);
-        } catch (ParseException ex) {
-        } catch (DomainViolationException ex) {
-        } catch (IncompatibleArgumentException ex) {
-        } catch (InvalidRepeatException ex) {
-        } catch (UnassignedException ex) {
+        } catch (ParseException | DomainViolationException | IncompatibleArgumentException | InvalidRepeatException | UnassignedException ex) {
         }
         return null;
     }

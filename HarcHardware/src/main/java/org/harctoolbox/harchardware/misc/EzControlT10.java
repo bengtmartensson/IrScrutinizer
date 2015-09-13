@@ -1107,9 +1107,7 @@ public class EzControlT10 implements IHarcHardware, IWeb {
                 if (cmd.hasTimeArgument())
                     arg = fs20Time(arg);
             }
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            usage();
-        } catch (NumberFormatException ex) {
+        } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
             usage();
         }
 

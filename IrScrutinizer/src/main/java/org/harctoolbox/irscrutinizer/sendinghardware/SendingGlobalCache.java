@@ -67,9 +67,7 @@ public class SendingGlobalCache extends SendingHardware<GlobalCache> implements 
                         properties.setGlobalCacheModule((Integer) evt.getNewValue());
                     else if (evt.getPropertyName().equals(GlobalCacheIrSenderSelector.PROP_PORT))
                         properties.setGlobalCachePort((Integer) evt.getNewValue());
-                } catch (IOException ex) {
-                    guiUtils.error(ex);
-                } catch (HarcHardwareException ex) {
+                } catch (IOException | HarcHardwareException ex) {
                     guiUtils.error(ex);
                 }
             }

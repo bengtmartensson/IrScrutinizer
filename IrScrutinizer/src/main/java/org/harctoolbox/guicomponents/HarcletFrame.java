@@ -40,13 +40,7 @@ public class HarcletFrame extends javax.swing.JFrame {
         try {
             if (lafClassName != null)
                 UIManager.setLookAndFeel(lafClassName);
-        } catch (ClassNotFoundException ex) {
-            //error(ex);
-        } catch (InstantiationException ex) {
-            //error(ex);
-        } catch (IllegalAccessException ex) {
-            //error(ex);
-        } catch (UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             //error(ex);
         }
         this.exitOnClose = exitOnClose;
@@ -208,19 +202,7 @@ public class HarcletFrame extends javax.swing.JFrame {
             Constructor<?> constructor = clazz.getConstructor((Class<?>[]) null);
 
             panel = (HarcPanel) constructor.newInstance((Object[]) null);
-        } catch (InstantiationException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IllegalAccessException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IllegalArgumentException ex) {
-            System.err.println(ex.getMessage());
-        } catch (InvocationTargetException ex) {
-            System.err.println(ex.getMessage());
-        } catch (NoSuchMethodException ex) {
-            System.err.println(ex.getMessage());
-        } catch (SecurityException ex) {
-            System.err.println(ex.getMessage());
-        } catch (ClassNotFoundException ex) {
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | ClassNotFoundException ex) {
             System.err.println(ex.getMessage());
         }
         final HarcPanel harcPanel = panel;

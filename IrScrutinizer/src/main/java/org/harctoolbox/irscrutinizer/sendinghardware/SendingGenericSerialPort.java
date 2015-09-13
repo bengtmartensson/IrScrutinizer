@@ -121,14 +121,8 @@ public class SendingGenericSerialPort extends SendingHardware<IrGenericSerial> i
             rawIrSender.setSeparator(genericSerialSenderBean.getSeparator());
             rawIrSender.setUseSigns(genericSerialSenderBean.getUseSigns());
             rawIrSender.setLineEnding(genericSerialSenderBean.getLineEnding());
-        } catch (NoSuchPortException ex) {
+        } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException ex) {
             // Should not happen
-            guiUtils.error(ex);
-        } catch (PortInUseException ex) {
-            guiUtils.error(ex);
-        } catch (UnsupportedCommOperationException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
             guiUtils.error(ex);
         }
         portName = genericSerialSenderBean.getPortName();

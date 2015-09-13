@@ -655,9 +655,7 @@ public class IrSignal {
                 System.out.println(irSignal);
                 System.out.println(irSignal.ccfString());
                 DecodeIR.invoke(irSignal);
-            } catch (IrpMasterException ex) {
-                System.err.println(ex.getMessage());
-            } catch (FileNotFoundException ex) {
+            } catch (IrpMasterException | FileNotFoundException ex) {
                 System.err.println(ex.getMessage());
             }
         }

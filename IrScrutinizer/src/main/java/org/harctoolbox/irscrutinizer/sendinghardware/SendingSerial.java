@@ -86,15 +86,7 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
             this.baudRate = newBaud;
             Props.class.getMethod("set" + clazz.getSimpleName() + "PortBaudRate", int.class).invoke(properties, newBaud);
             serialPortSimpleBean.setHardware(rawIrSender);
-        } catch (NoSuchMethodException ex) {
-            guiUtils.error(ex);
-        } catch (SecurityException ex) {
-            guiUtils.error(ex);
-        } catch (InstantiationException ex) {
-            guiUtils.error(ex);
-        } catch (IllegalAccessException ex) {
-            guiUtils.error(ex);
-        } catch (IllegalArgumentException ex) {
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException ex) {
             guiUtils.error(ex);
         } catch (InvocationTargetException ex) {
             // Likely NoSuchPortException

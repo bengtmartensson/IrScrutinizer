@@ -165,11 +165,7 @@ public class IrpMasterBean extends javax.swing.JPanel {
             D = initialD;
             S = initialS;
             F = initialF;
-        } catch (ParseException ex) {
-            guiUtils.error(ex);
-        } catch (UnassignedException ex) {
-            guiUtils.error(ex);
-        } catch (UnknownProtocolException ex) {
+        } catch (ParseException | UnassignedException | UnknownProtocolException ex) {
             guiUtils.error(ex);
         }
     }
@@ -495,11 +491,7 @@ public class IrpMasterBean extends javax.swing.JPanel {
             protocolName = (String) protocolComboBox.getSelectedItem();
             setupProtocol(protocolName, invalidParameterString, invalidParameterString, invalidParameterString);
             propertyChangeSupport.firePropertyChange(PROP_PROTOCOL_NAME, oldProtocolName, protocolName);
-        } catch (UnassignedException ex) {
-            guiUtils.error(ex);
-        } catch (ParseException ex) {
-            guiUtils.error(ex);
-        } catch (UnknownProtocolException ex) {
+        } catch (UnassignedException | ParseException | UnknownProtocolException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_protocolComboBoxActionPerformed

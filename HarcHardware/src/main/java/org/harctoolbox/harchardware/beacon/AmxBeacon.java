@@ -100,11 +100,7 @@ public class AmxBeacon implements Serializable {
                 try {
                     beacon.sendCommandUdp();
                     Thread.sleep(beaconPeriod);
-                } catch (UnknownHostException ex) {
-                    System.err.println(ex.getMessage());
-                } catch (IOException ex) {
-                    System.err.println(ex.getMessage());
-                } catch (InterruptedException ex) {
+                } catch (IOException | InterruptedException ex) {
                     System.err.println(ex.getMessage());
                 }
             }

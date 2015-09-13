@@ -286,9 +286,7 @@ public class GuiUtils implements Serializable {
         try {
             URL url = new URL(urlOrFilename);
             browse(url.toURI());
-        } catch (MalformedURLException ex) {
-            editOrOpen(new File(urlOrFilename));
-        } catch (URISyntaxException ex) {
+        } catch (MalformedURLException | URISyntaxException ex) {
             editOrOpen(new File(urlOrFilename));
         }
     }
