@@ -135,13 +135,8 @@ public class CommandSet {
         }
         if (commands != null) {
             for (Command command : commands.values()) {
-                try {
-                    element.appendChild(command.xmlExport(doc, null, fatRaw,
-                            generateRaw, generateCcf, generateParameters));
-                } catch (IrpMasterException ex) {
-                    element.appendChild(doc.createComment("Could not export command: " + command.toString()));
-                    // TODO: invoke logger
-                }
+                element.appendChild(command.xmlExport(doc, null, fatRaw,
+                        generateRaw, generateCcf, generateParameters));
             }
         }
         return element;

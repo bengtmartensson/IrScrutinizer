@@ -609,10 +609,9 @@ public class Command implements Serializable {
      * @param generateCcf
      * @param generateParameters
      * @return XML Element of gid "command".
-     * @throws IrpMasterException
      */
     public Element xmlExport(Document doc, String title, boolean fatRaw,
-            boolean generateRaw, boolean generateCcf, boolean generateParameters) throws IrpMasterException {
+            boolean generateRaw, boolean generateCcf, boolean generateParameters) {
         Element element = doc.createElement("command");
         if (title != null)
             element.setAttribute("title", title);
@@ -626,21 +625,26 @@ public class Command implements Serializable {
             element.appendChild(notesEl);
         }
         if (generateParameters) {
-            checkForParameters();
-            if (parameters != null) {
-                Element parametersEl = doc.createElement("parameters");
-                if (protocol != null)
-                    parametersEl.setAttribute("protocol", protocol);
-                element.appendChild(parametersEl);
-                for (Entry<String, Long> parameter : parameters.entrySet()) {
-                    Element parameterEl = doc.createElement("parameter");
-                    parameterEl.setAttribute("name", parameter.getKey());
-                    parameterEl.setAttribute("value", parameter.getValue().toString());
-                    parametersEl.appendChild(parameterEl);
+            try {
+                checkForParameters();
+                if (parameters != null) {
+                    Element parametersEl = doc.createElement("parameters");
+                    if (protocol != null)
+                        parametersEl.setAttribute("protocol", protocol);
+                    element.appendChild(parametersEl);
+                    for (Entry<String, Long> parameter : parameters.entrySet()) {
+                        Element parameterEl = doc.createElement("parameter");
+                        parameterEl.setAttribute("name", parameter.getKey());
+                        parameterEl.setAttribute("value", parameter.getValue().toString());
+                        parametersEl.appendChild(parameterEl);
+                    }
                 }
+            } catch (IrpMasterException ex) {
+                element.appendChild(doc.createComment("Parameters requested but could not be generated."));
             }
         }
         if (generateRaw) {
+            try {
             checkForRaw();
             if (intro != null || repeat != null || ending != null) {
                 Element rawEl = doc.createElement("raw");
@@ -652,13 +656,20 @@ public class Command implements Serializable {
                 processRaw(doc, rawEl, repeat, "repeat", fatRaw);
                 processRaw(doc, rawEl, ending, "ending", fatRaw);
             }
+            } catch (IrpMasterException ex) {
+                element.appendChild(doc.createComment("Raw signal requested but could not be generated."));
+            }
         }
         if (generateCcf) {
-            checkForCcf();
-            if (ccf != null) {
-                Element ccfEl = doc.createElement("ccf");
-                ccfEl.setTextContent(ccf);
-                element.appendChild(ccfEl);
+            try {
+                checkForCcf();
+                if (ccf != null) {
+                    Element ccfEl = doc.createElement("ccf");
+                    ccfEl.setTextContent(ccf);
+                    element.appendChild(ccfEl);
+                }
+            } catch (IrpMasterException ex) {
+                element.appendChild(doc.createComment("Pronto Hex requested but could not be generated."));
             }
         }
         if (otherFormats != null) {
