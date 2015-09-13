@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.harctoolbox</groupId>
     <artifactId>HarctoolboxBundle</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.4dev</version>
     <name>HarctoolboxBundle</name>
     <packaging>pom</packaging>
     <licenses>
