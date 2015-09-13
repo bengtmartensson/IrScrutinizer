@@ -353,12 +353,12 @@ public class Command implements Serializable {
                 nl = params.getElementsByTagName("parameter");
                 for (int i = 0; i < nl.getLength(); i++) {
                     Element el = (Element) nl.item(i);
-                    parameters.put(el.getAttribute("name"), Long.parseLong(el.getAttribute("value")));
+                    parameters.put(el.getAttribute("name"), IrpUtils.parseLong(el.getAttribute("value")));
                 }
             }
             String Fstring = element.getAttribute("F");
             if (!Fstring.isEmpty())
-                parameters.put("F", Long.parseLong(Fstring));
+                parameters.put("F", IrpUtils.parseLong(Fstring));
             nl = element.getElementsByTagName("raw");
             if (nl.getLength() > 0) {
                 Element el = (Element) nl.item(0);
