@@ -56,7 +56,7 @@ public class IrpMaster implements Serializable {
             this.name = unnamed;
             documentation = null;
             efcTranslation = null;
-            ueiProtocol = new ArrayList<Short>();
+            ueiProtocol = new ArrayList<>();
         }
 
         UnparsedProtocol() {
@@ -224,7 +224,7 @@ public class IrpMaster implements Serializable {
     }
 
     private IrpMaster() {
-        protocols = new LinkedHashMap<String, UnparsedProtocol>();
+        protocols = new LinkedHashMap<>();
         userComm = new UserComm();
     }
 
@@ -339,7 +339,7 @@ public class IrpMaster implements Serializable {
      */
     public static void main(String[] args) {
         InputVariableSetValues inputVariableSetValues = null;
-        LinkedHashMap<String, String> usersParameters = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> usersParameters = new LinkedHashMap<>();
         String configFilename = null;
         String xmlProtocolFilename = null;
         String dotFilename = null;

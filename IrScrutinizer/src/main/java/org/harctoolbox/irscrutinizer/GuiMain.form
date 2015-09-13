@@ -3270,7 +3270,7 @@
                         </Component>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="girrFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;GirrImporter&gt;(guiUtils, properties, girrImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, girrImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importGirrSignalHelpButton">
@@ -3340,7 +3340,7 @@
                         </Component>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="lircFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;LircImporter&gt;(guiUtils, properties, lircImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, lircImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importLircHelpButton">
@@ -3453,7 +3453,7 @@
                         </Component>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="rmduImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;RmduImporter&gt;(guiUtils, properties, rmduImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, rmduImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importRemoteMasterHelpButton">
@@ -3523,7 +3523,7 @@
                         </Component>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="irTransFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;IrTransImporter&gt;(guiUtils, properties, irTransImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, irTransImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importIrTransHelpButton">
@@ -3573,7 +3573,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="ccfFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;CcfImporter&gt;(guiUtils, properties, ccfImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, ccfImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importProntoClassicHelpButton">
@@ -3623,7 +3623,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="xcfFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;XcfImporter&gt;(guiUtils, properties, xcfImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, xcfImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importProntoProfessionalHelpButton">
@@ -3686,7 +3686,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="ictFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;IctImporter&gt;(guiUtils, properties, ictImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, ictImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel15">
@@ -3918,7 +3918,7 @@
                                 </Component>
                                 <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="csvRawFileImporterBean">
                                   <AuxValues>
-                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;CsvRawImporter&gt;(guiUtils, properties, csvRawImporter)"/>
+                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, csvRawImporter)"/>
                                   </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JButton" name="importTextRawHelpButton">
@@ -3982,7 +3982,7 @@
                               <SubComponents>
                                 <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="rawLineCsvFileImporterBean">
                                   <AuxValues>
-                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;RawLineImporter&gt;(guiUtils, properties, new RawLineImporter())"/>
+                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, new RawLineImporter())"/>
                                   </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JButton" name="importTextRawLineBasedHelpButton">
@@ -4283,7 +4283,7 @@
                                 </Component>
                                 <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="csvParametrizedFileImporterBean">
                                   <AuxValues>
-                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;CsvParametrizedImporter&gt;(guiUtils, properties, csvParametrizedImporter)"/>
+                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, csvParametrizedImporter)"/>
                                   </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="jLabel14">
@@ -4395,7 +4395,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="waveFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;WaveImporter&gt;(guiUtils, properties, waveImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, waveImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="importWaveDivideCarrierCheckBox1">
@@ -4456,7 +4456,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="cmlFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;CmlImporter&gt;(guiUtils, properties, cmlImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, cmlImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importCmlHelpButton">
@@ -4506,7 +4506,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="commandFusionFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;CommandFusionImporter&gt;(guiUtils, properties, commandFusionImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, commandFusionImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importCommandFusionHelpButton">

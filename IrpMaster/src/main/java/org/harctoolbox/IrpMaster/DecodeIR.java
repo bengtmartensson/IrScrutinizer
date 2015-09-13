@@ -171,7 +171,7 @@ public class DecodeIR {
 	//public int[] hex;
 	private String miscMessage;
 	private String errorMessage;
-        private final HashMap<String, Integer>miscNames = new HashMap<String, Integer>();
+        private final HashMap<String, Integer>miscNames = new HashMap<>();
 
 	public DecodedSignal(String protocolName,
 			     int device,
@@ -218,7 +218,7 @@ public class DecodeIR {
          * @return HashMap containing the parameters.
          */
         public HashMap<String, Long> getParameters() {
-            HashMap<String, Long> result = new LinkedHashMap<String, Long>();
+            HashMap<String, Long> result = new LinkedHashMap<>();
             if (device >= 0)
                 result.put("D", (long)device);
             if (subDevice >=0)
@@ -410,7 +410,7 @@ public class DecodeIR {
         Debug.debugDecodeIR("DecodeIR was setup with f=" + frequency + ", repeat=" + lengthRepeat
                 + ", ending=" + lengthEnding + ", data=" + IrpUtils.stringArray(us_data));
 
-        ArrayList<DecodedSignal> work = new ArrayList<DecodedSignal>();
+        ArrayList<DecodedSignal> work = new ArrayList<>();
         while (dirc.decode()) {
             work.add(new DecodedSignal(dirc.getProtocolName(),
                     dirc.getDevice(),

@@ -244,7 +244,7 @@ public class IrpMasterBean extends javax.swing.JPanel {
 
     public InputVariableSetValues getIntervalParameters() throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException {
         Protocol protocol = irpMaster.newProtocol(protocolName);
-        LinkedHashMap<String, String> parameters = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
 
         processParameter(parameters, protocol, "D", dTextField);
         processParameter(parameters, protocol, "S", sTextField);
@@ -273,7 +273,7 @@ public class IrpMasterBean extends javax.swing.JPanel {
     }
 
     public LinkedHashMap<String, Command> getCommands() throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException, IrpMasterException {
-        LinkedHashMap<String, Command> commands = new LinkedHashMap<String, Command>();
+        LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
         InputVariableSetValues intervals = getIntervalParameters();
         for (LinkedHashMap<String, Long> params : intervals) {
             String name = this.signalNameFormatter.format(getProtocolName(), params);

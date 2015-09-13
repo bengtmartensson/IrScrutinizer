@@ -468,11 +468,11 @@ public class GuiMain extends javax.swing.JFrame {
                 transmitAudioParametersBean, properties, guiUtils);
         sendingHardwareManager.add(sendingIrAudioPort);
 
-        SendingSerial<IrToy> sendingIrToy = new SendingSerial<IrToy>(IrToy.class, irToyPanel, //irToyVersionLabel,
+        SendingSerial<IrToy> sendingIrToy = new SendingSerial<>(IrToy.class, irToyPanel, //irToyVersionLabel,
                 irToySerialPortBean, properties, guiUtils);
         sendingHardwareManager.add(sendingIrToy);
 
-        SendingSerial<Arduino> sendingArduino = new SendingSerial<Arduino>(Arduino.class, arduinoPanel, //arduinoVersionLabel,
+        SendingSerial<Arduino> sendingArduino = new SendingSerial<>(Arduino.class, arduinoPanel, //arduinoVersionLabel,
                 arduinoSerialPortBean, properties, guiUtils);
         sendingHardwareManager.add(sendingArduino);
 
@@ -480,7 +480,7 @@ public class GuiMain extends javax.swing.JFrame {
         //        girsSendingSerialPortBean, properties, guiUtils);
         //sendingHardwareManager.add(sendingGirs);
 
-        SendingSerial<CommandFusion> sendingcommandFusion = new SendingSerial<CommandFusion>(CommandFusion.class, commandFusionSendPanel,
+        SendingSerial<CommandFusion> sendingcommandFusion = new SendingSerial<>(CommandFusion.class, commandFusionSendPanel,
                 commandFusionSendingSerialPortBean, properties, guiUtils);
         sendingHardwareManager.add(sendingcommandFusion);
 
@@ -503,7 +503,7 @@ public class GuiMain extends javax.swing.JFrame {
         capturingHardwareManager = new CapturingHardwareManager(guiUtils, properties,
                 capturingHardwareTabbedPane, startButton);
 
-        capturingHardwareManager.add(new CapturingSerial<IrWidget>(IrWidget.class, captureIrWidgetPanel,
+        capturingHardwareManager.add(new CapturingSerial<>(IrWidget.class, captureIrWidgetPanel,
                 irWidgetSerialPortSimpleBean, properties, guiUtils, capturingHardwareManager));
 
         capturingHardwareManager.add(new CapturingGlobalCache(properties.getGlobalCacheCaptureIpName(),
@@ -513,16 +513,16 @@ public class GuiMain extends javax.swing.JFrame {
         capturingHardwareManager.add(new CapturingLircMode2(properties.getLircMode2Command(),
                 captureLircMode2Panel, properties, guiUtils, capturingHardwareManager));
 
-        capturingHardwareManager.add(new CapturingSerial<Arduino>(Arduino.class, captureArduinoPanel, arduinoSerialPortSimpleBean,
+        capturingHardwareManager.add(new CapturingSerial<>(Arduino.class, captureArduinoPanel, arduinoSerialPortSimpleBean,
                 properties, guiUtils, capturingHardwareManager));
 
         //capturingHardwareManager.add(new CapturingSerial<GirsClient>(GirsClient.class, captureGirsPanel, girsClientSerialPortSimpleBean,
         //        properties, guiUtils, capturingHardwareManager));
 
-        capturingHardwareManager.add(new CapturingSerial<CommandFusion>(CommandFusion.class, captureCommandFusionPanel, commandFusionSerialPortSimpleBean,
+        capturingHardwareManager.add(new CapturingSerial<>(CommandFusion.class, captureCommandFusionPanel, commandFusionSerialPortSimpleBean,
                 properties, guiUtils, capturingHardwareManager));
 
-        capturingHardwareManager.add(new CapturingSerial<IrToy>(IrToy.class, captureIrToyPanel, irToySerialPortSimpleBean,
+        capturingHardwareManager.add(new CapturingSerial<>(IrToy.class, captureIrToyPanel, irToySerialPortSimpleBean,
                 properties, guiUtils, capturingHardwareManager));
 
         try {
@@ -543,15 +543,15 @@ public class GuiMain extends javax.swing.JFrame {
             @Override
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 if (evt.getPropertyName().equals(IrpMasterBean.PROP_PROTOCOL_NAME)) {
-                    properties.setIrpMasterCurrentProtocol((String) evt.getNewValue());
+                        properties.setIrpMasterCurrentProtocol((String) evt.getNewValue());
                 } else if (evt.getPropertyName().equals(IrpMasterBean.PROP_D)) {
-                    properties.setIrpMasterCurrentD((String) evt.getNewValue());
+                        properties.setIrpMasterCurrentD((String) evt.getNewValue());
                 } else if (evt.getPropertyName().equals(IrpMasterBean.PROP_S)) {
-                    properties.setIrpMasterCurrentS((String) evt.getNewValue());
+                        properties.setIrpMasterCurrentS((String) evt.getNewValue());
                 } else if (evt.getPropertyName().equals(IrpMasterBean.PROP_F)) {
-                    properties.setIrpMasterCurrentF((String) evt.getNewValue());
+                        properties.setIrpMasterCurrentF((String) evt.getNewValue());
                 } else {
-                    guiUtils.error("Programming error detected.");
+                        guiUtils.error("Programming error detected.");
                 }
             }
         });
@@ -627,7 +627,7 @@ public class GuiMain extends javax.swing.JFrame {
     } // end of constructor
 
     private Command.CommandTextFormat[] setupExtraTextFormats() {
-        ArrayList<Command.CommandTextFormat> formats = new ArrayList<Command.CommandTextFormat>();
+        ArrayList<Command.CommandTextFormat> formats = new ArrayList<>();
         if (properties.getExportGenerateUei())
             formats.add(new UeiFormatter());
         if (properties.getExportGenerateShortCcf())
@@ -1324,7 +1324,7 @@ public class GuiMain extends javax.swing.JFrame {
 
     @SuppressWarnings("unchecked")
     private <T extends TableModel> void enableSorter(JTable table, boolean state) {
-        TableRowSorter<T> tableRowSorter = state ? new TableRowSorter<T>((T) table.getModel()) : null;
+        TableRowSorter<T> tableRowSorter = state ? new TableRowSorter<>((T) table.getModel()) : null;
         table.setRowSorter(tableRowSorter);
     }
 
@@ -1759,31 +1759,31 @@ public class GuiMain extends javax.swing.JFrame {
         importIrdbHelpButton = new javax.swing.JButton();
         girrImportPanel = new javax.swing.JPanel();
         girrWebSiteButton = new javax.swing.JButton();
-        girrFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<GirrImporter>(guiUtils, properties, girrImporter);
+        girrFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, girrImporter);
         importGirrSignalHelpButton = new javax.swing.JButton();
         lircImportPanel = new javax.swing.JPanel();
         jButton20 = new javax.swing.JButton();
-        lircFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<LircImporter>(guiUtils, properties, lircImporter);
+        lircFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, lircImporter);
         importLircHelpButton = new javax.swing.JButton();
         rmduImportPanel = new javax.swing.JPanel();
         protocolsIniTextField = new javax.swing.JTextField();
         jLabel29 = new javax.swing.JLabel();
         selectProtocolIniButton = new javax.swing.JButton();
         webRmduButton = new javax.swing.JButton();
-        rmduImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<RmduImporter>(guiUtils, properties, rmduImporter);
+        rmduImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, rmduImporter);
         importRemoteMasterHelpButton = new javax.swing.JButton();
         irtransImportPanel = new javax.swing.JPanel();
         irTransWebButton = new javax.swing.JButton();
-        irTransFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<IrTransImporter>(guiUtils, properties, irTransImporter);
+        irTransFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, irTransImporter);
         importIrTransHelpButton = new javax.swing.JButton();
         ccfImportPanel = new javax.swing.JPanel();
-        ccfFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<CcfImporter>(guiUtils, properties, ccfImporter);
+        ccfFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, ccfImporter);
         importProntoClassicHelpButton = new javax.swing.JButton();
         xcfImportPanel = new javax.swing.JPanel();
-        xcfFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<XcfImporter>(guiUtils, properties, xcfImporter);
+        xcfFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, xcfImporter);
         importProntoProfessionalHelpButton = new javax.swing.JButton();
         ictImportPanel = new javax.swing.JPanel();
-        ictFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<IctImporter>(guiUtils, properties, ictImporter);
+        ictFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, ictImporter);
         jLabel15 = new javax.swing.JLabel();
         importIctHelpButton = new javax.swing.JButton();
         csvImportPanel = new javax.swing.JPanel();
@@ -1796,11 +1796,11 @@ public class GuiMain extends javax.swing.JFrame {
         jLabel26 = new javax.swing.JLabel();
         csvRawSeparatorComboBox = new javax.swing.JComboBox();
         jLabel30 = new javax.swing.JLabel();
-        csvRawFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<CsvRawImporter>(guiUtils, properties, csvRawImporter);
+        csvRawFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, csvRawImporter);
         importTextRawHelpButton = new javax.swing.JButton();
         rawMultiColumnNameCheckBox = new javax.swing.JCheckBox();
         rawLineCsvImportPanel = new javax.swing.JPanel();
-        rawLineCsvFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<RawLineImporter>(guiUtils, properties, new RawLineImporter());
+        rawLineCsvFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, new RawLineImporter());
         importTextRawLineBasedHelpButton = new javax.swing.JButton();
         parametrizedCsvImportPanel = new javax.swing.JPanel();
         parametrizedNameColumnComboBox = new javax.swing.JComboBox();
@@ -1813,7 +1813,7 @@ public class GuiMain extends javax.swing.JFrame {
         jLabel20 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
         parametrizedCsvSeparatorComboBox = new javax.swing.JComboBox();
-        csvParametrizedFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<CsvParametrizedImporter>(guiUtils, properties, csvParametrizedImporter);
+        csvParametrizedFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, csvParametrizedImporter);
         jLabel14 = new javax.swing.JLabel();
         parametrizedBaseComboBox = new javax.swing.JComboBox();
         importTextParametrizedHelpButton = new javax.swing.JButton();
@@ -1821,14 +1821,14 @@ public class GuiMain extends javax.swing.JFrame {
         jLabel23 = new javax.swing.JLabel();
         parametrizedMultiColumnNameCheckBox = new javax.swing.JCheckBox();
         waveImportPanel = new javax.swing.JPanel();
-        waveFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<WaveImporter>(guiUtils, properties, waveImporter);
+        waveFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, waveImporter);
         importWaveDivideCarrierCheckBox1 = new javax.swing.JCheckBox();
         importWaveHelpButton = new javax.swing.JButton();
         cmlImportPanel = new javax.swing.JPanel();
-        cmlFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<CmlImporter>(guiUtils, properties, cmlImporter);
+        cmlFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, cmlImporter);
         importCmlHelpButton = new javax.swing.JButton();
         commandFusionImportPanel = new javax.swing.JPanel();
-        commandFusionFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<CommandFusionImporter>(guiUtils, properties, commandFusionImporter);
+        commandFusionFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, commandFusionImporter);
         importCommandFusionHelpButton = new javax.swing.JButton();
         exportPanel = new javax.swing.JPanel();
         exportFormatComboBox = new javax.swing.JComboBox();
@@ -7032,14 +7032,14 @@ public class GuiMain extends javax.swing.JFrame {
             if (irdbManufacturerComboBox.getModel().getSize() == 1) {
                 String[] manufacturers = IrdbImporter.getManufacturers(properties.getVerbose());
                 Arrays.sort(manufacturers);
-                DefaultComboBoxModel<String> dcbm = new DefaultComboBoxModel<String>(manufacturers);
+                DefaultComboBoxModel<String> dcbm = new DefaultComboBoxModel<>(manufacturers);
                 irdbManufacturerComboBox.setModel(dcbm);
             } else {
                 String manufacturer = (String) irdbManufacturerComboBox.getSelectedItem();
                 irdbImporter = new IrdbImporter(manufacturer, properties.getVerbose());
                 irdbTreeImporter.clear();
                 Set<String> arr = irdbImporter.getDeviceTypes();
-                DefaultComboBoxModel<String> dcbm = new DefaultComboBoxModel<String>(arr.toArray(new String[arr.size()]));
+                DefaultComboBoxModel<String> dcbm = new DefaultComboBoxModel<>(arr.toArray(new String[arr.size()]));
                 irdbDeviceTypeComboBox.setModel(dcbm);
                 irdbDeviceTypeComboBox.setEnabled(true);
                 irdbDeviceTypeComboBoxActionPerformed(null);

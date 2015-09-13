@@ -30,8 +30,8 @@ import java.util.LinkedHashMap;
  */
 public class EvaluateLog {
 
-    LinkedHashMap<String, Integer>map = new LinkedHashMap<String, Integer>();
-    
+    LinkedHashMap<String, Integer>map = new LinkedHashMap<>();
+
     public EvaluateLog(String filename) {
         BufferedReader in = null;
         try {
@@ -61,7 +61,7 @@ public class EvaluateLog {
             }
         }
     }
-    
+
     @Override
     public String toString() {
         int total = 0;
@@ -72,8 +72,8 @@ public class EvaluateLog {
         }
         return result.toString() + "\nTotal: " + total;
     }
-    
-    
+
+
     private static void usage(int exitcode) {
         System.err.println("Usage:\n\tEvaluateLogs <logfile>");
         System.exit(exitcode);

@@ -94,7 +94,7 @@ public class Lirc2Xml {
         @Parameter(names = {"-x", "--xslt"}, description = "Link to XSLT stylesheet")
         String stylesheetUrl = null;
         @Parameter(description = "[configfile]")
-        ArrayList<String> configfile = new ArrayList<String>();
+        ArrayList<String> configfile = new ArrayList<>();
     }
     private static JCommander argumentParser;
     private static CommandLineArgs commandLineArgs = new CommandLineArgs();

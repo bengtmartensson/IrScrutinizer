@@ -143,7 +143,7 @@ public class XmlUtils {
     }
 
     public static HashMap<String, Element> createIndex(Element root, String tagName, String idName) {
-        HashMap<String, Element> index = new HashMap<String, Element>();
+        HashMap<String, Element> index = new HashMap<>();
         NodeList nodes = root.getElementsByTagName(tagName);
         for (int i = 0; i < nodes.getLength(); i++) {
             Element el = (Element) nodes.item(i);
@@ -191,7 +191,7 @@ public class XmlUtils {
     }
 
     public static HashMap<String, Element> buildIndex(Element element, String tagName, String idName) {
-        HashMap<String, Element> index = new HashMap<String, Element>();
+        HashMap<String, Element> index = new HashMap<>();
         NodeList nl = element.getElementsByTagName(tagName);
         for (int i = 0; i < nl.getLength(); i++) {
             Element el = (Element) nl.item(i);

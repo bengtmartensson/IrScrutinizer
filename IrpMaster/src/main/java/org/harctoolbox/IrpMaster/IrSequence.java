@@ -351,7 +351,7 @@ public class IrSequence implements Cloneable, Serializable {
      * @return Array of IrSequences
      */
     public IrSequence[] chop(double threshold) {
-        ArrayList<IrSequence> arrayList = new ArrayList<IrSequence>();
+        ArrayList<IrSequence> arrayList = new ArrayList<>();
         int beg = 0;
         for (int i = 1; i < data.length; i += 2) {
             if (data[i] >= threshold || i == data.length - 1) {

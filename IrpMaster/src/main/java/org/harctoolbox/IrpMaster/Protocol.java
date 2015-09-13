@@ -620,7 +620,7 @@ public class Protocol {
     }
 
     public IrSignal renderIrSignal(long device, long subdevice, long function, long toggle) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
-        HashMap<String, Long> actualVars = new HashMap<String, Long>(3);
+        HashMap<String, Long> actualVars = new HashMap<>(3);
         assignIfValid(actualVars, "D", device);
         assignIfValid(actualVars, "S", subdevice);
         assignIfValid(actualVars, "F", function);
@@ -654,7 +654,7 @@ public class Protocol {
      * @return HashMap<String, Long> for using as argument to renderIrSignal
      */
     public static HashMap<String, Long> parseParams(String additionalParams) {
-        HashMap<String, Long> params = new HashMap<String, Long>();
+        HashMap<String, Long> params = new HashMap<>();
         String[] arr = additionalParams.split("[,=\\s;]+");
         //for (int i = 0; i < arr.length; i++)
         //    System.out.println(arr[i]);
@@ -706,7 +706,7 @@ public class Protocol {
     }
 
     private static HashMap<String, Long> parseNamedProtocolArgs(String[] args, int skip) throws IncompatibleArgumentException {
-        HashMap<String, Long> params = new HashMap<String, Long>();
+        HashMap<String, Long> params = new HashMap<>();
             for (int i = skip; i < args.length; i++) {
                 String[] str = args[i].split("=");
                 if (str.length != 2)
@@ -719,7 +719,7 @@ public class Protocol {
     }
 
     private static HashMap<String, Long> parsePositionalProtocolArgs(String[] args, int skip) throws IncompatibleArgumentException {
-        HashMap<String, Long> params = new LinkedHashMap<String, Long>();
+        HashMap<String, Long> params = new LinkedHashMap<>();
         int index = skip;
         switch (args.length - skip) {
             case 4:

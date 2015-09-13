@@ -90,7 +90,7 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
         OutputStream out = null;
         try {
             out = new FileOutputStream(saveFile);
-            HashMap<String, String> parameters = new HashMap<String, String>(1);
+            HashMap<String, String> parameters = new HashMap<>(1);
             parameters.put("noRepeats", Integer.toString(noRepeats));
             xmlExporter.printDOM(out, xslt, parameters, null, binary);
         } finally {

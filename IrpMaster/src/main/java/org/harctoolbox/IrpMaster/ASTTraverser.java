@@ -221,7 +221,7 @@ public class ASTTraverser {
         int noAlternatives = 0;
         PrimaryIrStream bareIrStream = null;
         //skip = false; // local instead?
-        ArrayList<PrimaryIrStreamItem> list = new ArrayList<PrimaryIrStreamItem>();
+        ArrayList<PrimaryIrStreamItem> list = new ArrayList<>();
         for (int i = 0; i < tree.getChildCount(); i++) {
             PrimaryIrStreamItem irStreamItem = irstream_item((CommonTree) tree.getChild(i), level + 1, variationAlternative, repeatMarker, forceOk);
             if (irStreamItem != null && irStreamItem.getNoAlternatives() > 0)
@@ -279,7 +279,7 @@ public class ASTTraverser {
 
     public BitSpec bitspec(CommonTree tree, int level, boolean forceOk, RepeatMarker repeatMarker) throws UnassignedException, InvalidRepeatException, DomainViolationException, IncompatibleArgumentException {
         nodeBegin(tree, level);
-        ArrayList<PrimaryIrStream> list = new ArrayList<PrimaryIrStream>();
+        ArrayList<PrimaryIrStream> list = new ArrayList<>();
         for (int i = 0; i < tree.getChildCount(); i++)
             list.add(bare_irstream((CommonTree)tree.getChild(i), level+1, forceOk, Pass.intro, repeatMarker));
         BitSpec b = new BitSpec(env, list);

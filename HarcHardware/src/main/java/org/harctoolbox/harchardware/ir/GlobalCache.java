@@ -376,7 +376,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
     }
 
     private static String gcCompressedJoiner(int[]intro, int[]repeat) {
-        LinkedHashMap<String, Character> index = new LinkedHashMap<String, Character>();
+        LinkedHashMap<String, Character> index = new LinkedHashMap<>();
         return gcCompressedJoiner(intro, index) + gcCompressedJoiner(repeat, index);
     }
 
@@ -516,7 +516,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
                 //}
             }
         } else {
-            ArrayList<String> array = new ArrayList<String>();
+            ArrayList<String> array = new ArrayList<>();
             String lineRead = tcpSocketChannel.readString(); // may hang
             if (lineRead != null) {
                 array.add(lineRead);
@@ -644,7 +644,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
 
     private ArrayList<Integer> getModules(String moduleType) {
         //String[] dvs = getdevicesResult.split("\n");
-        ArrayList<Integer> modules = new ArrayList<Integer>();
+        ArrayList<Integer> modules = new ArrayList<>();
         for (String devicesResult : getdevicesResult) {
             String[] s = devicesResult.split(" ");
             if (s.length > 1 && s[1].startsWith(moduleType))

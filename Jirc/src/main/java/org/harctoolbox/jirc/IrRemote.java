@@ -175,7 +175,7 @@ public class IrRemote {
     };
 
     public HashMap<String, String> getApplicationData() {
-        HashMap<String, String> applicationData = new LinkedHashMap<String, String>();
+        HashMap<String, String> applicationData = new LinkedHashMap<>();
 
         applicationData.put("type", lircProtocolType());
         applicationData.put("bits", Integer.toString(bits)); // bits (length of code)
@@ -221,12 +221,12 @@ public class IrRemote {
     }
 
     public Remote toRemote(boolean invokeDecodeIr, boolean alternatingSigns, int debug) {
-        HashMap<String, HashMap<String, String>> appDataMap = new LinkedHashMap<String, HashMap<String, String>>();
+        HashMap<String, HashMap<String, String>> appDataMap = new LinkedHashMap<>();
         appDataMap.put("jirc", getApplicationData());
 
         //remote.last_code = null;
 
-        LinkedHashMap<String, Command> commands = new LinkedHashMap<String, Command>();
+        LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
         for (IrNCode c : getCodes()) {
             Command irCommand = toCommand(c, invokeDecodeIr, alternatingSigns, debug);
             if (irCommand != null)
@@ -289,7 +289,7 @@ public class IrRemote {
             return null;
         String decodeir_version = invokeDecodeIr ? DecodeIR.getVersion() : "none";
 
-        LinkedHashMap<String, Remote>girrRemotes = new LinkedHashMap<String, Remote>();
+        LinkedHashMap<String, Remote>girrRemotes = new LinkedHashMap<>();
         for (IrRemote irRemote : remotes.values()) {
             Remote remote = irRemote.toRemote(invokeDecodeIr, alternatingSigns, debug);
             if (remote != null)

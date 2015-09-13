@@ -82,7 +82,7 @@ public class Props {
      */
     public void reset() {
         props = new Properties();
-        changeListeners = new HashMap<String,ArrayList<IPropertyChangeListener>>();
+        changeListeners = new HashMap<>();
         setupDefaults();
         needSave = true;
         wasReset = true;
@@ -107,7 +107,7 @@ public class Props {
      */
     public Props(String filename, String applicationHome) {
         this.applicationHome = applicationHome;
-        changeListeners = new HashMap<String,ArrayList<IPropertyChangeListener>>();
+        changeListeners = new HashMap<>();
         this.filename = filename;
         if (filename == null || filename.isEmpty()) {
             if (isWindows) {

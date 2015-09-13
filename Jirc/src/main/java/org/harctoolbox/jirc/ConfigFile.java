@@ -38,7 +38,7 @@ public class ConfigFile {
      */
     public final static String lircCharactersetName = "ISO-8859-1";
 
-    private LinkedHashMap<String, IrRemote> remotes = new LinkedHashMap<String, IrRemote>();
+    private LinkedHashMap<String, IrRemote> remotes = new LinkedHashMap<>();
 
     private ConfigFile(File configFileName, int debug) throws IOException {
         this(new ANTLRFileStream(configFileName.getCanonicalPath(), lircCharactersetName), debug, configFileName.toString());
@@ -80,7 +80,7 @@ public class ConfigFile {
             return config.remotes;
         } else if (filename.isDirectory()) {
             File[] files = filename.listFiles();
-            LinkedHashMap<String, IrRemote>dictionary = new LinkedHashMap<String, IrRemote>();
+            LinkedHashMap<String, IrRemote>dictionary = new LinkedHashMap<>();
             for (File file : files) {
                 // The program handles nonsensical files fine, however rejecting some
                 // obviously irrelevant files saves time and log entries.

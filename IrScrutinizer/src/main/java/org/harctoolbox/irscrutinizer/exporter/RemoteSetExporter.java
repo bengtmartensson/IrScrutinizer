@@ -109,7 +109,7 @@ public abstract class RemoteSetExporter extends Exporter {
     }
 
     public void export(Collection<Command> commands, String source, String title, int repeatCount, File saveFile) throws FileNotFoundException, IOException, IrpMasterException {
-        HashMap<String, Command> cmds = new HashMap<String, Command>();
+        HashMap<String, Command> cmds = new HashMap<>();
         for (Command command : commands)
             cmds.put(command.getName(), command);
 
@@ -127,7 +127,7 @@ public abstract class RemoteSetExporter extends Exporter {
     }
 
     public void export(Command command, String title, String source, int repeatCount, File saveFile) throws FileNotFoundException, IrpMasterException, IOException {
-        HashMap<String,Command> commands = new HashMap<String,Command>(1);
+        HashMap<String,Command> commands = new HashMap<>(1);
         commands.put(command.getName(), command);
         export(commands, title, source, Version.appName + "Export", null, null, null, null, repeatCount, saveFile);
     }

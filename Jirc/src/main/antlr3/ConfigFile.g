@@ -45,9 +45,9 @@ package org.harctoolbox.jirc;
 @members {
     private static class Bucket {
         String name = null;
-        ArrayList<String> flags = new ArrayList<String>();
-        HashMap<String, Long>unaryParameters = new HashMap<String, Long>();
-        HashMap<String, IrRemote.XY>binaryParameters = new HashMap<String, IrRemote.XY>();
+        ArrayList<String> flags = new ArrayList<>();
+        HashMap<String, Long>unaryParameters = new HashMap<>();
+        HashMap<String, IrRemote.XY>binaryParameters = new HashMap<>();
 
         public void add(String name, long x) {
             unaryParameters.put(name, x);
@@ -73,7 +73,7 @@ catch (RecognitionException e) {
 }
 }
 
-remotes returns [LinkedHashMap<String, IrRemote> remotes = new LinkedHashMap<String, IrRemote>()]:
+remotes returns [LinkedHashMap<String, IrRemote> remotes = new LinkedHashMap<>()]:
     (remote { $remotes.put($remote.irRemote.getName(), $remote.irRemote); })+
 ;
 
@@ -88,10 +88,10 @@ codes returns [ArrayList<IrNCode> codes]:
      | raw_codes { $codes = (ArrayList<IrNCode>)$raw_codes.codes; }
 ;
 
-cooked_codes returns [ArrayList<IrNCode> codes = new ArrayList<IrNCode>()]: BEGIN_CODES (cooked_button {$codes.add($cooked_button.irNCode);})* END_CODES
+cooked_codes returns [ArrayList<IrNCode> codes = new ArrayList<>()]: BEGIN_CODES (cooked_button {$codes.add($cooked_button.irNCode);})* END_CODES
 ;
 
-raw_codes returns [ArrayList<IrNCode> codes = new ArrayList<IrNCode>()]: BEGIN_RAW_CODES (raw_button {$codes.add($raw_button.irNCode); } )+ END_RAW_CODES
+raw_codes returns [ArrayList<IrNCode> codes = new ArrayList<>()]: BEGIN_RAW_CODES (raw_button {$codes.add($raw_button.irNCode); } )+ END_RAW_CODES
 ;
 
 cooked_button returns [IrNCode irNCode]: name commandno_list {$irNCode = new IrNCode($name.text, $commandno_list.commandnos); }
@@ -100,10 +100,10 @@ cooked_button returns [IrNCode irNCode]: name commandno_list {$irNCode = new IrN
 raw_button returns [IrNCode irNCode]: 'name' name integer_list { $irNCode = new IrNCode($name.text, 0, $integer_list.codes); }
 ;
 
-integer_list returns [ArrayList<Integer> codes = new ArrayList<Integer>()] : ( integer {$codes.add((int)$integer.value); } )+
+integer_list returns [ArrayList<Integer> codes = new ArrayList<>()] : ( integer {$codes.add((int)$integer.value); } )+
 ;
 
-commandno_list returns [ArrayList<Long> commandnos = new ArrayList<Long>()] : ( HEXINT {$commandnos.add(parseUnsignedLongHex($HEXINT.text.substring(2))); } )+
+commandno_list returns [ArrayList<Long> commandnos = new ArrayList<>()] : ( HEXINT {$commandnos.add(parseUnsignedLongHex($HEXINT.text.substring(2))); } )+
 ;
 
 parameters returns [Bucket bucket = new Bucket()] :
@@ -123,7 +123,7 @@ unary_parameter_assignment returns [String name, long number]: unary_int_paramet
 binary_parameter_assignment returns [String name, long x, long y]:  binary_parameter i=integer j=integer { $name = $binary_parameter.text; $x = $i.value; $y = $j.value; }
 ;
 
-flags_decl returns [ArrayList<String> flags = new ArrayList<String>()]: 'flags' fl=flag {$flags.add($fl.text);} ('|' f=flag {$flags.add($f.text);} )*
+flags_decl returns [ArrayList<String> flags = new ArrayList<>()]: 'flags' fl=flag {$flags.add($fl.text);} ('|' f=flag {$flags.add($f.text);} )*
 ;
 
 flag: ID

@@ -66,9 +66,9 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
         DefaultComboBoxModel<String> model;
         try {
             ArrayList<String> portList = LocalSerialPort.getSerialPortNames(true);
-            model = new DefaultComboBoxModel<String>(portList.toArray(new String[portList.size()]));
+            model = new DefaultComboBoxModel<>(portList.toArray(new String[portList.size()]));
         } catch (IOException | LinkageError ex) {
-            model =  new DefaultComboBoxModel<String>(new String[]{ initialPort != null ? initialPort : notInitialized });
+            model =  new DefaultComboBoxModel<>(new String[]{ initialPort != null ? initialPort : notInitialized });
         }
 
         portComboBox.setModel(model);
@@ -201,7 +201,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
 
         ArrayList<String> portNames = LocalSerialPort.getSerialPortNames(useCached);
         portNames.add(0, "");
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>(portNames.toArray(new String[portNames.size()]));
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(portNames.toArray(new String[portNames.size()]));
         portComboBox.setModel(model);
     }
 
@@ -254,7 +254,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        portComboBox = new javax.swing.JComboBox<String>();
+        portComboBox = new javax.swing.JComboBox<>();
         refreshButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         openToggleButton = new javax.swing.JToggleButton();
@@ -265,7 +265,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
 
         setPreferredSize(new java.awt.Dimension(800, 80));
 
-        portComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { notInitialized }));
+        portComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { notInitialized }));
         portComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 portComboBoxActionPerformed(evt);

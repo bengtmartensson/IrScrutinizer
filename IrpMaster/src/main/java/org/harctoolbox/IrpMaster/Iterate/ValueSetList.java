@@ -35,7 +35,7 @@ import org.harctoolbox.IrpMaster.UnassignedException;
 public class ValueSetList implements Iterable<Long> {
     //long value = invalid;
 
-    private ArrayList<ValueSet> valueSets = new ArrayList<ValueSet>();
+    private ArrayList<ValueSet> valueSets = new ArrayList<>();
     private int currentSetIndex = (int) IrpUtils.invalid;
     private Iterator<Long> setIterator = null;
 

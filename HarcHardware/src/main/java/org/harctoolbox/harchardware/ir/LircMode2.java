@@ -52,7 +52,7 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
     private String[] cmdArray;
 
     private LircMode2(String cmd, String[] cmdArray, boolean verbose, int beginTimeout, int maxLearnLength, int endTimeout, boolean ignoreSillyLines) {
-        this.data = new ArrayList<Integer>();
+        this.data = new ArrayList<>();
         this.verbose = verbose;
         this.beginTimeout = beginTimeout;
         this.maxLearnedLength = maxLearnLength;

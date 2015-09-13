@@ -264,7 +264,7 @@ public class Wave {
         }
 
         // Search the largest block of oscillations
-        ArrayList<Integer> durations = new ArrayList<Integer>();
+        ArrayList<Integer> durations = new ArrayList<>();
         int bestLength = -1; // length of longest block this far
         int bestStart = -1;
         boolean isInInterestingBlock = true;
@@ -480,7 +480,7 @@ public class Wave {
         boolean versionRequested;
 
         @Parameter(description = "[parameters]")
-        private ArrayList<String> parameters = new ArrayList<String>();
+        private ArrayList<String> parameters = new ArrayList<>();
     }
 
     private static JCommander argumentParser;

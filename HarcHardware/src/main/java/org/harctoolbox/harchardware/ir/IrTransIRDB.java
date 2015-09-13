@@ -54,7 +54,7 @@ public class IrTransIRDB extends IrTrans implements IRemoteCommandIrSender {
         PrintStream outToServer = new PrintStream(sock.getOutputStream(), false, IrpUtils.dumbCharsetName);
         BufferedReader inFromServer = new BufferedReader(new InputStreamReader(sock.getInputStream(), IrpUtils.dumbCharset));
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         try {
             outToServer.print("ASCI");
             try {

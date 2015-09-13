@@ -323,7 +323,7 @@ public class IrSignal {
         this.repeatSequence = repeatSequence != null ? repeatSequence : new IrSequence();
         this.endingSequence = ((endingSequence != null) && !endingSequence.isEqual(repeatSequence)) ? endingSequence : new IrSequence();
 
-        map = new EnumMap<Pass, IrSequence>(Pass.class);
+        map = new EnumMap<>(Pass.class);
 
         map.put(Pass.intro, introSequence);
         map.put(Pass.repeat, repeatSequence);
@@ -461,7 +461,7 @@ public class IrSignal {
         } else {
             int arg_i = offset;
             String protocolName = args[arg_i++];
-            LinkedHashMap<String, Long> parameters = new LinkedHashMap<String, Long>();
+            LinkedHashMap<String, Long> parameters = new LinkedHashMap<>();
 
             // Parse name = value assignments
             while (arg_i < args.length && !args[arg_i].isEmpty() && args[arg_i].contains("=")) {

@@ -28,7 +28,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class SelectFile {
 
-    private static final HashMap<String, String> filechooserdirs = new HashMap<String, String>();
+    private static final HashMap<String, String> filechooserdirs = new HashMap<>();
 
     /**
      * Version of the file selector with exactly one file extension.

@@ -97,7 +97,7 @@ public class Utils {
     }
 
     public static HashMap<String,Long> mkParameters(long D, long S, long F) {
-        HashMap<String, Long> result = new HashMap<String, Long>(3);
+        HashMap<String, Long> result = new HashMap<>(3);
         if (D != IrpUtils.invalid)
             result.put("D", D);
         if (S != IrpUtils.invalid)

@@ -52,7 +52,7 @@ public class ExportFormatManager implements Serializable {
             IExporterFactory girrExporter, IExporterFactory waveExporter, IExporterFactory textExporter,
             IExporterFactory lircExporter, IExporterFactory prontoExporter) throws ParserConfigurationException, SAXException, IOException {
         this.exportFormatSelector = exportFormatSelector;
-        exportFormats = new LinkedHashMap<String, IExporterFactory>();
+        exportFormats = new LinkedHashMap<>();
         exportFormats.put("Girr", girrExporter);
         exportFormats.put("Text", textExporter);
         exportFormats.put("LIRC", lircExporter);

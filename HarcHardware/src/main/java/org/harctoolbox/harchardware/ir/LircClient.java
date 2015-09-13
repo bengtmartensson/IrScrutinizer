@@ -103,7 +103,7 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
         }
 
         private LircIrTransmitter(boolean[] ports) {
-            ArrayList<Integer> prts = new ArrayList<Integer>();
+            ArrayList<Integer> prts = new ArrayList<>();
             for (int i = 0; i < ports.length; i++)
                 if (ports[i])
                     prts.add(i+1);
@@ -211,7 +211,7 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
 
         tcpSocketChannel.sendString(packet + '\n');
 
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         int status = 0;
         try {
             int state = P_BEGIN;

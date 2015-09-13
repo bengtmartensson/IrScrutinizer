@@ -237,7 +237,7 @@ public class Pronto {
         }
 
         if (irSignal == null) {
-            HashMap<String, Long> parameters = new HashMap<String, Long>();
+            HashMap<String, Long> parameters = new HashMap<>();
             parameters.put("D", (long) dev);
             if (subdev != (int) IrpUtils.invalid)
                 parameters.put("S", (long) subdev);

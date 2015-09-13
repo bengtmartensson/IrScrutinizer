@@ -47,7 +47,7 @@ public class Ethers {
     }
 
     public Ethers(String filename) throws FileNotFoundException {
-        table = new HashMap<String, String>();
+        table = new HashMap<>();
         BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(filename), Charset.defaultCharset()));
 
         try {

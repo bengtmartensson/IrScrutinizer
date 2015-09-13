@@ -19,46 +19,46 @@ package org.harctoolbox.IrpMaster;
 import java.util.ArrayList;
 
 public class PrimaryIrStream extends PrimaryIrStreamItem {
-    
+
     private ArrayList<PrimaryIrStreamItem> irStreamItems;
     private BitSpec bitSpec;
     private boolean hasAssignmentContent = false;
-   
+
     public PrimaryIrStream(Protocol env) {
         super(env);
-        irStreamItems = new ArrayList<PrimaryIrStreamItem>();
+        irStreamItems = new ArrayList<>();
     }
-    
+
     public PrimaryIrStream(Protocol env, boolean hasAssignmentContent) {
         this(env);
         this.hasAssignmentContent = hasAssignmentContent;
     }
-    
+
     public PrimaryIrStream(Protocol env, ArrayList<PrimaryIrStreamItem>items, BitSpec bitSpec, int noAlternatives) {
         super(env);
         this.bitSpec = bitSpec;
         this.irStreamItems = items;
         this.noAlternatives = noAlternatives;
     }
-    
+
     public PrimaryIrStream(Protocol env, PrimaryIrStream src, BitSpec bitSpec) {
         this(env, src, bitSpec, 0);
     }
-    
+
     public PrimaryIrStream(Protocol env, PrimaryIrStream src, BitSpec bitSpec, int noAlternatives) {
         this(env, (src != null) ? src.irStreamItems : new ArrayList<PrimaryIrStreamItem>(), bitSpec, noAlternatives);
     }
-    
+
     @Override
     public String toString() {
         return irStreamItems.toString();
     }
-    
+
     @Override
     public boolean isEmpty() {
         return irStreamItems.isEmpty() && ! hasAssignmentContent;
     }
-    
+
     public void concatenate(PrimaryIrStream irStream) {
         irStreamItems.addAll(irStream.irStreamItems);
     }
@@ -66,7 +66,7 @@ public class PrimaryIrStream extends PrimaryIrStreamItem {
     public void assignBitSpecs() {
         assignBitSpecs(null);
     }
-    
+
     public void assignBitSpecs(BitSpec parentBitSpec) {
         if (bitSpec == null) {
             bitSpec = parentBitSpec;
@@ -74,18 +74,18 @@ public class PrimaryIrStream extends PrimaryIrStreamItem {
         } else {
             bitSpec.assignBitSpecs(parentBitSpec);
         }
-                
+
         for (PrimaryIrStreamItem item : irStreamItems) {
             if (item.getClass().getSimpleName().equals("PrimaryIrStream"))
                 ((PrimaryIrStream) item).assignBitSpecs(bitSpec);
         }
     }
-    
+
     @Override
     public ArrayList<PrimitiveIrStreamItem> evaluate(BitSpec bitSpec) throws IncompatibleArgumentException, UnassignedException {
         BitSpec bs = (bitSpec == null || this.bitSpec != null) ? this.bitSpec : bitSpec;
         debugBegin();
-        ArrayList<PrimitiveIrStreamItem> list = new ArrayList<PrimitiveIrStreamItem>();
+        ArrayList<PrimitiveIrStreamItem> list = new ArrayList<>();
         BitStream bitStream = new BitStream(environment);
         for (PrimaryIrStreamItem item : irStreamItems)
             if (item.getClass().getSimpleName().equals("BitField"))
@@ -95,12 +95,12 @@ public class PrimaryIrStream extends PrimaryIrStreamItem {
                     list.addAll(bitStream.evaluate(bs));
                     bitStream = new BitStream(environment);
                 }
-                
+
                 list.addAll(item.evaluate(bs));
             }
         if (!bitStream.isEmpty())
             list.addAll(bitStream.evaluate(bs));
-        
+
         debugEnd(list);
         return list;
     }
@@ -110,7 +110,7 @@ public class PrimaryIrStream extends PrimaryIrStreamItem {
         if (durationList.size() % 2 == 1)
             durationList.add(new Duration(environment, 0.001, DurationType.gap)); // ????
         int size = durationList.size();
-        ArrayList<Double> data = new ArrayList<Double>(size);
+        ArrayList<Double> data = new ArrayList<>(size);
         double elapsed = 0;
         boolean seenPositive = false;
 
@@ -118,11 +118,11 @@ public class PrimaryIrStream extends PrimaryIrStreamItem {
             try {
                 if (!Class.forName("org.harctoolbox.IrpMaster.Duration").isInstance(item))
                     throw new RuntimeException("Programming error detected: This cannot happen");
-            
+
             double duration = ((Duration) item).evaluate_sign(elapsed);
             if (duration > 0)
                 seenPositive = true;
-            
+
             if (seenPositive) {
                 elapsed += Math.abs(duration);
                 data.add(duration);

@@ -37,7 +37,7 @@ public class NameEngine {
     private HashMap<String, CommonTree> map;
 
     public NameEngine() {
-        map = new HashMap<String, CommonTree>();
+        map = new HashMap<>();
     }
 
     public CommonTree get(String name) {

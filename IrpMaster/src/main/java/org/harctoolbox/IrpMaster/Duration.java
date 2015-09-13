@@ -109,7 +109,7 @@ public class Duration extends PrimitiveIrStreamItem {
     @Override
     public ArrayList<PrimitiveIrStreamItem> evaluate(BitSpec bitSpec) {
         debugBegin();
-        ArrayList<PrimitiveIrStreamItem> list = new ArrayList<PrimitiveIrStreamItem>(1);
+        ArrayList<PrimitiveIrStreamItem> list = new ArrayList<>(1);
         list.add(this);
         return list;
     }

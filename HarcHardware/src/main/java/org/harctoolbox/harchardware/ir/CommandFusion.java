@@ -254,7 +254,7 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     }
 
     private byte[] readUntilTwoEndTokens() throws IOException {
-        ArrayList<Byte> data = new ArrayList<Byte>(200);
+        ArrayList<Byte> data = new ArrayList<>(200);
         int noEndingTokensFound = 0;
         while (noEndingTokensFound < 2) {
             byte x = (byte) serialPort.readByte();
@@ -339,7 +339,7 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         if ((payload.data.length() - index) % 4 != 0)
             throw new IncompatibleArgumentException("Receive length erroneous");
 
-        ArrayList<Integer> durations = new ArrayList<Integer>(payload.data.length() - index);
+        ArrayList<Integer> durations = new ArrayList<>(payload.data.length() - index);
         boolean lastState = false;
         int accumulated = 0;
         for (int i = index; i < payload.data.length(); i += 4) {

@@ -201,7 +201,7 @@ public abstract class LocalSerialPort implements IHarcHardware {
         } catch (UnsatisfiedLinkError ex) {
             throw new IOException(ex.getMessage());
         }
-        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> names = new ArrayList<>();
         while (portEnum.hasMoreElements()) {
             CommPortIdentifier portIdentifier = portEnum.nextElement();
             if (portIdentifier.getPortType() == CommPortIdentifier.PORT_SERIAL)

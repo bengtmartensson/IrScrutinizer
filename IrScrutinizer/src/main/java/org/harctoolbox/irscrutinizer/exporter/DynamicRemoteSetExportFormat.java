@@ -70,7 +70,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         DocumentBuilder builder = factory.newDocumentBuilder();
         doc = builder.parse(file);
 
-        HashMap<String, IExporterFactory> result = new HashMap<String, IExporterFactory>();
+        HashMap<String, IExporterFactory> result = new HashMap<>();
         NodeList nl = doc.getElementsByTagName("exportformat");
         for (int i = 0; i < nl.getLength(); i++) {
             final Element el = (Element) nl.item(i);
@@ -124,7 +124,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
          OutputStream out = null;
          try {
             out = new FileOutputStream(saveFile);
-            HashMap<String, String> parameters = new HashMap<String, String>(1);
+            HashMap<String, String> parameters = new HashMap<>(1);
             xmlExporter.printDOM(out, xslt, parameters, null, binary);
         } finally {
             if (out != null)

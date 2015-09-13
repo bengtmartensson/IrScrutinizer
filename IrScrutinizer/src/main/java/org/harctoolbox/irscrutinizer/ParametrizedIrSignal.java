@@ -80,7 +80,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
 
     public ParametrizedIrSignal(String protocolName, long device, long subdevice, long function, String name, String comment) {
         super(name, comment);
-        parameters = new HashMap<String, Long>();
+        parameters = new HashMap<>();
         setParameter("F", function);
         setParameter("D", device);
         setParameter("S", subdevice);
@@ -339,7 +339,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         }
 
         public ArrayList<Long> listF(Command reference) throws IrpMasterException {
-            ArrayList<Long> list = new ArrayList<Long>();
+            ArrayList<Long> list = new ArrayList<>();
             @SuppressWarnings("unchecked")
             HashMap<String, Long> params = (HashMap<String, Long>) reference.getParameters().clone();
             params.remove("F");

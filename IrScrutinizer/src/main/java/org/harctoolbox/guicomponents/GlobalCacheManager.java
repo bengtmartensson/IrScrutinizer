@@ -39,9 +39,9 @@ public final class GlobalCacheManager {
     private boolean debug = false;
     private static final GlobalCacheManager instance = new GlobalCacheManager();
     private AmxBeaconListener beaconListener = null;
-    private ArrayList<InetAddress> automaticGlobalCaches = new ArrayList<InetAddress>();
-    private ArrayList<String> automaticGlobalCacheTypes = new ArrayList<String>();
-    private final ArrayList<InetAddress> manualGlobalCaches = new ArrayList<InetAddress>();
+    private ArrayList<InetAddress> automaticGlobalCaches = new ArrayList<>();
+    private ArrayList<String> automaticGlobalCacheTypes = new ArrayList<>();
+    private final ArrayList<InetAddress> manualGlobalCaches = new ArrayList<>();
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -59,8 +59,8 @@ public final class GlobalCacheManager {
         @Override
         public void func(HashMap<InetAddress, AmxBeaconListener.Node> nodes) {
             int oldValue = sillyHashCode();
-            automaticGlobalCaches = new ArrayList<InetAddress>();
-            automaticGlobalCacheTypes = new ArrayList<String>();
+            automaticGlobalCaches = new ArrayList<>();
+            automaticGlobalCacheTypes = new ArrayList<>();
             //ipAddressMap = new LinkedHashMap<InetAddress, Integer>();
             for (Entry<InetAddress, AmxBeaconListener.Node> node : nodes.entrySet()) {
                 automaticGlobalCaches.add(node.getKey());

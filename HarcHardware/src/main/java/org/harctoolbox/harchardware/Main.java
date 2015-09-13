@@ -171,7 +171,7 @@ public class Main {
         private boolean irtoy = false;
 
         @Parameter(description = "[parameters]")
-        private ArrayList<String> parameters = new ArrayList<String>();
+        private ArrayList<String> parameters = new ArrayList<>();
     }
 
     private static JCommander argumentParser;
