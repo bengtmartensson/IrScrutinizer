@@ -731,7 +731,7 @@ public class GuiMain extends javax.swing.JFrame {
 
     private RemoteSetExporter newRemoteExporter() {
         ICommandExporter exporter = newExporter();
-        if (!RemoteSetExporter.class.isInstance(exporter)) {
+        if (exporter != null && !RemoteSetExporter.class.isInstance(exporter)) {
             guiUtils.error("Selected export format only supports single commands");
             return null;
         }
@@ -742,6 +742,13 @@ public class GuiMain extends javax.swing.JFrame {
     private ICommandExporter newExporter() {
         String formatName = (String) exportFormatComboBox.getSelectedItem();
         ICommandExporter exporter = exportFormatManager.get(formatName).newExporter();
+        // Not really clean...
+        if (formatName.equals("Girr") && !properties.getExportGenerateParameters()
+                && !properties.getExportGenerateCcf() && !properties.getExportGenerateRaw()) {
+            boolean answer = guiUtils.confirm("All of \"Parameters\", \"Raw\", and \"Pronto Hex\" deselected in the export. Continue?");
+            if (!answer)
+                return null;
+        }
         return exporter;
     }
 
