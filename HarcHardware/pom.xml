@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.harctoolbox</groupId>
         <artifactId>HarctoolboxBundle</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.4dev</version>
         <relativePath>..</relativePath>
     </parent>
     <licenses>
@@ -194,9 +194,9 @@
             <groupId>gnu.io</groupId>
             <artifactId>RXTX</artifactId>
         </dependency>
-        <!--dependency>
+        <dependency>
             <groupId>org.gnu</groupId>
             <artifactId>Readline</artifactId>
-        </dependency-->
+        </dependency>
     </dependencies>
 </project>

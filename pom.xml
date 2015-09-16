@@ -66,13 +66,12 @@
                 <artifactId>RXTX</artifactId>
                 <version>2.2pre2h</version>
             </dependency>
-            <!-- Disabled for this version
             <dependency>
                 <groupId>org.gnu</groupId>
                 <artifactId>Readline</artifactId>
+                <type>jar</type>
                 <version>0.8.2</version>
             </dependency>
-            -->
 
             <dependency>
                 <groupId>org.harctoolbox</groupId>
