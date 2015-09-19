@@ -1906,7 +1906,7 @@ public class GuiMain extends javax.swing.JFrame {
         irToySerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrToyCapturePortName(), properties.getIrToyCapturePortBaudRate(), true);
         capturingIrToyHardwareHelpButton = new javax.swing.JButton();
         captureArduinoPanel = new javax.swing.JPanel();
-        arduinoSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoCapturePortName(),Arduino.defaultBaudRate, false);
+        arduinoSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoCapturePortName(),Arduino.defaultBaudRate, true);
         capturingArduinoHardwareHelpButton = new javax.swing.JButton();
         captureGirsPanel = new javax.swing.JPanel();
         girsClientSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getGirsClientCapturePortName(),GirsClient.defaultBaudRate, false);
@@ -1936,7 +1936,7 @@ public class GuiMain extends javax.swing.JFrame {
         irToySerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrToyPortName(), properties.getIrToyPortBaudRate(), true);
         sendingIrToyHelpButton = new javax.swing.JButton();
         arduinoPanel = new javax.swing.JPanel();
-        arduinoSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoPortName(), Arduino.defaultBaudRate, false);
+        arduinoSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoPortName(), Arduino.defaultBaudRate, true);
         sendingArduinoHelpButton = new javax.swing.JButton();
         girsSendingPanel = new javax.swing.JPanel();
         sendingGirsClientHelpButton = new javax.swing.JButton();

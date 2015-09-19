@@ -5757,7 +5757,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.guicomponents.SerialPortSimpleBean" name="arduinoSerialPortSimpleBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoCapturePortName(),Arduino.defaultBaudRate, false)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoCapturePortName(),Arduino.defaultBaudRate, true)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="capturingArduinoHardwareHelpButton">
@@ -6355,7 +6355,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.guicomponents.SerialPortSimpleBean" name="arduinoSerialPortBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoPortName(), Arduino.defaultBaudRate, false)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoPortName(), Arduino.defaultBaudRate, true)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="sendingArduinoHelpButton">
