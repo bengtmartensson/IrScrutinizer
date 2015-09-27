@@ -134,7 +134,10 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
 
     @Override
     public ModulatedIrSequence capture() throws HarcHardwareException, IOException, IrpMasterException {
-        return new ModulatedIrSequence(receive(), IrpUtils.defaultFrequency, IrpUtils.invalid);
+        IrSequence irSequence = receive();
+        return irSequence != null
+                ? new ModulatedIrSequence(irSequence, IrpUtils.defaultFrequency, IrpUtils.invalid)
+                : null;
     }
 
     @Override
@@ -212,7 +215,7 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
                 }
             }
             if (lircMode2.verbose)
-                System.err.println("done, killing process");
+                System.err.println("done, killing mode2 process");
             process.destroy();
         }
     }
