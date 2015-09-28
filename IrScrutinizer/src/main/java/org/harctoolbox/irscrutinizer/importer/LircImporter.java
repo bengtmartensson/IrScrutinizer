@@ -85,7 +85,11 @@ public class LircImporter extends RemoteSetImporter implements IReaderImporter, 
 
     @Override
     public String[][] getFileExtensions() {
-        return new String[][]{new String[]{"Lircd conf files (*.lircd.conf)", "lircd.conf" },
+        return new String[][]{
+            // Lirc uses lirc.conf as "file extension". However,
+            // javax.swing.filechooser.FileNameExtensionFilter does not allow
+            // file extensions with a dot. Not important enough to fix.
+            //new String[]{"Lircd conf files (*.lircd.conf)", "lircd.conf" },
             new String[]{"Lirc files (*.lirc)", "lirc" },
             new String[]{"Conf files (*.conf)", "conf" }};
     }
