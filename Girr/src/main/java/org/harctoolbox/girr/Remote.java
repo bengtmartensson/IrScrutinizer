@@ -225,7 +225,8 @@ public class Remote implements Serializable {
      */
     public boolean hasThisProtocol(String protocolName) {
         for (Command command : commands.values()) {
-            if (!command.getProtocol().equalsIgnoreCase(protocolName))
+            String protocol = command.getProtocol();
+            if (protocol == null || !protocol.equalsIgnoreCase(protocolName))
                 return false;
         }
         return true;
