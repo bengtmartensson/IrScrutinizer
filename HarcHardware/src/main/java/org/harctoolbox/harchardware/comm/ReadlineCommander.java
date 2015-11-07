@@ -21,8 +21,6 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.gnu.readline.Readline;
 import org.gnu.readline.ReadlineLibrary;
 import org.harctoolbox.harchardware.FramedDevice;
@@ -138,8 +136,11 @@ public class ReadlineCommander {
      * @param waitForAnswer milliseconds to wait for an answer.
      * @param returnlines If >= 0 wait for this many return lines. If &lt; 0,
      * takes as many lines that are available within waitForAnswer milliseconds-
+     * @param escapeChar
+     * @param commentChar
      */
-    public static void readEvalPrint(FramedDevice stringCommander, int waitForAnswer, int returnlines) {
+    public static void readEvalPrint(FramedDevice stringCommander, int waitForAnswer, int returnlines,
+            char escapeChar, char commentChar) {
         while (true) {
 
             String line = null;
@@ -147,29 +148,54 @@ public class ReadlineCommander {
                 line = readline();
             } catch (IOException ex) {
                 System.err.println(ex.getMessage());
+                break;
             }
 
             if (line == null) { // EOF
                 System.out.println();
                 break;
             }
+
+            if (!line.isEmpty() && line.charAt(0) == commentChar)
+                continue;
+
+            line = line.replaceFirst("\\s*" + commentChar + ".*$", "");
+
+            if (!line.isEmpty() && line.charAt(0) == escapeChar) {
+                if (line.startsWith("bye", 1))
+                    break;
+                else if (line.startsWith("sleep", 1)) {
+                    try {
+                        int millisecs = Integer.parseInt(line.substring(6).trim());
+                        Thread.sleep(millisecs);
+                    } catch (NumberFormatException | InterruptedException ex) {
+                        System.err.println(ex);
+                    }
+                    continue;
+                } else {
+                    System.err.println("Unknown escape command: " + line);
+                    continue;
+                }
+            }
+
             String[] result = null;
             try {
                 result = stringCommander.sendString(line, returnlines <= 0 ? -1 : returnlines, waitForAnswer);
                 for (String str : result)
                     System.out.println(str);
 
-                if (result != null && result.length > 0 && result[result.length-1].equals("Bye!"))
+                if (result != null && result.length > 0
+                        && result[result.length-1] != null && result[result.length-1].equals("Bye!"))
                     break;
             } catch (IOException ex) {
-                Logger.getLogger(ReadlineCommander.class.getName()).log(Level.SEVERE, null, ex); // FIXME
+                System.err.println(ex);
             }
         }
-        System.out.println("Readline.readEvalPrint exited"); // ???
+        System.out.println("exiting");
     }
 
-    public static void readEvalPrint(ICommandLineDevice hardware, int waitForAnswer, int returnLines) {
-        readEvalPrint(new FramedDevice(hardware), waitForAnswer, returnLines);
+    public static void readEvalPrint(ICommandLineDevice hardware, int waitForAnswer, int returnLines, char escapeChar, char commentChar) {
+        readEvalPrint(new FramedDevice(hardware), waitForAnswer, returnLines, escapeChar, commentChar);
     }
 
     /**
@@ -181,7 +207,7 @@ public class ReadlineCommander {
         init("nosuchfile", ".rljunk", "$$$ ", "null");//".rljunk", "$$$ ");
         try (ICommandLineDevice denon = new TcpSocketPort("denon", 23, 2000, true, TcpSocketPort.ConnectionMode.keepAlive)) {
             FramedDevice stringCommander = new FramedDevice(denon, "{0}\r", true);
-            readEvalPrint(stringCommander, waitForAnswer, -1);
+            readEvalPrint(stringCommander, waitForAnswer, -1, '\\', '#');
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
         } finally {

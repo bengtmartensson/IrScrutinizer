@@ -24,6 +24,7 @@ import gnu.io.PortInUseException;
 import gnu.io.RXTXPort;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -88,8 +89,8 @@ public abstract class LocalSerialPort implements IHarcHardware {
         this.timeout = timeout;
     }
 
-    private void lowLevelOpen() throws NoSuchPortException, PortInUseException {
-        CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
+    private void lowLevelOpen() throws NoSuchPortException, PortInUseException, IOException {
+        CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(new File(portName).getCanonicalPath());
         commPort = portIdentifier.open(this.getClass().getName(), msToWaitForPort);
     }
 

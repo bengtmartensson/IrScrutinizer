@@ -93,11 +93,17 @@ public class MainString {
         //@Parameter(names = {"-d", "--debug"}, description = "Debug code")
         //private int debug = 0;
 
+        @Parameter(names = {"-c", "--comment"}, description = "Comment char for command line parser")
+        private char commentChar = '#';
+
         @Parameter(names = {"--delay"}, description = "Delay between commands in milliseconds")
         private int delay = 0;
 
         @Parameter(names = {"-d", "--device"}, description = "Device name for serial device")
         private String device = null;
+
+        @Parameter(names = {"-e", "--escape"}, description = "Escape char for command line parser")
+        private char escapeChar = '\\';
 
         @Parameter(names = {"-g", "--globalcache"}, description = "Use GlobalCache")
         private boolean globalcache = false;
@@ -288,9 +294,10 @@ public class MainString {
             if (commandLineArgs.parameters.isEmpty()) {
                 //if (!commandLineArgs.telnet)
                 System.err.println("No arguments given, going into interactive mode.");
-                System.err.println("Type EOL to quit.");
+                System.err.println("Type " + commandLineArgs.escapeChar + "bye or press EOL to quit.");
                 ReadlineCommander.init(null, ".rlhistory", commandLineArgs.prompt.replace('_', ' '), commandLineArgs.appName);
-                ReadlineCommander.readEvalPrint(stringCommander, commandLineArgs.waitForAnswer, returnLines);
+                ReadlineCommander.readEvalPrint(stringCommander, commandLineArgs.waitForAnswer, returnLines,
+                        commandLineArgs.escapeChar, commandLineArgs.commentChar);
                 ReadlineCommander.close();
             } else {
                 String command = framer.frame(join(commandLineArgs.parameters, " "));
