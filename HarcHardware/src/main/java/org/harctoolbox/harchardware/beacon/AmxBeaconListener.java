@@ -271,9 +271,9 @@ public class AmxBeaconListener /*implements Serializable*/ {
             }
 
             Node r = new Node(a, port, table);
-            if (key != null && ! r.get(key).equals(value)) {
-                    if (debug)
-                        System.err.println("Wrong value of `" + key + "', discarded.");
+            if (key != null && r.get(key) != null && !r.get(key).equals(value)) {
+                if (debug)
+                    System.err.println("Wrong value of `" + key + "', discarded.");
             } else if (nodes.containsKey(a))  {
                 if (debug)
                     System.err.println("already in table, just refreshing.");
