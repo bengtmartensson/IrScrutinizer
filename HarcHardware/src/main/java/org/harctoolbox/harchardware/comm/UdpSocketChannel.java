@@ -37,7 +37,6 @@ import org.harctoolbox.IrpMaster.IrpUtils;
  * It should therefore throw low-level exceptions, not HarcHardwareException.
  */
 public class UdpSocketChannel {
-    private final String hostIp;
     private final InetAddress inetAddress;
     private final int portNumber;
     private boolean verbose;
@@ -47,9 +46,8 @@ public class UdpSocketChannel {
     private final static int BUFFERSIZE = 65000;
     private final byte[] byteBuffer = new byte[BUFFERSIZE];
 
-    public UdpSocketChannel(String hostIp, int portNumber, int timeout, boolean verbose) throws UnknownHostException, SocketException {
-        this.hostIp = hostIp;
-        inetAddress = InetAddress.getByName(hostIp);
+    public UdpSocketChannel(InetAddress inetAddress, int portNumber, int timeout, boolean verbose) throws UnknownHostException, SocketException {
+        this.inetAddress = inetAddress;
         this.portNumber = portNumber;
         this.verbose = verbose;
         socket = new DatagramSocket();
@@ -61,9 +59,13 @@ public class UdpSocketChannel {
         }
     }
 
+    public UdpSocketChannel(String hostIp, int portNumber, int timeout, boolean verbose) throws UnknownHostException, SocketException {
+        this(InetAddress.getByName(hostIp), portNumber, timeout, verbose);
+    }
+
     private void send(byte[] buf) throws IOException {
         if (verbose)
-            System.err.println("Sending command `" + new String(buf, IrpUtils.dumbCharset) + "' over UDP to " + hostIp + ":" +  portNumber);
+            System.err.println("Sending command `" + new String(buf, IrpUtils.dumbCharset) + "' over UDP to " + inetAddress.getCanonicalHostName() + ":" +  portNumber);
         DatagramPacket dp = new DatagramPacket(buf, buf.length, inetAddress, portNumber);
         socket.send(dp);
     }
