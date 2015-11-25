@@ -171,24 +171,29 @@ public class ReadlineCommander {
                     } catch (NumberFormatException | InterruptedException ex) {
                         System.err.println(ex);
                     }
-                    continue;
+                } else if (line.startsWith("read", 1)) {
+                    try {
+                        String result = stringCommander.readString(true);
+                        System.out.println(result);
+                    } catch (IOException ex) {
+                        System.err.println(ex);
+                    }
                 } else {
                     System.err.println("Unknown escape command: " + line);
-                    continue;
                 }
-            }
+            } else {
+                String[] result = null;
+                try {
+                    result = stringCommander.sendString(line, returnlines <= 0 ? -1 : returnlines, waitForAnswer);
+                    for (String str : result)
+                        System.out.println(str);
 
-            String[] result = null;
-            try {
-                result = stringCommander.sendString(line, returnlines <= 0 ? -1 : returnlines, waitForAnswer);
-                for (String str : result)
-                    System.out.println(str);
-
-                if (result != null && result.length > 0
-                        && result[result.length-1] != null && result[result.length-1].equals("Bye!"))
-                    break;
-            } catch (IOException ex) {
-                System.err.println(ex);
+                    if (result != null && result.length > 0
+                            && result[result.length - 1] != null && result[result.length - 1].equals("Bye!"))
+                        break;
+                } catch (IOException ex) {
+                    System.err.println(ex);
+                }
             }
         }
         System.out.println("exiting");

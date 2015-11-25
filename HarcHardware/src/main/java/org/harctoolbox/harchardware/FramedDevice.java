@@ -101,11 +101,11 @@ public class FramedDevice {
     }
 
     public String readString() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return hardware.readString();
     }
 
     public String readString(boolean wait) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return hardware.readString(wait);
     }
 
     public String getVersion() throws IOException {
