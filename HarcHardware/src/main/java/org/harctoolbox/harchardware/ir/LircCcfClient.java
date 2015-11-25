@@ -26,7 +26,7 @@ import org.harctoolbox.IrpMaster.IrSignal;
  * A <a href="http://www.lirc.org">LIRC</a> client, talking to a remote LIRC
  * server through a TCP port.
  */
-public class LircCcfClient extends LircClient implements IRawIrSender,IIrSenderStop {
+public class LircCcfClient extends LircClient implements IRawIrSender {
 
     public LircCcfClient(String hostname, int port, boolean verbose, int timeout) throws UnknownHostException, IOException {
         super(hostname, port, verbose, timeout);

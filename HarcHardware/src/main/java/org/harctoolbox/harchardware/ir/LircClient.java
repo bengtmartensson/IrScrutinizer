@@ -116,7 +116,7 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
         @Override
         public String toString() {
             if (transmitters == null || transmitters.length == 0)
-                return null;
+                return "";
             StringBuilder s = new StringBuilder();
             for (int i = 0; i < transmitters.length; i++)
                 s.append(' ').append(transmitters[i]);
@@ -196,10 +196,9 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
         }
     }
 
-    protected String[] sendCommand(String packet, boolean oneWord) throws IOException {
-        if (verbose) {
+    protected final String[] sendCommand(String packet, boolean oneWord) throws IOException {
+        if (verbose)
             System.err.println("Sending command `" + packet + "' to Lirc@" + lircServerIp);
-        }
 
         TcpSocketChannel tcpSocketChannel = new TcpSocketChannel(lircServerIp, lircPort,
                 timeout, verbose, TcpSocketPort.ConnectionMode.justInTime);
@@ -217,12 +216,12 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
             int state = P_BEGIN;
             int n = 0;
             boolean done = false;
-            //int errno = 0;
             int dataN = -1;
 
             while (!done) {
                 String string = inFromServer.readLine();
-                //System.out.println("***"+string+"***"+state);
+                if (verbose)
+                    System.err.println("Received `" + string + "'");
                 if (string == null) {
                     done = true;
                     status = -1;
@@ -273,13 +272,8 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
                             state = dataN == 0 ? P_END : P_DATA_N;
                             break;
                         case P_DATA_N:
-                            if (verbose) {
-                                System.err.println(string);
-                            }
                             // Different LIRC servers seems to deliver commands in different
                             // formats. Just take the last word.
-                            //result[n++] = one_word ? string.replaceAll("\\S*\\s+", "") : string;
-
                             result.add(oneWord ? string.replaceAll("\\S*\\s+", "") : string);
                             n++;
                             if (n == dataN) {
@@ -309,22 +303,15 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
         } catch (IOException e) {
             System.err.println("Couldn't read from " + lircServerIp);
             status = -1;
-            //System.exit(1);
         } finally {
             try {
                 tcpSocketChannel.close(true);
             } catch (IOException e) {
                 System.err.println(e.getMessage());
-                //System.exit(1);
             }
         }
-        if (verbose) {
-            System.err.println(status == 0 ? "Lirc command succeded."
-                    : "Lirc command failed.");
-        }
-        if (result != null && !result.isEmpty() && verbose) {
-            System.err.println("result[0] = " + result.get(0));
-        }
+        if (verbose)
+            System.err.println("Lirc command " + (status == 0 ? "succeded." : "failed."));
 
         return status == 0 && result != null ? result.toArray(new String[result.size()]) : null;
     }
@@ -337,8 +324,7 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
             if (!LircIrTransmitter.class.isInstance(transmitter))
                 throw new NoSuchTransmitterException(transmitter);
             LircIrTransmitter trans = (LircIrTransmitter) transmitter;
-            if (trans.transmitters != null /*&& (this.lircIrTransmitter.transmitters == null
-                    || this.lircIrTransmitter.transmitters[0] != trans.transmitters[0])*/) {
+            if (trans.transmitters != null) {
                 boolean result = setTransmitters(transmitter);
                 if (!result)
                     throw new NoSuchTransmitterException("Error selecting transmitter " + transmitter);
@@ -385,16 +371,6 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
         return sendCommand("LIST " + remote, true);
     }
 
-    // Questionable
-    /*public String getRemoteCommand(String remote, String command) throws HarcHardwareException {
-        try {
-            String[] result = sendCommand("LIST " + remote + " " + command, false);
-            return result != null ? result[0] : null;
-        } catch (IOException ex) {
-            throw new HarcHardwareException(ex);
-        }
-    }*/
-
     /**
      * Sends the SET_TRANSMITTER command to the LIRC server.
      * @param transmitter
@@ -432,8 +408,6 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
     @Override
     public String getVersion() throws IOException {
         return version;
-        //String[] result = sendCommand("VERSION", false);
-        //return (result == null || result.length == 0) ? null : result[0];
     }
 
     /**
