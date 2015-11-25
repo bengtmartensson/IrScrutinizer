@@ -159,6 +159,7 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         stream.println("\trepeat\t9041\t2267");
         stream.println("\tgap\t36000");
         stream.println("\trepeat_bit\t0");
+        stream.println("\tfrequency\t38400");
         stream.println("\t\tbegin codes");
         for (Map.Entry<String, Command> kvp : remote.getCommands().entrySet())
             stream.println(String.format("\t\t\t%1$s\t%2$#016x", kvp.getKey(), formatNec1(kvp.getValue())));
@@ -187,6 +188,7 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         stream.println("\tplead\t889");
         stream.println("\tgap\t90886");
         stream.println("\ttoggle_bit\t2");
+        stream.println("\tfrequency\t36000");
         stream.println("\t\tbegin codes");
         for (Map.Entry<String, Command> kvp : remote.getCommands().entrySet())
             stream.println(String.format("\t\t\t%1$s\t%2$#016x", kvp.getKey(), formatRc5(kvp.getValue())));
