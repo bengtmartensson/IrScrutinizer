@@ -1,4 +1,4 @@
-sudo: true
+sudo: required
 notifications:
 email: false
 language: java
@@ -7,14 +7,12 @@ jdk:
 install:
 - sudo add-apt-repository ppa:dns/gnu -y
 - sudo apt-get update -qq
-- sudo apt-get install libtool subversion maven g++ openjdk-7-jdk dos2unix autoconf icoutils python-requests -qq
+- sudo apt-get install -y autoconf dos2unix icoutils
 script:
-- ./tools/build-decodeir.sh 
-- ./tools/build-exchangeir.sh 
+- ./tools/build-decodeir.sh
+- ./tools/build-exchangeir.sh
 - ./tools/build-jcommander.sh
 - ./tools/build-minimal-json.sh
 - ./tools/build-java-readline.sh
-- ./tools/build-tonto.sh -n # || echo "continuing"
-- mvn package
-- ls -lh ./IrScrutinizer/target/IrScrutinizer-bin.zip
-- find . -name *app
+- ./tools/build-tonto.sh -n
+- mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
