@@ -1589,6 +1589,10 @@ public class GuiMain extends javax.swing.JFrame {
         setCursor(cursor);
     }
 
+    private void setCapturedDataTextAreaFromClipboard() {
+        capturedDataTextArea.setText((new CopyClipboardText(null)).fromClipboard().replace('\n', ' '));
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -6742,7 +6746,7 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_rawCodeCopyAllMenuItemActionPerformed
 
     private void rawCodePasteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawCodePasteMenuItemActionPerformed
-        capturedDataTextArea.setText((new CopyClipboardText(null)).fromClipboard());
+        setCapturedDataTextAreaFromClipboard();
         //reAnalyze();
     }//GEN-LAST:event_rawCodePasteMenuItemActionPerformed
 
@@ -6782,7 +6786,7 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_analysisToClipboardMenuItemActionPerformed
 
     private void pasteToDataWindowMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pasteToDataWindowMenuItemActionPerformed
-        capturedDataTextArea.setText((new CopyClipboardText(null)).fromClipboard());
+        setCapturedDataTextAreaFromClipboard();
         //reAnalyze();
     }//GEN-LAST:event_pasteToDataWindowMenuItemActionPerformed
 
@@ -7657,7 +7661,7 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_rawCodeAnalyzeMenuItemActionPerformed
 
     private void rawCodePasteAnalyzeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawCodePasteAnalyzeMenuItemActionPerformed
-        capturedDataTextArea.setText((new CopyClipboardText(null)).fromClipboard());
+        setCapturedDataTextAreaFromClipboard();
         reAnalyze();
     }//GEN-LAST:event_rawCodePasteAnalyzeMenuItemActionPerformed
 
@@ -7666,7 +7670,7 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_signalClearMenuItemActionPerformed
 
     private void pasteScrutinizeToDataWindowMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pasteScrutinizeToDataWindowMenuItemActionPerformed
-        capturedDataTextArea.setText((new CopyClipboardText(null)).fromClipboard());
+        setCapturedDataTextAreaFromClipboard();
         reAnalyze();
     }//GEN-LAST:event_pasteScrutinizeToDataWindowMenuItemActionPerformed
 
@@ -7824,12 +7828,12 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void capturedDataTextAreaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_capturedDataTextAreaMouseReleased
         if (evt.isPopupTrigger())
-        CCFCodePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+            CCFCodePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
     }//GEN-LAST:event_capturedDataTextAreaMouseReleased
 
     private void capturedDataTextAreaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_capturedDataTextAreaMousePressed
         if (evt.isPopupTrigger())
-        CCFCodePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+            CCFCodePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
     }//GEN-LAST:event_capturedDataTextAreaMousePressed
 
     private void transferToParametricRemoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transferToParametricRemoteButtonActionPerformed
@@ -7905,7 +7909,7 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_transmitSignalButton1ActionPerformed
 
     private void pasteAnalyzeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pasteAnalyzeButtonActionPerformed
-        capturedDataTextArea.setText((new CopyClipboardText(null)).fromClipboard());
+        setCapturedDataTextAreaFromClipboard();
         reAnalyze();
     }//GEN-LAST:event_pasteAnalyzeButtonActionPerformed
 
