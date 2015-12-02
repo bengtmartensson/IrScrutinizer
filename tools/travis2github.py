@@ -30,11 +30,9 @@ mime = magic.Magic(mime=True)
 url = 'https://api.github.com/repos/' + username + '/' + repo + '/releases'
 print url
 
-#
 # TODO: MAKE A RELEASE AND DELETE THE PREVIOUS ONE INSTEAD OF HARDCODING ONE
 # IF ONE THAT MATCHES THE CURRENT SOURCE IS NOT HERE
 # THIS WAY THE SOURCE WILL MATCH TO THE BINARY...
-#
 
 # Get the release with the release_name
 headers = {'Authorization': 'token ' + token}
@@ -57,6 +55,9 @@ if (release != None):
     response = requests.delete(release["url"], headers=headers)
     assert(response.status_code==204)
     print response
+    # Nuke the corresponding tag
+    resp = requests.delete('https://api.github.com/repos/' + username + '/' + repo + '/git/refs/tags/' + release_name, headers=headers)
+    print resp
 
 # Create new release with the same name
 print("Creating new release with name " + release_name + "...")
