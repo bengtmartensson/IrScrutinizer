@@ -56,8 +56,8 @@ if (release != None):
     assert(response.status_code==204)
     print response
     # Nuke the corresponding tag
-    resp = requests.delete('https://api.github.com/repos/' + username + '/' + repo + '/git/refs/tags/' + release_name, headers=headers)
-    print resp
+    #resp = requests.delete('https://api.github.com/repos/' + username + '/' + repo + '/git/refs/tags/' + release_name, headers=headers)
+    #print resp
 
 # Create new release with the same name
 print("Creating new release with name " + release_name + "...")
