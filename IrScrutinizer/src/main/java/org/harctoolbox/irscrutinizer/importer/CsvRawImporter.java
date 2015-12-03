@@ -116,12 +116,12 @@ public class CsvRawImporter extends CsvImporter {
     @Override
     public void load(Reader reader, String origin) throws IOException {
         prepareLoad(origin);
-
+        boolean rejectNumbers = nameColumn < codeColumn;
         BufferedReader bufferedReader = new BufferedReader(reader);
         lineNo = 1;
         for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
             String[] chunks = csvSplit(line, separator);
-            Command signal = scrutinizeRaw(chunks);
+            Command signal = scrutinizeRaw(chunks, rejectNumbers);
             if (signal != null) {
                 addCommand(signal);
             }
@@ -130,8 +130,8 @@ public class CsvRawImporter extends CsvImporter {
         setupRemoteSet();
     }
 
-    private Command scrutinizeRaw(String[] chunks) {
-        String[] nameArray = gobbleString(chunks, nameColumn, nameMultiColumn, 16, "-");
+    private Command scrutinizeRaw(String[] chunks, boolean rejectNumbers) {
+        String[] nameArray = gobbleString(chunks, nameColumn, nameMultiColumn, 16, "-", rejectNumbers);
         String name = join(nameArray);
         if (name.isEmpty())
             return null;

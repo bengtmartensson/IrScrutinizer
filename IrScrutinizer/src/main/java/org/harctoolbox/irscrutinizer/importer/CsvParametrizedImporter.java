@@ -105,6 +105,8 @@ public class CsvParametrizedImporter extends CsvImporter {
     @Override
     public void load(Reader reader, String origin) throws IOException {
         prepareLoad(origin);
+        boolean rejectNumbers = nameColumn < protocolColumn || nameColumn < dColumn
+                || nameColumn < sColumn || nameColumn < fColumn;
         lineNo = 1;
         BufferedReader bufferedReader = new BufferedReader(reader);
         while (true) {
@@ -113,7 +115,7 @@ public class CsvParametrizedImporter extends CsvImporter {
                 break;
             String[] chunks = line.split(separator);
             try {
-                Command command = scrutinizeParameters(chunks, "Line " + lineNo + ", " + origin);
+                Command command = scrutinizeParameters(chunks, "Line " + lineNo + ", " + origin, rejectNumbers);
                 if (command != null)
                     addCommand(command);
             } catch (IrpMasterException ex) {
@@ -125,8 +127,8 @@ public class CsvParametrizedImporter extends CsvImporter {
         setupRemoteSet();
     }
 
-    private Command scrutinizeParameters(String[] chunks, String sourceAsComment) throws IrpMasterException {
-        String[] nameArray = gobbleString(chunks, nameColumn, nameMultiColumn, numberBase, "-");
+    private Command scrutinizeParameters(String[] chunks, String sourceAsComment, boolean rejectNumbers) throws IrpMasterException {
+        String[] nameArray = gobbleString(chunks, nameColumn, nameMultiColumn, numberBase, "-", rejectNumbers);
         if (nameArray == null || nameArray.length == 0)
             return null;
         int offset = nameArray.length - 1;
