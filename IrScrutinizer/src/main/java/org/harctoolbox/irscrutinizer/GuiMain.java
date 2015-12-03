@@ -172,6 +172,7 @@ public class GuiMain extends javax.swing.JFrame {
     private WaveImporter waveImporter;
     private final String applicationHome;
     private java.awt.Component lastPane;
+    private int dynamicExportFormatsMenuPosition;
 
     private final String testSignalCcf = // NEC1 12.34 56
             "0000 006C 0022 0002 015B 00AD 0016 0016 0016 0016 0016 0041 0016 0041 "
@@ -434,7 +435,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         //console.setStdErr();
         //console.setStdOut();
-
+        dynamicExportFormatsMenuPosition = optionsMenu.getItemCount();
         optionsMenu.add(this.exportFormatManager.getMenu(properties.getExportFormatName()));
         optionsMenu.add(new Separator());
 
@@ -1590,6 +1591,18 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void setCapturedDataTextAreaFromClipboard() {
         capturedDataTextArea.setText((new CopyClipboardText(null)).fromClipboard().replace('\n', ' '));
+    }
+
+    private void loadExportFormatsGuiRefresh() {
+        try {
+            loadExportFormats();
+            exportFormatComboBox.setModel(new DefaultComboBoxModel<>(exportFormatManager.toArray()));
+            exportFormatComboBox.setSelectedItem(properties.getExportFormatName());
+            optionsMenu.remove(dynamicExportFormatsMenuPosition);
+            optionsMenu.add(exportFormatManager.getMenu(properties.getExportFormatName()), dynamicExportFormatsMenuPosition);
+        } catch (IOException | SAXException | ParserConfigurationException ex) {
+            guiUtils.error(ex);
+        }
     }
 
     /**
@@ -7542,11 +7555,7 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_exportFormatComboBoxActionPerformed
 
     private void exportFormatsReloadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportFormatsReloadMenuItemActionPerformed
-        try {
-            loadExportFormats();
-        } catch (IOException | SAXException | ParserConfigurationException ex) {
-            guiUtils.error(ex);
-        }
+        loadExportFormatsGuiRefresh();
     }//GEN-LAST:event_exportFormatsReloadMenuItemActionPerformed
 
     private void importSignalAsWaveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importSignalAsWaveMenuItemActionPerformed
@@ -7707,11 +7716,7 @@ public class GuiMain extends javax.swing.JFrame {
             return;
 
         properties.setExportFormatFilePath(f.getAbsolutePath());
-        try {
-            loadExportFormats();
-        } catch (IOException | ParserConfigurationException | SAXException ex) {
-            guiUtils.error(ex);
-        }
+        loadExportFormatsGuiRefresh();
     }//GEN-LAST:event_exportFormatsSelectMenuItemActionPerformed
 
     private void irpFormatsIniReloadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpFormatsIniReloadMenuItemActionPerformed
