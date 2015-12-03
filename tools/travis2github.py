@@ -3,6 +3,7 @@
 import urllib, json, os, sys, re
 import requests # apt-get install python-requests
 import magic # apt-get install python-magic seems to install a wrong version
+from time import gmtime, strftime
 
 __author__ = 'probonopd'
 release_name = "ci-build"
@@ -67,7 +68,7 @@ payload = {
   "tag_name": release_name,
   "target_commitish": "master",
   "name": release_name,
-  "body": "Binary assets built with Travis CI",
+  "body": "These are the latest binaries built by Travis continuous integration  on " + strftime("%Y-%m-%d %H:%M:%S", gmtime()) + " GMT.\n\nPlease ignore the \"release date\" and the sources in this \"release\".",
   "draft": False,
   "prerelease": True
 }
