@@ -18,10 +18,9 @@ package org.harctoolbox.IrpMaster;
 
 /**
  * Something tried to be evaluated something that was not assigned.
- * 
+ *
  */
 public class UnassignedException extends IrpMasterException {
-    private static final long serialVersionUID = 1L;
 
     public UnassignedException(String string) {
         super(string);

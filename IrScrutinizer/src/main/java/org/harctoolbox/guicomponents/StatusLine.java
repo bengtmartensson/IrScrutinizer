@@ -20,7 +20,6 @@ package org.harctoolbox.guicomponents;
 import javax.swing.JTextField;
 
 public class StatusLine extends JTextField {
-    private static final long serialVersionUID = 1L;
 
     private final CopyPastePopupMenu copyPastePopupMenu;
 

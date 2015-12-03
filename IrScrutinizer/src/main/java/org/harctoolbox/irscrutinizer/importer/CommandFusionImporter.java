@@ -41,7 +41,6 @@ import org.harctoolbox.irscrutinizer.Version;
  */
 public class CommandFusionImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
     public static final String homeUrl = "http://www.commandfusion.com/index.php";
-    private static final long serialVersionUID = 1L;
 
     @Override
     public void load(Reader reader, String origin) throws IOException {

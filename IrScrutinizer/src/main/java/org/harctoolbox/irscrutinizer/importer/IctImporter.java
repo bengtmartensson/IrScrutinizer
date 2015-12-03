@@ -38,7 +38,6 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
 
     private static int invalid = -1;
     private static final int lengthInsertedGap = 100000;
-    private static final long serialVersionUID = 1L;
     private int lineNumber;
     private int frequency = invalid;
     private int sampleCount = invalid;

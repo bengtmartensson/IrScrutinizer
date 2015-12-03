@@ -27,8 +27,6 @@ import org.harctoolbox.harchardware.Utils;
 
 public final class LocalSerialPortRaw extends LocalSerialPort implements IBytesCommand {
 
-    private static final long serialVersionUID = 1L;
-
     public LocalSerialPortRaw(String portName, int baud, int length, int stopBits, Parity parity, FlowControl flowControl, int timeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         super(portName, baud, length, stopBits, parity, flowControl, timeout);
     }

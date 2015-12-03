@@ -42,8 +42,6 @@ import org.harctoolbox.irscrutinizer.Version;
  *
  */
 public class CmlImporter extends RemoteSetImporter implements IFileImporter, Serializable {
-    private static final long serialVersionUID = 1L;
-
     // I have no idea of a/the correct character set in the CML files.
     // Therefore, select the largest of the 8 bit character sets.
     private final String charactersetName = "WINDOWS-1252";

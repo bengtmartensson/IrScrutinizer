@@ -26,8 +26,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 public class HarcletFrame extends javax.swing.JFrame {
-    private static final long serialVersionUID = 1L;
-
     boolean exitOnClose;
 
     /**

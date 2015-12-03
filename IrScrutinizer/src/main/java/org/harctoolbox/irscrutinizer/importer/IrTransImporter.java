@@ -44,8 +44,6 @@ import org.harctoolbox.irscrutinizer.Version;
  */
 public class IrTransImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
     public static final String homeUrl = "http://www.irtrans.com";
-    private static final long serialVersionUID = 1L;
-
     private static final int dummyEndingGap = 50000;
 
     public IrTransImporter() {

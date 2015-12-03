@@ -28,7 +28,6 @@ import org.harctoolbox.IrpMaster.IrpUtils;
  */
 public abstract class CsvImporter extends RemoteSetImporter implements IReaderImporter,Serializable {
     protected final static int invalid = (int) IrpUtils.invalid;
-    private static final long serialVersionUID = 1L;
 
     protected String separator;
     protected int nameColumn;

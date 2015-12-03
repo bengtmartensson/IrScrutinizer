@@ -30,8 +30,6 @@ import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ir.LircClient;
 
 public class InternetHostPanel extends JPanel {
-    private static final long serialVersionUID = 1L;
-
     public static final String PROP_IP_NAME = "ipName";
     public static final String PROP_PORT_NUMBER = "portNumber";
     public static final String PROP_READY = "PROP_READY";

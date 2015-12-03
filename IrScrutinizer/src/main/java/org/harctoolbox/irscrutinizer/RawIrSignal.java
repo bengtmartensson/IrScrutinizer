@@ -208,15 +208,12 @@ public class RawIrSignal extends NamedIrSignal {
     }
 
     public static class RawTableColumnModel extends NamedIrSignal.LearnedIrSignalTableColumnModel {
-        private static final long serialVersionUID = 1L;
         public RawTableColumnModel() {
             super(new CapturedIrSignalColumns());
         }
     }
 
     public static class RawTableModel extends NamedIrSignal.LearnedIrSignalTableModel {
-        private static final long serialVersionUID = 1L;
-
         public RawTableModel() {
             super(new CapturedIrSignalColumns());
         }

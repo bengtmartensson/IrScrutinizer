@@ -21,15 +21,14 @@ package org.harctoolbox.IrpMaster;
  * Superclass for my own exceptions.
  */
 public class IrpMasterException extends Exception {
-    private static final long serialVersionUID = 1L;
     public IrpMasterException() {
         super();
     }
-    
+
     public IrpMasterException(Throwable cause) {
         super(cause);
     }
-    
+
     public IrpMasterException(String str) {
         super(str);
     }

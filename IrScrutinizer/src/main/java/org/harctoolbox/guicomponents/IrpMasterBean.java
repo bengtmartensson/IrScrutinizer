@@ -47,8 +47,6 @@ import org.harctoolbox.girr.Command;
  *
  */
 public class IrpMasterBean extends javax.swing.JPanel {
-    private static final long serialVersionUID = 1L;
-
     private static final long invalidParameter = IrpUtils.invalid;
     private static final String invalidParameterString = Long.toString(IrpUtils.invalid);
 
@@ -76,8 +74,6 @@ public class IrpMasterBean extends javax.swing.JPanel {
 
     // should probably not be here, but somewhere else
     public static class DefaultSignalNameFormatter implements ISignalNameFormatter, Serializable {
-        private static final long serialVersionUID = 1L;
-
         private StringBuilder doParameter(HashMap<String, Long> parameters, String parameterName) {
             if (!parameters.containsKey(parameterName))
                 return new StringBuilder();

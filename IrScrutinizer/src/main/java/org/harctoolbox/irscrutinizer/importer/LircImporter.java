@@ -37,7 +37,6 @@ public class LircImporter extends RemoteSetImporter implements IReaderImporter, 
     public static final String homeUrl = "http://www.lirc.org/";
 
     private static final int debug = 0;
-    private static final long serialVersionUID = 1L;
 
     public LircImporter() {
         super();

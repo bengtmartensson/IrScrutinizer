@@ -185,8 +185,6 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
     }
 
     private static class BadPacketException extends Exception {
-        private static final long serialVersionUID = 1L;
-
         BadPacketException() {
             super();
         }

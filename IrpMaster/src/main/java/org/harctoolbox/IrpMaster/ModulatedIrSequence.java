@@ -24,8 +24,6 @@ import java.util.Collection;
  * The name is slightly misleading since the modulation frequency can be 0; it just needs to be present.
  */
 public class ModulatedIrSequence extends IrSequence {
-    private static final long serialVersionUID = 1L;
-
     private static final double allowedFrequencyDeviation = 0.05;
     private static final double zeroModulationLimit = 0.000001;
 
@@ -135,7 +133,7 @@ public class ModulatedIrSequence extends IrSequence {
     public String toPrintString(boolean alternatingSigns, boolean noSigns, String separator) {
         return toPrintString(alternatingSigns, noSigns, separator, true);
     }
-    
+
     /**
      * Formats IR signal as sequence of durations, with alternating signs, ignoring all signs, or by preserving signs.
      * @param alternatingSigns if true, generate alternating signs (ignoring original signs).

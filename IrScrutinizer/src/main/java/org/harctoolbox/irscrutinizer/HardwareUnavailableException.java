@@ -21,8 +21,6 @@ package org.harctoolbox.irscrutinizer;
  * This class does something interesting and useful. Or not...
  */
 public class HardwareUnavailableException extends Exception {
-    private static final long serialVersionUID = 1L;
-
     public HardwareUnavailableException(String str) {
         super(str);
     }

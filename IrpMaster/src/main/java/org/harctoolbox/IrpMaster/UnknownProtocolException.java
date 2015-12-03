@@ -21,7 +21,6 @@ package org.harctoolbox.IrpMaster;
  *
  */
 public class UnknownProtocolException extends IrpMasterException {
-    private static final long serialVersionUID = 1L;
 
     public UnknownProtocolException(String protocol) {
         super("Protocol " + protocol + " not known.");

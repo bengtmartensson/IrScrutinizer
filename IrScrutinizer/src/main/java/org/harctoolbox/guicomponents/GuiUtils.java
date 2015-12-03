@@ -34,8 +34,6 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 
 // Interfaces to Desktop
 public class GuiUtils implements Serializable {
-    private static final long serialVersionUID = 1L;
-
     private final int maxGuiMessageLength;
     private boolean usePopupsForErrors = false;
     private boolean usePopupsForHelp = false;

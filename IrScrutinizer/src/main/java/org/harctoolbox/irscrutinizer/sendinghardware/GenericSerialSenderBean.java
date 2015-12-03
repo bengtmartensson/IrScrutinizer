@@ -27,8 +27,6 @@ import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
 
 public class GenericSerialSenderBean extends javax.swing.JPanel {
-    private static final long serialVersionUID = 1L;
-
     private String portName;
     private int baud; // Technically correct would have been bit/s. See http://en.wikipedia.org/wiki/Baud
     private int dataSize;

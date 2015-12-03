@@ -164,7 +164,6 @@ public abstract class NamedIrSignal {
     }
 
     public abstract static class LearnedIrSignalTableColumnModel extends DefaultTableColumnModel {
-        private static final long serialVersionUID = 1L;
         private final AbstractColumnFunction columnFunc;
 
         public LearnedIrSignalTableColumnModel(AbstractColumnFunction icolumn) {
@@ -209,7 +208,6 @@ public abstract class NamedIrSignal {
     }
 
     public abstract static class LearnedIrSignalTableModel extends DefaultTableModel {
-        private static final long serialVersionUID = 1L;
         private final AbstractColumnFunction columnsFunc;
         private boolean scrollRequest = false;
 

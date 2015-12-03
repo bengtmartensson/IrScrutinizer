@@ -45,8 +45,6 @@ import org.harctoolbox.irscrutinizer.Version;
  * Class for importing Pronto CCF files of the first generation.
  */
 public class CcfImporter extends RemoteSetImporter implements IFileImporter {
-    private static final long serialVersionUID = 1L;
-
     private CCF ccf;
     private boolean translateProntoFont = true;
 

@@ -22,7 +22,6 @@ package org.harctoolbox.IrpMaster;
  */
 
 public class DomainViolationException extends IrpMasterException {
-    private static final long serialVersionUID = 1L;
 
     public DomainViolationException(String string) {
         super(string);

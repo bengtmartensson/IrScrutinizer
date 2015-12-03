@@ -19,7 +19,6 @@ package org.harctoolbox.IrpMaster;
 
 /** Hierarchical repetitions discovered. This is not implemented. */
 public class InvalidRepeatException extends IrpMasterException {
-    private static final long serialVersionUID = 1L;
 
     public InvalidRepeatException(String string) {
         super(string);

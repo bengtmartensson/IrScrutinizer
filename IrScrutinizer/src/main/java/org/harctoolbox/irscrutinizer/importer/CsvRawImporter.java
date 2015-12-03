@@ -39,7 +39,6 @@ import org.harctoolbox.irscrutinizer.Utils;
  * Columns are numbered starting with 1.
  */
 public class CsvRawImporter extends CsvImporter {
-    private static final long serialVersionUID = 1L;
     private int codeColumn;
     private boolean includeTail;
 

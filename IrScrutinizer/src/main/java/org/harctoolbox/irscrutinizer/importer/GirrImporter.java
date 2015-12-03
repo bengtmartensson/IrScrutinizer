@@ -40,7 +40,6 @@ import org.xml.sax.SAXParseException;
  */
 public class GirrImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
     public static final String homeUrl = "http://www.harctoolbox.org/girr";
-    private static final long serialVersionUID = 1L;
 
     private transient Schema schema;
     private transient URL url;

@@ -48,7 +48,6 @@ public class RemoteSet implements Serializable {
      */
     public final static String girrVersion = "1.0";
 
-    private static final long serialVersionUID = 1L;
     private static String dateFormatString = "yyyy-MM-dd_HH:mm:ss";
 
     /**

@@ -31,8 +31,6 @@ import org.harctoolbox.harchardware.comm.LocalSerialPort;
  *
  */
 public class SerialPortBean extends javax.swing.JPanel {
-    private static final long serialVersionUID = 1L;
-
     private String portName;
     private int baud;
     private int dataSize;

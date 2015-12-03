@@ -37,8 +37,6 @@ import org.harctoolbox.girr.Command;
  * Columns are numbered starting with 1.
  */
 public class CsvParametrizedImporter extends CsvImporter {
-    private static final long serialVersionUID = 1L;
-
     private int numberBase;
     private int fColumn;
     private int dColumn;

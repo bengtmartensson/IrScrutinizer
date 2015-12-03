@@ -47,8 +47,6 @@ import org.w3c.dom.NodeList;
  * "ignore" individual unparseable commands.
  */
 public class Command implements Serializable {
-    private static final long serialVersionUID = 1L;
-
     /**
      * An implementation of this interface describes a way to format an IrSignal to a text string.
      */

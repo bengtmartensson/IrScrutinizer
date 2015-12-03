@@ -40,7 +40,6 @@ import java.util.Collection;
  *
  */
 public class IrSequence implements Cloneable, Serializable {
-    private static final long serialVersionUID = 1L;
     /**
      * Duration data, possibly with signs, which are ignored (by this class).
      */

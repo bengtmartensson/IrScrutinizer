@@ -24,7 +24,6 @@ import org.harctoolbox.guicomponents.GuiUtils;
  * The mandatory about popup ;-).
  *
  */
-@SuppressWarnings("serial")
 public class AboutPopup extends javax.swing.JDialog {
 
     private GuiUtils guiUtils;

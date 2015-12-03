@@ -156,8 +156,6 @@ public class DecodeIR {
      * Thrown if no sensible decode is found.
      */
     public static class DecodeIrException extends IrpMasterException {
-        private static final long serialVersionUID = 1L;
-
         public DecodeIrException(String string) {
             super(string);
         }

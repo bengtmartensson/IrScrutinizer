@@ -23,8 +23,6 @@ import org.harctoolbox.harchardware.HarcHardwareException;
  * This exception is thrown when trying to use a non existing transmitter.
  */
 public class NoSuchTransmitterException extends HarcHardwareException {
-    private static final long serialVersionUID = 1L;
-
     public NoSuchTransmitterException(String string) {
         super("No such transmitter: " + string);
     }

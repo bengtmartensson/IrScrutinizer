@@ -22,7 +22,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.text.JTextComponent;
 
-@SuppressWarnings("serial")
 public class CopyPastePopupMenu extends JPopupMenu {
 
     private JMenuItem copyMenuItem;

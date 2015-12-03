@@ -39,8 +39,6 @@ import org.harctoolbox.IrpMaster.IrpUtils;
  * This class is a general purpose console.
  */
 public class Console extends javax.swing.JScrollPane {
-    private static final long serialVersionUID = 1L;
-
     public interface IErrorFunction extends Serializable {
         void err(Exception ex, String str);
 
@@ -48,8 +46,6 @@ public class Console extends javax.swing.JScrollPane {
     }
 
     private static class SimpleErrorFunction implements IErrorFunction {
-        private static final long serialVersionUID = 1L;
-
         PrintStream consolePrintStream;
 
         SimpleErrorFunction(PrintStream consolePrintStream) {

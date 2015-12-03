@@ -38,7 +38,6 @@ import java.util.Properties;
  */
 public class Props {
     private final static boolean useXml = <xsl:value-of select="@useXml"/>;
-    private static final long serialVersionUID = 1L;
     private Properties props;
     private String filename;
     private String applicationHome;

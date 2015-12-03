@@ -20,11 +20,9 @@ package org.harctoolbox.harchardware;
 import java.io.IOException;
 
 /**
- * This class does something interesting and useful. Or not...
+ *
  */
 public class TimeoutException extends IOException {
-    private static final long serialVersionUID = 1L;
-
     public TimeoutException() {
         super();
     }

@@ -47,7 +47,6 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     private final static Proxy proxy = Proxy.NO_PROXY;
     private final static long invalid = -1L;
     private final static String irdbOriginName = "IRDB";
-    private static final long serialVersionUID = 1L;
 
     private boolean verbose = false;
     private String manufacturer;
@@ -95,8 +94,6 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     }*/
 
     public static class ProtocolDeviceSubdevice implements Serializable {
-        private static final long serialVersionUID = 1L;
-
         private String protocol;
         private long device;
         private long subdevice; // use -1 for no subdevice

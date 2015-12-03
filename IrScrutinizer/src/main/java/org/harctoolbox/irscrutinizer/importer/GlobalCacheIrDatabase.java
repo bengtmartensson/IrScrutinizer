@@ -41,7 +41,6 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
     public final static String globalCacheIrDatabaseHost = "irdatabase.globalcache.com";
     private final static String path = "/api/v1/";
     private final static String globalCacheDbOrigin = globalCacheIrDatabaseHost;
-    private static final long serialVersionUID = 1L;
     private boolean verbose = false;
 
     //private transient Proxy proxy = Proxy.NO_PROXY;

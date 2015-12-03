@@ -148,7 +148,6 @@ import org.harctoolbox.irscrutinizer.sendinghardware.SendingLircClient;
 import org.harctoolbox.irscrutinizer.sendinghardware.SendingSerial;
 import org.xml.sax.SAXException;
 
-@SuppressWarnings("serial")
 public class GuiMain extends javax.swing.JFrame {
 
     private Props properties;

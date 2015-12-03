@@ -36,8 +36,6 @@ public class AmxBeaconListenerPanel extends HarcPanel {
             + "Copyright 2013 by Bengt Martensson.\n\n"
             + "License: GPL3.\n\n"
             + "Project home page: http://www.harctoolbox.org";
-    private static final long serialVersionUID = 1L;
-
 
     private final transient AmxBeaconListener listener;
 

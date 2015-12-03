@@ -39,12 +39,10 @@ import org.harctoolbox.IrpMaster.Iterate.RandomValueSet;
 // D, S, F, T, and then the rest in alphabetical order.
 
 public class IrpMaster implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     private static class UnparsedProtocol implements Serializable {
 
         public static final String unnamed = "unnamed_protocol";
-        private static final long serialVersionUID = 1L;
         public String name;
         public String documentation;
         public String irp;

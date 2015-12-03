@@ -28,7 +28,6 @@ import org.harctoolbox.harchardware.IHarcHardware;
  *
  */
 public class TcpSerialComboBean extends javax.swing.JPanel {
-    private static final long serialVersionUID = 1L;
     private static final int defaultBaudRate = 9600;
     public static final String PROP_VERSION = "PROP_VERSION";
     public static final String PROP_BAUD = "PROP_BAUD";

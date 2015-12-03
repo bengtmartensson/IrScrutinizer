@@ -33,8 +33,6 @@ import org.harctoolbox.girr.Command;
  *
  */
 public class ParametrizedIrSignal extends NamedIrSignal {
-    private static final long serialVersionUID = 1L;
-
     private static boolean generateRaw = true;
     private static boolean generateCcf = true;
     private static IrpMaster irpMaster = null;
@@ -305,16 +303,12 @@ public class ParametrizedIrSignal extends NamedIrSignal {
     }
 
     public static class ParameterIrSignalTableColumnModel extends NamedIrSignal.LearnedIrSignalTableColumnModel {
-        private static final long serialVersionUID = 1L;
-
         public ParameterIrSignalTableColumnModel() {
             super(new ParameterIrSignalColumns());
         }
     }
 
     public static class ParameterIrSignalTableModel extends NamedIrSignal.LearnedIrSignalTableModel {
-        private static final long serialVersionUID = 1L;
-
         public ParameterIrSignalTableModel() {
             super(new ParameterIrSignalColumns());
         }

@@ -45,8 +45,6 @@ import org.w3c.dom.Document;
  * This class is a simple-minded importer of RMDU files.
  */
 public class RmduImporter extends RemoteSetImporter implements Serializable, IReaderImporter {
-    private static final long serialVersionUID = 1L;
-
     //public static final String[][] fileExtensions = new String[][]{ new String[]{"rmdu", "RemoteMaster device updates"}};
 
     private HashMap<String,String>parameters;

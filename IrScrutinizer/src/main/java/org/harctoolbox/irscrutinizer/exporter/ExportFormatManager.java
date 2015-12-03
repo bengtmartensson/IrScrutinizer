@@ -37,8 +37,6 @@ import org.xml.sax.SAXException;
  * This class does something interesting and useful. Or not...
  */
 public class ExportFormatManager implements Serializable {
-    private static final long serialVersionUID = 1L;
-
     public interface IExportFormatSelector {
         public void select(String name);
     }

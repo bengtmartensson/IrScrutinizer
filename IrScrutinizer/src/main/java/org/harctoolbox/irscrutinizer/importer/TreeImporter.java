@@ -45,7 +45,6 @@ import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
  * Despite being a Java Bean, this is not really intended to be a recyclable component, it is just to be used in IrScrutinizer.
  */
 
-@SuppressWarnings("serial")
 public class TreeImporter extends javax.swing.JPanel implements TreeExpansionListener {
     private GuiUtils guiUtils;
     private GuiMain guiMain = null;

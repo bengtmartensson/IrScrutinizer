@@ -36,7 +36,6 @@ import org.w3c.dom.NodeList;
  * it has a dictionary of Commands, indexed by their names.
  */
 public class Remote implements Serializable {
-    private static final long serialVersionUID = 1L;
     private String name;
     private String manufacturer;
     private String model;
@@ -233,8 +232,6 @@ public class Remote implements Serializable {
     }
 
     public static class CompareNameCaseSensitive implements Comparator<Remote>, Serializable {
-        private static final long serialVersionUID = 1L;
-
         @Override
         public int compare(Remote o1, Remote o2) {
             return o1.name.compareTo(o2.name);
@@ -242,8 +239,6 @@ public class Remote implements Serializable {
     }
 
     public static class CompareNameCaseInsensitive implements Comparator<Remote>, Serializable {
-        private static final long serialVersionUID = 1L;
-
         @Override
         public int compare(Remote o1, Remote o2) {
             return o1.name.compareToIgnoreCase(o2.name);

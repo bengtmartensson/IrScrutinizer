@@ -19,7 +19,6 @@ package org.harctoolbox.IrpMaster;
 
 /** Fatally incompatible arguments discovered */
 public class IncompatibleArgumentException extends IrpMasterException {
-    private static final long serialVersionUID = 1L;
 
     public IncompatibleArgumentException(String string) {
         super(string);
