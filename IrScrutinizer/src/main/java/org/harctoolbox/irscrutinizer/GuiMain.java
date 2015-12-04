@@ -6946,10 +6946,15 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_beaconListenerMenuItemActionPerformed
 
     private void parametricOrRawExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parametricOrRawExportButtonActionPerformed
-        if (rawCookedTabbedPane.getSelectedComponent() == this.cookedPanel)
-            saveParametricSignals(newRemoteExporter());
-        else
-            saveRawSignals(newRemoteExporter());
+        RemoteSetExporter exporter = newRemoteExporter();
+        if (exporter != null) {
+            if (rawCookedTabbedPane.getSelectedComponent() == this.cookedPanel)
+                saveParametricSignals(exporter);
+            else
+                saveRawSignals(exporter);
+        } else {
+            // error has already been reported, nothing to do.
+        }
     }//GEN-LAST:event_parametricOrRawExportButtonActionPerformed
 
     private void importLircMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importLircMenuItemActionPerformed
