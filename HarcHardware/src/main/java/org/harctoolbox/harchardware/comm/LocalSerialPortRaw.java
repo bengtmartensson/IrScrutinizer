@@ -91,4 +91,9 @@ public final class LocalSerialPortRaw extends LocalSerialPort implements IBytesC
             System.err.println(ex.getMessage());
         }
     }
+
+    @Override
+    public void setDebug(int debug) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

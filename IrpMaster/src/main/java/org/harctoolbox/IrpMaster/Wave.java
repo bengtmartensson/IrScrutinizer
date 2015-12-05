@@ -419,10 +419,10 @@ public class Wave {
      * @throws IOException
      */
     public void play() throws LineUnavailableException, IOException {
-        SourceDataLine line = AudioSystem.getSourceDataLine(audioFormat);
-        line.open(audioFormat);
-        play(line);
-        line.close();
+        try (SourceDataLine line = AudioSystem.getSourceDataLine(audioFormat)) {
+            line.open(audioFormat);
+            play(line);
+        }
     }
 
     private static void usage(int exitcode) {

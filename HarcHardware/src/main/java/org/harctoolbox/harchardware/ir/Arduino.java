@@ -316,4 +316,9 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
     public boolean ready() throws IOException {
         return serialPort.ready();
     }
+
+    @Override
+    public void setDebug(int debug) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

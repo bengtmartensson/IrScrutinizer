@@ -84,23 +84,28 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
         this.useReceiveForCapture = false;
     }
 
+    @Override
     public void close() throws IOException {
         hardware.close();
     }
 
+    @Override
     public String getVersion() throws IOException {
         return version;
     }
 
+    @Override
     public void setVerbosity(boolean verbosity) {
         this.verbosity = verbosity;
     }
 
+    @Override
     public void setDebug(int debug) {
         this.debug = debug;
     }
 
     @Deprecated
+    @Override
     public void setTimeout(int timeout) throws IOException {
         setBeginTimeout(timeout);
     }
@@ -161,6 +166,7 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
         this.lineEnding = lineEnding;
     }
 
+    @Override
     public boolean isValid() {
         return hardware.isValid() && version != null && modules != null && modules.contains("base");
     }
@@ -169,9 +175,9 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
         return modules;
     }
 
-    private boolean checkModule(String module) {
-        return modules.contains(module.toLowerCase(Locale.US));
-    }
+    //private boolean checkModule(String module) {
+    //    return modules.contains(module.toLowerCase(Locale.US));
+    //}
 
     /**
      * @param fallbackFrequency the fallbackFrequency to set
@@ -213,6 +219,7 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
         //super(LocalSerialPortBuffered.class, portName, baudRate, dataSize, stopBits, parity, defaultFlowControl, serialTimeout, verbose);
     }
 
+    @Override
     public void open() throws IOException, HarcHardwareException {
         hardware.open();
         hardware.waitFor(okString, lineEnding, /*delay*/ 100, /* tries = */ 10);
@@ -325,6 +332,7 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
         return hardware.readString();
     }
 
+    @Override
     public String readString(boolean wait) throws IOException {
         return hardware.readString(wait);
     }
@@ -338,38 +346,47 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
         hardware.flushInput();
     }
 
+    @Override
     public Transmitter getTransmitter() {
         throw new UnsupportedOperationException("Not supported yet."); // TODO
     }
 
+    @Override
     public boolean stopIr(Transmitter transmitter) throws NoSuchTransmitterException, IOException {
         throw new UnsupportedOperationException("Not supported yet."); // TODO
     }
 
+    @Override
     public Transmitter getTransmitter(String connector) throws NoSuchTransmitterException {
         throw new UnsupportedOperationException("Not supported yet."); // TODO
     }
 
+    @Override
     public String[] getTransmitterNames() {
         throw new UnsupportedOperationException("Not supported yet."); // TODO
     }
 
+    @Override
     public boolean sendIrRepeat(IrSignal irSignal, Transmitter transmitter) throws NoSuchTransmitterException, IOException, IrpMasterException {
         throw new UnsupportedOperationException("Not supported yet."); // TODO
     }
 
+    @Override
     public String[] getRemotes() throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); // TODO (later)
     }
 
+    @Override
     public String[] getCommands(String remote) throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); // TODO (later)
     }
 
+    @Override
     public boolean sendIrCommand(String remote, String command, int count, Transmitter transmitter) throws IOException, NoSuchTransmitterException {
         throw new UnsupportedOperationException("Not supported yet."); //TODO (later)
     }
 
+    @Override
     public boolean sendIrCommandRepeat(String remote, String command, Transmitter transmitter) throws IOException, NoSuchTransmitterException {
         throw new UnsupportedOperationException("Not supported yet."); // TODO (later)
     }

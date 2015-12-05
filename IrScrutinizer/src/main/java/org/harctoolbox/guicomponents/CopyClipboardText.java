@@ -41,7 +41,6 @@ public class CopyClipboardText implements ClipboardOwner {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(str), this);
     }
 
-    // FIXME: java.awt.datatransfer.UnsupportedFlavorException: Unicode String
     public String fromClipboard() {
         try {
             return (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this).getTransferData(DataFlavor.stringFlavor);

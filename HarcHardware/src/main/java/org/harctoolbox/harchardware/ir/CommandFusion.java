@@ -42,6 +42,11 @@ import org.harctoolbox.harchardware.comm.LocalSerialPortRaw;
  * @see https://docs.google.com/document/d/1BMRwD9RlUYtf4VeJNXgRwo6-lkkSAIVo8tczrynJ7CU/preview?pli=1
  */
 public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawIrSender, ICapture {
+
+    @Override
+    public void setDebug(int debug) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     // USB parameters:
     //    VID = 0403
     //    PID = 6001

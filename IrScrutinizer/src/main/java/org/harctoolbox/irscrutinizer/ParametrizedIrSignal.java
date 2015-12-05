@@ -159,12 +159,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         return formatMiscParams(parameters);
     }
 
-    @Override
-    public String csvString(String separator) {
-        String str = super.csvString(separator);
-        // TODO
-        return str;
-    }
+    // TODO: @Override public String csvString(String separator) {
 
     @Override
     public String toPrintString() {

@@ -73,7 +73,7 @@ public class XmlExport {
     public XmlExport() {
         doc = newDocument();
     }
-    
+
     public static Document newDocument() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
@@ -120,14 +120,9 @@ public class XmlExport {
         if (file == null)
             printDOM(System.out, doctypeSystemid);
         else {
-            FileOutputStream stream = null;
-            try {
-                stream = new FileOutputStream(file);
+            try (FileOutputStream stream = new FileOutputStream(file)) {
                 printDOM(stream, doctypeSystemid);
                 System.err.println("File " + file + " written.");
-            } finally {
-                if (stream != null)
-                    stream.close();
             }
         }
     }

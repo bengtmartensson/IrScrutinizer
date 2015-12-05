@@ -492,9 +492,7 @@ public class IrWidget implements IHarcHardware, ICapture {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        IrWidget w = null;
-        try {
-            w = new IrWidget();
+        try (IrWidget w = new IrWidget()) {
             w.setTimeout(2000, 10000, 500);
             w.open();
             ModulatedIrSequence seq = w.capture();
@@ -508,9 +506,6 @@ public class IrWidget implements IHarcHardware, ICapture {
             System.err.println("exception: " + ex.toString() + ex.getMessage());
         } catch (HarcHardwareException ex) {
             System.err.println(ex.getMessage());
-        } finally {
-            if (w != null)
-                w.close();
         }
     }
 }

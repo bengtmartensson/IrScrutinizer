@@ -87,15 +87,10 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
                 true //generateParameters)
                 );
         XmlExporter xmlExporter = new XmlExporter(document);
-        OutputStream out = null;
-        try {
-            out = new FileOutputStream(saveFile);
+        try (OutputStream out = new FileOutputStream(saveFile)) {
             HashMap<String, String> parameters = new HashMap<>(1);
             parameters.put("noRepeats", Integer.toString(noRepeats));
             xmlExporter.printDOM(out, xslt, parameters, null, binary);
-        } finally {
-            if (out != null)
-                out.close();
         }
     }
 }

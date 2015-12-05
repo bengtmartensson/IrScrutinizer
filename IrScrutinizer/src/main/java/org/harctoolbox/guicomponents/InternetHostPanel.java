@@ -17,7 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.guicomponents;
 
-import java.awt.Cursor;
 import java.awt.Desktop;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -368,41 +367,6 @@ public class InternetHostPanel extends JPanel {
         isPingable();
     }//GEN-LAST:event_pingButtonActionPerformed
 
-    private void enableStuff(boolean isOpen) {
-        ipNameTextField.setEnabled(!isOpen);
-        portTextField.setEnabled(!isOpen);
-    }
-
-    private Cursor setBusyCursor() {
-        Cursor oldCursor = getCursor();
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        return oldCursor;
-    }
-
-    private void resetCursor(Cursor cursor) {
-        setCursor(cursor);
-    }
-/*
-    private void openClose(boolean opening) throws IOException, HarcHardwareException {
-        boolean oldIsOpen = hardware.isValid();
-        try {
-            if (opening) {
-                hardware.open();
-                listenable = true;
-                //openToggleButton.setSelected(hardware.isValid());
-                //refreshButton.setEnabled(!hardware.isValid());
-            } else {
-                listenable = false;
-                hardware.close();
-                //openToggleButton.setSelected(false);
-                //refreshButton.setEnabled(true);
-            }
-        } finally {
-            enableStuff(opening && hardware.isValid());
-            setVersion();
-            propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, hardware.isValid());
-        }
-    }*/
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;
     private javax.swing.JTextField ipNameTextField;

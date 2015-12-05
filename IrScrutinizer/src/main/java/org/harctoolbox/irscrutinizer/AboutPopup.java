@@ -37,6 +37,9 @@ public class AboutPopup extends javax.swing.JDialog {
      */
     public AboutPopup(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        if (!(parent instanceof GuiMain))
+            throw new RuntimeException("Programming error");
+        
         guiUtils = ((GuiMain) parent).getGuiUtils();
         try {
             decodeIRVersion = "DecodeIR version " + DecodeIR.getVersion();

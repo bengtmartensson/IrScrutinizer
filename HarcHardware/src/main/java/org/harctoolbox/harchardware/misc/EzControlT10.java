@@ -465,9 +465,7 @@ public class EzControlT10 implements IHarcHardware, IWeb {
 
     private boolean udpSendCheck(DatagramPacket dp) {
         boolean success = false;
-        DatagramSocket sock = null;
-        try {
-            sock = new DatagramSocket();
+        try (DatagramSocket sock = new DatagramSocket()) {
             sock.setSoTimeout(soTimeout);
             sock.send(dp);
             byte[] error = new byte[6];
@@ -483,9 +481,6 @@ public class EzControlT10 implements IHarcHardware, IWeb {
                 System.err.println("UDP socket timeout from " + ezcontrolIP);
             else
                 System.err.println(e.getMessage());
-        } finally {
-            if (sock != null)
-                sock.close();
         }
         return success;
     }
@@ -538,9 +533,7 @@ public class EzControlT10 implements IHarcHardware, IWeb {
         }
 
         DatagramPacket dp = new DatagramPacket(buf, buf.length, addr, ezcontrolQueryPortno);
-        DatagramSocket sock = null;
-        try {
-            sock = new DatagramSocket();
+        try (DatagramSocket sock = new DatagramSocket()) {
             sock.setSoTimeout(soTimeout);
             sock.send(dp);
             sock.receive(dp);
@@ -550,9 +543,6 @@ public class EzControlT10 implements IHarcHardware, IWeb {
             else
                 System.err.println(e.getMessage());
             buf = null;
-        } finally {
-            if (sock != null)
-                sock.close();
         }
         return buf;
     }
@@ -1051,23 +1041,30 @@ public class EzControlT10 implements IHarcHardware, IWeb {
         try {
             while (arg_i < args.length && (args[arg_i].length() > 0) && args[arg_i].charAt(0) == '-') {
 
-                if (args[arg_i].equals("-v")) {
-                    verbose = true;
-                    arg_i++;
-                } else if (args[arg_i].equals("-u")) {
-                    arg_i++;
-                    udp = true;
-                } else if (args[arg_i].equals("-h")) {
-                    arg_i++;
-                    ezcontrolHost = args[arg_i++];
-                } else if (args[arg_i].equals("-d")) {
-                    arg_i++;
-                    //debug = Integer.parseInt(args[arg_i++]);
-                } else if (args[arg_i].equals("-#")) {
-                    arg_i++;
-                    count = Integer.parseInt(args[arg_i++]);
-                } else {
-                    usage();
+                switch (args[arg_i]) {
+                    case "-v":
+                        verbose = true;
+                        arg_i++;
+                        break;
+                    case "-u":
+                        arg_i++;
+                        udp = true;
+                        break;
+                    case "-h":
+                        arg_i++;
+                        ezcontrolHost = args[arg_i++];
+                        break;
+                    case "-d":
+                        arg_i++;
+                        //debug = Integer.parseInt(args[arg_i++]);
+                        break;
+                    case "-#":
+                        arg_i++;
+                        count = Integer.parseInt(args[arg_i++]);
+                        break;
+                    default:
+                        usage();
+                        break;
                 }
             }
 

@@ -54,18 +54,13 @@ public class OpenremoteClient {
      * @return url base as String.
      */
     public static String discover() {
-        DatagramSocket sock = null;
-        try {
-            sock = new DatagramSocket();
+        try (DatagramSocket sock = new DatagramSocket()) {
             InetAddress addr = InetAddress.getByName(multicastIp);
             byte[] buf = token.getBytes("US-ASCII");
             DatagramPacket dp = new DatagramPacket(buf, buf.length, addr, multicastPort);
             sock.send(dp);
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
-        } finally {
-            if (sock != null)
-                sock.close();
         }
 
         String result = null;

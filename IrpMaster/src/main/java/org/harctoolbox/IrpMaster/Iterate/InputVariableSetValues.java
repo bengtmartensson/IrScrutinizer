@@ -189,8 +189,8 @@ public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Lo
             }
 
             @Override
-            public LinkedHashMap<String, Long> next() {
-                update();
+            public LinkedHashMap<String, Long> next() throws NoSuchElementException {
+                update(); // throws NoSuchElementException
                 return currentAssignment;
             }
 

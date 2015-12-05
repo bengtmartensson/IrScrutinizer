@@ -202,7 +202,7 @@ public class RawIrSignal extends NamedIrSignal {
                         cir.getName(), cir.getDecodeString(), cir.getAnalyzerString(), cir.getValidated(),
                         cir.getComment(), (int) irSignal.getFrequency(), cir, null
                     };
-            assert(result != null && result.length == columnNames.length);
+            assert(result.length == columnNames.length);
             return result;
         }
     }

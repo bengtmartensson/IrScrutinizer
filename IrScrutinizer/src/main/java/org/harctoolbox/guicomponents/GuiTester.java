@@ -700,7 +700,7 @@ public class GuiTester extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void statusLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statusLineActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_statusLineActionPerformed
 
     private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
@@ -708,22 +708,26 @@ public class GuiTester extends javax.swing.JFrame {
     }//GEN-LAST:event_jCheckBox2ActionPerformed
 
     private void globalCacheIrSenderSelectorPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_globalCacheIrSenderSelectorPropertyChange
-        if (evt.getPropertyName().equals(GlobalCacheIrSenderSelector.PROP_IPNAME))
-            globalCacheTextField.setText((String) evt.getNewValue());
-        else if (evt.getPropertyName().equals(GlobalCacheIrSenderSelector.PROP_MODULE)
-                || evt.getPropertyName().equals(GlobalCacheIrSenderSelector.PROP_PORT)) {
-            try {
-                GlobalCache.GlobalCacheIrTransmitter transmitter = globalCacheIrSenderSelector.getTransmitter();
-                globalCacheTransmitterTextField.setText(transmitter.toString());
-                globalCacheTextField.setText(globalCacheIrSenderSelector.getIpName());
-            } catch (NoSuchTransmitterException ex) {
-                guiUtils.error(ex);
-            }
+        switch (evt.getPropertyName()) {
+            case GlobalCacheIrSenderSelector.PROP_IPNAME:
+                globalCacheTextField.setText((String) evt.getNewValue());
+                break;
+            case GlobalCacheIrSenderSelector.PROP_MODULE:
+            case GlobalCacheIrSenderSelector.PROP_PORT:
+                try {
+                    GlobalCache.GlobalCacheIrTransmitter transmitter = globalCacheIrSenderSelector.getTransmitter();
+                    globalCacheTransmitterTextField.setText(transmitter.toString());
+                    globalCacheTextField.setText(globalCacheIrSenderSelector.getIpName());
+                } catch (NoSuchTransmitterException ex) {
+                    guiUtils.error(ex);
+                }   break;
+            default:
+                throw new RuntimeException("Programming error detected.");
         }
     }//GEN-LAST:event_globalCacheIrSenderSelectorPropertyChange
 
     private void globalCacheIrSenderSelector1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_globalCacheIrSenderSelector1PropertyChange
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_globalCacheIrSenderSelector1PropertyChange
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed

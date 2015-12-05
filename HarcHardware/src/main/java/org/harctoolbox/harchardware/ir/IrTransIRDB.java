@@ -70,6 +70,8 @@ public class IrTransIRDB extends IrTrans implements IRemoteCommandIrSender {
                 }
                 outToServer.print(str + index + "\r");
                 String result = inFromServer.readLine(); // hangs here sometimes
+                if (result ==  null)
+                    throw new IOException("Unexpected end of file");
                 int secondSpace = result.indexOf(' ', 9);
                 if (verbose) {
                     System.err.println(result);

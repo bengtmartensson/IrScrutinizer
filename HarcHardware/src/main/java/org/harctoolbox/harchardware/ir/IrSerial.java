@@ -34,7 +34,6 @@ import org.harctoolbox.harchardware.IHarcHardware;
 public abstract class IrSerial<T extends LocalSerialPort> implements IHarcHardware {
 
     protected boolean verbose;
-    protected int debug;
     private int timeout;
     protected T serialPort;
     private String portName;
@@ -101,11 +100,6 @@ public abstract class IrSerial<T extends LocalSerialPort> implements IHarcHardwa
     }
 
     @Override
-    public void setDebug(int debug) {
-        this.debug = debug;
-    }
-
-    @Override
     public void setTimeout(int timeout) throws IOException {
         if (!isValid())
             throw new IOException("Port not valid, cannot set timeout.");
@@ -149,7 +143,6 @@ public abstract class IrSerial<T extends LocalSerialPort> implements IHarcHardwa
         this.flowControl = flowControl;
         this.timeout = timeout;
         this.verbose = verbose;
-        this.debug = 0;
         //open();
     }
 

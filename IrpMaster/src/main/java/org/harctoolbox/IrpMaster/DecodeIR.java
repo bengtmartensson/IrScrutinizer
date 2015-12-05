@@ -225,7 +225,7 @@ public class DecodeIR {
                 result.put("F", (long)OBC);
 
             for (String name : this.miscNames.keySet())
-                result.put(name, Long.valueOf((long)miscNames.get(name)));
+                result.put(name, (long)miscNames.get(name));
 
             return result;
         }
@@ -674,32 +674,48 @@ public class DecodeIR {
             String rawString = null;
 
             while (arg_i < args.length && args[arg_i].length() > 1 && args[arg_i].charAt(0) == '-') {
-                if (args[arg_i].equals("--help")) {
-                    usage(IrpUtils.exitSuccess);
-                } else if (args[arg_i].equals("-v") || args[arg_i].equals("--version")) {
-                    System.out.println("DecodeIR version " + DecodeIR.getVersion());
-                    System.exit(IrpUtils.exitSuccess);
-                } else if (args[arg_i].equals("-s") || args[arg_i].equals("--skip")) {
-                    arg_i++;
-                    skip = Integer.parseInt(args[arg_i++]);
-                } else if (args[arg_i].equals("-d") || args[arg_i].equals("--debug")) {
-                    arg_i++;
-                    debug = Integer.parseInt(args[arg_i++]);
-                    Debug.setDebug(debug);
-                } else if (args[arg_i].equals("-f") || args[arg_i].equals("--frequency")) {
-                    arg_i++;
-                    frequency = Integer.parseInt(args[arg_i++]);
-                } else if (args[arg_i].equals("-i") || args[arg_i].equals("--intro")) {
-                    arg_i++;
-                    introLength = Integer.parseInt(args[arg_i++]);
-                } else if (args[arg_i].equals("-r") || args[arg_i].equals("--repetition")) {
-                    arg_i++;
-                    repetitionLength = Integer.parseInt(args[arg_i++]);
-                } else if (args[arg_i].equals("-e") || args[arg_i].equals("--ending")) {
-                    arg_i++;
-                    endingLength = Integer.parseInt(args[arg_i++]);
-                } else
-                    usage(IrpUtils.exitUsageError);
+                switch (args[arg_i]) {
+                    case "--help":
+                        usage(IrpUtils.exitSuccess);
+                        break;
+                    case "-v":
+                    case "--version":
+                        System.out.println("DecodeIR version " + DecodeIR.getVersion());
+                        System.exit(IrpUtils.exitSuccess);
+                    case "-s":
+                    case "--skip":
+                        arg_i++;
+                        skip = Integer.parseInt(args[arg_i++]);
+                        break;
+                    case "-d":
+                    case "--debug":
+                        arg_i++;
+                        debug = Integer.parseInt(args[arg_i++]);
+                        Debug.setDebug(debug);
+                        break;
+                    case "-f":
+                    case "--frequency":
+                        arg_i++;
+                        frequency = Integer.parseInt(args[arg_i++]);
+                        break;
+                    case "-i":
+                    case "--intro":
+                        arg_i++;
+                        introLength = Integer.parseInt(args[arg_i++]);
+                        break;
+                    case "-r":
+                    case "--repetition":
+                        arg_i++;
+                        repetitionLength = Integer.parseInt(args[arg_i++]);
+                        break;
+                    case "-e":
+                    case "--ending":
+                        arg_i++;
+                        endingLength = Integer.parseInt(args[arg_i++]);
+                        break;
+                    default:
+                        usage(IrpUtils.exitUsageError);
+                }
             }
 
             if (args[arg_i].equals("-"))

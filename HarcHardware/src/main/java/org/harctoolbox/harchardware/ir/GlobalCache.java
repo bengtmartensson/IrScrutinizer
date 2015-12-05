@@ -910,38 +910,50 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
 
         try {
             while (arg_i < args.length && args[arg_i].charAt(0) == '-') {
-                if (args[arg_i].equals("-h")) {
-                    hostname = args[arg_i + 1];
-                    arg_i += 2;
-                } else if (args[arg_i].equals("-m")) {
-                    module = Integer.parseInt(args[arg_i + 1]);
-                    arg_i += 2;
-                } else if (args[arg_i].equals("-c")) {
-                    connector = Integer.parseInt(args[arg_i + 1]);
-                    arg_i += 2;
-                } else if (args[arg_i].equals("-#")) {
-                    count = Integer.parseInt(args[arg_i + 1]);
-                    arg_i += 2;
-                } else if (args[arg_i].equals("-b")) {
-                    baudrate = Integer.parseInt(args[arg_i + 1]);
-                    arg_i += 2;
-                } else if (args[arg_i].equals("-v")) {
-                    verbose = true;
-                    arg_i++;
-                } else if (args[arg_i].equals("-t")) {
-                    timeout = Integer.parseInt(args[arg_i + 1]);
-                    arg_i += 2;
-                } else if (args[arg_i].equals("-B")) {
-                    beacon = true;
-                    arg_i++;
-                } else if (args[arg_i].equals("-j")) {
-                    json = true;
-                    arg_i++;
-                } else if (args[arg_i].equals("-p")) {
-                    parserFood = args[arg_i + 1];
-                    arg_i += 2;
-                } else {
-                    usage();
+                switch (args[arg_i]) {
+                    case "-h":
+                        hostname = args[arg_i + 1];
+                        arg_i += 2;
+                        break;
+                    case "-m":
+                        module = Integer.parseInt(args[arg_i + 1]);
+                        arg_i += 2;
+                        break;
+                    case "-c":
+                        connector = Integer.parseInt(args[arg_i + 1]);
+                        arg_i += 2;
+                        break;
+                    case "-#":
+                        count = Integer.parseInt(args[arg_i + 1]);
+                        arg_i += 2;
+                        break;
+                    case "-b":
+                        baudrate = Integer.parseInt(args[arg_i + 1]);
+                        arg_i += 2;
+                        break;
+                    case "-v":
+                        verbose = true;
+                        arg_i++;
+                        break;
+                    case "-t":
+                        timeout = Integer.parseInt(args[arg_i + 1]);
+                        arg_i += 2;
+                        break;
+                    case "-B":
+                        beacon = true;
+                        arg_i++;
+                        break;
+                    case "-j":
+                        json = true;
+                        arg_i++;
+                        break;
+                    case "-p":
+                        parserFood = args[arg_i + 1];
+                        arg_i += 2;
+                        break;
+                    default:
+                        usage();
+                        break;
                 }
             }
 
@@ -999,79 +1011,96 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
             arg = (args.length > arg_i + 1) ? args[arg_i + 1] : null;
 
 
-            if (cmd.equals("set_blink")) {
-                if (arg == null || !arg.equals("1")) {
-                    gc.setBlink(0);
-                } else {
-                    gc.setBlink(1);
-                }
-            } else if (cmd.equals("get_devices")) {
-                output = IrpUtils.join(gc.getDevices(), System.getProperty("line.separator"));
-            } else if (cmd.equals("get_version")) {
-                output = gc.getVersion(module);
-            } else if (cmd.equals("get_net")) { // Only v3
-                output = gc.getNet();
-            } else if (cmd.equals("set_net")) { // Only v3
-                // Syntax: see API-document
-                output = gc.setNet(arg);
-            } else if (cmd.equals("get_ir")) { //Only v3
-                output = gc.getIr(module, connector);
-            } else if (cmd.equals("set_ir")) {
-                output = gc.setIr(module, connector, arg);
-            } else if (cmd.equals("get_serial")) {
-                output = gc.getSerial(module);
-            } else if (cmd.equals("set_serial")) {
-                if (baudrate > 0) {
-                    output = gc.setSerial(module, baudrate);
-                } else {
-                    output = gc.setSerial(module, arg);
-                }
-            } else if (cmd.equals("get_state")) {
-                output = gc.getState(module, connector) == 1 ? "on" : "off";
-            } else if (cmd.equals("toggle_state")) {
-                output = gc.toggleState(connector) ? "ok" : "not ok";
-            } else if (cmd.equals("set_state")) {
-                output = gc.setState(connector, (arg == null || arg.equals("0") ? 0 : 1)) ? "on" : "off";
-            } else if (cmd.equals("set_relay")) {
-                // Just a convenience version of the above
-                output = gc.setState(connector, (arg == null || arg.equals("0") ? 0 : 1)) ? "on" : "off";
-            } else if (cmd.equals("send_ir")) {
-                if (arg_i + 2 == args.length) {
-                    output = gc.sendIr(args[arg_i + 1]) ? "ok" : "error";
-                } else {
-                    StringBuilder ccf = new StringBuilder();
+            switch (cmd) {
+                case "set_blink":
+                    if (arg == null || !arg.equals("1")) {
+                        gc.setBlink(0);
+                    } else {
+                        gc.setBlink(1);
+                    }   break;
+                case "get_devices":
+                    output = IrpUtils.join(gc.getDevices(), System.getProperty("line.separator"));
+                    break;
+                case "get_version":
+                    output = gc.getVersion(module);
+                    break;
+                case "get_net":
+                    // Only v3
+                    output = gc.getNet();
+                    break;
+                case "set_net":
+                    // Only v3
+                    // Syntax: see API-document
+                    output = gc.setNet(arg);
+                    break;
+                case "get_ir":
+                    //Only v3
+                    output = gc.getIr(module, connector);
+                    break;
+                case "set_ir":
+                    output = gc.setIr(module, connector, arg);
+                    break;
+                case "get_serial":
+                    output = gc.getSerial(module);
+                    break;
+                case "set_serial":
+                    if (baudrate > 0) {
+                        output = gc.setSerial(module, baudrate);
+                    } else {
+                        output = gc.setSerial(module, arg);
+                }   break;
+                case "get_state":
+                    output = gc.getState(module, connector) == 1 ? "on" : "off";
+                    break;
+                case "toggle_state":
+                    output = gc.toggleState(connector) ? "ok" : "not ok";
+                    break;
+                case "set_state":
+                case "set_relay":
+                    // Just a convenience version of the above
+                    output = gc.setState(connector, (arg == null || arg.equals("0") ? 0 : 1)) ? "on" : "off";
+                    break;
+                case "send_ir":
+                    if (arg_i + 2 == args.length) {
+                        output = gc.sendIr(args[arg_i + 1]) ? "ok" : "error";
+                    } else {
+                        StringBuilder ccf = new StringBuilder();
+                        for (int i = arg_i + 1; i < args.length; i++) {
+                            ccf.append(' ').append(args[i]);
+                        }
+
+                        output = gc.sendIr(ccf.toString(), count, module, connector) ? "ok" : "error";
+                    }   break;
+                case "send_serial":
+                    StringBuilder transmit = new StringBuilder();
                     for (int i = arg_i + 1; i < args.length; i++) {
-                        ccf.append(' ').append(args[i]);
-                    }
-
-                    output = gc.sendIr(ccf.toString(), count, module, connector) ? "ok" : "error";
-                }
-            } else if (cmd.equals("send_serial")) {
-                StringBuilder transmit = new StringBuilder();
-                for (int i = arg_i + 1; i < args.length; i++) {
-                    transmit.append(' ').append(args[i]);
+                        transmit.append(' ').append(args[i]);
                 }
 
-                //output = gc.sendStringCommand(module, transmit, 0);
-            } else if (cmd.equals("stop_ir")) {
-                gc.stopIr(module, connector);
-            } else if (cmd.equals("get_learn")) {
-                ModulatedIrSequence seq = gc.capture();
-                System.out.println(seq);
-                if (seq != null) {
-                    System.out.println(DecodeIR.DecodedSignal.toPrintString(DecodeIR.decode(seq)));
-                }
-            } else if (cmd.equals("listen_serial")) {
-                System.err.println("Press Ctrl-C to interrupt.");
-                // Never returns
-                //gc.listenStringCommands(module);
-                //} else if (cmd.equals("ccf")) {
-                //    String s = "";
-                //    for (int i = arg_i + 1; i < args.length; i++)
-                //        s = s + args[i];
+                    //output = gc.sendStringCommand(module, transmit, 0);
+                    break;
+                case "stop_ir":
+                    gc.stopIr(module, connector);
+                    break;
+                case "get_learn":
+                    ModulatedIrSequence seq = gc.capture();
+                    System.out.println(seq);
+                    if (seq != null) {
+                        System.out.println(DecodeIR.DecodedSignal.toPrintString(DecodeIR.decode(seq)));
+                    }   break;
+                case "listen_serial":
+                    System.err.println("Press Ctrl-C to interrupt.");
+                    // Never returns
+                    //gc.listenStringCommands(module);
+                    //} else if (cmd.equals("ccf")) {
+                    //    String s = "";
+                    //    for (int i = arg_i + 1; i < args.length; i++)
+                    //        s = s + args[i];
                 //    System.out.println(gc2Ccf(s));
-            } else {
-                usage();
+                    break;
+                default:
+                    usage();
+                    break;
             }
             gc.close();
         } catch (HarcHardwareException e) {

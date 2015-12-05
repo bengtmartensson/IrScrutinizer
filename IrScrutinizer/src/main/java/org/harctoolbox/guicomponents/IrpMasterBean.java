@@ -175,15 +175,6 @@ public class IrpMasterBean extends javax.swing.JPanel {
         return protocolList;
     }
 
-    private long parse(JTextField textField) throws ParseException {
-        String str = textField.getText().trim();
-        try {
-            return str.isEmpty() ? invalidParameter : IrpUtils.parseLong(str, true);
-        } catch (NumberFormatException ex) {
-            throw new ParseException(ex);
-        }
-    }
-
     private void checkParam(Protocol protocol, JTextField textField, JLabel label, String parameterName, String oldValueStr) {
         if (protocol.hasParameter(parameterName)) {
             // TODO: check validity

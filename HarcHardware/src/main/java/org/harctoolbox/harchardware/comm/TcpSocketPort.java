@@ -127,11 +127,11 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
 
     public static void main(String[] args) {
         try {
-            TcpSocketPort port = new TcpSocketPort("denon", 23, defaultTimeout, true, ConnectionMode.keepAlive);
-            port.sendString("MVDOWN\r");
-            String result = port.readString();
-            System.out.println(result);
-            port.close();
+            try (TcpSocketPort port = new TcpSocketPort("denon", 23, defaultTimeout, true, ConnectionMode.keepAlive)) {
+                port.sendString("MVDOWN\r");
+                String result = port.readString();
+                System.out.println(result);
+            }
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }

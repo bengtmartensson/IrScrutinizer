@@ -63,20 +63,28 @@ public class GenericSerialSenderBean extends javax.swing.JPanel {
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals(SerialPortBean.PROP_PORTNAME))
-                    setPortName((String)evt.getNewValue());
-                else if (evt.getPropertyName().equals(SerialPortBean.PROP_BAUD))
-                    setBaud((Integer) evt.getNewValue());
-                else if (evt.getPropertyName().equals(SerialPortBean.PROP_DATASIZE))
-                    setDataSize((Integer)evt.getNewValue());
-                else if (evt.getPropertyName().equals(SerialPortBean.PROP_FLOWCONTROL))
-                    setFlowControl((LocalSerialPort.FlowControl)evt.getNewValue());
-                else if (evt.getPropertyName().equals(SerialPortBean.PROP_PARITY))
-                    setParity((LocalSerialPort.Parity)evt.getNewValue());
-                else if (evt.getPropertyName().equals(SerialPortBean.PROP_STOPBITS))
-                    setStopBits((Integer)evt.getNewValue());
-                else
-                    throw new RuntimeException("This cannot happen");
+                switch (evt.getPropertyName()) {
+                    case SerialPortBean.PROP_PORTNAME:
+                        setPortName((String)evt.getNewValue());
+                        break;
+                    case SerialPortBean.PROP_BAUD:
+                        setBaud((Integer) evt.getNewValue());
+                        break;
+                    case SerialPortBean.PROP_DATASIZE:
+                        setDataSize((Integer)evt.getNewValue());
+                        break;
+                    case SerialPortBean.PROP_FLOWCONTROL:
+                        setFlowControl((LocalSerialPort.FlowControl)evt.getNewValue());
+                        break;
+                    case SerialPortBean.PROP_PARITY:
+                        setParity((LocalSerialPort.Parity)evt.getNewValue());
+                        break;
+                    case SerialPortBean.PROP_STOPBITS:
+                        setStopBits((Integer)evt.getNewValue());
+                        break;
+                    default:
+                        throw new RuntimeException("This cannot happen");
+                }
             }
         });
     }

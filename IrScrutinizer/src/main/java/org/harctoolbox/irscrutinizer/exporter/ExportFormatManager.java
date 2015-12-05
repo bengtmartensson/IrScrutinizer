@@ -20,7 +20,6 @@ package org.harctoolbox.irscrutinizer.exporter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
@@ -36,7 +35,7 @@ import org.xml.sax.SAXException;
 /**
  * This class does something interesting and useful. Or not...
  */
-public class ExportFormatManager implements Serializable {
+public class ExportFormatManager {
     public interface IExportFormatSelector {
         public void select(String name);
     }

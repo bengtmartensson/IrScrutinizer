@@ -74,10 +74,8 @@ public abstract class LocalSerialPort implements IHarcHardware {
     private static ArrayList<String> cachedPortNames = null;
     private final static int maxtries = 3;
     protected boolean verbose;
-    protected int debug;
 
     public LocalSerialPort(String portName, int baud, int length, int stopBits, Parity parity, FlowControl flowControl, int timeout) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this.debug = 0;
         this.verbose = false;
         this.portName = portName;
         this.baud = baud;
@@ -93,27 +91,10 @@ public abstract class LocalSerialPort implements IHarcHardware {
         commPort = portIdentifier.open(this.getClass().getName(), msToWaitForPort);
     }
 
-    private static String nextPortName(String portName) {
-        try {
-            final String pattern = "(.*)(\\D+)(\\d+)(:?)";
-            String dig = portName.replaceFirst(pattern, "$3");
-            int n = Integer.parseInt(dig);
-            return portName.replaceFirst(pattern, "$1$2" + Integer.toString(n+1) + "$4");
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
     @Override
     public void setVerbosity(boolean verbosity) {
         this.verbose = verbosity;
     }
-
-    @Override
-    public void setDebug(int debug) {
-        this.debug = debug;
-    }
-
 
     /**
      * Opens the device.
@@ -153,19 +134,16 @@ public abstract class LocalSerialPort implements IHarcHardware {
 
     public LocalSerialPort(String portName, int baud) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         this(portName, baud, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0);
-        this.debug = 0;
         this.verbose = false;
     }
 
     public LocalSerialPort(String portName) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         this(portName, 9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0);
-        this.debug = 0;
         this.verbose = false;
     }
 
     public LocalSerialPort(int portNumber) throws IOException, NoSuchPortException, PortInUseException, UnsupportedCommOperationException {
         this(getSerialPortName(portNumber), 9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0);
-        this.debug = 0;
         this.verbose = false;
     }
 

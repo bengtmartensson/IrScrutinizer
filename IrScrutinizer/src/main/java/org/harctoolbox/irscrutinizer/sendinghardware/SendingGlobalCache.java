@@ -60,13 +60,20 @@ public class SendingGlobalCache extends SendingHardware<GlobalCache> implements 
                 try {
                     setup();
 
-                    if (evt.getPropertyName().equals(GlobalCacheIrSenderSelector.PROP_IPNAME)) {
-                        rawIrSender = globalCacheIrSenderSelector.getGlobalCache();
-                        properties.setGlobalCacheIpName((String) evt.getNewValue());
-                    } else if (evt.getPropertyName().equals(GlobalCacheIrSenderSelector.PROP_MODULE))
-                        properties.setGlobalCacheModule((Integer) evt.getNewValue());
-                    else if (evt.getPropertyName().equals(GlobalCacheIrSenderSelector.PROP_PORT))
-                        properties.setGlobalCachePort((Integer) evt.getNewValue());
+                    switch (evt.getPropertyName()) {
+                        case GlobalCacheIrSenderSelector.PROP_IPNAME:
+                            rawIrSender = globalCacheIrSenderSelector.getGlobalCache();
+                            properties.setGlobalCacheIpName((String) evt.getNewValue());
+                            break;
+                        case GlobalCacheIrSenderSelector.PROP_MODULE:
+                            properties.setGlobalCacheModule((Integer) evt.getNewValue());
+                            break;
+                        case GlobalCacheIrSenderSelector.PROP_PORT:
+                            properties.setGlobalCachePort((Integer) evt.getNewValue());
+                            break;
+                        default:
+                            throw new RuntimeException("Programming error");
+                    }
                 } catch (IOException | HarcHardwareException ex) {
                     guiUtils.error(ex);
                 }

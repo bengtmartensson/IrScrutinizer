@@ -35,7 +35,7 @@ import org.harctoolbox.irscrutinizer.Version;
  * This class exports a RemoteSet to a LIRC configuration file.
  */
 public class LircExporter extends RemoteSetExporter implements IRemoteSetExporter {
-    private final static boolean forceRaw = false; // FIXME
+    private final static boolean forceRaw = false; // TODO: make user settable
 
     public LircExporter() {
         super();

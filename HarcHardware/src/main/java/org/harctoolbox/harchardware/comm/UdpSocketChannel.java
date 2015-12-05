@@ -115,19 +115,20 @@ public class UdpSocketChannel {
     }
 
     public String readString() throws SocketException, IOException {
-        DatagramSocket inSocket = new DatagramSocket(portNumber, inetAddress);
-        inSocket.setSoTimeout(timeout);
-        DatagramPacket pack = new DatagramPacket(byteBuffer, byteBuffer.length);
-        if (verbose)
-            System.err.println("listening at:" + portNumber + "...");
-        inSocket.receive(pack);
-        String payload = (new String(pack.getData(), 0, pack.getLength(), IrpUtils.dumbCharset));
-        InetAddress a = pack.getAddress();
-        int port = pack.getPort();
-        if (verbose)
-            System.err.println("Got package for " + a + ":" + port + ": " + payload);
-        inSocket.disconnect();
-        inSocket.close();
+        String payload;
+        try (DatagramSocket inSocket = new DatagramSocket(portNumber, inetAddress)) {
+            inSocket.setSoTimeout(timeout);
+            DatagramPacket pack = new DatagramPacket(byteBuffer, byteBuffer.length);
+            if (verbose)
+                System.err.println("listening at:" + portNumber + "...");
+            inSocket.receive(pack);
+            payload = (new String(pack.getData(), 0, pack.getLength(), IrpUtils.dumbCharset));
+            InetAddress a = pack.getAddress();
+            int port = pack.getPort();
+            if (verbose)
+                System.err.println("Got package for " + a + ":" + port + ": " + payload);
+            inSocket.disconnect();
+        }
         return payload;
     }
 

@@ -133,8 +133,14 @@ public class Props {
                 if (base == null || base.isEmpty() || !(new File(base)).isAbsolute())
                     base = System.getProperty("user.home") + File.separator + ".config";
                 File baseFile = new File(base + File.separator + Version.appName);
-                if (!baseFile.exists())
-                    baseFile.mkdirs();
+                if (!baseFile.exists()) {
+                    boolean status = baseFile.mkdirs();
+                    if (!status) {
+                        System.err.println("Could not create directory " + baseFile.getAbsolutePath()
+                                + ", saving properites in home direcory");
+                        baseFile = new File(System.getProperty("user.home")); // emergency
+                    }
+                }
                 this.filename = baseFile.getAbsolutePath() + File.separator + "properties.xml";
             }
         }

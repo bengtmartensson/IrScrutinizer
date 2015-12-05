@@ -224,6 +224,7 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
                     done = true;
                     status = -1;
                 } else {
+                    OUTER:
                     switch (state) {
                         case P_BEGIN:
                             if (!string.equals("BEGIN")) {
@@ -240,26 +241,31 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
                             state = P_STATUS;
                             break;
                         case P_STATUS:
-                            if (string.equals("SUCCESS")) {
-                                status = 0;
-                            } else if (string.equals("END")) {
-                                status = 0;
-                                done = true;
-                            } else if (string.equals("ERROR")) {
-                                System.err.println("command failed: " + packet);
-                                status = -1;
-                            } else {
-                                throw new BadPacketException();
+                            switch (string) {
+                                case "SUCCESS":
+                                    status = 0;
+                                    break;
+                                case "END":
+                                    status = 0;
+                                    done = true;
+                                    break;
+                                case "ERROR":
+                                    System.err.println("command failed: " + packet);
+                                    status = -1;
+                                    break;
+                                default:
+                                    throw new BadPacketException();
                             }
                             state = P_DATA;
                             break;
                         case P_DATA:
-                            if (string.equals("END")) {
-                                done = true;
-                                break;
-                            } else if (string.equals("DATA")) {
-                                state = P_N;
-                                break;
+                            switch (string) {
+                                case "END":
+                                    done = true;
+                                    break OUTER;
+                                case "DATA":
+                                    state = P_N;
+                                    break OUTER;
                             }
                             throw new BadPacketException();
                         case P_N:

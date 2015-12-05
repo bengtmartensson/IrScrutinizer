@@ -60,13 +60,17 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
                 String propertyName = evt.getPropertyName();
 
                 try {
-                    if (propertyName.equals(SerialPortSimpleBean.PROP_BAUD)) {
-                        setupSerial();
-                    } else if (propertyName.equals(SerialPortSimpleBean.PROP_PORT)) {
-                        if (evt.getNewValue() == null)
-                            return;
-
-                        setupSerial();
+                    switch (propertyName) {
+                        case SerialPortSimpleBean.PROP_BAUD:
+                            setupSerial();
+                            break;
+                        case SerialPortSimpleBean.PROP_PORT:
+                            if (evt.getNewValue() == null)
+                                return;
+                            setupSerial();
+                            break;
+                        default:
+                            throw new RuntimeException("Programmming error detected");
                     }
                 } catch (IOException ex) {
                     guiUtils.error(ex);

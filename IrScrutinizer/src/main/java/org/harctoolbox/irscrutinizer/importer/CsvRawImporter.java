@@ -79,7 +79,7 @@ public class CsvRawImporter extends CsvImporter {
         }
     }
 
-    // TODO: This is probably quite inefficient. Better would be to copy
+    // This is probably quite inefficient. Better would be to copy
     // String.split and make the necessary fixes to it.
     private String[] csvSplit(String line, String separator) {
         StringBuilder str = new StringBuilder(line.trim());

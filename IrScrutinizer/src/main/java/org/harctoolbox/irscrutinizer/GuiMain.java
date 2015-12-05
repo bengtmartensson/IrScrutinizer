@@ -158,8 +158,8 @@ public class GuiMain extends javax.swing.JFrame {
     private IrdbImporter irdbImporter = null;
     private IrpMaster irpMaster = null;
     private ProtocolsIni protocolsIni = null;
-    private CcfImporter ccfImporter;
-    private XcfImporter xcfImporter;
+    private transient CcfImporter ccfImporter;
+    private transient XcfImporter xcfImporter;
     private CmlImporter cmlImporter;
     private CommandFusionImporter commandFusionImporter;
     private CsvRawImporter csvRawImporter;
@@ -169,7 +169,7 @@ public class GuiMain extends javax.swing.JFrame {
     private GirrImporter girrImporter;
     private final LircImporter lircImporter;
     private final IrTransImporter irTransImporter;
-    private WaveImporter waveImporter;
+    private transient WaveImporter waveImporter;
     private final String applicationHome;
     private java.awt.Component lastPane;
     private int dynamicExportFormatsMenuPosition;
@@ -190,9 +190,9 @@ public class GuiMain extends javax.swing.JFrame {
     private final ParametrizedIrSignal.ParameterIrSignalTableModel parameterTableModel;
     private transient CaptureThread captureThread = null;
     private final String[] prontoModelNames;
-    private ExportFormatManager exportFormatManager;
-    private SendingHardwareManager sendingHardwareManager;
-    private CapturingHardwareManager capturingHardwareManager;
+    private transient ExportFormatManager exportFormatManager;
+    private transient SendingHardwareManager sendingHardwareManager;
+    private transient CapturingHardwareManager capturingHardwareManager;
 
     // FIXME: make user settable??
     private final static boolean forgiveSillySignals = true;
@@ -542,16 +542,22 @@ public class GuiMain extends javax.swing.JFrame {
         irpMasterBean.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals(IrpMasterBean.PROP_PROTOCOL_NAME)) {
+                switch (evt.getPropertyName()) {
+                    case IrpMasterBean.PROP_PROTOCOL_NAME:
                         properties.setIrpMasterCurrentProtocol((String) evt.getNewValue());
-                } else if (evt.getPropertyName().equals(IrpMasterBean.PROP_D)) {
+                        break;
+                    case IrpMasterBean.PROP_D:
                         properties.setIrpMasterCurrentD((String) evt.getNewValue());
-                } else if (evt.getPropertyName().equals(IrpMasterBean.PROP_S)) {
+                        break;
+                    case IrpMasterBean.PROP_S:
                         properties.setIrpMasterCurrentS((String) evt.getNewValue());
-                } else if (evt.getPropertyName().equals(IrpMasterBean.PROP_F)) {
+                        break;
+                    case IrpMasterBean.PROP_F:
                         properties.setIrpMasterCurrentF((String) evt.getNewValue());
-                } else {
+                        break;
+                    default:
                         guiUtils.error("Programming error detected.");
+                        break;
                 }
             }
         });
@@ -6258,11 +6264,6 @@ public class GuiMain extends javax.swing.JFrame {
         irpFormatsIniReloadMenuItem.setText("Reload");
         irpFormatsIniReloadMenuItem.setToolTipText("Reload data base (not yet implemented)");
         irpFormatsIniReloadMenuItem.setEnabled(false);
-        irpFormatsIniReloadMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                irpFormatsIniReloadMenuItemActionPerformed(evt);
-            }
-        });
         irpProtocolsIniMenu.add(irpFormatsIniReloadMenuItem);
 
         optionsMenu.add(irpProtocolsIniMenu);
@@ -6779,7 +6780,7 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_copyDataToClipboardMenuItemActionPerformed
 
     private void startCaptureMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startCaptureMenuItemActionPerformed
-        startButton.setSelected(true); // FIXME presently useless...
+        startButton.setSelected(true); // presently useless...
         startButtonActionPerformed(evt);
         startButton.setSelected(false);
     }//GEN-LAST:event_startCaptureMenuItemActionPerformed
@@ -7724,10 +7725,6 @@ public class GuiMain extends javax.swing.JFrame {
         loadExportFormatsGuiRefresh();
     }//GEN-LAST:event_exportFormatsSelectMenuItemActionPerformed
 
-    private void irpFormatsIniReloadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpFormatsIniReloadMenuItemActionPerformed
-        // TODO
-    }//GEN-LAST:event_irpFormatsIniReloadMenuItemActionPerformed
-
     private void scrutinizeRemoteHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scrutinizeRemoteHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.scrutinizeRemoteHelp);
     }//GEN-LAST:event_scrutinizeRemoteHelpButtonActionPerformed
@@ -8048,7 +8045,7 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_scrutinizeParametricMenuItemActionPerformed
 
     private void importTextRawLineBasedHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importTextRawLineBasedHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.importTextRawLineBasedHelp);// TODO add your handling code here:
+        HelpPopup.newHelpPopup(this, HelpTexts.importTextRawLineBasedHelp);
     }//GEN-LAST:event_importTextRawLineBasedHelpButtonActionPerformed
 
     private void importTextParametrizedHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importTextParametrizedHelpButtonActionPerformed
@@ -8209,7 +8206,7 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_capturingCommandFusionHardwareHelpButtonActionPerformed
 
     private void importCmlHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCmlHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.importCmlHelp);// TODO add your handling code here:
+        HelpPopup.newHelpPopup(this, HelpTexts.importCmlHelp);
     }//GEN-LAST:event_importCmlHelpButtonActionPerformed
 
     private void importCommandFusionHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCommandFusionHelpButtonActionPerformed

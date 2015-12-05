@@ -168,7 +168,7 @@ public class ProtocolsIni implements Serializable {
 
     }
 
-    // FIXME: this is an ad-hoc solution
+    // this is an ad-hoc solution
     public static class LsbComp3 implements ICmdTranslator {
 
         @Override

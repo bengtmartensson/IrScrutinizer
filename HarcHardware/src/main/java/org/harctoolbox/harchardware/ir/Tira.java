@@ -91,8 +91,8 @@ import org.harctoolbox.harchardware.IHarcHardware;
     //private String protocolVersion;
     private String version;
 
-    private boolean verbosity;
-    private int debug;
+    //private boolean verbosity;
+    //private int debug;
     /* public */ Tira() throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException, InterruptedException  {
         this(defaultPortName);
     }
@@ -345,10 +345,7 @@ import org.harctoolbox.harchardware.IHarcHardware;
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Tira tira = null;
-        try {
-            //int[] data = new int[]{889, 889, 1778, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 90886};
-            tira = new Tira();
+        try (Tira tira = new Tira()) {
             System.out.println(tira.getVersion());
             //String result = toy.selftest();
             //System.out.println(result);
@@ -366,9 +363,6 @@ import org.harctoolbox.harchardware.IHarcHardware;
         } catch (UnsupportedCommOperationException | IOException | InterruptedException ex) {
             System.err.println("xxx" + ex.getMessage());
             //ex.printStackTrace();
-        } finally {
-            if (tira != null)
-                tira.close();
         }
     }
 

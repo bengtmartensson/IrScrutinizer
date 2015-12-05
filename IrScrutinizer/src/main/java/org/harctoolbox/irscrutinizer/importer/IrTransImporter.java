@@ -226,40 +226,46 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         String name = arr[index++];
         index++;
         String type = arr[index++];
-        if (type.equals("RAW")) {
-            int noDurations = Integer.parseInt(arr[index++]);
-            if (!arr[index++].equals("FREQ"))
-                throw new ParseException("No FREQ in raw signal", lineNo);
-            int frequency = Integer.parseInt(arr[index++]);
-            if (!arr[index++].equals("D"))
-                throw new ParseException("[D] not found", lineNo);
-            String data = arr[index++];
-            String[] durations = data.split(" ");
-            if (durations.length != noDurations)
-                throw new ParseException("Wrong number of durations", lineNo);
-            int[] times = new int[noDurations + (noDurations % 2)];
-            for (int i = 0; i < noDurations; i++) {
-                times[i] = Integer.parseInt(durations[i]);
+        switch (type) {
+            case "RAW": {
+                int noDurations = Integer.parseInt(arr[index++]);
+                if (!arr[index++].equals("FREQ"))
+                    throw new ParseException("No FREQ in raw signal", lineNo);
+                int frequency = Integer.parseInt(arr[index++]);
+                if (!arr[index++].equals("D"))
+                    throw new ParseException("[D] not found", lineNo);
+                String data = arr[index++];
+                String[] durations = data.split(" ");
+                if (durations.length != noDurations)
+                    throw new ParseException("Wrong number of durations", lineNo);
+                int[] times = new int[noDurations + (noDurations % 2)];
+                for (int i = 0; i < noDurations; i++) {
+                    times[i] = Integer.parseInt(durations[i]);
+                }
+                if ((noDurations % 2) != 0)
+                    times[noDurations] = dummyEndingGap;
+                command = new IrTransCommandRaw(name, frequency, times);
+                break;
             }
-            if ((noDurations % 2) != 0)
-                times[noDurations] = dummyEndingGap;
 
-            command = new IrTransCommandRaw(name, frequency, times);
-        } else if (type.equals("CCF")) {
-            command = new IrTransCommandCcf(name, arr[index++]);
-        } else if (type.equals("T")) {
-            int timingNo = Integer.parseInt(arr[index++]);
-            if (!arr[index++].equals("D"))
-                throw new ParseException("[D] not found", lineNo);
-            String data = arr[index++];
-            command = new IrTransCommandIndexed(name, data, timings.get(timingNo));
-        } else
-            throw new ParseException("Unknown command type " + type, lineNo);
+            case "CCF":
+                command = new IrTransCommandCcf(name, arr[index++]);
+                break;
+            case "T": {
+                int timingNo = Integer.parseInt(arr[index++]);
+                if (!arr[index++].equals("D"))
+                    throw new ParseException("[D] not found", lineNo);
+                String data = arr[index++];
+                command = new IrTransCommandIndexed(name, data, timings.get(timingNo));
+                break;
+            }
+            default:
+                throw new ParseException("Unknown command type " + type, lineNo);
+        }
 
         if (index != arr.length)
             throw new ParseException("unparsable line", lineNo);
         return command;
-
     }
 
     private boolean gobbleTo(LineNumberReader reader, String target, boolean throwException) throws IOException, ParseException {
@@ -303,40 +309,53 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                     index++;
                     continue;
                 }
-                if (token.equals("N"))
-                    timing.durations = new int[Integer.parseInt(arr[++index])][2];
-                else if (token.equals("RC"))
-                    timing.repetitions = Integer.parseInt(arr[++index]);
-                else if (token.equals("RP"))
-                    timing.pause = Integer.parseInt(arr[++index]);
-                else if (token.equals("FL")) {
-                    timing.framelength = Integer.parseInt(arr[++index]);
-                    timing.pause = -1;
-                } else if (token.equals("FREQ"))
-                    timing.frequency = Integer.parseInt(arr[++index]);
-                else if (token.equals("FREQ-MEAS"))
-                    timing.freqMeas = true;
-                else if (token.equals("SB"))
-                    timing.startBit = true;
-                else if (token.equals("RS"))
-                    timing.repeatStart = true;
-                else if (token.equals("RC5"))
-                    timing.type = TimingType.rc5;
-                else if (token.equals("RC6"))
-                    timing.type = TimingType.rc6;
-                else if (token.equals("NOTOG"))
-                    timing.noToggle = true;
-                else if (token.equals("RCMM-TOGGLE"))
-                    timing.rcmmToggle = true;
-                else {
-                    try {
-                        int timingNumber = Integer.parseInt(token);
-                        String[] durations = arr[++index].split(" ");
-                        for (int i = 0; i < 2; i++)
-                            timing.durations[timingNumber-1][i] = Integer.parseInt(durations[i]);
-                    } catch (NumberFormatException ex) {
-                        throw new ParseException("Unknown token: " + token, reader.getLineNumber());
-                    }
+                switch (token) {
+                    case "N":
+                        timing.durations = new int[Integer.parseInt(arr[++index])][2];
+                        break;
+                    case "RC":
+                        timing.repetitions = Integer.parseInt(arr[++index]);
+                        break;
+                    case "RP":
+                        timing.pause = Integer.parseInt(arr[++index]);
+                        break;
+                    case "FL":
+                        timing.framelength = Integer.parseInt(arr[++index]);
+                        timing.pause = -1;
+                        break;
+                    case "FREQ":
+                        timing.frequency = Integer.parseInt(arr[++index]);
+                        break;
+                    case "FREQ-MEAS":
+                        timing.freqMeas = true;
+                        break;
+                    case "SB":
+                        timing.startBit = true;
+                        break;
+                    case "RS":
+                        timing.repeatStart = true;
+                        break;
+                    case "RC5":
+                        timing.type = TimingType.rc5;
+                        break;
+                    case "RC6":
+                        timing.type = TimingType.rc6;
+                        break;
+                    case "NOTOG":
+                        timing.noToggle = true;
+                        break;
+                    case "RCMM-TOGGLE":
+                        timing.rcmmToggle = true;
+                        break;
+                    default:
+                        try {
+                            int timingNumber = Integer.parseInt(token);
+                            String[] durations = arr[++index].split(" ");
+                            for (int i = 0; i < 2; i++)
+                                timing.durations[timingNumber-1][i] = Integer.parseInt(durations[i]);
+                        } catch (NumberFormatException ex) {
+                            throw new ParseException("Unknown token: " + token, reader.getLineNumber());
+                        }   break;
                 }
                 index++;
             }

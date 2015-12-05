@@ -38,7 +38,6 @@ import org.harctoolbox.harchardware.IHarcHardware;
 public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
 
     private boolean verbose;
-    private int debug;
     private final ArrayList<Integer> data;
     private boolean stopRequest;
     private Date lastRead;
@@ -98,7 +97,6 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
 
     @Override
     public void setDebug(int debug) {
-        this.debug = debug;
     }
 
     public void setCommand(String command) {
@@ -325,23 +323,23 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
     public static void main(String[] args) {
         String[] cmd = new String[]{"/usr/local/bin/mode2", "-H", "commandIR"};
         try {
-            LircMode2 lircMode2 = new LircMode2(cmd, true, 3000, 1000, 300);
-            lircMode2.open();
-            int noNulls = 0;
-            for (int i = 0; i < 20 && noNulls < 3; i++) {
-                lircMode2.setTimeout(5000, 1000, 300);
-                IrSequence seq = lircMode2.receive();
-                if (seq == null) {
-                    System.err.println("Got null");
-                    noNulls++;
-                } else {
-                    noNulls = 0;
-                    System.out.println(seq);
-                    ModulatedIrSequence mseq = new ModulatedIrSequence(seq, IrpUtils.defaultFrequency, (double) IrpUtils.invalid);
-                    DecodeIR.invoke(mseq);
+            try (LircMode2 lircMode2 = new LircMode2(cmd, true, 3000, 1000, 300)) {
+                lircMode2.open();
+                int noNulls = 0;
+                for (int i = 0; i < 20 && noNulls < 3; i++) {
+                    lircMode2.setTimeout(5000, 1000, 300);
+                    IrSequence seq = lircMode2.receive();
+                    if (seq == null) {
+                        System.err.println("Got null");
+                        noNulls++;
+                    } else {
+                        noNulls = 0;
+                        System.out.println(seq);
+                        ModulatedIrSequence mseq = new ModulatedIrSequence(seq, IrpUtils.defaultFrequency, (double) IrpUtils.invalid);
+                        DecodeIR.invoke(mseq);
+                    }
                 }
             }
-            lircMode2.close();
             Thread.sleep(3000);
         } catch (InterruptedException | IOException | HarcHardwareException ex) {
             System.err.println(ex);

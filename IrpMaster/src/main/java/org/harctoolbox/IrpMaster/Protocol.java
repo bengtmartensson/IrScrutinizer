@@ -258,16 +258,26 @@ public class Protocol {
         } catch (RecognitionException ex) {
             throw new ParseException(ex);
         }
-        AST = (CommonTree) r.getTree();
+        AST = r.getTree();
 
         for (int i = 0; i < AST.getChildCount(); i++) {
             CommonTree ch = (CommonTree) AST.getChild(i);
-            if (ch.getText().equals("GENERALSPEC"))
-                generalSpec = new GeneralSpec(ch);
-            else if (ch.getText().equals("PARAMETER_SPECS"))
-                parameterSpecs = new ParameterSpecs(ch);
-            else if (ch.getText().equals("BITSPEC_IRSTREAM"))
-                topBitspecIrsteam = ch;
+            switch (ch.getText()) {
+                case "GENERALSPEC":
+                    generalSpec = new GeneralSpec(ch);
+                    break;
+                case "PARAMETER_SPECS":
+                    parameterSpecs = new ParameterSpecs(ch);
+                    break;
+                case "BITSPEC_IRSTREAM":
+                    topBitspecIrsteam = ch;
+                    break;
+                case "DEFINITIONS":
+                    // nothing to do
+                    break;
+                default:
+                    throw new RuntimeException("This cannot happen");
+            }
         }
         if (parameterSpecs == null) {
             UserComm.warning("Parameter specs are missing from protocol. Runtime errors due to unassigned variables are possile. Also silent truncation of parameters can occur. Further messages on parameters will be suppressed.");
