@@ -76,6 +76,7 @@ import org.harctoolbox.IrpMaster.UnknownProtocolException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.guicomponents.AmxBeaconListenerPanel;
 import org.harctoolbox.guicomponents.CopyClipboardText;
+import org.harctoolbox.guicomponents.ErroneousSelectionException;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.guicomponents.HarcletFrame;
 import org.harctoolbox.guicomponents.HelpPopup;
@@ -1072,7 +1073,7 @@ public class GuiMain extends javax.swing.JFrame {
         try {
             File savedFile = saveSignal(commandTableSelectedRow(table), title, newExporter());
             guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
-        } catch (IrpMasterException | IOException ex) {
+        } catch (IrpMasterException | IOException | ErroneousSelectionException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1394,7 +1395,7 @@ public class GuiMain extends javax.swing.JFrame {
         }
     }
 
-    private void parameterTableAddMissingF() throws IrpMasterException {
+    private void parameterTableAddMissingF() throws IrpMasterException, ErroneousSelectionException {
         Command command = commandTableSelectedRow(parameterTable);
         if (command == null)
             throw new IllegalArgumentException("No command selected.");
@@ -1448,16 +1449,13 @@ public class GuiMain extends javax.swing.JFrame {
 
     // If using sorter and deleting several rows, need to compute the to-be-removed model-indexes,
     // sort them, and remove them in descending order. I presently do not care enough...
-    private void deleteTableSelectedRow(JTable table) {
+    private void deleteTableSelectedRows(JTable table) throws ErroneousSelectionException {
+        barfIfNoneSelected(table);
         if (table.getRowSorter() != null && table.getSelectedRowCount() > 1) {
             guiUtils.error("Deleting several rows with enabled row sorter not yet implemented");
             return;
         }
         int row = table.getSelectedRow();
-        if (row < 0) {
-            guiUtils.error("No signal selected");
-            return;
-        }
 
         DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
 
@@ -1465,31 +1463,49 @@ public class GuiMain extends javax.swing.JFrame {
             tableModel.removeRow(table.convertRowIndexToModel(row + i - 1));
     }
 
-    private void printTableSelectedRow(JTable table) {
+    private void printTableSelectedRow(JTable table) throws ErroneousSelectionException {
+        barfIfNotExactlyOneSelected(table);
         int modelRow = table.convertRowIndexToModel(table.getSelectedRow());
         NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
         String str = tableModel.toPrintString(modelRow);
         guiUtils.message(str);
     }
 
-    private void transmitTableSelectedRow(JTable table) throws IrpMasterException, NoSuchTransmitterException, IOException, HardwareUnavailableException, HarcHardwareException {
+    private void transmitTableSelectedRow(JTable table) throws IrpMasterException, NoSuchTransmitterException, IOException, HardwareUnavailableException, HarcHardwareException, ErroneousSelectionException {
+        barfIfNotExactlyOneSelected(table);
         int modelRow = table.convertRowIndexToModel(table.getSelectedRow());
         NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
         Command command = tableModel.toCommand(modelRow);
         transmit(command);
     }
 
-    private void scrutinizeTableSelectedRow(JTable table) throws IrpMasterException {
+    private void barfIfManySelected(JTable table) throws ErroneousSelectionException {
+        if (table.getSelectedRowCount() > 1)
+            throw new ErroneousSelectionException("Only one row may be selected");
+    }
+
+    private void barfIfNoneSelected(JTable table) throws ErroneousSelectionException {
+        if (table.getSelectedRow() == -1)
+            throw new ErroneousSelectionException("No row selected");
+    }
+
+    private void barfIfNotExactlyOneSelected(JTable table) throws ErroneousSelectionException {
+        barfIfManySelected(table);
+        barfIfNoneSelected(table);
+    }
+
+    private void scrutinizeTableSelectedRow(JTable table) throws IrpMasterException, ErroneousSelectionException {
+        barfIfNotExactlyOneSelected(table);
+
         int modelRow = table.convertRowIndexToModel(table.getSelectedRow());
         NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
         Command command = tableModel.toCommand(modelRow);
         scrutinizeIrSignal(command.toIrSignal());
     }
 
-    private Command commandTableSelectedRow(JTable table) throws IrpMasterException {
+    private Command commandTableSelectedRow(JTable table) throws IrpMasterException, ErroneousSelectionException {
+        barfIfNotExactlyOneSelected(table);
         int selectedRow = table.getSelectedRow();
-        if (selectedRow < 0)
-            return null;
         int modelRow = table.convertRowIndexToModel(selectedRow);
         NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
         Command command = tableModel.toCommand(modelRow);
@@ -6853,7 +6869,11 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_rawTableMouseReleased
 
     private void deleteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMenuItemActionPerformed
-        deleteTableSelectedRow(rawTable);
+        try {
+            deleteTableSelectedRows(rawTable);
+        } catch (ErroneousSelectionException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_deleteMenuItemActionPerformed
 
     private void clearMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearMenuItemActionPerformed
@@ -6896,7 +6916,11 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_startStopToggleButtonActionPerformed
 
     private void debugTableRowMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugTableRowMenuItemActionPerformed
-        printTableSelectedRow(rawTable);
+        try {
+            printTableSelectedRow(rawTable);
+        } catch (ErroneousSelectionException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_debugTableRowMenuItemActionPerformed
 
     private void hideColumnMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideColumnMenuItemActionPerformed
@@ -6923,11 +6947,19 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_moveDownMenuItem1ActionPerformed
 
     private void deleteMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMenuItem1ActionPerformed
-        deleteTableSelectedRow(parameterTable);
+        try {
+            deleteTableSelectedRows(parameterTable);
+        } catch (ErroneousSelectionException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_deleteMenuItem1ActionPerformed
 
     private void debugTableRowMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugTableRowMenuItem1ActionPerformed
-        printTableSelectedRow(parameterTable);
+        try {
+            printTableSelectedRow(parameterTable);
+        } catch (ErroneousSelectionException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_debugTableRowMenuItem1ActionPerformed
 
     private void clearMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearMenuItem1ActionPerformed
@@ -7859,7 +7891,7 @@ public class GuiMain extends javax.swing.JFrame {
             transmitTableSelectedRow(parameterTable);
         } catch (HardwareUnavailableException ex) {
             guiUtils.error("Transmitting hardware not selected or not ready.");
-        } catch (IrpMasterException | IOException | HarcHardwareException ex) {
+        } catch (IrpMasterException | IOException | HarcHardwareException | ErroneousSelectionException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_transmitMenuItemActionPerformed
@@ -7867,7 +7899,7 @@ public class GuiMain extends javax.swing.JFrame {
     private void sendMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendMenuItemActionPerformed
         try {
             transmitTableSelectedRow(rawTable);
-        } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException ex) {
+        } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException | ErroneousSelectionException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_sendMenuItemActionPerformed
@@ -7885,7 +7917,7 @@ public class GuiMain extends javax.swing.JFrame {
     private void addMissingFsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addMissingFsMenuItemActionPerformed
         try {
             parameterTableAddMissingF();
-        } catch (IrpMasterException ex) {
+        } catch (IrpMasterException | ErroneousSelectionException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_addMissingFsMenuItemActionPerformed
@@ -8039,7 +8071,7 @@ public class GuiMain extends javax.swing.JFrame {
     private void scrutinizeParametricMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scrutinizeParametricMenuItemActionPerformed
         try {
             scrutinizeTableSelectedRow(parameterTable);
-        } catch (IrpMasterException ex) {
+        } catch (IrpMasterException | ErroneousSelectionException ex) {
              guiUtils.error(ex);
         }
     }//GEN-LAST:event_scrutinizeParametricMenuItemActionPerformed
