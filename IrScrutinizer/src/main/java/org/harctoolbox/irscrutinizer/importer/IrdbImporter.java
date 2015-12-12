@@ -116,12 +116,16 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
             this.subdevice = subdevice;
         }
 
+        public ProtocolDeviceSubdevice(JsonValue jprotocol, long device, long subdevice) {
+            this(jprotocol.isString() ? jprotocol.asString() : null, device, subdevice);
+        }
+
         public ProtocolDeviceSubdevice(String protocol, long device) {
             this(protocol, device, invalid);
         }
 
         public ProtocolDeviceSubdevice(JsonObject json) {
-            this(json.get("protocol").asString(),
+            this(json.get("protocol"),
                     parseLong(json.get("device").asString()),
                     parseLong(json.get("subdevice").asString()));
         }
@@ -227,6 +231,10 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
                     deviceTypes.put(deviceType, new LinkedHashMap<ProtocolDeviceSubdevice, HashMap<String, Long>>());
                 HashMap<ProtocolDeviceSubdevice, HashMap<String, Long>> devCollection = deviceTypes.get(deviceType);
                 ProtocolDeviceSubdevice pds = new ProtocolDeviceSubdevice(obj);
+                if (pds.getProtocol() == null) {
+                    System.err.println("Null protocol ignored");
+                    continue;
+                }
                 if (!devCollection.containsKey(pds))
                     devCollection.put(pds, new LinkedHashMap<String, Long>());
                 HashMap<String, Long> cmnds = devCollection.get(pds);
