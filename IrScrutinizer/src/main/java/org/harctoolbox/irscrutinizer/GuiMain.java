@@ -199,6 +199,7 @@ public class GuiMain extends javax.swing.JFrame {
     private final static boolean forgiveSillySignals = true;
     private final static int importSequenceAskThreshold = 3;
     private final static int maxCharsInGuiMessages = 150;
+    private final static int transmitSignalMouseButton = 2;
 
     private AboutPopup aboutBox;
 
@@ -2980,7 +2981,7 @@ public class GuiMain extends javax.swing.JFrame {
         parameterTableScrollPane.setComponentPopupMenu(parameterTablePopupMenu);
 
         parameterTable.setModel(parameterTableModel);
-        parameterTable.setToolTipText("Press right button for a menu of table actions.");
+        parameterTable.setToolTipText("Press right button for a menu of table actions, middle to transmit signal under mouse.");
         parameterTable.setInheritsPopupMenu(true);
         parameterTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -6857,15 +6858,7 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_rawTableMousePressed
 
     private void rawTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rawTableMouseReleased
-        int row = rawTable.getSelectedRow();
-        int column = rawTable.getSelectedColumn();
-        if (row >= 0 && column >= 0) {
-            row = rawTable.convertRowIndexToModel(row);
-            column = rawTable.convertColumnIndexToModel(column);
-            Object thing = rawTableModel.getValueAt(row, column);
-            editingTextField.setText(thing != null ? thing.toString() : null);
-            editingTextField.setEditable(rawTableModel.isCellEditable(row, column));
-        }
+        tableMouseReleased(rawTable, evt);
     }//GEN-LAST:event_rawTableMouseReleased
 
     private void deleteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMenuItemActionPerformed
@@ -8150,17 +8143,33 @@ public class GuiMain extends javax.swing.JFrame {
         properties.setRawNameMultiColumn(rawMultiColumnNameCheckBox.isSelected());
     }//GEN-LAST:event_rawMultiColumnNameCheckBoxActionPerformed
 
-    private void parameterTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_parameterTableMouseReleased
-        int row = parameterTable.getSelectedRow();
-        int column = parameterTable.getSelectedColumn();
-        if (row >= 0 && column >= 0) {
-            row = parameterTable.convertRowIndexToModel(row);
-            column = parameterTable.convertColumnIndexToModel(column);
-            Object thing = parameterTableModel.getValueAt(row, column);
-            editingTextField.setText(thing != null ? thing.toString() : null);
-            editingTextField.setEditable(parameterTableModel.isCellEditable(row, column));
-            //editingTextField.setEnabled(parameterTableModel.getColumnClass(column) != Boolean.class);
+    private void tableMouseReleased(JTable table, java.awt.event.MouseEvent evt) {
+        if (evt.getButton() == transmitSignalMouseButton) {
+            int row = table.rowAtPoint(evt.getPoint());
+            if (row == -1)
+                return;
+            table.setRowSelectionInterval(row, row);
+            try {
+                transmitTableSelectedRow(table);
+            } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException | ErroneousSelectionException ex) {
+                guiUtils.error(ex);
+            }
+        } else {
+            int row = table.getSelectedRow();
+            int column = table.getSelectedColumn();
+            if (row >= 0 && column >= 0) {
+                row = table.convertRowIndexToModel(row);
+                column = table.convertColumnIndexToModel(column);
+                Object thing = table.getModel().getValueAt(row, column);
+                editingTextField.setText(thing != null ? thing.toString() : null);
+                editingTextField.setEditable(parameterTableModel.isCellEditable(row, column));
+                //editingTextField.setEnabled(parameterTableModel.getColumnClass(column) != Boolean.class);
+            }
         }
+    }
+
+    private void parameterTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_parameterTableMouseReleased
+        tableMouseReleased(parameterTable, evt);
     }//GEN-LAST:event_parameterTableMouseReleased
 
     private void noTransmitsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noTransmitsComboBoxActionPerformed
