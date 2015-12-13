@@ -69,6 +69,9 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
                                 return;
                             setupSerial();
                             break;
+                        case SerialPortSimpleBean.PROP_VERSION:
+                        case SerialPortSimpleBean.PROP_ISOPEN:
+                            break;
                         default:
                             throw new RuntimeException("Programmming error detected");
                     }
