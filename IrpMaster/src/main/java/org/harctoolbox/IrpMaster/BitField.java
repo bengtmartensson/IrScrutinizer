@@ -65,8 +65,8 @@ public class BitField extends PrimaryIrStreamItem {
         this.data = data;
         this.width = infinite ? maxWidth : (int) width;
         this.skip = (int) skip;
-        Debug.debugBitFields("new Bitfield: " + toString());
         compute();
+        Debug.debugBitFields("new Bitfield: " + toString() + " = " + toLong());
     }
 
     /**
