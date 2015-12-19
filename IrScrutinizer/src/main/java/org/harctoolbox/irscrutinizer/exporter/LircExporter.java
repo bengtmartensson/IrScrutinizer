@@ -162,21 +162,30 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         stream.println("\tfrequency\t38400");
         stream.println("\t\tbegin codes");
         for (Map.Entry<String, Command> kvp : remote.getCommands().entrySet())
-            stream.println(String.format("\t\t\t%1$s\t%2$#016x", kvp.getKey(), formatNec1(kvp.getValue())));
+            try {
+                stream.println(String.format("\t\t\t%1$s\t%2$#016x", kvp.getKey(), formatNec1(kvp.getValue())));
+            } catch (IrpMasterException ex) {
+                stream.println(String.format("\t\t\t# %1$s Error: %2$s", kvp.getKey(), ex.getMessage()));
+            }
 
         stream.println("\t\tend codes");
         stream.println("end remote");
     }
 
-    private long formatNec1(Command command) {
+    private long formatNec1(Command command) throws IrpMasterException {
         HashMap<String, Long> parameters = command.getParameters();
+        if (!parameters.containsKey("D"))
+            throw new IrpMasterException("Parameter D not assigned");
+        if (!parameters.containsKey("F"))
+            throw new IrpMasterException("Parameter F not assigned");
+
         long D = IrpUtils.reverse(parameters.get("D"), 8);
         long F = IrpUtils.reverse(parameters.get("F"), 8);
         long S = IrpUtils.reverse(parameters.containsKey("S") ? parameters.get("S") : 255L - parameters.get("D"), 8);
         return (D << 24L) | (S << 16L) | (F << 8L) | ((~F) & 0xFFL) ;
     }
 
-    private void exportRemoteRc5(PrintStream stream, Remote remote) throws IrpMasterException {
+    private void exportRemoteRc5(PrintStream stream, Remote remote) {
         stream.println("begin remote");
         stream.println("\tname\t" + remote.getName());
         stream.println("\tbits\t13");
@@ -191,13 +200,21 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         stream.println("\tfrequency\t36000");
         stream.println("\t\tbegin codes");
         for (Map.Entry<String, Command> kvp : remote.getCommands().entrySet())
-            stream.println(String.format("\t\t\t%1$s\t%2$#016x", kvp.getKey(), formatRc5(kvp.getValue())));
+            try {
+                stream.println(String.format("\t\t\t%1$s\t%2$#016x", kvp.getKey(), formatRc5(kvp.getValue())));
+            } catch (IrpMasterException ex) {
+                stream.println(String.format("\t\t\t# %1$s Error: %2$s", kvp.getKey(), ex.getMessage()));
+            }
         stream.println("\t\tend codes");
         stream.println("end remote");
     }
 
-    private long formatRc5(Command command) {
+    private long formatRc5(Command command) throws IrpMasterException {
         HashMap<String, Long> parameters = command.getParameters();
+        if (!parameters.containsKey("D"))
+            throw new IrpMasterException("Parameter D not assigned");
+        if (!parameters.containsKey("F"))
+            throw new IrpMasterException("Parameter F not assigned");
         long D = parameters.get("D");
         long F = parameters.get("F");
         long T = parameters.containsKey("T") ? parameters.get("T") : 0;
