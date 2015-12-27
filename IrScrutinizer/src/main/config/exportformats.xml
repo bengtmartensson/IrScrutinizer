@@ -226,7 +226,7 @@ const char *pronto_</xsl:text>
             <xsl:value-of select="ccf"/>
             <xsl:text>&#9;</xsl:text>
             <xsl:value-of select="@comment"/>
-            <xsl:text>&#13;&#10;</xsl:text>
+            <xsl:text>&#10;</xsl:text>
         </xsl:template>
 
         <xsl:template match="parameter">
@@ -270,7 +270,7 @@ const char *pronto_</xsl:text>
             <xsl:text>&#9;</xsl:text> <!-- Hex -->
             <xsl:text>&#9;</xsl:text>
             <xsl:value-of select="@comment"/>
-            <xsl:text>&#13;&#10;</xsl:text>
+            <xsl:text>&#10;</xsl:text>
         </xsl:template>
 
     </xsl:stylesheet>
@@ -281,20 +281,20 @@ const char *pronto_</xsl:text>
         <xsl:output method="text" />
 
         <xsl:template match="/remotes">
-            <xsl:text>irscope 0&#13;&#10;</xsl:text>
+            <xsl:text>irscope 0&#10;</xsl:text>
             <xsl:text>carrier_frequency </xsl:text>
             <xsl:value-of select="remote/commandSet/command/raw/@frequency"/>
-            <xsl:text>&#13;&#10;</xsl:text>
+            <xsl:text>&#10;</xsl:text>
             <xsl:text>sample_count </xsl:text>
             <xsl:value-of select="count(remote/commandSet/command/raw/*/*)"/>
-            <xsl:text>&#13;&#10;</xsl:text>
+            <xsl:text>&#10;</xsl:text>
             <xsl:apply-templates select="//command"/>
         </xsl:template>
 
         <xsl:template match="command">
             <xsl:text>note=</xsl:text>
             <xsl:value-of select="@name"/>
-            <xsl:text>&#13;&#10;</xsl:text>
+            <xsl:text>&#10;</xsl:text>
             <xsl:apply-templates select="*/*"/>
         </xsl:template>
 
@@ -303,13 +303,19 @@ const char *pronto_</xsl:text>
             <xsl:value-of select="."/>
             <xsl:text>,</xsl:text>
             <xsl:value-of select="round(number(.) * number(../../@frequency div 1000000))"/>
-            <xsl:text>&#13;&#10;</xsl:text>
+            <xsl:text>&#10;</xsl:text>
         </xsl:template>
 
         <xsl:template match="gap">
             <xsl:text>-</xsl:text>
             <xsl:value-of select="."/>
-            <xsl:text>&#13;&#10;</xsl:text>
+            <xsl:text>&#10;</xsl:text>
+        </xsl:template>
+        
+        <!-- There is a bug/design flaw in IrScope that makes it want to bundle all
+        signals into one gigantic macro. Using brute force to circumvent... -->
+        <xsl:template match="gap[position()=last()]">
+            <xsl:text>-500000&#10;</xsl:text>
         </xsl:template>
 
     </xsl:stylesheet>
