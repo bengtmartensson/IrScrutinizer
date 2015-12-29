@@ -88,6 +88,12 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         return "LIRC";
     }
 
+    // Jirc's definition of Lirc names:
+    // ('!' .. '{' | '}' .. '~' | '\u00A1' .. '\u00FF')+
+    private static String lircName(String key) {
+        return key.replaceAll("[^!-{}-~\u00A1-\u00FF]", "_");
+    }
+
     /**
      * Write the instance to a the PrintStream in the argument. It is not closed.
      * @param stream PrintStream, should be ready for writing.
@@ -130,7 +136,7 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         stream.println("\t\tbegin raw_codes");
         for (Map.Entry<String, Command> kvp : remote.getCommands().entrySet()) {
             stream.println();
-            stream.print("\t\t\tname " + kvp.getKey());
+            stream.print("\t\t\tname " + lircName(kvp.getKey()));
             int[] signal = kvp.getValue().toIrSignal().toIntArrayCount(count);
             for (int i = 0; i < signal.length - 1; i++) {
                 if (i % 8 == 0) {
@@ -163,7 +169,7 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         stream.println("\t\tbegin codes");
         for (Map.Entry<String, Command> kvp : remote.getCommands().entrySet())
             try {
-                stream.println(String.format("\t\t\t%1$s\t%2$#016x", kvp.getKey(), formatNec1(kvp.getValue())));
+                stream.println(String.format("\t\t\t%1$s\t%2$#016x", lircName(kvp.getKey()), formatNec1(kvp.getValue())));
             } catch (IrpMasterException ex) {
                 stream.println(String.format("\t\t\t# %1$s Error: %2$s", kvp.getKey(), ex.getMessage()));
             }
@@ -201,7 +207,7 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         stream.println("\t\tbegin codes");
         for (Map.Entry<String, Command> kvp : remote.getCommands().entrySet())
             try {
-                stream.println(String.format("\t\t\t%1$s\t%2$#016x", kvp.getKey(), formatRc5(kvp.getValue())));
+                stream.println(String.format("\t\t\t%1$s\t%2$#016x", lircName(kvp.getKey()), formatRc5(kvp.getValue())));
             } catch (IrpMasterException ex) {
                 stream.println(String.format("\t\t\t# %1$s Error: %2$s", kvp.getKey(), ex.getMessage()));
             }
@@ -218,6 +224,6 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         long D = parameters.get("D");
         long F = parameters.get("F");
         long T = parameters.containsKey("T") ? parameters.get("T") : 0;
-        return (((~F) & 64L) << 6L)| (T << 11L) | (D << 6L) | F;
+        return (((~F) & 64L) << 6L)| (T << 11L) | (D << 6L) | (F & 63L);
     }
 }
