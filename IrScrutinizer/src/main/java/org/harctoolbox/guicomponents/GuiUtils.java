@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.ParseException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -173,7 +174,10 @@ public class GuiUtils implements Serializable {
     }
 
     public void error(Throwable ex, String message) {
-        boolean result = error(ex.getClass().getSimpleName() + ": " + message, offerStackTrace);
+        String errorMessage = ex instanceof ParseException
+                ? ex.getClass().getSimpleName() + " on line " + ((ParseException) ex).getErrorOffset() + ": " + message
+                : ex.getClass().getSimpleName() + ": " + message;
+        boolean result = error(errorMessage, offerStackTrace);
         if (result)
             ex.printStackTrace();
     }
