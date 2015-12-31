@@ -313,7 +313,7 @@ href="stylesheets/simplehtml.xsl">simplehtml.xsl</a>.</p>
 </source>
 <p>to the Girr file. (Some programs, like IrScrutinizer, can do this
 automatically.) Note that some browsers, like Firefox, for security reasons
-limits the usage of style sheets to the current directors.</p>
+limits the usage of style sheets to the current directory.</p>
 
 <p>XSLT style-sheets can however be used for other purposes than the name
 suggests. Included in the distribution is a "stylesheet"

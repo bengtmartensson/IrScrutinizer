@@ -257,10 +257,10 @@ directory can be read only after the installation.
     <title>Fedora Linux</title>
     <p>Fedora rpm packages are
         available for the previous version 1.1.2.</p>
-        <p>To install, the command <code>sudo yum install harctoolbox harctoolbox-doc</code> should be issued in a terminal window.
+        <p>To install, the command <code>sudo dnf install harctoolbox harctoolbox-doc</code> should be issued in a terminal window.
         This will install IrScrutinizer as a desktop program, as well as the command line
         commands <code>irscrutinizer</code> and <code>irpmaster</code>.
-        To uninstall, use the command  <code>sudo yum erase harctoolbox harctoolbox-doc</code>.</p>
+        To uninstall, use the command  <code>sudo dnf erase harctoolbox harctoolbox-doc</code>.</p>
         <p>Unfortunatelly, the packaging contains a few semi-serious problems. These are reported, but stay unfixed.
             Fedora users are recommended to use the generic binary package.</p>
 </section>
@@ -1007,8 +1007,9 @@ for an internal flash memory, that can be filled by the user), its commands can
 be sent from this pane. By pressing the "Read" button, the known remotes and
 commands are loaded, and the version of the IRTrans displayed. The selected
 command can now be sent by the "Send" button. (However, this
-functionality is otherwise not used by IrScrutinizer.) Selecting
-"IRTrans" on the "Analyze" and "War dialer" pane should now work. The IRTrans
+functionality is otherwise not used by IrScrutinizer.)</p>
+
+<p>The IRTrans
 module is then accessed using the UDP text mode.</p>
 
 
@@ -1146,12 +1147,12 @@ half the carrier frequency, and the possibility to select sine (instead of
 square) for modulation) have been removed. Finally, there is some
 stuff that simply works differently, like the export function.</p>
 </section>
-<section><title>How do I emulate the war dialer in IrScrutinizer?</title>
+<section><title>How do I emulate the war dialer of IrMaster?</title>
 <p>
 Use "Scrutinize remote" -> Parametric Remote. Fill in the table with signals to
 be tested, either using the pop-up button (right mouse in the table) Advanced ->
-Add missing F's, or from the Generate pane, using suitable parameter intervals
-(see TODO), and transfer them using the "To parametric remote" button. Then
+Add missing F's, or from the Generate pane, using suitable parameter
+intervals (see <a href="#The+%22Generate%22+pane">this</a>), and transfer them using the "To parametric remote" button. Then
 test the candidate signals one at a time by transmit-ting them, using suitable
 sending hardware.
 The comment field, or the "verified" check-box, can be used for note taking.</p>
@@ -1220,6 +1221,20 @@ instead of the program starting, WinRar (or some other program) comes
 up.</title><p>The program that comes up has "stolen" the file association of
 files with the extension <code>.jar</code>. Restore it. (Allegedly, WinRar can
 gracefully "unsteal" file associations.)</p></section>
+
+<section><title>(Windows) Why is the program so slow at start-up?</title>
+<p>Normal start up time is a few seconds, about the same time as it
+takes for (e.g.) a web browser to start. If it takes considerably
+longer than that, the problem is almost surely hardware related, i.e., the
+program looks for possibly non-existant hardware. To fix this, make
+sure that the selected capture- and sending devices (these are save
+between sessions!) do not correspond to something non-existant. The
+most "innocent" settings are: capture: LIRC mode 2, and sending:
+Audio port. These are also the defaults when the program starts up for
+the first time. Also, consider deleting possible
+"junk devices" in the Windows device manager under COM & LPT
+(unused Bluetooth to serial ports etc.). </p>
+
 <section><title>(Linux) I get error messages that lock files cannot be
 created, and then the Arduino and IrToy hardware do not
 work.</title><p>
@@ -1252,7 +1267,7 @@ using the one with IrScrutinizer. For example, on Fedora, the command
 is
 </p>
 <source>
-sudo yum install rxtx
+sudo dnf install rxtx
 </source>
 <p>which installs the library in <code>/usr/lib/rxtx</code> or
 <code>/usr/lib64/rxtx</code>, depending on the operating system. (Other distributions uses other
@@ -1320,32 +1335,32 @@ the information in this chapter is not needed.</p>
     <section>
         <title>DecodeIR</title>
         <p>If the system supports DecodeIR, use the system version. On recent Fedora, this can be installed with the command
-            <code>sudo yum install DecodeIR</code>. This will install both the shared
+            <code>sudo dnf install DecodeIR</code>. This will install both the shared
             library <code>libDecodeIR</code> as well as the jar file <code>DecodeIrCaller.jar</code>.
 To download and compile the sources, see (or execute) the script <code>tools/build-decodeir.sh</code>.</p>
     </section>
 
     <section>
         <title>ExchangeIR</title>
-        <p>It the system supports ExchangeIR (java), use the system version. (On recent Fedora, use <code>sudo yum install ExchangeIR</code>.)
+        <p>It the system supports ExchangeIR (java), use the system version. (On recent Fedora, use <code>sudo dnf install ExchangeIR</code>.)
         Otherwise, it can be downloaded and installed by the script <code>tools/build-exchangeir.sh</code>.</p>
     </section>
 
     <section>
         <title>minimal-json</title>
-        <p>It the system supports minimal-json, use the system version. (On recent Fedora, use <code>sudo yum install minimal-json</code>.)
+        <p>It the system supports minimal-json, use the system version. (On recent Fedora, use <code>sudo dnf install minimal-json</code>.)
         Otherwise, it can be downloaded and installed by the script <code>tools/build-minimal-json.sh</code>.</p>
     </section>
 
     <section>
         <title>jcommander</title>
-        <p>It the system supports jcommander, use the system version. (On recent Fedora, use <code>sudo yum install beust-jcommander</code>.)
+        <p>It the system supports jcommander, use the system version. (On recent Fedora, use <code>sudo dnf install beust-jcommander</code>.)
         Otherwise, it can be downloaded and installed by the script <code>tools/build-jcommander.sh</code>.</p>
     </section>
 
     <section>
         <title>Tonto</title>
-        <p>It the system support Tonto, use the system version. (On recent Fedora, use <code>sudo yum install tonto</code>.)
+        <p>It the system support Tonto, use the system version. (On recent Fedora, use <code>sudo dnf install tonto</code>.)
         Otherwise, it can be downloaded and installed by the script <code>tools/build-tonto.sh</code>.</p>
 
         <p>Note that the shared library <code>libjnijcomm</code>,

@@ -355,7 +355,8 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                                 timing.durations[timingNumber-1][i] = Integer.parseInt(durations[i]);
                         } catch (NumberFormatException ex) {
                             throw new ParseException("Unknown token: " + token, reader.getLineNumber());
-                        }   break;
+                        }
+                        break;
                 }
                 index++;
             }
