@@ -107,7 +107,6 @@ import org.harctoolbox.irscrutinizer.exporter.GirrExporter;
 import org.harctoolbox.irscrutinizer.exporter.ICommandExporter;
 import org.harctoolbox.irscrutinizer.exporter.IExporterFactory;
 import org.harctoolbox.irscrutinizer.exporter.IRemoteSetExporter;
-import org.harctoolbox.irscrutinizer.exporter.IctExporter;
 import org.harctoolbox.irscrutinizer.exporter.LircExporter;
 import org.harctoolbox.irscrutinizer.exporter.ProntoClassicExporter;
 import org.harctoolbox.irscrutinizer.exporter.RemoteSetExporter;
@@ -748,7 +747,10 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private ICommandExporter newExporter() {
-        String formatName = (String) exportFormatComboBox.getSelectedItem();
+        return newExporter((String) exportFormatComboBox.getSelectedItem());
+    }
+
+    private ICommandExporter newExporter(String formatName) {
         ICommandExporter exporter = exportFormatManager.get(formatName).newExporter();
         // Not really clean...
         if (formatName.equals("Girr") && !properties.getExportGenerateParameters()
@@ -6825,9 +6827,9 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_importSignalAsIctMenuItemActionPerformed
 
     private void exportSignalIctMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSignalIctMenuItemActionPerformed
-        // NOTE: ICT export is an xslt-protocol in the main exporter. Oh well...
         try {
-            saveSignal(getCapturedIrSignal(), new IctExporter(/*new File(properties.getExportDir())*/));
+            ICommandExporter exporter = newExporter("ICT");
+            saveSignal(getCapturedIrSignal(), exporter);
         } catch (IrpMasterException ex) {
             guiUtils.error(ex);
         }
