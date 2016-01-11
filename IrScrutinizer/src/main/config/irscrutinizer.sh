@@ -15,7 +15,8 @@ JAVA=java
 
 # Where the programs are installed, adjust if required
 #IRSCRUTINIZERHOME=/usr/local/irscrutinizer
-IRSCRUTINIZERHOME="$( dirname "${BASH_SOURCE[0]}" )"
+#IRSCRUTINIZERHOME="$( dirname "${BASH_SOURCE[0]}" )"
+IRSCRUTINIZERHOME="$(dirname -- "$(readlink -f -- "${0}")" )"
 
 # Path to DecodeIR and RXTX
 # If the code below does not work, just set LIBRARY_PATH to the directory
