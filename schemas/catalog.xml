@@ -15,6 +15,12 @@
     <public publicId="-//APACHE//DTD DocumentationV2.0//en" uri="./document-v20.dtd"/>
     <system systemId="http://forrest.apache.org/dtd/document-v20.dtd" uri="./document-v20.dtd"/>
 
+    <public publicId="-//APACHE//ENTITIES Documentation V2.0//EN" uri="./document-v20.mod"/>
+    <system systemId="http://forrest.apache.org/dtd/document-v20.mod" uri="./document-v20.mod"/>
+
+    <public publicId="-//APACHE//ENTITIES Common Character Entity Sets V1.0//EN" uri="./common-charents-v10.mod"/>
+    <system systemId="http://forrest.apache.org/dtd/common-charents-v10.mod" uri="./common-charents-v10.mod"/>
+
     <!-- The schema for this file -->
     <system systemId="http://www.oasis-open.org/committees/entity/release/1.1/catalog.xsd" uri="./catalog.xsd"/>
 
