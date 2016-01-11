@@ -347,6 +347,11 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                     case "RCMM-TOGGLE":
                         timing.rcmmToggle = true;
                         break;
+                    case "RO":
+                        // treat as junk, but with one argument, see
+                        // See http://www.irtrans.de/forum/viewtopic.php?f=24&t=3970
+                        ++index;
+                        break;
                     default:
                         try {
                             int timingNumber = Integer.parseInt(token);
