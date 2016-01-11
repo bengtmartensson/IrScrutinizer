@@ -1232,8 +1232,9 @@ between sessions!) do not correspond to something non-existant. The
 most "innocent" settings are: capture: LIRC mode 2, and sending:
 Audio port. These are also the defaults when the program starts up for
 the first time. Also, consider deleting possible
-"junk devices" in the Windows device manager under COM & LPT
-(unused Bluetooth to serial ports etc.). </p>
+    "junk devices" in the Windows device manager under <code>COM &amp; LPT</code>
+    (unused Bluetooth-to-serial ports etc.). </p>
+</section>
 
 <section><title>(Linux) I get error messages that lock files cannot be
 created, and then the Arduino and IrToy hardware do not
