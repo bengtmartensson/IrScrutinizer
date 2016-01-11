@@ -310,13 +310,12 @@ public class Pronto {
      * @param array Input strings, to be parsed/tested.
      * @param begin Starting index
      * @return Integer array of numbers if successful, null if unsuccessful.
-     * @throws NumberFormatException
      */
-    public static int[] parseStringArray(String[] array, int begin) throws NumberFormatException {
+    public static int[] parseStringArray(String[] array, int begin) {
         int[] ccf = new int[array.length];
 
         for (int i = begin; i < array.length; i++) {
-            if (array[i].length() != charsInDigit)
+            if (array[i].length() != charsInDigit || array[i].charAt(0) == '+' || array[i].charAt(0) == '-')
                 return null;
             try {
                 ccf[i] = Integer.parseInt(array[i], 16);

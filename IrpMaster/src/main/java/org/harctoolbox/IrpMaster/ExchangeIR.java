@@ -162,7 +162,7 @@ public class ExchangeIR {
             try {
                 int[] array = Pronto.parseString(str);
                 return array != null ? Pronto.ccfSignal(array) : parseUeiLearned(str);
-            } catch (IllegalArgumentException ex) {
+            } catch (IllegalArgumentException | IncompatibleArgumentException ex) {
                 return interpretRawString(str, fallbackFrequency, invokeRepeatFinder, invokeAnalyzer);
             }
         } catch (NumberFormatException ex) {

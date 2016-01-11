@@ -763,8 +763,8 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private IrSignal getCapturedIrSignal() throws ParseException, IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException {
-        String str = capturedDataTextArea.getText().trim();
-        if (str.isEmpty())
+        String str = capturedDataTextArea.getText();
+        if (str.trim().isEmpty())
             return null;
 
         return Utils.interpretString(str, getFrequency() , properties.getInvokeRepeatFinder(), properties.getInvokeAnalyzer());
