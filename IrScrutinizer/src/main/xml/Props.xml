@@ -115,7 +115,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name='parametricNumberBaseIndex' type="int" default='"2"' doc='Number base (index) for interpreting parametric files.'/>
     <property name="parametricSeparatorIndex" type="int" default='"0"' doc='Field separator for parsing parametric files.'/>
 
-    <property name="girrSchemaLocation" type="string" default='"file:///" + applicationHome + "schemas" + File.separator + "girr.xsd"' doc='URL for schema for girr.' />
+    <property name="girrSchemaLocation" type="string" default='"file:///" + applicationHome + "schemas" + File.separator + "girr.xsd"' doc='URL for schema for girr (for validating import).' />
     <property name="girrValidate" type="boolean" default='"false"' doc='If true, girr instances are validated against a schema.'/>
 
     <property name="irpMasterCurrentProtocol" type="string" default='"nec1"' doc='Selected protocol for generator.'/>

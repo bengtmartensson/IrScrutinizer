@@ -248,7 +248,7 @@ public class RemoteSet implements Serializable {
         element.setAttribute("girrVersion", girrVersion);
         if (createSchemaLocation) {
             element.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            element.setAttribute("xsi:noNamespaceSchemaLocation", "girr.xsd");
+            element.setAttribute("xsi:noNamespaceSchemaLocation", XmlExporter.noNamespaceSchemaLocation);
         }
         if (title != null)
             element.setAttribute("title", title);

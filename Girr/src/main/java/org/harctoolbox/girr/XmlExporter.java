@@ -78,9 +78,9 @@ public class XmlExporter {
     private static final String w3cSchemaNamespace = "http://www.w3.org/2001/XMLSchema-instance";
 
     /**
-     * Default location for schema file.
+     * URL for schema file.
      */
-    private static final String noNamespaceSchemaLocation = "girr.xsd";
+    public static final String noNamespaceSchemaLocation = "http://www.harctoolbox.org/schemas/girr.xsd";
 
     /**
      * Comment string pointing to Girr docu.
