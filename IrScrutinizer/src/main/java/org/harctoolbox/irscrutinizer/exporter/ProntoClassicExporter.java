@@ -84,7 +84,8 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File saveFile) throws FileNotFoundException, IrpMasterException, IOException {
+    public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName /* ignored */)
+            throws FileNotFoundException, IrpMasterException, IOException {
         setup(remoteSet);
         ccf.save(saveFile.getPath());
     }

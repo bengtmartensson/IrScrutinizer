@@ -55,6 +55,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
 
     public static final String homeUrl = "http://www.hifi-remote.com/wiki/index.php?title=Remote_Master_Manual";
 
+    public static final String defaultCharsetName = "WINDOWS-1252";
     /**
      * @param protocolsIni the protocolsIni to set
      */
@@ -125,6 +126,14 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
         this();
                 }
                 * */
+
+    public void load() throws IOException, ParseException, IrpMasterException {
+        load(defaultCharsetName);
+    }
+
+    public void load(File file) throws IOException, ParseException {
+        load(file, defaultCharsetName);
+    }
 
     @Override
     public void load(Reader reader, String origin) throws IOException, ParseException {

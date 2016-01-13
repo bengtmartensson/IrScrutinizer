@@ -79,7 +79,7 @@ public class RawLineImporter extends RemoteSetImporter implements IReaderImporte
     public static void main(String[] args) {
         RawLineImporter rli = new RawLineImporter();
         try {
-            rli.load(new File(args[0]));
+            rli.load(new File(args[0]), "WINDOWS-1252");
             for (Command command : rli.getCommands())
                 System.out.println(command.toPrintString());
         } catch (IOException | IrpMasterException | java.text.ParseException ex) {

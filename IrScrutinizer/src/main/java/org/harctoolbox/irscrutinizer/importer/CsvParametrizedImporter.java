@@ -96,9 +96,9 @@ public class CsvParametrizedImporter extends CsvImporter {
     }
 
     @Override
-    public void load(File file, String origin) throws FileNotFoundException, IOException, ParseException {
+    public void load(File file, String origin, String charsetName) throws FileNotFoundException, IOException, ParseException {
         try (FileInputStream stream = new FileInputStream(file)) {
-            load(stream, origin);
+            load(stream, origin, charsetName);
         }
     }
 

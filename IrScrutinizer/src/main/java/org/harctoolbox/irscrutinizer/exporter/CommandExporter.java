@@ -33,13 +33,13 @@ public abstract class CommandExporter extends Exporter {
         super();
     }
 
-    public abstract void export(Command command, String source, String title, int repeatCount, File exportFile)
+    public abstract void export(Command command, String source, String title, int repeatCount, File exportFile, String charsetName)
             throws IrpMasterException, FileNotFoundException;
 
     public File export(Command command, String source, String title, int repeatCount,
-            boolean automaticFilenames, Component parent, File exportDir) throws IrpMasterException, IOException {
+            boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IrpMasterException, IOException {
         File file = exportFilename(automaticFilenames, parent, exportDir);
-        export(command, source, title, repeatCount, file);
+        export(command, source, title, repeatCount, file, charsetName);
         return file;
     }
 

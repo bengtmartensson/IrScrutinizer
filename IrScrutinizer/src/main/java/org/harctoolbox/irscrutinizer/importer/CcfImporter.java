@@ -137,11 +137,11 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
 
     @Override
     public void load(Reader reader, String origin) throws IOException, FileNotFoundException, ParseException {
-        dumbLoad(reader, origin);
+        dumbLoad(reader, origin, "windows-1252");
     }
 
     @Override
-    public void load(File file, String origin) throws IOException {
+    public void load(File file, String origin, String charsetName /*ignored */) throws IOException {
         ccf = new CCF(ProntoModel.getModel(ProntoModel.RU890));
         String filename = file.getPath();
         ccf.load(filename);

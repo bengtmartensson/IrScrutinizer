@@ -94,6 +94,8 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="exportSendIrCompressed" type="boolean" default='"false"' doc="Use compressed form in sendir exports?"/>
     <property name="exportNoRepeats" type="int" default='"1"' doc="Repeat count for export formats supporting it."/>
     <property name="exportInquireDeviceData" type='boolean' default='"true"' doc='If true, inquire for device type etc before exporting commands.'/>
+    <property name="exportCharsetName" type="string" default='"WINDOWS-1252"' doc='Character set used for exports'/>
+    <property name="importCharsetName" type="string" default='"WINDOWS-1252"' doc='Character set used for imports'/>
     <!--property name="exportPersistentParams" type='boolean' default='"false"' doc='If true, parameters declared persistent in the IRP protocol (typically toggle T) are included in the parameteric export, omitted otherwise.'/-->
     <property name="translateProntoFont" type="boolean" default='"true"' doc='If true, one-character Pronto button names, likely using the Pronto font, are tranlated to readable strings.'/>
     <property name="protocolsIniUrl" type="string" default='applicationHome + "protocols.ini"' doc='Path to protocols.ini' />
