@@ -128,6 +128,8 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                 for (int i = 0; i < data.length(); i++) {
                     char ch = data.charAt(i);
                     int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
+                    if (index >= timing.durations.length)
+                        throw new IrpMasterException("Undefined timing :" + ch);
                     times[2 * i] = timing.durations[index][0];
                     times[2 * i + 1] = timing.durations[index][1];
                 }
@@ -141,10 +143,11 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         private int[] durations;
         private int frequency;
 
-        IrTransCommandRaw(String name, int frequency, int[] durations) {
+        IrTransCommandRaw(String name, int frequency, int[] durations, int effectiveLength) {
             super(name);
             this.frequency = frequency;
-            this.durations = durations;
+            this.durations = new int[effectiveLength];
+            System.arraycopy(durations, 0, this.durations, 0, effectiveLength);
         }
 
         @Override
@@ -182,7 +185,6 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
             } catch (IrpMasterException ex) {
                 System.err.println(cmd.name + " Unparsable signal: " + ex.getMessage());
             }
-
         }
         return new Remote(name, null, null, null, null, null, null, commands, null);
     }
@@ -228,23 +230,33 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         String type = arr[index++];
         switch (type) {
             case "RAW": {
-                int noDurations = Integer.parseInt(arr[index++]);
+                int noNumbers = Integer.parseInt(arr[index++]);
                 if (!arr[index++].equals("FREQ"))
                     throw new ParseException("No FREQ in raw signal", lineNo);
                 int frequency = Integer.parseInt(arr[index++]);
                 if (!arr[index++].equals("D"))
                     throw new ParseException("[D] not found", lineNo);
                 String data = arr[index++];
-                String[] durations = data.split(" ");
-                if (durations.length != noDurations)
+                String[] numbers = data.split(" ");
+                if (numbers.length != noNumbers)
                     throw new ParseException("Wrong number of durations", lineNo);
-                int[] times = new int[noDurations + (noDurations % 2)];
-                for (int i = 0; i < noDurations; i++) {
-                    times[i] = Integer.parseInt(durations[i]);
+                int[] times = new int[noNumbers + (noNumbers % 2)];
+                int durationIndex = 0;
+                int numberIndex = 0;
+                while (numberIndex < noNumbers) {
+                    int t = Integer.parseInt(numbers[numberIndex]);
+                    if (t == 0) {
+                        times[durationIndex] = 256*Integer.parseInt(numbers[numberIndex+1]) + Integer.parseInt(numbers[numberIndex+2]);
+                        numberIndex += 3;
+                    } else {
+                        times[durationIndex] = t;
+                        numberIndex++;
+                    }
+                    durationIndex++;
                 }
-                if ((noDurations % 2) != 0)
-                    times[noDurations] = dummyEndingGap;
-                command = new IrTransCommandRaw(name, frequency, times);
+                if ((durationIndex % 2) != 0)
+                    times[durationIndex++] = dummyEndingGap;
+                command = new IrTransCommandRaw(name, frequency, times, durationIndex);
                 break;
             }
 
@@ -351,6 +363,10 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                         // treat as junk, but with one argument, see
                         // See http://www.irtrans.de/forum/viewtopic.php?f=24&t=3970
                         ++index;
+                        break;
+                    case "IRDA":
+                    case "IRDA-RAW":
+                        // treat as junk
                         break;
                     default:
                         try {
