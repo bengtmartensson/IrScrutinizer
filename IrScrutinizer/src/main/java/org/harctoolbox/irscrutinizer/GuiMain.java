@@ -6919,7 +6919,12 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_debugTableRowMenuItemActionPerformed
 
     private void hideColumnMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideColumnMenuItemActionPerformed
-        rawTableColumnModel.removeColumn(rawTable.getSelectedColumn());
+        int selectedColumn = rawTable.getSelectedColumn();
+        try {
+            rawTableColumnModel.removeColumn(selectedColumn);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            guiUtils.error(selectedColumn < 0 ? "No column selected." : "No column # " + selectedColumn + ".");
+        }
     }//GEN-LAST:event_hideColumnMenuItemActionPerformed
 
     private void resetRawTableColumnsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetRawTableColumnsMenuItemActionPerformed
@@ -6962,7 +6967,12 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_clearMenuItem1ActionPerformed
 
     private void hideColumnMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideColumnMenuItem1ActionPerformed
-        parameterTableColumnModel.removeColumn(parameterTable.getSelectedColumn());
+        int selectedColumn = parameterTable.getSelectedColumn();
+        try {
+            parameterTableColumnModel.removeColumn(selectedColumn);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            guiUtils.error(selectedColumn < 0 ? "No column selected." : "No column # " + selectedColumn + ".");
+        }
     }//GEN-LAST:event_hideColumnMenuItem1ActionPerformed
 
     private void resetRawTableColumnsMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetRawTableColumnsMenuItem1ActionPerformed

@@ -181,6 +181,11 @@ public abstract class NamedIrSignal {
             }
         }
 
+        /**
+         * Remove selected column, if possible
+         * @param i column number
+         * @throws ArrayIndexOutOfBoundsException if no column #i exists
+         */
         public void removeColumn(int i) {
             removeColumn(getColumn(i));
         }
