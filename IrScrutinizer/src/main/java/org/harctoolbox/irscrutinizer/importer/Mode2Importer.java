@@ -56,15 +56,18 @@ public class Mode2Importer extends ReaderImporter implements IModulatedIrSequenc
             } else
                 throw new ParseException("Unknown line: " + line, lineNo);
 
-            if (lastWasPulse == isPulse)
-                throw new ParseException("pulse and spaces are not interleaving", lineNo);
-            lastWasPulse = isPulse;
             try {
                 duration = Integer.parseInt(line.substring(6));
-                data.add(duration);
             } catch (NumberFormatException e) {
                 throw new ParseException("Unparsable data: " + line, lineNo);
             }
+            if (lastWasPulse != isPulse)
+                data.add(duration);
+            else {
+                int index = data.size() - 1;
+                data.set(index, data.get(index) + duration);
+            }
+            lastWasPulse = isPulse;
         }
         if (data.size() % 2 != 0)
             data.add(1000 * (int)getEndingTimeout()); // convert milliseconds to micro seconds
