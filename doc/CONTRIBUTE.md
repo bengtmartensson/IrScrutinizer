@@ -14,7 +14,7 @@ integration in a particular platform. But they are not prohibited either.
 ## Code layout
 
 The code uses "normal Java formatting". Indentation 4 spaces, no
-tabs. Braces in _simple_ if-statements (etc) discouraged. Observe the
+tabs. Braces in _simple_ if-statements (etc) discouraged. No linefeed before opening brace. Observe the
 "principle of locality": Distance between declaration and usage
 should be minimal; C style declaration of local variables in the beginning
 of a block discouraged.
@@ -30,7 +30,7 @@ The format of text files follows the requirement of portability:
 * Otherwise LF.
 
 ## GUI files
-Most Java classes with GUI content are maintained with
+Most (but not all) Java classes with GUI content are maintained with
 [Netbeans](http://www.netbeans.org). This is indicated by a <code>.form</code> file
 in parallel to the <code>.java</code> file. Contributions that breaks Netbeans
 cannot be accepted -- as a rule of thumb, the parts of the code that
