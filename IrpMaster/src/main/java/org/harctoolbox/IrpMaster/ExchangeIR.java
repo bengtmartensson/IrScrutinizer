@@ -177,7 +177,8 @@ public class ExchangeIR {
                 return new IrSignal(fallbackFrequency, IrpUtils.invalid, codes[0], codes[1], codes.length > 2 ? codes[2] : null);
 
             IrSequence irSequence = new IrSequence(str, true);
-            return interpretIrSequence(irSequence, invokeRepeatFinder, invokeAnalyzer);
+            ModulatedIrSequence modulatedIrSequence = new ModulatedIrSequence(irSequence, fallbackFrequency, (double) IrpUtils.invalid);
+            return interpretIrSequence(modulatedIrSequence, invokeRepeatFinder, invokeAnalyzer);
         } catch (NumberFormatException ex) {
             throw new ParseException("Could not interpret string " + str + " (" + ex.getMessage() + ")");
         }
