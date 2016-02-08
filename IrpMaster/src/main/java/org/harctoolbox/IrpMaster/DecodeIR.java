@@ -410,13 +410,14 @@ public class DecodeIR {
 
         ArrayList<DecodedSignal> work = new ArrayList<>();
         while (dirc.decode()) {
-            work.add(new DecodedSignal(dirc.getProtocolName(),
+            DecodedSignal decodedSignal = new DecodedSignal(dirc.getProtocolName(),
                     dirc.getDevice(),
                     dirc.getSubDevice(),
                     dirc.getOBC(),
                     dirc.getHex(),
                     dirc.getMiscMessage(),
-                    dirc.getErrorMessage()));
+                    dirc.getErrorMessage());
+            work.add(decodedSignal);
         }
 
         decodedSignals = work.toArray(new DecodedSignal[work.size()]);

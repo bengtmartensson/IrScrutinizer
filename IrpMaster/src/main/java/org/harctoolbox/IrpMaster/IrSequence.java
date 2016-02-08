@@ -165,7 +165,7 @@ public class IrSequence implements Cloneable, Serializable {
      * Constructs an IrSequence from the parameter data.
      * This version does not require flashes and gaps to be interleaved (signs alternating).
      * @param str String of durations, possibly using signed numbers.
-     * @param fixOddSequences it true, odd sequences (ending with space) are silently fixed.
+     * @param fixOddSequences it true, odd sequences (ending with space) are silently fixed by adding a dummy gap.
      * @throws IncompatibleArgumentException If last duration is not a gap, and fixOddSequences false.
      */
     public IrSequence(String str, boolean fixOddSequences) throws IncompatibleArgumentException {
