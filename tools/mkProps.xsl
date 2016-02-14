@@ -55,7 +55,7 @@ public class Props {
 
     private HashMap&lt;String,ArrayList&lt;IPropertyChangeListener>> changeListeners;
 
-   private void update(String key, String value) {
+    private void update(String key, String value) {
         if (!props.containsKey(key)) {
             if (value != null) {
                 props.setProperty(key, value);
@@ -89,6 +89,10 @@ public class Props {
 
     public String getFilename() {
         return filename;
+    }
+
+    private String mkPathRelative(String path) {
+        return path.replace(applicationHome, "");
     }
 
     /**
@@ -391,7 +395,7 @@ public class Props {
     public void set<xsl:apply-templates select="@name" mode="capitalize"/>(String str) {
         String oldValue = props.getProperty("<xsl:value-of select="@name"/>");
         if (!oldValue.equals(str)) {
-            props.setProperty("<xsl:value-of select="@name"/>", str);
+            props.setProperty("<xsl:value-of select="@name"/>", mkPathRelative(str));
             firePropertyChange("<xsl:value-of select="@name"/>", oldValue, str);
             needSave = true;
         }
