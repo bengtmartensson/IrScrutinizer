@@ -1,12 +1,19 @@
 #!/bin/sh
 
-# Installs IrScrutinizer in a normal posix manner in PREFIX.
+# Installs IrScrutinizer on the local machine, in a normal posix manner in PREFIX.
 
 # This script should be run with the rights required to write
 # at the desired places. I.e. root a priori not necessary.
+# It should be run from the directory IrScrutinizer.
 
 MYPROG=IrScrutinizer
 
+if [ "$1" = -u ] ; then
+    UNCONDITIONAL_INSTALL_LIB=yes
+    shift
+else
+    UNCONDITIONAL_INSTALL_LIB=no
+fi
 
 if [ $# = 1 ] ; then
     PREFIX=$1
@@ -45,19 +52,20 @@ install --mode=444 target/${MYPROG}.png ${MYPROG_HOME}/${MYPROG_LOWER}.png
 install --mode=444 target/*.ini ${MYPROG_HOME}
 install --mode=444 target/exportformats.xml ${MYPROG_HOME}
 install --mode=444 target/doc/README* target/doc/LICENSE* ${MYPROG_HOME}
-install -d ${MYPROG_HOME}/arduino
-install --mode=444 arduino/* ${MYPROG_HOME}/arduino
 
 # Create trivial wrappers
-echo "#!/bin/sh" > ${MYPROG_HOME}/${MYPROG_LOWER}.sh
-echo "java -Djava.library.path=${LIB} -jar ${MYPROG_HOME}/${MYPROG}-jar-with-dependencies.jar \"\$@\"" >> ${MYPROG_HOME}/${MYPROG_LOWER}.sh
+echo "#!/bin/sh"                                                        >  ${MYPROG_HOME}/${MYPROG_LOWER}.sh
+echo 'IRSCRUTINIZERHOME="$(dirname -- "$(readlink -f -- "${0}")" )"'    >> ${MYPROG_HOME}/${MYPROG_LOWER}.sh
+echo 'cd ${IRSCRUTINIZERHOME}'                                          >> ${MYPROG_HOME}/${MYPROG_LOWER}.sh
+echo "java -Djava.library.path=${LIB} -jar \${IRSCRUTINIZERHOME}/${MYPROG}-jar-with-dependencies.jar \"\$@\"" >> ${MYPROG_HOME}/${MYPROG_LOWER}.sh
 chmod +x ${MYPROG_HOME}/${MYPROG_LOWER}.sh
-ln -sf ${MYPROG_HOME}/${MYPROG_LOWER}.sh ${PREFIX}/bin/${MYPROG_LOWER}
+mkdir -p ${PREFIX}/bin
+ln -sf ../share/${MYPROG_LOWER}/${MYPROG_LOWER}.sh ${PREFIX}/bin/${MYPROG_LOWER}
 
 echo "#!/bin/sh" > ${MYPROG_HOME}/irpmaster.sh
 echo "java -Djava.library.path=${LIB} -classpath ${MYPROG_HOME}/${MYPROG}-jar-with-dependencies.jar org.harctoolbox.IrpMaster.IrpMaster \"\$@\"" >> ${MYPROG_HOME}/irpmaster.sh
 chmod +x ${MYPROG_HOME}/irpmaster.sh
-ln -sf ${MYPROG_HOME}/irpmaster.sh ${PREFIX}/bin/irpmaster
+ln -sf ../share/${MYPROG_LOWER}/irpmaster.sh ${PREFIX}/bin/irpmaster
 
 # Install documentation
 install -d ${PREFIX}/share/doc/${MYPROG_LOWER}
@@ -74,14 +82,14 @@ install -d ${LIB}
 install --mode=444 ${FROMLIB}/libDecodeIR.* ${LIB}
 
 # Install RXTX serial
-if [ $(uname -m) = 'x86_64' -a -f /usr/lib64/rxtx/librxtxSerial.so ] ; then
+if [ $(uname -m) = 'x86_64' -a -f /usr/lib64/rxtx/librxtxSerial.so -a $UNCONDITIONAL_INSTALL_LIB = 'no' ] ; then
     echo "System librxtxSerial.so found, linking to that instead of installing ours."
     ln -sf /usr/lib64/rxtx/librxtxSerial.so ${LIB}
-elif [ $(uname -m) = 'x86' -a -f /usr/lib/rxtx/librxtxSerial.so ] ; then
+elif [ $(uname -m) = 'x86' -a -f /usr/lib/rxtx/librxtxSerial.so -a $UNCONDITIONAL_INSTALL_LIB = 'no' ] ; then
     echo "System librxtxSerial.so found, linking to that instead of installing ours."
     ln -sf /usr/lib/rxtx/librxtxSerial.so ${LIB}
 else
-    echo "System librxtxSerial.so NOT found, installing ours."
+    echo "System librxtxSerial.so not found or not wanted, installing ours."
     install --mode=444 ${FROMLIB}/librxtxSerial* ${LIB}
 fi
 
