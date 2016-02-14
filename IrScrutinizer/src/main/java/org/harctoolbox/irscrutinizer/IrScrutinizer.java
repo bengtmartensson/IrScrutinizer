@@ -71,6 +71,10 @@ public class IrScrutinizer {
         @Parameter(names = {"--nuke-properties"}, description = "Get rid of present properties file")
         private boolean nukeProperties = false;
 
+        // This option is sort of a dummy.
+        @Parameter(names = {"--irpmaster"}, description = "Invoke IrpMaster on the rest of the parameters; must be first option.")
+        private boolean irpmaster = false;
+
         @Parameter(names = {"-p", "--properties"}, description = "Pathname of properties file")
         private String propertiesFilename = null;
 
@@ -92,6 +96,13 @@ public class IrScrutinizer {
      * @param args the command line arguments.
      */
     public static void main(String[] args) {
+        if (args.length > 0 && args[0].equalsIgnoreCase("--irpmaster")) {
+            String[] newargs = new String[args.length - 1];
+            System.arraycopy(args, 1, newargs, 0, newargs.length);
+            org.harctoolbox.IrpMaster.IrpMaster.main(newargs);
+            System.exit(IrpUtils.exitSuccess); // just to be safe
+        }
+
         int userLevel = 0; // presently not used
         argumentParser = new JCommander(commandLineArgs);
         argumentParser.setProgramName(Version.appName);
