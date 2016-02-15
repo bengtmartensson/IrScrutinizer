@@ -527,7 +527,7 @@ const char *pronto_</xsl:text>
 
 <exportformat name="irplus" extension="irplus" multiSignal="true" simpleSequence="false">
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
-    <xsl:output method="xml" indent="yes"/>
+    <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
 
     <xsl:template match="/remotes">
         <irplus>
@@ -540,13 +540,14 @@ const char *pronto_</xsl:text>
         <device>
             <xsl:attribute name="manufacturer">
                 <xsl:value-of select="@manufacturer"/>
-                        <xsl:if test="not(@manufacturer)">unknown manufacturer</xsl:if>
+                <xsl:if test="not(@manufacturer)">unknown manufacturer</xsl:if>
             </xsl:attribute>
             <xsl:attribute name="model">
                 <xsl:value-of select="@model"/>
-                        <xsl:if test="not(@model)">unknown model</xsl:if>
+                <xsl:if test="not(@model)">unknown model</xsl:if>
             </xsl:attribute>
             <xsl:attribute name="format">PRONTO_HEX</xsl:attribute>
+            <!--xsl:attribute name="columns">3</xsl:attribute--> <!-- uncomment if desired -->
             <xsl:apply-templates select="commandSet/command"/>
         </device>
     </xsl:template>
