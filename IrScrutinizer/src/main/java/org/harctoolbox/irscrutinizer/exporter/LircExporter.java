@@ -57,30 +57,23 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File saveFile) throws FileNotFoundException, IrpMasterException {
+    public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName) throws FileNotFoundException, IrpMasterException, UnsupportedEncodingException {
         // LIRC often does not add extensions to its files, therefore we should not do it either.
         if (remoteSet.getAllCommands().isEmpty())
             throw new IllegalArgumentException("No commands in the remotes.");
 
-        PrintStream out = null;
-        try {
-            out = new PrintStream(saveFile, IrpUtils.dumbCharsetName);
-        } catch (UnsupportedEncodingException ex) {
-            // cannot happen
-            return;
-        }
+        try (PrintStream out = new PrintStream(saveFile, charsetName)) {
+            exportPreamble(out, title, charsetName);
 
-        exportPreamble(out, title);
-
-        for (Remote remote : remoteSet.getRemotes()) {
-            if (!forceRaw && remote.hasThisProtocol("nec1"))
-                exportRemoteNec1(out, remote);
-            else if (!forceRaw && remote.hasThisProtocol("rc5"))
-                exportRemoteRc5(out, remote);
-            else
-                exportRemoteRaw(out, remote, count);
+            for (Remote remote : remoteSet.getRemotes()) {
+                if (!forceRaw && remote.hasThisProtocol("nec1"))
+                    exportRemoteNec1(out, remote);
+                else if (!forceRaw && remote.hasThisProtocol("rc5"))
+                    exportRemoteRc5(out, remote);
+                else
+                    exportRemoteRaw(out, remote, count);
+            }
         }
-        out.close();
     }
 
     @Override
@@ -98,7 +91,7 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
      * Write the instance to a the PrintStream in the argument. It is not closed.
      * @param stream PrintStream, should be ready for writing.
      */
-    private void exportPreamble(PrintStream stream, String title) {
+    private void exportPreamble(PrintStream stream, String title, String charsetName) {
         if (title != null && !title.isEmpty())
             stream.println("# " + title);
         else
@@ -107,6 +100,7 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         stream.println("# Creating tool: " + Version.versionString);
         stream.println("# Creating user: " + creatingUser);
         stream.println("# CreateDate: " + (new Date()).toString());
+        stream.println("# Encoding: " + charsetName);
         stream.println("#");
     }
 

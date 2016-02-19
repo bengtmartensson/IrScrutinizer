@@ -29,10 +29,11 @@ import org.harctoolbox.girr.Command;
 public interface ICommandExporter {
 
     public File export(Command command, String source, String title, int repeatCount,
-            boolean automaticFilenames, Component parent, File exportDir)
+            boolean automaticFilenames, Component parent, File exportDir, String charsetName)
             throws IrpMasterException, IOException;
 
-    public void export(Command command, String source, String title, int repeatCount, File exportFile) throws IrpMasterException, IOException;
+    public void export(Command command, String source, String title, int repeatCount, File exportFile,
+            String charsetName) throws IrpMasterException, IOException;
 
     public boolean considersRepetitions();
 

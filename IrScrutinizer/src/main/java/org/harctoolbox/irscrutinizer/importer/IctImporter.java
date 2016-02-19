@@ -129,9 +129,9 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
         addCommand(command);
     }
 
-    public static Collection<Command> importer(File file) throws IOException, ParseException, IrpMasterException {
+    public static Collection<Command> importer(File file, String charsetName) throws IOException, ParseException, IrpMasterException {
         IctImporter imp = new IctImporter();
-        imp.load(file);
+        imp.load(file, file.getCanonicalPath(), charsetName);
         return imp.getCommands();
     }
 

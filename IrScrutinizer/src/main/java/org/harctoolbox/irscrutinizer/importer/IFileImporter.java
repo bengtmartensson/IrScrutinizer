@@ -28,11 +28,11 @@ import org.harctoolbox.IrpMaster.IrpMasterException;
  */
 public interface IFileImporter {
 
-    public void load(File file) throws IOException, ParseException, IrpMasterException;
+    public void load(File file, String charsetName) throws IOException, ParseException, IrpMasterException;
 
-    public void possiblyZipLoad(File file) throws ParseException, IOException, IrpMasterException;
+    public void possiblyZipLoad(File file, String charsetName) throws ParseException, IOException, IrpMasterException;
 
-    public boolean loadFileSelector(Component component, String title, String defaultDir) throws IOException, ParseException, IrpMasterException;
+    public boolean loadFileSelector(Component component, String title, String defaultDir, String charsetName) throws IOException, ParseException, IrpMasterException;
 
     public boolean canImportDirectories();
 

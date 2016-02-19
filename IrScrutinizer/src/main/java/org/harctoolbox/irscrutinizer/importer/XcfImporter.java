@@ -46,6 +46,7 @@ import org.xml.sax.SAXException;
 public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
     private static final String xcfXmlFileName = "ConfigEdit.xml";
+    private static final String defaultCharsetName = "WINDOWS-1252";
     private boolean translateProntoFont = true;
 
     private HashMap<String, String> nameIndex;
@@ -87,7 +88,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
     }
 
     @Override
-    public void load(File filename, String origin) throws IOException, ParseException {
+    public void load(File filename, String origin, String charsetName /* unused */) throws IOException, ParseException {
         prepareLoad(origin);
         try {
             load(openConfig(filename));
@@ -309,7 +310,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
     public static RemoteSet importXcf(String filename) throws IOException, SAXException, ParseException, IrpMasterException {
         XcfImporter importer = new XcfImporter();
-        importer.load(new File(filename));
+        importer.load(new File(filename), defaultCharsetName);
         return importer.getRemoteSet();
     }
 
@@ -325,7 +326,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
     @Override
     public void load(Reader reader, String originName) throws IOException, FileNotFoundException, ParseException {
-        dumbLoad(reader, originName);
+        dumbLoad(reader, originName, defaultCharsetName);
     }
 
     @Override

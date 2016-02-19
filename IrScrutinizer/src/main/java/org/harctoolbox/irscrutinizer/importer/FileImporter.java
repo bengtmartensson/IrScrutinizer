@@ -43,22 +43,22 @@ public abstract class FileImporter extends Importer {
         super();
     }
 
-    public abstract void load(File file, String origin) throws IOException, ParseException;
+    public abstract void load(File file, String origin, String charsetName) throws IOException, ParseException;
 
-    public final void load(File file) throws IOException, ParseException {
-        load(file, file.getPath());
+    public final void load(File file, String charsetName) throws IOException, ParseException {
+        load(file, file.getPath(), charsetName);
     }
 
-    public boolean loadFileSelector(Component component, String title, String defaultDir) throws IOException, ParseException, IrpMasterException {
+    public boolean loadFileSelector(Component component, String title, String defaultDir, String charsetName) throws IOException, ParseException, IrpMasterException {
         File file = SelectFile.selectFile(component, title, defaultDir, false, false,
             canImportDirectories() ? JFileChooser.FILES_AND_DIRECTORIES : JFileChooser.FILES_ONLY, getFileExtensions());
         if (file == null)
             return false;
-        load(file);
+        load(file, charsetName);
         return true;
     }
 
-    protected void dumbLoad(Reader reader, String origin) throws FileNotFoundException, IOException, ParseException {
+    protected void dumbLoad(Reader reader, String origin, String charsetName) throws FileNotFoundException, IOException, ParseException {
         FileOutputStream out = null;
         try {
             File file = File.createTempFile(Version.appName + origin, null);
@@ -69,7 +69,7 @@ public abstract class FileImporter extends Importer {
                     break;
                 out.write(c);
             }
-            load(file);
+            load(file, charsetName);
         } finally {
             if (out != null)
                 out.close();
@@ -81,7 +81,7 @@ public abstract class FileImporter extends Importer {
     // and the caller has to take responsibility for somehow closing the zip file.
     // A reasonably clean solution would be to have a protected class for the zip file
     // -- just not worth it.
-    public void possiblyZipLoad(File file) throws ParseException, IOException {
+    public void possiblyZipLoad(File file, String charsetName) throws ParseException, IOException {
         if (file.getName().toLowerCase(IrpUtils.dumbLocale).endsWith(".zip")) {
             String extension = getFileExtensions()[0][1];
             File tmpFile = unzipFirstMatch(file, extension);
@@ -90,7 +90,7 @@ public abstract class FileImporter extends Importer {
             // and when it just returns false.
             // Better to be on the safe side...
             try {
-                load(tmpFile, file.getPath());
+                load(tmpFile, file.getPath(), charsetName);
             } finally {
 
                 success = tmpFile.delete();
@@ -98,7 +98,7 @@ public abstract class FileImporter extends Importer {
             if (!success)
                 throw new IOException("Deletion of temporary file " + file.getAbsolutePath() + " failed.");
         } else
-            load(file);
+            load(file, charsetName);
     }
 
     private File unzipFirstMatch(File file, String extension) throws IOException {

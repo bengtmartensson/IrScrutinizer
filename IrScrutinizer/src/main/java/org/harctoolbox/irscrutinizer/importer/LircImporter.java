@@ -58,8 +58,8 @@ public class LircImporter extends RemoteSetImporter implements IReaderImporter, 
     }
 
     @Override
-    public void load(InputStream inputStream, String origin) throws IOException {
-        load(ConfigFile.readConfig(inputStream, debug, origin), origin);
+    public void load(InputStream inputStream, String origin, String charsetName) throws IOException {
+        load(ConfigFile.readConfig(inputStream, debug, origin, charsetName), origin);
     }
 
     @Override
@@ -68,13 +68,17 @@ public class LircImporter extends RemoteSetImporter implements IReaderImporter, 
     }
 
     @Override
-    public void load(File file, String origin) throws IOException {
-        load(ConfigFile.readConfig(file, debug), origin);
+    public void load(File file, String origin, String charsetName) throws IOException {
+        load(ConfigFile.readConfig(file, debug, charsetName), origin);
     }
 
     @Override
     public void load(Reader reader, String origin) throws IOException {
         load(ConfigFile.readConfig(reader, debug, origin), origin);
+    }
+
+    public void load(File file) throws IOException {
+        load(ConfigFile.readConfig(file, debug), file.getCanonicalPath());
     }
 
     @Override

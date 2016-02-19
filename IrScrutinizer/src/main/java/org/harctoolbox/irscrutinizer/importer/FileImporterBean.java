@@ -86,9 +86,9 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
         try {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             if (IReaderImporter.class.isInstance(importer))
-                ((IReaderImporter)importer).load(filenameTextField.getText().trim(), properties.getImportOpensZipFiles());
+                ((IReaderImporter)importer).load(filenameTextField.getText().trim(), properties.getImportOpensZipFiles(), properties.getImportCharsetName());
             else
-                importer.possiblyZipLoad(new File(filenameTextField.getText().trim()));
+                importer.possiblyZipLoad(new File(filenameTextField.getText().trim()), properties.getImportCharsetName());
             return getRemoteSet(importer);
         } finally {
             setCursor(oldCursor);
@@ -105,7 +105,7 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
                 guiUtils.error("No usable clipboard content");
                 return null;
             }
-            ((IReaderImporter)importer).load(payload, "<clipboard>");
+            ((IReaderImporter)importer).load(payload, "<clipboard>", properties.getImportCharsetName());
             return getRemoteSet(importer);
         } finally {
             setCursor(oldCursor);

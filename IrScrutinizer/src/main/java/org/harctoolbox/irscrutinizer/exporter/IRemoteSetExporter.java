@@ -32,22 +32,25 @@ import org.harctoolbox.girr.RemoteSet;
  *
  */
 public interface IRemoteSetExporter extends ICommandExporter {
-    public void export(RemoteSet remoteSet, String title, int count, boolean automaticFilenames, Component parent, File exportDir)
+    public void export(RemoteSet remoteSet, String title, int count, boolean automaticFilenames,
+            Component parent, File exportDir, String charsetName)
             throws FileNotFoundException, IOException, IrpMasterException;
 
-    public abstract void export(RemoteSet remoteSet, String title, int count, File saveFile) throws FileNotFoundException, IOException, IrpMasterException;
+    public abstract void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName) throws FileNotFoundException, IOException, IrpMasterException;
 
-    public void export(Remote remote, String title, String source, int count, File saveFile) throws FileNotFoundException, IrpMasterException, IOException;
+    public void export(Remote remote, String title, String source, int count, File saveFile, String charsetName) throws FileNotFoundException, IrpMasterException, IOException;
 
     public void export(HashMap<String, Command> commands, String source, String title,
-            String name, String manufacturer, String model, String deviceClass, String remoteName, int count, File saveFile) throws FileNotFoundException, IrpMasterException, IOException;
+            String name, String manufacturer, String model, String deviceClass, String remoteName,
+            int count, File saveFile, String charsetName) throws FileNotFoundException, IrpMasterException, IOException;
 
     public File export(HashMap<String, Command> commands, String source, String title,
             String name, String manufacturer, String model, String deviceClass,
-            String remoteName, int count, boolean automaticFilenames, Component parent, File exportDir)
+            String remoteName, int count, boolean automaticFilenames, Component parent, File exportDir, String charsetName)
             throws FileNotFoundException, IrpMasterException, IOException;
 
-    public void export(Collection<Command> commands, String source, String title, int count, File saveFile) throws FileNotFoundException, IOException, IrpMasterException;
+    public void export(Collection<Command> commands, String source, String title, int count, File saveFile, String charsetName)
+            throws FileNotFoundException, IOException, IrpMasterException;
 
     public boolean supportsEmbeddedFormats();
 }

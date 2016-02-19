@@ -60,12 +60,12 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File file) throws FileNotFoundException, IOException, IrpMasterException {
+    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws FileNotFoundException, IOException, IrpMasterException {
         for (Command.CommandTextFormat formatter : extraFormats)
             remoteSet.addFormat(formatter, count);
         Document document = remoteSet.xmlExportDocument(title, girrStyleSheetType, girrStyleSheetUrl, fatRaw, createSchemaLocation,
                 generateRaw, generateCcf, generateParameters);
-        (new XmlExporter(document)).printDOM(file);
+        (new XmlExporter(document)).printDOM(file, charsetName);
     }
 
     @Override

@@ -73,9 +73,9 @@ public class CsvRawImporter extends CsvImporter {
     }
 
     @Override
-    public void load(File file, String origin) throws IOException, ParseException {
+    public void load(File file, String origin, String charsetName) throws IOException, ParseException {
         try (FileInputStream stream = new FileInputStream(file)) {
-            load(stream, origin);
+            load(stream, origin, charsetName);
         }
     }
 
@@ -156,15 +156,15 @@ public class CsvRawImporter extends CsvImporter {
     }
 
     public static Collection<Command> process(File file, String separator, int nameColumn, boolean nameMultiColumn, int codeColumn, boolean includeTail,
-            boolean invokeAnalyzer, boolean invokeRepeatFinder, boolean verbose) throws IOException, ParseException, IrpMasterException {
+            boolean invokeAnalyzer, boolean invokeRepeatFinder, boolean verbose, String charsetName) throws IOException, ParseException, IrpMasterException {
         CsvRawImporter csvImportRaw = new CsvRawImporter(separator, nameColumn, nameMultiColumn, codeColumn, includeTail);
-        csvImportRaw.load(file);
+        csvImportRaw.load(file, charsetName);
         return csvImportRaw.getCommands();
     }
 
     public static void main(String[] args) {
         try {
-            Collection<Command> signals = process(new File(args[0]), " ", 3, false, 6, true, true, true, true);
+            Collection<Command> signals = process(new File(args[0]), " ", 3, false, 6, true, true, true, true, "WINDOWS-1252");
             for (Command signal : signals)
                 System.out.println(signal.toPrintString());
         } catch (IOException | IrpMasterException | ParseException ex) {

@@ -48,6 +48,10 @@ not to hold the author responsible.</warning>
 	  <td>2015-08-19</td>
 	  <td>Version for release 1.1.3. Misc. minor improvements.</td>
 	</tr>
+        <tr>
+            <td>2016-01-13</td>
+            <td>Added description for user selectable character sets for import and export.</td>
+        </tr>
       </table>
 
 <section>
@@ -580,6 +584,11 @@ the "..."-Button, a file selector allows the selection of a local file. For
 files and URLs, the "Edit/Browse" button allows to examine the selected
 file/URL with the operating system's standard command.</p>
 
+<p>Several of the formats (the one based on text files, but not on XML) allow the
+user to select the character set to be used for the import to be selected.
+    This option is found as <code>Options -> Import options -> Character Set...</code>
+</p>
+
 <p>If the option "<code>Open ZIP files</code>" (accessible from <code>Options
 -> Import</code>) is
 selected, zip files can  be selected, opened, and unzipped "on the fly",
@@ -633,8 +642,8 @@ IrScrutinizer.</p>
 
 <section><title>LIRC</title>
 <p>The <a href="Glossary.html#LIRC">LIRC</a> import feature is based upon <a
-href="Jirc.html">Jirc</a>, which is basically LIRC translated into <a
-href="Glossary.html#Java">Java</a>. The LIRC importer can even import a file
+href="Jirc.html">Jirc</a>, which is basically LIRC translated into Java.
+The LIRC importer can even import a file
 system hierarchy by selecting the top directory as File/URL. (Importing the
 entire lirc.org database with over 100000 commands takes around 1 minute and 1GB
 of memory.)</p>
@@ -791,7 +800,8 @@ href="transforming-xml-export.html">this article</a>.</dd>
 <dd>Variant of the C format, this format generates C code for the  <a
 href="http://en.wikipedia.org/wiki/TV-B-Gone">TV-B-Gone</a>.</dd>
 	</dl>
-
+        <p>The character set used for the export can be selected through <code>Options -> Export options -> Character set...</code>
+            Note however that this makes sense only for text based formats, including XML.</p>
 
 <!--p>For
 protocols with toggles, both toggle pairs may optionally be included in

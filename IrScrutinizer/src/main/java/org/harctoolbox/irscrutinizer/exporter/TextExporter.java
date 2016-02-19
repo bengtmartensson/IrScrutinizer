@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.irscrutinizer.Utils;
@@ -68,12 +67,8 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
         return "txt";
     }
 
-    private void open(File file) throws FileNotFoundException {
-        try {
-            printStream = new PrintStream(file, IrpUtils.dumbCharsetName);
-        } catch (UnsupportedEncodingException ex) {
-            // cannot happen
-        }
+    private void open(File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException {
+        printStream = new PrintStream(file, charsetName);
     }
 
     private void close() {
@@ -81,8 +76,8 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
             printStream.close();
     }
 
-    public void export(String payload, File exportFile) throws IrpMasterException, FileNotFoundException {
-        open(exportFile);
+    public void export(String payload, File exportFile, String charsetName) throws IrpMasterException, FileNotFoundException, UnsupportedEncodingException {
+        open(exportFile, charsetName);
         try {
             printStream.println(payload);
         } finally {
@@ -90,15 +85,15 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
         }
     }
 
-    public File export(String payload, boolean automaticFilenames, Component parent, File exportDir) throws IrpMasterException, IOException {
+    public File export(String payload, boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IrpMasterException, IOException {
         File file = exportFilename(automaticFilenames, parent, exportDir);
-        export(payload, file);
+        export(payload, file, charsetName);
         return file;
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File file) throws FileNotFoundException, IOException, IrpMasterException {
-        open(file);
+    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws FileNotFoundException, IOException, IrpMasterException {
+        open(file, charsetName);
         try {
             for (Command command : remoteSet.getAllCommands()) {
                 printStream.println(formatCommand(command, count));
