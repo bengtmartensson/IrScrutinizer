@@ -985,16 +985,16 @@ public class EzControlT10 implements IHarcHardware, IWeb {
     }
 
     private void generateXml() {
-        XmlUtils.printDOM(System.out, xmlConfig(), "ezcontrol_t10_config.dtd", null);
+        XmlUtils.printDOM(System.out, xmlConfig(), null);
     }
 
     public void generateXml(File file) throws FileNotFoundException {
-        XmlUtils.printDOM(file, xmlConfig(), "ezcontrol_t10_config.dtd", null);
+        XmlUtils.printDOM(file, xmlConfig(), null);
     }
 
     public void getConfiguration(File file) {
         try {
-            XmlUtils.printDOM(file, xmlConfig(), "ezcontrol_t10_config.dtd", null);
+            XmlUtils.printDOM(file, xmlConfig(), null);
         } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
         }

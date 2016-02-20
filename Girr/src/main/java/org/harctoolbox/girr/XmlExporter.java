@@ -135,7 +135,7 @@ public class XmlExporter {
     }
 
     public void printDOM(OutputStream ostr, Document stylesheet, HashMap<String, String>parameters,
-            String doctypeSystemid, boolean binary, String charsetName) throws IOException {
+            boolean binary, String charsetName) throws IOException {
         try {
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer tr;
@@ -163,8 +163,6 @@ public class XmlExporter {
             }
             tr.setOutputProperty(OutputKeys.INDENT, "yes");
             tr.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            if (doctypeSystemid != null)
-                tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctypeSystemid);
             if (binary) {
                 DOMResult domResult = new DOMResult();
                 tr.transform(new DOMSource(document), domResult);
@@ -194,25 +192,21 @@ public class XmlExporter {
         }
     }
 
-    public void printDOM(OutputStream ostr, String doctypeSystemid, String charsetName) throws IOException {
-        printDOM(ostr, null, null, doctypeSystemid, false, charsetName);
+    public void printDOM(OutputStream ostr, String charsetName) throws IOException {
+        printDOM(ostr, null, null, false, charsetName);
     }
 
-    public void printDOM(File file, String doctypeSystemid, String charsetName) throws IOException  {
+    public void printDOM(File file, String charsetName) throws IOException  {
         if (file == null)
-            printDOM(System.out, doctypeSystemid, charsetName);
+            printDOM(System.out, charsetName);
         else {
             try (FileOutputStream stream = new FileOutputStream(file)) {
-                printDOM(stream, doctypeSystemid, charsetName);
+                printDOM(stream, charsetName);
             }
         }
     }
 
     public void printDOM(File file) throws FileNotFoundException, IOException {
-        printDOM(file, null, defaultCharsetName);
-    }
-
-    public void printDOM(File file, String charsetName) throws FileNotFoundException, IOException {
-        printDOM(file, null, charsetName);
+        printDOM(file, defaultCharsetName);
     }
 }

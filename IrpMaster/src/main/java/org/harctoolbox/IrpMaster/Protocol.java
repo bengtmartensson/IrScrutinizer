@@ -383,7 +383,7 @@ public class Protocol {
     }
 
     public void printDOM(OutputStream ostream, Document stylesheet) {
-        (new XmlExport(doc)).printDOM(ostream, stylesheet, null);
+        (new XmlExport(doc)).printDOM(ostream, stylesheet);
     }
 
     public Document toDOM() {

@@ -123,7 +123,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         XmlExporter xmlExporter = new XmlExporter(document);
         try (OutputStream out = new FileOutputStream(saveFile)) {
             HashMap<String, String> parameters = new HashMap<>(1);
-            xmlExporter.printDOM(out, xslt, parameters, null, binary, charsetName);
+            xmlExporter.printDOM(out, xslt, parameters, binary, charsetName);
         }
     }
 }
