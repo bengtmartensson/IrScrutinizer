@@ -73,7 +73,7 @@ public class ProntoIrCode {
     }
 
     public Command toCommand(boolean generateRaw, boolean decode) throws IrpMasterException {
-        return new Command(name, comment, ccf, generateRaw, decode);
+        return new Command(name, comment, ccf);
     }
 
     // Not perfect, but better than nothing.

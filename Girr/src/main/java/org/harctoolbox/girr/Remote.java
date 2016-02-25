@@ -149,8 +149,14 @@ public class Remote implements Serializable {
                 null, //java.lang.String remoteName,
                 null, //java.lang.String comment,
                 null, //java.lang.String notes,
-                Command.toHashMap(new Command(name, comment, irSignal)),
+                commandToHashMap(new Command(name, comment, irSignal)),
                 null);
+    }
+
+    private static HashMap<String,Command> commandToHashMap(Command command) {
+        HashMap<String,Command> result = new HashMap<>(1);
+        result.put(command.getName(), command);
+        return result;
     }
 
     /**
@@ -221,11 +227,12 @@ public class Remote implements Serializable {
      * Returns true if and only if all contained commands has the protocol in the argument.
      * @param protocolName
      * @return
+     * @throws org.harctoolbox.IrpMaster.IrpMasterException
      */
-    public boolean hasThisProtocol(String protocolName) {
+    public boolean hasThisProtocol(String protocolName) throws IrpMasterException {
         for (Command command : commands.values()) {
-            String protocol = command.getProtocol();
-            if (protocol == null || !protocol.equalsIgnoreCase(protocolName))
+            String prtcl = command.getProtocol();
+            if (prtcl == null || !prtcl.equalsIgnoreCase(protocolName))
                 return false;
         }
         return true;

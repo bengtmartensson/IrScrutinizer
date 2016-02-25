@@ -1121,7 +1121,7 @@ public class GuiMain extends javax.swing.JFrame {
                 guiUtils.error("Not exporting empty signal.");
                 return;
             }
-            Command command = new Command("IrScrutinizer captured signal", null, irSignal, true, true);
+            Command command = new Command("IrScrutinizer captured signal", null, irSignal);
             File savedFile = saveSignal(command, "IrScrutinizer scrutinized signal", exporter);
             if (savedFile != null)
                 guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
@@ -1222,6 +1222,20 @@ public class GuiMain extends javax.swing.JFrame {
         }
     }
 
+    private static ModulatedIrSequence concatenateAsSequence(Collection<Command>commands) throws IrpMasterException {
+        double frequency = (double) IrpUtils.invalid;
+        double dutyCycle = (double) IrpUtils.invalid;
+        IrSequence seq = new IrSequence();
+        for (Command c : commands) {
+            if (frequency < 0) // take the first sensible frequency
+                frequency = c.getFrequency();
+            if (dutyCycle <= 0)
+                dutyCycle = c.getDutyCycle();
+            seq = seq.append(c.toIrSignal().toModulatedIrSequence(1));
+        }
+        return new ModulatedIrSequence(seq, frequency, dutyCycle);
+    }
+
     private void importSequence(ICommandImporter importer) throws IrpMasterException {
         Collection<Command> commands = importer.getCommands();
                 if (commands.isEmpty()) {
@@ -1232,7 +1246,7 @@ public class GuiMain extends javax.swing.JFrame {
                 && ! guiUtils.confirm("There are " + commands.size() + " commands. Proceed?"))
             return;
 
-        processIr(Command.appendAsSequence(commands));
+        processIr(concatenateAsSequence(commands));
     }
 
     public void importCommands(Collection<Command> commands, boolean raw) throws IrpMasterException {

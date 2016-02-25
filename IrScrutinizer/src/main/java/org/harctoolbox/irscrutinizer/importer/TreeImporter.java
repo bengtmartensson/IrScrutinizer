@@ -62,11 +62,6 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         for (Enumeration e = remote.children(); e.hasMoreElements();) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
             Command command = (Command) node.getUserObject();
-            try {
-                command.checkForParameters(); // decode the commands, if possible
-            } catch (IrpMasterException ex) {
-               // nothing to do...
-            }
         }
     }
 

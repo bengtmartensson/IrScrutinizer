@@ -120,7 +120,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
                 if (has_content) {
                     try {
                         Command command = new Command(translateProntoFont ? ProntoIrCode.translateProntoFont(buttonName) : buttonName,
-                                deviceName + "/" + panelName, ccfString, isGenerateRaw(), isInvokeDecodeIr());
+                                deviceName + "/" + panelName, ccfString);
                         commandList.add(command);
                     } catch (IrpMasterException ex) {
                         System.err.println(ex.getMessage());

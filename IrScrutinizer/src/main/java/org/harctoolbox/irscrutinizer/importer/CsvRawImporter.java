@@ -151,7 +151,7 @@ public class CsvRawImporter extends CsvImporter {
             return null;
         }
         return irSignal != null ?
-                new Command(uniqueName(name), "Line " + lineNo + ", " + origin, irSignal, isGenerateCcf(), isInvokeDecodeIr())
+                new Command(uniqueName(name), "Line " + lineNo + ", " + origin, irSignal)
                 : null;
     }
 

@@ -50,7 +50,7 @@ public class LircImporter extends RemoteSetImporter implements IReaderImporter, 
             for (IrNCode code : remote.getCodes()) {
                 IrSignal irSignal = remote.toIrSignal(code, true, debug);
                 if (irSignal != null) {
-                    Command command = new Command(code.getName(), origin /* comment */, irSignal, isGenerateCcf(), isInvokeDecodeIr());
+                    Command command = new Command(code.getName(), origin /* comment */, irSignal);
                     addCommand(command);
                 }
             }

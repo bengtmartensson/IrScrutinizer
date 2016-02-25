@@ -224,7 +224,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
         //String codeName = actionCodeName(action);
         try {
-            return new Command(actionCodeName(action), null /*comment*/, ccf, isGenerateRaw(), isInvokeDecodeIr());
+            return new Command(actionCodeName(action), null /*comment*/, ccf);
             //System.out.print(codeName);
         } catch (IrpMasterException ex) {
             return null;
@@ -298,7 +298,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
                 //RawIrSignal raw = new RawIrSignal(Pronto.ccfSignal(codeElement.getTextContent()), name, null, invokeAnalyzer);
                 Command raw = new Command(translateProntoFont ? ProntoIrCode.translateProntoFont(name) : name, null /* comment */,
-                        ccf, isGenerateCcf(), isInvokeDecodeIr());
+                        ccf);
                 //commands.add(raw);
                 //commandIndex.put(raw.getName(), raw);
                 addCommand(raw);

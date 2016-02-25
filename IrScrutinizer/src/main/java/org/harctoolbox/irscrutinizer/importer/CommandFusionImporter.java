@@ -89,7 +89,7 @@ public class CommandFusionImporter extends RemoteSetImporter implements IReaderI
         String ccf = cmd.getString("CCF", null);
         Command command = null;
         try {
-            command = new Command(name, null, ccf, isGenerateRaw(), isInvokeDecodeIr());
+            command = new Command(name, null, ccf);
         } catch (IrpMasterException ex) {
             Logger.getLogger(CommandFusionImporter.class.getName()).log(Level.SEVERE, null, ex);
         }

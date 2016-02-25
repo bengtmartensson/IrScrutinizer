@@ -255,7 +255,7 @@ public class IrRemote {
     public Command toCommand(IrNCode code, boolean invokeDecodeIr, boolean alternatingSigns, int debug) {
         IrSignal irSignal = toIrSignal(code, alternatingSigns, debug);
         return irSignal != null
-                ? new Command(code.getName(), /*comment=*/null, irSignal, /*genereteCcf=*/true, /*decode=*/true)
+                ? new Command(code.getName(), /*comment=*/null, irSignal)
                 : null;
     }
 

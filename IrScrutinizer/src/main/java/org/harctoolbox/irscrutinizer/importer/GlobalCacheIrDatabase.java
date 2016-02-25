@@ -120,8 +120,7 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
             IrSignal irSignal = new IrSignal(durations, (repIndex - 1)/2, (durations.length - repIndex + 1)/2, frequency);
             String keyName = obj.get("KeyName").asString();
             Command cmd = new Command(keyName,
-                    "GCDB: " + manufacturer + "/" + deviceType + "/" + codeSet, irSignal,
-                    isGenerateCcf(), isInvokeDecodeIr());
+                    "GCDB: " + manufacturer + "/" + deviceType + "/" + codeSet, irSignal);
             addCommand(cmd);
         }
 
