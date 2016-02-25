@@ -238,11 +238,8 @@ public class IrRemote {
         //    return null;
         //}
 
-        Remote rem = new Remote(getName(),
-                null, // manufacturer,
-                null, // model,
-                null, // deviceClass,
-                null, // remoteName,
+        Remote.MetaData metaData = new Remote.MetaData(getName());
+        Remote rem = new Remote(metaData,
                 null, // comment,
                 null, // notes,
                 commands,

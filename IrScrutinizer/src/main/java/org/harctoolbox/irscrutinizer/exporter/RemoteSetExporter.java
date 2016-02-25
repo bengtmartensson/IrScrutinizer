@@ -68,14 +68,10 @@ public abstract class RemoteSetExporter extends Exporter {
     }
 
     public void export(HashMap<String, Command> commands, String source, String title,
-            String name, String manufacturer, String model, String deviceClass, String remoteName,
+            Remote.MetaData metaData,
             int repeatCount, File saveFile, String charsetName) throws FileNotFoundException, IrpMasterException, IOException {
         Remote remote = new Remote(
-                name,
-                manufacturer,
-                model,
-                deviceClass,
-                remoteName,
+                metaData,
                 "Export from " + Version.appName, //                String comment,
                 null, //                       String notes,
                 commands,
@@ -87,18 +83,14 @@ public abstract class RemoteSetExporter extends Exporter {
     }
 
     public File export(HashMap<String, Command> commands, String source, String title,
-            String name, String manufacturer, String model, String deviceClass,
-            String remoteName, int repeatCount, boolean automaticFilenames, Component parent, File exportDir, String charsetName)
+            Remote.MetaData metaData,
+            int repeatCount, boolean automaticFilenames, Component parent, File exportDir, String charsetName)
             throws FileNotFoundException, IrpMasterException, IOException {
         File file = exportFilename(automaticFilenames, parent, exportDir);
         if (file == null)
             return null;
         Remote remote = new Remote(
-                name,
-                manufacturer,
-                model,
-                deviceClass,
-                remoteName,
+                metaData,
                 "Export from " + Version.appName, //                String comment,
                 null, //                       String notes,
                 commands,
@@ -116,7 +108,7 @@ public abstract class RemoteSetExporter extends Exporter {
         for (Command command : commands)
             cmds.put(command.getName(), command);
 
-        export(cmds, source, title, null, null, null, null, null, repeatCount, saveFile, charsetName);
+        export(cmds, source, title, new Remote.MetaData(), repeatCount, saveFile, charsetName);
     }
 
     public File export(Command command, String title, String source, int repeatCount,
@@ -133,7 +125,7 @@ public abstract class RemoteSetExporter extends Exporter {
             throws FileNotFoundException, IrpMasterException, IOException {
         HashMap<String,Command> commands = new HashMap<>(1);
         commands.put(command.getName(), command);
-        export(commands, title, source, Version.appName + "Export", null, null, null, null, repeatCount, saveFile, charsetName);
+        export(commands, title, source, new Remote.MetaData(Version.appName + "Export"), repeatCount, saveFile, charsetName);
     }
 
     public boolean supportsEmbeddedFormats() {

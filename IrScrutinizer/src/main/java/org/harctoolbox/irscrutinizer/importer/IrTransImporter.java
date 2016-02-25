@@ -187,7 +187,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                 System.err.println(cmd.name + " Unparsable signal: " + ex.getMessage());
             }
         }
-        return new Remote(name, null, null, null, null, null, null, commands, null);
+        return new Remote(new Remote.MetaData(name), null, null, commands, null);
     }
 
     private String parseName(LineNumberReader reader) throws IOException, ParseException {

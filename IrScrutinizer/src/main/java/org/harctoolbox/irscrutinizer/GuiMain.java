@@ -75,6 +75,7 @@ import org.harctoolbox.IrpMaster.Protocol;
 import org.harctoolbox.IrpMaster.UnassignedException;
 import org.harctoolbox.IrpMaster.UnknownProtocolException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.Remote;
 import org.harctoolbox.guicomponents.AmxBeaconListenerPanel;
 import org.harctoolbox.guicomponents.CopyClipboardText;
 import org.harctoolbox.guicomponents.ErroneousSelectionException;
@@ -194,6 +195,8 @@ public class GuiMain extends javax.swing.JFrame {
     private transient ExportFormatManager exportFormatManager;
     private transient SendingHardwareManager sendingHardwareManager;
     private transient CapturingHardwareManager capturingHardwareManager;
+
+    private Remote.MetaData metaData = new Remote.MetaData("unnamed");
 
     // FIXME: make user settable??
     private final static boolean forgiveSillySignals = true;
@@ -1048,24 +1051,25 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private File saveCommands(HashMap<String, Command> commands, String source, String title, RemoteSetExporter exporter) throws FileNotFoundException, IrpMasterException, IOException {
-        String manufacturer = null;
-        String model = null;
-        String deviceClass = null;
-        String remoteName = null;
-        String name = "unnamed";
-
         if (properties.getExportInquireDeviceData()) {
-            manufacturer = guiUtils.getInput("Enter manufacturer", "Manufacturer entry", "manufacturer");
-            model = guiUtils.getInput("Enter model", "Model entry", "model");
-            deviceClass = guiUtils.getInput("Enter device class", "Device Class entry", "device_class");
-            remoteName = guiUtils.getInput("Enter name of the remote", "Remote name entry", "unknown_remote");
-            name = guiUtils.getInput("Enter name of this document", "Document name entry", "unknown_thing");
+            // TODO: replace with a custom dialog.
+            String name = inquire("Enter your name of this remote", "Remote name entry", metaData.getName());
+            String manufacturer = inquire("Enter manufacturer", "Manufacturer entry", metaData.getManufacturer());
+            String model = inquire("Enter model", "Model entry", metaData.getModel());
+            String deviceClass = inquire("Enter device class", "Device Class entry", metaData.getDeviceClass());
+            String remoteName = inquire("Enter manufacturers name of the remote", "Remote name entry", metaData.getRemoteName());
+            metaData = new Remote.MetaData(name, manufacturer, model, deviceClass, remoteName);
         }
 
-        File file = exporter.export(commands, source, title, name, manufacturer, model, deviceClass, remoteName,
+        File file = exporter.export(commands, source, title, metaData,
                 properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
                 new File(properties.getExportDir()), properties.getExportCharsetName());
         return file;
+    }
+
+    private String inquire(String prompt, String title, String dflt) {
+        String answer = guiUtils.getInput("Enter your name of this remote", "Remote name entry", dflt);
+        return answer != null ? answer : dflt;
     }
 
     private File saveSignal(Command command, String title, ICommandExporter exporter) throws FileNotFoundException, IOException, IrpMasterException {

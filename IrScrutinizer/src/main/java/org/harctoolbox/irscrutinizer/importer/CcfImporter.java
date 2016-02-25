@@ -77,16 +77,12 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
                 commands.put(command.getName(), command);
         }
 
-        Remote remote = new Remote(deviceName,
-              null, //java.lang.String manufacturer,
-              null, //java.lang.String model,
-              null, //java.lang.String deviceClass,
-              null, //java.lang.String remoteName,
-              origin, //java.lang.String comment,
-              "Imported by IrScrutinizer", //java.lang.String notes,
-              commands,
-              null //java.util.HashMap<java.lang.String,java.util.HashMap<java.lang.String,java.lang.String>> applicationParameters)
-                );
+        Remote remote = new Remote(new Remote.MetaData(deviceName),
+                origin, //java.lang.String comment,
+                "Imported by IrScrutinizer", //java.lang.String notes,
+                commands,
+                null //java.util.HashMap<java.lang.String,java.util.HashMap<java.lang.String,java.lang.String>> applicationParameters)
+        );
         return remote;
     }
 

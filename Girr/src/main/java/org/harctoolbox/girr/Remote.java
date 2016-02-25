@@ -36,11 +36,73 @@ import org.w3c.dom.NodeList;
  * it has a dictionary of Commands, indexed by their names.
  */
 public class Remote implements Serializable {
-    private String name;
-    private String manufacturer;
-    private String model;
-    private String deviceClass;
-    private String remoteName;
+
+    public static class MetaData implements Serializable {
+        private String name;
+        private String manufacturer;
+        private String model;
+        private String deviceClass;
+        private String remoteName;
+
+        public MetaData() {
+            this.name = null;
+            this.manufacturer = null;
+            this.model = null;
+            this.deviceClass = null;
+            this.remoteName = null;
+        }
+
+        public MetaData(String name) {
+            this();
+            this.name = name;
+        }
+
+        public MetaData(String name, String manufacturer, String model,
+                String deviceClass, String remoteName) {
+            this.name = name;
+            this.manufacturer = manufacturer;
+            this.model = model;
+            this.deviceClass = deviceClass;
+            this.remoteName = remoteName;
+        }
+
+        /**
+         * @return the name
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * @return the manufacturer
+         */
+        public String getManufacturer() {
+            return manufacturer;
+        }
+
+        /**
+         * @return the model
+         */
+        public String getModel() {
+            return model;
+        }
+
+        /**
+         * @return the deviceClass
+         */
+        public String getDeviceClass() {
+            return deviceClass;
+        }
+
+        /**
+         * @return the remoteName
+         */
+        public String getRemoteName() {
+            return remoteName;
+        }
+    }
+
+    private MetaData metaData;
     private String comment;
     private String notes;
     private String protocol;
@@ -55,14 +117,13 @@ public class Remote implements Serializable {
      * @throws ParseException
      */
     public Remote(Element element) throws ParseException {
+        metaData = new MetaData(element.getAttribute("name"),
+                element.getAttribute("manufacturer"),
+                element.getAttribute("model"),
+                element.getAttribute("deviceClass"),
+                element.getAttribute("remoteName"));
         commands = new LinkedHashMap<>();
         applicationParameters = new LinkedHashMap<>();
-
-        name = element.getAttribute("name");
-        manufacturer = element.getAttribute("manufacturer");
-        model = element.getAttribute("model");
-        deviceClass = element.getAttribute("deviceClass");
-        remoteName = element.getAttribute("remoteName");
         comment = element.getAttribute("comment");
         NodeList nl = element.getElementsByTagName("applicationData");
         for (int i = 0; i < nl.getLength(); i++) {
@@ -86,11 +147,7 @@ public class Remote implements Serializable {
     /**
      * Construct a Remote from its arguments, general case.
      *
-     * @param name
-     * @param manufacturer
-     * @param model
-     * @param deviceClass
-     * @param remoteName
+     * @param metaData
      * @param comment
      * @param notes
      * @param commands
@@ -98,14 +155,15 @@ public class Remote implements Serializable {
      * @param protocol
      * @param parameters
      */
-    public Remote(String name, String manufacturer, String model, String deviceClass, String remoteName, String comment, String notes,
+    public Remote(MetaData metaData, String comment, String notes,
             HashMap<String, Command> commands, HashMap<String, HashMap<String, String>> applicationParameters,
             String protocol, HashMap<String,Long>parameters) {
-        this.name = name;
+        this.metaData = metaData;
+        /*this.name = name;
         this.manufacturer = manufacturer;
         this.model = model;
         this.deviceClass = deviceClass;
-        this.remoteName = remoteName;
+        this.remoteName = remoteName;*/
         this.comment = comment;
         this.notes = notes;
         this.commands = commands;
@@ -117,20 +175,15 @@ public class Remote implements Serializable {
     /**
      * Convenience version of the general constructor, with default values.
      *
-     * @param name
-     * @param manufacturer
-     * @param model
-     * @param deviceClass
-     * @param remoteName
+     * @param metaData
      * @param comment
      * @param notes
      * @param commands
      * @param applicationParameters
      */
-    public Remote(String name, String manufacturer, String model, String deviceClass, String remoteName, String comment, String notes,
+    public Remote(MetaData metaData, String comment, String notes,
             HashMap<String, Command> commands, HashMap<String, HashMap<String, String>> applicationParameters) {
-        this(name, manufacturer, model, deviceClass, remoteName, comment, notes,
-            commands, applicationParameters, null, null);
+        this(metaData, comment, notes, commands, applicationParameters, null, null);
     }
 
     /**
@@ -142,13 +195,9 @@ public class Remote implements Serializable {
      * @param deviceName
      */
     public Remote(IrSignal irSignal, String name, String comment, String deviceName) {
-        this(deviceName, //java.lang.String name,
-                null, //java.lang.String manufacturer,
-                null, //java.lang.String model,
-                null, //java.lang.String deviceClass,
-                null, //java.lang.String remoteName,
-                null, //java.lang.String comment,
-                null, //java.lang.String notes,
+        this(new MetaData(deviceName),
+                null, // comment,
+                null, // notes,
                 commandToHashMap(new Command(name, comment, irSignal)),
                 null);
     }
@@ -172,15 +221,15 @@ public class Remote implements Serializable {
     public Element xmlExport(Document doc, boolean fatRaw,
             boolean generateRaw, boolean generateCcf, boolean generateParameters) {
         Element element = doc.createElement("remote");
-        element.setAttribute("name", name);
-        if (manufacturer != null)
-            element.setAttribute("manufacturer", manufacturer);
-        if (model != null)
-            element.setAttribute("model", model);
-        if (deviceClass !=  null)
-            element.setAttribute("deviceClass", deviceClass);
-        if (remoteName != null)
-            element.setAttribute("remoteName", remoteName);
+        element.setAttribute("name", metaData.name);
+        if (metaData.manufacturer != null)
+            element.setAttribute("manufacturer", metaData.manufacturer);
+        if (metaData.model != null)
+            element.setAttribute("model", metaData.model);
+        if (metaData.deviceClass !=  null)
+            element.setAttribute("deviceClass", metaData.deviceClass);
+        if (metaData.remoteName != null)
+            element.setAttribute("remoteName", metaData.remoteName);
         if (comment != null)
             element.setAttribute("comment", comment);
         if (notes != null) {
@@ -241,14 +290,14 @@ public class Remote implements Serializable {
     public static class CompareNameCaseSensitive implements Comparator<Remote>, Serializable {
         @Override
         public int compare(Remote o1, Remote o2) {
-            return o1.name.compareTo(o2.name);
+            return o1.metaData.name.compareTo(o2.metaData.name);
         }
     }
 
     public static class CompareNameCaseInsensitive implements Comparator<Remote>, Serializable {
         @Override
         public int compare(Remote o1, Remote o2) {
-            return o1.name.compareToIgnoreCase(o2.name);
+            return o1.metaData.name.compareToIgnoreCase(o2.metaData.name);
         }
     }
 
@@ -258,10 +307,18 @@ public class Remote implements Serializable {
 
     /**
      *
+     * @return the metaData
+     */
+    public MetaData getMetaData() {
+        return metaData;
+    }
+
+    /**
+     *
      * @return Name of the Remote.
      */
     public String getName() {
-        return name;
+        return metaData.name;
     }
 
     /**
@@ -289,28 +346,28 @@ public class Remote implements Serializable {
      * @return the manufacturer
      */
     public String getManufacturer() {
-        return manufacturer;
+        return metaData.manufacturer;
     }
 
     /**
      * @return the model
      */
     public String getModel() {
-        return model;
+        return metaData.model;
     }
 
     /**
      * @return the deviceClass
      */
     public String getDeviceClass() {
-        return deviceClass;
+        return metaData.deviceClass;
     }
 
     /**
      * @return the remoteName
      */
     public String getRemoteName() {
-        return remoteName;
+        return metaData.remoteName;
     }
 
     /**
