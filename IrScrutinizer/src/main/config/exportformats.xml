@@ -100,8 +100,7 @@ const char *pronto_</xsl:text>
 
 
     <xsl:template match="command">
-
-        <xsl:apply-templates select="raw"/>
+        <xsl:apply-templates select="raw[position()=1]"/>
     </xsl:template>
 
     <xsl:template match="raw">
@@ -162,11 +161,11 @@ const char *pronto_</xsl:text>
     <xsl:template match="/remotes/remote[position()=1]/commandSet/command[position()=1]">
         <xsl:text>const struct powercode xCode PROGMEM = {
    freq_to_timerval(</xsl:text>
-        <xsl:value-of select="raw/@frequency"/>
+        <xsl:value-of select="raw[position()=1]/@frequency"/>
         <xsl:text>),
    {
 </xsl:text>
-        <xsl:apply-templates select="raw/*/*"/>
+        <xsl:apply-templates select="raw[position()=1]/*/*"/>
         <!--xsl:apply-templates select="command[position()=1]"/-->
         <xsl:text>   }
 };
@@ -217,11 +216,11 @@ const char *pronto_</xsl:text>
             <xsl:text>&#9;</xsl:text>
             <xsl:value-of select="raw/@frequency"/>
             <xsl:text>&#9;</xsl:text>
-            <xsl:apply-templates select="raw/intro/*"/>
+            <xsl:apply-templates select="raw[position()=1]/intro/*"/>
             <xsl:text>&#9;</xsl:text>
-            <xsl:apply-templates select="raw/repeat/*"/>
+            <xsl:apply-templates select="raw[position()=1]/repeat/*"/>
             <xsl:text>&#9;</xsl:text>
-            <xsl:apply-templates select="raw/ending/*"/>
+            <xsl:apply-templates select="raw[position()=1]/ending/*"/>
             <xsl:text>&#9;</xsl:text>
             <xsl:value-of select="ccf"/>
             <xsl:text>&#9;</xsl:text>
@@ -295,7 +294,7 @@ const char *pronto_</xsl:text>
             <xsl:text>note=</xsl:text>
             <xsl:value-of select="@name"/>
             <xsl:text>&#10;</xsl:text>
-            <xsl:apply-templates select="*/*"/>
+            <xsl:apply-templates select="raw[position()=1]/*"/>
         </xsl:template>
 
         <xsl:template match="flash">
@@ -332,7 +331,7 @@ const char *pronto_</xsl:text>
     </xsl:template>
 
     <xsl:template match="command">
-        <xsl:apply-templates select="raw"/>
+        <xsl:apply-templates select="raw[position()=1]"/>
     </xsl:template>
 
     <xsl:template match="raw">
@@ -400,7 +399,7 @@ const char *pronto_</xsl:text>
     </xsl:template>
 
     <xsl:template match="command">
-        <xsl:apply-templates select="raw"/>
+        <xsl:apply-templates select="raw[position()=1]"/>
     </xsl:template>
 
     <xsl:template match="raw">
@@ -452,7 +451,7 @@ const char *pronto_</xsl:text>
         </xsl:template>
 
         <xsl:template match="command">
-            <xsl:apply-templates select="raw"/>
+            <xsl:apply-templates select="raw[position()=1]"/>
         </xsl:template>
 
         <xsl:template match="raw">
@@ -504,7 +503,7 @@ const char *pronto_</xsl:text>
             <xsl:text>{"function":"</xsl:text>
             <xsl:value-of select="@name"/>
             <xsl:text>","code1":"</xsl:text>
-            <xsl:apply-templates select="raw"/>
+            <xsl:apply-templates select="raw[position()=1]"/>
             <xsl:text>"}</xsl:text>
             <xsl:if test="position()!=last()">
                 <xsl:text>,</xsl:text>
@@ -557,9 +556,19 @@ const char *pronto_</xsl:text>
             <xsl:attribute name="label">
                 <xsl:value-of select="@name"/>
             </xsl:attribute>
-            <xsl:value-of select="ccf"/>
+            <xsl:apply-templates select="ccf"/>
         </button>
     </xsl:template>
+
+    <xsl:template match="ccf">
+        <xsl:text>|</xsl:text>
+        <xsl:value-of select="."/>
+    </xsl:template>
+
+    <xsl:template match="ccf[position()=1]">
+        <xsl:value-of select="."/>
+    </xsl:template>
+
 </xsl:stylesheet>
 
 </exportformat>

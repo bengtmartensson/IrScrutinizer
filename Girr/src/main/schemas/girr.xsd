@@ -40,6 +40,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="ccfString">
+        <xs:annotation>
+            <xs:documentation>Data type describing a Pronto Hex CCF string.</xs:documentation>
+        </xs:annotation>
+        <xs:list itemType="ccfHexType"/>
+    </xs:simpleType>
+
     <xs:simpleType name="between0and1">
         <xs:annotation>
             <xs:documentation>Number between 0 and 1.</xs:documentation>
@@ -346,8 +353,8 @@
             <xs:sequence minOccurs="0">
                 <xs:element ref="notes" minOccurs="0"/>
                 <xs:element ref="parameters" minOccurs="0"/>
-                <xs:element ref="raw" minOccurs="0"/>
-                <xs:element ref="ccf" minOccurs="0"/>
+                <xs:element ref="raw" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="ccf" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element ref="format" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
             <xs:attribute name="F" type="xs:nonNegativeInteger">
@@ -365,6 +372,14 @@
         <xs:unique name="uniqueLangsInNotesInCommands">
             <xs:selector xpath="notes"/>
             <xs:field xpath="@xml:lang"/>
+        </xs:unique>
+        <xs:unique name="TInCcfUnique">
+            <xs:selector xpath="ccf"/>
+            <xs:field xpath="@T"/>
+        </xs:unique>
+        <xs:unique name="TInRawUnique">
+            <xs:selector xpath="raw"/>
+            <xs:field xpath="@T"/>
         </xs:unique>
     </xs:element>
 
@@ -390,8 +405,15 @@
                     <xs:documentation>Duty cycle of modulation signal, between 0 and 1.</xs:documentation>
                 </xs:annotation>
             </xs:attribute>
+            <xs:attribute ref="T"/>
         </xs:complexType>
     </xs:element>
+
+    <xs:attribute name="T" type="xs:nonNegativeInteger" default="0">
+        <xs:annotation>
+            <xs:documentation>Toggle value, the "T" parameter in many protocols.</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
 
     <xs:complexType name="rawsequence" mixed="true">
         <xs:annotation>
@@ -410,9 +432,13 @@
     <xs:element name="ending" type="rawsequence"/>
 
     <xs:element name="ccf">
-        <xs:simpleType>
-            <xs:list itemType="ccfHexType"/>
-        </xs:simpleType>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ccfString">
+                    <xs:attribute ref="T"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="format">
