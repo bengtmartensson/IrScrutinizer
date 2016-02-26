@@ -98,7 +98,15 @@ public class Command implements Serializable {
         ccf,
 
         /** The protocol/parameter version is the master. May have multiple CCF/raw representations if the protocol has a toggle. */
-        parameters
+        parameters;
+
+        public static MasterType safeValueOf(String s) {
+            try {
+                return valueOf(s);
+            } catch (IllegalArgumentException ex) {
+                return null;
+            }
+        }
     }
     private transient Protocol protocol;
     private static IrpMaster irpMaster;
@@ -439,8 +447,8 @@ public class Command implements Serializable {
      * @throws ParseException
      * @throws IrpMasterException
      */
-    public Command(Element element, String inheritProtocol, HashMap<String, Long> inheritParameters) throws ParseException, IrpMasterException, IllegalArgumentException {
-        this(element.getAttribute("master"), element.getAttribute("name"), element.getAttribute("comment")); // throws IllegalArgumentException
+    public Command(Element element, String inheritProtocol, HashMap<String, Long> inheritParameters) throws ParseException, IrpMasterException {
+        this(MasterType.safeValueOf(element.getAttribute("master")), element.getAttribute("name"), element.getAttribute("comment"));
         protocolName = inheritProtocol;
         parameters = new HashMap<>();
         parameters.putAll(inheritParameters);
