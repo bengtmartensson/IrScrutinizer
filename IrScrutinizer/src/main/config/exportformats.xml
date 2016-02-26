@@ -12,7 +12,10 @@
 Author: Bengt Martensson
 
 -->
-<exportformats>
+
+<!-- If personalizing this file, consider using xinclude. -->
+
+<exportformats xmlns:xi="http://www.w3.org/2001/XInclude" >
 <exportformat name="C" extension="c" multiSignal="true" simpleSequence="false">
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="text" />
@@ -572,5 +575,12 @@ const char *pronto_</xsl:text>
 </xsl:stylesheet>
 
 </exportformat>
+
+<!-- Here, additional export formats can be added if the user so desires.
+Consider using XInclude for this, as in the following commented out code. -->
+
+<!--
+<xi:include href="myexportformats.xml"/>
+-->
 
 </exportformats>
