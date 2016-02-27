@@ -7,7 +7,9 @@
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:xml="http://www.w3.org/XML/1998/namespace"
-           xmlns:html="http://www.w3.org/1999/xhtml">
+           xmlns:html="http://www.w3.org/1999/xhtml"
+           xmlns:xi="http://www.w3.org/2001/XInclude"
+>
     <xs:annotation>
         <xs:documentation>
             <html:div>
@@ -19,6 +21,7 @@
 
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
     <xs:import namespace="http://www.w3.org/1999/xhtml" schemaLocation="http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd"/>
+    <xs:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="https://www.w3.org/2001/XInclude/XInclude.xsd"/>
 
     <xs:simpleType name="masterEnum">
         <xs:annotation>
@@ -65,7 +68,10 @@
             </xs:annotation>
             <xs:sequence>
                 <xs:element ref="adminData" minOccurs="0"/>
-                <xs:element ref="remote" maxOccurs="unbounded"/>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="xi:include"/>
+                    <xs:element ref="remote"/>
+                </xs:choice>
             </xs:sequence>
             <!--xs:attribute name="noNamespaceSchemaLocation" type="xs:anySimpleType" use="optional"/-->
             <xs:attributeGroup ref="girrVersion"/>
@@ -229,7 +235,10 @@
                     <xs:element ref="applicationData"/>
                     <xs:element ref="html:img"/>
                 </xs:choice>
-                <xs:element ref="commandSet" maxOccurs="unbounded"/>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="commandSet" maxOccurs="unbounded"/>
+                    <xs:element ref="xi:include"/>
+                </xs:choice>
             </xs:sequence>
             <xs:attributeGroup ref="girrVersion"/>
             <xs:attributeGroup ref="nameAttributes"/>
@@ -306,7 +315,10 @@
             <xs:sequence>
                 <xs:element ref="notes" minOccurs="0"/>
                 <xs:element ref="parameters" minOccurs="0"/>
-                <xs:element ref="command" maxOccurs="unbounded"/>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="command"/>
+                    <xs:element ref="xi:include"/>
+                </xs:choice>
             </xs:sequence>
 
             <xs:attributeGroup ref="nameAttributes"/>

@@ -124,6 +124,8 @@ public class XmlUtils {
         try {
             builder = factory.newDocumentBuilder();
         } catch (ParserConfigurationException ex) {
+            // there is something seriously wrong
+            throw new RuntimeException(ex);
         }
         return builder;
     }
