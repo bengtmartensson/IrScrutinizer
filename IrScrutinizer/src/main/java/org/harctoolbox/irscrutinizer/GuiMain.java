@@ -415,6 +415,15 @@ public class GuiMain extends javax.swing.JFrame {
 
         initComponents();
 
+        // Cannot do this in initComponents, since then it will be called therein
+        importTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            @Override
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                int index  = importTabbedPane.getSelectedIndex();
+                properties.setImportPaneSelectedIndex(index);
+            }
+        });
+
         // Scroll the tables to the last line
         parameterTable.addComponentListener(new ComponentAdapter() {
             @Override
@@ -1094,7 +1103,7 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private void saveSignals(LinkedHashMap<String, Command> commands) throws FileNotFoundException, IOException, IrpMasterException {
-        if (commands.size() == 0)
+        if (commands.isEmpty())
             guiUtils.error("Nothing to export");
         else if (commands.size() == 1) {
             // exporting just a single command
@@ -4239,6 +4248,8 @@ public class GuiMain extends javax.swing.JFrame {
         );
 
         importTabbedPane.addTab("CommandFusion", commandFusionImportPanel);
+
+        importTabbedPane.setSelectedIndex(properties.getImportPaneSelectedIndex());
 
         javax.swing.GroupLayout importPanelLayout = new javax.swing.GroupLayout(importPanel);
         importPanel.setLayout(importPanelLayout);

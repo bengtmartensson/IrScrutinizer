@@ -2858,6 +2858,11 @@
               </Layout>
               <SubComponents>
                 <Container class="javax.swing.JTabbedPane" name="importTabbedPane">
+                  <Properties>
+                    <Property name="selectedIndex" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="properties.getImportPaneSelectedIndex()" type="code"/>
+                    </Property>
+                  </Properties>
                   <AccessibilityProperties>
                     <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="importTabbedPane"/>
                   </AccessibilityProperties>
