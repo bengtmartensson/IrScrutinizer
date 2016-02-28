@@ -73,14 +73,32 @@ public class XmlExporter {
     public static final String commentAttributeName = "comment";*/
 
     /**
+     * String of the form major.<!-- -->minor identifying the protocol version
+     * (not to be confused with the version of an implementation).
+     */
+    public final static String girrVersion = "1.0";
+
+    /**
      * Name space for the XML Schemas
      */
     private static final String w3cSchemaNamespace = "http://www.w3.org/2001/XMLSchema-instance";
 
     /**
-     * URL for schema file.
+     * URL for schema file without name spaces.
      */
     public static final String noNamespaceSchemaLocation = "http://www.harctoolbox.org/schemas/girr.xsd";
+
+    /**
+     * Namespace URI
+     */
+    public static final String girrNamespace = "http://www.harctoolbox.org/Girr";
+
+    /**
+     * URL for schema file supporting name spaces.
+     */
+    public static final String girrSchemaLocation = "http://www.harctoolbox.org/schemas/girr_ns.xsd";
+
+    public static final boolean useNamespaces = true;
 
     /**
      * Comment string pointing to Girr docu.
@@ -99,32 +117,47 @@ public class XmlExporter {
         this.document = doc;
     }
 
-    public XmlExporter(Element root, String stylesheetType, String stylesheetUrl, boolean createSchemaLocation) {
-        this(createDocument(root, stylesheetType, stylesheetUrl, createSchemaLocation));
+    public XmlExporter(String title, Element root, String stylesheetType, String stylesheetUrl, boolean createSchemaLocation) {
+        this(createDocument(title, root, stylesheetType, stylesheetUrl, createSchemaLocation));
     }
 
-    public static Document createDocument(Element root, String stylesheetType, String stylesheetUrl, boolean createSchemaLocation) {
+    public static Document createDocument(String title, Element root, String stylesheetType, String stylesheetUrl,
+            boolean createSchemaLocation) {
         Document document = root.getOwnerDocument();
 
-        if (stylesheetType != null && stylesheetUrl != null && ! stylesheetUrl.isEmpty()) {
+        if (stylesheetType != null && stylesheetUrl != null && !stylesheetUrl.isEmpty()) {
             ProcessingInstruction pi = document.createProcessingInstruction("xml-stylesheet",
                     "type=\"text/" + stylesheetType + "\" href=\"" + stylesheetUrl + "\"");
             document.appendChild(pi);
         }
+
+        // At least in some Java versions (https://bugs.openjdk.java.net/browse/JDK-7150637)
+        // there is no line feed before and after the comment.
+        // This is technically correct, but looks awful to the human reader.
+        // AFAIK, there is no clean way to fix this.
+        // Possibly works with some Java versions?
         Comment comment = document.createComment(girrComment);
         document.appendChild(comment);
         document.appendChild(root);
+        root.setAttribute("girrVersion", girrVersion);
         if (createSchemaLocation) {
-            root.setAttribute("xmlns:xsi", XmlExporter.w3cSchemaNamespace);
-            root.setAttribute("xsi:noNamespaceSchemaLocation", XmlExporter.noNamespaceSchemaLocation);
+            root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            if (XmlExporter.useNamespaces) {
+                root.setAttribute("xsi:schemaLocation", XmlExporter.girrNamespace + " " + XmlExporter.girrSchemaLocation);
+                root.setAttribute("xmlns", "http://www.harctoolbox.org/Girr");
+            } else {
+                root.setAttribute("xsi:noNamespaceSchemaLocation", XmlExporter.noNamespaceSchemaLocation);
+            }
         }
+        if (title != null)
+            root.setAttribute("title", title);
         return document;
     }
 
     public static Document newDocument() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
-        factory.setNamespaceAware(false);
+        factory.setNamespaceAware(false); // FIXME, but carefully...
         Document doc = null;
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();

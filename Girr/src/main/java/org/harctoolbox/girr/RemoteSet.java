@@ -42,12 +42,6 @@ import org.xml.sax.SAXException;
  */
 public class RemoteSet implements Serializable {
 
-    /**
-     * String of the form major.<!-- -->minor identifying the protocol version
-     * (not to be confused with the version of an implementation).
-     */
-    public final static String girrVersion = "1.0";
-
     private static String dateFormatString = "yyyy-MM-dd_HH:mm:ss";
 
     /**
@@ -242,17 +236,9 @@ public class RemoteSet implements Serializable {
      * @param generateParameters
      * @return Element describing the RemoteSet
      */
-    public Element xmlExport(Document doc, String title, boolean fatRaw, boolean createSchemaLocation,
+    public Element xmlExport(Document doc, boolean fatRaw,
             boolean generateRaw, boolean generateCcf, boolean generateParameters) {
         Element element = doc.createElement("remotes");
-        element.setAttribute("girrVersion", girrVersion);
-        if (createSchemaLocation) {
-            element.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            element.setAttribute("xsi:noNamespaceSchemaLocation", XmlExporter.noNamespaceSchemaLocation);
-        }
-        if (title != null)
-            element.setAttribute("title", title);
-
         Element adminDataEl = doc.createElement("adminData");
         element.appendChild(adminDataEl);
         Element creationEl = doc.createElement("creationData");
@@ -298,9 +284,8 @@ public class RemoteSet implements Serializable {
     public Document xmlExportDocument(String title, String stylesheetType, String stylesheetUrl,
             boolean fatRaw, boolean createSchemaLocation,
             boolean generateRaw, boolean generateCcf, boolean generateParameters) {
-        Element root = xmlExport(XmlExporter.newDocument(), title, fatRaw, createSchemaLocation,
-            generateRaw, generateCcf, generateParameters);
-        return XmlExporter.createDocument(root, stylesheetType, stylesheetUrl, createSchemaLocation);
+        Element root = xmlExport(XmlExporter.newDocument(), fatRaw, generateRaw, generateCcf, generateParameters);
+        return XmlExporter.createDocument(title, root, stylesheetType, stylesheetUrl, createSchemaLocation);
     }
 
     /**

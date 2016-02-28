@@ -5,7 +5,8 @@
      notice and this notice are preserved.  This file is offered as-is,
      without any warranty.
 -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+<xs:schema
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:xml="http://www.w3.org/XML/1998/namespace"
            xmlns:html="http://www.w3.org/1999/xhtml"
            xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -25,12 +26,21 @@
 
     <xs:simpleType name="masterEnum">
         <xs:annotation>
-            <xs:documentation>Determines whether the raw representation, the ccf or the parameters are the masters of the data.</xs:documentation>
+            <xs:documentation>Determines whether the raw representation, the ccf, or the protocol with parameters is the master of the data.</xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="raw"/>
             <xs:enumeration value="ccf"/>
             <xs:enumeration value="parameters"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="parameterValue">
+        <xs:annotation>
+            <xs:documentation>A parameter value, either a decimal, nonnegative number, or a hexadecimal number preceeded by 0x.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="0x[0-9A-Fa-f]+|[0-9]+"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -73,7 +83,6 @@
                     <xs:element ref="remote"/>
                 </xs:choice>
             </xs:sequence>
-            <!--xs:attribute name="noNamespaceSchemaLocation" type="xs:anySimpleType" use="optional"/-->
             <xs:attributeGroup ref="girrVersion"/>
             <xs:attributeGroup ref="title"/>
         </xs:complexType>
@@ -108,43 +117,20 @@
                     in the English language, are recommended.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="comment">
-            <xs:annotation>
-                <xs:documentation>Textual comment.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="displayName">
+
+        <xs:attribute name="displayName" type="xs:string">
             <xs:annotation>
                 <xs:documentation>Name of the command as being displayed to the user.
                     Special characters and non-english languages are here appropriate.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
+
+        <xs:attribute name="comment" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Textual comment.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:attributeGroup>
-
-    <xs:attribute name="display-name" type="xs:string">
-        <xs:annotation>
-            <xs:documentation>Name of the command as being displayed to the user.
-                Special characters and non-english languages are here appropriate.</xs:documentation>
-        </xs:annotation>
-    </xs:attribute>
-
-    <xs:attribute name="comment" type="xs:string">
-        <xs:annotation>
-            <xs:documentation>Textual comment.</xs:documentation>
-        </xs:annotation>
-    </xs:attribute>
-
-    <!--xs:attribute name="lang" type="xs:language">
-        <xs:annotation>
-            <xs:documentation>Language as defined in XML 1.0.</xs:documentation>
-        </xs:annotation>
-    </xs:attribute-->
-
-    <!--xs:attribute name="value" type="xs:nonNegativeInteger">
-        <xs:annotation>
-            <xs:documentation>Numerical value for a parameter. Nonnegative integer with base 10.</xs:documentation>
-        </xs:annotation>
-    </xs:attribute-->
 
     <xs:element name="adminData">
         <xs:complexType>
@@ -216,9 +202,12 @@
 
     <xs:element name="notes">
         <xs:annotation>
-            <xs:documentation>Textual notes.</xs:documentation>
+            <xs:documentation>Textual notes, possibly using formatting in HTML.</xs:documentation>
         </xs:annotation>
         <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+            </xs:sequence>
             <xs:attribute ref="xml:lang" default="en"/>
         </xs:complexType>
     </xs:element>
@@ -287,14 +276,9 @@
         </xs:unique>
     </xs:element>
 
-
     <xs:complexType name="value-name">
-        <xs:attribute name="name" use="required">
-            <xs:annotation>
-                <xs:documentation>Name of parameter.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="value" use="required">
+        <xs:attributeGroup ref="nameAttributes"/>
+        <xs:attribute name="value" type="parameterValue" use="required">
             <xs:annotation>
                 <xs:documentation>Numerical value for a parameter. Nonnegative integer with base 10.</xs:documentation>
             </xs:annotation>
@@ -303,12 +287,6 @@
 
     <xs:element name="appParameter" type="value-name"/>
     <xs:element name="parameter" type="value-name"/>
-    <!--xs:element name="parameter">
-        <xs:complexType>
-            <xs:attribute ref="value" use="required"/>
-            <xs:attribute ref="name" use="required"/>
-        </xs:complexType>
-    </xs:element-->
 
     <xs:element name="commandSet">
         <xs:complexType>
@@ -322,8 +300,6 @@
             </xs:sequence>
 
             <xs:attributeGroup ref="nameAttributes"/>
-            <!--xs:attribute ref="comment"/>
-            <xs:attribute ref="display-name"/-->
         </xs:complexType>
         <xs:unique name="uniqueLangInNotesInCommandSet">
             <xs:selector xpath="notes"/>
@@ -369,14 +345,12 @@
                 <xs:element ref="ccf" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element ref="format" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
-            <xs:attribute name="F" type="xs:nonNegativeInteger">
+            <xs:attribute name="F" type="parameterValue">
                 <xs:annotation>
                     <xs:documentation>Value of the F parameter for the current command in the current protocol (if applicable).</xs:documentation>
                 </xs:annotation>
             </xs:attribute>
-            <xs:attribute ref="display-name" use="optional"/>
             <xs:attributeGroup ref="nameAttributes"/>
-            <!--xs:attribute name="application-id" type="xs:anySimpleType"/-->
             <xs:attribute name="master" type="masterEnum" use="optional" default="raw"/>
             <xs:attributeGroup ref="title"/>
             <xs:attributeGroup ref="girrVersion"/>
@@ -421,7 +395,7 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:attribute name="T" type="xs:nonNegativeInteger" default="0">
+    <xs:attribute name="T" type="parameterValue" default="0">
         <xs:annotation>
             <xs:documentation>Toggle value, the "T" parameter in many protocols.</xs:documentation>
         </xs:annotation>
@@ -461,16 +435,5 @@
 
     <xs:element name="flash" type="xs:nonNegativeInteger"/>
     <xs:element name="gap" type="xs:nonNegativeInteger"/>
-
-    <!--xs:element name="img">
-        <xs:complexType>
-            <xs:attribute ref="name"/
-            <xs:attribute name="src" type="xs:anyURI">
-                <xs:annotation>
-                    <xs:documentation>URL to image</xs:documentation>
-                </xs:annotation>
-            </xs:attribute>
-        </xs:complexType>
-    </xs:element-->
 
 </xs:schema>

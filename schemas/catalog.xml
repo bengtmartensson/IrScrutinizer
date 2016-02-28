@@ -10,6 +10,7 @@
     <public publicId="-//harctoolbox.org//properties//en" uri="./properties.dtd"/>
     <system systemId="http://www.harctoolbox.org/dtds/properties.dtd" uri="./properties.dtd"/>
     <system systemId="http://www.harctoolbox.org/schemas/girr.xsd" uri="./girr.xsd"/>
+    <system systemId="http://www.harctoolbox.org/schemas/girr_ns.xsd" uri="./girr_ns.xsd"/>
 
     <!-- Needed by the documentation files -->
     <public publicId="-//APACHE//DTD DocumentationV2.0//en" uri="./document-v20.dtd"/>
