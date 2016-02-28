@@ -7707,6 +7707,10 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_capturingHardwareTabbedPaneStateChanged
 
     private void captureTestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_captureTestButtonActionPerformed
+        if (captureThread != null) {
+            guiUtils.error("A capture is still running in \"Scrutinize Remote\". Please stop it first.");
+            return;
+        }
         if (!capturingHardwareManager.hasSelection()) {
             guiUtils.error("No capture device selected.");
             return;
@@ -7893,6 +7897,10 @@ public class GuiMain extends javax.swing.JFrame {
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         if (!capturingHardwareManager.isReady()) {
             guiUtils.error("No capture device selected, aborting");
+            return;
+        }
+        if (captureThread != null) {
+            guiUtils.error("A capture is still running in \"Scrutinize Remote\". Please stop it first.");
             return;
         }
         try {
