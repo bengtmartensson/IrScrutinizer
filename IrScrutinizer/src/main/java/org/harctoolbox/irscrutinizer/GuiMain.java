@@ -171,6 +171,7 @@ public class GuiMain extends javax.swing.JFrame {
         guiUtils.setUsePopupsForErrors(false); // during initialization, popup errors might not work
         guiUtils.setUsePopupsForHelp(properties.getUsePopupsForHelp());
         guiUtils.setOfferStackTrace(properties.getOfferStackTrace());
+        guiUtils.setVerbose(properties.getVerbose());
 
         ProntoModel[] prontomodels = ProntoModel.getModels();
         prontoModelNames = new String[prontomodels.length];
@@ -380,6 +381,7 @@ public class GuiMain extends javax.swing.JFrame {
             @Override
             public void propertyChange(String name, Object oldValue, Object newValue) {
                 sendingHardwareManager.setVerbosity((Boolean)newValue);
+                guiUtils.setVerbose((Boolean)newValue);
             }
         });
 
