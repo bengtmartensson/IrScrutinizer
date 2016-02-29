@@ -4,6 +4,10 @@
 # Should be called from the IrScrutinizer directory.
 #
 
+# Since the lock directory is sometimes different from /var/lock,
+# we prefer the system's rxtx (if existing) over our own.
+JAVA_LIBRARY_PATH=/usr/lib64/rxtx:/usr/lib64:/usr/lib/rxtx:/usr/lib
+
 APPNAME=$1
 VERSION=$2
 MYPROG_LOWER=$(echo ${APPNAME} | tr A-Z a-z)
@@ -44,7 +48,7 @@ install -d ${USR_BIN}
 echo "#!/bin/sh"                                                                    >  ${WRAPPER}
 echo "IRSCRUTINIZERHOME=\$(readlink -f \$(dirname \"\${0}\")/../share/${MYPROG_LOWER})" >> ${WRAPPER}
 echo 'cd ${IRSCRUTINIZERHOME}'                                                      >> ${WRAPPER}
-echo "java -jar \${IRSCRUTINIZERHOME}/${APPNAME}-jar-with-dependencies.jar \"\$@\"" >> ${WRAPPER}
+echo "java -Djava.library.path=${JAVA_LIBRARY_PATH} -jar \${IRSCRUTINIZERHOME}/${APPNAME}-jar-with-dependencies.jar \"\$@\"" >> ${WRAPPER}
 chmod 555 ${WRAPPER}
 install --mode=555 ${APPIMAGEKITDIR}/desktopintegration ${USR_BIN}/${MYPROG_LOWER}.wrapper
 
