@@ -332,7 +332,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         loadExportFormats(); // must come before initComponents
 
-        loadProtocolsIni(properties.getProtocolsIniUrl());
+        loadProtocolsIni(properties.getProtocolsIniPath());
 
         initComponents();
 
@@ -703,7 +703,7 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private void loadProtocolsIni(String filename) throws IOException, java.text.ParseException {
-        protocolsIni = new ProtocolsIni(new File(properties.getProtocolsIniUrl()));
+        protocolsIni = new ProtocolsIni(new File(properties.getProtocolsIniPath()));
         if (rmduImporter == null)
             rmduImporter = new RmduImporter(protocolsIni);
         else
@@ -3519,7 +3519,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         importTabbedPane.addTab("LIRC", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-0.png")), lircImportPanel); // NOI18N
 
-        protocolsIniTextField.setText(properties.getProtocolsIniUrl());
+        protocolsIniTextField.setText(properties.getProtocolsIniPath());
         protocolsIniTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 protocolsIniTextFieldActionPerformed(evt);
@@ -6543,15 +6543,27 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     private void homePageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homePageMenuItemActionPerformed
-        guiUtils.browse(Version.homepageUrl);
+        try {
+            guiUtils.browse(new URI(Version.homepageUrl));
+        } catch (URISyntaxException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_homePageMenuItemActionPerformed
 
     private void mainDocuMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDocuMenuItemActionPerformed
-        guiUtils.browse(properties.getHelpfileUrl());
+        try {
+            guiUtils.browse(new File(properties.getHelpfilePath()));
+        } catch (MalformedURLException | URISyntaxException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_mainDocuMenuItemActionPerformed
 
     private void protocolSpecMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolSpecMenuItemActionPerformed
-        guiUtils.browse(IrpUtils.decodeIrUrl);
+        try {
+            guiUtils.browse(new URI(IrpUtils.decodeIrUrl));
+        } catch (URISyntaxException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_protocolSpecMenuItemActionPerformed
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
@@ -7206,7 +7218,11 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_removeUnusedMenuItem1ActionPerformed
 
     private void girrWebSiteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_girrWebSiteButtonActionPerformed
-        guiUtils.browse(Utils.girrHomepageUrl);
+        try {
+            guiUtils.browse(new URI(Utils.girrHomepageUrl));
+        } catch (URISyntaxException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_girrWebSiteButtonActionPerformed
 
     private void invokeDecodeIrCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invokeDecodeIrCheckBoxMenuItemActionPerformed
@@ -7236,11 +7252,19 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton22ActionPerformed
 
     private void jButton20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton20ActionPerformed
-        guiUtils.browse(LircImporter.homeUrl);
+        try {
+            guiUtils.browse(new URI(LircImporter.homeUrl));
+        } catch (URISyntaxException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_jButton20ActionPerformed
 
     private void webRmduButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_webRmduButtonActionPerformed
-        guiUtils.browse(RmduImporter.homeUrl);
+        try {
+            guiUtils.browse(new URI(RmduImporter.homeUrl));
+        } catch (URISyntaxException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_webRmduButtonActionPerformed
 
     private void selectProtocolIniButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectProtocolIniButtonActionPerformed
@@ -7255,7 +7279,7 @@ public class GuiMain extends javax.swing.JFrame {
     private void protocolsIniTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolsIniTextFieldActionPerformed
         try {
             loadProtocolsIni(protocolsIniTextField.getText());
-            properties.setProtocolsIniUrl(protocolsIniTextField.getText());
+            properties.setProtocolsIniPath(protocolsIniTextField.getText());
         } catch (IOException | java.text.ParseException ex) {
             guiUtils.error(ex);
         }
@@ -8173,7 +8197,11 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_prontoExportButtonHeightTextFieldActionPerformed
 
     private void irTransWebButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irTransWebButtonActionPerformed
-        guiUtils.browse(IrTransImporter.homeUrl);
+        try {
+            guiUtils.browse(new URI(IrTransImporter.homeUrl));
+        } catch (URISyntaxException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_irTransWebButtonActionPerformed
 
     private void importIrTransHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importIrTransHelpButtonActionPerformed
@@ -8181,7 +8209,11 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_importIrTransHelpButtonActionPerformed
 
     private void releaseNotesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_releaseNotesMenuItemActionPerformed
-        guiUtils.browse(properties.getReleaseNotesUrl());
+        try {
+            guiUtils.browse(new File(properties.getReleaseNotesPath()));
+        } catch (URISyntaxException | MalformedURLException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_releaseNotesMenuItemActionPerformed
 
     private void importSignalAsMode2MenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importSignalAsMode2MenuItemActionPerformed
@@ -8197,7 +8229,11 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_unsetTMenuItemActionPerformed
 
     private void irpMasterDocuMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpMasterDocuMenuItemActionPerformed
-        guiUtils.browse(properties.getIrpMasterHelpfileUrl());
+        try {
+            guiUtils.browse(new File(properties.getIrpMasterHelpfilePath()));
+        } catch (URISyntaxException | MalformedURLException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_irpMasterDocuMenuItemActionPerformed
 
     private void debugCodeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugCodeMenuItemActionPerformed
@@ -8251,7 +8287,11 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_importCommandFusionMenuItem2ActionPerformed
 
     private void tutorialMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tutorialMenuItemActionPerformed
-        guiUtils.browse(properties.getTutorialUrl());
+        try {
+            guiUtils.browse(new URI(properties.getTutorialUrl()));
+        } catch (URISyntaxException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_tutorialMenuItemActionPerformed
 
     private void exportCharsetMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportCharsetMenuItemActionPerformed
