@@ -75,7 +75,8 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int noRepeats, File saveFile) throws IrpMasterException, FileNotFoundException, IOException {
+    public void export(RemoteSet remoteSet, String title, int noRepeats, File saveFile, String charsetName)
+            throws IrpMasterException, FileNotFoundException, IOException {
 
         Document document = remoteSet.xmlExportDocument(title,
                 null,
@@ -90,7 +91,7 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
         try (OutputStream out = new FileOutputStream(saveFile)) {
             HashMap<String, String> parameters = new HashMap<>(1);
             parameters.put("noRepeats", Integer.toString(noRepeats));
-            xmlExporter.printDOM(out, xslt, parameters, null, binary);
+            xmlExporter.printDOM(out, xslt, parameters, binary, charsetName);
         }
     }
 }

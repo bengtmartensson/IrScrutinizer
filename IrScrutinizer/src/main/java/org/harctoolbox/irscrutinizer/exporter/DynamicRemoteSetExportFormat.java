@@ -110,7 +110,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File saveFile) throws FileNotFoundException, IOException, IrpMasterException {
+    public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName) throws FileNotFoundException, IOException, IrpMasterException {
         Document document = remoteSet.xmlExportDocument(title,
                 null,
                 null,
@@ -119,11 +119,11 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
                 true, //generateRaw,
                 true, //generateCcf,
                 true //generateParameters)
-                );
+        );
         XmlExporter xmlExporter = new XmlExporter(document);
-         try (OutputStream out = new FileOutputStream(saveFile)) {
+        try (OutputStream out = new FileOutputStream(saveFile)) {
             HashMap<String, String> parameters = new HashMap<>(1);
-            xmlExporter.printDOM(out, xslt, parameters, null, binary);
+            xmlExporter.printDOM(out, xslt, parameters, binary, charsetName);
         }
     }
 }

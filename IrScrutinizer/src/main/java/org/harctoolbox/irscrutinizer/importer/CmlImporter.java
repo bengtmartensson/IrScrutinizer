@@ -44,10 +44,12 @@ import org.harctoolbox.irscrutinizer.Version;
 public class CmlImporter extends RemoteSetImporter implements IFileImporter, Serializable {
     // I have no idea of a/the correct character set in the CML files.
     // Therefore, select the largest of the 8 bit character sets.
-    private final String charactersetName = "WINDOWS-1252";
+    private final String defaultCharsetName = "WINDOWS-1252";
     private static final int remoteToken = 0xbbbbbbbb;
     private static final int commandToken = 0xcccccccc;
     private static final int EOF = -1;
+
+    private String charactersetName = null;
 
     public CmlImporter() {
         super();
@@ -60,13 +62,13 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
 
     @Override
     public void load(Reader reader, String origin) throws IOException, ParseException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported.");
     }
 
     @Override
-    public void load(File file, String origin) throws IOException, ParseException {
+    public void load(File file, String origin, String charsetName) throws IOException, ParseException {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            load(fileInputStream, origin);
+            load(fileInputStream, origin, charsetName);
         }
     }
 
@@ -76,7 +78,8 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
     //}
 
     @Override
-    public void load(InputStream reader, String origin) throws IOException, ParseException {
+    public void load(InputStream reader, String origin, String charsetName) throws IOException, ParseException {
+        charactersetName = charsetName;
         prepareLoad(origin);
         remoteSet = parseRemoteSet(reader, origin);
         setupCommands();

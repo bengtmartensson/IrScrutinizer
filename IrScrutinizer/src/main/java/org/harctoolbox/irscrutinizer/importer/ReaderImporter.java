@@ -29,7 +29,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
 import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.IrpUtils;
 
 /**
  * This class extends the Importer with file/reader load functions.
@@ -43,41 +42,41 @@ public abstract class ReaderImporter extends FileImporter {
     public abstract void load(Reader reader, String origin) throws IOException, ParseException;
 
     @Override
-    public void load(File file, String origin) throws IOException, ParseException {
-        load(new InputStreamReader(new FileInputStream(file), IrpUtils.dumbCharset), origin);
+    public void load(File file, String origin, String charsetName) throws IOException, ParseException {
+        load(new InputStreamReader(new FileInputStream(file), charsetName), origin);
     }
 
-    public void load() throws IOException, ParseException, IrpMasterException {
-        load(System.in, "<STDIN>");
+    public void load(String charsetName) throws IOException, ParseException, IrpMasterException {
+        load(System.in, "<STDIN>", charsetName);
     }
 
-    public void load(InputStream inputStream, String origin) throws IOException, ParseException {
-        load(new InputStreamReader(inputStream, IrpUtils.dumbCharset), origin);
+    public void load(InputStream inputStream, String origin, String charsetName) throws IOException, ParseException {
+        load(new InputStreamReader(inputStream, charsetName), origin);
     }
 
-    public void load(String payload, String origin) throws IOException, ParseException, IrpMasterException {
+    public void load(String payload, String origin, String charsetName) throws IOException, ParseException, IrpMasterException {
         //load(new StringReader(payload), origin);
-        load(new ByteArrayInputStream(payload.getBytes(IrpUtils.dumbCharset)), origin);
+        load(new ByteArrayInputStream(payload.getBytes(charsetName)), origin, charsetName);
     }
 
-    public void load(String urlOrFilename, boolean zip) throws IOException, ParseException {
+    public void load(String urlOrFilename, boolean zip, String charsetName) throws IOException, ParseException {
         if (urlOrFilename == null || urlOrFilename.isEmpty())
             throw new IOException("Empty file name/URL");
         try {
             URL url = new URL(urlOrFilename);
             URLConnection urlConnection = url.openConnection();
             InputStream inputStream = urlConnection.getInputStream();
-            load(inputStream, urlOrFilename);
+            load(inputStream, urlOrFilename, charsetName);
         } catch (MalformedURLException ex) {
             if (zip)
-                possiblyZipLoad(new File(urlOrFilename));
+                possiblyZipLoad(new File(urlOrFilename), charsetName);
             else
-                load(new File(urlOrFilename));
+                load(new File(urlOrFilename), charsetName);
         }
     }
 
-    public void load(String urlOrFilename) throws IOException, ParseException, IrpMasterException {
-        load(urlOrFilename, false);
+    public void load(String urlOrFilename, String charsetName) throws IOException, ParseException, IrpMasterException {
+        load(urlOrFilename, false, charsetName);
     }
 
     //public final void possiblyZipLoad(String urlOrFilename) throws IOException, ParseException {

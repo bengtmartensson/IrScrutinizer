@@ -19,6 +19,7 @@ package org.harctoolbox.irscrutinizer.importer;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.IrpMaster.Wave;
@@ -44,13 +45,17 @@ public class WaveImporter extends FileImporter implements IModulatedIrSequenceIm
     }
 
     @Override
-    public void load(File file, String origin) throws IOException {
+    public void load(File file, String origin, String charsetName /* ignored */) throws IOException {
         try {
             Wave wave = new Wave(file);
             sequence = wave.analyze(divideCarrier);
         } catch (UnsupportedAudioFileException ex) {
             throw new IOException(ex.getMessage());
         }
+    }
+
+    public void load(File file) throws IOException, ParseException {
+        load(file, "US-ASCII");
     }
 
     @Override

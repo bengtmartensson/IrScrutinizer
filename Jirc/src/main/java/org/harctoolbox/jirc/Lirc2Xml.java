@@ -200,7 +200,7 @@ public class Lirc2Xml {
                 outFilename = commandLineArgs.outputfile;
             }
 
-            XmlUtils.printDOM(xmlStream, doc, null, commandLineArgs.encoding);
+            XmlUtils.printDOM(xmlStream, doc, commandLineArgs.encoding);
             System.err.println(remotes.size() + " remote(s) written to XML export file " + outFilename + ".");
             System.exit(IrpUtils.exitSuccess);
         } catch (FileNotFoundException ex) {

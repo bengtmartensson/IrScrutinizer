@@ -220,11 +220,13 @@ public class GuiUtils implements Serializable {
             return;
         }
         try {
-            Desktop.getDesktop().browse(uri);
             if (verbose)
                 trace("Browsing URI `" + uri.toString() + "'");
+            Desktop.getDesktop().browse(uri);
         } catch (IOException ex) {
-            error("Could not start browser using uri `" + uri.toString() + "'.");
+            boolean stacktrace = error("Could not start browser using uri `" + uri.toString() + "'.", offerStackTrace);
+            if (stacktrace)
+                ex.printStackTrace(System.err);
         }
     }
 

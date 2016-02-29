@@ -81,8 +81,14 @@ public class WaveExporter extends CommandExporter implements ICommandExporter {
         return "wav";
     }
 
-    @Override
     public void export(Command command, String source, String title, int repeatCount, File exportFile) throws IrpMasterException, FileNotFoundException {
+        export(command, source, title, repeatCount, exportFile, null);
+    }
+
+    @Override
+    public void export(Command command, String source /* ignored */, String title /* ignored */,
+            int repeatCount, File exportFile, String charsetName /* ignored */)
+            throws IrpMasterException, FileNotFoundException {
         ModulatedIrSequence seq = command.toModulatedIrSequence(repeatCount);
         Wave wave = new Wave(seq,
                 sampleFrequency,

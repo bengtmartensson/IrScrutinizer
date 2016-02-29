@@ -1654,6 +1654,15 @@
                 <Property name="text" type="java.lang.String" value="Import options"/>
               </Properties>
               <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="importCharsetMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Character Set..."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Select the character set used by imports."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importCharsetMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="openZipFilesCheckBoxMenuItem">
                   <Properties>
                     <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
@@ -1735,9 +1744,18 @@
                 <Property name="text" type="java.lang.String" value="Export options"/>
               </Properties>
               <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="exportCharsetMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Character Set..."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Select the character set used by exports."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportCharsetMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="creatingUserMenuItem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Creating user..."/>
+                    <Property name="text" type="java.lang.String" value="Creating User..."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="creatingUserMenuItemActionPerformed"/>
@@ -1748,7 +1766,7 @@
                     <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="properties.getExportInquireDeviceData()" type="code"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Inquire Device Data"/>
+                    <Property name="text" type="java.lang.String" value="Inquire Device Metadata"/>
                     <Property name="toolTipText" type="java.lang.String" value="If true, device data (manufacturer, model, name, etc) are inquired before export."/>
                   </Properties>
                   <Events>
@@ -2840,6 +2858,11 @@
               </Layout>
               <SubComponents>
                 <Container class="javax.swing.JTabbedPane" name="importTabbedPane">
+                  <Properties>
+                    <Property name="selectedIndex" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="properties.getImportPaneSelectedIndex()" type="code"/>
+                    </Property>
+                  </Properties>
                   <AccessibilityProperties>
                     <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="importTabbedPane"/>
                   </AccessibilityProperties>

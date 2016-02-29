@@ -44,6 +44,7 @@ import org.harctoolbox.irscrutinizer.Version;
  */
 public class IrTransImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
     public static final String homeUrl = "http://www.irtrans.com";
+    public static final String defaultCharsetName = "windows-1252";
     private static final int dummyEndingGap = 50000;
 
     public IrTransImporter() {
@@ -406,6 +407,10 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                 null, //java.lang.String tool2Version,
                 null, //java.lang.String notes,
                 remotes);
+    }
+
+    public void load(File file) throws IOException, ParseException {
+        load(file, defaultCharsetName);
     }
 
     @Override

@@ -39,6 +39,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,97 +56,17 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.xml.parsers.ParserConfigurationException;
-import org.harctoolbox.IrpMaster.Debug;
-import org.harctoolbox.IrpMaster.DecodeIR;
+import org.harctoolbox.IrpMaster.*;
 import org.harctoolbox.IrpMaster.DecodeIR.DecodeIrException;
-import org.harctoolbox.IrpMaster.DomainViolationException;
-import org.harctoolbox.IrpMaster.ExchangeIR;
-import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
-import org.harctoolbox.IrpMaster.InvalidRepeatException;
-import org.harctoolbox.IrpMaster.IrSequence;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpMaster;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.IrpUtils;
-import org.harctoolbox.IrpMaster.ModulatedIrSequence;
-import org.harctoolbox.IrpMaster.ParseException;
-import org.harctoolbox.IrpMaster.Pronto;
-import org.harctoolbox.IrpMaster.Protocol;
-import org.harctoolbox.IrpMaster.UnassignedException;
-import org.harctoolbox.IrpMaster.UnknownProtocolException;
 import org.harctoolbox.girr.Command;
-import org.harctoolbox.guicomponents.AmxBeaconListenerPanel;
-import org.harctoolbox.guicomponents.CopyClipboardText;
-import org.harctoolbox.guicomponents.ErroneousSelectionException;
-import org.harctoolbox.guicomponents.GuiUtils;
-import org.harctoolbox.guicomponents.HarcletFrame;
-import org.harctoolbox.guicomponents.HelpPopup;
-import org.harctoolbox.guicomponents.HexCalculator;
-import org.harctoolbox.guicomponents.IrPlotter;
-import org.harctoolbox.guicomponents.IrpMasterBean;
-import org.harctoolbox.guicomponents.LookAndFeelManager;
-import org.harctoolbox.guicomponents.SelectFile;
-import org.harctoolbox.guicomponents.TimeFrequencyCalculator;
+import org.harctoolbox.guicomponents.*;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.TimeoutException;
-import org.harctoolbox.harchardware.ir.Arduino;
-import org.harctoolbox.harchardware.ir.CommandFusion;
-import org.harctoolbox.harchardware.ir.GirsClient;
-import org.harctoolbox.harchardware.ir.IrToy;
-import org.harctoolbox.harchardware.ir.IrTrans;
-import org.harctoolbox.harchardware.ir.IrTransIRDB;
-import org.harctoolbox.harchardware.ir.IrWidget;
-import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
-import org.harctoolbox.irscrutinizer.capturinghardware.CapturingGlobalCache;
-import org.harctoolbox.irscrutinizer.capturinghardware.CapturingHardwareManager;
-import org.harctoolbox.irscrutinizer.capturinghardware.CapturingLircMode2;
-import org.harctoolbox.irscrutinizer.capturinghardware.CapturingSerial;
-import org.harctoolbox.irscrutinizer.capturinghardware.ICapturingHardware;
-import org.harctoolbox.irscrutinizer.exporter.ExportFormatManager;
-import org.harctoolbox.irscrutinizer.exporter.Exporter;
-import org.harctoolbox.irscrutinizer.exporter.GirrExporter;
-import org.harctoolbox.irscrutinizer.exporter.ICommandExporter;
-import org.harctoolbox.irscrutinizer.exporter.IExporterFactory;
-import org.harctoolbox.irscrutinizer.exporter.IRemoteSetExporter;
-import org.harctoolbox.irscrutinizer.exporter.LircExporter;
-import org.harctoolbox.irscrutinizer.exporter.ProntoClassicExporter;
-import org.harctoolbox.irscrutinizer.exporter.RemoteSetExporter;
-import org.harctoolbox.irscrutinizer.exporter.SendIrFormatter;
-import org.harctoolbox.irscrutinizer.exporter.ShortCcfFormatter;
-import org.harctoolbox.irscrutinizer.exporter.TextExporter;
-import org.harctoolbox.irscrutinizer.exporter.UeiFormatter;
-import org.harctoolbox.irscrutinizer.exporter.WaveExporter;
-import org.harctoolbox.irscrutinizer.importer.CcfImporter;
-import org.harctoolbox.irscrutinizer.importer.CmlImporter;
-import org.harctoolbox.irscrutinizer.importer.CommandFusionImporter;
-import org.harctoolbox.irscrutinizer.importer.CsvImporter;
-import org.harctoolbox.irscrutinizer.importer.CsvParametrizedImporter;
-import org.harctoolbox.irscrutinizer.importer.CsvRawImporter;
-import org.harctoolbox.irscrutinizer.importer.GirrImporter;
-import org.harctoolbox.irscrutinizer.importer.GlobalCacheIrDatabase;
-import org.harctoolbox.irscrutinizer.importer.ICommandImporter;
-import org.harctoolbox.irscrutinizer.importer.IFileImporter;
-import org.harctoolbox.irscrutinizer.importer.IModulatedIrSequenceImporter;
-import org.harctoolbox.irscrutinizer.importer.IctImporter;
-import org.harctoolbox.irscrutinizer.importer.ImportType;
-import org.harctoolbox.irscrutinizer.importer.Importer;
-import org.harctoolbox.irscrutinizer.importer.IrTransImporter;
-import org.harctoolbox.irscrutinizer.importer.IrdbImporter;
-import org.harctoolbox.irscrutinizer.importer.LircImporter;
-import org.harctoolbox.irscrutinizer.importer.Mode2Importer;
-import org.harctoolbox.irscrutinizer.importer.ProtocolsIni;
-import org.harctoolbox.irscrutinizer.importer.RawLineImporter;
-import org.harctoolbox.irscrutinizer.importer.RmduImporter;
-import org.harctoolbox.irscrutinizer.importer.WaveImporter;
-import org.harctoolbox.irscrutinizer.importer.XcfImporter;
-import org.harctoolbox.irscrutinizer.sendinghardware.ISendingHardware;
-import org.harctoolbox.irscrutinizer.sendinghardware.SendingGenericSerialPort;
-import org.harctoolbox.irscrutinizer.sendinghardware.SendingGlobalCache;
-import org.harctoolbox.irscrutinizer.sendinghardware.SendingHardwareManager;
-import org.harctoolbox.irscrutinizer.sendinghardware.SendingIrAudioPort;
-import org.harctoolbox.irscrutinizer.sendinghardware.SendingIrTrans;
-import org.harctoolbox.irscrutinizer.sendinghardware.SendingLircClient;
-import org.harctoolbox.irscrutinizer.sendinghardware.SendingSerial;
+import org.harctoolbox.harchardware.ir.*;
+import org.harctoolbox.irscrutinizer.capturinghardware.*;
+import org.harctoolbox.irscrutinizer.exporter.*;
+import org.harctoolbox.irscrutinizer.importer.*;
+import org.harctoolbox.irscrutinizer.sendinghardware.*;
 import org.xml.sax.SAXException;
 
 public class GuiMain extends javax.swing.JFrame {
@@ -250,6 +171,7 @@ public class GuiMain extends javax.swing.JFrame {
         guiUtils.setUsePopupsForErrors(false); // during initialization, popup errors might not work
         guiUtils.setUsePopupsForHelp(properties.getUsePopupsForHelp());
         guiUtils.setOfferStackTrace(properties.getOfferStackTrace());
+        guiUtils.setVerbose(properties.getVerbose());
 
         ProntoModel[] prontomodels = ProntoModel.getModels();
         prontoModelNames = new String[prontomodels.length];
@@ -414,6 +336,15 @@ public class GuiMain extends javax.swing.JFrame {
 
         initComponents();
 
+        // Cannot do this in initComponents, since then it will be called therein
+        importTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            @Override
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                int index  = importTabbedPane.getSelectedIndex();
+                properties.setImportPaneSelectedIndex(index);
+            }
+        });
+
         // Scroll the tables to the last line
         parameterTable.addComponentListener(new ComponentAdapter() {
             @Override
@@ -450,6 +381,7 @@ public class GuiMain extends javax.swing.JFrame {
             @Override
             public void propertyChange(String name, Object oldValue, Object newValue) {
                 sendingHardwareManager.setVerbosity((Boolean)newValue);
+                guiUtils.setVerbose((Boolean)newValue);
             }
         });
 
@@ -1062,14 +994,16 @@ public class GuiMain extends javax.swing.JFrame {
         }
 
         File file = exporter.export(commands, source, title, name, manufacturer, model, deviceClass, remoteName,
-                properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this, new File(properties.getExportDir()));
+                properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
+                new File(properties.getExportDir()), properties.getExportCharsetName());
         return file;
     }
 
     private File saveSignal(Command command, String title, ICommandExporter exporter) throws FileNotFoundException, IOException, IrpMasterException {
         //File file = exporter.exportFilename(properties.getExportAutomaticFilenames(), this);
         return exporter.export(command, "IrScrutinizer captured signal", title,
-                properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this, new File(properties.getExportDir()));
+                properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
+                new File(properties.getExportDir()), properties.getExportCharsetName());
     }
 
     private void saveSelectedSignal(JTable table, String title) {
@@ -1091,7 +1025,7 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private void saveSignals(LinkedHashMap<String, Command> commands) throws FileNotFoundException, IOException, IrpMasterException {
-        if (commands.size() == 0)
+        if (commands.isEmpty())
             guiUtils.error("Nothing to export");
         else if (commands.size() == 1) {
             // exporting just a single command
@@ -1151,7 +1085,8 @@ public class GuiMain extends javax.swing.JFrame {
         TextExporter exporter = newTextExporter();
         try {
             File file = exporter.export(capturedDataTextArea.getText().trim(),
-                    properties.getExportAutomaticFilenames(), this, new File(properties.getExportDir()));
+                    properties.getExportAutomaticFilenames(), this, new File(properties.getExportDir()),
+                    properties.getExportCharsetName());
             guiUtils.message("File " + file.getPath() + " successfully written.");
         } catch (IrpMasterException | IOException ex) {
             guiUtils.error(ex);
@@ -1258,7 +1193,8 @@ public class GuiMain extends javax.swing.JFrame {
 
     private <T extends IFileImporter & ICommandImporter> void importConcatenatedCommandsByFileSelector(T importer) {
         try {
-            boolean status = importer.loadFileSelector(this, "Select file for signal import", properties.getDefaultImportDir());
+            boolean status = importer.loadFileSelector(this, "Select file for signal import",
+                    properties.getDefaultImportDir(), properties.getImportCharsetName());
             if (status)
                 importSequence(importer);
         } catch (IrpMasterException | java.text.ParseException | IOException ex) {
@@ -1268,7 +1204,8 @@ public class GuiMain extends javax.swing.JFrame {
 
     private <T extends IFileImporter & IModulatedIrSequenceImporter> void importModulatedIrSequenceByFileSelector(T importer) {
     try {
-            boolean status = importer.loadFileSelector(this, "Select file for signal import", properties.getDefaultImportDir());
+            boolean status = importer.loadFileSelector(this, "Select file for signal import",
+                    properties.getDefaultImportDir(), properties.getImportCharsetName());
             if (status)
                 processIr(importer.getModulatedIrSequence());
         } catch (IOException | java.text.ParseException | IrpMasterException ex) {
@@ -1284,7 +1221,8 @@ public class GuiMain extends javax.swing.JFrame {
                 Thread.sleep(10);
             } catch (InterruptedException ex) {
             }
-            boolean status = importer.loadFileSelector(this, "Select file for signal import", properties.getDefaultImportDir());
+            boolean status = importer.loadFileSelector(this, "Select file for signal import",
+                    properties.getDefaultImportDir(), properties.getImportCharsetName());
             if (status)
                 importCommands(importer.getCommands(), raw);
         } catch (IrpMasterException | IOException | java.text.ParseException ex) {
@@ -2105,6 +2043,7 @@ public class GuiMain extends javax.swing.JFrame {
         jSeparator20 = new javax.swing.JPopupMenu.Separator();
         disregardRepeatMinsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         importOptionsMenu = new javax.swing.JMenu();
+        importCharsetMenuItem = new javax.swing.JMenuItem();
         openZipFilesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         invokeDecodeIrCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         generateRawCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -2113,6 +2052,7 @@ public class GuiMain extends javax.swing.JFrame {
         girrValidateCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         girrSchemaLocationMenuItem = new javax.swing.JMenuItem();
         exportOptionsMenu = new javax.swing.JMenu();
+        exportCharsetMenuItem = new javax.swing.JMenuItem();
         creatingUserMenuItem = new javax.swing.JMenuItem();
         inquiryDeviceDataCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         debugMenu = new javax.swing.JMenu();
@@ -4231,6 +4171,8 @@ public class GuiMain extends javax.swing.JFrame {
 
         importTabbedPane.addTab("CommandFusion", commandFusionImportPanel);
 
+        importTabbedPane.setSelectedIndex(properties.getImportPaneSelectedIndex());
+
         javax.swing.GroupLayout importPanelLayout = new javax.swing.GroupLayout(importPanel);
         importPanel.setLayout(importPanelLayout);
         importPanelLayout.setHorizontalGroup(
@@ -6331,6 +6273,15 @@ public class GuiMain extends javax.swing.JFrame {
 
         importOptionsMenu.setText("Import options");
 
+        importCharsetMenuItem.setText("Character Set...");
+        importCharsetMenuItem.setToolTipText("Select the character set used by imports.");
+        importCharsetMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importCharsetMenuItemActionPerformed(evt);
+            }
+        });
+        importOptionsMenu.add(importCharsetMenuItem);
+
         openZipFilesCheckBoxMenuItem.setSelected(properties.getImportOpensZipFiles());
         openZipFilesCheckBoxMenuItem.setText("Open ZIP files");
         openZipFilesCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -6397,7 +6348,16 @@ public class GuiMain extends javax.swing.JFrame {
 
         exportOptionsMenu.setText("Export options");
 
-        creatingUserMenuItem.setText("Creating user...");
+        exportCharsetMenuItem.setText("Character Set...");
+        exportCharsetMenuItem.setToolTipText("Select the character set used by exports.");
+        exportCharsetMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportCharsetMenuItemActionPerformed(evt);
+            }
+        });
+        exportOptionsMenu.add(exportCharsetMenuItem);
+
+        creatingUserMenuItem.setText("Creating User...");
         creatingUserMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 creatingUserMenuItemActionPerformed(evt);
@@ -6406,7 +6366,7 @@ public class GuiMain extends javax.swing.JFrame {
         exportOptionsMenu.add(creatingUserMenuItem);
 
         inquiryDeviceDataCheckBoxMenuItem.setSelected(properties.getExportInquireDeviceData());
-        inquiryDeviceDataCheckBoxMenuItem.setText("Inquire Device Data");
+        inquiryDeviceDataCheckBoxMenuItem.setText("Inquire Device Metadata");
         inquiryDeviceDataCheckBoxMenuItem.setToolTipText("If true, device data (manufacturer, model, name, etc) are inquired before export.");
         inquiryDeviceDataCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -7669,6 +7629,10 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_capturingHardwareTabbedPaneStateChanged
 
     private void captureTestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_captureTestButtonActionPerformed
+        if (captureThread != null) {
+            guiUtils.error("A capture is still running in \"Scrutinize Remote\". Please stop it first.");
+            return;
+        }
         if (!capturingHardwareManager.hasSelection()) {
             guiUtils.error("No capture device selected.");
             return;
@@ -7855,6 +7819,10 @@ public class GuiMain extends javax.swing.JFrame {
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         if (!capturingHardwareManager.isReady()) {
             guiUtils.error("No capture device selected, aborting");
+            return;
+        }
+        if (captureThread != null) {
+            guiUtils.error("A capture is still running in \"Scrutinize Remote\". Please stop it first.");
             return;
         }
         try {
@@ -8286,6 +8254,26 @@ public class GuiMain extends javax.swing.JFrame {
         guiUtils.browse(properties.getTutorialUrl());
     }//GEN-LAST:event_tutorialMenuItemActionPerformed
 
+    private void exportCharsetMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportCharsetMenuItemActionPerformed
+        String s = guiUtils.getInput("Enter character set to be used for export (e.g. US-ASCII, UTF-8, ISO-8859-1, WINDOWS-1252)", "Export character set inquiry", properties.getExportCharsetName());
+        if (s == null)
+            return;
+        if (Charset.isSupported(s))
+            properties.setExportCharsetName(s);
+        else
+            guiUtils.error("Character set \"" + s + "\" is not supported");
+    }//GEN-LAST:event_exportCharsetMenuItemActionPerformed
+
+    private void importCharsetMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCharsetMenuItemActionPerformed
+        String s = guiUtils.getInput("Enter character set to be used for import (e.g. US-ASCII, UTF-8, ISO-8859-1, WINDOWS-1252)", "Import character set inquiry", properties.getExportCharsetName());
+         if (s == null)
+            return;
+        if (Charset.isSupported(s))
+            properties.setImportCharsetName(s);
+        else
+            guiUtils.error("Character set \"" + s + "\" is not supported");
+    }//GEN-LAST:event_importCharsetMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -8374,6 +8362,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem exitMenuItem;
     private org.harctoolbox.guicomponents.AudioParametersBean exportAudioParametersBean;
     private javax.swing.JMenu exportCapturedMenu;
+    private javax.swing.JMenuItem exportCharsetMenuItem;
     private javax.swing.JButton exportDirOpenButton;
     private javax.swing.JButton exportDirSelectButton;
     private javax.swing.JTextField exportDirectoryTextField;
@@ -8463,6 +8452,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu importCaptureMenu;
     private javax.swing.JMenuItem importCcfMenuItem;
     private javax.swing.JMenuItem importCcfMenuItem1;
+    private javax.swing.JMenuItem importCharsetMenuItem;
     private javax.swing.JButton importCmlHelpButton;
     private javax.swing.JMenuItem importCmlMenuItem;
     private javax.swing.JMenuItem importCmlMenuItem2;

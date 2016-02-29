@@ -87,6 +87,8 @@ public class XmlExporter {
      */
     private static final String girrComment = "This file is in the Girr (General IR Remote) format, see http://www.harctoolbox.org/Girr.html";
 
+    private static final String defaultCharsetName = "UTF-8";
+
     private final Document document;
 
     /**
@@ -133,7 +135,7 @@ public class XmlExporter {
     }
 
     public void printDOM(OutputStream ostr, Document stylesheet, HashMap<String, String>parameters,
-            String doctypeSystemid, boolean binary) throws IOException {
+            boolean binary, String charsetName) throws IOException {
         try {
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer tr;
@@ -141,6 +143,7 @@ public class XmlExporter {
                 tr = factory.newTransformer();
 
                 tr.setOutputProperty(OutputKeys.METHOD, "xml");
+                tr.setOutputProperty(OutputKeys.ENCODING, charsetName);
 
             } else {
                 if (parameters != null)
@@ -150,13 +153,16 @@ public class XmlExporter {
                         e.setAttribute("select", kvp.getValue());
                         stylesheet.getDocumentElement().insertBefore(e, stylesheet.getDocumentElement().getFirstChild());
                     }
-                //XmlUtils.printDOM(System.out, stylesheet, null);
+                NodeList nodeList = stylesheet.getDocumentElement().getElementsByTagName("xsl:output");
+                if (nodeList.getLength() > 0) {
+                    Element e = (Element) nodeList.item(0);
+                    e.setAttribute("encoding", charsetName);
+                }
+                //XmlUtils.printDOM(System.out, stylesheet, null, "UTF-8");
                 tr = factory.newTransformer(new DOMSource(stylesheet));
             }
             tr.setOutputProperty(OutputKeys.INDENT, "yes");
             tr.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            if (doctypeSystemid != null)
-                tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctypeSystemid);
             if (binary) {
                 DOMResult domResult = new DOMResult();
                 tr.transform(new DOMSource(document), domResult);
@@ -186,21 +192,21 @@ public class XmlExporter {
         }
     }
 
-    public void printDOM(OutputStream ostr, String doctypeSystemid) throws IOException {
-        printDOM(ostr, null, null, doctypeSystemid, false);
+    public void printDOM(OutputStream ostr, String charsetName) throws IOException {
+        printDOM(ostr, null, null, false, charsetName);
     }
 
-    public void printDOM(File file, String doctypeSystemid) throws IOException  {
+    public void printDOM(File file, String charsetName) throws IOException  {
         if (file == null)
-            printDOM(System.out, doctypeSystemid);
+            printDOM(System.out, charsetName);
         else {
             try (FileOutputStream stream = new FileOutputStream(file)) {
-                printDOM(stream, doctypeSystemid);
+                printDOM(stream, charsetName);
             }
         }
     }
 
     public void printDOM(File file) throws FileNotFoundException, IOException {
-        printDOM(file, null);
+        printDOM(file, defaultCharsetName);
     }
 }
