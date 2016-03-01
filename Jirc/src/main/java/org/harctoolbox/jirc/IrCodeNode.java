@@ -2,7 +2,7 @@ package org.harctoolbox.jirc;
 
 //struct ir_code_node {
 
-import java.util.ArrayList;
+import java.util.List;
 
 //	ir_code code;
 //	struct ir_code_node *next;
@@ -39,7 +39,7 @@ public class IrCodeNode {
         return code;
     }
 
-    public IrCodeNode(ArrayList<Long> list) {
+    public IrCodeNode(List<Long> list) {
         code = list.get(0);
         list.remove(0);
         next = list.isEmpty() ? null : new IrCodeNode(list);

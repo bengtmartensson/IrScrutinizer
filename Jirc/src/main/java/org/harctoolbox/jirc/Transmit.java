@@ -12,7 +12,7 @@
 
 package org.harctoolbox.jirc;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Transmit {
     private IrRemote remote; // Could really remove all the remote arguments on the private functions...
@@ -393,7 +393,7 @@ void init_send_buffer(void)
         }
     }
 
-    private void send_signals(ArrayList<Integer> signals) {
+    private void send_signals(List<Integer> signals) {
         for (Integer s : signals)
             add_send_buffer(s);
     }

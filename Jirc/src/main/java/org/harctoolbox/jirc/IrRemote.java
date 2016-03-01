@@ -2,10 +2,10 @@ package org.harctoolbox.jirc;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
@@ -226,7 +226,7 @@ public class IrRemote {
 
         //remote.last_code = null;
 
-        LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
+        HashMap<String, Command> commands = new LinkedHashMap<>();
         for (IrNCode c : getCodes()) {
             Command irCommand = toCommand(c, invokeDecodeIr, alternatingSigns, debug);
             if (irCommand != null)
@@ -289,7 +289,7 @@ public class IrRemote {
             return null;
         String decodeir_version = invokeDecodeIr ? DecodeIR.getVersion() : "none";
 
-        LinkedHashMap<String, Remote>girrRemotes = new LinkedHashMap<>();
+        HashMap<String, Remote>girrRemotes = new LinkedHashMap<>();
         for (IrRemote irRemote : remotes.values()) {
             Remote remote = irRemote.toRemote(invokeDecodeIr, alternatingSigns, debug);
             if (remote != null)
@@ -336,9 +336,9 @@ public class IrRemote {
         this.source = source;
     }
 
-    private ArrayList<IrNCode> codes;
+    private List<IrNCode> codes;
 
-    public ArrayList<IrNCode> getCodes() {
+    public List<IrNCode> getCodes() {
         return codes;
     }
 
@@ -536,8 +536,8 @@ public class IrRemote {
     private IrRemote() {
     }
 
-    public IrRemote(String name, ArrayList<String> flags, HashMap<String, Long> unaryParameters,
-            HashMap<String, XY> binaryParameters, ArrayList<IrNCode> codes) {
+    public IrRemote(String name, List<String> flags, HashMap<String, Long> unaryParameters,
+            HashMap<String, XY> binaryParameters, List<IrNCode> codes) {
         this.name = name;
         for (String flag  : flags)
             setNamedFlag(flag);
@@ -1746,7 +1746,7 @@ public class IrRemote {
         return new ModulatedIrSequence(array, (double) freq);
     }
 
-    public ModulatedIrSequence toSequence(ArrayList<Integer> signals, boolean alternatingSigns) throws IncompatibleArgumentException {
+    public ModulatedIrSequence toSequence(List<Integer> signals, boolean alternatingSigns) throws IncompatibleArgumentException {
         int[] array = new int[signals.size() + signals.size() % 2];
         array[array.length - 1] = 0;
         int index = 0;

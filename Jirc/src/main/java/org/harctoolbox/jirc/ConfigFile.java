@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import org.antlr.runtime.ANTLRFileStream;
@@ -36,9 +37,9 @@ public class ConfigFile {
      * Default character set input files.
      * Most LIRC files come from the time when ISO-8859-1 was the coolest thing on the planet.
      */
-    public final static String defaultCharsetName = "ISO-8859-1";
+    public final static String defaultCharsetName = "WINDOWS-1252";
 
-    private LinkedHashMap<String, IrRemote> remotes = new LinkedHashMap<>();
+    private HashMap<String, IrRemote> remotes = new LinkedHashMap<>();
 
     private ConfigFile(File configFileName, int debug, String charsetName) throws IOException {
         this(new ANTLRFileStream(configFileName.getCanonicalPath(), charsetName), debug, configFileName.toString());
@@ -74,11 +75,11 @@ public class ConfigFile {
         }
     }
 
-    public static LinkedHashMap<String, IrRemote> readConfig(File filename, int debug) throws IOException {
+    public static HashMap<String, IrRemote> readConfig(File filename, int debug) throws IOException {
         return readConfig(filename, debug, defaultCharsetName);
     }
 
-    public static LinkedHashMap<String, IrRemote> readConfig(File filename, int debug, String charsetName) throws IOException {
+    public static HashMap<String, IrRemote> readConfig(File filename, int debug, String charsetName) throws IOException {
         if (filename.isFile()) {
             ConfigFile config = new ConfigFile(filename, debug, charsetName);
             return config.remotes;
@@ -93,7 +94,7 @@ public class ConfigFile {
                     System.err.println("Rejecting file " + file.getCanonicalPath());
                     continue;
                 }
-                LinkedHashMap<String, IrRemote> map = readConfig(file, debug, charsetName);
+                HashMap<String, IrRemote> map = readConfig(file, debug, charsetName);
 
                 for (Entry<String, IrRemote> kvp : map.entrySet()) {
                     String remoteName = kvp.getKey();
@@ -115,21 +116,21 @@ public class ConfigFile {
             return null;
     }
 
-    public static LinkedHashMap<String, IrRemote> readConfig(Reader reader, int debug, String source) throws IOException {
+    public static HashMap<String, IrRemote> readConfig(Reader reader, int debug, String source) throws IOException {
         ConfigFile config = new ConfigFile(reader, debug, source);
         return config.remotes;
     }
 
-    public static LinkedHashMap<String, IrRemote> readConfig(InputStream inputStream, int debug, String source) throws IOException {
+    public static HashMap<String, IrRemote> readConfig(InputStream inputStream, int debug, String source) throws IOException {
          return readConfig(inputStream, debug, source, defaultCharsetName);
     }
 
-    public static LinkedHashMap<String, IrRemote> readConfig(InputStream inputStream, int debug, String source, String charsetName) throws IOException {
+    public static HashMap<String, IrRemote> readConfig(InputStream inputStream, int debug, String source, String charsetName) throws IOException {
         ConfigFile config = new ConfigFile(inputStream, debug, source, charsetName);
         return config.remotes;
     }
 
-    public static LinkedHashMap<String, IrRemote> readConfig(String input, int debug, String source) throws IOException {
+    public static HashMap<String, IrRemote> readConfig(String input, int debug, String source) throws IOException {
         ConfigFile config = new ConfigFile(new ANTLRStringStream(input), debug, source);
         return config.remotes;
     }

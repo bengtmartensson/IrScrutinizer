@@ -1,6 +1,6 @@
 package org.harctoolbox.jirc;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Code with name
@@ -10,12 +10,12 @@ public class IrNCode {
     private String name;
     private long code;
     //public int length;
-    private ArrayList<Integer> signals;// int[] signals ;
+    private List<Integer> signals;// int[] signals ;
     private IrCodeNode next;
     private IrCodeNode current;
     private IrCodeNode transmit_state;
 
-    public IrNCode(String name, long code, ArrayList<Integer> signals) {
+    public IrNCode(String name, long code, List<Integer> signals) {
         this.name = name;
         this.code = code;
         this.signals = signals;
@@ -47,7 +47,7 @@ public class IrNCode {
         this(name, code, null);
     }
 
-    public IrNCode(String name, ArrayList<Long> codelist) {
+    public IrNCode(String name, List<Long> codelist) {
         this(name, codelist.get(0), null);
         codelist.remove(0);
         next = codelist.isEmpty() ? null : new IrCodeNode(codelist);
@@ -70,7 +70,7 @@ public class IrNCode {
     /**
      * @return the signals
      */
-    public ArrayList<Integer> getSignals() {
+    public List<Integer> getSignals() {
         return signals;
     }
 

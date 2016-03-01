@@ -32,7 +32,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.XmlUtils;
@@ -135,7 +135,7 @@ public class Lirc2Xml {
         }
 
         try {
-            LinkedHashMap<String, IrRemote> remotes;
+            HashMap<String, IrRemote> remotes;
             if (configFilename == null) {
                 if (commandLineArgs.debug > 0)
                     System.err.println("Reading stdin.");
