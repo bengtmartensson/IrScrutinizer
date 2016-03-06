@@ -13,6 +13,106 @@ Author: Bengt Martensson
 
 -->
 <exportformats>
+
+<exportformat name="RemoteMaster" extension="rmdu" multiSignal="true" simpleSequence="false">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+    <xsl:output method="text" />
+
+    <xsl:template match="/">
+        <xsl:apply-templates select="remotes/remote[position()=1]"/> <!-- just consider the first remote -->
+    </xsl:template>
+
+    <xsl:template match="remote">
+        <xsl:text># This file was created by IrScrutinizer.
+# It is not directly usable in RemoteMaster. For this, make sure that
+# protocols.ini contains the "protocol" ImportOnly. Also, check
+# Options -> "Allow preserve Control", and then select
+# "Preserve: OBC and function parameters" on the "Setup" pane.
+# Then open this file with RemoteMaster, and select a sensible executor
+# (called protocol in RemoteMaster).
+#
+# Original protocol: </xsl:text>
+        <xsl:value-of select="commandSet[position()=1]/command[position()=1]/parameters/@protocol"/>
+        <xsl:text>
+#
+Description=</xsl:text>
+        <xsl:value-of select="@name"/>
+        <xsl:text>
+Notes=</xsl:text>
+        <xsl:value-of select="@comment"/>
+        <xsl:text>\n\nOriginal protocol: </xsl:text>
+        <xsl:value-of select="commandSet[position()=1]/command[position()=1]/parameters/@protocol"/>
+        <xsl:text>
+Remote.name=URC-7781 One For All Digital 12
+Remote.signature=11311131
+DeviceType=Cable
+DeviceIndex=3
+SetupCode=1999
+Protocol=99 99
+Protocol.name=ImportOnly
+ProtocolParms=</xsl:text>
+        <xsl:value-of select="commandSet[position()=1]/command[position()=1]/parameters/parameter[@name='D']/@value"/>
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="commandSet[position()=1]/command[position()=1]/parameters/parameter[@name='S']/@value"/>
+        <xsl:text>
+</xsl:text>
+        <xsl:apply-templates select="commandSet/command"/>
+    </xsl:template>
+
+    <xsl:template match="command">
+        <xsl:text>Function.</xsl:text>
+        <xsl:value-of select="position() - 1"/>
+        <xsl:text>.name=</xsl:text>
+        <xsl:value-of select="@name"/>
+        <xsl:text>
+Function.</xsl:text>
+        <xsl:value-of select="position() - 1"/>
+        <xsl:text>.hex=</xsl:text>
+        <!--xsl:variable name="junk">parameters/parameter[@name='F']/@value</xsl:variable>
+        <xsl:value-of select="java:java.lang.Integer.toHexString(111)"/-->
+        <xsl:call-template name="toHexString">
+            <xsl:with-param name="x" select="parameters/parameter[@name='F']/@value"/>
+        </xsl:call-template>
+        <xsl:apply-templates select="@comment"/>
+        <xsl:text>
+</xsl:text>
+
+    </xsl:template>
+
+    <xsl:template match="@comment">
+        <xsl:text>
+Function.</xsl:text>
+        <xsl:value-of select="count(../preceding-sibling::command)"/>
+        <xsl:text>.notes=</xsl:text>
+        <xsl:value-of select="."/>
+    </xsl:template>
+
+    <xsl:template name="hexDigitWith0">
+        <xsl:param name="x" />
+        <xsl:value-of select="substring('0123456789ABCDEF', $x + 1, 1)"/>
+    </xsl:template>
+
+    <xsl:template name="hexDigit">
+        <xsl:param name="x" />
+        <xsl:value-of select="substring(' 123456789ABCDEF', $x + 1, 1)"/>
+    </xsl:template>
+
+    <xsl:template  name="toHexString">
+        <xsl:param name="x"/>
+        <!--xsl:value-of select="$x"/-->
+        <xsl:call-template name="hexDigit">
+            <xsl:with-param name="x" select="floor($x div 256)" />
+        </xsl:call-template>
+        <xsl:call-template name="hexDigitWith0">
+            <xsl:with-param name="x" select="floor($x div 16) mod 16" />
+        </xsl:call-template>
+        <xsl:call-template name="hexDigitWith0">
+            <xsl:with-param name="x" select="$x mod 16"/>
+        </xsl:call-template>
+    </xsl:template>
+</xsl:stylesheet>
+</exportformat>
+
 <exportformat name="C" extension="c" multiSignal="true" simpleSequence="false">
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="text" />
