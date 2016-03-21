@@ -17,22 +17,20 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.exporter;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.harctoolbox.IrpMaster.IrpMasterException;
+import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.XmlUtils;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.girr.XmlExporter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -41,24 +39,27 @@ import org.xml.sax.SAXException;
  */
 public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements IRemoteSetExporter {
 
-    private final String formatName;
-    private final String extension;
-    private final boolean simpleSequence;
-    private final boolean binary;
     private final Document xslt;
 
-    public Document getXslt() { return xslt; }
+    public Document getXslt() {
+        return xslt;
+    }
 
-    private DynamicRemoteSetExportFormat(Element el) {
-        super();
-        this.formatName = el.getAttribute("name");
-        this.extension = el.getAttribute("extension");
-        this.simpleSequence = Boolean.parseBoolean(el.getAttribute("simpleSequence"));
-        this.binary = Boolean.parseBoolean(el.getAttribute("binary"));
+    static String[][] mkExtensions(String formatName, String extension) {
+        return new String[][] { new String[] { formatName + " files (*." + extension + ")", extension } };
+    }
 
-        xslt = XmlUtils.newDocument();
-        Node stylesheet = el.getElementsByTagName("xsl:stylesheet").item(0);
-        xslt.appendChild(xslt.importNode(stylesheet, true));
+    private static String parseDocumentation(Element el) {
+        NodeList nl = el.getElementsByTagName("documentation");
+        return nl.getLength() > 0 ? ((Element)nl.item(0)).getTextContent() : null;
+    }
+
+    private DynamicRemoteSetExportFormat(String nm, String ext, String documentation, URL url, List<Option> options,
+            boolean simpleSequence, boolean binary, Document xslt) {
+        super(nm, mkExtensions(nm, ext), ext, documentation, url, options, simpleSequence, binary);
+        //if (!options.isEmpty() || !documentation.isEmpty() || url != null)
+        //    panel = new JPanel();
+        this.xslt = xslt;
     }
 
     public static HashMap<String, IExporterFactory> parseExportFormats(File file) throws ParserConfigurationException, SAXException, IOException {
@@ -74,39 +75,44 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         NodeList nl = doc.getElementsByTagName("exportformat");
         for (int i = 0; i < nl.getLength(); i++) {
             final Element el = (Element) nl.item(i);
-            final ICommandExporter ef = (el.getAttribute("multiSignal").equals("true"))
-                    ? new DynamicRemoteSetExportFormat(el)
-                    : new DynamicCommandExportFormat(el);
+            String nm = el.getAttribute("name");
+            String ext = el.getAttribute("extension");
+            String documentation = parseDocumentation(el);
+            URL url = IrpUtils.newURL(el.getAttribute("url"));
+            List<Option> opts = Option.parseOptions(el);
+            boolean seq = Boolean.parseBoolean(el.getAttribute("simpleSequence"));
+            boolean bin = Boolean.parseBoolean(el.getAttribute("binary"));
+            NodeList nodeList = el.getElementsByTagName("xsl:stylesheet");
+            Document xslt;
+            if (nodeList.getLength() > 0) {
+                xslt = XmlUtils.newDocument();
+                xslt.appendChild(xslt.importNode(nodeList.item(0), true));
+            } else
+                xslt = null;
 
-            result.put(ef.getFormatName(), new IExporterFactory() {
+            final ICommandExporter ef = (el.getAttribute("multiSignal").equals("true"))
+                    ? new DynamicRemoteSetExportFormat(nm, ext, documentation, url, opts, seq, bin, xslt)
+                    : new DynamicCommandExportFormat(nm, ext, documentation, url, opts, seq, bin, xslt);
+
+            result.put(ef.getName(), new IExporterFactory() {
 
                 @Override
                 public ICommandExporter newExporter() {
                     return ef;
                 }
+
+                //@Override
+                //public JPanel getPanel() {
+                //    return ef.getPanel();
+                //}
+
+                @Override
+                public String getName() {
+                    return ef.getName();
+                }
             });
         }
         return result;
-    }
-
-    @Override
-    public boolean considersRepetitions() {
-        return this.simpleSequence;
-    }
-
-    @Override
-    public String[][] getFileExtensions() {
-        return new String[][] { new String[] { formatName + " files (*." + extension + ")", extension } };
-    }
-
-    @Override
-    public String getFormatName() {
-        return formatName;
-    }
-
-    @Override
-    public String getPreferredFileExtension() {
-        return extension;
     }
 
     @Override
@@ -127,7 +133,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         XmlExporter xmlExporter = new XmlExporter(document);
         try (OutputStream out = new FileOutputStream(saveFile)) {
             HashMap<String, String> parameters = new HashMap<>(1);
-            xmlExporter.printDOM(out, xslt, parameters, binary, charsetName);
+            xmlExporter.printDOM(out, xslt, parameters, isBinary(), charsetName);
         }
     }
 

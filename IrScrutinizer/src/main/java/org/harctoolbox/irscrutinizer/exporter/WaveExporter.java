@@ -19,6 +19,7 @@ package org.harctoolbox.irscrutinizer.exporter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URL;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.IrpMaster.Wave;
@@ -26,9 +27,15 @@ import org.harctoolbox.girr.Command;
 import org.harctoolbox.guicomponents.AudioParametersBean;
 
 /**
- * This class does something interesting and useful. Or not...
+ *
  */
 public class WaveExporter extends CommandExporter implements ICommandExporter {
+
+    public final static String formatName = "Wave";
+    public final static String[][] fileExtensions = new String[][]{new String[]{"Wave files (*.wav *.wave)", "wav", "wave"}};
+    public final static String preferredFileExtension = "wav";
+    public final static String documentation = "One IrSequence packed as an audion file.";
+    public final static URL url = null;
 
     private int sampleFrequency;
     private int sampleSize;
@@ -46,7 +53,8 @@ public class WaveExporter extends CommandExporter implements ICommandExporter {
             boolean omitTail,
             boolean square,
             boolean divideCarrier) {
-        super();
+        super(formatName, fileExtensions, preferredFileExtension, documentation, url,
+                null /* options */, true /* simpleSequence */, true /* binary */);
         this.sampleFrequency = sampleFrequency;
         this.sampleSize = sampleSize;
         this.channels = channels;
@@ -65,7 +73,7 @@ public class WaveExporter extends CommandExporter implements ICommandExporter {
                 exportAudioParametersBean.getSquare(),
                 exportAudioParametersBean.getDivideCarrier());
     }
-
+/*
     @Override
     public String[][] getFileExtensions() {
         return new String[][]{ new String[] { "Wave files (*.wav *.wave)", "wav", "wave" } };
@@ -79,15 +87,15 @@ public class WaveExporter extends CommandExporter implements ICommandExporter {
     @Override
     public String getPreferredFileExtension() {
         return "wav";
-    }
+    }*/
 
-    public void export(Command command, String source, String title, int repeatCount, File exportFile) throws IrpMasterException, FileNotFoundException {
-        export(command, source, title, repeatCount, exportFile, null);
-    }
+    //public void export(Command command, String source, String title, int repeatCount, File exportFile, String creatingUser) throws IrpMasterException, FileNotFoundException {
+    //    export(command, source, title, repeatCount, exportFile, null, creatingUser);
+    //}
 
     @Override
     public void export(Command command, String source /* ignored */, String title /* ignored */,
-            int repeatCount, File exportFile, String charsetName /* ignored */)
+            int repeatCount, File exportFile, String charsetName /* ignored */, String creatingUser)
             throws IrpMasterException, FileNotFoundException {
         ModulatedIrSequence seq = command.toModulatedIrSequence(repeatCount);
         Wave wave = new Wave(seq,
@@ -99,10 +107,5 @@ public class WaveExporter extends CommandExporter implements ICommandExporter {
                 square,
                 divideCarrier);
         wave.export(exportFile);
-    }
-
-    @Override
-    public boolean considersRepetitions() {
-        return true;
     }
 }

@@ -44,6 +44,10 @@ import org.harctoolbox.girr.RemoteSet;
  * This class does something interesting and useful. Or not...
  */
 public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteSetExporter {
+    public final static String formatName = "ProntoClassic";
+    public final static String[][] fileExtensions = new String[][] { new String[]{ "ccf", "Pronto classic configuration files (*.ccf)" } };
+    public final static String preferredFileExtension = "ccf";
+    public final static String documentation = "A Pronto Classic export consists of a CCF file with the exported signals associated to dummy buttons. The Pronto (Classic) model for which the export is designed is entered in the combo box. Screen size of the Pronto is normally inferred from the model, but can be changed here. The button size of the generated buttons is also entered here.";
 
     private static final int buttonLabelLength = 100;
 
@@ -55,12 +59,13 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
     private int screenHeight;
 
     public ProntoClassicExporter() {
-        super();
+        super(formatName, fileExtensions, preferredFileExtension, documentation, null/*url*/,
+                null /*options*/, false /*simpleSequence*/, true /*binary*/);
     }
 
     public ProntoClassicExporter(ProntoModel prontomodel,
             int buttonwidth, int buttonheight, int screenwidth, int screenheight) {
-        super();
+        this();
         this.prontoModel = prontomodel;
         this.buttonWidth = buttonwidth;
         this.buttonHeight = buttonheight;
@@ -68,7 +73,7 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
         this.screenHeight = screenheight;
     }
 
-    @Override
+    /*@Override
     public String[][] getFileExtensions() {
         return new String[][] { new String[]{ "ccf", "Pronto classic configuration files (*.ccf)" } };
     }
@@ -81,7 +86,7 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
     @Override
     public String getFormatName() {
         return "ProntoClassic";
-    }
+    }*/
 
     @Override
     public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName /* ignored */)

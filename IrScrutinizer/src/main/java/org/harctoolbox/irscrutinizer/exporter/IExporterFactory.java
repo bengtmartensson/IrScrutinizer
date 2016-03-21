@@ -23,4 +23,8 @@ package org.harctoolbox.irscrutinizer.exporter;
 public interface IExporterFactory {
 
     public ICommandExporter newExporter();
+
+    //public JPanel getPanel();
+
+    public String getName();
 }

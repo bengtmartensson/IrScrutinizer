@@ -29,15 +29,17 @@ import org.harctoolbox.girr.Command;
 public interface ICommandExporter {
 
     public File export(Command command, String source, String title, int repeatCount,
-            boolean automaticFilenames, Component parent, File exportDir, String charsetName)
+            boolean automaticFilenames, Component parent, File exportDir, String charsetName, String creatingUser)
             throws IrpMasterException, IOException;
 
     public void export(Command command, String source, String title, int repeatCount, File exportFile,
-            String charsetName) throws IrpMasterException, IOException;
+            String charsetName, String creatingUser) throws IrpMasterException, IOException;
 
-    public boolean considersRepetitions();
+    public boolean isSimpleSequence();
 
     public String getPreferredFileExtension();
 
-    public String getFormatName();
+    public String getName();
+
+    //public JPanel getPanel();
 }

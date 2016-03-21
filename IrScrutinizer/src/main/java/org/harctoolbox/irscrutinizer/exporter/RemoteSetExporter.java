@@ -21,8 +21,10 @@ import java.awt.Component;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
@@ -35,16 +37,19 @@ import org.harctoolbox.irscrutinizer.Version;
  */
 public abstract class RemoteSetExporter extends Exporter {
 
-    protected String creatingUser;
+    RemoteSetExporter(String formatName, String[][] fileExtensions, String preferredFileExtension, String documentation,
+            URL url, List<Option> options, boolean simpleSequence, boolean binary) {
+        super(formatName, fileExtensions, preferredFileExtension, documentation, url, options, simpleSequence, binary);
+    }
 
-    protected  RemoteSetExporter() {
+    /*protected  RemoteSetExporter() {
         this(System.getProperty("user.name", "unknown"));
     }
 
     protected RemoteSetExporter(String creatingUser) {
         super();
         this.creatingUser = creatingUser;
-    }
+    }*/
 
     public void export(RemoteSet remoteSet, String title, int repeatCount, boolean automaticFilenames,
             Component parent, File exportDir, String charsetName)
@@ -54,7 +59,7 @@ public abstract class RemoteSetExporter extends Exporter {
 
     public abstract void export(RemoteSet remoteSet, String title, int repeatCount, File saveFile, String charsetName) throws FileNotFoundException, IOException, IrpMasterException;
 
-    public void export(Remote remote, String title, String source, int repeatCount, File saveFile, String charsetName) throws FileNotFoundException, IrpMasterException, IOException {
+    public void export(Remote remote, String title, String source, int repeatCount, File saveFile, String charsetName, String creatingUser) throws FileNotFoundException, IrpMasterException, IOException {
         RemoteSet remoteSet = new RemoteSet(creatingUser,
                 source,
                 Exporter.getDateString(), //java.lang.String creationDate,
@@ -69,7 +74,7 @@ public abstract class RemoteSetExporter extends Exporter {
 
     public void export(HashMap<String, Command> commands, String source, String title,
             String name, String manufacturer, String model, String deviceClass, String remoteName,
-            int repeatCount, File saveFile, String charsetName) throws FileNotFoundException, IrpMasterException, IOException {
+            int repeatCount, File saveFile, String charsetName, String creatingUser) throws FileNotFoundException, IrpMasterException, IOException {
         Remote remote = new Remote(
                 name,
                 manufacturer,
@@ -83,12 +88,13 @@ public abstract class RemoteSetExporter extends Exporter {
                 null, //String protocol,
                 null //HashMap<String,Long>parameters
         );
-        export(remote, title, source, repeatCount, saveFile, charsetName);
+        export(remote, title, source, repeatCount, saveFile, charsetName, creatingUser);
     }
 
     public File export(HashMap<String, Command> commands, String source, String title,
             String name, String manufacturer, String model, String deviceClass,
-            String remoteName, int repeatCount, boolean automaticFilenames, Component parent, File exportDir, String charsetName)
+            String remoteName, int repeatCount, boolean automaticFilenames, Component parent, File exportDir,
+            String charsetName, String creatingUser)
             throws FileNotFoundException, IrpMasterException, IOException {
         File file = exportFilename(automaticFilenames, parent, exportDir);
         if (file == null)
@@ -106,41 +112,41 @@ public abstract class RemoteSetExporter extends Exporter {
                 null, //String protocol,
                 null //HashMap<String,Long>parameters
                 );
-        export(remote, title, source, repeatCount, file, charsetName);
+        export(remote, title, source, repeatCount, file, charsetName, creatingUser);
         return file;
     }
 
     public void export(Collection<Command> commands, String source, String title, int repeatCount,
-            File saveFile, String charsetName) throws FileNotFoundException, IOException, IrpMasterException {
+            File saveFile, String charsetName, String creatingUser) throws FileNotFoundException, IOException, IrpMasterException {
         HashMap<String, Command> cmds = new HashMap<>();
         for (Command command : commands)
             cmds.put(command.getName(), command);
 
-        export(cmds, source, title, null, null, null, null, null, repeatCount, saveFile, charsetName);
+        export(cmds, source, title, null, null, null, null, null, repeatCount, saveFile, charsetName, creatingUser);
     }
 
     public File export(Command command, String title, String source, int repeatCount,
-            boolean automaticFilenames, Component parent, File exportDir, String charsetName)
+            boolean automaticFilenames, Component parent, File exportDir, String charsetName, String creatingUser)
             throws FileNotFoundException, IOException, IrpMasterException {
         File file = exportFilename(automaticFilenames, parent, exportDir);
         if (file == null)
             return null;
-        export(command, title, source, repeatCount, file, charsetName);
+        export(command, title, source, repeatCount, file, charsetName, creatingUser);
         return file;
     }
 
-    public void export(Command command, String title, String source, int repeatCount, File saveFile, String charsetName)
+    public void export(Command command, String title, String source, int repeatCount, File saveFile, String charsetName, String creatingUser)
             throws FileNotFoundException, IrpMasterException, IOException {
         HashMap<String,Command> commands = new HashMap<>(1);
         commands.put(command.getName(), command);
-        export(commands, title, source, Version.appName + "Export", null, null, null, null, repeatCount, saveFile, charsetName);
+        export(commands, title, source, Version.appName + "Export", null, null, null, null, repeatCount, saveFile, charsetName, creatingUser);
     }
 
     public boolean supportsEmbeddedFormats() {
         return false;
     }
 
-    public boolean considersRepetitions() {
-        return false;
-    }
+    //public boolean considersRepetitions() {
+    //    return false;
+    //}
 }

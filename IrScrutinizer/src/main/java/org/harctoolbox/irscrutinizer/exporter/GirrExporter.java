@@ -20,6 +20,8 @@ package org.harctoolbox.irscrutinizer.exporter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.RemoteSet;
@@ -31,6 +33,22 @@ import org.w3c.dom.Document;
  */
 public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporter {
 
+    public final static String formatName = "Girr";
+    public final static String[][] fileExtensions = { new String[]{ "Girr files (*.girr)", "girr"}, new String[]{ "XML files", "xml"}};
+    public final static String preferredFileExtension = "girr";
+    public final static String documentation = "The native vormat of IrScrutinizer.";
+    public final static URL url = getGirrUrl();
+
+    private static URL getGirrUrl() {
+        URL u;
+        try {
+            u = new URL("http://www.harctoolbox.org/Girr.html");
+        } catch (MalformedURLException ex) {
+            u = null;
+        }
+        return u;
+    }
+
     private String girrStyleSheetType;
     private String girrStyleSheetUrl;
     private boolean fatRaw;
@@ -40,15 +58,17 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     private boolean generateParameters;
     Command.CommandTextFormat[] extraFormats;
 
-    private GirrExporter() {
+    /*private GirrExporter() {
         super();
-    }
+    }*/
 
     public GirrExporter(String creatingUser, String girrStyleSheetType, String girrStyleSheetUrl,
             boolean fatRaw, boolean createSchemaLocation,
             boolean generateRaw, boolean generateCcf,
             boolean generateParameters, Command.CommandTextFormat... extraFormats) {
-        super(creatingUser);
+        //super(creatingUser);
+        super(formatName, fileExtensions, preferredFileExtension, documentation, url, null/*options*/,
+                false /*simpleSequence*/, false /*binary*/);
         this.girrStyleSheetType = girrStyleSheetType;
         this.girrStyleSheetUrl = girrStyleSheetUrl;
         this.fatRaw = fatRaw;
@@ -68,7 +88,7 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
         (new XmlExporter(document)).printDOM(file, charsetName);
     }
 
-    @Override
+    /*@Override
     public String[][] getFileExtensions() {
         return new String[][] { new String[]{ "Girr files (*.girr)", "girr"}, new String[]{ "XML files", "xml"}};
     }
@@ -81,7 +101,7 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     @Override
     public String getFormatName() {
         return "Girr";
-    }
+    }*/
 
     @Override
     public boolean supportsEmbeddedFormats() {

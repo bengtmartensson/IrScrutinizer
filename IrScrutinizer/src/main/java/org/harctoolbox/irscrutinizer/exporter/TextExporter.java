@@ -32,6 +32,10 @@ import org.harctoolbox.irscrutinizer.Utils;
  * This class does something interesting and useful. Or not...
  */
 public class TextExporter extends RemoteSetExporter implements IRemoteSetExporter {
+    public final static String formatName = "Text";
+    public final static String[][] fileExtensions = new String[][]{ new String[] { "Text files (*.txt *.text)", "txt", "text" } };
+    public final static String preferredFileExtension = "txt";
+    public final static String documentation = "Plain text format.";
 
     boolean generateRaw;
     boolean generateCcf;
@@ -41,7 +45,8 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
 
     public TextExporter(boolean generateRaw, boolean generateCcf,
             boolean generateParameters, Command.CommandTextFormat... extraFormatters) {
-        super();
+        super(formatName, fileExtensions, preferredFileExtension, documentation, null/*url*/, null /*options*/,
+                false /*simpleSequence*/, false /*binary*/);
         this.generateRaw = generateRaw;
         this.generateCcf = generateCcf;
         this.generateParameters = generateParameters;
@@ -52,7 +57,7 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
         this(false, true, true, (Command.CommandTextFormat[]) null);
     }
 
-    @Override
+    /*@Override
     public String[][] getFileExtensions() {
         return new String[][]{ new String[] { "Text files (*.txt *.text)", "txt", "text" } };
     }
@@ -65,7 +70,7 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
     @Override
     public String getPreferredFileExtension() {
         return "txt";
-    }
+    }*/
 
     private void open(File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException {
         printStream = new PrintStream(file, charsetName);

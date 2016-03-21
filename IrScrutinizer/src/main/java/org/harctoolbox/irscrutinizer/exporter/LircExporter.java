@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,35 +36,28 @@ import org.harctoolbox.irscrutinizer.Version;
  * This class exports a RemoteSet to a LIRC configuration file.
  */
 public class LircExporter extends RemoteSetExporter implements IRemoteSetExporter {
-    private final static boolean forceRaw = false; // TODO: make user settable
+    public final static String formatName = "Lirc";
+    public final static String[][] fileExtensions = new String[][] { new String[]{ "LIRC files", "lirc" }, new String[]{ "Text files", "txt" }};
+    public final static String preferredFileExtension = "lircd.conf";
+    public final static String documentation = "Lirc text format.";
+    public final static URL url = IrpUtils.newURL("http://www.lirc.org");
+
+    private final static boolean forceRaw = false; // TODO: make user settable, as option
 
     public LircExporter() {
-        super();
-    }
-
-    public LircExporter(String creatingUser) {
-        super(creatingUser);
+        super(formatName, fileExtensions, preferredFileExtension, documentation, url,
+                null /*options*/, false /*simpleSequence*/, false /*binary*/);
     }
 
     @Override
-    public String[][] getFileExtensions() {
-        return new String[][] { new String[]{ "LIRC files", "lirc" }, new String[]{ "Text files", "txt" }};
-    }
-
-    // LIRC in general does not add extensions to its files, therefore we should not do it either.
-    @Override
-    public String getPreferredFileExtension() {
-        return "lircd.conf";
-    }
-
-    @Override
-    public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName) throws FileNotFoundException, IrpMasterException, UnsupportedEncodingException {
+    public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName)
+            throws FileNotFoundException, IrpMasterException, UnsupportedEncodingException {
         // LIRC often does not add extensions to its files, therefore we should not do it either.
         if (remoteSet.getAllCommands().isEmpty())
             throw new IllegalArgumentException("No commands in the remotes.");
 
         try (PrintStream out = new PrintStream(saveFile, charsetName)) {
-            exportPreamble(out, title, charsetName);
+            exportPreamble(out, title, charsetName, remoteSet.getCreatingUser());
 
             for (Remote remote : remoteSet.getRemotes()) {
                 if (!forceRaw && remote.hasThisProtocol("nec1"))
@@ -76,11 +70,6 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         }
     }
 
-    @Override
-    public String getFormatName() {
-        return "LIRC";
-    }
-
     // Jirc's definition of Lirc names:
     // ('!' .. '{' | '}' .. '~' | '\u00A1' .. '\u00FF')+
     private static String lircName(String key) {
@@ -91,7 +80,7 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
      * Write the instance to a the PrintStream in the argument. It is not closed.
      * @param stream PrintStream, should be ready for writing.
      */
-    private void exportPreamble(PrintStream stream, String title, String charsetName) {
+    private void exportPreamble(PrintStream stream, String title, String charsetName, String creatingUser) {
         if (title != null && !title.isEmpty())
             stream.println("# " + title);
         else

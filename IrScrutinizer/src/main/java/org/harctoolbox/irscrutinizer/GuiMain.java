@@ -336,6 +336,8 @@ public class GuiMain extends javax.swing.JFrame {
 
         initComponents();
 
+        addExportFormatsOptions();
+
         // Cannot do this in initComponents, since then it will be called therein
         importTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             @Override
@@ -613,7 +615,7 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private LircExporter newLircExporter() {
-        return new LircExporter(properties.getCreatingUser()/*, new File(properties.getExportDir())*/);
+        return new LircExporter();
     }
 
     public ProntoClassicExporter newProntoClassicExporter() {
@@ -641,11 +643,31 @@ public class GuiMain extends javax.swing.JFrame {
             public ICommandExporter newExporter() {
                 return newGirrExporter();
             }
+
+            /*@Override
+            public JPanel getPanel() {
+                return girrExportOptionsPanel;
+            }*/
+
+            @Override
+            public String getName() {
+                return GirrExporter.formatName;
+            }
         },
                 new IExporterFactory() {
             @Override
             public ICommandExporter newExporter() {
                 return newWaveExporter();
+            }
+
+            /*@Override
+            public JPanel getPanel() {
+                return waveExportOptionsPanel;
+            }*/
+
+            @Override
+            public String getName() {
+                return WaveExporter.formatName;
             }
         },
                 new IExporterFactory() {
@@ -653,11 +675,31 @@ public class GuiMain extends javax.swing.JFrame {
             public ICommandExporter newExporter() {
                 return newTextExporter();
             }
+
+            /*@Override
+            public JPanel getPanel() {
+                return null;
+            }*/
+
+            @Override
+            public String getName() {
+                return TextExporter.formatName;
+            }
         },
                 new IExporterFactory() {
             @Override
             public ICommandExporter newExporter() {
                 return newLircExporter();
+            }
+
+            /*@Override
+            public JPanel getPanel() {
+                return null;
+            }*/
+
+            @Override
+            public String getName() {
+                return LircExporter.formatName;
             }
         },
                 new IExporterFactory() {
@@ -665,7 +707,27 @@ public class GuiMain extends javax.swing.JFrame {
             public ICommandExporter newExporter() {
                 return newProntoClassicExporter();
             }
+
+            /*@Override
+            public JPanel getPanel() {
+                return prontoClassicExportOptionsPanel;
+            }*/
+
+            @Override
+            public String getName() {
+                return ProntoClassicExporter.formatName;
+            }
         });
+    }
+
+    private void addExportFormatsOptions() {
+    /*    for (IExporterFactory format : exportFormatManager.getExportFormats()) {
+            //if (format instanceof DynamicRemoteSetExportFormat) {
+            //    DynamicRemoteSetExportFormat fmt = (DynamicRemoteSetExportFormat) format;
+                JPanel panel = format.getPanel();
+                if (panel != null)
+                    exportSpecificOptionsTabbedPane.addTab(format.getName(), panel);
+            }*/
     }
 
     private RemoteSetExporter newRemoteExporter() {
@@ -995,7 +1057,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         File file = exporter.export(commands, source, title, name, manufacturer, model, deviceClass, remoteName,
                 properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
-                new File(properties.getExportDir()), properties.getExportCharsetName());
+                new File(properties.getExportDir()), properties.getExportCharsetName(), properties.getCreatingUser());
         return file;
     }
 
@@ -1003,7 +1065,7 @@ public class GuiMain extends javax.swing.JFrame {
         //File file = exporter.exportFilename(properties.getExportAutomaticFilenames(), this);
         return exporter.export(command, "IrScrutinizer captured signal", title,
                 properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
-                new File(properties.getExportDir()), properties.getExportCharsetName());
+                new File(properties.getExportDir()), properties.getExportCharsetName(), properties.getCreatingUser());
     }
 
     private void saveSelectedSignal(JTable table, String title) {
@@ -1535,7 +1597,7 @@ public class GuiMain extends javax.swing.JFrame {
         ICommandExporter exporter = format.newExporter();
         boolean supportsEmbedded = IRemoteSetExporter.class.isInstance(exporter) && ((IRemoteSetExporter) exporter).supportsEmbeddedFormats();
         enableSubFormats(supportsEmbedded);
-        exportRepeatComboBox.setEnabled(supportsEmbedded && exportGenerateSendIrCheckBox.isSelected() || exporter.considersRepetitions());
+        exportRepeatComboBox.setEnabled(supportsEmbedded && exportGenerateSendIrCheckBox.isSelected() || exporter.isSimpleSequence());
         //enableRemoteExporers(IRemoteSetExporter.class.isInstance(exporter));
         if (!formatName.equals((String) exportFormatComboBox.getSelectedItem()))
             exportFormatComboBox.setSelectedItem(formatName);
@@ -1558,7 +1620,9 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void loadExportFormatsGuiRefresh() {
         try {
+            // TODO: remove extra panels
             loadExportFormats();
+            // TODO: add new panels
             exportFormatComboBox.setModel(new DefaultComboBoxModel<>(exportFormatManager.toArray()));
             exportFormatComboBox.setSelectedItem(properties.getExportFormatName());
             optionsMenu.remove(dynamicExportFormatsMenuPosition);
@@ -7149,7 +7213,7 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_repeatFinderCheckBoxMenuItemActionPerformed
 
     private void exportRawAsLircMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRawAsLircMenuItemActionPerformed
-        saveRawSignals(new LircExporter(properties.getCreatingUser()/*, new File(properties.getExportDir())*/));
+        saveRawSignals(new LircExporter());
     }//GEN-LAST:event_exportRawAsLircMenuItemActionPerformed
 
     private void importRmduMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importRmduMenuItemActionPerformed
@@ -7171,7 +7235,7 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_setProtocolMenuItemActionPerformed
 
     private void exportParametricAsLircMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportParametricAsLircMenuItemActionPerformed
-        saveParametricSignals(new LircExporter(properties.getCreatingUser()/*, new File(properties.getExportDir())*/));
+        saveParametricSignals(new LircExporter());
     }//GEN-LAST:event_exportParametricAsLircMenuItemActionPerformed
 
     private void nukeHexMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nukeHexMenuItemActionPerformed

@@ -20,6 +20,7 @@ package org.harctoolbox.irscrutinizer.exporter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
@@ -33,7 +34,7 @@ import org.harctoolbox.guicomponents.GuiUtils;
 import org.xml.sax.SAXException;
 
 /**
- * This class does something interesting and useful. Or not...
+ *
  */
 public class ExportFormatManager {
     public interface IExportFormatSelector {
@@ -64,6 +65,10 @@ public class ExportFormatManager {
 
     public IExporterFactory get(String name) {
         return exportFormats.get(name);
+    }
+
+    public Collection<IExporterFactory> getExportFormats() {
+        return exportFormats.values();
     }
 
     private void createMenu(String selection) {

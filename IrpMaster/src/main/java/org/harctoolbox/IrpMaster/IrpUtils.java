@@ -17,6 +17,8 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.IrpMaster;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Locale;
@@ -288,6 +290,14 @@ public class IrpUtils {
             return "";
 
         return prefix + map.get(name) + postfix;
+    }
+
+    public static URL newURL(String str) {
+        try {
+            return new URL(str);
+        } catch (MalformedURLException ex) {
+            return null;
+        }
     }
 
     public static void main(String[] args) {

@@ -17,61 +17,25 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.exporter;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.XmlUtils;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.girr.XmlExporter;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
- * This class does something interesting and useful. Or not...
+ *
  */
 public class DynamicCommandExportFormat extends RemoteSetExporter implements ICommandExporter {
-
-    private final String formatName;
-    private final String extension;
-    private final boolean simpleSequence;
-    private final boolean binary;
     private final Document xslt;
 
-
-    public DynamicCommandExportFormat(Element el) {
-        super();
-        this.formatName = el.getAttribute("name");
-        this.extension = el.getAttribute("extension");
-        this.simpleSequence = Boolean.parseBoolean(el.getAttribute("simpleSequence"));
-        this.binary = Boolean.parseBoolean(el.getAttribute("binary"));
-        xslt = XmlUtils.newDocument(true);
-        Node stylesheet = el.getElementsByTagName("xsl:stylesheet").item(0);
-        xslt.appendChild(xslt.importNode(stylesheet, true));
-    }
-
-    @Override
-    public boolean considersRepetitions() {
-        return this.simpleSequence;
-    }
-
-    @Override
-    public String[][] getFileExtensions() {
-        return new String[][] { new String[] { formatName + " files (*." + extension + ")", extension } };
-    }
-
-    @Override
-    public String getFormatName() {
-        return formatName;
-    }
-
-    @Override
-    public String getPreferredFileExtension() {
-        return extension;
+    DynamicCommandExportFormat(String nm, String ext, String documentation, URL url, List<Option>options,
+            boolean simpleSequence, boolean binary, Document stylesheet) {
+        super(nm, DynamicRemoteSetExportFormat.mkExtensions(nm, ext), ext, documentation, url, options, simpleSequence, binary);
+        xslt = stylesheet;
     }
 
     @Override
@@ -91,7 +55,7 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
         try (OutputStream out = new FileOutputStream(saveFile)) {
             HashMap<String, String> parameters = new HashMap<>(1);
             parameters.put("noRepeats", Integer.toString(noRepeats));
-            xmlExporter.printDOM(out, xslt, parameters, binary, charsetName);
+            xmlExporter.printDOM(out, xslt, parameters, isBinary(), charsetName);
         }
     }
 }

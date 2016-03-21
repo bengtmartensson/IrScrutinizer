@@ -21,29 +21,38 @@ import java.awt.Component;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
+import java.util.List;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
 
 /**
- * This class does something interesting and useful. Or not...
+ *
  */
 public abstract class CommandExporter extends Exporter {
 
-    protected CommandExporter() {
-        super();
+    CommandExporter(String formatName, String[][] fileExtensions, String preferredFileExtension,
+            String documentation, URL url, List<Option> options, boolean simpleSequence,
+            boolean binary) {
+        super(formatName, fileExtensions, preferredFileExtension, documentation, url, options, simpleSequence, binary);
     }
 
-    public abstract void export(Command command, String source, String title, int repeatCount, File exportFile, String charsetName)
+    /*protected CommandExporter() {
+        super();
+    }*/
+
+    public abstract void export(Command command, String source, String title, int repeatCount,
+            File exportFile, String charsetName, String creatingUser)
             throws IrpMasterException, FileNotFoundException;
 
     public File export(Command command, String source, String title, int repeatCount,
-            boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IrpMasterException, IOException {
+            boolean automaticFilenames, Component parent, File exportDir, String charsetName, String creatingUser) throws IrpMasterException, IOException {
         File file = exportFilename(automaticFilenames, parent, exportDir);
-        export(command, source, title, repeatCount, file, charsetName);
+        export(command, source, title, repeatCount, file, charsetName, creatingUser);
         return file;
     }
 
-    public boolean considersRepetitions() {
-        return false;
-    }
+    //public boolean considersRepetitions() {
+    //    return false;
+    //}
 }
