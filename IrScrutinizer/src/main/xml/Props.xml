@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see http://www.gnu.org/licenses/.
 -->
 
+<!-- All relative file names are relative to IRSCRUTINIZERHOME = applicationHome -->
 <properties package="org.harctoolbox.irscrutinizer" useXml = "true" appName="Version.appName" home-environment-var="IRSCRUTINIZERHOME">
     <import class="org.harctoolbox.harchardware.ir.IrTrans"/>
     <import class="org.harctoolbox.harchardware.ir.LircClient"/>
@@ -58,17 +59,17 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="invokeRepeatFinder" type="boolean" default='"true"' doc="Determines if the repeatfinder is invoked on captures and clipboard."/>
     <property name="disregardRepeatMins" type="boolean" default='"false"' doc='Value of the "disregard repeat mins" parameter. See IrpMaster documentation for the semantic.'/>
     <property name="exportDir" type="string" default='System.getProperty("java.io.tmpdir") + File.separator + "exports"' doc='Directory to which to write exports.'/>
-    <property name="defaultImportDir" type="string" default='applicationHome + "testfiles"' doc='Just the starting directory for file selectors.'/>
-    <property name="exportFormatFilePath" type="string" default='applicationHome + "exportformats.xml"' doc='Filename of a file consisting of export format descriptions.'/>
+    <property name="defaultImportDir" type="string" default='"testfiles"' doc='Just the starting directory for file selectors.'/>
+    <property name="exportFormatFilePath" type="string" default='"exportformats.xml"' doc='Filename of a file consisting of export format descriptions.'/>
     <property name="exportFormatName" type="string" default='"Girr"' doc='Name of currenty selected export file format' />
     <property name="globalCacheIpName" type="string" default='""' doc="IP Name or Address of GlobalCache to use (transmitting)."/>
     <property name="globalCacheModule" type="int" default='"2"' doc='Module number of Global Cache to use, see its documentation.'/>
     <property name="globalCachePort" type="int" default='"1"' doc='IR Port number of selected Global Cache module, see Global Cache documenation.'/>
     <property name="globalCacheTimeout" type="int" default='"3000"' doc='Socket timeout for GlobalCache'/>
     <property name="genericSerialPortDeviceName" type="string" default='ifWindows("COM2", "/dev/ttyS0")' doc="Port name for generic serial port"/>
-    <property name="helpfileUrl" type="string" default='(new File(applicationHome + "doc" + File.separator + "IrScrutinizer.html")).toURI().toString()' doc='URL for help file.'/>
-    <property name="irpMasterHelpfileUrl" type="string" default='(new File(applicationHome + "doc" + File.separator + "IrpMaster.html")).toURI().toString()' doc='URL for IrpMaster help file.'/>
-    <property name="releaseNotesUrl" type="string" default='(new File(applicationHome + "doc" + File.separator + "IrScrutinizer.releasenotes.txt")).toURI().toString()' doc='URL for release notes.'/>
+    <property name="helpfilePath" type="string" default='"doc" + File.separator + "IrScrutinizer.html"' doc='Path name for help file.'/>
+    <property name="irpMasterHelpfilePath" type="string" default='"doc" + File.separator + "IrpMaster.html"' doc='Path name for IrpMaster help file.'/>
+    <property name="releaseNotesPath" type="string" default='"doc" + File.separator + "IrScrutinizer.releasenotes.txt"' doc='Path name for release notes.'/>
     <property name="tutorialUrl" type="string" default='"http://www.hifi-remote.com/wiki/index.php?title=IrScrutinizer_Guide"' doc='URL for tutorial.'/>
     <property name="irTransIpName" type="string" default='IrTrans.defaultIrTransIP' doc='IP name or address of IRTrans unit.'/>
     <property name="transmitHardware" type="string" default='"Audio Port"' doc="Name of selected transmit hardware."/>
@@ -98,8 +99,8 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="importCharsetName" type="string" default='"WINDOWS-1252"' doc='Character set used for imports'/>
     <!--property name="exportPersistentParams" type='boolean' default='"false"' doc='If true, parameters declared persistent in the IRP protocol (typically toggle T) are included in the parameteric export, omitted otherwise.'/-->
     <property name="translateProntoFont" type="boolean" default='"true"' doc='If true, one-character Pronto button names, likely using the Pronto font, are tranlated to readable strings.'/>
-    <property name="protocolsIniUrl" type="string" default='applicationHome + "protocols.ini"' doc='Path to protocols.ini' />
-    <property name="irpProtocolsIniPath" type="string" default='applicationHome + "IrpProtocols.ini"' doc='Path to IrpProtocols.ini' />
+    <property name="protocolsIniPath" type="string" default='"protocols.ini"' doc='Path to protocols.ini' />
+    <property name="irpProtocolsIniPath" type="string" default='"IrpProtocols.ini"' doc='Path to IrpProtocols.ini' />
     <property name="creatingUser" type="string" default='System.getProperty("user.name", "unknown")' doc='Name of the user, for documentation purposes'/>
     <property name="rawSeparatorIndex" type="int" default='"0"' doc='Field separator for parsing raw files.'/>
     <property name='rawNameColumn' type="int" default='"1"' doc='Column for name when parsing raw files.'/>
@@ -117,7 +118,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name='parametricNumberBaseIndex' type="int" default='"2"' doc='Number base (index) for interpreting parametric files.'/>
     <property name="parametricSeparatorIndex" type="int" default='"0"' doc='Field separator for parsing parametric files.'/>
 
-    <property name="girrSchemaLocation" type="string" default='"file:///" + applicationHome + "schemas" + File.separator + "girr.xsd"' doc='URL for schema for girr (for validating import).' />
+    <property name="girrSchemaLocation" type="string" default='"http://www.harctoolbox.org/schemas/girr.xsd"' doc='URL for schema for girr (for validating import).' />
     <property name="girrValidate" type="boolean" default='"false"' doc='If true, girr instances are validated against a schema.'/>
 
     <property name="irpMasterCurrentProtocol" type="string" default='"nec1"' doc='Selected protocol for generator.'/>

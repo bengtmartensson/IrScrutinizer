@@ -206,8 +206,12 @@ public class GuiUtils implements Serializable {
         return JOptionPane.showConfirmDialog(frame, message, "Confirmation requested", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
     }
 
-    public void browse(String uri) {
-        browse(URI.create(uri));
+    // There is, deliberately, no public void browse(String string)
+    // rationale: too easy to confuse file names and URLs,
+    // thereby too error prone.
+
+    public void browse(File file) throws MalformedURLException, URISyntaxException {
+        browse(new URL("file", null, file.getAbsolutePath()).toURI());
     }
 
     public void browse(URI uri) {
