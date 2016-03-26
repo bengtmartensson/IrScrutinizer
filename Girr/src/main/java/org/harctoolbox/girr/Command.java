@@ -643,18 +643,19 @@ public class Command implements Serializable {
         }
         if (generateRaw) {
             try {
-            checkForRaw();
-            if (intro != null || repeat != null || ending != null) {
-                Element rawEl = doc.createElement("raw");
-                rawEl.setAttribute("frequency", Integer.toString(frequency));
-                if (dutyCycle > 0)
-                    rawEl.setAttribute("dutyCycle", Double.toString(dutyCycle));
-                element.appendChild(rawEl);
-                processRaw(doc, rawEl, intro, "intro", fatRaw);
-                processRaw(doc, rawEl, repeat, "repeat", fatRaw);
-                processRaw(doc, rawEl, ending, "ending", fatRaw);
-            }
-            } catch (IrpMasterException ex) {
+                checkForRaw();
+                if (intro != null || repeat != null || ending != null) {
+                    Element rawEl = doc.createElement("raw");
+                    rawEl.setAttribute("frequency", Integer.toString(frequency));
+                    if (dutyCycle > 0)
+                        rawEl.setAttribute("dutyCycle", Double.toString(dutyCycle));
+                    element.appendChild(rawEl);
+                    processRaw(doc, rawEl, intro, "intro", fatRaw);
+                    processRaw(doc, rawEl, repeat, "repeat", fatRaw);
+                    processRaw(doc, rawEl, ending, "ending", fatRaw);
+                }
+            } catch (IrpMasterException | NullPointerException ex) {
+                // NullPointerException thrown if irpMaster == null.
                 element.appendChild(doc.createComment("Raw signal requested but could not be generated."));
             }
         }
@@ -666,7 +667,8 @@ public class Command implements Serializable {
                     ccfEl.setTextContent(ccf);
                     element.appendChild(ccfEl);
                 }
-            } catch (IrpMasterException ex) {
+            } catch (IrpMasterException | NullPointerException ex) {
+                // NullPointerException thrown if irpMaster == null.
                 element.appendChild(doc.createComment("Pronto Hex requested but could not be generated."));
             }
         }
