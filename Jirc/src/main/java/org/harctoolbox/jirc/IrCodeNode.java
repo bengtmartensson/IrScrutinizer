@@ -7,29 +7,27 @@ import java.util.List;
 //	ir_code code;
 //	struct ir_code_node *next;
 //};
-public class IrCodeNode {
+
+/**
+ * This class mirrors ir_code_node from Lirc 0.9.0. It consists of an long "code", with
+ * packing to be put in a linked list, the way programming was made the previous century :-).
+ */
+final class IrCodeNode {
 
     private long code;
     private IrCodeNode next;
 
-    private static long parse(String str) {
-        return
-                str.startsWith(("0x")) ? Long.parseLong(str.substring(2), 16)
-                : str.startsWith("0") ? Long.parseLong(str, 8)
-                : Long.parseLong(str);
-    }
-
-    public IrCodeNode(long code, IrCodeNode next) {
+    IrCodeNode(long code, IrCodeNode next) {
         this.code = code;
         this.next = next;
     }
 
-    public IrCodeNode(long code) {
+    IrCodeNode(long code) {
         this(code, null);
     }
 
-    public IrCodeNode(String code) {
-        this(parse(code));
+    IrCodeNode(String code) {
+        this(IrNCode.parseLircNumber(code));
     }
 
     /**
@@ -39,7 +37,7 @@ public class IrCodeNode {
         return code;
     }
 
-    public IrCodeNode(List<Long> list) {
+    IrCodeNode(List<Long> list) {
         code = list.get(0);
         list.remove(0);
         next = list.isEmpty() ? null : new IrCodeNode(list);

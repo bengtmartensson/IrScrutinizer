@@ -59,26 +59,26 @@ public class LircImporter extends RemoteSetImporter implements IReaderImporter, 
 
     @Override
     public void load(InputStream inputStream, String origin, String charsetName) throws IOException {
-        load(ConfigFile.readConfig(inputStream, debug, origin, charsetName), origin);
+        load(ConfigFile.readConfig(inputStream, origin, charsetName, false), origin);
     }
 
     @Override
     public void load(String input, String origin) throws IOException {
-        load(ConfigFile.readConfig(input, debug, origin), origin);
+        load(ConfigFile.readConfig(input, origin, false), origin);
     }
 
     @Override
     public void load(File file, String origin, String charsetName) throws IOException {
-        load(ConfigFile.readConfig(file, debug, charsetName), origin);
+        load(ConfigFile.readConfig(file, charsetName, false), origin);
     }
 
     @Override
     public void load(Reader reader, String origin) throws IOException {
-        load(ConfigFile.readConfig(reader, debug, origin), origin);
+        load(ConfigFile.readConfig(reader, origin, false), origin);
     }
 
     public void load(File file) throws IOException {
-        load(ConfigFile.readConfig(file, debug), file.getCanonicalPath());
+        load(ConfigFile.readConfig(file), file.getCanonicalPath());
     }
 
     @Override
@@ -93,8 +93,9 @@ public class LircImporter extends RemoteSetImporter implements IReaderImporter, 
             // javax.swing.filechooser.FileNameExtensionFilter does not allow
             // file extensions with a dot. Not important enough to fix.
             //new String[]{"Lircd conf files (*.lircd.conf)", "lircd.conf" },
-            new String[]{"Lirc files (*.lirc)", "lirc" },
-            new String[]{"Conf files (*.conf)", "conf" }};
+            new String[]{"Conf files (*.conf)", "conf" },
+            new String[]{"Lirc files (*.lirc)", "lirc" }
+        };
     }
 
     @Override
