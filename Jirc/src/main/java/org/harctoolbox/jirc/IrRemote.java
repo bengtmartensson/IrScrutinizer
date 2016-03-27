@@ -1,7 +1,5 @@
 package org.harctoolbox.jirc;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,7 +18,8 @@ import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 
 /**
- * This class represents a remote in Lirc.
+ * This class represents a remote in Lirc, with all its parameters.
+ * It should preferably not be used outside of the package, and may be package private in a future version.
  */
 final public class IrRemote {
 
@@ -222,9 +221,9 @@ final public class IrRemote {
 
         HashMap<String, Command> commands = new LinkedHashMap<>();
         for (IrNCode c : getCodes()) {
-            Command irCommand = toCommand(c, invokeDecodeIr, generateCcf, alternatingSigns, debug);
-            if (irCommand != null)
-                commands.put(irCommand.getName(), irCommand);
+            Command command = toCommand(c, invokeDecodeIr, generateCcf, alternatingSigns, debug);
+            if (command != null)
+                commands.put(command.getName(), command);
         }
 
         return new Remote(getName(),
@@ -305,11 +304,6 @@ final public class IrRemote {
                 null,
                 girrRemotes);
         return girr;
-    }
-
-    public static RemoteSet newRemoteSet(File configFile, boolean invokeDecodeIr, boolean generateCcf, String creatingUser, int debug) throws IOException {
-        return newRemoteSet(ConfigFile.readConfig(configFile), configFile.getPath(),
-           invokeDecodeIr, generateCcf, creatingUser, true, debug);
     }
 
     private boolean setNamedFlag(String flagName) {

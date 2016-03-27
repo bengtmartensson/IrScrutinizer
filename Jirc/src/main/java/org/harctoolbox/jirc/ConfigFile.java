@@ -20,11 +20,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.Reader;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -32,10 +30,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import org.harctoolbox.girr.RemoteSet;
 
 /**
- * This class parses the Lircd configuration file(s). Its only public members are the static functions readConfig,
- * returning a Collection of IrRemote's.
+ * This class parses the <a href="http://lirc.org/html/lircd.conf.html">Lircd configuration file(s)</a>.
+ * Its preferred public members are the static functions parseConfig,
+ * returning a {@link org.harctoolbox.girr.RemoteSet RemoteSet}.
  */
 
 public final class ConfigFile {
@@ -52,9 +52,7 @@ public final class ConfigFile {
     }
 
     /**
-     * Default character set input files. Most LIRC files come from the time
-     * when ISO-8859-1 was the coolest thing on the planet,
-     * WINDOWS-1252 is just a small superset.
+     * Default character set input files.
      */
     public final static String defaultCharsetName = "WINDOWS-1252";
 
@@ -63,12 +61,8 @@ public final class ConfigFile {
     private String line;
     private String[] words;
 
-    private ConfigFile(File configFileName, String source, String charsetName, boolean lircCode) throws UnsupportedEncodingException, FileNotFoundException, IOException {
-        this(new FileInputStream(configFileName), source, charsetName, lircCode);
-    }
-
-    private ConfigFile(InputStream inputStream, String source, String charsetName, boolean lircCode) throws UnsupportedEncodingException, IOException {
-        this(new InputStreamReader(inputStream, charsetName), source, lircCode);
+    private ConfigFile(File configFileName, String source, String charsetName, boolean acceptLircCode) throws UnsupportedEncodingException, FileNotFoundException, IOException {
+        this(new InputStreamReader(new FileInputStream(configFileName), charsetName), source, acceptLircCode);
     }
 
     private ConfigFile(Reader reader, String source, boolean accepLircCode) throws IOException {
@@ -88,20 +82,13 @@ public final class ConfigFile {
         }
     }
 
-    public static Collection<IrRemote> readConfig(File filename) throws IOException {
-        return readConfig(filename, defaultCharsetName, false);
-    }
-
-    public static Collection<IrRemote> readConfig(File filename, boolean acceptLircCode) throws IOException {
-        return readConfig(filename, defaultCharsetName, acceptLircCode);
-    }
-
     /**
-     * Reads the file given as first argument and deliveres a Collection of IrRemote's.
+     * Reads the file given as first argument and deliveres a Collection of {@link org.harctoolbox.jirc.IrRemote IrRemote}'s.
      *
      * @param filename lirc.conf file
      * @param charsetName Name of the Charset used for reading.
-     * @param acceptLircCode if true, remotes without timing information, depending on special drivers, will be accepted.
+     * @param acceptLircCode if true, so-called LircCode remotes (without timing information, depending on special drivers),
+     * will be accepted.
      * @return Collection of IrRemote's.
      * @throws IOException Misc IO problem
      */
@@ -148,18 +135,45 @@ public final class ConfigFile {
         return config.remotes;
     }
 
-    public static Collection<IrRemote> readConfig(InputStream inputStream, String source, boolean acceptLircCode) throws UnsupportedEncodingException, IOException {
-        return readConfig(inputStream, source, defaultCharsetName, acceptLircCode);
+    /**
+     * Parses a Lirc configuration file, and returns a {@link org.harctoolbox.girr.RemoteSet RemoteSet}.
+     *
+     * @param filename Lirc configuration file
+     * @param charsetName Name of the {@link java.nio.charset.Charset character set} for reading, e.g. URF-8, ISO-8859-1, WINDOWS-1252.
+     * @param acceptLircCode If true, so-called Lirccode files are processed (but will be of limited use anyhow).
+     * @param generateParameters If true, parameters are generated.
+     * @param generateCcf If true, the ccf/hex form of the raw signals is generated.
+     * @param creatingUser Name of the creating user; for documentation purposes.
+     * @param alternatingSigns If true, the generated signals will precede gaps with a minus sign.
+     * @return RemoteSet as per <a href="http://www.harctoolbox.org/Girr.html">Girr specification</a>.
+     * @throws IOException Misc IO errors.
+     */
+    public static RemoteSet parseConfig(File filename, String charsetName, boolean acceptLircCode,
+            boolean generateParameters, boolean generateCcf, String creatingUser, boolean alternatingSigns) throws IOException {
+        Collection<IrRemote> lircRemotes = readConfig(filename, charsetName, acceptLircCode);
+        return IrRemote.newRemoteSet(lircRemotes, filename.getCanonicalPath(), generateParameters, generateCcf,
+                creatingUser, alternatingSigns, 0 /* debug */);
     }
 
-    public static Collection<IrRemote> readConfig(InputStream inputStream, String source, String charsetName, boolean acceptLircCode) throws UnsupportedEncodingException, IOException {
-        ConfigFile config = new ConfigFile(inputStream, source, charsetName, acceptLircCode);
-        return config.remotes;
-    }
-
-    public static Collection<IrRemote> readConfig(String input, String source, boolean acceptLircCode) throws IOException {
-        ConfigFile config = new ConfigFile(new StringReader(input), source, acceptLircCode);
-        return config.remotes;
+    /**
+     * Parses a {@link java.io.Reader Reader} for one or many Lirc configuration "file(s)",
+     * and returns a {@link org.harctoolbox.girr.RemoteSet RemoteSet}.
+     *
+     * @param reader Reader delivering a Lirc configuration file.
+     * @param source String containing the source of the informatsion, for documentation purposes.
+     * @param acceptLircCode If true, so-called Lirccode files are rejected, otherwise they are processed (but will be of limited use anyhow)
+     * @param generateParameters If true, parameters are generated.
+     * @param generateCcf If true, the ccf/hex form of the raw signals is generated.
+     * @param creatingUser Name of the creating user; for documentation purposes.
+     * @param alternatingSigns If true, the generated signals will precede gaps with a minus sign.
+     * @return RemoteSet as per <a href="http://www.harctoolbox.org/Girr.html">Girr specification</a>.
+     * @throws IOException Misc IO errors.
+     */
+    public static RemoteSet parseConfig(Reader reader, String source, boolean acceptLircCode,
+            boolean generateParameters, boolean generateCcf, String creatingUser, boolean alternatingSigns) throws IOException {
+        Collection<IrRemote> lircRemotes = readConfig(reader, source, acceptLircCode);
+        return IrRemote.newRemoteSet(lircRemotes, source, generateParameters, generateCcf,
+                creatingUser, alternatingSigns, 0 /* debug */);
     }
 
     private static class ProtocolParameters {
@@ -376,9 +390,10 @@ public final class ConfigFile {
             throw new ParseException("", reader.getLineNumber());
         if (!words[0].equalsIgnoreCase("name"))
             throw new ParseException("", reader.getLineNumber());
+        String cmdName = words[1];
         consumeLine();
         List<Integer> codes = integerList();
-        IrNCode irNCode = new IrNCode(words[0], 0, codes);
+        IrNCode irNCode = new IrNCode(cmdName, 0, codes);
         return irNCode;
     }
 

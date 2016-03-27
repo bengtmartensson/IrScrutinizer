@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -157,7 +158,7 @@ final public class Lirc2Xml {
                 if (commandLineArgs.debug > 0)
                     System.err.println("Reading stdin.");
 
-                remotes = ConfigFile.readConfig(System.in, "<stdin>", commandLineArgs.inputEncoding, commandLineArgs.lircCode);
+                remotes = ConfigFile.readConfig(new InputStreamReader(System.in, commandLineArgs.inputEncoding), "<stdin>", commandLineArgs.lircCode);
             } else {
                 try {
                     URL url = new URL(configFilename);
@@ -165,8 +166,8 @@ final public class Lirc2Xml {
                         System.err.println("Looks like an url.");
                     URLConnection urlConnection = url.openConnection();
                     InputStream inputStream = urlConnection.getInputStream();
-                    remotes = ConfigFile.readConfig(inputStream, url.toString(),
-                            commandLineArgs.inputEncoding, commandLineArgs.lircCode);
+                    remotes = ConfigFile.readConfig(new InputStreamReader(inputStream, commandLineArgs.inputEncoding),
+                            url.toString(), commandLineArgs.lircCode);
                 } catch (MalformedURLException ex) {
                     if (commandLineArgs.debug > 0)
                         System.err.println("Does not look like an url, hope it is a file.");
