@@ -614,7 +614,17 @@ public class Command implements Serializable {
         if (title != null)
             element.setAttribute("title", title);
         element.setAttribute("name", name);
-        element.setAttribute("master", masterType.name());
+        MasterType actualMasterType = masterType;
+        if (masterType == MasterType.raw && !generateRaw
+                || masterType == MasterType.ccf && !generateCcf
+                || masterType == MasterType.parameters && !generateParameters) {
+            actualMasterType = generateRaw ? MasterType.raw
+                    : generateParameters ? MasterType.parameters
+                    : generateCcf ? MasterType.ccf
+                    : null;
+        }
+        if (actualMasterType != null)
+            element.setAttribute("master", actualMasterType.name());
         if (comment != null)
             element.setAttribute("comment", comment);
         if (notes != null) {
