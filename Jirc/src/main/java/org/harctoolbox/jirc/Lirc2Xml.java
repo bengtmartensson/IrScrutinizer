@@ -192,8 +192,8 @@ final public class Lirc2Xml {
                 }
             }
 
-            RemoteSet remoteSet = IrRemote.newRemoteSet(remotes, configFilename, commandLineArgs.generateParameters, //useSignsInRawSequences,
-                    commandLineArgs.generateCcf, System.getProperty("user.name", "unknown"), /*alternatingSigns=*/ true, commandLineArgs.debug);
+            RemoteSet remoteSet = IrRemote.newRemoteSet(remotes, configFilename,
+                    System.getProperty("user.name", "unknown"), /*alternatingSigns=*/ true, commandLineArgs.debug);
             if (remoteSet == null) {
                 System.err.println("No remotes in found in file " + configFilename + ", no output generated.");
                 System.exit(IrpUtils.exitFatalProgramFailure);

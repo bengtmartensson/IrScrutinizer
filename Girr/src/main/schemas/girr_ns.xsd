@@ -5,12 +5,13 @@
      notice and this notice are preserved.  This file is offered as-is,
      without any warranty.
 -->
-<xs:schema
+<xs:schema targetNamespace="http://www.harctoolbox.org/Girr"
+           xmlns="http://www.harctoolbox.org/Girr"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:xml="http://www.w3.org/XML/1998/namespace"
            xmlns:html="http://www.w3.org/1999/xhtml"
            xmlns:xi="http://www.w3.org/2001/XInclude"
->
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:annotation>
         <xs:documentation>
             <html:div>

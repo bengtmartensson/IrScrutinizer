@@ -213,7 +213,7 @@ final public class IrRemote {
         return applicationData;
     }
 
-    public Remote toRemote(boolean invokeDecodeIr, boolean generateCcf, boolean alternatingSigns, int debug) {
+    public Remote toRemote(boolean alternatingSigns, int debug) {
         HashMap<String, HashMap<String, String>> appDataMap = new LinkedHashMap<>();
         appDataMap.put("jirc", getApplicationData());
 
@@ -221,25 +221,22 @@ final public class IrRemote {
 
         HashMap<String, Command> commands = new LinkedHashMap<>();
         for (IrNCode c : getCodes()) {
-            Command command = toCommand(c, invokeDecodeIr, generateCcf, alternatingSigns, debug);
+            Command command = toCommand(c, alternatingSigns, debug);
             if (command != null)
                 commands.put(command.getName(), command);
         }
 
-        return new Remote(getName(),
-                null, // manufacturer,
-                null, // model,
-                null, // deviceClass,
-                null, // remoteName,
+        Remote.MetaData metaData = new Remote.MetaData(getName());
+        return new Remote(metaData,
                 null, // comment,
                 null, // notes,
                 commands,
                 appDataMap);
     }
 
-    Command toCommand(IrNCode code, boolean invokeDecodeIr, boolean generateCcf, boolean alternatingSigns, int debug) {
+    Command toCommand(IrNCode code, boolean alternatingSigns, int debug) {
         return isTimingInfo()
-                ? toTimedCommand(code, invokeDecodeIr, generateCcf, alternatingSigns, debug)
+                ? toTimedCommand(code, alternatingSigns, debug)
                 : toLircCodeCommand(code);
     }
 
@@ -255,10 +252,10 @@ final public class IrRemote {
         }
     }
 
-    Command toTimedCommand(IrNCode code, boolean invokeDecodeIr, boolean generateCcf, boolean alternatingSigns, int debug) {
+    Command toTimedCommand(IrNCode code, boolean alternatingSigns, int debug) {
         IrSignal irSignal = toIrSignal(code, alternatingSigns, debug);
         return irSignal != null
-                ? new Command(code.getName(), /*comment=*/null, irSignal, generateCcf/*true*/, invokeDecodeIr/*decode=* /true*/)
+                ? new Command(code.getName(), /*comment=*/null, irSignal)
                 : null;
     }
 
@@ -287,14 +284,14 @@ final public class IrRemote {
     }
 
     public static RemoteSet newRemoteSet(Collection<IrRemote> remotes, String configFilename,
-            boolean invokeDecodeIr, boolean generateCcf, String creatingUser, boolean alternatingSigns, int debug) {
+            String creatingUser, boolean alternatingSigns, int debug) {
         if (remotes == null || remotes.isEmpty())
             return null;
-        String decodeir_version = invokeDecodeIr ? DecodeIR.getVersion() : "none";
+        String decodeir_version = DecodeIR.getVersion();
 
         HashMap<String, Remote>girrRemotes = new LinkedHashMap<>();
         for (IrRemote irRemote : remotes) {
-            Remote remote = irRemote.toRemote(invokeDecodeIr, generateCcf, alternatingSigns, debug);
+            Remote remote = irRemote.toRemote(alternatingSigns, debug);
             girrRemotes.put(remote.getName(), remote);
         }
 

@@ -59,6 +59,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.harctoolbox.IrpMaster.*;
 import org.harctoolbox.IrpMaster.DecodeIR.DecodeIrException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.Remote;
 import org.harctoolbox.guicomponents.*;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.TimeoutException;
@@ -114,6 +115,8 @@ public class GuiMain extends javax.swing.JFrame {
     private transient ExportFormatManager exportFormatManager;
     private transient SendingHardwareManager sendingHardwareManager;
     private transient CapturingHardwareManager capturingHardwareManager;
+
+    private Remote.MetaData metaData = new Remote.MetaData("unnamed");
 
     // FIXME: make user settable??
     private final static boolean forgiveSillySignals = true;
@@ -979,24 +982,25 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private File saveCommands(HashMap<String, Command> commands, String source, String title, RemoteSetExporter exporter) throws FileNotFoundException, IrpMasterException, IOException {
-        String manufacturer = null;
-        String model = null;
-        String deviceClass = null;
-        String remoteName = null;
-        String name = "unnamed";
-
         if (properties.getExportInquireDeviceData()) {
-            manufacturer = guiUtils.getInput("Enter manufacturer", "Manufacturer entry", "manufacturer");
-            model = guiUtils.getInput("Enter model", "Model entry", "model");
-            deviceClass = guiUtils.getInput("Enter device class", "Device Class entry", "device_class");
-            remoteName = guiUtils.getInput("Enter name of the remote", "Remote name entry", "unknown_remote");
-            name = guiUtils.getInput("Enter name of this document", "Document name entry", "unknown_thing");
+            // TODO: replace with a custom dialog.
+            String name = inquire("Enter your name of this remote", "Remote name entry", metaData.getName());
+            String manufacturer = inquire("Enter manufacturer", "Manufacturer entry", metaData.getManufacturer());
+            String model = inquire("Enter model", "Model entry", metaData.getModel());
+            String deviceClass = inquire("Enter device class", "Device Class entry", metaData.getDeviceClass());
+            String remoteName = inquire("Enter manufacturers name of the remote", "Remote name entry", metaData.getRemoteName());
+            metaData = new Remote.MetaData(name, manufacturer, model, deviceClass, remoteName);
         }
 
-        File file = exporter.export(commands, source, title, name, manufacturer, model, deviceClass, remoteName,
+        File file = exporter.export(commands, source, title, metaData,
                 properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
                 new File(properties.getExportDir()), properties.getExportCharsetName());
         return file;
+    }
+
+    private String inquire(String prompt, String title, String dflt) {
+        String answer = guiUtils.getInput("Enter your name of this remote", "Remote name entry", dflt);
+        return answer != null ? answer : dflt;
     }
 
     private File saveSignal(Command command, String title, ICommandExporter exporter) throws FileNotFoundException, IOException, IrpMasterException {
@@ -1052,7 +1056,7 @@ public class GuiMain extends javax.swing.JFrame {
                 guiUtils.error("Not exporting empty signal.");
                 return;
             }
-            Command command = new Command("IrScrutinizer captured signal", null, irSignal, true, true);
+            Command command = new Command("IrScrutinizer captured signal", null, irSignal);
             File savedFile = saveSignal(command, "IrScrutinizer scrutinized signal", exporter);
             if (savedFile != null)
                 guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
@@ -1153,6 +1157,20 @@ public class GuiMain extends javax.swing.JFrame {
         }
     }
 
+    private static ModulatedIrSequence concatenateAsSequence(Collection<Command>commands) throws IrpMasterException {
+        double frequency = (double) IrpUtils.invalid;
+        double dutyCycle = (double) IrpUtils.invalid;
+        IrSequence seq = new IrSequence();
+        for (Command c : commands) {
+            if (frequency < 0) // take the first sensible frequency
+                frequency = c.getFrequency();
+            if (dutyCycle <= 0)
+                dutyCycle = c.getDutyCycle();
+            seq = seq.append(c.toIrSignal().toModulatedIrSequence(1));
+        }
+        return new ModulatedIrSequence(seq, frequency, dutyCycle);
+    }
+
     private void importSequence(ICommandImporter importer) throws IrpMasterException {
         Collection<Command> commands = importer.getCommands();
                 if (commands.isEmpty()) {
@@ -1163,7 +1181,7 @@ public class GuiMain extends javax.swing.JFrame {
                 && ! guiUtils.confirm("There are " + commands.size() + " commands. Proceed?"))
             return;
 
-        processIr(Command.appendAsSequence(commands));
+        processIr(concatenateAsSequence(commands));
     }
 
     public void importCommands(Collection<Command> commands, boolean raw) throws IrpMasterException {

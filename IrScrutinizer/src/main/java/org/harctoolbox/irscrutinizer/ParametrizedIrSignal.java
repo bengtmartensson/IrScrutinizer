@@ -65,7 +65,6 @@ public class ParametrizedIrSignal extends NamedIrSignal {
 
     public ParametrizedIrSignal(Command command) throws IrpMasterException {
         super(command.getName(), command.getComment());
-        command.checkForParameters();
         this.protocolName = command.getProtocol();
         this.parameters = command.getParameters();
     }
@@ -192,7 +191,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         @SuppressWarnings("unchecked")
         HashMap<String,Long> localParameters = (HashMap<String,Long>) parameters.clone();
         localParameters.remove("hex");
-        Command command = new Command(getName(), getComment(), protocolName, localParameters, irpMaster, generateRaw, generateCcf);
+        Command command = new Command(getName(), getComment(), protocolName, localParameters);
         return command;
     }
 

@@ -49,7 +49,7 @@ public class LircImporter extends RemoteSetImporter implements IReaderImporter, 
 
     private void load(Collection<IrRemote> lircRemotes, String origin) {
         prepareLoad(origin);
-        remoteSet = IrRemote.newRemoteSet(lircRemotes, origin, isInvokeDecodeIr(), isGenerateCcf(),
+        remoteSet = IrRemote.newRemoteSet(lircRemotes, origin,
                 getCreatingUser(), alternatingSigns, debug);
         setupCommands();
     }

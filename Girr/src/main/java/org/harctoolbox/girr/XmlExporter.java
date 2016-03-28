@@ -80,7 +80,24 @@ public class XmlExporter {
     /**
      * URL for schema file.
      */
+    public static final String schemaLocation = "http://www.harctoolbox.org/Girr http://www.harctoolbox.org/schemas/girr_ns.xsd";
+
+    /**
+     * URL for schema file, namespace-less version.
+     */
     public static final String noNamespaceSchemaLocation = "http://www.harctoolbox.org/schemas/girr.xsd";
+
+    /**
+     * Namespace URI
+     */
+    public static final String girrNamespace = "http://www.harctoolbox.org/Girr";
+
+    /**
+     * URL for schema file supporting name spaces.
+     */
+    public static final String girrSchemaLocation = "http://www.harctoolbox.org/schemas/girr_ns.xsd";
+
+    public static final boolean useNamespaces = true;
 
     /**
      * Comment string pointing to Girr docu.
@@ -111,12 +128,21 @@ public class XmlExporter {
                     "type=\"text/" + stylesheetType + "\" href=\"" + stylesheetUrl + "\"");
             document.appendChild(pi);
         }
+
+        // At least in some Java versions (https://bugs.openjdk.java.net/browse/JDK-7150637)
+        // there is no line feed before and after the comment.
+        // This is technically correct, but looks awful to the human reader.
+        // AFAIK, there is no clean way to fix this.
+        // Possibly works with some Java versions?
         Comment comment = document.createComment(girrComment);
         document.appendChild(comment);
         document.appendChild(root);
+        root.setAttribute("girrVersion", RemoteSet.girrVersion);
         if (createSchemaLocation) {
             root.setAttribute("xmlns:xsi", XmlExporter.w3cSchemaNamespace);
-            root.setAttribute("xsi:noNamespaceSchemaLocation", XmlExporter.noNamespaceSchemaLocation);
+            root.setAttribute("xmlns", girrNamespace);
+            //root.setAttribute("xsi:noNamespaceSchemaLocation", XmlExporter.noNamespaceSchemaLocation);
+            root.setAttribute("xsi:schemaLocation", schemaLocation);
         }
         return document;
     }
@@ -124,7 +150,7 @@ public class XmlExporter {
     public static Document newDocument() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
-        factory.setNamespaceAware(false);
+        factory.setNamespaceAware(false); // FIXME, but carefully...
         Document doc = null;
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();

@@ -11,6 +11,7 @@
     <system systemId="http://www.harctoolbox.org/dtds/properties.dtd" uri="./properties.dtd"/>
     <system systemId="http://www.harctoolbox.org/schemas/girr.xsd" uri="./girr.xsd"/>
     <system systemId="http://www.harctoolbox.org/schemas/exportformats.xsd" uri="./exportformats.xsd"/>
+    <system systemId="http://www.harctoolbox.org/schemas/girr_ns.xsd" uri="./girr_ns.xsd"/>
 
     <!-- Needed by the documentation files -->
     <public publicId="-//APACHE//DTD DocumentationV2.0//en" uri="./document-v20.dtd"/>
@@ -28,6 +29,6 @@
     <!-- Stuff referenced by other files, like girr.xsd -->
     <system systemId="http://www.w3.org/2001/xml.xsd" uri="./xml.xsd"/>
     <system systemId="http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd" uri="./xhtml1-strict.xsd"/>
-
+    <system systemId="https://www.w3.org/2001/XInclude/XInclude.xsd" uri="./XInclude.xsd"/>
 
 </catalog>
