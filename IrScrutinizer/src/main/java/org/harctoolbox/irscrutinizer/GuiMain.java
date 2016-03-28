@@ -2091,6 +2091,9 @@ public class GuiMain extends javax.swing.JFrame {
         homePageMenuItem = new javax.swing.JMenuItem();
         releaseNotesMenuItem = new javax.swing.JMenuItem();
         protocolSpecMenuItem = new javax.swing.JMenuItem();
+        gitMenuItem = new javax.swing.JMenuItem();
+        homePageMenuItem1 = new javax.swing.JMenuItem();
+        homePageMenuItem2 = new javax.swing.JMenuItem();
 
         rawCodeClearMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/eraser.png"))); // NOI18N
         rawCodeClearMenuItem.setText("Clear");
@@ -6468,6 +6471,7 @@ public class GuiMain extends javax.swing.JFrame {
         aboutMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/info.png"))); // NOI18N
         aboutMenuItem.setMnemonic('A');
         aboutMenuItem.setText("About...");
+        aboutMenuItem.setToolTipText("Starts About popup");
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 aboutMenuItemActionPerformed(evt);
@@ -6489,6 +6493,7 @@ public class GuiMain extends javax.swing.JFrame {
         tutorialMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         tutorialMenuItem.setMnemonic('T');
         tutorialMenuItem.setText("Tutorial");
+        tutorialMenuItem.setToolTipText("View tutorial in the browser");
         tutorialMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tutorialMenuItemActionPerformed(evt);
@@ -6531,6 +6536,38 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
         helpMenu.add(protocolSpecMenuItem);
+
+        gitMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/github/GitHub-Mark-24px.png"))); // NOI18N
+        gitMenuItem.setText("Browse Sources on GitHub");
+        gitMenuItem.setToolTipText("Direct the browser to the Github source repository.");
+        gitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gitMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(gitMenuItem);
+
+        homePageMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/idea.png"))); // NOI18N
+        homePageMenuItem1.setMnemonic('H');
+        homePageMenuItem1.setText("Issues (GitHub)");
+        homePageMenuItem1.setToolTipText("Open the Github issues in the browser.");
+        homePageMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                homePageMenuItem1ActionPerformed(evt);
+            }
+        });
+        helpMenu.add(homePageMenuItem1);
+
+        homePageMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mail_generic2.png"))); // NOI18N
+        homePageMenuItem2.setMnemonic('H');
+        homePageMenuItem2.setText("Send feedback");
+        homePageMenuItem2.setToolTipText("Start the mail program for sendiing feedback.");
+        homePageMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                homePageMenuItem2ActionPerformed(evt);
+            }
+        });
+        helpMenu.add(homePageMenuItem2);
 
         menuBar.add(helpMenu);
 
@@ -8332,6 +8369,39 @@ public class GuiMain extends javax.swing.JFrame {
             guiUtils.error("Character set \"" + s + "\" is not supported");
     }//GEN-LAST:event_importCharsetMenuItemActionPerformed
 
+    private void gitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gitMenuItemActionPerformed
+        try {
+            guiUtils.browse(new URI(IrScrutinizer.gitUrl));
+        } catch (URISyntaxException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_gitMenuItemActionPerformed
+
+    private void homePageMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homePageMenuItem1ActionPerformed
+        try {
+            guiUtils.browse(new URI(IrScrutinizer.issuesUrl));
+        } catch (URISyntaxException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_homePageMenuItem1ActionPerformed
+
+    private void homePageMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homePageMenuItem2ActionPerformed
+          try {
+            String body = String.format(
+                    "# Enter message here%%0D%%0A%%0D%%0A%6$s%%0D%%0A%7$s%%0D%%0A"
+                    + "DecodeIR%%3D%1$s %%0D%%0AJava%%3D%2$s %3$s %%0D%%0AOperating system%%3D%4$s-%5$s",
+                    DecodeIR.getVersion(),
+                    System.getProperty("java.vendor"), System.getProperty("java.version"),
+                    System.getProperty("os.name"), System.getProperty("os.arch"),
+                    Version.versionString, applicationHome
+            ).replace(" ", "%20");
+            String subject = ("Feedback to " + Version.versionString).replace(" ", "%20");
+            guiUtils.mail(IrScrutinizer.feedbackMail, subject, body);
+        } catch (URISyntaxException | IOException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_homePageMenuItem2ActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -8491,6 +8561,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton girrWebSiteButton;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean girsClientSerialPortSimpleBean;
     private javax.swing.JPanel girsSendingPanel;
+    private javax.swing.JMenuItem gitMenuItem;
     private org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector globalCacheCaptureSelector;
     private javax.swing.JButton globalCacheDBBrowseButton;
     private org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector globalCacheIrSenderSelector;
@@ -8504,6 +8575,8 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem hideUninterestingColumnsMenuItem1;
     private javax.swing.JMenuItem hideUnusedMenuItem;
     private javax.swing.JMenuItem homePageMenuItem;
+    private javax.swing.JMenuItem homePageMenuItem1;
+    private javax.swing.JMenuItem homePageMenuItem2;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean ictFileImporterBean;
     private javax.swing.JPanel ictImportPanel;
     private javax.swing.JCheckBoxMenuItem ignoreEndingSilenceCheckBoxMenuItem;
