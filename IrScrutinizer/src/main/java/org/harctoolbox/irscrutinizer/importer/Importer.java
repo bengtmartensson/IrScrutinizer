@@ -158,7 +158,7 @@ public abstract class Importer {
         ModulatedIrSequence[] array = new ModulatedIrSequence[commands.size()];
         int index = 0;
         for (Command command : commands) {
-            array[index++] = command.toModulatedIrSequence(1);
+            array[index++] = command.toIrSignal().toModulatedIrSequence(1);
         }
         return new ModulatedIrSequence(array);
     }

@@ -132,7 +132,6 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
                         b1.setLocation(new Point(x * buttonWidth + (x * hRest) / (columns - 1), y * buttonHeight + (y * vRest) / (rows - 1)));
                         b1.setSize(new Dimension(buttonWidth, buttonHeight));
                         panel.addButton(b1);
-                        cmd.checkForCcf();
                         String ccfstring = cmd.getCcf();
 
                         if ((prontoModel.getModel() == ProntoModel.CUSTOM) || (prontoModel.getCapability() & (1 << 18)) != 0)

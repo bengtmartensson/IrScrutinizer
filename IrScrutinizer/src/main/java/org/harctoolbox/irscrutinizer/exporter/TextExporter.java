@@ -105,15 +105,11 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
 
     private String formatCommand(Command command, int count) throws IrpMasterException {
         StringBuilder str = new StringBuilder();
-        if (generateParameters)
-            command.checkForParameters();
         str.append(generateParameters ? command.nameProtocolParameterString() : command.getName()).append(Utils.linefeed);
         if (generateCcf) {
-            command.checkForCcf();
             str.append(command.getCcf()).append(Utils.linefeed);
         }
         if (generateRaw) {
-            command.checkForRaw();
             str.append(command.getIntro()).append(Utils.linefeed);
             str.append(command.getRepeat()).append(Utils.linefeed);
             if (command.getEnding() != null && !command.getEnding().isEmpty())

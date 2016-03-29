@@ -135,7 +135,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
     public void load(File file, String origin, String charsetName /* ignored */) throws IOException, ParseException {
         try {
             loadSchema();
-            load(XmlUtils.openXmlFile(file, validate ? schema : null, false, false), origin);
+            load(XmlUtils.openXmlFile(file, validate ? schema : null, true, true), origin);
         } catch (SAXParseException ex) {
             throw new ParseException(ex.getMessage(), ex.getLineNumber());
         } catch (SAXException ex) {

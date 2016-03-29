@@ -62,7 +62,7 @@ public class RawLineImporter extends RemoteSetImporter implements IReaderImporte
             }
 
             if (name != null && irSignal != null) {
-                Command command = new Command(uniqueName(name), null /*comment*/, irSignal, isGenerateCcf(), isInvokeDecodeIr());
+                Command command = new Command(uniqueName(name), null /*comment*/, irSignal);
                 addCommand(command);
                 name = null;
                 irSignal = null;

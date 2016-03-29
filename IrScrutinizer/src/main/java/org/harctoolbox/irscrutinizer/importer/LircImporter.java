@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013 Bengt Martensson.
+Copyright (C) 2013, 2016 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,13 +20,12 @@ package org.harctoolbox.irscrutinizer.importer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
-import java.util.HashMap;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.girr.Command;
+import java.io.StringReader;
+import java.util.Collection;
 import org.harctoolbox.jirc.ConfigFile;
-import org.harctoolbox.jirc.IrNCode;
 import org.harctoolbox.jirc.IrRemote;
 
 /**
@@ -36,49 +35,43 @@ public class LircImporter extends RemoteSetImporter implements IReaderImporter, 
     public static final String remotesUrl = "http://lirc.sourceforge.net/remotes/";
     public static final String homeUrl = "http://www.lirc.org/";
 
+    /** Jirc/Lirc debug, pretty useless */
     private static final int debug = 0;
+
+    /** We ignore LircCode remotes. */
+    private static final boolean acceptLircCode = false;
+
+    private static final boolean alternatingSigns = true;
 
     public LircImporter() {
         super();
     }
 
-    private void load(HashMap<String,IrRemote> lircRemotes, String origin) {
-        //this.lircRemotes = lircRemotes;
+    private void load(Collection<IrRemote> lircRemotes, String origin) {
         prepareLoad(origin);
-        remoteSet = IrRemote.newRemoteSet(lircRemotes, origin, isInvokeDecodeIr(), getCreatingUser(), true, 0 /* debug */);
-        for (IrRemote remote : lircRemotes.values()) {
-            for (IrNCode code : remote.getCodes()) {
-                IrSignal irSignal = remote.toIrSignal(code, true, debug);
-                if (irSignal != null) {
-                    Command command = new Command(code.getName(), origin /* comment */, irSignal, isGenerateCcf(), isInvokeDecodeIr());
-                    addCommand(command);
-                }
-            }
-        }
+        remoteSet = IrRemote.newRemoteSet(lircRemotes, origin,
+                getCreatingUser(), alternatingSigns, debug);
+        setupCommands();
     }
 
     @Override
     public void load(InputStream inputStream, String origin, String charsetName) throws IOException {
-        load(ConfigFile.readConfig(inputStream, debug, origin, charsetName), origin);
+        load(ConfigFile.readConfig(new InputStreamReader(inputStream, charsetName), origin, acceptLircCode), origin);
     }
 
     @Override
     public void load(String input, String origin) throws IOException {
-        load(ConfigFile.readConfig(input, debug, origin), origin);
+        load(ConfigFile.readConfig(new StringReader(input), origin, acceptLircCode), origin);
     }
 
     @Override
     public void load(File file, String origin, String charsetName) throws IOException {
-        load(ConfigFile.readConfig(file, debug, charsetName), origin);
+        load(ConfigFile.readConfig(file, charsetName, acceptLircCode), origin);
     }
 
     @Override
     public void load(Reader reader, String origin) throws IOException {
-        load(ConfigFile.readConfig(reader, debug, origin), origin);
-    }
-
-    public void load(File file) throws IOException {
-        load(ConfigFile.readConfig(file, debug), file.getCanonicalPath());
+        load(ConfigFile.readConfig(reader, origin, acceptLircCode), origin);
     }
 
     @Override
@@ -93,8 +86,9 @@ public class LircImporter extends RemoteSetImporter implements IReaderImporter, 
             // javax.swing.filechooser.FileNameExtensionFilter does not allow
             // file extensions with a dot. Not important enough to fix.
             //new String[]{"Lircd conf files (*.lircd.conf)", "lircd.conf" },
-            new String[]{"Lirc files (*.lirc)", "lirc" },
-            new String[]{"Conf files (*.conf)", "conf" }};
+            new String[]{"Conf files (*.conf)", "conf" },
+            new String[]{"Lirc files (*.lirc)", "lirc" }
+        };
     }
 
     @Override

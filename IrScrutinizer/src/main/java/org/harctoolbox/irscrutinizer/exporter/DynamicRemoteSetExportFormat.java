@@ -120,10 +120,42 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
                 true, //generateCcf,
                 true //generateParameters)
         );
+        export(document, saveFile, charsetName);
+    }
+
+    public void export(Document document, File saveFile, String charsetName) throws FileNotFoundException, IOException, IrpMasterException {
         XmlExporter xmlExporter = new XmlExporter(document);
         try (OutputStream out = new FileOutputStream(saveFile)) {
             HashMap<String, String> parameters = new HashMap<>(1);
             xmlExporter.printDOM(out, xslt, parameters, binary, charsetName);
+        }
+    }
+
+    public static void main(String[] args) {
+        if (args.length != 3) {
+            System.err.println("Usage:\n\tDynamicRemoteSetExportFormat exportformats.xml formatname girrfile\n");
+            System.exit(1);
+        }
+        File configFile = new File(args[0]);
+        String formatName = args[1];
+        File girrFile = new File(args[2]);
+
+        try {
+            HashMap<String, IExporterFactory> exportFormats = parseExportFormats(configFile);
+            //Schema schema = (SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)).newSchema(new URL("http://www.harctoolbox.org/schemas/exportformats.xsd"));
+            if (!exportFormats.containsKey(formatName)) {
+                System.err.println("No such export format ``" + formatName + "''");
+                System.exit(2);
+            }
+            IExporterFactory format = exportFormats.get(formatName);
+
+            DynamicRemoteSetExportFormat exporter = (DynamicRemoteSetExportFormat) format.newExporter();
+            File outFile = new File(args[2].replaceAll("\\.girr$", "." + exporter.getPreferredFileExtension()));
+            Document doc = XmlUtils.openXmlFile(girrFile);
+            exporter.export(doc, outFile, "ISO-8859-1");
+            System.err.println("Created " + outFile);
+        } catch (ParserConfigurationException | SAXException | IOException | IrpMasterException ex) {
+            System.err.println(ex + ": " + ex.getMessage());
         }
     }
 }

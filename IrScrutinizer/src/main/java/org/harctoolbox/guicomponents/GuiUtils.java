@@ -206,6 +206,11 @@ public class GuiUtils implements Serializable {
         return JOptionPane.showConfirmDialog(frame, message, "Confirmation requested", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
     }
 
+    public void mail(String address, String subject, String body) throws URISyntaxException, IOException {
+        URI uri = new URI("mailto:" + address + "?subject=" + subject + "&body=" + body);
+        Desktop.getDesktop().mail(uri);
+    }
+
     // There is, deliberately, no public void browse(String string)
     // rationale: too easy to confuse file names and URLs,
     // thereby too error prone.

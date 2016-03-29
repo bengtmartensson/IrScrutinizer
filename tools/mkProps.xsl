@@ -36,7 +36,7 @@ import java.util.Properties;
 /**
  * This class handles the properties of the program, saved to a file between program invocations.
  */
-public class Props {
+public final class Props {
     private final static boolean useXml = <xsl:value-of select="@useXml"/>;
     private Properties props;
     private String filename;

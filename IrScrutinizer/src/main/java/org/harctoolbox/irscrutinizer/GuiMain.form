@@ -1873,6 +1873,7 @@
                 </Property>
                 <Property name="mnemonic" type="int" value="65"/>
                 <Property name="text" type="java.lang.String" value="About..."/>
+                <Property name="toolTipText" type="java.lang.String" value="Starts About popup"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="aboutMenuItemActionPerformed"/>
@@ -1900,6 +1901,7 @@
                 </Property>
                 <Property name="mnemonic" type="int" value="84"/>
                 <Property name="text" type="java.lang.String" value="Tutorial"/>
+                <Property name="toolTipText" type="java.lang.String" value="View tutorial in the browser"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tutorialMenuItemActionPerformed"/>
@@ -1941,6 +1943,44 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="protocolSpecMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="gitMenuItem">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icons/github/GitHub-Mark-24px.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Browse Sources on GitHub"/>
+                <Property name="toolTipText" type="java.lang.String" value="Direct the browser to the Github source repository."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gitMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="homePageMenuItem1">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/idea.png"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="72"/>
+                <Property name="text" type="java.lang.String" value="Issues (GitHub)"/>
+                <Property name="toolTipText" type="java.lang.String" value="Open the Github issues in the browser."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="homePageMenuItem1ActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="homePageMenuItem2">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/mail_generic2.png"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="72"/>
+                <Property name="text" type="java.lang.String" value="Send feedback"/>
+                <Property name="toolTipText" type="java.lang.String" value="Start the mail program for sendiing feedback."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="homePageMenuItem2ActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>

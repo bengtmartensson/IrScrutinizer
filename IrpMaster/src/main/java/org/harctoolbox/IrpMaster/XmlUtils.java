@@ -81,6 +81,10 @@ public class XmlUtils {
         return openXmlFile(file, schema, isNamespaceAware, isXIncludeAware);
     }
 
+    public static Document openXmlFile(File file) throws IOException, SAXParseException, SAXException {
+        return openXmlFile(file, (Schema) null, true, true);
+    }
+
     // NOTE: By silly reader, makes null as InputStream, producing silly error messages.
     public static Document openXmlReader(Reader reader, Schema schema, boolean isNamespaceAware, boolean isXIncludeAware) throws IOException, SAXParseException, SAXException {
         return openXmlStream((new InputSource(reader)).getByteStream(), schema, isNamespaceAware, isXIncludeAware);
@@ -124,6 +128,8 @@ public class XmlUtils {
         try {
             builder = factory.newDocumentBuilder();
         } catch (ParserConfigurationException ex) {
+            // there is something seriously wrong
+            throw new RuntimeException(ex);
         }
         return builder;
     }

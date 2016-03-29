@@ -119,7 +119,6 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
     private void exportRemoteRaw(PrintStream stream, Remote remote, int count) throws IrpMasterException {
         exportRemoteHead(stream, remote);
         Command randomCommand = remote.getCommands().values().iterator().next();
-        randomCommand.checkForRaw();
         stream.println("begin remote");
         stream.println("\tname\t" + remote.getName());
         stream.println("\tflags\tRAW_CODES");

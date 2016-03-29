@@ -38,6 +38,12 @@ import org.xml.sax.SAXException;
  */
 public class IrScrutinizer {
 
+    public final static String feedbackMail = "feedback@harctoolbox.org";
+
+    public final static String issuesUrl = "https://github.com/bengtmartensson/harctoolboxbundle/issues";
+
+    public final static String gitUrl = "https://github.com/bengtmartensson/harctoolboxbundle/";
+
     /** Number indicating invalid value. */
     public final static long invalid = -1;
     private final static String backupsuffix = "back";

@@ -68,7 +68,7 @@ public class RawIrSignal extends NamedIrSignal {
     }
 
     public Command toCommand() {
-        Command command = new Command(getName(), getComment(), irSignal, generateCcf, decode);
+        Command command = new Command(getName(), getComment(), irSignal);
         return command;
     }
 

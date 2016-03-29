@@ -30,7 +30,7 @@ package <xsl:value-of select="@package"/>;
 /**
  * This class contains version and license information and constants.
  */
-public class Version {
+public final class Version {
     /** Verbal description of the license of the current work. */
     public final static String licenseString = "<xsl:value-of select="translate(licenseString/., '&#xA;', '')"/>";
 

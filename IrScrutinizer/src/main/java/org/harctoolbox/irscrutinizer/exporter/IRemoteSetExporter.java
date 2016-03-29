@@ -41,12 +41,11 @@ public interface IRemoteSetExporter extends ICommandExporter {
     public void export(Remote remote, String title, String source, int count, File saveFile, String charsetName) throws FileNotFoundException, IrpMasterException, IOException;
 
     public void export(HashMap<String, Command> commands, String source, String title,
-            String name, String manufacturer, String model, String deviceClass, String remoteName,
+            Remote.MetaData metaData,
             int count, File saveFile, String charsetName) throws FileNotFoundException, IrpMasterException, IOException;
 
     public File export(HashMap<String, Command> commands, String source, String title,
-            String name, String manufacturer, String model, String deviceClass,
-            String remoteName, int count, boolean automaticFilenames, Component parent, File exportDir, String charsetName)
+            Remote.MetaData metaData, int count, boolean automaticFilenames, Component parent, File exportDir, String charsetName)
             throws FileNotFoundException, IrpMasterException, IOException;
 
     public void export(Collection<Command> commands, String source, String title, int count, File saveFile, String charsetName)

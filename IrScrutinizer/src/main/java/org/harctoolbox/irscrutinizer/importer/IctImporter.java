@@ -125,7 +125,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
             System.err.println("Warning: carrier_frequency missing, assuming " + (int) IrpUtils.defaultFrequency);
         }
         IrSignal irSignal = ExchangeIR.interpretIrSequence(dataArray, (double) frequency, isInvokeRepeatFinder(), isInvokeAnalyzer());
-        Command command = new Command(uniqueName(name), origin == null ? "ICT import" : ("ICT import from " + origin), irSignal, isGenerateCcf(), isInvokeDecodeIr());
+        Command command = new Command(uniqueName(name), origin == null ? "ICT import" : ("ICT import from " + origin), irSignal);
         addCommand(command);
     }
 

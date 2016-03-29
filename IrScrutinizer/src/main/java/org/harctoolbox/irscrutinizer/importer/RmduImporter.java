@@ -230,11 +230,13 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
 
         HashMap<String,HashMap<String,String>> appParams = new HashMap<>();
         appParams.put("rmdu", parameters);
-        remote = new Remote(Utils.basename(origin),
+        Remote.MetaData metaData = new Remote.MetaData(Utils.basename(origin),
                 null, // manufacturer,
                 null, // model,
                 parameters.get("DeviceType"), // deviceClass,
-                parameters.get("Remote.name"), // String remoteName,
+                parameters.get("Remote.name") // String remoteName,
+        );
+        remote = new Remote(metaData,
                 parameters.get("Description"), //String comment,
                 parameters.get("Notes"),
                 getCommandIndex(),
