@@ -627,7 +627,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
 
     @Override
     public String getVersion() throws IOException {
-        return getVersion(0);
+        return sendCommand("getversion");
     }
 
     public String getNet() throws IOException {
