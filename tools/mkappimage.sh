@@ -46,7 +46,8 @@ chmod 444 ${APPIMAGEDIR}/${MYPROG_LOWER}.desktop
 # Fill "usr/bin"
 install -d ${USR_BIN}
 echo "#!/bin/sh"                                                                    >  ${WRAPPER}
-echo "IRSCRUTINIZERHOME=\$(readlink -f \$(dirname \"\${0}\")/../share/${MYPROG_LOWER})" >> ${WRAPPER}
+echo "unset XDG_DATA_DIRS"                                                          >> ${WRAPPER}
+echo "IRSCRUTINIZERHOME=\${APPDIR}/usr/share/${MYPROG_LOWER}"                       >> ${WRAPPER}
 echo 'cd ${IRSCRUTINIZERHOME}'                                                      >> ${WRAPPER}
 echo "java -Djava.library.path=${JAVA_LIBRARY_PATH} -jar \${IRSCRUTINIZERHOME}/${APPNAME}-jar-with-dependencies.jar \"\$@\"" >> ${WRAPPER}
 chmod 555 ${WRAPPER}
