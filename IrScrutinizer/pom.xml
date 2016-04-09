@@ -94,7 +94,7 @@
             <id>builAppImage</id>
             <activation>
                 <file>
-                    <exists>${basedir}/../../AppImageKit/AppImageAssistant</exists>
+                    <exists>${basedir}/../appimagekit/AppImageAssistant</exists>
                 </file>
             </activation>
             <build>
@@ -116,6 +116,7 @@
                                     <arguments>
                                         <argument>${project.name}</argument>
                                         <argument>${project.version}</argument>
+                                        <argument>${basedir}/../appimagekit</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

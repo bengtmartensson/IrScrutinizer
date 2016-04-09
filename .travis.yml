@@ -9,6 +9,7 @@ install:
 - sudo apt-get update -qq
 - sudo apt-get install -y autoconf dos2unix icoutils python-requests
 script:
+- tools/build-appimagekit.sh
 - tools/build-decodeir.sh
 - tools/build-exchangeir.sh
 - tools/build-jcommander.sh
@@ -16,4 +17,4 @@ script:
 - tools/build-java-readline.sh
 - tools/build-tonto.sh -n
 - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-- tools/travis2github.py IrScrutinizer/target/IrScrutinizer-bin.zip IrScrutinizer/target/IrScrutinizer-*-app.zip
+- tools/travis2github.py IrScrutinizer/target/IrScrutinizer-bin.zip IrScrutinizer/target/IrScrutinizer-*-app.zip IrScrutinizer/target/IrScrutinizer-*AppImage
