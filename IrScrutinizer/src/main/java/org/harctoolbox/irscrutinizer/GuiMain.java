@@ -499,7 +499,7 @@ public class GuiMain extends javax.swing.JFrame {
         });
 
         initializePlot();
-        setTitle(Version.versionString);
+        setTitle(System.getenv("APPIMAGE") == null ? Version.versionString : Version.versionString + " AppImage");
         setupAnalyzerMenu();
         updateOutputFormat(properties.getOutputFormatIndex());
 

@@ -88,6 +88,43 @@
                 </plugins>
             </build>
         </profile>
+
+        <!-- Build AppImage, if possible -->
+        <profile>
+            <id>builAppImage</id>
+            <activation>
+                <file>
+                    <exists>${basedir}/../appimagekit/AppImageAssistant</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.4.0</version>
+                        <executions>
+                            <execution>
+                                <id>make-appimage</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${basedir}/../tools/mkappimage.sh</executable>
+                                    <workingDirectory>${basedir}</workingDirectory>
+                                    <arguments>
+                                        <argument>${project.name}</argument>
+                                        <argument>${project.version}</argument>
+                                        <argument>${basedir}/../appimagekit</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <build>
