@@ -49,7 +49,7 @@
                                     <classifier>bin</classifier>
                                     <type>tar.gz</type>
                                     <outputDirectory>dist</outputDirectory>
-                                    <includes>*.xml,*.ini,doc/*</includes>
+                                    <includes>*.xml,*.ini,doc/*,contributed/*</includes>                                                                       <includes>*.xml,*/*.ini*</includes>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>

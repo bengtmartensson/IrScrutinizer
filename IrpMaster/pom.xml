@@ -167,7 +167,7 @@
                             <resources>
                                 <resource>
                                     <directory>src/main/config</directory>
-                                    <filtering>true</filtering>
+                                    <filtering>false</filtering>
                                 </resource>
                             </resources>
                         </configuration>

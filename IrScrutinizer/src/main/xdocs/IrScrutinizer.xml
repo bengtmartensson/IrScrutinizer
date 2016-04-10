@@ -415,9 +415,9 @@ supposed to be read only when needed. Fundamental knowledge of XML and
 
 <section><title>Format of the file
 <code>exportformats.xml</code></title>
-<p>The file is an XML file read in without validation. The syntax and semantics
-are beleived to be essentailly self explaining or clear from the
-examples aleady in there. An export format is
+<p>The file is an XML file read without validation. The syntax and semantics
+are believed to be essentailly self explaining, or clear from the
+examples already in there. An export format is
 packed in an element of type <code>exportformat</code>. It contains
 the following attributes:</p>
 <dl>

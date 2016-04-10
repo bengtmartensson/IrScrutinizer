@@ -309,7 +309,7 @@
                                 </resource>
                                 <resource>
                                     <directory>../IrpMaster/src/main/config</directory>
-                                    <filtering>true</filtering>
+                                    <filtering>false</filtering>
                                 </resource>
                             </resources>
                         </configuration>

@@ -41,9 +41,10 @@ Name: modifypath; Description: &Add installation directory to path
 Source: "IrScrutinizer-jar-with-dependencies.jar"; DestName: "IrScrutinizer.jar"; DestDir: "{app}"; Flags: ignoreversion; AfterInstall: CreateWrapper
 Source: "..\..\native\Windows-x86\*"; DestDir: "{app}\Windows-x86"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\native\Windows-amd64\*"; DestDir: "{app}\Windows-amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "IrpProtocols.ini"; DestDir: "{app}"; Flags: ignoreversion
+Source: "*.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "protocols.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "exportformats.xml"; DestDir: "{app}"; Flags: ignoreversion
+Source: "contributed\*"; DestDir: "{app}\contributed"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "generated-documents\*.html"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "doc\*.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "doc\IrpMaster.releasenotes.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -92,7 +93,7 @@ begin
    SaveStringToFile(wrapperFilename, '@ECHO off' + #13#10, false);
    SaveStringToFile(wrapperFilename, 'set IRSCRUTINIZERHOME=' + ExpandConstant('{app}') + #13#10, true);
    SaveStringToFile(wrapperFilename, 'set JAVA=java' + #13#10, true);
-   SaveStringToFile(wrapperFilename, '"%JAVA%" "-Djava.library.path=%IRSCRUTINIZERHOME%\' + DllLibraryPath() + '" -classpath "%IRSCRUTINIZERHOME%\IrScrutinizer.jar" org.harctoolbox.irscrutinizer.IrpMaster -c "%IRSCRUTINIZERHOME%\IrpProtocols.ini" %*', true);
+   SaveStringToFile(wrapperFilename, '"%JAVA%" "-Djava.library.path=%IRSCRUTINIZERHOME%\' + DllLibraryPath() + '" -jar "%IRSCRUTINIZERHOME%\IrScrutinizer.jar" --irpmaster -c "%IRSCRUTINIZERHOME%\IrpProtocols.ini" %*', true);
 end;
 
 const

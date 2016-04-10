@@ -51,6 +51,8 @@ install --mode=444 target/${MYPROG}-jar-with-dependencies.jar ${MYPROG_HOME}
 install --mode=444 target/${MYPROG}.png ${MYPROG_HOME}/${MYPROG_LOWER}.png
 install --mode=444 target/*.ini ${MYPROG_HOME}
 install --mode=444 target/exportformats.xml ${MYPROG_HOME}
+install -d ${MYPROG_HOME}/contributed
+install --mode=444 target/contributed/*.ini ${MYPROG_HOME}/contributed
 install --mode=444 target/doc/README* target/doc/LICENSE* ${MYPROG_HOME}
 
 # Create trivial wrappers
@@ -63,7 +65,7 @@ mkdir -p ${PREFIX}/bin
 ln -sf ../share/${MYPROG_LOWER}/${MYPROG_LOWER}.sh ${PREFIX}/bin/${MYPROG_LOWER}
 
 echo "#!/bin/sh" > ${MYPROG_HOME}/irpmaster.sh
-echo "java -Djava.library.path=${LIB} -classpath ${MYPROG_HOME}/${MYPROG}-jar-with-dependencies.jar org.harctoolbox.IrpMaster.IrpMaster \"\$@\"" >> ${MYPROG_HOME}/irpmaster.sh
+echo "java -Djava.library.path=${LIB} -jar ${MYPROG_HOME}/${MYPROG}-jar-with-dependencies.jar --irpmaster -c ${MYPROG_HOME}/IrpProtocols.ini \"\$@\"" >> ${MYPROG_HOME}/irpmaster.sh
 chmod +x ${MYPROG_HOME}/irpmaster.sh
 ln -sf ../share/${MYPROG_LOWER}/irpmaster.sh ${PREFIX}/bin/irpmaster
 

@@ -13,7 +13,7 @@ Author: Bengt Martensson
 
 -->
 
-<!-- If personalizing this file, consider using xinclude. -->
+<!-- If personalizing this file, consider using xinclude, see the end of the file. -->
 
 <exportformats xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xmlns="http://www.harctoolbox.org/exportformats"
@@ -94,7 +94,7 @@ Function.</xsl:text>
 <exportformat name="Arduino Raw" extension="ino" multiSignal="true" simpleSequence="false">
 <!-- Limitations:supports only one remote (ignores all but the first one),
      Does not support ending sequences (ignores them).
-     Does not (yet) guarantee that the generated C identifiers will be unique.
+     Does not guarantee that the generated C identifiers will be unique.
     -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:java="http://xml.apache.org/xalan/java"
                 xmlns:cidentifierfactory="http://xml.apache.org/xalan/java/org.harctoolbox.irscrutinizer.exporter.CIdentifierFactory"
@@ -886,9 +886,9 @@ const char *pronto_</xsl:text>
 
 <!-- Here, additional export formats can be added if the user so desires.
 Consider using XInclude for this, as in the following example. -->
-
+<!--
 <xi:include href="myexportformats.xml">
     <xi:fallback/>
 </xi:include>
-
+-->
 </exportformats>
