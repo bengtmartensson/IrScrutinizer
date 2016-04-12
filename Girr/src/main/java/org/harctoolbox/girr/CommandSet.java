@@ -65,7 +65,7 @@ public class CommandSet {
             for (int i = 0; i < paramList.getLength(); i++) {
                 Element e = (Element) paramList.item(i);
                 try {
-                    parameters.put(e.getAttribute("name"), IrpUtils.parseLong(e.getAttribute("value")));
+                    parameters.put(e.getAttribute("name"), Command.parseParameter(e.getAttribute("value")));
                 } catch (NumberFormatException ex) {
                     throw new ParseException("NumberFormatException " + ex.getMessage(), (int) IrpUtils.invalid);
                 }

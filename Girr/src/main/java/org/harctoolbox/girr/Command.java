@@ -66,6 +66,10 @@ public class Command implements Serializable {
 
     private static final String linefeed = System.getProperty("line.separator", "\n");
 
+    static long parseParameter(String s) throws NumberFormatException {
+        return s.startsWith("0x") ? Long.parseLong(s.substring(2), 16) : Long.parseLong(s);
+    }
+
     /**
      * An implementation of this interface describes a way to format an IrSignal to a text string.
      */
@@ -464,12 +468,12 @@ public class Command implements Serializable {
                 nl = params.getElementsByTagName("parameter");
                 for (int i = 0; i < nl.getLength(); i++) {
                     Element el = (Element) nl.item(i);
-                    parameters.put(el.getAttribute("name"), IrpUtils.parseLong(el.getAttribute("value")));
+                    parameters.put(el.getAttribute("name"), parseParameter(el.getAttribute("value")));
                 }
             }
             String Fstring = element.getAttribute("F");
             if (!Fstring.isEmpty())
-                parameters.put("F", IrpUtils.parseLong(Fstring));
+                parameters.put("F", parseParameter(Fstring));
             nl = element.getElementsByTagName("raw");
             if (nl.getLength() > 0) {
                 intro = new String[nl.getLength()];
