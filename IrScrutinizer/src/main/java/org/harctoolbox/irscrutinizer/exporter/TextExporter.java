@@ -92,7 +92,7 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws FileNotFoundException, IOException, IrpMasterException {
+    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws IOException, IrpMasterException {
         open(file, charsetName);
         try {
             for (Command command : remoteSet.getAllCommands()) {

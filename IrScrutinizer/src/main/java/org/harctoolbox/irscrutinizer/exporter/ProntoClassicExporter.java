@@ -31,7 +31,6 @@ import com.neuron.app.tonto.ProntoModel;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -85,7 +84,7 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
 
     @Override
     public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName /* ignored */)
-            throws FileNotFoundException, IrpMasterException, IOException {
+            throws IrpMasterException, IOException {
         setup(remoteSet);
         ccf.save(saveFile.getPath());
     }

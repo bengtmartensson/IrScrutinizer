@@ -18,7 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.exporter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -76,7 +75,7 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
 
     @Override
     public void export(RemoteSet remoteSet, String title, int noRepeats, File saveFile, String charsetName)
-            throws IrpMasterException, FileNotFoundException, IOException {
+            throws IrpMasterException, IOException {
 
         Document document = remoteSet.xmlExportDocument(title,
                 null,
