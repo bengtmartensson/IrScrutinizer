@@ -421,8 +421,9 @@ public class Command implements Serializable {
     private void sanityCheck() throws IrpMasterException {
         boolean protocolOk = protocolName != null && ! protocolName.isEmpty();
         boolean parametersOk = parameters != null && ! parameters.isEmpty();
-        boolean rawOk = (intro != null && ! intro[0].isEmpty()) || (repeat != null && ! repeat[0].isEmpty());
-        boolean ccfOk = ccf != null && ! ccf[0].isEmpty();
+        boolean rawOk = (intro != null && intro[0] != null && ! intro[0].isEmpty())
+                || (repeat != null && repeat[0] != null && ! repeat[0].isEmpty());
+        boolean ccfOk = ccf != null && ccf[0] != null && ! ccf[0].isEmpty();
 
         if (masterType == null)
             masterType = (protocolOk && parametersOk) ? MasterType.parameters
@@ -465,6 +466,9 @@ public class Command implements Serializable {
             NodeList paramsNodeList = element.getElementsByTagName("parameters");
             if (paramsNodeList.getLength() > 0) {
                 Element params = (Element) paramsNodeList.item(0);
+                String proto = params.getAttribute("protocol");
+                if (!proto.isEmpty())
+                    this.protocolName = proto;
                 nl = params.getElementsByTagName("parameter");
                 for (int i = 0; i < nl.getLength(); i++) {
                     Element el = (Element) nl.item(i);

@@ -24,6 +24,7 @@ import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -55,9 +56,15 @@ public class CommandSet {
         NodeList nl = element.getElementsByTagName("notes");
         if (nl.getLength() > 0)
             notes = ((Element) nl.item(0)).getTextContent();
-        nl = element.getElementsByTagName("parameters");
-        if (nl.getLength() > 0) {
-            Element el = (Element) nl.item(0);
+        // Cannot use getElementsByTagName("parameters") because it will find
+        // the parameters of the child commands, which is not what we want.
+        nl = element.getChildNodes();
+        for (int nodeNr = 0; nodeNr < nl.getLength(); nodeNr++) {
+            if (nl.item(nodeNr).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element el = (Element) nl.item(nodeNr);
+            if (!el.getTagName().equals("parameters"))
+                continue;
             String newProtocol = el.getAttribute("protocol");
             if (!newProtocol.isEmpty())
                 protocol = newProtocol;
