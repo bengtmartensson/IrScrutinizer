@@ -27,6 +27,7 @@ import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeListener;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
@@ -46,6 +47,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Set;
+import javax.comm.DriverGenUnix;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -557,6 +559,15 @@ public class GuiMain extends javax.swing.JFrame {
                         guiUtils.error(str);
                     }
                 });
+
+        // When the Tonto stuff loads, it tries to load a library called jnijcomm,
+        // see javax.comm.DriverGenUnix. This will fail, but that is no concern for us.
+        // However, it writes an ugly stacktrace on stderr, which is scaring the user.
+        // Therefore, redirect stderr to nirvana, and make that call now.
+        PrintStream nullPrintStream = new PrintStream(new ByteArrayOutputStream());
+        System.setErr(nullPrintStream);
+        DriverGenUnix junk = new DriverGenUnix();
+
         console.setStdErr();
         console.setStdOut();
 
@@ -999,7 +1010,7 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private String inquire(String prompt, String title, String dflt) {
-        String answer = guiUtils.getInput("Enter your name of this remote", "Remote name entry", dflt);
+        String answer = guiUtils.getInput(prompt, title, dflt);
         return answer != null ? answer : dflt;
     }
 
