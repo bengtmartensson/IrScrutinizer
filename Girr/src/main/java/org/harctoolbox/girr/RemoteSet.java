@@ -236,26 +236,28 @@ public class RemoteSet implements Serializable {
      * @param doc
      * @param title
      * @param fatRaw
+     * @param createSchemaLocation
      * @param generateRaw
      * @param generateCcf
      * @param generateParameters
      * @return Element describing the RemoteSet
      */
-    public Element xmlExport(Document doc, String title, boolean fatRaw,
+    public Element xmlExport(Document doc, String title, boolean fatRaw, boolean createSchemaLocation,
             boolean generateRaw, boolean generateCcf, boolean generateParameters) {
-        Element element = doc.createElement("remotes");
+        Element element = doc.createElementNS(XmlExporter.girrNamespace, "remotes");
         element.setAttribute("girrVersion", girrVersion);
-//        if (createSchemaLocation) {
-//            element.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-//            //element.setAttribute("xsi:noNamespaceSchemaLocation", XmlExporter.noNamespaceSchemaLocation);
-//            element.setAttribute("xsi:schemaLocation", XmlExporter.schemaLocation);
-//        }
+        if (createSchemaLocation) {
+            element.setAttribute("xmlns:xsi", XmlExporter.w3cSchemaNamespace);
+            element.setAttribute("xsi:schemaLocation",
+                    XmlExporter.girrNamespace + " " + XmlExporter.girrSchemaLocationURL);
+        }
+
         if (title != null)
             element.setAttribute("title", title);
 
-        Element adminDataEl = doc.createElement("adminData");
+        Element adminDataEl = doc.createElementNS(XmlExporter.girrNamespace, "adminData");
         element.appendChild(adminDataEl);
-        Element creationEl = doc.createElement("creationData");
+        Element creationEl = doc.createElementNS(XmlExporter.girrNamespace, "creationData");
         adminDataEl.appendChild(creationEl);
         if (creatingUser != null)
             creationEl.setAttribute("creatingUser", creatingUser);
@@ -272,7 +274,7 @@ public class RemoteSet implements Serializable {
         if (tool2Version != null)
             creationEl.setAttribute("tool2Version", tool2Version);
         if (notes != null) {
-            Element notesEl = doc.createElement("notes");
+            Element notesEl = doc.createElementNS(XmlExporter.girrNamespace, "notes");
             notesEl.setTextContent(notes);
             adminDataEl.appendChild(notesEl);
         }
@@ -298,7 +300,7 @@ public class RemoteSet implements Serializable {
     public Document xmlExportDocument(String title, String stylesheetType, String stylesheetUrl,
             boolean fatRaw, boolean createSchemaLocation,
             boolean generateRaw, boolean generateCcf, boolean generateParameters) {
-        Element root = xmlExport(XmlExporter.newDocument(), title, fatRaw,
+        Element root = xmlExport(XmlExporter.newDocument(), title, fatRaw, createSchemaLocation,
             generateRaw, generateCcf, generateParameters);
         return XmlExporter.createDocument(root, stylesheetType, stylesheetUrl, createSchemaLocation);
     }

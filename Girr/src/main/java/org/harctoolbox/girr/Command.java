@@ -386,6 +386,11 @@ public class Command implements Serializable {
      * @return Nicely formatted string the way the user would like to see it if truncated to "small" length.
      */
     public String prettyValueString() {
+        try {
+            checkForParameters();
+        } catch (IrpMasterException ex) {
+            return "Raw signal";
+        }
         return (parameters != null && !parameters.isEmpty()) ? protocolName + ", " + toPrintString(parameters)
                 : ccf != null ? ccf[0]
                 : "Raw signal";
@@ -777,7 +782,7 @@ public class Command implements Serializable {
      */
     public Element xmlExport(Document doc, String title, boolean fatRaw,
             boolean generateRaw, boolean generateCcf, boolean generateParameters) {
-        Element element = doc.createElement("command");
+        Element element = doc.createElementNS(XmlExporter.girrNamespace, "command");
         if (title != null)
             element.setAttribute("title", title);
         element.setAttribute("name", name);
@@ -795,7 +800,7 @@ public class Command implements Serializable {
         if (comment != null)
             element.setAttribute("comment", comment);
         if (notes != null) {
-            Element notesEl = doc.createElement("notes");
+            Element notesEl = doc.createElementNS(XmlExporter.girrNamespace, "notes");
             notesEl.setTextContent(notes);
             element.appendChild(notesEl);
         }
@@ -803,12 +808,12 @@ public class Command implements Serializable {
             try {
                 checkForParameters();
                 if (parameters != null) {
-                    Element parametersEl = doc.createElement("parameters");
+                    Element parametersEl = doc.createElementNS(XmlExporter.girrNamespace, "parameters");
                     if (protocolName != null)
                         parametersEl.setAttribute("protocol", protocolName);
                     element.appendChild(parametersEl);
                     for (Entry<String, Long> parameter : parameters.entrySet()) {
-                        Element parameterEl = doc.createElement("parameter");
+                        Element parameterEl = doc.createElementNS(XmlExporter.girrNamespace, "parameter");
                         parameterEl.setAttribute("name", parameter.getKey());
                         parameterEl.setAttribute("value", parameter.getValue().toString());
                         parametersEl.appendChild(parameterEl);
@@ -823,7 +828,7 @@ public class Command implements Serializable {
                 checkForRaw();
                 if (intro != null || repeat != null || ending != null) {
                     for (int T = 0; T < numberOfToggleValues(); T++) {
-                        Element rawEl = doc.createElement("raw");
+                        Element rawEl = doc.createElementNS(XmlExporter.girrNamespace, "raw");
                         rawEl.setAttribute("frequency", Integer.toString(frequency));
                         if (dutyCycle > 0)
                             rawEl.setAttribute("dutyCycle", Double.toString(dutyCycle));
@@ -845,7 +850,7 @@ public class Command implements Serializable {
                 checkForCcf();
                 if (ccf != null) {
                     for (int T = 0; T < numberOfToggleValues(); T++) {
-                        Element ccfEl = doc.createElement("ccf");
+                        Element ccfEl = doc.createElementNS(XmlExporter.girrNamespace, "ccf");
                         if (numberOfToggleValues() > 1)
                             ccfEl.setAttribute(toggleAttributeName, Integer.toString(T));
                         ccfEl.setTextContent(ccf[T]);
@@ -859,7 +864,7 @@ public class Command implements Serializable {
         }
         if (otherFormats != null) {
             for (Entry<String, String> format : otherFormats.entrySet()) {
-                Element formatEl = doc.createElement("format");
+                Element formatEl = doc.createElementNS(XmlExporter.girrNamespace, "format");
                 formatEl.setAttribute("name", format.getKey());
                 formatEl.setTextContent(format.getValue());
                 element.appendChild(formatEl);
@@ -878,7 +883,7 @@ public class Command implements Serializable {
         if (sequence == null || sequence.isEmpty())
             return null;
 
-        Element el = doc.createElement(tagName);
+        Element el = doc.createElementNS(XmlExporter.girrNamespace, tagName);
         if (fatRaw)
             insertFatElements(doc, el, sequence);
         else
@@ -891,7 +896,7 @@ public class Command implements Serializable {
         String[] durations = sequence.split(" ");
         for (int i = 0; i < durations.length; i++) {
             String duration = durations[i].replaceAll("[\\+-]", "");
-            Element e = doc.createElement(i % 2 == 0 ? "flash" : "gap");
+            Element e = doc.createElementNS(XmlExporter.girrNamespace, i % 2 == 0 ? "flash" : "gap");
             e.setTextContent(duration);
             el.appendChild(e);
         }

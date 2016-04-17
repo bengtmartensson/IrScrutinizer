@@ -35,6 +35,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.harctoolbox.IrpMaster.XmlUtils;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,46 +47,16 @@ import org.w3c.dom.ProcessingInstruction;
  * Utility class for XML export. Usage in other contexts not recommended.
  */
 public class XmlExporter {
-    /*public static final String flashTagName = "flash";
-    public static final String gapTagName = "gap";
-    public static final String decodeTagName = "decode";
-    public static final String decodesTagName = "decodes";
-    public static final String protocolAttributeName = "protocol";
-    public static final String textTagName = "text";
-    public static final String prontoTagName = "pronto";
-    public static final String introTagName = "intro";
-    public static final String repeatTagName = "repeat";
-    public static final String endingTagName = "ending";
-    public static final String parametersTagName = "parameters";
-    public static final String parameterTagName = "parameter";
-    public static final String parameterNameAttributeName = "name";
-    public static final String parameterValueAttributeName = "value";
-    public static final String irSignalTagName = "irsignal";
-    public static final String nameAttributeName = "name";
-    public static final String frequencyAttributeName = "frequency";
-    public static final String dutyCycleAttributeName = "dutycycle";
-    public static final String rawTagName = "raw";
-    public static final String analyzerTagName = "analyzer";
-    public static final String introBurstsLengthName = "nointrobursts";
-    public static final String repeatBurstsLengthName = "norepeatbursts";
-    public static final String endingBurstsLengthName = "noendingbursts";
-    public static final String burstLengthAttributeName = "burstlength";
-    public static final String commentAttributeName = "comment";*/
 
     /**
      * Name space for the XML Schemas
      */
-    private static final String w3cSchemaNamespace = "http://www.w3.org/2001/XMLSchema-instance";
+    static final String w3cSchemaNamespace = "http://www.w3.org/2001/XMLSchema-instance";
 
     /**
-     * URL for schema file.
+     * Name space for XLST (1.0)
      */
-    public static final String schemaLocation = "http://www.harctoolbox.org/Girr http://www.harctoolbox.org/schemas/girr_ns.xsd";
-
-    /**
-     * URL for schema file, namespace-less version.
-     */
-    public static final String noNamespaceSchemaLocation = "http://www.harctoolbox.org/schemas/girr.xsd";
+    static final String xsltNamespace = "http://www.w3.org/1999/XSL/Transform";
 
     /**
      * Namespace URI
@@ -95,9 +66,16 @@ public class XmlExporter {
     /**
      * URL for schema file supporting name spaces.
      */
-    public static final String girrSchemaLocation = "http://www.harctoolbox.org/schemas/girr_ns.xsd";
+    public static final String girrSchemaLocationURL = "http://www.harctoolbox.org/schemas/girr_ns.xsd";
 
-    public static final boolean useNamespaces = true;
+    /**
+     * URL for schema file, namespace-less version.
+     */
+    public static final String girrNoNamespaceSchemaLocationURL = "http://www.harctoolbox.org/schemas/girr.xsd";
+
+    //public static final boolean useNamespaces = true;
+
+    private static boolean debug = false;
 
     /**
      * Comment string pointing to Girr docu.
@@ -107,6 +85,10 @@ public class XmlExporter {
     private static final String defaultCharsetName = "UTF-8";
 
     private final Document document;
+
+    public static void setDebug(boolean dbg) {
+        debug = dbg;
+    }
 
     /**
      *
@@ -141,8 +123,7 @@ public class XmlExporter {
         if (createSchemaLocation) {
             root.setAttribute("xmlns:xsi", XmlExporter.w3cSchemaNamespace);
             root.setAttribute("xmlns", girrNamespace);
-            //root.setAttribute("xsi:noNamespaceSchemaLocation", XmlExporter.noNamespaceSchemaLocation);
-            root.setAttribute("xsi:schemaLocation", schemaLocation);
+            root.setAttribute("xsi:schemaLocation", girrSchemaLocationURL);
         }
         return document;
     }
@@ -150,7 +131,7 @@ public class XmlExporter {
     public static Document newDocument() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
-        factory.setNamespaceAware(false); // FIXME, but carefully...
+        factory.setNamespaceAware(true);
         Document doc = null;
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -162,6 +143,10 @@ public class XmlExporter {
 
     public void printDOM(OutputStream ostr, Document stylesheet, HashMap<String, String>parameters,
             boolean binary, String charsetName) throws IOException {
+        if (debug) {
+            XmlUtils.printDOM(new File("girr.girr"), this.document);
+            XmlUtils.printDOM(new File("stylesheet.xsl"), stylesheet);
+        }
         try {
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer tr;
@@ -174,17 +159,18 @@ public class XmlExporter {
             } else {
                 if (parameters != null)
                     for (Map.Entry<String, String> kvp : parameters.entrySet()) {
-                        Element e = stylesheet.createElementNS("http://www.w3.org/1999/XSL/Transform", "param");
+                        Element e = stylesheet.createElementNS(xsltNamespace, "param");
                         e.setAttribute("name", kvp.getKey());
                         e.setAttribute("select", kvp.getValue());
                         stylesheet.getDocumentElement().insertBefore(e, stylesheet.getDocumentElement().getFirstChild());
                     }
-                NodeList nodeList = stylesheet.getDocumentElement().getElementsByTagName("xsl:output");
+                NodeList nodeList = stylesheet.getDocumentElement().getElementsByTagNameNS(xsltNamespace, "output");
                 if (nodeList.getLength() > 0) {
                     Element e = (Element) nodeList.item(0);
                     e.setAttribute("encoding", charsetName);
                 }
-                //XmlUtils.printDOM(System.out, stylesheet, null, "UTF-8");
+                if (debug)
+                    XmlUtils.printDOM(new File("stylesheet-params.xsl"), stylesheet);
                 tr = factory.newTransformer(new DOMSource(stylesheet));
             }
             tr.setOutputProperty(OutputKeys.INDENT, "yes");

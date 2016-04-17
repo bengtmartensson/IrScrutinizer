@@ -220,7 +220,7 @@ public class Remote implements Serializable {
      */
     public Element xmlExport(Document doc, boolean fatRaw,
             boolean generateRaw, boolean generateCcf, boolean generateParameters) {
-        Element element = doc.createElement("remote");
+        Element element = doc.createElementNS(XmlExporter.girrNamespace, "remote");
         element.setAttribute("name", metaData.name);
         if (metaData.manufacturer != null)
             element.setAttribute("manufacturer", metaData.manufacturer);
@@ -233,17 +233,17 @@ public class Remote implements Serializable {
         if (comment != null)
             element.setAttribute("comment", comment);
         if (notes != null) {
-            Element notesEl = doc.createElement("notes");
+            Element notesEl = doc.createElementNS(XmlExporter.girrNamespace, "notes");
             notesEl.setTextContent(notes);
             element.appendChild(notesEl);
         }
         if (applicationParameters != null) {
             for (Entry<String, HashMap<String, String>> kvp : applicationParameters.entrySet()) {
-                Element appEl = doc.createElement("applicationData");
+                Element appEl = doc.createElementNS(XmlExporter.girrNamespace, "applicationData");
                 appEl.setAttribute("application", kvp.getKey());
                 element.appendChild(appEl);
                 for (Entry<String, String>param : kvp.getValue().entrySet() ) {
-                    Element paramEl = doc.createElement("appParameter");
+                    Element paramEl = doc.createElementNS(XmlExporter.girrNamespace, "appParameter");
                     paramEl.setAttribute("name", param.getKey());
                     paramEl.setAttribute("value", param.getValue());
                     appEl.appendChild(paramEl);

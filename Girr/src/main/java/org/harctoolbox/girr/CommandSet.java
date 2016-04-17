@@ -122,19 +122,19 @@ public class CommandSet {
      */
     public Element xmlExport(Document doc, boolean fatRaw,
             boolean generateRaw, boolean generateCcf, boolean generateParameters) {
-        Element element = doc.createElement("commandSet");
+        Element element = doc.createElementNS(XmlExporter.girrNamespace, "commandSet");
         element.setAttribute("name", name);
         if (notes != null) {
-            Element notesEl = doc.createElement("notes");
+            Element notesEl = doc.createElementNS(XmlExporter.girrNamespace, "notes");
             notesEl.setTextContent(notes);
             element.appendChild(notesEl);
         }
         if (parameters != null && generateParameters) {
-            Element parametersEl = doc.createElement("parameters");
+            Element parametersEl = doc.createElementNS(XmlExporter.girrNamespace, "parameters");
             parametersEl.setAttribute("protocol", protocol);
             element.appendChild(parametersEl);
             for (Entry<String, Long> parameter : parameters.entrySet()) {
-                Element parameterEl = doc.createElement("parameter");
+                Element parameterEl = doc.createElementNS(XmlExporter.girrNamespace, "parameter");
                 parameterEl.setAttribute("name", parameter.getKey());
                 parameterEl.setAttribute("value", parameter.getValue().toString());
                 parametersEl.appendChild(parameterEl);
