@@ -47,7 +47,7 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
 
     @Override
     public String[][] getFileExtensions() {
-        return new String[][] { new String[]{ "LIRC files", "lirc" }, new String[]{ "Text files", "txt" }};
+        return new String[][] { new String[]{ "LIRC files", "conf" }, new String[]{ "Text files", "txt" }};
     }
 
     // LIRC in general does not add extensions to its files, therefore we should not do it either.
@@ -124,9 +124,9 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         stream.println("\tflags\tRAW_CODES");
         stream.println("\teps\t30");
         stream.println("\taeps\t100");
-        stream.println("\tfrequency\t" + randomCommand.getFrequency());
+        stream.println("\tfrequency\t" + randomCommand.getFrequency()); // Might be wrong...
         stream.println("\tgap\t" + Math.round(randomCommand.toIrSignal().getGap()));
-        stream.println("\t\tbegin raw_codes");
+        stream.print("\t\tbegin raw_codes");
         for (Map.Entry<String, Command> kvp : remote.getCommands().entrySet()) {
             stream.println();
             stream.print("\t\t\tname " + lircName(kvp.getKey()));
