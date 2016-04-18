@@ -203,7 +203,7 @@ public class Command implements Serializable {
      * @return the frequency
      */
     public int getFrequency() {
-        return frequency;
+        return masterType == MasterType.parameters ? (int) Math.round(protocol.getFrequency()) : frequency;
     }
 
     /**

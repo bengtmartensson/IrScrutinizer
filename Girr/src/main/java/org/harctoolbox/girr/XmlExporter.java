@@ -179,6 +179,8 @@ public class XmlExporter {
                 DOMResult domResult = new DOMResult();
                 tr.transform(new DOMSource(document), domResult);
                 Document newDoc = (Document) domResult.getNode();
+                if (debug)
+                    XmlUtils.printDOM(new File("girr-binary.xml"), newDoc);
                 NodeList byteElements = newDoc.getDocumentElement().getElementsByTagName("byte");
                 for (int i = 0; i < byteElements.getLength(); i++) {
                     int val = Integer.parseInt(((Element) byteElements.item(i)).getTextContent());
