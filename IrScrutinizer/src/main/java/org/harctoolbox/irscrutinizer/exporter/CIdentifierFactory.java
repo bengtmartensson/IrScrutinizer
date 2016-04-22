@@ -17,30 +17,33 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.exporter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 /**
- * 
+ * This class is a helper for C exporters. It makes unique C identifiers from "arbitrary"
+ * command names.
  */
 public class CIdentifierFactory {
 
-    private List<String> names;
+    private HashMap<Integer, String> table;
 
     public CIdentifierFactory() {
-        names = new ArrayList<>();
+        table = new HashMap<>();
     }
 
-    public String mkCIdentifier(String s) {
+    public String mkCIdentifier(String s, int position) {
+        if (table.containsKey(position))
+            return table.get(position);
+
         String str = s.replaceAll("[^0-9A-Za-z_]", "_");
         if (str.matches("^[0-9].*"))
             str = "_" + str;
-        int n = 0;
+        int n = 1;
         String candidate = str;
-        //while (names.contains(candidate)) {
-        //    candidate = str + n++;
-        //}
-        //names.add(candidate);
+        while (table.containsValue(candidate)) {
+            candidate = str + "_" + n++;
+        }
+        table.put(position, candidate);
         return candidate;
     }
 }
