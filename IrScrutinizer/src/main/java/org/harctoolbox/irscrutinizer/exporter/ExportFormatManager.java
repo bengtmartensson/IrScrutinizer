@@ -20,9 +20,10 @@ package org.harctoolbox.irscrutinizer.exporter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map.Entry;
 import java.util.Set;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
@@ -71,8 +72,8 @@ public class ExportFormatManager {
         menu.setText("Export formats");
         menu.setToolTipText("Allows direct selection of export format");
         buttonGroup = new ButtonGroup();
-        for (Entry<String, IExporterFactory> kvp : exportFormats.entrySet()) {
-            final String name = kvp.getKey();
+        for (String formatName : toArray()) {
+            final String name = formatName;
             JMenuItem menuItem = new JCheckBoxMenuItem(name);
             menuItem.setSelected(name.equals(selection));
             menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -107,6 +108,8 @@ public class ExportFormatManager {
     }
 
     public String[] toArray() {
-        return exportFormats.keySet().toArray(new String[exportFormats.keySet().size()]);
+        ArrayList<String> list = new ArrayList<>(exportFormats.keySet());
+        Collections.sort(list, String.CASE_INSENSITIVE_ORDER);
+        return list.toArray(new String[list.size()]);
     }
 }
