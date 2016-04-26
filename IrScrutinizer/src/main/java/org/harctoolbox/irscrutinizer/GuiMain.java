@@ -850,6 +850,10 @@ public class GuiMain extends javax.swing.JFrame {
         setDecodeIrParameters(seq.toIrSignal());
     }
 
+    private void clearAnalyzeParameters() {
+        analyzerTextField.setText(null);
+    }
+
     private void setAnalyzeParameters(Analyzer analyzer) {
         this.analyzerTextField.setText(analyzer != null ? analyzer.toString() : null);
     }
@@ -898,6 +902,8 @@ public class GuiMain extends javax.swing.JFrame {
         setFrequencyParameter(irSignal);
         if (properties.getInvokeAnalyzer())
             setAnalyzeParameters(irSignal);
+        else
+            clearAnalyzeParameters();
         setCaptureWindow(irSignal);
         irPlotter.plot(irSignal);
         try {
@@ -2772,11 +2778,9 @@ public class GuiMain extends javax.swing.JFrame {
         });
 
         analyzerTextField.setEditable(false);
-        analyzerTextField.setText("Analyzer result unavailable");
         analyzerTextField.setComponentPopupMenu(copyPopupMenu);
 
         decodeIRTextField.setEditable(false);
-        decodeIRTextField.setText("DecodeIR result unavailable");
         decodeIRTextField.setToolTipText("Result from DecodeIR.");
         decodeIRTextField.setComponentPopupMenu(copyPopupMenu);
 

@@ -2318,7 +2318,6 @@
                     <Component class="javax.swing.JTextField" name="analyzerTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
-                        <Property name="text" type="java.lang.String" value="Analyzer result unavailable"/>
                         <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
                           <ComponentRef name="copyPopupMenu"/>
                         </Property>
@@ -2327,7 +2326,6 @@
                     <Component class="javax.swing.JTextField" name="decodeIRTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
-                        <Property name="text" type="java.lang.String" value="DecodeIR result unavailable"/>
                         <Property name="toolTipText" type="java.lang.String" value="Result from DecodeIR."/>
                         <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
                           <ComponentRef name="copyPopupMenu"/>
