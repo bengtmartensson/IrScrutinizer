@@ -140,11 +140,17 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     }
 
     @Override
-    public void open() throws IOException, HarcHardwareException {
-        super.open();
-        send(encode(versionCommand, "", queryToken));
-        byte[] response = readUntilTwoEndTokens();
-        Payload payload = decode(response, receiveToken);
+    public void open() throws HarcHardwareException, IOException {
+        Payload payload;
+        try {
+            super.open();
+            send(encode(versionCommand, "", queryToken));
+            byte[] response = readUntilTwoEndTokens();
+            payload = decode(response, receiveToken);
+        } catch (IOException ex) {
+            close();
+            throw ex;
+        }
         if (verbose)
             System.err.println("<Received " + payload);
         if (payload == null) {
@@ -262,9 +268,11 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         ArrayList<Byte> data = new ArrayList<>(200);
         int noEndingTokensFound = 0;
         while (noEndingTokensFound < 2) {
-            byte x = (byte) serialPort.readByte();
-            data.add(x);
-            if (x == endingToken)
+            int x = serialPort.readByte();
+            if (x == -1)
+                throw new IOException("EOF from CommandFusion");
+            data.add((byte) x);
+            if ((byte) x == endingToken)
                 noEndingTokensFound++;
         }
         byte[] result = new byte[data.size()];
