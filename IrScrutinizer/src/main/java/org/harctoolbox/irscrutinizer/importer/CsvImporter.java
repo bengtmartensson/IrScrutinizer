@@ -98,7 +98,8 @@ public abstract class CsvImporter extends RemoteSetImporter implements IReaderIm
             return aPriori;
         if (column > chunks.length)
             return null;
-
+        if (column + offset > chunks.length)
+            return null;
         StringBuilder str = new StringBuilder(chunks[column-1+offset]);
         if (str.length() > 0 && str.charAt(str.length()-1) == '"')
             str.deleteCharAt(str.length()-1);
@@ -132,7 +133,7 @@ public abstract class CsvImporter extends RemoteSetImporter implements IReaderIm
             String chunk = chunks[index];
             if (basis == 16 && chunk.startsWith("0x"))
                 chunk = chunk.substring(2);
-            if (rejectNumbers) {
+            if (rejectNumbers && chunk.length() > 2) {
                 try {
                     Integer.parseInt(chunk, basis);
                     break;
