@@ -8405,7 +8405,7 @@ public class GuiMain extends javax.swing.JFrame {
                     System.getProperty("java.vendor"), System.getProperty("java.version"),
                     System.getProperty("os.name"), System.getProperty("os.arch"),
                     Version.versionString, applicationHome
-            ).replace(" ", "%20");
+            ).replace(" ", "%20").replace("\\", "%5C");
             String subject = ("Feedback to " + Version.versionString).replace(" ", "%20");
             guiUtils.mail(IrScrutinizer.feedbackMail, subject, body);
         } catch (URISyntaxException | IOException ex) {
