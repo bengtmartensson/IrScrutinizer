@@ -109,11 +109,6 @@ public class ExporterUtilsNGTest {
     @Test
     public void testSony20Data() {
         System.out.println("sony20Data");
-        int D = 0;
-        int S = 0;
-        int F = 0;
-        String expResult = "";
-        String result = ExporterUtils.sony20Data(D, S, F);
         assertEquals(ExporterUtils.sony20Data(3, 5, 4), Integer.toHexString((0x10 << 13) + (24 << 8) + 0xA0));
     }
 }
