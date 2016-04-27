@@ -79,6 +79,7 @@
                                     <workingDirectory>${project.build.directory}</workingDirectory>
                                     <arguments>
                                         <argument>${basedir}/../../Inno Setup 5/ISCC.exe</argument>
+                                        <argument>/Q</argument> <!-- quiet execution -->
                                         <argument>${project.artifactId}_inno.iss</argument>
                                     </arguments>
                                 </configuration>
