@@ -333,11 +333,11 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        irpMaster = new IrpMaster(properties.getIrpProtocolsIniPath()); // must come before initComponents
+        irpMaster = new IrpMaster(properties.mkPathAbsolute(properties.getIrpProtocolsIniPath())); // must come before initComponents
 
         loadExportFormats(); // must come before initComponents
 
-        loadProtocolsIni(properties.getProtocolsIniPath());
+        loadProtocolsIni();
 
         initComponents();
 
@@ -642,7 +642,7 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void loadExportFormats() throws ParserConfigurationException, SAXException, IOException {
         exportFormatManager = new ExportFormatManager(guiUtils,
-                new File(properties.getExportFormatFilePath()),
+                new File(properties.mkPathAbsolute(properties.getExportFormatFilePath())),
                 //new File(properties.getExportDir()),
                 new ExportFormatManager.IExportFormatSelector() {
             @Override
@@ -716,8 +716,8 @@ public class GuiMain extends javax.swing.JFrame {
         return Utils.interpretString(str, getFrequency() , properties.getInvokeRepeatFinder(), properties.getInvokeAnalyzer());
     }
 
-    private void loadProtocolsIni(String filename) throws IOException, java.text.ParseException {
-        protocolsIni = new ProtocolsIni(new File(properties.getProtocolsIniPath()));
+    private void loadProtocolsIni() throws IOException, java.text.ParseException {
+        protocolsIni = new ProtocolsIni(new File(properties.mkPathAbsolute(properties.getProtocolsIniPath())));
         if (rmduImporter == null)
             rmduImporter = new RmduImporter(protocolsIni);
         else
@@ -6622,7 +6622,7 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void mainDocuMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDocuMenuItemActionPerformed
         try {
-            guiUtils.browse(new File(properties.getHelpfilePath()));
+            guiUtils.browse(new File(properties.mkPathAbsolute(properties.getHelpfilePath())));
         } catch (MalformedURLException | URISyntaxException ex) {
             guiUtils.error(ex);
         }
@@ -7348,8 +7348,8 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void protocolsIniTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolsIniTextFieldActionPerformed
         try {
-            loadProtocolsIni(protocolsIniTextField.getText());
             properties.setProtocolsIniPath(protocolsIniTextField.getText());
+            loadProtocolsIni();
         } catch (IOException | java.text.ParseException ex) {
             guiUtils.error(ex);
         }
@@ -7784,14 +7784,14 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_pasteScrutinizeToDataWindowMenuItemActionPerformed
 
     private void irpProtocolsEditMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpProtocolsEditMenuItemActionPerformed
-        guiUtils.open(new File(properties.getIrpProtocolsIniPath()));
+        guiUtils.open(new File(properties.mkPathAbsolute(properties.getIrpProtocolsIniPath())));
         guiUtils.warning("If editing the file, changes will not take effect before you save the file AND restart the program.");
     }//GEN-LAST:event_irpProtocolsEditMenuItemActionPerformed
 
     private void irpProtocolsSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpProtocolsSelectMenuItemActionPerformed
-        String oldDir = (new File(properties.getIrpProtocolsIniPath())).getAbsoluteFile().getParent();
+        String oldDir = new File(properties.mkPathAbsolute(properties.getIrpProtocolsIniPath())).getParent();
         File f = SelectFile.selectFile(this, "Select protocol file IrpProtocol.ini", oldDir, false, false, "Configuration files (*.ini)", "ini");
-        if (f == null || f.getAbsolutePath().equals(new File(properties.getIrpProtocolsIniPath()).getAbsolutePath()))
+        if (f == null || f.getAbsolutePath().equals(properties.mkPathAbsolute(properties.getIrpProtocolsIniPath())))
             return;
 
         properties.setIrpProtocolsIniPath(f.getAbsolutePath());
@@ -7806,14 +7806,14 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_irpProtocolsSelectMenuItemActionPerformed
 
     private void exportFormatsEditMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportFormatsEditMenuItemActionPerformed
-        guiUtils.open(new File(properties.getExportFormatFilePath()));
+        guiUtils.open(new File(properties.mkPathAbsolute(properties.getExportFormatFilePath())));
         guiUtils.warning("If editing the file, changes will not take effect before pressing reload.");
     }//GEN-LAST:event_exportFormatsEditMenuItemActionPerformed
 
     private void exportFormatsSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportFormatsSelectMenuItemActionPerformed
-        String oldDir = (new File(properties.getExportFormatFilePath())).getAbsoluteFile().getParent();
+        String oldDir = new File(properties.mkPathAbsolute(properties.getExportFormatFilePath())).getParent();
         File f = SelectFile.selectFile(this, "Select export format file exports.xml", oldDir, false, false, "XML files (*.xml)", "xml");
-        if (f == null || f.getAbsolutePath().equals(new File(properties.getExportFormatFilePath()).getAbsolutePath()))
+        if (f == null || f.getAbsolutePath().equals(properties.mkPathAbsolute(properties.getExportFormatFilePath())))
             return;
 
         properties.setExportFormatFilePath(f.getAbsolutePath());
@@ -8280,7 +8280,7 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void releaseNotesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_releaseNotesMenuItemActionPerformed
         try {
-            guiUtils.browse(new File(properties.getReleaseNotesPath()));
+            guiUtils.browse(new File(properties.mkPathAbsolute(properties.getReleaseNotesPath())));
         } catch (URISyntaxException | MalformedURLException ex) {
             guiUtils.error(ex);
         }
@@ -8300,7 +8300,7 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void irpMasterDocuMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpMasterDocuMenuItemActionPerformed
         try {
-            guiUtils.browse(new File(properties.getIrpMasterHelpfilePath()));
+            guiUtils.browse(new File(properties.mkPathAbsolute(properties.getIrpMasterHelpfilePath())));
         } catch (URISyntaxException | MalformedURLException ex) {
             guiUtils.error(ex);
         }
@@ -8404,11 +8404,12 @@ public class GuiMain extends javax.swing.JFrame {
           try {
             String body = String.format(
                     "# Enter message here%%0D%%0A%%0D%%0A%6$s%%0D%%0A%7$s%%0D%%0A"
-                    + "DecodeIR%%3D%1$s %%0D%%0AJava%%3D%2$s %3$s %%0D%%0AOperating system%%3D%4$s-%5$s",
+                    + "DecodeIR%%3D%1$s %%0D%%0AJava%%3D%2$s %3$s %%0D%%0AOperating system%%3D%4$s-%5$s LAF=%8$s",
                     DecodeIR.getVersion(),
                     System.getProperty("java.vendor"), System.getProperty("java.version"),
                     System.getProperty("os.name"), System.getProperty("os.arch"),
-                    Version.versionString, applicationHome
+                    Version.versionString, applicationHome,
+                    lookAndFeelManager.getCurrentLAFClassName()
             ).replace(" ", "%20").replace("\\", "%5C");
             String subject = ("Feedback to " + Version.versionString).replace(" ", "%20");
             guiUtils.mail(IrScrutinizer.feedbackMail, subject, body);

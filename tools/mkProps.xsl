@@ -95,6 +95,11 @@ public final class Props {
         return path.replace(applicationHome, "");
     }
 
+    public String mkPathAbsolute(String path) {
+        return new File(path).isAbsolute() ? path
+               : new File(new File(applicationHome), path).getAbsolutePath();
+    }
+
     /**
      * Sets up a Props instance from system default file name.
      * @param applicationHome
