@@ -39,7 +39,7 @@ import org.harctoolbox.harchardware.IHarcHardware;
  * Although it duplicates some functionality found in Kevin's program IrScope (file widget.cpp),
  * it is not derived.
  *
- * @see http://www.compendiumarcana.com/irwidget/
+ * <a href="http://www.compendiumarcana.com/irwidget/">Original web page</a>.
  */
 
 // Presently, only the "irwidgetPulse" (case 0 in widget.cpp) is to be considered as implemented and tested.

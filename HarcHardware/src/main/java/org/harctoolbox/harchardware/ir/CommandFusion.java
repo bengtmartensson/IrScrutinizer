@@ -37,9 +37,9 @@ import org.harctoolbox.harchardware.comm.LocalSerialPortRaw;
 
 /**
  * This class implements capturing and sending support for the CommandFusion Learner.
- * @see http://www.commandfusion.com/wiki2/hardware/cflink/ir-learner
- * @see http://www.commandfusion.com/wiki2/hardware/cflink/ir-module
- * @see https://docs.google.com/document/d/1BMRwD9RlUYtf4VeJNXgRwo6-lkkSAIVo8tczrynJ7CU/preview?pli=1
+ * see <a href="http://www.commandfusion.com/wiki2/hardware/cflink/ir-learner">IR learner</a>,
+ * <a href="http://www.commandfusion.com/wiki2/hardware/cflink/ir-module">IR Module</a>, and
+ * <a href="https://docs.google.com/document/d/1BMRwD9RlUYtf4VeJNXgRwo6-lkkSAIVo8tczrynJ7CU/preview?pli=1">USB Communication Protocol</a>.
  */
 public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawIrSender, ICapture {
 
@@ -164,15 +164,13 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     }
 
     /**
-     * Sends an IR signal from the built-in, proprietary data base.
+     * Sends an IR signal from the <a href="http://www.commandfusion.com/irdatabase">built-in, proprietary data base</a>.
      *
      * @param deviceType
      * @param codeset
      * @param key function code
      * @return success of operation
      * @throws IOException
-     *
-     * @see http://www.commandfusion.com/irdatabase
      */
     public boolean sendIr(int deviceType, int codeset, int key) throws IOException {
         return sendIr(encode(sendCommand,
