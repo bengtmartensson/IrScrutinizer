@@ -1,3 +1,6 @@
+THIS FILE IS NO LONGER MAINTAINED; SEE git log AND
+IrScrutinizer.releasenotes.txt.
+
 DecodeIR.loadLibrary() searches the architecture dependent local
 libraries in subdirectories of system property
 harctoolbox.jniLibsHome, if it is defined. Improved debug messages by

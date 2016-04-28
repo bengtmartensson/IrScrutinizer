@@ -47,19 +47,14 @@ Source: "exportformats.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "contributed\*"; DestDir: "{app}\contributed"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "generated-documents\*.html"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "doc\*.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "doc\IrpMaster.releasenotes.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "doc\IrScrutinizer.releasenotes.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\schemas\*.xsd"; DestDir: "{app}\schemas"
 Source: "{#MyAppName}.ico";  DestDir: "{app}"
 Source: "..\..\IrpMaster\target\generated-documents\IrpMaster.html"; DestDir: "{app}\doc"
-Source: "generated-documents\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: isreadme
-
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppName}.ico";
 Name: "{group}\HTML-Doc\IrpMaster Documentation"; Filename: "{app}\doc\IrpMaster.html"
 Name: "{group}\HTML-Doc\IrScrutinizer Documentation"; Filename: "{app}\doc\IrScrutinizer.html"
-Name: "{group}\HTML-Doc\Release Notes IRPmaster"; Filename: "{app}\doc\IrpMaster.releasenotes.txt"
 Name: "{group}\HTML-Doc\Release Notes IrScrutinizer"; Filename: "{app}\doc\IrScrutinizer.releasenotes.txt"
 Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
