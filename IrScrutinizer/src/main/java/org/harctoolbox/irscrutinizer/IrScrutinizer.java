@@ -198,7 +198,8 @@ public class IrScrutinizer {
             public void run() {
                 try {
                     new GuiMain(applicationHome, propsfilename, verbose, debug, userlevel).setVisible(true);
-                } catch (ParseException | IOException | IncompatibleArgumentException | URISyntaxException ex) {
+                } catch (ParseException | IOException | IncompatibleArgumentException | URISyntaxException
+                        | RuntimeException ex) {
                     GuiUtils.fatal(ex, IrpUtils.exitConfigReadError, new GuiUtils.EmergencyFixer () {
                         private String backupfile;
 
