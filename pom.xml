@@ -100,7 +100,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <reposurl>${basedir}/repos</reposurl>
-        <IrScrutinizer.version>1.2beta</IrScrutinizer.version>
+        <IrScrutinizer.version>1.2</IrScrutinizer.version>
         <IrpMaster.version>1.2</IrpMaster.version>
         <Girr.version>1.2</Girr.version>
         <Jirc.version>1.2</Jirc.version>
