@@ -79,9 +79,7 @@ public class Protocol {
     public long evaluateName(String name, long dflt) {
         try {
             return evaluateName(name);
-        } catch (UnassignedException ex) {
-            return dflt;
-        } catch (DomainViolationException ex) {
+        } catch (UnassignedException | DomainViolationException ex) {
             return dflt;
         }
     }
@@ -260,16 +258,26 @@ public class Protocol {
         } catch (RecognitionException ex) {
             throw new ParseException(ex);
         }
-        AST = (CommonTree) r.getTree();
+        AST = r.getTree();
 
         for (int i = 0; i < AST.getChildCount(); i++) {
             CommonTree ch = (CommonTree) AST.getChild(i);
-            if (ch.getText().equals("GENERALSPEC"))
-                generalSpec = new GeneralSpec(ch);
-            else if (ch.getText().equals("PARAMETER_SPECS"))
-                parameterSpecs = new ParameterSpecs(ch);
-            else if (ch.getText().equals("BITSPEC_IRSTREAM"))
-                topBitspecIrsteam = ch;
+            switch (ch.getText()) {
+                case "GENERALSPEC":
+                    generalSpec = new GeneralSpec(ch);
+                    break;
+                case "PARAMETER_SPECS":
+                    parameterSpecs = new ParameterSpecs(ch);
+                    break;
+                case "BITSPEC_IRSTREAM":
+                    topBitspecIrsteam = ch;
+                    break;
+                case "DEFINITIONS":
+                    // nothing to do
+                    break;
+                default:
+                    throw new RuntimeException("This cannot happen");
+            }
         }
         if (parameterSpecs == null) {
             UserComm.warning("Parameter specs are missing from protocol. Runtime errors due to unassigned variables are possile. Also silent truncation of parameters can occur. Further messages on parameters will be suppressed.");
@@ -375,7 +383,7 @@ public class Protocol {
     }
 
     public void printDOM(OutputStream ostream, Document stylesheet) {
-        (new XmlExport(doc)).printDOM(ostream, stylesheet, null);
+        (new XmlExport(doc)).printDOM(ostream, stylesheet);
     }
 
     public Document toDOM() {
@@ -523,13 +531,10 @@ public class Protocol {
                         break;
                 }
                 //done = true;
-             } catch (IOException ex) {
+             } catch (IOException | IrpMasterException ex) {
                 userComm.errorMsg(ex.getMessage());
                 done = true;
-             } catch (IrpMasterException ex) {
-                userComm.errorMsg(ex.getMessage());
-                done = true;
-            }
+             }
         }
     }
 
@@ -625,7 +630,7 @@ public class Protocol {
     }
 
     public IrSignal renderIrSignal(long device, long subdevice, long function, long toggle) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
-        HashMap<String, Long> actualVars = new HashMap<String, Long>(3);
+        HashMap<String, Long> actualVars = new HashMap<>(3);
         assignIfValid(actualVars, "D", device);
         assignIfValid(actualVars, "S", subdevice);
         assignIfValid(actualVars, "F", function);
@@ -654,12 +659,12 @@ public class Protocol {
     }
 
      /**
-     * Returns a parameter HashMap<String, Long> suitable for using as argument to renderIRSignal by evaluating the arguments.
+     * Returns a parameter HashMap&lt;String, Long&gt; suitable for using as argument to renderIRSignal by evaluating the arguments.
      * @param additionalParams String of assignments like a=12 b=34 c=56
-     * @return HashMap<String, Long> for using as argument to renderIrSignal
+     * @return tests- irpmaster?HashMap&lt;String, Long&gt; for using as argument to renderIrSignal
      */
     public static HashMap<String, Long> parseParams(String additionalParams) {
-        HashMap<String, Long> params = new HashMap<String, Long>();
+        HashMap<String, Long> params = new HashMap<>();
         String[] arr = additionalParams.split("[,=\\s;]+");
         //for (int i = 0; i < arr.length; i++)
         //    System.out.println(arr[i]);
@@ -670,14 +675,14 @@ public class Protocol {
     }
 
     /**
-     * Returns a parameter HashMap<String, Long> suitable for using as argument to renderIrSignal by evaluating the arguments.
+     * Returns a parameter tests- irpmaster?HashMap&lt;String, Long&gt; suitable for using as argument to renderIrSignal by evaluating the arguments.
      * The four first parameters overwrite the parameters in the additional parameters, if in conflict.
      * @param D device number. Use -1 for not assigned.
      * @param S subdevice number. Use -1 for not assigned.
      * @param F function number (obc, command number). Use -1 for not assigned.
      * @param T toggle. Use -1 for not assigned.
      * @param additionalParams String of assignments like a=12 b=34 c=56
-     * @return HashMap<String, Long> for using as argument to renderIrSignal
+     * @return HashMap&lt;String, Long&gt; for using as argument to renderIrSignal
      */
     public static HashMap<String, Long> parseParams(int D, int S, int F, int T, String additionalParams) {
         HashMap<String, Long> params = parseParams(additionalParams);
@@ -701,7 +706,7 @@ public class Protocol {
      *
      * @param args String array of parameters
      * @param skip Number of elements in the args to skip
-     * @return parameter HashMap<String, Long> suitable for rendering signals
+     * @return parameter HashMap&lt;String, Long&gt; suitable for rendering signals
      * @throws IncompatibleArgumentException
      */
     public static HashMap<String, Long> parseParams(String[] args, int skip) throws IncompatibleArgumentException {
@@ -711,7 +716,7 @@ public class Protocol {
     }
 
     private static HashMap<String, Long> parseNamedProtocolArgs(String[] args, int skip) throws IncompatibleArgumentException {
-        HashMap<String, Long> params = new HashMap<String, Long>();
+        HashMap<String, Long> params = new HashMap<>();
             for (int i = skip; i < args.length; i++) {
                 String[] str = args[i].split("=");
                 if (str.length != 2)
@@ -724,7 +729,7 @@ public class Protocol {
     }
 
     private static HashMap<String, Long> parsePositionalProtocolArgs(String[] args, int skip) throws IncompatibleArgumentException {
-        HashMap<String, Long> params = new LinkedHashMap<String, Long>();
+        HashMap<String, Long> params = new LinkedHashMap<>();
         int index = skip;
         switch (args.length - skip) {
             case 4:

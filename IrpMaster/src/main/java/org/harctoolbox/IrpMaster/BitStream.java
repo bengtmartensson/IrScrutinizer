@@ -19,10 +19,10 @@ package org.harctoolbox.IrpMaster;
 import java.util.ArrayList;
 
 public class BitStream extends PrimitiveIrStreamItem {
-    
+
     private int length;
     private long data[];
-    
+
     @Override
     public String toString() {
         if (data.length == 1)
@@ -38,18 +38,18 @@ public class BitStream extends PrimitiveIrStreamItem {
             return "BitStream, length = " + length + ", data = " + dataString + "] = " + binString;
         }
     }
-    
+
     public BitStream(Protocol env) {
         super(env);
         data = new long[1];
         data[0] = 0L;
         length = 0;
     }
-    
+
     public void add(BitField bitField) throws IncompatibleArgumentException {
         add(bitField, environment.getBitDirection());
     }
-    
+
     public void add(BitField bitField, BitDirection bitDirection) throws IncompatibleArgumentException {
         if (bitField.isInfinite())
             throw new IncompatibleArgumentException("Infinite bitfields cannot be converted to bitstreams.");
@@ -75,7 +75,7 @@ public class BitStream extends PrimitiveIrStreamItem {
         }
         data[0] = data[0] << bitField.getWidth() | newData;
     }
-    
+
     private long getLeftmostBits(long x, int n) {
         return x >> (Long.SIZE - n) & ((1L << n) - 1L);
     }
@@ -96,16 +96,16 @@ public class BitStream extends PrimitiveIrStreamItem {
         int chunk = (int)(data[n*chunksize/Long.SIZE] >> n*chunksize) & ((1 << chunksize)- 1);
         return chunk;
     }
-    
+
     @Override
     public ArrayList<PrimitiveIrStreamItem> evaluate(BitSpec bitSpec) throws UnassignedException, IncompatibleArgumentException {
         debugBegin();
         if (bitSpec == null)
             throw new UnassignedException("BitStream " + toString() + " has no associated BitSpec, cannot compute IRStream");
-        ArrayList<PrimitiveIrStreamItem> list = new ArrayList<PrimitiveIrStreamItem>();
+        ArrayList<PrimitiveIrStreamItem> list = new ArrayList<>();
         if (length % bitSpec.getChunkSize() != 0)
             throw new IncompatibleArgumentException("chunksize (= " + bitSpec.getChunkSize() + ") does not divide bitstream length (= " + length + ").");
-        
+
         int noChunks = length/bitSpec.getChunkSize();
         for (int n = 0; n < noChunks; n++) {
             int chunkNo = noChunks - n - 1;

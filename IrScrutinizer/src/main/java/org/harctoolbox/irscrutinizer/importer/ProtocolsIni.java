@@ -33,8 +33,6 @@ import org.harctoolbox.IrpMaster.IrpUtils;
  * This class contains a simple importer for the RemoteMaster's protocols.ini.
  */
 public class ProtocolsIni implements Serializable {
-    private static final long serialVersionUID = 1L;
-
     private HashMap<Integer, HashMap<String,String>> pidMap;
     private HashMap<String, HashMap<String,String>> nameMap;
 
@@ -170,7 +168,7 @@ public class ProtocolsIni implements Serializable {
 
     }
 
-    // FIXME: this is an ad-hoc solution
+    // this is an ad-hoc solution
     public static class LsbComp3 implements ICmdTranslator {
 
         @Override

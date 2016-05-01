@@ -37,8 +37,6 @@ import org.harctoolbox.girr.Command;
  * Columns are numbered starting with 1.
  */
 public class CsvParametrizedImporter extends CsvImporter {
-    private static final long serialVersionUID = 1L;
-
     private int numberBase;
     private int fColumn;
     private int dColumn;
@@ -98,15 +96,17 @@ public class CsvParametrizedImporter extends CsvImporter {
     }
 
     @Override
-    public void load(File file, String origin) throws FileNotFoundException, IOException, ParseException {
+    public void load(File file, String origin, String charsetName) throws FileNotFoundException, IOException, ParseException {
         try (FileInputStream stream = new FileInputStream(file)) {
-            load(stream, origin);
+            load(stream, origin, charsetName);
         }
     }
 
     @Override
     public void load(Reader reader, String origin) throws IOException {
         prepareLoad(origin);
+        boolean rejectNumbers = nameColumn < protocolColumn || nameColumn < dColumn
+                || nameColumn < sColumn || nameColumn < fColumn;
         lineNo = 1;
         BufferedReader bufferedReader = new BufferedReader(reader);
         while (true) {
@@ -115,7 +115,7 @@ public class CsvParametrizedImporter extends CsvImporter {
                 break;
             String[] chunks = line.split(separator);
             try {
-                Command command = scrutinizeParameters(chunks, "Line " + lineNo + ", " + origin);
+                Command command = scrutinizeParameters(chunks, "Line " + lineNo + ", " + origin, rejectNumbers);
                 if (command != null)
                     addCommand(command);
             } catch (IrpMasterException ex) {
@@ -127,8 +127,8 @@ public class CsvParametrizedImporter extends CsvImporter {
         setupRemoteSet();
     }
 
-    private Command scrutinizeParameters(String[] chunks, String sourceAsComment) throws IrpMasterException {
-        String[] nameArray = gobbleString(chunks, nameColumn, nameMultiColumn, numberBase, "-");
+    private Command scrutinizeParameters(String[] chunks, String sourceAsComment, boolean rejectNumbers) throws IrpMasterException {
+        String[] nameArray = gobbleString(chunks, nameColumn, nameMultiColumn, numberBase, "-", rejectNumbers);
         if (nameArray == null || nameArray.length == 0)
             return null;
         int offset = nameArray.length - 1;

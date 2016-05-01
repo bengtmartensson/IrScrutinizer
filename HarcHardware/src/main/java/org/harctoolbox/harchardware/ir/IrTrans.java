@@ -292,17 +292,12 @@ public class IrTrans implements IHarcHardware, IRawIrSender, ITransmitter, IWeb 
         if (verbose)
             System.err.println("Sending command `" + cmd + "' to IrTrans over UDP");
 
-        DatagramSocket sock = null;
-        try {
-            sock = new DatagramSocket();
+        try (DatagramSocket sock = new DatagramSocket()) {
             sock.setSoTimeout(timeout);
             byte[] buf = cmd.getBytes("US-ASCII");
             DatagramPacket dp = new DatagramPacket(buf, buf.length, inetAddress, portNumber);
             sock.send(dp);
             success = true;
-        } finally {
-            if (sock != null)
-                sock.close();
         }
         return success;
     }

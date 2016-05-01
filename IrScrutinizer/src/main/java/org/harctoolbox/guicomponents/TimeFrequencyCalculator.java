@@ -23,7 +23,6 @@ import org.harctoolbox.IrpMaster.Pronto;
  *
  */
 public class TimeFrequencyCalculator extends HarcPanel {
-    private static final long serialVersionUID = 1L;
     private static final String helpText =
             "This pane computes, for a carrier frequency given either in Hz or as a Pronto code\n"
             + "(i.e., the second number in the CCF), either the time for a given number of periods\n"

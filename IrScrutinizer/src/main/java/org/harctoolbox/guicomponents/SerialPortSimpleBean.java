@@ -32,7 +32,6 @@ import org.harctoolbox.harchardware.comm.LocalSerialPort;
  *
  */
 public class SerialPortSimpleBean extends javax.swing.JPanel {
-    private static final long serialVersionUID = 1L;
     private static final int defaultBaudRate = 9600;
     public static final String PROP_VERSION = "PROP_VERSION";
     public static final String PROP_BAUD = "PROP_BAUD";
@@ -66,12 +65,9 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
         DefaultComboBoxModel<String> model;
         try {
             ArrayList<String> portList = LocalSerialPort.getSerialPortNames(true);
-            model = new DefaultComboBoxModel<String>(portList.toArray(new String[portList.size()]));
-        } catch (IOException ex) {
-            model =  new DefaultComboBoxModel<String>(new String[]{ initialPort != null ? initialPort : notInitialized });
-        } catch (LinkageError ex) {
-            // Just to make Javabeans safe
-            model =  new DefaultComboBoxModel<String>(new String[]{ initialPort != null ? initialPort : notInitialized });
+            model = new DefaultComboBoxModel<>(portList.toArray(new String[portList.size()]));
+        } catch (IOException | LinkageError ex) {
+            model =  new DefaultComboBoxModel<>(new String[]{ initialPort != null ? initialPort : notInitialized });
         }
 
         portComboBox.setModel(model);
@@ -204,7 +200,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
 
         ArrayList<String> portNames = LocalSerialPort.getSerialPortNames(useCached);
         portNames.add(0, "");
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>(portNames.toArray(new String[portNames.size()]));
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(portNames.toArray(new String[portNames.size()]));
         portComboBox.setModel(model);
     }
 
@@ -257,7 +253,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        portComboBox = new javax.swing.JComboBox<String>();
+        portComboBox = new javax.swing.JComboBox<>();
         refreshButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         openToggleButton = new javax.swing.JToggleButton();
@@ -268,7 +264,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
 
         setPreferredSize(new java.awt.Dimension(800, 80));
 
-        portComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { notInitialized }));
+        portComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { notInitialized }));
         portComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 portComboBoxActionPerformed(evt);
@@ -380,9 +376,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
         boolean opening = openToggleButton.isSelected();
         try {
             openClose(opening);
-        } catch (HarcHardwareException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
+        } catch (HarcHardwareException | IOException ex) {
             guiUtils.error(ex);
         } finally {
             openToggleButton.setSelected(hardware.isValid());

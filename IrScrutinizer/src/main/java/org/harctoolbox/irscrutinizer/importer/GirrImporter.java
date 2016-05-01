@@ -40,7 +40,6 @@ import org.xml.sax.SAXParseException;
  */
 public class GirrImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
     public static final String homeUrl = "http://www.harctoolbox.org/girr";
-    private static final long serialVersionUID = 1L;
 
     private transient Schema schema;
     private transient URL url;
@@ -87,8 +86,16 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
         setupCommands();
     }
 
+    /**
+     *
+     * @param inputStream
+     * @param origin
+     * @param charsetName ignored; taken from input file encoding.
+     * @throws IOException
+     * @throws ParseException
+     */
     @Override
-    public void load(InputStream inputStream, String origin) throws IOException, ParseException {
+    public void load(InputStream inputStream, String origin, String charsetName /* ignored */) throws IOException, ParseException {
         try {
             loadSchema();
             load(XmlUtils.openXmlStream(inputStream, validate ? schema : null, false, false), origin);
@@ -98,6 +105,11 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
             throw new IOException(ex.getMessage());
         }
     }
+
+    public void load(InputStream inputStream, String origin) throws IOException, ParseException {
+        load(inputStream, origin, null);
+    }
+
 
     @Override
     public void load(Reader reader, String origin) throws IOException, ParseException {
@@ -111,11 +123,19 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
         }
     }
 
+    /**
+     *
+     * @param file
+     * @param origin
+     * @param charsetName ignored, instead taken from file encoding field.
+     * @throws IOException
+     * @throws ParseException
+     */
     @Override
-    public void load(File file, String origin) throws IOException, ParseException {
+    public void load(File file, String origin, String charsetName /* ignored */) throws IOException, ParseException {
         try {
             loadSchema();
-            load(XmlUtils.openXmlFile(file, validate ? schema : null, false, false), origin);
+            load(XmlUtils.openXmlFile(file, validate ? schema : null, true, true), origin);
         } catch (SAXParseException ex) {
             throw new ParseException(ex.getMessage(), ex.getLineNumber());
         } catch (SAXException ex) {

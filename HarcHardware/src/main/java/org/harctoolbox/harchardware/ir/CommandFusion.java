@@ -37,11 +37,16 @@ import org.harctoolbox.harchardware.comm.LocalSerialPortRaw;
 
 /**
  * This class implements capturing and sending support for the CommandFusion Learner.
- * @see http://www.commandfusion.com/wiki2/hardware/cflink/ir-learner
- * @see http://www.commandfusion.com/wiki2/hardware/cflink/ir-module
- * @see https://docs.google.com/document/d/1BMRwD9RlUYtf4VeJNXgRwo6-lkkSAIVo8tczrynJ7CU/preview?pli=1
+ * see <a href="http://www.commandfusion.com/wiki2/hardware/cflink/ir-learner">IR learner</a>,
+ * <a href="http://www.commandfusion.com/wiki2/hardware/cflink/ir-module">IR Module</a>, and
+ * <a href="https://docs.google.com/document/d/1BMRwD9RlUYtf4VeJNXgRwo6-lkkSAIVo8tczrynJ7CU/preview?pli=1">USB Communication Protocol</a>.
  */
 public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawIrSender, ICapture {
+
+    @Override
+    public void setDebug(int debug) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     // USB parameters:
     //    VID = 0403
     //    PID = 6001
@@ -135,11 +140,17 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     }
 
     @Override
-    public void open() throws IOException, HarcHardwareException {
-        super.open();
-        send(encode(versionCommand, "", queryToken));
-        byte[] response = readUntilTwoEndTokens();
-        Payload payload = decode(response, receiveToken);
+    public void open() throws HarcHardwareException, IOException {
+        Payload payload;
+        try {
+            super.open();
+            send(encode(versionCommand, "", queryToken));
+            byte[] response = readUntilTwoEndTokens();
+            payload = decode(response, receiveToken);
+        } catch (IOException ex) {
+            close();
+            throw ex;
+        }
         if (verbose)
             System.err.println("<Received " + payload);
         if (payload == null) {
@@ -153,15 +164,13 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     }
 
     /**
-     * Sends an IR signal from the built-in, proprietary data base.
+     * Sends an IR signal from the <a href="http://www.commandfusion.com/irdatabase">built-in, proprietary data base</a>.
      *
      * @param deviceType
      * @param codeset
      * @param key function code
      * @return success of operation
      * @throws IOException
-     *
-     * @see http://www.commandfusion.com/irdatabase
      */
     public boolean sendIr(int deviceType, int codeset, int key) throws IOException {
         return sendIr(encode(sendCommand,
@@ -254,12 +263,14 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     }
 
     private byte[] readUntilTwoEndTokens() throws IOException {
-        ArrayList<Byte> data = new ArrayList<Byte>(200);
+        ArrayList<Byte> data = new ArrayList<>(200);
         int noEndingTokensFound = 0;
         while (noEndingTokensFound < 2) {
-            byte x = (byte) serialPort.readByte();
-            data.add(x);
-            if (x == endingToken)
+            int x = serialPort.readByte();
+            if (x == -1)
+                throw new IOException("EOF from CommandFusion");
+            data.add((byte) x);
+            if ((byte) x == endingToken)
                 noEndingTokensFound++;
         }
         byte[] result = new byte[data.size()];
@@ -339,7 +350,7 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         if ((payload.data.length() - index) % 4 != 0)
             throw new IncompatibleArgumentException("Receive length erroneous");
 
-        ArrayList<Integer> durations = new ArrayList<Integer>(payload.data.length() - index);
+        ArrayList<Integer> durations = new ArrayList<>(payload.data.length() - index);
         boolean lastState = false;
         int accumulated = 0;
         for (int i = index; i < payload.data.length(); i += 4) {
@@ -415,11 +426,9 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
             //ex.printStackTrace();
         } catch (NoSuchPortException ex) {
             System.err.println("No such port: " + portName);
-        } catch (HarcHardwareException ex) {
-            System.err.println(ex.getMessage());
         } catch (PortInUseException ex) {
             System.err.println("Port " + portName + " in use.");
-        } catch (UnsupportedCommOperationException ex) {
+        } catch (HarcHardwareException | UnsupportedCommOperationException ex) {
             System.err.println(ex.getMessage());
         } catch (IrpMasterException ex) {
             Logger.getLogger(CommandFusion.class.getName()).log(Level.SEVERE, null, ex);

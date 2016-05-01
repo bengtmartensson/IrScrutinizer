@@ -1,56 +1,51 @@
 package org.harctoolbox.jirc;
 
-import java.util.ArrayList;
+import java.math.BigInteger;
+import java.util.List;
+import java.util.Locale;
 
 /**
- * Code with name
+ * This class consists of an IR code with a name. It mirrors ir_ncode from Lirc 0.9.0.
  */
-public class IrNCode {
+final class IrNCode {
 
     private String name;
     private long code;
     //public int length;
-    private ArrayList<Integer> signals;// int[] signals ;
+    private List<Integer> signals;// int[] signals ;
     private IrCodeNode next;
     private IrCodeNode current;
     private IrCodeNode transmit_state;
 
-    public IrNCode(String name, long code, ArrayList<Integer> signals) {
+    IrNCode(String name, long code, List<Integer> signals) {
         this.name = name;
         this.code = code;
         this.signals = signals;
         //length = signals.size();
     }
 
-    /*public int[] intArray(int trailingSilence, boolean alternatingSigns) {
-        int[] array = new int[signals.size() + signals.size() % 2];
-        int index = 0;
-        for (Integer d : signals) {
-            array[index] = (alternatingSigns && index % 2 == 1) ? -d : d;
-            index++;
-        }
-
-        if (signals.size() % 2 == 1)
-            array[array.length - 1] = alternatingSigns ? -trailingSilence : trailingSilence;
-        return array;
-    }*/
-
-    //public IrNCode(String name, String code) {
-    //    this(name, Lirc.smartLongParse(code));
-    //}
-
-    //public IrNCode() {
-    //    this(null, 0L);
-    //}
-
-    public IrNCode(String name, long code) {
+    IrNCode(String name, long code) {
         this(name, code, null);
     }
 
-    public IrNCode(String name, ArrayList<Long> codelist) {
+    IrNCode(String name, List<Long> codelist) {
         this(name, codelist.get(0), null);
         codelist.remove(0);
         next = codelist.isEmpty() ? null : new IrCodeNode(codelist);
+    }
+
+    public static long parseLircNumber(String s) {
+        return s.toLowerCase(Locale.US).startsWith("0x") ? parseUnsignedLongHex(s.substring(2))
+                : s.startsWith("0") ? Long.parseLong(s, 8)
+                : Long.parseLong(s);
+    }
+
+    private static long parseUnsignedLongHex(String s) {
+        if (s.length() == 16) {
+            long value = new BigInteger(s, 16).longValue();
+            return value;
+        }
+        return Long.parseLong(s, 16);
     }
 
     /**
@@ -70,7 +65,7 @@ public class IrNCode {
     /**
      * @return the signals
      */
-    public ArrayList<Integer> getSignals() {
+    public List<Integer> getSignals() {
         return signals;
     }
 

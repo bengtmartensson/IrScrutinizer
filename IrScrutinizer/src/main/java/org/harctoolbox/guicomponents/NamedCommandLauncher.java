@@ -31,8 +31,6 @@ import org.harctoolbox.harchardware.ir.Transmitter;
  *
  */
 public class NamedCommandLauncher extends JPanel {
-    private static final long serialVersionUID = 1L;
-
     private GuiUtils guiUtils;
     private transient IRemoteCommandIrSender hardware;
     private DefaultComboBoxModel transmitterComboBoxModel;
@@ -302,9 +300,7 @@ public class NamedCommandLauncher extends JPanel {
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
         try {
             hardware.sendIrCommand(getRemote(), getCommand(), getNoSends(), getTransmitter());
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (NoSuchTransmitterException ex) {
+        } catch (IOException | NoSuchTransmitterException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_sendButtonActionPerformed

@@ -34,7 +34,6 @@ import org.harctoolbox.harchardware.IHarcHardware;
 public abstract class IrSerial<T extends LocalSerialPort> implements IHarcHardware {
 
     protected boolean verbose;
-    protected int debug;
     private int timeout;
     protected T serialPort;
     private String portName;
@@ -101,11 +100,6 @@ public abstract class IrSerial<T extends LocalSerialPort> implements IHarcHardwa
     }
 
     @Override
-    public void setDebug(int debug) {
-        this.debug = debug;
-    }
-
-    @Override
     public void setTimeout(int timeout) throws IOException {
         if (!isValid())
             throw new IOException("Port not valid, cannot set timeout.");
@@ -149,7 +143,6 @@ public abstract class IrSerial<T extends LocalSerialPort> implements IHarcHardwa
         this.flowControl = flowControl;
         this.timeout = timeout;
         this.verbose = verbose;
-        this.debug = 0;
         //open();
     }
 
@@ -160,17 +153,7 @@ public abstract class IrSerial<T extends LocalSerialPort> implements IHarcHardwa
             Constructor<T> constructor =  clazz.getConstructor(String.class, int.class, int.class, int.class,
                     LocalSerialPort.Parity.class, LocalSerialPort.FlowControl.class, int.class, boolean.class);
             serialPort = constructor.newInstance(portName, baudRate, dataSize, stopBits, parity, flowControl, timeout, verbose);
-        } catch (NoSuchMethodException ex) {
-            throw new RuntimeException("Programming error in IrSerial");
-        } catch (SecurityException ex) {
-            throw new RuntimeException("Programming error in IrSerial");
-        } catch (InstantiationException ex) {
-            throw new RuntimeException("Programming error in IrSerial");
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException("Programming error in IrSerial");
-        } catch (IllegalArgumentException ex) {
-            throw new RuntimeException("Programming error in IrSerial");
-        } catch (InvocationTargetException ex) {
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             throw new RuntimeException("Programming error in IrSerial");
         }
         serialPort.open();

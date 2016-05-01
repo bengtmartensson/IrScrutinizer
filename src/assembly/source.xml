@@ -18,6 +18,7 @@
             </includes>
             <excludes>
                 <exclude>native/**</exclude>
+                <exclude>appimagekit/**</exclude>
                 <exclude>repos/**</exclude>
                 <exclude>package/dist/**</exclude>
                 <exclude>package/repos/**</exclude>
@@ -30,7 +31,6 @@
                 <exclude>**/*~</exclude> <!-- just in case -->
                 <exclude>**/*.o</exclude>
                 <exclude>**/Makefile.in</exclude>
-                <exclude>**/JavaApplicationStub*</exclude> <!-- proprietary -->
             </excludes>
             <lineEnding>keep</lineEnding> <!-- do not change! -->
         </fileSet>

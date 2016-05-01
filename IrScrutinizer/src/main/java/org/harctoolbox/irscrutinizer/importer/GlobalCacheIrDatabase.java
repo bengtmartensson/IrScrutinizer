@@ -41,7 +41,6 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
     public final static String globalCacheIrDatabaseHost = "irdatabase.globalcache.com";
     private final static String path = "/api/v1/";
     private final static String globalCacheDbOrigin = globalCacheIrDatabaseHost;
-    private static final long serialVersionUID = 1L;
     private boolean verbose = false;
 
     //private transient Proxy proxy = Proxy.NO_PROXY;
@@ -121,21 +120,21 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
             IrSignal irSignal = new IrSignal(durations, (repIndex - 1)/2, (durations.length - repIndex + 1)/2, frequency);
             String keyName = obj.get("KeyName").asString();
             Command cmd = new Command(keyName,
-                    "GCDB: " + manufacturer + "/" + deviceType + "/" + codeSet, irSignal,
-                    isGenerateCcf(), isInvokeDecodeIr());
+                    "GCDB: " + manufacturer + "/" + deviceType + "/" + codeSet, irSignal);
             addCommand(cmd);
         }
-
-        Remote remote = new Remote(manufacturer + "_" + deviceType + "_" + codeSet, //java.lang.String name,
+        Remote.MetaData metaData = new Remote.MetaData(manufacturer + "_" + deviceType + "_" + codeSet, //java.lang.String name,
                 manufacturer,
                 null, //java.lang.String model,
                 deviceType, //java.lang.String deviceClass,
-                null, //java.lang.String remoteName,
+                null //java.lang.String remoteName,
+        );
+        Remote remote = new Remote(metaData,
                 null, //java.lang.String comment,
                 null,
                 getCommandIndex(),
                 null //java.util.HashMap<java.lang.String,java.util.HashMap<java.lang.String,java.lang.String>> applicationParameters)
-                );
+        );
 
         remoteSet = new RemoteSet(getCreatingUser(), origin, remote);
     }

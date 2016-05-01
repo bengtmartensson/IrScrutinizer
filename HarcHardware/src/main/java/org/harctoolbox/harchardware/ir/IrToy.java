@@ -521,4 +521,9 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
             }
         }
     }
+
+    @Override
+    public void setDebug(int debug) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

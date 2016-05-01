@@ -19,11 +19,10 @@ package org.harctoolbox.IrpMaster;
 /**
  * Thrown if something did not parse. Often used to encapsulate org,antlr.runtime.RecognitionException
  * in order not to export the latter, breaking encapsulation and requiring the use of antlr*.jar.
- * 
+ *
  */
 
 public class ParseException extends IrpMasterException {
-    private static final long serialVersionUID = 1L;
 
     public ParseException() {
         super();
@@ -36,7 +35,7 @@ public class ParseException extends IrpMasterException {
     public ParseException(String string, Throwable ex) {
         super(string, ex);
     }
-    
+
     public ParseException(Throwable ex) {
         super(ex);
     }

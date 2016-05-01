@@ -50,18 +50,22 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
             public void propertyChange(PropertyChangeEvent evt) {
                 String propertyName = evt.getPropertyName();
                 try {
-                    if (propertyName.equals(SerialPortSimpleBean.PROP_VERSION)) {
-                        // nothing
-                    } else if (propertyName.equals(SerialPortSimpleBean.PROP_PORT)) {
-                        if (evt.getNewValue() == null)
-                            return;
-                        setupSerial();
-                    } else if (propertyName.equals(SerialPortSimpleBean.PROP_BAUD)) {
-                        setupSerial();
-                    } else if (propertyName.equals(SerialPortSimpleBean.PROP_ISOPEN)) {
-                        // nothing
-                    } else {
-                        guiUtils.error("Unknown property " + propertyName);
+                    switch (propertyName) {
+                        case SerialPortSimpleBean.PROP_VERSION:
+                            break;
+                        case SerialPortSimpleBean.PROP_PORT:
+                            if (evt.getNewValue() == null)
+                                return;
+                            setupSerial();
+                            break;
+                        case SerialPortSimpleBean.PROP_BAUD:
+                            setupSerial();
+                            break;
+                        case SerialPortSimpleBean.PROP_ISOPEN:
+                            break;
+                        default:
+                            guiUtils.error("Unknown property " + propertyName);
+                            break;
                     }
                 } catch (IOException ex) {
                     guiUtils.error(ex);
@@ -86,15 +90,7 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
             this.baudRate = newBaud;
             Props.class.getMethod("set" + clazz.getSimpleName() + "PortBaudRate", int.class).invoke(properties, newBaud);
             serialPortSimpleBean.setHardware(rawIrSender);
-        } catch (NoSuchMethodException ex) {
-            guiUtils.error(ex);
-        } catch (SecurityException ex) {
-            guiUtils.error(ex);
-        } catch (InstantiationException ex) {
-            guiUtils.error(ex);
-        } catch (IllegalAccessException ex) {
-            guiUtils.error(ex);
-        } catch (IllegalArgumentException ex) {
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException ex) {
             guiUtils.error(ex);
         } catch (InvocationTargetException ex) {
             // Likely NoSuchPortException

@@ -70,7 +70,7 @@ public class LircExport {
         this.toolVersion = toolVersion;
         this.frequency = (int) frequency;
         gap = 0;
-        signals = new LinkedHashMap<String, int[]>();
+        signals = new LinkedHashMap<>();
     }
 
     public LircExport(String name, String comment, double frequency) {

@@ -172,4 +172,9 @@ public final class LocalSerialPortBuffered extends LocalSerialPort implements IC
             System.err.println(ex.getMessage());
         }
     }
+
+    @Override
+    public void setDebug(int debug) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

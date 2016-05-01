@@ -68,11 +68,12 @@ public class CapturingLircMode2 extends CapturingHardware<LircMode2> implements 
             hardware = new LircMode2(commandName, properties.getVerbose(),
                     properties.getCaptureStartTimeout(), properties.getCaptureRunTimeout(), properties.getCaptureEndingTimeout()/*, properties.getFallbackFrequency()*/);
             selectMe();
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } catch (HarcHardwareException ex) {
+        } catch (IOException | HarcHardwareException ex) {
             guiUtils.error(ex);
         }
+        //setupHardwareCommonEnd(lircMode2command);
+        //properties.setCaptureDevice(lircMode2RadioButtonMenuItem.getText());
+
         //setupHardwareCommonEnd(lircMode2command);
         //properties.setCaptureDevice(lircMode2RadioButtonMenuItem.getText());
     }

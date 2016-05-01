@@ -33,8 +33,6 @@ import org.harctoolbox.girr.Command;
  *
  */
 public class ParametrizedIrSignal extends NamedIrSignal {
-    private static final long serialVersionUID = 1L;
-
     private static boolean generateRaw = true;
     private static boolean generateCcf = true;
     private static IrpMaster irpMaster = null;
@@ -67,7 +65,6 @@ public class ParametrizedIrSignal extends NamedIrSignal {
 
     public ParametrizedIrSignal(Command command) throws IrpMasterException {
         super(command.getName(), command.getComment());
-        command.checkForParameters();
         this.protocolName = command.getProtocol();
         this.parameters = command.getParameters();
     }
@@ -80,7 +77,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
 
     public ParametrizedIrSignal(String protocolName, long device, long subdevice, long function, String name, String comment) {
         super(name, comment);
-        parameters = new HashMap<String, Long>();
+        parameters = new HashMap<>();
         setParameter("F", function);
         setParameter("D", device);
         setParameter("S", subdevice);
@@ -161,12 +158,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         return formatMiscParams(parameters);
     }
 
-    @Override
-    public String csvString(String separator) {
-        String str = super.csvString(separator);
-        // TODO
-        return str;
-    }
+    // TODO: @Override public String csvString(String separator) {
 
     @Override
     public String toPrintString() {
@@ -199,7 +191,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         @SuppressWarnings("unchecked")
         HashMap<String,Long> localParameters = (HashMap<String,Long>) parameters.clone();
         localParameters.remove("hex");
-        Command command = new Command(getName(), getComment(), protocolName, localParameters, irpMaster, generateRaw, generateCcf);
+        Command command = new Command(getName(), getComment(), protocolName, localParameters);
         return command;
     }
 
@@ -305,16 +297,12 @@ public class ParametrizedIrSignal extends NamedIrSignal {
     }
 
     public static class ParameterIrSignalTableColumnModel extends NamedIrSignal.LearnedIrSignalTableColumnModel {
-        private static final long serialVersionUID = 1L;
-
         public ParameterIrSignalTableColumnModel() {
             super(new ParameterIrSignalColumns());
         }
     }
 
     public static class ParameterIrSignalTableModel extends NamedIrSignal.LearnedIrSignalTableModel {
-        private static final long serialVersionUID = 1L;
-
         public ParameterIrSignalTableModel() {
             super(new ParameterIrSignalColumns());
         }
@@ -339,7 +327,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         }
 
         public ArrayList<Long> listF(Command reference) throws IrpMasterException {
-            ArrayList<Long> list = new ArrayList<Long>();
+            ArrayList<Long> list = new ArrayList<>();
             @SuppressWarnings("unchecked")
             HashMap<String, Long> params = (HashMap<String, Long>) reference.getParameters().clone();
             params.remove("F");

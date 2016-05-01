@@ -23,10 +23,7 @@ import javax.swing.JPanel;
  *
  */
 public abstract class HarcPanel extends JPanel implements IHarcPanel {
-    private static final long serialVersionUID = 1L;
-
     @Override
     public void close() {
-
     }
 }

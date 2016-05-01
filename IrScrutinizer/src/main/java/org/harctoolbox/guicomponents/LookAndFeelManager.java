@@ -101,9 +101,7 @@ public class LookAndFeelManager {
             setLAFex(index);
         } catch (ClassNotFoundException ex) {
             caller.err(ex, "Class not found");
-        } catch (InstantiationException ex) {
-            caller.err(ex, null);
-        } catch (IllegalAccessException ex) {
+        } catch (InstantiationException | IllegalAccessException ex) {
             caller.err(ex, null);
         } catch (UnsupportedLookAndFeelException ex) {
             caller.err(ex, "Unsupported LAF");

@@ -44,8 +44,7 @@ import org.harctoolbox.irscrutinizer.Version;
  */
 public class IrTransImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
     public static final String homeUrl = "http://www.irtrans.com";
-    private static final long serialVersionUID = 1L;
-
+    public static final String defaultCharsetName = "windows-1252";
     private static final int dummyEndingGap = 50000;
 
     public IrTransImporter() {
@@ -130,11 +129,13 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                 for (int i = 0; i < data.length(); i++) {
                     char ch = data.charAt(i);
                     int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
+                    if (index >= timing.durations.length)
+                        throw new IrpMasterException("Undefined timing :" + ch);
                     times[2 * i] = timing.durations[index][0];
                     times[2 * i + 1] = timing.durations[index][1];
                 }
                 IrSignal irSignal = new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
-                return new Command(name, null, irSignal, false, true);
+                return new Command(name, null, irSignal);
             }
         }
     }
@@ -143,16 +144,17 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         private int[] durations;
         private int frequency;
 
-        IrTransCommandRaw(String name, int frequency, int[] durations) {
+        IrTransCommandRaw(String name, int frequency, int[] durations, int effectiveLength) {
             super(name);
             this.frequency = frequency;
-            this.durations = durations;
+            this.durations = new int[effectiveLength];
+            System.arraycopy(durations, 0, this.durations, 0, effectiveLength);
         }
 
         @Override
         Command toCommand() {
             IrSignal irSignal = new IrSignal(durations, 0, durations.length/2, 1000 * frequency);
-            return new Command(name, null, irSignal, false, true);
+            return new Command(name, null, irSignal);
         }
     }
 
@@ -166,7 +168,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
 
         @Override
         Command toCommand() throws IrpMasterException {
-            return new Command(name, null, ccf, false, true);
+            return new Command(name, null, ccf);
         }
     }
 
@@ -184,9 +186,8 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
             } catch (IrpMasterException ex) {
                 System.err.println(cmd.name + " Unparsable signal: " + ex.getMessage());
             }
-
         }
-        return new Remote(name, null, null, null, null, null, null, commands, null);
+        return new Remote(new Remote.MetaData(name), null, null, commands, null);
     }
 
     private String parseName(LineNumberReader reader) throws IOException, ParseException {
@@ -228,40 +229,56 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         String name = arr[index++];
         index++;
         String type = arr[index++];
-        if (type.equals("RAW")) {
-            int noDurations = Integer.parseInt(arr[index++]);
-            if (!arr[index++].equals("FREQ"))
-                throw new ParseException("No FREQ in raw signal", lineNo);
-            int frequency = Integer.parseInt(arr[index++]);
-            if (!arr[index++].equals("D"))
-                throw new ParseException("[D] not found", lineNo);
-            String data = arr[index++];
-            String[] durations = data.split(" ");
-            if (durations.length != noDurations)
-                throw new ParseException("Wrong number of durations", lineNo);
-            int[] times = new int[noDurations + (noDurations % 2)];
-            for (int i = 0; i < noDurations; i++) {
-                times[i] = Integer.parseInt(durations[i]);
+        switch (type) {
+            case "RAW": {
+                int noNumbers = Integer.parseInt(arr[index++]);
+                if (!arr[index++].equals("FREQ"))
+                    throw new ParseException("No FREQ in raw signal", lineNo);
+                int frequency = Integer.parseInt(arr[index++]);
+                if (!arr[index++].equals("D"))
+                    throw new ParseException("[D] not found", lineNo);
+                String data = arr[index++];
+                String[] numbers = data.split(" ");
+                if (numbers.length != noNumbers)
+                    throw new ParseException("Wrong number of durations", lineNo);
+                int[] times = new int[noNumbers + (noNumbers % 2)];
+                int durationIndex = 0;
+                int numberIndex = 0;
+                while (numberIndex < noNumbers) {
+                    int t = Integer.parseInt(numbers[numberIndex]);
+                    if (t == 0) {
+                        times[durationIndex] = 256*Integer.parseInt(numbers[numberIndex+1]) + Integer.parseInt(numbers[numberIndex+2]);
+                        numberIndex += 3;
+                    } else {
+                        times[durationIndex] = t;
+                        numberIndex++;
+                    }
+                    durationIndex++;
+                }
+                if ((durationIndex % 2) != 0)
+                    times[durationIndex++] = dummyEndingGap;
+                command = new IrTransCommandRaw(name, frequency, times, durationIndex);
+                break;
             }
-            if ((noDurations % 2) != 0)
-                times[noDurations] = dummyEndingGap;
 
-            command = new IrTransCommandRaw(name, frequency, times);
-        } else if (type.equals("CCF")) {
-            command = new IrTransCommandCcf(name, arr[index++]);
-        } else if (type.equals("T")) {
-            int timingNo = Integer.parseInt(arr[index++]);
-            if (!arr[index++].equals("D"))
-                throw new ParseException("[D] not found", lineNo);
-            String data = arr[index++];
-            command = new IrTransCommandIndexed(name, data, timings.get(timingNo));
-        } else
-            throw new ParseException("Unknown command type " + type, lineNo);
+            case "CCF":
+                command = new IrTransCommandCcf(name, arr[index++]);
+                break;
+            case "T": {
+                int timingNo = Integer.parseInt(arr[index++]);
+                if (!arr[index++].equals("D"))
+                    throw new ParseException("[D] not found", lineNo);
+                String data = arr[index++];
+                command = new IrTransCommandIndexed(name, data, timings.get(timingNo));
+                break;
+            }
+            default:
+                throw new ParseException("Unknown command type " + type, lineNo);
+        }
 
         if (index != arr.length)
             throw new ParseException("unparsable line", lineNo);
         return command;
-
     }
 
     private boolean gobbleTo(LineNumberReader reader, String target, boolean throwException) throws IOException, ParseException {
@@ -305,40 +322,63 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                     index++;
                     continue;
                 }
-                if (token.equals("N"))
-                    timing.durations = new int[Integer.parseInt(arr[++index])][2];
-                else if (token.equals("RC"))
-                    timing.repetitions = Integer.parseInt(arr[++index]);
-                else if (token.equals("RP"))
-                    timing.pause = Integer.parseInt(arr[++index]);
-                else if (token.equals("FL")) {
-                    timing.framelength = Integer.parseInt(arr[++index]);
-                    timing.pause = -1;
-                } else if (token.equals("FREQ"))
-                    timing.frequency = Integer.parseInt(arr[++index]);
-                else if (token.equals("FREQ-MEAS"))
-                    timing.freqMeas = true;
-                else if (token.equals("SB"))
-                    timing.startBit = true;
-                else if (token.equals("RS"))
-                    timing.repeatStart = true;
-                else if (token.equals("RC5"))
-                    timing.type = TimingType.rc5;
-                else if (token.equals("RC6"))
-                    timing.type = TimingType.rc6;
-                else if (token.equals("NOTOG"))
-                    timing.noToggle = true;
-                else if (token.equals("RCMM-TOGGLE"))
-                    timing.rcmmToggle = true;
-                else {
-                    try {
-                        int timingNumber = Integer.parseInt(token);
-                        String[] durations = arr[++index].split(" ");
-                        for (int i = 0; i < 2; i++)
-                            timing.durations[timingNumber-1][i] = Integer.parseInt(durations[i]);
-                    } catch (NumberFormatException ex) {
-                        throw new ParseException("Unknown token: " + token, reader.getLineNumber());
-                    }
+                switch (token) {
+                    case "N":
+                        timing.durations = new int[Integer.parseInt(arr[++index])][2];
+                        break;
+                    case "RC":
+                        timing.repetitions = Integer.parseInt(arr[++index]);
+                        break;
+                    case "RP":
+                        timing.pause = Integer.parseInt(arr[++index]);
+                        break;
+                    case "FL":
+                        timing.framelength = Integer.parseInt(arr[++index]);
+                        timing.pause = -1;
+                        break;
+                    case "FREQ":
+                        timing.frequency = Integer.parseInt(arr[++index]);
+                        break;
+                    case "FREQ-MEAS":
+                        timing.freqMeas = true;
+                        break;
+                    case "SB":
+                        timing.startBit = true;
+                        break;
+                    case "RS":
+                        timing.repeatStart = true;
+                        break;
+                    case "RC5":
+                        timing.type = TimingType.rc5;
+                        break;
+                    case "RC6":
+                        timing.type = TimingType.rc6;
+                        break;
+                    case "NOTOG":
+                        timing.noToggle = true;
+                        break;
+                    case "RCMM-TOGGLE":
+                        timing.rcmmToggle = true;
+                        break;
+                    case "RO":
+                        // treat as junk, but with one argument, see
+                        // See http://www.irtrans.de/forum/viewtopic.php?f=24&t=3970
+                        ++index;
+                        break;
+                    case "IRDA":
+                    case "IRDA-RAW":
+                        // treat as junk
+                        break;
+                    default:
+                        try {
+                            int timingNumber = Integer.parseInt(token);
+                            String[] durations = arr[++index].split(" ");
+                            for (int i = 0; i < 2; i++)
+                                timing.durations[timingNumber-1][i] = Integer.parseInt(durations[i]);
+                        } catch (NumberFormatException ex) {
+                            throw new ParseException("Unknown token: " + token, reader.getLineNumber());
+                        }
+                        break;
                 }
                 index++;
             }
@@ -367,6 +407,10 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                 null, //java.lang.String tool2Version,
                 null, //java.lang.String notes,
                 remotes);
+    }
+
+    public void load(File file) throws IOException, ParseException {
+        load(file, defaultCharsetName);
     }
 
     @Override

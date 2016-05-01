@@ -55,7 +55,7 @@ public class CapturingHardwareManager {
         this.tabbedPane = tabbedPane;
         this.startButton = startButton;
         this.startButton.setEnabled(false);
-        table = new LinkedHashMap<String, ICapturingHardware<?>>();
+        table = new LinkedHashMap<>();
     }
 
     public Collection<ICapturingHardware<?>> getCapturingHardware() {
@@ -126,9 +126,7 @@ public class CapturingHardwareManager {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     try {
                         select(hardware, true);
-                    } catch (IOException ex) {
-                        guiUtils.error(ex);
-                    } catch (HarcHardwareException ex) {
+                    } catch (IOException | HarcHardwareException ex) {
                         guiUtils.error(ex);
                     }
                 }

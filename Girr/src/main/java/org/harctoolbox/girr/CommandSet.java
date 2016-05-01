@@ -24,6 +24,7 @@ import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -55,9 +56,15 @@ public class CommandSet {
         NodeList nl = element.getElementsByTagName("notes");
         if (nl.getLength() > 0)
             notes = ((Element) nl.item(0)).getTextContent();
-        nl = element.getElementsByTagName("parameters");
-        if (nl.getLength() > 0) {
-            Element el = (Element) nl.item(0);
+        // Cannot use getElementsByTagName("parameters") because it will find
+        // the parameters of the child commands, which is not what we want.
+        nl = element.getChildNodes();
+        for (int nodeNr = 0; nodeNr < nl.getLength(); nodeNr++) {
+            if (nl.item(nodeNr).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element el = (Element) nl.item(nodeNr);
+            if (!el.getTagName().equals("parameters"))
+                continue;
             String newProtocol = el.getAttribute("protocol");
             if (!newProtocol.isEmpty())
                 protocol = newProtocol;
@@ -65,7 +72,7 @@ public class CommandSet {
             for (int i = 0; i < paramList.getLength(); i++) {
                 Element e = (Element) paramList.item(i);
                 try {
-                    parameters.put(e.getAttribute("name"), Long.parseLong(e.getAttribute("value")));
+                    parameters.put(e.getAttribute("name"), Command.parseParameter(e.getAttribute("value")));
                 } catch (NumberFormatException ex) {
                     throw new ParseException("NumberFormatException " + ex.getMessage(), (int) IrpUtils.invalid);
                 }
@@ -115,19 +122,19 @@ public class CommandSet {
      */
     public Element xmlExport(Document doc, boolean fatRaw,
             boolean generateRaw, boolean generateCcf, boolean generateParameters) {
-        Element element = doc.createElement("commandSet");
+        Element element = doc.createElementNS(XmlExporter.girrNamespace, "commandSet");
         element.setAttribute("name", name);
         if (notes != null) {
-            Element notesEl = doc.createElement("notes");
+            Element notesEl = doc.createElementNS(XmlExporter.girrNamespace, "notes");
             notesEl.setTextContent(notes);
             element.appendChild(notesEl);
         }
         if (parameters != null && generateParameters) {
-            Element parametersEl = doc.createElement("parameters");
+            Element parametersEl = doc.createElementNS(XmlExporter.girrNamespace, "parameters");
             parametersEl.setAttribute("protocol", protocol);
             element.appendChild(parametersEl);
             for (Entry<String, Long> parameter : parameters.entrySet()) {
-                Element parameterEl = doc.createElement("parameter");
+                Element parameterEl = doc.createElementNS(XmlExporter.girrNamespace, "parameter");
                 parameterEl.setAttribute("name", parameter.getKey());
                 parameterEl.setAttribute("value", parameter.getValue().toString());
                 parametersEl.appendChild(parameterEl);
@@ -135,13 +142,8 @@ public class CommandSet {
         }
         if (commands != null) {
             for (Command command : commands.values()) {
-                try {
-                    element.appendChild(command.xmlExport(doc, null, fatRaw,
-                            generateRaw, generateCcf, generateParameters));
-                } catch (IrpMasterException ex) {
-                    element.appendChild(doc.createComment("Could not export command: " + command.toString()));
-                    // TODO: invoke logger
-                }
+                element.appendChild(command.xmlExport(doc, null, fatRaw,
+                        generateRaw, generateCcf, generateParameters));
             }
         }
         return element;

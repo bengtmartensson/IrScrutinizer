@@ -19,7 +19,6 @@ package org.harctoolbox.irscrutinizer.exporter;
 
 import java.awt.Component;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,22 +31,24 @@ import org.harctoolbox.girr.RemoteSet;
  *
  */
 public interface IRemoteSetExporter extends ICommandExporter {
-    public void export(RemoteSet remoteSet, String title, int count, boolean automaticFilenames, Component parent, File exportDir)
-            throws FileNotFoundException, IOException, IrpMasterException;
+    public void export(RemoteSet remoteSet, String title, int count, boolean automaticFilenames,
+            Component parent, File exportDir, String charsetName)
+            throws IOException, IrpMasterException;
 
-    public abstract void export(RemoteSet remoteSet, String title, int count, File saveFile) throws FileNotFoundException, IOException, IrpMasterException;
+    public abstract void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName) throws IOException, IrpMasterException;
 
-    public void export(Remote remote, String title, String source, int count, File saveFile) throws FileNotFoundException, IrpMasterException, IOException;
+    public void export(Remote remote, String title, String source, int count, File saveFile, String charsetName) throws IrpMasterException, IOException;
 
     public void export(HashMap<String, Command> commands, String source, String title,
-            String name, String manufacturer, String model, String deviceClass, String remoteName, int count, File saveFile) throws FileNotFoundException, IrpMasterException, IOException;
+            Remote.MetaData metaData,
+            int count, File saveFile, String charsetName) throws IrpMasterException, IOException;
 
     public File export(HashMap<String, Command> commands, String source, String title,
-            String name, String manufacturer, String model, String deviceClass,
-            String remoteName, int count, boolean automaticFilenames, Component parent, File exportDir)
-            throws FileNotFoundException, IrpMasterException, IOException;
+            Remote.MetaData metaData, int count, boolean automaticFilenames, Component parent, File exportDir, String charsetName)
+            throws IrpMasterException, IOException;
 
-    public void export(Collection<Command> commands, String source, String title, int count, File saveFile) throws FileNotFoundException, IOException, IrpMasterException;
+    public void export(Collection<Command> commands, String source, String title, int count, File saveFile, String charsetName)
+            throws IOException, IrpMasterException;
 
     public boolean supportsEmbeddedFormats();
 }

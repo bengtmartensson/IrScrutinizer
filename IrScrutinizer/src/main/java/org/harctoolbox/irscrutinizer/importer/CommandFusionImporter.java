@@ -41,7 +41,6 @@ import org.harctoolbox.irscrutinizer.Version;
  */
 public class CommandFusionImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
     public static final String homeUrl = "http://www.commandfusion.com/index.php";
-    private static final long serialVersionUID = 1L;
 
     @Override
     public void load(Reader reader, String origin) throws IOException {
@@ -78,7 +77,7 @@ public class CommandFusionImporter extends RemoteSetImporter implements IReaderI
         String remoteName = remoteInfo.getString("RemoteModel", null);
         String notes = remoteInfo.getString("Description", null);
 
-        Remote remote = new Remote(name, manufacturer, model, deviceClass, remoteName,
+        Remote remote = new Remote(new Remote.MetaData(name, manufacturer, model, deviceClass, remoteName),
                 null /* String comment */, notes, commands,
                 null /* HashMap<String,HashMap<String,String>> applicationParameters*/);
         return remote;
@@ -90,7 +89,7 @@ public class CommandFusionImporter extends RemoteSetImporter implements IReaderI
         String ccf = cmd.getString("CCF", null);
         Command command = null;
         try {
-            command = new Command(name, null, ccf, isGenerateRaw(), isInvokeDecodeIr());
+            command = new Command(name, null, ccf);
         } catch (IrpMasterException ex) {
             Logger.getLogger(CommandFusionImporter.class.getName()).log(Level.SEVERE, null, ex);
         }

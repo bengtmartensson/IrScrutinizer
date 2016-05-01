@@ -60,13 +60,20 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
                 String propertyName = evt.getPropertyName();
 
                 try {
-                    if (propertyName.equals(SerialPortSimpleBean.PROP_BAUD)) {
-                        setupSerial();
-                    } else if (propertyName.equals(SerialPortSimpleBean.PROP_PORT)) {
-                        if (evt.getNewValue() == null)
-                            return;
-
-                        setupSerial();
+                    switch (propertyName) {
+                        case SerialPortSimpleBean.PROP_BAUD:
+                            setupSerial();
+                            break;
+                        case SerialPortSimpleBean.PROP_PORT:
+                            if (evt.getNewValue() == null)
+                                return;
+                            setupSerial();
+                            break;
+                        case SerialPortSimpleBean.PROP_VERSION:
+                        case SerialPortSimpleBean.PROP_ISOPEN:
+                            break;
+                        default:
+                            throw new RuntimeException("Programmming error detected");
                     }
                 } catch (IOException ex) {
                     guiUtils.error(ex);
@@ -101,15 +108,7 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
             Props.class.getMethod("set" + clazz.getSimpleName() + "CapturePortName", String.class).invoke(properties, portName);
             serialPortSimpleBean.setHardware(hardware);
             selectMe();
-        } catch (NoSuchMethodException ex) {
-            guiUtils.error(ex);
-        } catch (SecurityException ex) {
-            guiUtils.error(ex);
-        } catch (InstantiationException ex) {
-            guiUtils.error(ex);
-        } catch (IllegalAccessException ex) {
-            guiUtils.error(ex);
-        } catch (IllegalArgumentException ex) {
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | HarcHardwareException ex) {
             guiUtils.error(ex);
         } catch (InvocationTargetException ex) {
             // Likely NoSuchPortException
@@ -118,8 +117,6 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
             else
                 guiUtils.error(ex);
             guiUtils.error(ex.getCause().getMessage());
-        } catch (HarcHardwareException ex) {
-            guiUtils.error(ex);
         }
     }
 

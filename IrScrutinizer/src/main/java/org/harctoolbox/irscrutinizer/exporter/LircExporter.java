@@ -35,7 +35,7 @@ import org.harctoolbox.irscrutinizer.Version;
  * This class exports a RemoteSet to a LIRC configuration file.
  */
 public class LircExporter extends RemoteSetExporter implements IRemoteSetExporter {
-    private final static boolean forceRaw = false; // FIXME
+    private final static boolean forceRaw = false; // TODO: make user settable
 
     public LircExporter() {
         super();
@@ -47,7 +47,7 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
 
     @Override
     public String[][] getFileExtensions() {
-        return new String[][] { new String[]{ "LIRC files", "lirc" }, new String[]{ "Text files", "txt" }};
+        return new String[][] { new String[]{ "LIRC files", "conf" }, new String[]{ "Text files", "txt" }};
     }
 
     // LIRC in general does not add extensions to its files, therefore we should not do it either.
@@ -57,30 +57,23 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File saveFile) throws FileNotFoundException, IrpMasterException {
+    public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName) throws FileNotFoundException, IrpMasterException, UnsupportedEncodingException {
         // LIRC often does not add extensions to its files, therefore we should not do it either.
         if (remoteSet.getAllCommands().isEmpty())
             throw new IllegalArgumentException("No commands in the remotes.");
 
-        PrintStream out = null;
-        try {
-            out = new PrintStream(saveFile, IrpUtils.dumbCharsetName);
-        } catch (UnsupportedEncodingException ex) {
-            // cannot happen
-            return;
-        }
+        try (PrintStream out = new PrintStream(saveFile, charsetName)) {
+            exportPreamble(out, title, charsetName);
 
-        exportPreamble(out, title);
-
-        for (Remote remote : remoteSet.getRemotes()) {
-            if (!forceRaw && remote.hasThisProtocol("nec1"))
-                exportRemoteNec1(out, remote);
-            else if (!forceRaw && remote.hasThisProtocol("rc5"))
-                exportRemoteRc5(out, remote);
-            else
-                exportRemoteRaw(out, remote, count);
+            for (Remote remote : remoteSet.getRemotes()) {
+                if (!forceRaw && remote.hasThisProtocol("nec1"))
+                    exportRemoteNec1(out, remote);
+                else if (!forceRaw && remote.hasThisProtocol("rc5"))
+                    exportRemoteRc5(out, remote);
+                else
+                    exportRemoteRaw(out, remote, count);
+            }
         }
-        out.close();
     }
 
     @Override
@@ -88,11 +81,17 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         return "LIRC";
     }
 
+    // Jirc's definition of Lirc names:
+    // ('!' .. '{' | '}' .. '~' | '\u00A1' .. '\u00FF')+
+    private static String lircName(String key) {
+        return key.replaceAll("[^!-{}-~\u00A1-\u00FF]", "_");
+    }
+
     /**
      * Write the instance to a the PrintStream in the argument. It is not closed.
      * @param stream PrintStream, should be ready for writing.
      */
-    private void exportPreamble(PrintStream stream, String title) {
+    private void exportPreamble(PrintStream stream, String title, String charsetName) {
         if (title != null && !title.isEmpty())
             stream.println("# " + title);
         else
@@ -101,6 +100,7 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         stream.println("# Creating tool: " + Version.versionString);
         stream.println("# Creating user: " + creatingUser);
         stream.println("# CreateDate: " + (new Date()).toString());
+        stream.println("# Encoding: " + charsetName);
         stream.println("#");
     }
 
@@ -119,18 +119,17 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
     private void exportRemoteRaw(PrintStream stream, Remote remote, int count) throws IrpMasterException {
         exportRemoteHead(stream, remote);
         Command randomCommand = remote.getCommands().values().iterator().next();
-        randomCommand.checkForRaw();
         stream.println("begin remote");
         stream.println("\tname\t" + remote.getName());
         stream.println("\tflags\tRAW_CODES");
         stream.println("\teps\t30");
         stream.println("\taeps\t100");
-        stream.println("\tfrequency\t" + randomCommand.getFrequency());
+        stream.println("\tfrequency\t" + randomCommand.getFrequency()); // Might be wrong...
         stream.println("\tgap\t" + Math.round(randomCommand.toIrSignal().getGap()));
-        stream.println("\t\tbegin raw_codes");
+        stream.print("\t\tbegin raw_codes");
         for (Map.Entry<String, Command> kvp : remote.getCommands().entrySet()) {
             stream.println();
-            stream.print("\t\t\tname " + kvp.getKey());
+            stream.print("\t\t\tname " + lircName(kvp.getKey()));
             int[] signal = kvp.getValue().toIrSignal().toIntArrayCount(count);
             for (int i = 0; i < signal.length - 1; i++) {
                 if (i % 8 == 0) {
@@ -159,23 +158,33 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         stream.println("\trepeat\t9041\t2267");
         stream.println("\tgap\t36000");
         stream.println("\trepeat_bit\t0");
+        stream.println("\tfrequency\t38400");
         stream.println("\t\tbegin codes");
         for (Map.Entry<String, Command> kvp : remote.getCommands().entrySet())
-            stream.println(String.format("\t\t\t%1$s\t%2$#016x", kvp.getKey(), formatNec1(kvp.getValue())));
+            try {
+                stream.println(String.format("\t\t\t%1$s\t%2$#016x", lircName(kvp.getKey()), formatNec1(kvp.getValue())));
+            } catch (IrpMasterException ex) {
+                stream.println(String.format("\t\t\t# %1$s Error: %2$s", kvp.getKey(), ex.getMessage()));
+            }
 
         stream.println("\t\tend codes");
         stream.println("end remote");
     }
 
-    private long formatNec1(Command command) {
+    private long formatNec1(Command command) throws IrpMasterException {
         HashMap<String, Long> parameters = command.getParameters();
+        if (!parameters.containsKey("D"))
+            throw new IrpMasterException("Parameter D not assigned");
+        if (!parameters.containsKey("F"))
+            throw new IrpMasterException("Parameter F not assigned");
+
         long D = IrpUtils.reverse(parameters.get("D"), 8);
         long F = IrpUtils.reverse(parameters.get("F"), 8);
         long S = IrpUtils.reverse(parameters.containsKey("S") ? parameters.get("S") : 255L - parameters.get("D"), 8);
         return (D << 24L) | (S << 16L) | (F << 8L) | ((~F) & 0xFFL) ;
     }
 
-    private void exportRemoteRc5(PrintStream stream, Remote remote) throws IrpMasterException {
+    private void exportRemoteRc5(PrintStream stream, Remote remote) {
         stream.println("begin remote");
         stream.println("\tname\t" + remote.getName());
         stream.println("\tbits\t13");
@@ -187,18 +196,27 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         stream.println("\tplead\t889");
         stream.println("\tgap\t90886");
         stream.println("\ttoggle_bit\t2");
+        stream.println("\tfrequency\t36000");
         stream.println("\t\tbegin codes");
         for (Map.Entry<String, Command> kvp : remote.getCommands().entrySet())
-            stream.println(String.format("\t\t\t%1$s\t%2$#016x", kvp.getKey(), formatRc5(kvp.getValue())));
+            try {
+                stream.println(String.format("\t\t\t%1$s\t%2$#016x", lircName(kvp.getKey()), formatRc5(kvp.getValue())));
+            } catch (IrpMasterException ex) {
+                stream.println(String.format("\t\t\t# %1$s Error: %2$s", kvp.getKey(), ex.getMessage()));
+            }
         stream.println("\t\tend codes");
         stream.println("end remote");
     }
 
-    private long formatRc5(Command command) {
+    private long formatRc5(Command command) throws IrpMasterException {
         HashMap<String, Long> parameters = command.getParameters();
+        if (!parameters.containsKey("D"))
+            throw new IrpMasterException("Parameter D not assigned");
+        if (!parameters.containsKey("F"))
+            throw new IrpMasterException("Parameter F not assigned");
         long D = parameters.get("D");
         long F = parameters.get("F");
         long T = parameters.containsKey("T") ? parameters.get("T") : 0;
-        return (((~F) & 64L) << 6L)| (T << 11L) | (D << 6L) | F;
+        return (((~F) & 64L) << 6L)| (T << 11L) | (D << 6L) | (F & 63L);
     }
 }

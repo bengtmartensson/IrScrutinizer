@@ -45,8 +45,6 @@ import org.harctoolbox.irscrutinizer.Version;
  * Class for importing Pronto CCF files of the first generation.
  */
 public class CcfImporter extends RemoteSetImporter implements IFileImporter {
-    private static final long serialVersionUID = 1L;
-
     private CCF ccf;
     private boolean translateProntoFont = true;
 
@@ -79,16 +77,12 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
                 commands.put(command.getName(), command);
         }
 
-        Remote remote = new Remote(deviceName,
-              null, //java.lang.String manufacturer,
-              null, //java.lang.String model,
-              null, //java.lang.String deviceClass,
-              null, //java.lang.String remoteName,
-              origin, //java.lang.String comment,
-              "Imported by IrScrutinizer", //java.lang.String notes,
-              commands,
-              null //java.util.HashMap<java.lang.String,java.util.HashMap<java.lang.String,java.lang.String>> applicationParameters)
-                );
+        Remote remote = new Remote(new Remote.MetaData(deviceName),
+                origin, //java.lang.String comment,
+                "Imported by IrScrutinizer", //java.lang.String notes,
+                commands,
+                null //java.util.HashMap<java.lang.String,java.util.HashMap<java.lang.String,java.lang.String>> applicationParameters)
+        );
         return remote;
     }
 
@@ -122,7 +116,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
                 if (has_content) {
                     try {
                         Command command = new Command(translateProntoFont ? ProntoIrCode.translateProntoFont(buttonName) : buttonName,
-                                deviceName + "/" + panelName, ccfString, isGenerateRaw(), isInvokeDecodeIr());
+                                deviceName + "/" + panelName, ccfString);
                         commandList.add(command);
                     } catch (IrpMasterException ex) {
                         System.err.println(ex.getMessage());
@@ -139,11 +133,11 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
 
     @Override
     public void load(Reader reader, String origin) throws IOException, FileNotFoundException, ParseException {
-        dumbLoad(reader, origin);
+        dumbLoad(reader, origin, "windows-1252");
     }
 
     @Override
-    public void load(File file, String origin) throws IOException {
+    public void load(File file, String origin, String charsetName /*ignored */) throws IOException {
         ccf = new CCF(ProntoModel.getModel(ProntoModel.RU890));
         String filename = file.getPath();
         ccf.load(filename);

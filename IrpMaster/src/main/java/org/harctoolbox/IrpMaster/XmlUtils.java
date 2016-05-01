@@ -81,6 +81,10 @@ public class XmlUtils {
         return openXmlFile(file, schema, isNamespaceAware, isXIncludeAware);
     }
 
+    public static Document openXmlFile(File file) throws IOException, SAXParseException, SAXException {
+        return openXmlFile(file, (Schema) null, true, true);
+    }
+
     // NOTE: By silly reader, makes null as InputStream, producing silly error messages.
     public static Document openXmlReader(Reader reader, Schema schema, boolean isNamespaceAware, boolean isXIncludeAware) throws IOException, SAXParseException, SAXException {
         return openXmlStream((new InputSource(reader)).getByteStream(), schema, isNamespaceAware, isXIncludeAware);
@@ -124,6 +128,8 @@ public class XmlUtils {
         try {
             builder = factory.newDocumentBuilder();
         } catch (ParserConfigurationException ex) {
+            // there is something seriously wrong
+            throw new RuntimeException(ex);
         }
         return builder;
     }
@@ -143,7 +149,7 @@ public class XmlUtils {
     }
 
     public static HashMap<String, Element> createIndex(Element root, String tagName, String idName) {
-        HashMap<String, Element> index = new HashMap<String, Element>();
+        HashMap<String, Element> index = new HashMap<>();
         NodeList nodes = root.getElementsByTagName(tagName);
         for (int i = 0; i < nodes.getLength(); i++) {
             Element el = (Element) nodes.item(i);
@@ -154,15 +160,13 @@ public class XmlUtils {
         return index;
     }
 
-    public static void printDOM(OutputStream ostr, Document doc, String doctypeSystemid, String encoding) {
+    public static void printDOM(OutputStream ostr, Document doc, String encoding) {
         try {
             Transformer tr = TransformerFactory.newInstance().newTransformer();
             if (encoding != null)
                 tr.setOutputProperty(OutputKeys.ENCODING, encoding);
             tr.setOutputProperty(OutputKeys.INDENT, "yes");
             tr.setOutputProperty(OutputKeys.METHOD, "xml");
-            if (doctypeSystemid != null)
-                tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctypeSystemid);
             tr.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             tr.transform(new DOMSource(doc), new StreamResult(ostr));
         } catch (TransformerConfigurationException ex) {
@@ -172,10 +176,10 @@ public class XmlUtils {
         }
     }
 
-    public static void printDOM(File file, Document doc, String doctypeSystemid, String encoding)
+    public static void printDOM(File file, Document doc, String encoding)
             throws FileNotFoundException {
         printDOM(file != null ? new FileOutputStream(file) : System.out,
-                doc, doctypeSystemid, encoding);
+                doc, encoding);
         System.err.println("File " + file + " written.");
     }
 
@@ -183,7 +187,7 @@ public class XmlUtils {
     // since it would been too error prone.
 
     public static void printDOM(File file, Document doc) throws FileNotFoundException {
-        printDOM(file, doc, null, null);
+        printDOM(file, doc, null);
     }
 
     private static Schema readSchemaFromFile(File schemaFile) throws SAXException {
@@ -191,7 +195,7 @@ public class XmlUtils {
     }
 
     public static HashMap<String, Element> buildIndex(Element element, String tagName, String idName) {
-        HashMap<String, Element> index = new HashMap<String, Element>();
+        HashMap<String, Element> index = new HashMap<>();
         NodeList nl = element.getElementsByTagName(tagName);
         for (int i = 0; i < nl.getLength(); i++) {
             Element el = (Element) nl.item(i);

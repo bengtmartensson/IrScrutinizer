@@ -42,14 +42,14 @@ import org.harctoolbox.irscrutinizer.Version;
  *
  */
 public class CmlImporter extends RemoteSetImporter implements IFileImporter, Serializable {
-    private static final long serialVersionUID = 1L;
-
     // I have no idea of a/the correct character set in the CML files.
     // Therefore, select the largest of the 8 bit character sets.
-    private final String charactersetName = "WINDOWS-1252";
+    private final String defaultCharsetName = "WINDOWS-1252";
     private static final int remoteToken = 0xbbbbbbbb;
     private static final int commandToken = 0xcccccccc;
     private static final int EOF = -1;
+
+    private String charactersetName = null;
 
     public CmlImporter() {
         super();
@@ -62,13 +62,13 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
 
     @Override
     public void load(Reader reader, String origin) throws IOException, ParseException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported.");
     }
 
     @Override
-    public void load(File file, String origin) throws IOException, ParseException {
+    public void load(File file, String origin, String charsetName) throws IOException, ParseException {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            load(fileInputStream, origin);
+            load(fileInputStream, origin, charsetName);
         }
     }
 
@@ -78,7 +78,8 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
     //}
 
     @Override
-    public void load(InputStream reader, String origin) throws IOException, ParseException {
+    public void load(InputStream reader, String origin, String charsetName) throws IOException, ParseException {
+        charactersetName = charsetName;
         prepareLoad(origin);
         remoteSet = parseRemoteSet(reader, origin);
         setupCommands();
@@ -149,7 +150,8 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
             System.err.println("Remote " + remoteName + " has no commands, ignored.");
             return null;
         }
-        return new Remote(remoteName, vendor, model, kind, null, null, null, commands, null);
+        Remote.MetaData metaData = new Remote.MetaData(remoteName, vendor, model, kind, null);
+        return new Remote(metaData, null, null, commands, null);
     }
 
     private Command parseCommand(InputStream inputStream, String remoteName) throws IOException {

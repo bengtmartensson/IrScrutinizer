@@ -73,7 +73,7 @@ public class XmlExport {
     public XmlExport() {
         doc = newDocument();
     }
-    
+
     public static Document newDocument() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
@@ -88,7 +88,7 @@ public class XmlExport {
     }
 
 
-    public void printDOM(OutputStream ostr, Document stylesheet, String doctypeSystemid) {
+    public void printDOM(OutputStream ostr, Document stylesheet) {
         try {
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer tr;
@@ -102,8 +102,6 @@ public class XmlExport {
             }
             tr.setOutputProperty(OutputKeys.INDENT, "yes");
             tr.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            if (doctypeSystemid != null)
-                tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctypeSystemid);
             tr.transform(new DOMSource(doc), new StreamResult(ostr));
         } catch (TransformerConfigurationException e) {
             System.err.println(e.getMessage());
@@ -112,28 +110,19 @@ public class XmlExport {
         }
     }
 
-    public void printDOM(OutputStream ostr, String doctypeSystemid) {
-        printDOM(ostr, null, doctypeSystemid);
-    }
-
-    public void printDOM(File file, String doctypeSystemid) throws FileNotFoundException, IOException {
-        if (file == null)
-            printDOM(System.out, doctypeSystemid);
-        else {
-            FileOutputStream stream = null;
-            try {
-                stream = new FileOutputStream(file);
-                printDOM(stream, doctypeSystemid);
-                System.err.println("File " + file + " written.");
-            } finally {
-                if (stream != null)
-                    stream.close();
-            }
-        }
+    public void printDOM(OutputStream ostr) {
+        printDOM(ostr, null);
     }
 
     public void printDOM(File file) throws FileNotFoundException, IOException {
-        printDOM(file, null);
+        if (file == null)
+            printDOM(System.out);
+        else {
+            try (FileOutputStream stream = new FileOutputStream(file)) {
+                printDOM(stream);
+                System.err.println("File " + file + " written.");
+            }
+        }
     }
 
     public void setRoot(Element el) {

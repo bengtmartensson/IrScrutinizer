@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.ParseException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -34,8 +35,6 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 
 // Interfaces to Desktop
 public class GuiUtils implements Serializable {
-    private static final long serialVersionUID = 1L;
-
     private final int maxGuiMessageLength;
     private boolean usePopupsForErrors = false;
     private boolean usePopupsForHelp = false;
@@ -175,7 +174,10 @@ public class GuiUtils implements Serializable {
     }
 
     public void error(Throwable ex, String message) {
-        boolean result = error(ex.getClass().getSimpleName() + ": " + message, offerStackTrace);
+        String errorMessage = ex instanceof ParseException
+                ? ex.getClass().getSimpleName() + " on line " + ((ParseException) ex).getErrorOffset() + ": " + message
+                : ex.getClass().getSimpleName() + ": " + message;
+        boolean result = error(errorMessage, offerStackTrace);
         if (result)
             ex.printStackTrace();
     }
@@ -204,8 +206,17 @@ public class GuiUtils implements Serializable {
         return JOptionPane.showConfirmDialog(frame, message, "Confirmation requested", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
     }
 
-    public void browse(String uri) {
-        browse(URI.create(uri));
+    public void mail(String address, String subject, String body) throws URISyntaxException, IOException {
+        URI uri = new URI("mailto:" + address + "?subject=" + subject + "&body=" + body);
+        Desktop.getDesktop().mail(uri);
+    }
+
+    // There is, deliberately, no public void browse(String string)
+    // rationale: too easy to confuse file names and URLs,
+    // thereby too error prone.
+
+    public void browse(File file) throws MalformedURLException, URISyntaxException {
+        browse(file.toURI());
     }
 
     public void browse(URI uri) {
@@ -218,11 +229,13 @@ public class GuiUtils implements Serializable {
             return;
         }
         try {
-            Desktop.getDesktop().browse(uri);
             if (verbose)
                 trace("Browsing URI `" + uri.toString() + "'");
+            Desktop.getDesktop().browse(uri);
         } catch (IOException ex) {
-            error("Could not start browser using uri `" + uri.toString() + "'.");
+            boolean stacktrace = error("Could not start browser using uri `" + uri.toString() + "'.", offerStackTrace);
+            if (stacktrace)
+                ex.printStackTrace(System.err);
         }
     }
 
@@ -286,9 +299,7 @@ public class GuiUtils implements Serializable {
         try {
             URL url = new URL(urlOrFilename);
             browse(url.toURI());
-        } catch (MalformedURLException ex) {
-            editOrOpen(new File(urlOrFilename));
-        } catch (URISyntaxException ex) {
+        } catch (MalformedURLException | URISyntaxException ex) {
             editOrOpen(new File(urlOrFilename));
         }
     }
@@ -326,9 +337,5 @@ public class GuiUtils implements Serializable {
             }
         }
         return current != null && current.equals(versionString);
-    }
-
-    public static void main(String[] args) {
-        fatal("Nasty thing happened", 42, null);
     }
 }

@@ -164,7 +164,6 @@ public abstract class NamedIrSignal {
     }
 
     public abstract static class LearnedIrSignalTableColumnModel extends DefaultTableColumnModel {
-        private static final long serialVersionUID = 1L;
         private final AbstractColumnFunction columnFunc;
 
         public LearnedIrSignalTableColumnModel(AbstractColumnFunction icolumn) {
@@ -182,6 +181,11 @@ public abstract class NamedIrSignal {
             }
         }
 
+        /**
+         * Remove selected column, if possible
+         * @param i column number
+         * @throws ArrayIndexOutOfBoundsException if no column #i exists
+         */
         public void removeColumn(int i) {
             removeColumn(getColumn(i));
         }
@@ -209,7 +213,6 @@ public abstract class NamedIrSignal {
     }
 
     public abstract static class LearnedIrSignalTableModel extends DefaultTableModel {
-        private static final long serialVersionUID = 1L;
         private final AbstractColumnFunction columnsFunc;
         private boolean scrollRequest = false;
 
@@ -218,7 +221,7 @@ public abstract class NamedIrSignal {
         public abstract Command toCommand(int row) throws IrpMasterException;
 
         public HashMap<String, Command> getCommands(boolean forgiveSillySignals) throws IrpMasterException {
-            HashMap<String, Command> commands = new LinkedHashMap<String, Command>(getRowCount() + 10);
+            HashMap<String, Command> commands = new LinkedHashMap<>(getRowCount() + 10);
             for (int row = 0; row < getRowCount(); row++) {
                 try {
                     Command command = toCommand(row);
@@ -247,8 +250,8 @@ public abstract class NamedIrSignal {
         }
 
         public ArrayList<String> getNonUniqueNames() {
-            ArrayList<String> duplicates = new ArrayList<String>();
-            ArrayList<String> allNames = new ArrayList<String>(getRowCount() + 10);
+            ArrayList<String> duplicates = new ArrayList<>();
+            ArrayList<String> allNames = new ArrayList<>(getRowCount() + 10);
             for (int row = 0; row < getRowCount(); row++) {
                 String name = (String) getValueAt(row, columnsFunc.getPosName());
                 if (allNames.contains(name)) {
@@ -261,7 +264,7 @@ public abstract class NamedIrSignal {
         }
 
         public ArrayList<Integer> getUnusedColumns() {
-            ArrayList<Integer> list = new ArrayList<Integer>();
+            ArrayList<Integer> list = new ArrayList<>();
             if (getRowCount() > 0) { // If the table is empty, do not consider any columns unused.
                 for (int column = 0; column < getColumnCount(); column++) {
                     if (!isUsedColumn(column))
@@ -296,7 +299,7 @@ public abstract class NamedIrSignal {
         }
 
         public ArrayList<Integer> getUninterestingColumns() {
-            ArrayList<Integer> list = new ArrayList<Integer>();
+            ArrayList<Integer> list = new ArrayList<>();
             if (getRowCount() > 0) { // If the table is empty, do not consider any columns unused.
                 for (int column = 0; column < getColumnCount(); column++) {
                     if (!isInterestingColumn(column))

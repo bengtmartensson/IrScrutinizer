@@ -91,8 +91,8 @@ import org.harctoolbox.harchardware.IHarcHardware;
     //private String protocolVersion;
     private String version;
 
-    private boolean verbosity;
-    private int debug;
+    //private boolean verbosity;
+    //private int debug;
     /* public */ Tira() throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException, InterruptedException  {
         this(defaultPortName);
     }
@@ -230,9 +230,7 @@ import org.harctoolbox.harchardware.IHarcHardware;
             in.close();
             Thread.sleep(1000);
             commPort.close();
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        } catch (InterruptedException ex) {
+        } catch (IOException | InterruptedException ex) {
             System.err.println(ex.getMessage());
         }
     }
@@ -347,10 +345,7 @@ import org.harctoolbox.harchardware.IHarcHardware;
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Tira tira = null;
-        try {
-            //int[] data = new int[]{889, 889, 1778, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 90886};
-            tira = new Tira();
+        try (Tira tira = new Tira()) {
             System.out.println(tira.getVersion());
             //String result = toy.selftest();
             //System.out.println(result);
@@ -365,21 +360,9 @@ import org.harctoolbox.harchardware.IHarcHardware;
             System.err.println("Port for IRToy " + defaultPortName + " was not found");
         } catch (PortInUseException ex) {
             System.err.println("Port for IRToy in use");
-        } catch (UnsupportedCommOperationException ex) {
+        } catch (UnsupportedCommOperationException | IOException | InterruptedException ex) {
             System.err.println("xxx" + ex.getMessage());
             //ex.printStackTrace();
-        } catch (IOException ex) {
-            System.err.println("xxx" + ex.getMessage());
-            //ex.printStackTrace();
-        } catch (InterruptedException ex) {
-            System.err.println("xxx" + ex.getMessage());
-            //ex.printStackTrace();
-        //} catch (IrpMasterException ex) {
-        //    System.err.println("xxx" + ex.getMessage());
-        //    ex.printStackTrace();
-        } finally {
-            if (tira != null)
-                tira.close();
         }
     }
 

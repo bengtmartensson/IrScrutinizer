@@ -10,7 +10,6 @@
 
     <!--xsl:variable name="mainPomDocument" select="document('../pom.xml')"/-->
     <!--xsl:variable name="IrScrutinizerVersion" select="document('../IrScrutinizer/pom.xml')/project/version/text()"/-->
-    <xsl:variable name="IrScrutinizerVersion" select="pattar"/>
 
     <xsl:template match="@*|node()">
         <xsl:copy>

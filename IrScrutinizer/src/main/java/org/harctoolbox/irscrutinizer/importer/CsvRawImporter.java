@@ -39,7 +39,6 @@ import org.harctoolbox.irscrutinizer.Utils;
  * Columns are numbered starting with 1.
  */
 public class CsvRawImporter extends CsvImporter {
-    private static final long serialVersionUID = 1L;
     private int codeColumn;
     private boolean includeTail;
 
@@ -74,13 +73,13 @@ public class CsvRawImporter extends CsvImporter {
     }
 
     @Override
-    public void load(File file, String origin) throws IOException, ParseException {
+    public void load(File file, String origin, String charsetName) throws IOException, ParseException {
         try (FileInputStream stream = new FileInputStream(file)) {
-            load(stream, origin);
+            load(stream, origin, charsetName);
         }
     }
 
-    // TODO: This is probably quite inefficient. Better would be to copy
+    // This is probably quite inefficient. Better would be to copy
     // String.split and make the necessary fixes to it.
     private String[] csvSplit(String line, String separator) {
         StringBuilder str = new StringBuilder(line.trim());
@@ -117,12 +116,12 @@ public class CsvRawImporter extends CsvImporter {
     @Override
     public void load(Reader reader, String origin) throws IOException {
         prepareLoad(origin);
-
+        boolean rejectNumbers = nameColumn < codeColumn;
         BufferedReader bufferedReader = new BufferedReader(reader);
         lineNo = 1;
         for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
             String[] chunks = csvSplit(line, separator);
-            Command signal = scrutinizeRaw(chunks);
+            Command signal = scrutinizeRaw(chunks, rejectNumbers);
             if (signal != null) {
                 addCommand(signal);
             }
@@ -131,8 +130,8 @@ public class CsvRawImporter extends CsvImporter {
         setupRemoteSet();
     }
 
-    private Command scrutinizeRaw(String[] chunks) {
-        String[] nameArray = gobbleString(chunks, nameColumn, nameMultiColumn, 16, "-");
+    private Command scrutinizeRaw(String[] chunks, boolean rejectNumbers) {
+        String[] nameArray = gobbleString(chunks, nameColumn, nameMultiColumn, 16, "-", rejectNumbers);
         String name = join(nameArray);
         if (name.isEmpty())
             return null;
@@ -152,20 +151,20 @@ public class CsvRawImporter extends CsvImporter {
             return null;
         }
         return irSignal != null ?
-                new Command(uniqueName(name), "Line " + lineNo + ", " + origin, irSignal, isGenerateCcf(), isInvokeDecodeIr())
+                new Command(uniqueName(name), "Line " + lineNo + ", " + origin, irSignal)
                 : null;
     }
 
     public static Collection<Command> process(File file, String separator, int nameColumn, boolean nameMultiColumn, int codeColumn, boolean includeTail,
-            boolean invokeAnalyzer, boolean invokeRepeatFinder, boolean verbose) throws IOException, ParseException, IrpMasterException {
+            boolean invokeAnalyzer, boolean invokeRepeatFinder, boolean verbose, String charsetName) throws IOException, ParseException, IrpMasterException {
         CsvRawImporter csvImportRaw = new CsvRawImporter(separator, nameColumn, nameMultiColumn, codeColumn, includeTail);
-        csvImportRaw.load(file);
+        csvImportRaw.load(file, charsetName);
         return csvImportRaw.getCommands();
     }
 
     public static void main(String[] args) {
         try {
-            Collection<Command> signals = process(new File(args[0]), " ", 3, false, 6, true, true, true, true);
+            Collection<Command> signals = process(new File(args[0]), " ", 3, false, 6, true, true, true, true, "WINDOWS-1252");
             for (Command signal : signals)
                 System.out.println(signal.toPrintString());
         } catch (IOException | IrpMasterException | ParseException ex) {

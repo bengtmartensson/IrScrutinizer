@@ -159,10 +159,7 @@ public class SonySerialCommand {
                 gc = new GlobalCache("gc", true);
                 gc.setSerial(1, "38400,FLOW_NONE,PARITY_EVEN");
                 port = gc.getSerialPort(1);
-            } catch (IOException ex) {
-                System.err.println(ex.getMessage());
-                System.exit(IrpUtils.exitIoError);
-            } catch (NoSuchTransmitterException ex) {
+            } catch (IOException | NoSuchTransmitterException ex) {
                 System.err.println(ex.getMessage());
                 System.exit(IrpUtils.exitIoError);
             }
@@ -170,19 +167,7 @@ public class SonySerialCommand {
             try {
                 port = new LocalSerialPortRaw("/dev/ttyS0", 38400, 8, 1, LocalSerialPort.Parity.EVEN, LocalSerialPort.FlowControl.NONE, 2000, true);
                 ((LocalSerialPort) port).open();
-            } catch (NoSuchPortException ex) {
-                System.err.println(ex.getMessage());
-                System.exit(IrpUtils.exitIoError);
-            } catch (HarcHardwareException ex) {
-                System.err.println(ex.getMessage());
-                System.exit(IrpUtils.exitIoError);
-            } catch (PortInUseException ex) {
-                System.err.println(ex.getMessage());
-                System.exit(IrpUtils.exitIoError);
-            } catch (UnsupportedCommOperationException ex) {
-                System.err.println(ex.getMessage());
-                System.exit(IrpUtils.exitIoError);
-            } catch (IOException ex) {
+            } catch (NoSuchPortException | HarcHardwareException | PortInUseException | UnsupportedCommOperationException | IOException ex) {
                 System.err.println(ex.getMessage());
                 System.exit(IrpUtils.exitIoError);
             }

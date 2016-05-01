@@ -31,8 +31,6 @@ import org.harctoolbox.harchardware.comm.LocalSerialPort;
  *
  */
 public class SerialPortBean extends javax.swing.JPanel {
-    private static final long serialVersionUID = 1L;
-
     private String portName;
     private int baud;
     private int dataSize;
@@ -421,9 +419,7 @@ public class SerialPortBean extends javax.swing.JPanel {
                 hardware.open();
             else
                 hardware.close();
-        } catch (HarcHardwareException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
+        } catch (HarcHardwareException | IOException ex) {
             guiUtils.error(ex);
         } finally {
             openToggleButton.setSelected(hardware.isValid());

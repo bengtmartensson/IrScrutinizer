@@ -20,10 +20,10 @@ package org.harctoolbox.irscrutinizer.exporter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map.Entry;
 import java.util.Set;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
@@ -36,9 +36,7 @@ import org.xml.sax.SAXException;
 /**
  * This class does something interesting and useful. Or not...
  */
-public class ExportFormatManager implements Serializable {
-    private static final long serialVersionUID = 1L;
-
+public class ExportFormatManager {
     public interface IExportFormatSelector {
         public void select(String name);
     }
@@ -52,7 +50,7 @@ public class ExportFormatManager implements Serializable {
             IExporterFactory girrExporter, IExporterFactory waveExporter, IExporterFactory textExporter,
             IExporterFactory lircExporter, IExporterFactory prontoExporter) throws ParserConfigurationException, SAXException, IOException {
         this.exportFormatSelector = exportFormatSelector;
-        exportFormats = new LinkedHashMap<String, IExporterFactory>();
+        exportFormats = new LinkedHashMap<>();
         exportFormats.put("Girr", girrExporter);
         exportFormats.put("Text", textExporter);
         exportFormats.put("LIRC", lircExporter);
@@ -74,8 +72,8 @@ public class ExportFormatManager implements Serializable {
         menu.setText("Export formats");
         menu.setToolTipText("Allows direct selection of export format");
         buttonGroup = new ButtonGroup();
-        for (Entry<String, IExporterFactory> kvp : exportFormats.entrySet()) {
-            final String name = kvp.getKey();
+        for (String formatName : toArray()) {
+            final String name = formatName;
             JMenuItem menuItem = new JCheckBoxMenuItem(name);
             menuItem.setSelected(name.equals(selection));
             menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -110,6 +108,8 @@ public class ExportFormatManager implements Serializable {
     }
 
     public String[] toArray() {
-        return exportFormats.keySet().toArray(new String[exportFormats.keySet().size()]);
+        ArrayList<String> list = new ArrayList<>(exportFormats.keySet());
+        Collections.sort(list, String.CASE_INSENSITIVE_ORDER);
+        return list.toArray(new String[list.size()]);
     }
 }

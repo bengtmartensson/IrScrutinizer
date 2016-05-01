@@ -70,7 +70,7 @@ public class ICT {
      */
     public static ModulatedIrSequence parse(BufferedReader reader) throws IOException, IncompatibleArgumentException {
         //int[] data = null;
-        ArrayList<Integer> data = new ArrayList<Integer>();
+        ArrayList<Integer> data = new ArrayList<>();
         int index = 0;
         int frequency = -1;
         int sample_count = -1;

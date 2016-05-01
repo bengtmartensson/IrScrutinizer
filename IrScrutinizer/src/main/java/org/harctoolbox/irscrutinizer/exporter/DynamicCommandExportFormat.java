@@ -18,12 +18,11 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.exporter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import org.harctoolbox.IrpMaster.IrpMasterException;
+import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.XmlUtils;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.girr.XmlExporter;
@@ -75,7 +74,8 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int noRepeats, File saveFile) throws IrpMasterException, FileNotFoundException, IOException {
+    public void export(RemoteSet remoteSet, String title, int noRepeats, File saveFile, String charsetName)
+            throws IrpMasterException, IOException {
 
         Document document = remoteSet.xmlExportDocument(title,
                 null,
@@ -86,16 +86,15 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
                 true, //generateCcf,
                 true //generateParameters)
                 );
+        export(document, saveFile.getCanonicalPath(), charsetName, noRepeats);
+    }
+
+    void export(Document document, String fileName, String charsetName, int noRepeats) throws IOException, IrpMasterException {
         XmlExporter xmlExporter = new XmlExporter(document);
-        OutputStream out = null;
-        try {
-            out = new FileOutputStream(saveFile);
-            HashMap<String, String> parameters = new HashMap<String, String>(1);
+        try (OutputStream out = IrpUtils.getPrintSteam(fileName)) {
+            HashMap<String, String> parameters = new HashMap<>(1);
             parameters.put("noRepeats", Integer.toString(noRepeats));
-            xmlExporter.printDOM(out, xslt, parameters, null, binary);
-        } finally {
-            if (out != null)
-                out.close();
+            xmlExporter.printDOM(out, xslt, parameters, binary, charsetName);
         }
     }
 }

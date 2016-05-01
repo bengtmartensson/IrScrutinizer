@@ -52,9 +52,7 @@ public class SendingIrTrans extends SendingHardware<IrTransIRDB> implements ISen
             public void propertyChange(PropertyChangeEvent evt) {
                 try {
                     setup();
-                } catch (IOException ex) {
-                    //guiUtils.error(ex);
-                } catch (HarcHardwareException ex) {
+                } catch (IOException | HarcHardwareException ex) {
                     //guiUtils.error(ex);
                 }
             }

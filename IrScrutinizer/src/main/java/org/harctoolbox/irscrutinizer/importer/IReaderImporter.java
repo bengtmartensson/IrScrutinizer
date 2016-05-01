@@ -40,34 +40,46 @@ public interface IReaderImporter extends IFileImporter {
 
     /**
      * Loads from stdin.
+     * @param charsetName
      * @throws IOException
      * @throws ParseException
      * @throws org.harctoolbox.IrpMaster.IrpMasterException
      */
-    public void load() throws IOException, ParseException, IrpMasterException;
+    public void load(String charsetName) throws IOException, ParseException, IrpMasterException;
 
-    public void load(InputStream inputStream, String origin) throws IOException, ParseException, IrpMasterException;
+    /**
+     *
+     * @param inputStream
+     * @param origin
+     * @param charsetName
+     * @throws IOException
+     * @throws ParseException
+     * @throws IrpMasterException
+     */
+    public void load(InputStream inputStream, String origin, String charsetName) throws IOException, ParseException, IrpMasterException;
 
     /**
      * Load from the string given as the first argument.
      *
      * @param payload
      * @param origin
+     * @param charsetName
      * @throws IOException
      * @throws ParseException
      * @throws org.harctoolbox.IrpMaster.IrpMasterException
      */
-    public void load(String payload, String origin) throws IOException, ParseException, IrpMasterException;
+    public void load(String payload, String origin, String charsetName) throws IOException, ParseException, IrpMasterException;
 
     /**
      * If the argument can be parsed as an URL string, load from its content.
      * Otherwise, consider it as a file name, and load its content.
      * @param urlOrFilename
+     * @param charsetName
      * @throws IOException
      * @throws ParseException
      * @throws org.harctoolbox.IrpMaster.IrpMasterException
      */
-    public void load(String urlOrFilename) throws IOException, ParseException, IrpMasterException;
+    public void load(String urlOrFilename, String charsetName) throws IOException, ParseException, IrpMasterException;
 
-    public void load(String urlOrFilename, boolean zip) throws IOException, ParseException;
+    public void load(String urlOrFilename, boolean zip, String charsetName) throws IOException, ParseException;
 }

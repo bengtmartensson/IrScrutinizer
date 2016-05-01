@@ -11,8 +11,4 @@ set JAVA=java
 rem Where the files are located.
 set APPLICATIONHOME=C:\Program Files\IrScrutinizer
 
-rem Uncomment exactly one, depending on your "bitness"
-set DLL=Windows-x86
-rem set DLL=Windows-amd64
-
-"%JAVA%" -Djava.library.path=%DLL% -jar IrScrutinizer.jar --applicationhome "%APPLICATIONHOME%"
+"%JAVA%" -jar "%APPLICATIONHOME%"\IrScrutinizer.jar --applicationhome "%APPLICATIONHOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9

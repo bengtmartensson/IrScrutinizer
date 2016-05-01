@@ -47,7 +47,6 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     private final static Proxy proxy = Proxy.NO_PROXY;
     private final static long invalid = -1L;
     private final static String irdbOriginName = "IRDB";
-    private static final long serialVersionUID = 1L;
 
     private boolean verbose = false;
     private String manufacturer;
@@ -95,8 +94,6 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     }*/
 
     public static class ProtocolDeviceSubdevice implements Serializable {
-        private static final long serialVersionUID = 1L;
-
         private String protocol;
         private long device;
         private long subdevice; // use -1 for no subdevice
@@ -119,12 +116,16 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
             this.subdevice = subdevice;
         }
 
+        public ProtocolDeviceSubdevice(JsonValue jprotocol, long device, long subdevice) {
+            this(jprotocol.isString() ? jprotocol.asString() : null, device, subdevice);
+        }
+
         public ProtocolDeviceSubdevice(String protocol, long device) {
             this(protocol, device, invalid);
         }
 
         public ProtocolDeviceSubdevice(JsonObject json) {
-            this(json.get("protocol").asString(),
+            this(json.get("protocol"),
                     parseLong(json.get("device").asString()),
                     parseLong(json.get("subdevice").asString()));
         }
@@ -230,6 +231,10 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
                     deviceTypes.put(deviceType, new LinkedHashMap<ProtocolDeviceSubdevice, HashMap<String, Long>>());
                 HashMap<ProtocolDeviceSubdevice, HashMap<String, Long>> devCollection = deviceTypes.get(deviceType);
                 ProtocolDeviceSubdevice pds = new ProtocolDeviceSubdevice(obj);
+                if (pds.getProtocol() == null) {
+                    System.err.println("Null protocol ignored");
+                    continue;
+                }
                 if (!devCollection.containsKey(pds))
                     devCollection.put(pds, new LinkedHashMap<String, Long>());
                 HashMap<String, Long> cmnds = devCollection.get(pds);
@@ -260,11 +265,13 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
 
         HashMap<String, Long> commandMap = map.get(pds);
         load(commandMap, pds, deviceType);
-        Remote remote = new Remote(manufacturer + "_" + deviceType + "_" + pds.toString(), //java.lang.String name,
+        Remote.MetaData metaData = new Remote.MetaData(manufacturer + "_" + deviceType + "_" + pds.toString(), //java.lang.String name,
                 null, //java.lang.String manufacturer,
                 null, //java.lang.String model,
                 deviceType,//java.lang.String deviceClass,
-                null, //java.lang.String remoteName,
+                null //java.lang.String remoteName,
+        );
+        Remote remote = new Remote(metaData,
                 null, //java.lang.String comment,
                 null, //java.lang.String notes,
                 getCommandIndex(),
@@ -286,17 +293,18 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
             HashMap<String, Long> commandMap = kvp.getValue();
             ProtocolDeviceSubdevice pds = kvp.getKey();
             HashMap<String, Command> cmds = load(commandMap, pds, deviceType);
-
-            Remote remote = new Remote(manufacturer + "_" + deviceType + "_" + pds.toString(), //java.lang.String name,
+            Remote.MetaData metaData = new Remote.MetaData(manufacturer + "_" + deviceType + "_" + pds.toString(), //java.lang.String name,
                     null, //java.lang.String manufacturer,
                     null, //java.lang.String model,
                     deviceType,//java.lang.String deviceClass,
-                    null, //java.lang.String remoteName,
+                    null //java.lang.String remoteName,
+            );
+            Remote remote = new Remote(metaData,
                     null, //java.lang.String comment,
                     null, //java.lang.String notes,
                     cmds, //getCommandIndex(),
                     null //java.util.HashMap<java.lang.String,java.util.HashMap<java.lang.String,java.lang.String>> applicationParameters)
-                    );
+            );
             remoteList.put(remote.getName(), remote);
         }
         remoteSet = new RemoteSet(getCreatingUser(), irdbOriginName, remoteList);
@@ -308,7 +316,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
             //ParametrizedIrSignal paramSig = new ParametrizedIrSignal(pds.getProtocol(), pds.getDevice(), pds.subdevice,
             //        kvp.getValue().longValue(), kvp.getKey(),
             //        "IRDB: " + manufacturer + "/" + deviceType + "/" + pds.toString());
-            HashMap<String, Long> parameters = Utils.mkParameters(pds.getDevice(), pds.subdevice, kvp.getValue().longValue());
+            HashMap<String, Long> parameters = Utils.mkParameters(pds.getDevice(), pds.subdevice, kvp.getValue());
             Command command = new Command(kvp.getKey(),
                     "IRDB: " + manufacturer + "/" + deviceType + "/" + pds.toString(),
                     pds.getProtocol(),

@@ -66,28 +66,33 @@ public class SendingGenericSerialPort extends SendingHardware<IrGenericSerial> i
         genericSerialSenderBean.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals(GenericSerialSenderBean.PROP_PORTNAME)) {
-                    properties.setGenericSerialPortDeviceName((String) evt.getNewValue());
-                    try {
-                        setupGenericSerialPort();
-                    } catch (IOException ex) {
-                        guiUtils.error(ex);
-                    }
-                } else if (evt.getPropertyName().equals(GenericSerialSenderBean.PROP_COMMAND))
-                    rawIrSender.setCommand(genericSerialSenderBean.getCommand());
-                else if (evt.getPropertyName().equals(GenericSerialSenderBean.PROP_RAW))
-                    rawIrSender.setRaw(genericSerialSenderBean.getRaw());
-                else if (evt.getPropertyName().equals(GenericSerialSenderBean.PROP_SEPARATOR))
-                    rawIrSender.setSeparator(genericSerialSenderBean.getSeparator());
-                else if (evt.getPropertyName().equals(GenericSerialSenderBean.PROP_USESIGNS))
-                    rawIrSender.setUseSigns(genericSerialSenderBean.getUseSigns());
-                else if (evt.getPropertyName().equals(GenericSerialSenderBean.PROP_LINEENDING))
-                    rawIrSender.setLineEnding(genericSerialSenderBean.getLineEnding());
-                //else
-                //    hasChanged = true;
-
-                //if (rawIrSender == null)
-                //    setupGenericSerialPort();
+                switch (evt.getPropertyName()) {
+                    case GenericSerialSenderBean.PROP_PORTNAME:
+                        properties.setGenericSerialPortDeviceName((String) evt.getNewValue());
+                        try {
+                            setupGenericSerialPort();
+                        } catch (IOException ex) {
+                            guiUtils.error(ex);
+                        }
+                        break;
+                    case GenericSerialSenderBean.PROP_COMMAND:
+                        rawIrSender.setCommand(genericSerialSenderBean.getCommand());
+                        break;
+                    case GenericSerialSenderBean.PROP_RAW:
+                        rawIrSender.setRaw(genericSerialSenderBean.getRaw());
+                        break;
+                    case GenericSerialSenderBean.PROP_SEPARATOR:
+                        rawIrSender.setSeparator(genericSerialSenderBean.getSeparator());
+                        break;
+                    case GenericSerialSenderBean.PROP_USESIGNS:
+                        rawIrSender.setUseSigns(genericSerialSenderBean.getUseSigns());
+                        break;
+                    case GenericSerialSenderBean.PROP_LINEENDING:
+                        rawIrSender.setLineEnding(genericSerialSenderBean.getLineEnding());
+                        break;
+                    default:
+                        throw new RuntimeException("Programming error");
+                }
             }
         });
     }
@@ -121,14 +126,8 @@ public class SendingGenericSerialPort extends SendingHardware<IrGenericSerial> i
             rawIrSender.setSeparator(genericSerialSenderBean.getSeparator());
             rawIrSender.setUseSigns(genericSerialSenderBean.getUseSigns());
             rawIrSender.setLineEnding(genericSerialSenderBean.getLineEnding());
-        } catch (NoSuchPortException ex) {
+        } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException ex) {
             // Should not happen
-            guiUtils.error(ex);
-        } catch (PortInUseException ex) {
-            guiUtils.error(ex);
-        } catch (UnsupportedCommOperationException ex) {
-            guiUtils.error(ex);
-        } catch (IOException ex) {
             guiUtils.error(ex);
         }
         portName = genericSerialSenderBean.getPortName();

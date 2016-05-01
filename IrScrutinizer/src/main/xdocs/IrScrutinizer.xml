@@ -48,6 +48,14 @@ not to hold the author responsible.</warning>
 	  <td>2015-08-19</td>
 	  <td>Version for release 1.1.3. Misc. minor improvements.</td>
 	</tr>
+        <tr>
+            <td>2016-01-13</td>
+            <td>Added description for user selectable character sets for import and export.</td>
+        </tr>
+        <tr>
+	  <td>2016-04-29</td>
+	  <td>Version for release 1.2. Misc. minor improvements.</td>
+	</tr>
       </table>
 
 <section>
@@ -251,18 +259,7 @@ hardware access will be unavailable.</p>
 <p>In all versions, IrScrutinizer behave civilized, in that the installation
 directory can be read only after the installation.
 </p>
-<p>As of version 1.1.2, there are five different way of installing the program, described next.</p>
-</section>
-<section>
-    <title>Fedora Linux</title>
-    <p>Fedora rpm packages are
-        available for the previous version 1.1.2.</p>
-        <p>To install, the command <code>sudo yum install harctoolbox harctoolbox-doc</code> should be issued in a terminal window.
-        This will install IrScrutinizer as a desktop program, as well as the command line
-        commands <code>irscrutinizer</code> and <code>irpmaster</code>.
-        To uninstall, use the command  <code>sudo yum erase harctoolbox harctoolbox-doc</code>.</p>
-        <p>Unfortunatelly, the packaging contains a few semi-serious problems. These are reported, but stay unfixed.
-            Fedora users are recommended to use the generic binary package.</p>
+<p>As of version 1.2, there are six different way of installing the program, described next.</p>
 </section>
 <section><title>Windows</title>
 <p>Download the <a
@@ -281,6 +278,28 @@ which can be called as <code>irpmaster</code> from a so-called DOS box.</p>
 <p>To uninstall, select the uninstall option from the Start menu. Very pedantic
 people may like to delete the properties file too, see <a href="#Properties">properties</a>.</p>
 </section>
+
+<section>
+    <title>AppImage for 64-bit Linux</title>
+    <p>An <a href="http://appimage.org/">AppImage</a> is a distribution consisting of
+    one large monolithic executable application that is downloaded, made executable, and run, without any
+    installation in classic sense. At this moment, only 64-bit x86 Linux is supported, but it is believed
+to run on all modern, 64-bit x86 Linux distrubutions. Just download
+    <a href="http://www.harctoolbox.org/downloads/IrScrutinizer-x86_64.AppImage">IrScrutinizer-x86_64.AppImage</a>,
+    make executable, and double click (alternativelly, start from the command line).
+    </p>
+
+    <section>
+        <title>Serial device access</title>
+        <p>To access serial devices, including "serial" devices connected over USB, most current Linuxes
+            require the current user to be a member of the group <code>dialout</code>, in some cases (e.g. Fedora) also
+            the group <code>lock</code>. To grant user <code>$USER</code> this membership, typically a
+            command like
+            <code>sudo usermod -aG dialout $USER</code>, and/or <code>sudo usermod -aG lock $USER</code> is used.
+        </p>
+        <p>Do not run this program as root.</p>
+    </section>
+</section>
       <section>
 	<title>Mac OS X app</title>
 <p>Download the  <a
@@ -289,10 +308,10 @@ people may like to delete the properties file too, see <a href="#Properties">pro
     The app can just be dragged to the desktop, to the tray, to "Applications" or any other location the user prefers.
     IrScrutinizer now behaves like any other app in Mac OS X.</p>
 
-    <p>(The previous version was instead distrubuted as a <a
+    <!--p>(The previous version was instead distrubuted as a <a
     href="http://www.harctoolbox.org/downloads/IrScrutinizer.dmg.zip">compressed disk image</a>.
     This should be uncompressed it by double clicking, and mounted by double clicking the resulting file.
-    A mounted disk image "IrScrutinizer" will appear on the desktop. Then proceed as above.)</p>
+    A mounted disk image "IrScrutinizer" will appear on the desktop. Then proceed as above.)</p-->
 
     <p>To unistall, just move the app to the trash.</p>
     <p>The command line program <a href="IrpMaster.html">IrpMaster</a> is not supported in this mode.
@@ -300,7 +319,7 @@ people may like to delete the properties file too, see <a href="#Properties">pro
       </section>
 
 <section><title>Generic Binary</title>
-<p>The generic binary version consists of all the java code packed in one executable jar file,
+<p>The generic binary version consists of all the java classes packed in one executable jar file,
 together with supporting files, like all the compiled shared libraries for the different
 operating systems Linux, Windows, and Mac. It can be used on all those systems. (In other environments, the
 shared libraries may be compiled with moderate effort.)</p>
@@ -335,8 +354,25 @@ ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irpmaster
     to open executable jar files with the "java" application. For this, select a jar file the file browser,
     select the properties, and select "java" as the application to "open with". (The details might vary.)</p>
 
+    <p>On Linux, it is general necessary to check, and possibly fix, the
+        <a href="#Serial+device+access">access to the serial devices</a>. The previously mentioned
+        wrapper does this.</p>
+
 <p>To uninstall, just delete the files. Very pedantic
     people may like to delete the <a href="#Properties">properties file</a> too.</p>
+</section>
+
+<section>
+    <title>Fedora Linux</title>
+    <p>Fedora rpm packages are
+        available for the previous version 1.1.3.</p>
+        <p>To install, the command <code>sudo dnf install harctoolbox harctoolbox-doc</code> should be issued in a terminal window.
+        This will install IrScrutinizer as a desktop program, as well as the command line
+        commands <code>irscrutinizer</code> and <code>irpmaster</code>.
+        To uninstall, use the command  <code>sudo dnf erase harctoolbox harctoolbox-doc</code>.</p>
+        <p>Unfortunatelly, the packaging contains a few semi-serious problems. These are reported,
+            but stay unfixed (since a year).
+            Fedora users are recommended instead to use AppImage or the generic binary package.</p>
 </section>
 
 <section>
@@ -411,9 +447,9 @@ supposed to be read only when needed. Fundamental knowledge of XML and
 
 <section><title>Format of the file
 <code>exportformats.xml</code></title>
-<p>The file is an XML file read in without validation. The syntax and semantics
-are beleived to be essentailly self explaining or clear from the
-examples aleady in there. An export format is
+<p>The file is an XML file read without validation. The syntax and semantics
+are believed to be essentailly self explaining, or clear from the
+examples already in there. An export format is
 packed in an element of type <code>exportformat</code>. It contains
 the following attributes:</p>
 <dl>
@@ -512,6 +548,9 @@ number of ways to manipulate the table, its view, or the data contained
 therein. By enabling the row selector, the rows can be sorted along any of the
 present columns. </p>
 
+<p>Clicking a row with the middle mouse button selects that row, and transmits
+it using the currently selected sending hardware.</p>
+
 <p>To capture a number of IR signals, first configure the hardware using the <a
 href='#The+"Capturing+HW"+pane'>capturing hardware</a> pane. Next press the
 Capture button. The program will now run the  capturing in a separate thread, so
@@ -577,6 +616,12 @@ the "..."-Button, a file selector allows the selection of a local file. For
 files and URLs, the "Edit/Browse" button allows to examine the selected
 file/URL with the operating system's standard command.</p>
 
+<p>Several of the formats (the one based on text files, but not on XML
+    (which carries its own character set declaration) allow the
+user to select the character set to be used for the import to be selected.
+    This option is found as <code>Options -> Import options -> Character Set...</code>
+</p>
+
 <p>If the option "<code>Open ZIP files</code>" (accessible from <code>Options
 -> Import</code>) is
 selected, zip files can  be selected, opened, and unzipped "on the fly",
@@ -630,8 +675,8 @@ IrScrutinizer.</p>
 
 <section><title>LIRC</title>
 <p>The <a href="Glossary.html#LIRC">LIRC</a> import feature is based upon <a
-href="Jirc.html">Jirc</a>, which is basically LIRC translated into <a
-href="Glossary.html#Java">Java</a>. The LIRC importer can even import a file
+href="Jirc.html">Jirc</a>, which is basically LIRC translated into Java.
+The LIRC importer can even import a file
 system hierarchy by selecting the top directory as File/URL. (Importing the
 entire lirc.org database with over 100000 commands takes around 1 minute and 1GB
 of memory.)</p>
@@ -743,56 +788,7 @@ microseconds, positive for pulses, negative for gaps), as well as other
 formats. These formats, together with Wave, LIRC, and Pronto Classic, are
 built-in in the program. However, it is possible to define new
 export formats by extending a configuration file, see <a
-href="#Adding+new+export+formats">Adding new export formats</a>. The formats
-are, at the time of this writing:</p>
-<dl>
-<dt>Girr</dt>
-<dd>The program's native format, based on XML. Very flexible and
-extensible. Can contain information like the raw format, CCF format, UEI
-learned format, and the Global Caché sendir format. <a href="Girr.html">Documentation</a>.</dd>
-<dt>Text</dt>
-<dd>The text format is essentially the Girr format stripped of the XML markup information.</dd>
-<dt>Wave</dt>
-<dd><!--See the article <a href="wave.html">Wave files for IR sequences</a>.-->
-IR sequences encoded as wave audio files.
-</dd>
-<dt>LIRC</dt>
-<dd>The LIRC-exports are in lirc.conf-format using the raw LIRC format. They can be
-concatenated together and used as the LIRC server data base. Can also be used with <a
-href="http://winlirc.sourceforge.net/">WinLirc</a>.
-</dd>
-<dt>Pronto Classic</dt>
-<dd>This format generates a <a href="Glossary.html#ccfFileFormat">CCF
-configuration file</a> to be downloaded in a Pronto, or opened by a ProntoEdit program.</dd>
-<dt>IrTrans</dt>
-<dd>This export format generates .rem files for the <a
-href="Glossary.html#IrTrans">IrTrans</a> system, using its CCF format.</dd>
-
-<dt>Lintronic</dt>
-<dd>Simple text protocol for describing a single <a
-href="Glossary.html#IrSeqeunce">IrSequence</a>.</dd>
-
-<dt>Spreadsheet</dt>
-<dd>Simple <a href="Glossary.html">tab separated value</a> export format for
-importing in a spreadsheet program.</dd>
-
-<dt>RM Functions</dt>
-<dd>Variant of the Spreadsheet format, this format is intended to be pasted
-directly into the "Functions" table of <a href="Glossary.html#RemoteMaster">RemoteMaster</a>.</dd>
-
-<dt>C</dt>
-<dd>Intended mostly as an example  of generating C code, cf. <a
-href="transforming-xml-export.html">this article</a>.</dd>
-
-<dt>TV-B-Gone</dt>
-<dd>Variant of the C format, this format generates C code for the  <a
-href="http://en.wikipedia.org/wiki/TV-B-Gone">TV-B-Gone</a>.</dd>
-	</dl>
-
-
-<!--p>For
-protocols with toggles, both toggle pairs may optionally be included in
-the export file by selecting the "Generate toggle pairs"-option.</p-->
+    href="#Adding+new+export+formats">Adding new export formats</a>.</p>
 <p>Export file
 names are either user selected from a file
 selector, or, if "Automatic file names" has been selected,
@@ -807,47 +803,169 @@ actions menu.) The "Open" button
 similarly opens the operating systems standard directory browser (Windows
 Explorer, Konquistador, Nautilus,...) on the export directory.</p>
 
-<p>Some export formats (presently Wave and Lintronic)  export an <a href="Glossary.html#IrSequence">IR sequence</a> rather than an
+<p>Some export formats (presently Wave, mode2, and Lintronic)
+    export an <a href="Glossary.html#IrSequence">IR sequence</a> rather than an
 <a href="Glossary.html#IrSignal">IR signal</a> (consisting of an intro sequence, an repetition sequence (to be
 included 0 or more times), and an (most often empty) ending
 sequence). Using these formats, the number of repetition sequences to include
 can be selected.</p>
+<p>The character set used for the export can be selected through <code>Options -> Export options -> Character set...</code>
+            Note however that this makes sense only for text based formats, including XML.</p>
 
-<p>Some export formats have some more parameters, configured in sub
-panes. These will be discussed next.</p>
+<p>Some export formats have some more parameters, configured in sub panes.
+    These will be discussed in the context of the containing formats.</p>
 
-<section><title>The Girr sub-pane</title>
-<p>A style sheet can be selected to be linked in into the exported Girr
-file. The type of style file (presently xslt and css) can also be selected.</p>
-<p>"Fat form raw" can be selected; this means that the raw signals are not given
-as a text string of alternating positive and negative numbers, but the
-individual flashes and gaps are enclosed into own XML elements. This can be
-advantageous if generating XML mainly for the purpose of transforming to other formats.</p>
-	</section>
+<p>The formats presently implemented will be described next, in alphabetical order.</p>
 
-<section><title>The Wave sub-pane</title>
-<p>Parameters for the generated Wave export (except for the number of repeats)
-can be selected here.
-<!-- For their meaning, see the article <a href="wave.html">Wave files for IR sequences</a>.-->
-</p>
-	</section>
+<section>
+    <title>AnyMote</title>
 
-<section><title>The sendir sub-pane</title>
-<p>The Global Caché sendir format requires a module number and a connector
-number. Also, there is a compressed format, that can be enabled by selecting
-the compressed check-box.</p>
-	</section>
+    <p>Generates a configuration file for the <a href="http://www.colortiger.com/">AnyMote IR remote control app</a>
+    for Android and iOS.
+    </p>
+</section>
 
-<section><title>The Pronto Classic sub-pane</title>
-<p>A Pronto Classic export consists of a <a
-href="Glossary.html#ccfFileFormat">CCF file</a> with the exported signals
-associated to dummy buttons. The Pronto (Classic) model for which the export is
-designed is entered in the combo box. Screen size of the Pronto is normally
-inferred from the model, but can be changed here. The button size of the
-generated buttons is also entered here.</p>
-	</section>
+    <section><title>Arduino/Raw</title>
+    <p>Generates a complete C++ sketch for the <a href="Glossary.html#Arduino">Arduino</a>.
+    This uses one of the three Arduino Infrared libraries
+    <a href="https://github.com/z3t0/Arduino-IRremote">IRremote</a>,
+    <a href="https://github.com/cyborg5/IRLib">IRLib</a>,
+    and <a href="https://github.com/bengtmartensson/Infrared4Arduino">Infrared4Arduino</a>.
+    As the name suggests, the <a href="Glossary.html#RawIrSignal">raw form of the signals</a> are used.
+    </p></section>
+
+    <section><title>Arduino/Infrared4Arduino</title>
+    <p>Generates a similar C++ sketch for the Arduino as in the raw case, but tries to
+        use the <a href="Glossary.html#ParametricIRSignal">parametric form</a> whenever possible, i.e.,
+        whenever the protocol is one that can be generated by the underlying infrared library. This version supports
+        Infrared4Arduino only.
+    </p></section>
+
+    <section><title>Arduino/IRremote</title>
+    <p>Like the preceding, but supports the IRremote library instead.</p></section>
+
+    <section><title>C</title>
+    <p>Generates a C code fragment consisting of declarations of the signals in raw- and CCF
+        format. Intended mostly as an example.</p>
+    </section>
+
+    <section>
+        <title>Girr</title>
+        <p>The program's native format, based on XML. Very flexible and
+            extensible. Can contain information like the raw format, CCF format, UEI
+            learned format, and the Global Caché sendir format. <a href="Girr.html">Documentation</a>.
+            There are some extra parameters that can be configured in subpanes, described next:</p>
+        <section>
+            <title>The Girr sub-pane</title>
+            <p>A style sheet can be selected to be linked in into the exported Girr
+                file. The type of style file (presently xslt and css) can also be selected.</p>
+
+            <p>"Fat form raw" can be selected; this means that the raw signals are not given
+                as a text string of alternating positive and negative numbers, but the
+                individual flashes and gaps are enclosed into own XML elements. This can be
+                advantageous if generating XML mainly for the purpose of transforming to other formats.</p>
+        </section>
+        <section>
+            <title>The sendir sub-pane</title>
+            <p>The <a href="Glossary.html#sendir">Global Caché sendir</a> format is
+                optionally included within the Girr and the text format. It
+                requires a module number and a connector
+                number. Also, it is possible to generate the compressed form of sendir. This can be enabled by selecting
+                the <code>compressed</code> check-box.</p>
+        </section>
+    </section>
+
+    <section><title>ICT</title>
+    <p>The ICT format, introduced by Kevin Timmerman's <a href="Glossary.html#IrScope">IrScope</a>,
+        contains the timing pattern, the modulation frequency, and optionally a
+        name ("note") of one or many IR signals.</p></section>
+
+    <section><title>irplus</title>
+    <p>Generates a configuration file for the Android ID remote <a href="https://irplus-remote.github.io/">irplus</a>.
+    </p></section>
+
+    <section><title>IrToy</title>
+    <p>A text version of the following</p></section>
+
+    <section><title>IrToy-bin</title>
+    <p>Generates a binary file "in IrToy format" that can be send to the IrToy using the  <em>program</em>
+    <code>irtoy[.exe]</code>, see <a href="http://dangerousprototypes.com/forum/viewtopic.php?f=29&amp;t=6678">this
+        thread</a>.
+    </p></section>
+
+    <section><title>IrTrans</title>
+    <p>This export format generates .rem files for the <a
+            href="Glossary.html#IrTrans">IrTrans</a> system, using its CCF format.</p></section>
+
+    <section><title>Lintronic</title>
+    <p>Simple text protocol for describing a single <a
+            href="Glossary.html#IrSeqeunce">IrSequence</a>.</p></section>
+
+    <section><title>LIRC</title>
+    <p>The LIRC-exports are in <a href="Glossary.html#lircd.conf">lircd.conf</a>-format.
+        These uses the raw LIRC format, except for a few well known protocol (presently NEC1 and RC5). They can be
+        concatenated together and used as the LIRC server data base. Can also be used with <a
+            href="http://winlirc.sourceforge.net/">WinLirc</a>.
+    </p></section>
+
+    <section><title>mode2</title>
+    <p>A primitive debugging "signal format", consisting on interleaved on- and off durations.</p></section>
+
+    <section>
+        <title>Pronto Classic</title>
+        <p>This format generates a <a href="Glossary.html#ccfFileFormat">CCF
+                configuration file</a> to be downloaded in a Pronto, or opened by a ProntoEdit program.</p>
+        <section>
+            <title>The Pronto Classic sub-pane</title>
+            <p>A Pronto Classic export consists of a <a
+                    href="Glossary.html#ccfFileFormat">CCF file</a> with the exported signals
+                associated to dummy buttons. The Pronto (Classic) model for which the export is
+                designed is entered in the combo box. Screen size of the Pronto is normally
+                inferred from the model, but can be changed here. The button size of the
+                generated buttons is also entered here.</p>
+        </section>
+    </section>
+
+    <section><title>RemoteMaster</title>
+    <p>Produce a rudimentary <a href="Glossary.html#rmdu">device update</a> (<code>.rmdu</code> file)
+    for <a href="Glossary.html#RemoteMaster">RemoteMaster</a>.
+    This can be imported into RemoteMaster (after appending the file <code>ImportOnly.protocols.ini</code> to its
+    <code>protocols.ini</code>). RemoteMaster will now have the parameters, but not an
+    <a href="Glossary.html#Executor">executor</a>, nor button assignments. These have to be entered manually
+    in RemoteMaster.
+    </p></section>
+
+    <section><title>Spreadsheet</title>
+    <p>Simple <a href="Glossary.html">tab separated value</a> export format for
+        importing in a spreadsheet program.</p></section>
+
+    <section><title>Text</title>
+    <p>The text format is essentially the Girr format stripped of the XML markup information.
+        <a href="#The+sendir+sub-pane">The sendir sub-pane</a> is used for selecting the parameters
+        of the optionally contained sendir format.
+    </p>
+    </section>
+    <section><title>TV-B-Gone</title>
+    <p>Variant of the C format, this format generates C code for the  <a
+            href="http://en.wikipedia.org/wiki/TV-B-Gone">TV-B-Gone</a>.</p></section>
+
+            <section>
+                <title>Wave</title>
+                <p><!--See the article <a href="wave.html">Wave files for IR sequences</a>.-->
+                    IR sequences encoded as wave audio files.
+                </p>
+                <section>
+                    <title>The Wave sub-pane</title>
+                    <p>Parameters for the generated Wave export (except for the number of repeats)
+                        can be selected here.
+                        <!-- For their meaning, see the article <a href="wave.html">Wave files for IR sequences</a>.-->
+                    </p>
+                </section>
+            </section>
+
 
       </section>
+
       <section>
 <title>The "Capturing HW" pane</title>
 <p>The sub-panes of this pane allow for the configuration of capturing
@@ -938,6 +1056,7 @@ reconnecting the device may help.</p>
 the combo box, pressing "Refresh" if necessary. "Open" the port
 thereafter.</p>
 	</section>
+      </section>
       <section>
 <title>The "Sending HW" pane</title>
 <p>The sub-panes of this pane allows for the selection and configuration
@@ -1004,8 +1123,9 @@ for an internal flash memory, that can be filled by the user), its commands can
 be sent from this pane. By pressing the "Read" button, the known remotes and
 commands are loaded, and the version of the IRTrans displayed. The selected
 command can now be sent by the "Send" button. (However, this
-functionality is otherwise not used by IrScrutinizer.) Selecting
-"IRTrans" on the "Analyze" and "War dialer" pane should now work. The IRTrans
+functionality is otherwise not used by IrScrutinizer.)</p>
+
+<p>The IRTrans
 module is then accessed using the UDP text mode.</p>
 
 
@@ -1088,7 +1208,6 @@ automatically anyhow. It will possibly be removed in future versions.</p-->
 <p>This pane contains the controls for sending a signal in a general format to
 one of the serial ports available on the system.</p>
     </section-->
-      </section>
     </section>
 </section>
 <section>
@@ -1120,6 +1239,12 @@ the like, it
 is probably a better idea to use IrpMaster instead, which has a
 reasonably complete <a href="IrpMaster.html#Command+line+usage">command line interface</a>.</p>
 
+<p>IrpMaster as command line program can be invoked with the AppImage installation by giving <code>--irpmaster</code>
+as the <em>first</em> argument to the program; all of the rest will be handled over to IrpMaster.
+However, the <code>--config</code> is not needed, it is generated automatically.</p>
+
+<p>The MacOS App does not support calling IrpMaster; install the generic binary version if needed.</p>
+
 <p>The program delivers well defined and sensible exit codes.</p>
     </section>
 
@@ -1143,12 +1268,12 @@ half the carrier frequency, and the possibility to select sine (instead of
 square) for modulation) have been removed. Finally, there is some
 stuff that simply works differently, like the export function.</p>
 </section>
-<section><title>How do I emulate the war dialer in IrScrutinizer?</title>
+<section><title>How do I emulate the war dialer of IrMaster?</title>
 <p>
 Use "Scrutinize remote" -> Parametric Remote. Fill in the table with signals to
 be tested, either using the pop-up button (right mouse in the table) Advanced ->
-Add missing F's, or from the Generate pane, using suitable parameter intervals
-(see TODO), and transfer them using the "To parametric remote" button. Then
+Add missing F's, or from the Generate pane, using suitable parameter
+intervals (see <a href="#The+%22Generate%22+pane">this</a>), and transfer them using the "To parametric remote" button. Then
 test the candidate signals one at a time by transmit-ting them, using suitable
 sending hardware.
 The comment field, or the "verified" check-box, can be used for note taking.</p>
@@ -1217,6 +1342,21 @@ instead of the program starting, WinRar (or some other program) comes
 up.</title><p>The program that comes up has "stolen" the file association of
 files with the extension <code>.jar</code>. Restore it. (Allegedly, WinRar can
 gracefully "unsteal" file associations.)</p></section>
+
+<section><title>(Windows) Why is the program so slow at start-up?</title>
+<p>Normal start up time is a few seconds, about the same time as it
+takes for (e.g.) a web browser to start. If it takes considerably
+longer than that, the problem is almost surely hardware related, i.e., the
+program looks for possibly non-existant hardware. To fix this, make
+sure that the selected capture- and sending devices (these are save
+between sessions!) do not correspond to something non-existant. The
+most "innocent" settings are: capture: LIRC mode 2, and sending:
+Audio port. These are also the defaults when the program starts up for
+the first time. Also, consider deleting possible
+    "junk devices" in the Windows device manager under <code>COM &amp; LPT</code>
+    (unused Bluetooth-to-serial ports etc.). </p>
+</section>
+
 <section><title>(Linux) I get error messages that lock files cannot be
 created, and then the Arduino and IrToy hardware do not
 work.</title><p>
@@ -1249,7 +1389,7 @@ using the one with IrScrutinizer. For example, on Fedora, the command
 is
 </p>
 <source>
-sudo yum install rxtx
+sudo dnf install rxtx
 </source>
 <p>which installs the library in <code>/usr/lib/rxtx</code> or
 <code>/usr/lib64/rxtx</code>, depending on the operating system. (Other distributions uses other
@@ -1317,32 +1457,32 @@ the information in this chapter is not needed.</p>
     <section>
         <title>DecodeIR</title>
         <p>If the system supports DecodeIR, use the system version. On recent Fedora, this can be installed with the command
-            <code>sudo yum install DecodeIR</code>. This will install both the shared
+            <code>sudo dnf install DecodeIR</code>. This will install both the shared
             library <code>libDecodeIR</code> as well as the jar file <code>DecodeIrCaller.jar</code>.
 To download and compile the sources, see (or execute) the script <code>tools/build-decodeir.sh</code>.</p>
     </section>
 
     <section>
         <title>ExchangeIR</title>
-        <p>It the system supports ExchangeIR (java), use the system version. (On recent Fedora, use <code>sudo yum install ExchangeIR</code>.)
+        <p>It the system supports ExchangeIR (java), use the system version. (On recent Fedora, use <code>sudo dnf install ExchangeIR</code>.)
         Otherwise, it can be downloaded and installed by the script <code>tools/build-exchangeir.sh</code>.</p>
     </section>
 
     <section>
         <title>minimal-json</title>
-        <p>It the system supports minimal-json, use the system version. (On recent Fedora, use <code>sudo yum install minimal-json</code>.)
+        <p>It the system supports minimal-json, use the system version. (On recent Fedora, use <code>sudo dnf install minimal-json</code>.)
         Otherwise, it can be downloaded and installed by the script <code>tools/build-minimal-json.sh</code>.</p>
     </section>
 
     <section>
         <title>jcommander</title>
-        <p>It the system supports jcommander, use the system version. (On recent Fedora, use <code>sudo yum install beust-jcommander</code>.)
+        <p>It the system supports jcommander, use the system version. (On recent Fedora, use <code>sudo dnf install beust-jcommander</code>.)
         Otherwise, it can be downloaded and installed by the script <code>tools/build-jcommander.sh</code>.</p>
     </section>
 
     <section>
         <title>Tonto</title>
-        <p>It the system support Tonto, use the system version. (On recent Fedora, use <code>sudo yum install tonto</code>.)
+        <p>It the system support Tonto, use the system version. (On recent Fedora, use <code>sudo dnf install tonto</code>.)
         Otherwise, it can be downloaded and installed by the script <code>tools/build-tonto.sh</code>.</p>
 
         <p>Note that the shared library <code>libjnijcomm</code>,
@@ -1381,7 +1521,7 @@ be mounted on a Windows computer. Then, on the Windows computer, open
     href="https://www.winehq.org">Wine</a> (included in most Linux
     distributions) can run the ISCC compiler of Inno. The Maven file
     <code>IrScrutinizer/pom.xml</code> contains an experimental
-    invocation along these lines.</p> 
+    invocation along these lines.</p>
 </section>
 
 <section>

@@ -28,7 +28,8 @@ public class EthernetAddress {
     public EthernetAddress(byte[] data) throws InvalidEthernetAddressException {
         if (data.length != noBytes)
             throw new InvalidEthernetAddressException();
-        this.data = data;
+        this.data = new byte[noBytes];
+        System.arraycopy(data, 0, this.data, 0, noBytes);
     }
 
     public EthernetAddress(String str) throws InvalidEthernetAddressException {

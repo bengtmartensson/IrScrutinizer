@@ -20,13 +20,13 @@ package org.harctoolbox.IrpMaster;
  * This class implements Repeatmarker as per Chapter 8.
  */
 public class RepeatMarker {
-    
+
     int min = 1;
     int max = 1;
-    
+
     public RepeatMarker(String s) {
         String str = s.trim();
-        if (str == null || str.isEmpty()) {
+        if (str.isEmpty()) {
             min = 1;
             max = 1;
         } else if (str.charAt(0) == '*') {
@@ -46,11 +46,11 @@ public class RepeatMarker {
             }
         }
     }
-    
+
     public RepeatMarker(int i) {
         this(i, ' ');
     }
-    
+
     public RepeatMarker(int i, char c) {
         switch (c) {
             case '*':
@@ -70,7 +70,7 @@ public class RepeatMarker {
                 //break;
         }
     }
-     
+
     public RepeatMarker() {
         min = 1;
         max = 1;
@@ -79,15 +79,15 @@ public class RepeatMarker {
     public RepeatMarker(char ch) {
         this(Character.toString(ch));
     }
-    
+
     public boolean isInfinite() {
         return max == Integer.MAX_VALUE;
     }
-    
+
     public boolean is(int n) {
         return n == min && n == max;
     }
-    
+
     public boolean is(String s) {
         int n;
         try {
@@ -115,7 +115,7 @@ public class RepeatMarker {
                 : (s.equals("n+")) ? min != Integer.MAX_VALUE && max == Integer.MAX_VALUE
                 : false;
     }
-    
+
     @Override
     public String toString() {
         return

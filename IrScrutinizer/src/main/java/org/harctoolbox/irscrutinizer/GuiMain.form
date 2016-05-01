@@ -1590,9 +1590,6 @@
                     <Property name="toolTipText" type="java.lang.String" value="Reload data base (not yet implemented)"/>
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irpFormatsIniReloadMenuItemActionPerformed"/>
-                  </Events>
                 </MenuItem>
               </SubComponents>
             </Menu>
@@ -1657,6 +1654,15 @@
                 <Property name="text" type="java.lang.String" value="Import options"/>
               </Properties>
               <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="importCharsetMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Character Set..."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Select the character set used by imports."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importCharsetMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="openZipFilesCheckBoxMenuItem">
                   <Properties>
                     <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
@@ -1738,9 +1744,18 @@
                 <Property name="text" type="java.lang.String" value="Export options"/>
               </Properties>
               <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="exportCharsetMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Character Set..."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Select the character set used by exports."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportCharsetMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="creatingUserMenuItem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Creating user..."/>
+                    <Property name="text" type="java.lang.String" value="Creating User..."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="creatingUserMenuItemActionPerformed"/>
@@ -1751,7 +1766,7 @@
                     <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="properties.getExportInquireDeviceData()" type="code"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Inquire Device Data"/>
+                    <Property name="text" type="java.lang.String" value="Inquire Device Metadata"/>
                     <Property name="toolTipText" type="java.lang.String" value="If true, device data (manufacturer, model, name, etc) are inquired before export."/>
                   </Properties>
                   <Events>
@@ -1858,6 +1873,7 @@
                 </Property>
                 <Property name="mnemonic" type="int" value="65"/>
                 <Property name="text" type="java.lang.String" value="About..."/>
+                <Property name="toolTipText" type="java.lang.String" value="Starts About popup"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="aboutMenuItemActionPerformed"/>
@@ -1885,6 +1901,7 @@
                 </Property>
                 <Property name="mnemonic" type="int" value="84"/>
                 <Property name="text" type="java.lang.String" value="Tutorial"/>
+                <Property name="toolTipText" type="java.lang.String" value="View tutorial in the browser"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tutorialMenuItemActionPerformed"/>
@@ -1926,6 +1943,44 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="protocolSpecMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="gitMenuItem">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icons/github/GitHub-Mark-24px.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Browse Sources on GitHub"/>
+                <Property name="toolTipText" type="java.lang.String" value="Direct the browser to the Github source repository."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gitMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="homePageMenuItem1">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/idea.png"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="72"/>
+                <Property name="text" type="java.lang.String" value="Issues (GitHub)"/>
+                <Property name="toolTipText" type="java.lang.String" value="Open the Github issues in the browser."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="homePageMenuItem1ActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="homePageMenuItem2">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/mail_generic2.png"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="72"/>
+                <Property name="text" type="java.lang.String" value="Send feedback"/>
+                <Property name="toolTipText" type="java.lang.String" value="Start the mail program for sendiing feedback."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="homePageMenuItem2ActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -2263,7 +2318,6 @@
                     <Component class="javax.swing.JTextField" name="analyzerTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
-                        <Property name="text" type="java.lang.String" value="Analyzer result unavailable"/>
                         <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
                           <ComponentRef name="copyPopupMenu"/>
                         </Property>
@@ -2272,7 +2326,6 @@
                     <Component class="javax.swing.JTextField" name="decodeIRTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
-                        <Property name="text" type="java.lang.String" value="DecodeIR result unavailable"/>
                         <Property name="toolTipText" type="java.lang.String" value="Result from DecodeIR."/>
                         <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
                           <ComponentRef name="copyPopupMenu"/>
@@ -2461,7 +2514,7 @@
                                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                                   <Connection code="parameterTableModel" type="code"/>
                                 </Property>
-                                <Property name="toolTipText" type="java.lang.String" value="Press right button for a menu of table actions."/>
+                                <Property name="toolTipText" type="java.lang.String" value="Press right button for a menu of table actions, middle to transmit signal under mouse."/>
                                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                                   <Connection code="parameterTableColumnModel" type="code"/>
                                 </Property>
@@ -2843,6 +2896,11 @@
               </Layout>
               <SubComponents>
                 <Container class="javax.swing.JTabbedPane" name="importTabbedPane">
+                  <Properties>
+                    <Property name="selectedIndex" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="properties.getImportPaneSelectedIndex()" type="code"/>
+                    </Property>
+                  </Properties>
                   <AccessibilityProperties>
                     <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="importTabbedPane"/>
                   </AccessibilityProperties>
@@ -3270,7 +3328,7 @@
                         </Component>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="girrFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;GirrImporter&gt;(guiUtils, properties, girrImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, girrImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importGirrSignalHelpButton">
@@ -3340,7 +3398,7 @@
                         </Component>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="lircFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;LircImporter&gt;(guiUtils, properties, lircImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, lircImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importLircHelpButton">
@@ -3420,7 +3478,7 @@
                         <Component class="javax.swing.JTextField" name="protocolsIniTextField">
                           <Properties>
                             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                              <Connection code="properties.getProtocolsIniUrl()" type="code"/>
+                              <Connection code="properties.getProtocolsIniPath()" type="code"/>
                             </Property>
                           </Properties>
                           <Events>
@@ -3453,7 +3511,7 @@
                         </Component>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="rmduImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;RmduImporter&gt;(guiUtils, properties, rmduImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, rmduImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importRemoteMasterHelpButton">
@@ -3523,7 +3581,7 @@
                         </Component>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="irTransFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;IrTransImporter&gt;(guiUtils, properties, irTransImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, irTransImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importIrTransHelpButton">
@@ -3573,7 +3631,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="ccfFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;CcfImporter&gt;(guiUtils, properties, ccfImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, ccfImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importProntoClassicHelpButton">
@@ -3623,7 +3681,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="xcfFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;XcfImporter&gt;(guiUtils, properties, xcfImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, xcfImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importProntoProfessionalHelpButton">
@@ -3686,7 +3744,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="ictFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;IctImporter&gt;(guiUtils, properties, ictImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, ictImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel15">
@@ -3918,7 +3976,7 @@
                                 </Component>
                                 <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="csvRawFileImporterBean">
                                   <AuxValues>
-                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;CsvRawImporter&gt;(guiUtils, properties, csvRawImporter)"/>
+                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, csvRawImporter)"/>
                                   </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JButton" name="importTextRawHelpButton">
@@ -3982,7 +4040,7 @@
                               <SubComponents>
                                 <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="rawLineCsvFileImporterBean">
                                   <AuxValues>
-                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;RawLineImporter&gt;(guiUtils, properties, new RawLineImporter())"/>
+                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, new RawLineImporter())"/>
                                   </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JButton" name="importTextRawLineBasedHelpButton">
@@ -4283,7 +4341,7 @@
                                 </Component>
                                 <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="csvParametrizedFileImporterBean">
                                   <AuxValues>
-                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;CsvParametrizedImporter&gt;(guiUtils, properties, csvParametrizedImporter)"/>
+                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, csvParametrizedImporter)"/>
                                   </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="jLabel14">
@@ -4395,7 +4453,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="waveFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;WaveImporter&gt;(guiUtils, properties, waveImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, waveImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="importWaveDivideCarrierCheckBox1">
@@ -4456,7 +4514,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="cmlFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;CmlImporter&gt;(guiUtils, properties, cmlImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, cmlImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importCmlHelpButton">
@@ -4506,7 +4564,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="commandFusionFileImporterBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;CommandFusionImporter&gt;(guiUtils, properties, commandFusionImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, commandFusionImporter)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importCommandFusionHelpButton">
@@ -5757,7 +5815,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.guicomponents.SerialPortSimpleBean" name="arduinoSerialPortSimpleBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoCapturePortName(),Arduino.defaultBaudRate, false)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoCapturePortName(),Arduino.defaultBaudRate, true)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="capturingArduinoHardwareHelpButton">
@@ -6355,7 +6413,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.guicomponents.SerialPortSimpleBean" name="arduinoSerialPortBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoPortName(), Arduino.defaultBaudRate, false)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoPortName(), Arduino.defaultBaudRate, true)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="sendingArduinoHelpButton">

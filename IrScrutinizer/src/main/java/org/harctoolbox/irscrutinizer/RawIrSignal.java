@@ -68,7 +68,7 @@ public class RawIrSignal extends NamedIrSignal {
     }
 
     public Command toCommand() {
-        Command command = new Command(getName(), getComment(), irSignal, generateCcf, decode);
+        Command command = new Command(getName(), getComment(), irSignal);
         return command;
     }
 
@@ -202,21 +202,18 @@ public class RawIrSignal extends NamedIrSignal {
                         cir.getName(), cir.getDecodeString(), cir.getAnalyzerString(), cir.getValidated(),
                         cir.getComment(), (int) irSignal.getFrequency(), cir, null
                     };
-            assert(result != null && result.length == columnNames.length);
+            assert(result.length == columnNames.length);
             return result;
         }
     }
 
     public static class RawTableColumnModel extends NamedIrSignal.LearnedIrSignalTableColumnModel {
-        private static final long serialVersionUID = 1L;
         public RawTableColumnModel() {
             super(new CapturedIrSignalColumns());
         }
     }
 
     public static class RawTableModel extends NamedIrSignal.LearnedIrSignalTableModel {
-        private static final long serialVersionUID = 1L;
-
         public RawTableModel() {
             super(new CapturedIrSignalColumns());
         }

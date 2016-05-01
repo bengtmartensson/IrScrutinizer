@@ -47,8 +47,6 @@ import org.harctoolbox.girr.Command;
  *
  */
 public class IrpMasterBean extends javax.swing.JPanel {
-    private static final long serialVersionUID = 1L;
-
     private static final long invalidParameter = IrpUtils.invalid;
     private static final String invalidParameterString = Long.toString(IrpUtils.invalid);
 
@@ -76,8 +74,6 @@ public class IrpMasterBean extends javax.swing.JPanel {
 
     // should probably not be here, but somewhere else
     public static class DefaultSignalNameFormatter implements ISignalNameFormatter, Serializable {
-        private static final long serialVersionUID = 1L;
-
         private StringBuilder doParameter(HashMap<String, Long> parameters, String parameterName) {
             if (!parameters.containsKey(parameterName))
                 return new StringBuilder();
@@ -165,11 +161,7 @@ public class IrpMasterBean extends javax.swing.JPanel {
             D = initialD;
             S = initialS;
             F = initialF;
-        } catch (ParseException ex) {
-            guiUtils.error(ex);
-        } catch (UnassignedException ex) {
-            guiUtils.error(ex);
-        } catch (UnknownProtocolException ex) {
+        } catch (ParseException | UnassignedException | UnknownProtocolException ex) {
             guiUtils.error(ex);
         }
     }
@@ -181,15 +173,6 @@ public class IrpMasterBean extends javax.swing.JPanel {
         String[] protocolList = irpMaster.getNames().toArray(new String[irpMaster.getNames().size()]);
         java.util.Arrays.sort(protocolList, String.CASE_INSENSITIVE_ORDER);
         return protocolList;
-    }
-
-    private long parse(JTextField textField) throws ParseException {
-        String str = textField.getText().trim();
-        try {
-            return str.isEmpty() ? invalidParameter : IrpUtils.parseLong(str, true);
-        } catch (NumberFormatException ex) {
-            throw new ParseException(ex);
-        }
     }
 
     private void checkParam(Protocol protocol, JTextField textField, JLabel label, String parameterName, String oldValueStr) {
@@ -248,7 +231,7 @@ public class IrpMasterBean extends javax.swing.JPanel {
 
     public InputVariableSetValues getIntervalParameters() throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException {
         Protocol protocol = irpMaster.newProtocol(protocolName);
-        LinkedHashMap<String, String> parameters = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
 
         processParameter(parameters, protocol, "D", dTextField);
         processParameter(parameters, protocol, "S", sTextField);
@@ -277,7 +260,7 @@ public class IrpMasterBean extends javax.swing.JPanel {
     }
 
     public LinkedHashMap<String, Command> getCommands() throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException, IrpMasterException {
-        LinkedHashMap<String, Command> commands = new LinkedHashMap<String, Command>();
+        LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
         InputVariableSetValues intervals = getIntervalParameters();
         for (LinkedHashMap<String, Long> params : intervals) {
             String name = this.signalNameFormatter.format(getProtocolName(), params);
@@ -495,11 +478,7 @@ public class IrpMasterBean extends javax.swing.JPanel {
             protocolName = (String) protocolComboBox.getSelectedItem();
             setupProtocol(protocolName, invalidParameterString, invalidParameterString, invalidParameterString);
             propertyChangeSupport.firePropertyChange(PROP_PROTOCOL_NAME, oldProtocolName, protocolName);
-        } catch (UnassignedException ex) {
-            guiUtils.error(ex);
-        } catch (ParseException ex) {
-            guiUtils.error(ex);
-        } catch (UnknownProtocolException ex) {
+        } catch (UnassignedException | ParseException | UnknownProtocolException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_protocolComboBoxActionPerformed

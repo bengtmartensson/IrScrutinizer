@@ -27,7 +27,7 @@
 |   any confusion about linking to RXTX.   We want to allow in part what
 |   section 5, paragraph 2 of the LGPL does not permit in the special
 |   case of linking over a controlled interface.  The intent is to add a
-|   Java Specification Request or standards body defined interface in the 
+|   Java Specification Request or standards body defined interface in the
 |   future as another exception but one is not currently available.
 |
 |   http://www.fsf.org/licenses/gpl-faq.html#LinkingOverControlledInterface
@@ -88,7 +88,7 @@ final public class RXTXPort extends SerialPort
 			z = new Zystem();
 		} catch ( Exception e ) {}
 
-		if(debug ) 
+		if(debug )
 			z.reportln( "RXTXPort {}");
 		RXTXVersion.loadLibrary( "rxtxSerial" );
 		Initialize();
@@ -98,7 +98,7 @@ final public class RXTXPort extends SerialPort
 	private native static void Initialize();
 	boolean MonitorThreadAlive=false;
 
-	/** 
+	/**
 	*  Open the named port
 	*  @param name the name of the device to open
 	*  @throws  PortInUseException
@@ -108,13 +108,13 @@ final public class RXTXPort extends SerialPort
 	{
 		if (debug)
 			z.reportln( "RXTXPort:RXTXPort("+name+") called");
-	/* 
+	/*
 	   commapi/javadocs/API_users_guide.html specifies that whenever
 	   an application tries to open a port in use by another application
 	   the PortInUseException will be thrown
 
 	   I know some didnt like it this way but I'm not sure how to avoid
-	   it.  We will just be writing to a bogus fd if we catch the 
+	   it.  We will just be writing to a bogus fd if we catch the
 	   exeption
 
 	   Trent
@@ -161,7 +161,7 @@ final public class RXTXPort extends SerialPort
 
 	/** Output stream */
 	private final SerialOutputStream out = new SerialOutputStream();
-	/** 
+	/**
 	*  get the OutputStream
 	*  @return OutputStream
 	*/
@@ -174,7 +174,7 @@ final public class RXTXPort extends SerialPort
 
 	/** Input stream */
 	private final SerialInputStream in = new SerialInputStream();
-	/** 
+	/**
 	*  get the InputStream
 	*  @return InputStream
 	*  @see java.io.InputStream
@@ -186,7 +186,7 @@ final public class RXTXPort extends SerialPort
 		return in;
 	}
 
-	/** 
+	/**
 	*  Set the SerialPort parameters
 	*  1.5 stop bits requires 5 databits
 	*  @param  b baudrate
@@ -232,7 +232,7 @@ final public class RXTXPort extends SerialPort
 
 	/** Line speed in bits-per-second */
 	private int speed=9600;
-	/** 
+	/**
 	*  @return  int representing the baudrate
 	*  This will not behave as expected with custom speeds
 	*/
@@ -245,7 +245,7 @@ final public class RXTXPort extends SerialPort
 
 	/** Data bits port parameter */
 	private int dataBits=DATABITS_8;
-	/** 
+	/**
 	*  @return int representing the databits
 	*/
 	public int getDataBits()
@@ -257,7 +257,7 @@ final public class RXTXPort extends SerialPort
 
 	/** Stop bits port parameter */
 	private int stopBits=SerialPort.STOPBITS_1;
-	/** 
+	/**
 	*  @return int representing the stopbits
 	*/
 	public int getStopBits()
@@ -269,7 +269,7 @@ final public class RXTXPort extends SerialPort
 
 	/** Parity port parameter */
 	private int parity= SerialPort.PARITY_NONE;
-	/** 
+	/**
 	*  @return int representing the parity
 	*/
 	public int getParity()
@@ -282,7 +282,7 @@ final public class RXTXPort extends SerialPort
 
 	/** Flow control */
 	private int flowmode = SerialPort.FLOWCONTROL_NONE;
-	/** 
+	/**
 	*  @param  flowcontrol FLOWCONTROL_NONE is default
 	*  @see gnu.io.SerialPort#FLOWCONTROL_NONE
 	*/
@@ -290,7 +290,7 @@ final public class RXTXPort extends SerialPort
 	{
 		if (debug)
 			z.reportln( "RXTXPort:setFlowControlMode( " + flowcontrol + " ) called");
-		if(monThreadisInterrupted) 
+		if(monThreadisInterrupted)
 		{
 			if( debug_events )
 				z.reportln(  "RXTXPort:setFlowControlMode MonThread is Interrupeted returning" );
@@ -308,7 +308,7 @@ final public class RXTXPort extends SerialPort
 		if (debug)
 			z.reportln( "RXTXPort:setFlowControlMode( " + flowcontrol + " ) returning");
 	}
-	/** 
+	/**
 	*  @return  int representing the flowmode
 	*/
 	public int getFlowControlMode()
@@ -336,14 +336,14 @@ final public class RXTXPort extends SerialPort
 			z.reportln( "RXTXPort:enableReceiveFramming() throwing exception");
 		throw new UnsupportedCommOperationException( "Not supported" );
 	}
-	/** 
+	/**
 	*/
 	public void disableReceiveFraming()
 	{
 		if (debug)
 			z.reportln( "RXTXPort:disableReceiveFramming() called and returning (noop)");
 	}
-	/** 
+	/**
 	*  @return true if framing is enabled
 	*/
 	public boolean isReceiveFramingEnabled()
@@ -352,7 +352,7 @@ final public class RXTXPort extends SerialPort
 			z.reportln( "RXTXPort:isReceiveFrammingEnabled() called and returning " + false );
 		return false;
 	}
-	/** 
+	/**
 	*  @return  int representing the framing byte
 	*/
 	public int getReceiveFramingByte()
@@ -366,22 +366,22 @@ final public class RXTXPort extends SerialPort
 	/** Receive timeout control */
 	private int timeout;
 
-	/** 
+	/**
 	*  @return  int the timeout
 	*/
 	public native int NativegetReceiveTimeout();
-	/** 
+	/**
 	*  @return  bloolean true if recieve timeout is enabled
 	*/
 	private native boolean NativeisReceiveTimeoutEnabled();
-	/** 
+	/**
 	*  @param  time
 	*  @param  threshold
 	*  @param  InputBuffer
 	*/
 	private native void NativeEnableReceiveTimeoutThreshold(int time,
 		int threshold,int InputBuffer);
-	/** 
+	/**
 	*/
 	public void disableReceiveTimeout()
 	{
@@ -392,7 +392,7 @@ final public class RXTXPort extends SerialPort
 		if (debug)
 			z.reportln( "RXTXPort:disableReceiveTimeout() returning");
 	}
-	/** 
+	/**
 	*  @param time
 	*/
 	public void enableReceiveTimeout( int time )
@@ -415,7 +415,7 @@ final public class RXTXPort extends SerialPort
 		if (debug)
 			z.reportln( "RXTXPort:enableReceiveTimeout() returning");
 	}
-	/** 
+	/**
 	*  @return  boolean true if recieve timeout is enabled
 	*/
 	public boolean isReceiveTimeoutEnabled()
@@ -424,7 +424,7 @@ final public class RXTXPort extends SerialPort
 			z.reportln( "RXTXPort:isReceiveTimeoutEnabled() called and returning " + NativeisReceiveTimeoutEnabled() );
 		return( NativeisReceiveTimeoutEnabled() );
 	}
-	/** 
+	/**
 	*  @return  int the timeout
 	*/
 	public int getReceiveTimeout()
@@ -438,7 +438,7 @@ final public class RXTXPort extends SerialPort
 
 	private int threshold = 0;
 
-	/** 
+	/**
 	*  @param thresh threshold
 	*/
 	public void enableReceiveThreshold( int thresh )
@@ -461,7 +461,7 @@ final public class RXTXPort extends SerialPort
 		if (debug)
 			z.reportln( "RXTXPort:enableReceiveThreshold( " + thresh + " ) returned");
 	}
-	/** 
+	/**
 	*/
 	public void disableReceiveThreshold()
 	{
@@ -469,7 +469,7 @@ final public class RXTXPort extends SerialPort
 			z.reportln( "RXTXPort:disableReceiveThreshold() called and returning");
 		enableReceiveThreshold(0);
 	}
-	/** 
+	/**
 	*  @return  int the recieve threshold
 	*/
 	public int getReceiveThreshold()
@@ -478,7 +478,7 @@ final public class RXTXPort extends SerialPort
 			z.reportln( "RXTXPort:getReceiveThreshold() called and returning " + threshold);
 		return threshold;
 	}
-	/** 
+	/**
 	*  @return  boolean true if receive threshold is enabled
 	*/
 	public boolean isReceiveThresholdEnabled()
@@ -497,7 +497,7 @@ final public class RXTXPort extends SerialPort
 	*/
 	private int InputBuffer=0;
 	private int OutputBuffer=0;
-	/** 
+	/**
 	*  @param size
 	*/
 	public void setInputBufferSize( int size )
@@ -515,7 +515,7 @@ final public class RXTXPort extends SerialPort
 			z.reportln( "RXTXPort:setInputBufferSize( " +
 					size + ") returning");
 	}
-	/** 
+	/**
 	*/
 	public int getInputBufferSize()
 	{
@@ -523,7 +523,7 @@ final public class RXTXPort extends SerialPort
 			z.reportln( "RXTXPort:getInputBufferSize() called and returning " + InputBuffer );
 		return(InputBuffer);
 	}
-	/** 
+	/**
 	*  @param size
 	*/
 	public void setOutputBufferSize( int size )
@@ -540,9 +540,9 @@ final public class RXTXPort extends SerialPort
 		if (debug)
 			z.reportln( "RXTXPort:setOutputBufferSize( " +
 					size + ") returned");
-		
+
 	}
-	/** 
+	/**
 	*  @return  in the output buffer size
 	*/
 	public int getOutputBufferSize()
@@ -561,32 +561,32 @@ final public class RXTXPort extends SerialPort
 	*  @return true if DTR is set
 	*/
 	public native boolean isDTR();
-	/** 
+	/**
 	*  @param state
 	*/
 	public native void setDTR( boolean state );
-	/** 
+	/**
 	*  @param state
 	*/
 	public native void setRTS( boolean state );
 	private native void setDSR( boolean state );
-	/** 
+	/**
 	*  @return boolean true if CTS is set
 	*/
 	public native boolean isCTS();
-	/** 
+	/**
 	*  @return boolean true if DSR is set
 	*/
 	public native boolean isDSR();
-	/** 
+	/**
 	*  @return boolean true if CD is set
 	*/
 	public native boolean isCD();
-	/** 
+	/**
 	*  @return boolean true if RI is set
 	*/
 	public native boolean isRI();
-	/** 
+	/**
 	*  @return boolean true if RTS is set
 	*/
 	public native boolean isRTS();
@@ -620,7 +620,7 @@ final public class RXTXPort extends SerialPort
 	/** Process SerialPortEvents */
 	native void eventLoop();
 
-	/** 
+	/**
 	*  @return boolean  true if monitor thread is interrupted
 	*/
 	boolean monThreadisInterrupted=true;
@@ -632,7 +632,7 @@ final public class RXTXPort extends SerialPort
 		if(monThread != null)
 		{
 			if ( debug )
-				z.reportln( 
+				z.reportln(
 					"monThreadisInterrupted = " +
 					monThreadisInterrupted );
 			return monThreadisInterrupted;
@@ -642,7 +642,7 @@ final public class RXTXPort extends SerialPort
 		return(true);
 	}
 
-	/** 
+	/**
 	*  @param event
 	*  @param state
 	*  @return boolean true if the port is closing
@@ -667,7 +667,7 @@ final public class RXTXPort extends SerialPort
 				break;
 			case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
 				if( debug_events )
-					z.reportln( 
+					z.reportln(
 						"OUTPUT_BUFFER_EMPTY " +
 						monThread.Output + ")" );
 				break;
@@ -762,7 +762,7 @@ final public class RXTXPort extends SerialPort
 			state );
 		if( debug_events && debug_verbose )
 			z.reportln(  "	sending event" );
-		if(monThreadisInterrupted) 
+		if(monThreadisInterrupted)
 		{
 			if( debug_events )
 				z.reportln(  "	sendEvent return" );
@@ -776,13 +776,13 @@ final public class RXTXPort extends SerialPort
 		if( debug_events && debug_verbose )
 			z.reportln(  "	sendEvent return" );
 
-		if (fd == 0 ||  SPEventListener == null || monThread == null) 
+		if (fd == 0 ||  SPEventListener == null || monThread == null)
 		{
 			return(true);
 		}
-		else 
+		else
 		{
-			return(false);  
+			return(false);
 		}
 	}
 
@@ -849,7 +849,7 @@ final public class RXTXPort extends SerialPort
 			if (debug)
 				z.reportln( "	RXTXPort:calling interruptEventLoop");
 			interruptEventLoop( );
-			
+
 			if (debug)
 				z.reportln( "	RXTXPort:calling monThread.join()");
 			try {
@@ -858,17 +858,17 @@ final public class RXTXPort extends SerialPort
 				monThread.join(3000);
 			} catch (InterruptedException ex) {
 				// somebody called interrupt() on us (ie wants us to abort)
-				// we dont propagate InterruptedExceptions so lets re-set the flag 
+				// we dont propagate InterruptedExceptions so lets re-set the flag
 				Thread.currentThread().interrupt();
 				return;
  			}
-				
+
 			if ( debug && monThread.isAlive() )
 			{
 				z.reportln( "	MonThread is still alive!");
 
 			}
-			
+
 		}
 		monThread = null;
 		SPEventListener = null;
@@ -905,7 +905,7 @@ final public class RXTXPort extends SerialPort
 		if (debug)
 			z.reportln( "RXTXPort:notifyOnDataAvailable( " +
 				enable+" )");
-		
+
 		waitForTheNativeCodeSilly();
 
 		MonitorThreadLock = true;
@@ -1053,7 +1053,7 @@ final public class RXTXPort extends SerialPort
 	{
 		synchronized (this) {
 			if (debug)
-				z.reportln( "RXTXPort:close( " + this.name + " )"); 
+				z.reportln( "RXTXPort:close( " + this.name + " )");
 
 			while( IOLocked > 0 )
 			{
@@ -1083,21 +1083,21 @@ final public class RXTXPort extends SerialPort
 		setDTR(false);
 		setDSR(false);
 		if (debug)
-			z.reportln( "RXTXPort:close( " + this.name + " ) setting monThreadisInterrupted"); 
+			z.reportln( "RXTXPort:close( " + this.name + " ) setting monThreadisInterrupted");
 		if ( ! monThreadisInterrupted )
 		{
 			removeEventListener();
 		}
 		if (debug)
-			z.reportln( "RXTXPort:close( " + this.name + " ) calling nativeClose"); 
+			z.reportln( "RXTXPort:close( " + this.name + " ) calling nativeClose");
 		nativeClose( this.name );
 		if (debug)
-			z.reportln( "RXTXPort:close( " + this.name + " ) calling super.close"); 
+			z.reportln( "RXTXPort:close( " + this.name + " ) calling super.close");
 		super.close();
 		fd = 0;
 		closeLock = false;
 		if (debug)
-			z.reportln( "RXTXPort:close( " + this.name + " ) leaving"); 
+			z.reportln( "RXTXPort:close( " + this.name + " ) leaving");
 	}
 
 
@@ -1178,7 +1178,7 @@ final public class RXTXPort extends SerialPort
 					IOLocked--;
 				}
 			}
-			
+
 		}
 	/**
 	*  @param b[]
@@ -1196,7 +1196,7 @@ final public class RXTXPort extends SerialPort
 					"Invalid offset/length passed to read"
 				);
 			}
-	 
+
 			byte send[] = new byte[len];
 			System.arraycopy( b, off, send, 0, len );
 			if (debug_write)
@@ -1243,7 +1243,7 @@ final public class RXTXPort extends SerialPort
 			try
 			{
 				waitForTheNativeCodeSilly();
-				/* 
+				/*
 				   this is probably good on all OS's but for now
 				   just sendEvent from java on Sol
 				*/
@@ -1302,7 +1302,7 @@ final public class RXTXPort extends SerialPort
 					//z.reportln(  "RXTXPort:SerialInputStream:read() returns byte = " + result );
 					z.reportln(  "RXTXPort:SerialInputStream:read() returns" );
 				return( result );
-			}				
+			}
 			finally
 			{
 				synchronized (IOLockedMutex) {
@@ -1476,7 +1476,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 
 	   We are trying to catch the terminator in the native code
 	   Right now it is assumed that t[] is an array of 2 bytes.
-	
+
 	   if the read encounters the two bytes, it will return and the
 	   array will contain the terminator.  Otherwise read behavior should
 	   be the same as read( b[], off, len ).  Timeouts have not been well
@@ -1627,10 +1627,10 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 		private volatile boolean Data=false;
 		private volatile boolean Output=false;
 
-		MonitorThread() 
+		MonitorThread()
 		{
 			if (debug)
-				z.reportln( "RXTXPort:MontitorThread:MonitorThread()"); 
+				z.reportln( "RXTXPort:MontitorThread:MonitorThread()");
 		}
 	/**
 	*  run the thread and call the event loop.
@@ -1638,23 +1638,23 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 		public void run()
 		{
 			if (debug)
-				z.reportln( "RXTXPort:MontitorThread:run()"); 
+				z.reportln( "RXTXPort:MontitorThread:run()");
 			monThreadisInterrupted=false;
 			eventLoop();
 			if (debug)
-				z.reportln( "eventLoop() returned"); 
+				z.reportln( "eventLoop() returned");
 		}
-		protected void finalize() throws Throwable 
-		{ 
+		protected void finalize() throws Throwable
+		{
 			if (debug)
-				z.reportln( "RXTXPort:MonitorThread exiting"); 
+				z.reportln( "RXTXPort:MonitorThread exiting");
 		}
 	}
 	/**
 	*  A dummy method added so RXTX compiles on Kaffee
-	*  @deprecated deprecated but used in Kaffe 
+	*  @deprecated deprecated but used in Kaffe
 	*/
-	public void setRcvFifoTrigger(int trigger){};  
+	public void setRcvFifoTrigger(int trigger){};
 
 /*------------------------  END OF CommAPI -----------------------------*/
 
@@ -1706,9 +1706,9 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 		throws UnsupportedCommOperationException;
 	native String nativeGetUartType()
 		throws UnsupportedCommOperationException;
-	private native boolean nativeSetBaudBase(int BaudBase) 
+	private native boolean nativeSetBaudBase(int BaudBase)
 		throws UnsupportedCommOperationException;
-	private native int nativeGetBaudBase() 
+	private native int nativeGetBaudBase()
 		throws UnsupportedCommOperationException;
 	private native boolean nativeSetDivisor(int Divisor)
 		throws UnsupportedCommOperationException;
@@ -1734,7 +1734,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*
 	*  @param  port the name of the port thats been preopened
 	*  @return BaudRate on success
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*  This will not behave as expected with custom speeds
 	*
 	*/
@@ -1742,7 +1742,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 		throws UnsupportedCommOperationException
 	{
 		if ( debug )
-			z.reportln( 
+			z.reportln(
 				"RXTXPort:staticGetBaudRate( " + port + " )");
 		return(nativeStaticGetBaudRate( port ));
 	}
@@ -1753,14 +1753,14 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*
 	*  @param  port the name of the port thats been preopened
 	*  @return DataBits on success
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*
 	*/
 	public static int staticGetDataBits( String port )
 		throws UnsupportedCommOperationException
 	{
 		if ( debug )
-			z.reportln( 
+			z.reportln(
 				"RXTXPort:staticGetDataBits( " + port + " )");
 		return(nativeStaticGetDataBits( port ) );
 	}
@@ -1772,14 +1772,14 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*
 	*  @param  port the name of the port thats been preopened
 	*  @return Parity on success
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*
 	*/
 	public static int staticGetParity( String port )
 		throws UnsupportedCommOperationException
 	{
 		if ( debug )
-			z.reportln( 
+			z.reportln(
 				"RXTXPort:staticGetParity( " + port + " )");
 		return( nativeStaticGetParity( port ) );
 	}
@@ -1791,19 +1791,19 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*
 	*  @param  port the name of the port thats been preopened
 	*  @return StopBits on success
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*
 	*/
 	public static int staticGetStopBits( String port )
 		throws UnsupportedCommOperationException
 	{
 		if ( debug )
-			z.reportln( 
+			z.reportln(
 				"RXTXPort:staticGetStopBits( " + port + " )");
 			return(nativeStaticGetStopBits( port ) );
 	}
 
-	/** 
+	/**
 	*  Extension to CommAPI
 	*  This is an extension to CommAPI.  It may not be supported on
 	*  all operating systems.
@@ -1825,7 +1825,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 		throws UnsupportedCommOperationException
 	{
 		if ( debug )
-			z.reportln( 
+			z.reportln(
 				"RXTXPort:staticSetSerialPortParams( " +
 				f + " " + b + " " + d + " " + s + " " + p );
 		nativeStaticSetSerialPortParams( f, b, d, s, p );
@@ -1841,7 +1841,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*  the port a second time later on.
 	*
 	*  @return true on success
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*
 	*/
 
@@ -1864,7 +1864,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*  the port a second time later on.
 	*
 	*  @return true on success
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*
 	*/
 
@@ -1887,7 +1887,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*  the port a second time later on.
 	*
 	*  @return none
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*
 	*/
 
@@ -1909,7 +1909,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*
 	*  @param port
 	*  @return true if asserted
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*
 	*/
 
@@ -1929,7 +1929,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*
 	*  @param port
 	*  @return true if asserted
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*
 	*/
 
@@ -1949,7 +1949,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*
 	*  @param port
 	*  @return true if asserted
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*
 	*/
 
@@ -1969,7 +1969,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*
 	*  @param port
 	*  @return true if asserted
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*
 	*/
 
@@ -1989,7 +1989,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*
 	*  @param port
 	*  @return true if asserted
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*
 	*/
 
@@ -2009,7 +2009,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*
 	*  @param port
 	*  @return true if asserted
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*
 	*/
 
@@ -2027,7 +2027,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*  This is an extension to CommAPI.  It may not be supported on
 	*  all operating systems.
 	*  @return int the Parity Error Character
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*
 	*  Anyone know how to do this in Unix?
 	*/
@@ -2051,7 +2051,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*  all operating systems.
 	*  @param b Parity Error Character
 	*  @return boolean true on success
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*
 	*  Anyone know how to do this in Unix?
 	*/
@@ -2069,7 +2069,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*  This is an extension to CommAPI.  It may not be supported on
 	*  all operating systems.
 	*  @return int the End of Input Character
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*
 	*  Anyone know how to do this in Unix?
 	*/
@@ -2093,7 +2093,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*  all operating systems.
 	*  @param b End Of Input Character
 	*  @return boolean true on success
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*/
 
 	public boolean setEndOfInputChar( byte b )
@@ -2113,7 +2113,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*  or "16750".
 	*  @param test boolean flag to determin if the UART should be tested.
 	*  @return boolean true on success
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*/
 	public boolean setUARTType(String type, boolean test)
 		throws UnsupportedCommOperationException
@@ -2129,7 +2129,7 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*  @return type String representation of the UART type which mayb
 	*  be "none", "8250", "16450", "16550", "16550A", "16650", "16550V2"
 	*  or "16750".
-	*  @throws UnsupportedCommOperationException;
+	*  @throws UnsupportedCommOperationException
 	*/
 	public String getUARTType() throws UnsupportedCommOperationException
 	{
@@ -2142,7 +2142,8 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*  @param BaudBase The clock frequency divided by 16.  Default
 	*  BaudBase is 115200.
 	*  @return true on success
-	*  @throws UnsupportedCommOperationException, IOException
+	*  @throws UnsupportedCommOperationException
+        *  @throws IOException
 	*/
 
 	public boolean setBaudBase(int BaudBase)
@@ -2157,7 +2158,8 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	/**
 	*  Extension to CommAPI
 	*  @return BaudBase
-	*  @throws UnsupportedCommOperationException, IOException
+	*  @throws UnsupportedCommOperationException
+        *  @throws IOException
 	*/
 
 	public int getBaudBase() throws UnsupportedCommOperationException,
@@ -2172,7 +2174,8 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	*  Extension to CommAPI.  Set Baud Base to 38600 on Linux and W32
 	*  before using.
 	*  @param Divisor
-	*  @throws UnsupportedCommOperationException, IOException
+	*  @throws UnsupportedCommOperationException
+        *  @throws IOException
 	*/
 
 	public boolean setDivisor(int Divisor)
@@ -2186,7 +2189,8 @@ Documentation is at http://java.sun.com/products/jdk/1.2/docs/api/java/io/InputS
 	/**
 	*  Extension to CommAPI
 	*  @return Divisor;
-	*  @throws UnsupportedCommOperationException, IOException
+	*  @throws UnsupportedCommOperationException
+        *  @throws IOException
 	*/
 
 	public int getDivisor() throws UnsupportedCommOperationException,

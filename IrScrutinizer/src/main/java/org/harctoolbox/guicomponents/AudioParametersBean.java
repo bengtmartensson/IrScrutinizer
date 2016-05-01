@@ -35,8 +35,6 @@ public class AudioParametersBean extends javax.swing.JPanel {
     private boolean verbose = false;
     private int sampleSize = 8;
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * Creates new form AudioParametersBean
      */

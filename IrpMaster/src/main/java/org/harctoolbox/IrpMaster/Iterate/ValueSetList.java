@@ -35,7 +35,7 @@ import org.harctoolbox.IrpMaster.UnassignedException;
 public class ValueSetList implements Iterable<Long> {
     //long value = invalid;
 
-    private ArrayList<ValueSet> valueSets = new ArrayList<ValueSet>();
+    private ArrayList<ValueSet> valueSets = new ArrayList<>();
     private int currentSetIndex = (int) IrpUtils.invalid;
     private Iterator<Long> setIterator = null;
 
@@ -112,9 +112,7 @@ public class ValueSetList implements Iterable<Long> {
         ValueSetList vsl = null;
         try {
             vsl = new ValueSetList(0L, 255L, args[arg_i]);
-        } catch (ParseException ex) {
-            System.err.println(ex.getMessage());
-        } catch (UnassignedException ex) {
+        } catch (ParseException | UnassignedException ex) {
             System.err.println(ex.getMessage());
         }
 

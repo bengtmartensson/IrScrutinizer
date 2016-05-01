@@ -1,4 +1,7 @@
-Interface fixed: debug and verbose. Creaned up receive/capture. Some
+THIS FILE IS NO LONGER MAINTAINED; SEE git log AND
+IrScrutinizer.releasenotes.txt.
+
+Interface fixed: debug and verbose. Cleaned up receive/capture. Some
 misc cleanup. 
 Important bugs fixed in IrToy.
 IrToy now implements IStringCommand.

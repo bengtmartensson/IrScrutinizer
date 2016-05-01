@@ -1,6 +1,6 @@
 /*      $Id: transmit.c,v 5.31 2010/04/02 10:26:57 lirc Exp $      */
-
-/****************************************************************************
+/**
+ * **************************************************************************
  ** transmit.c **************************************************************
  ****************************************************************************
  *
@@ -9,18 +9,24 @@
  * Copyright (C) 1999-2004 Christoph Bartelmus <lirc@bartelmus.de>
  *
  */
-
 package org.harctoolbox.jirc;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class Transmit {
+/**
+ * This class is a translation of transmit.c from Lirc 0.9.0, and renders the
+ * signal. A Transmit is first constructed, then, getValid() and getData()
+ * deliver the rendered signal as a sequence of durations.
+ *
+ */
+final class Transmit {
+
     private IrRemote remote; // Could really remove all the remote arguments on the private functions...
 
     private Transmit() {
     }
 
-    public Transmit(IrRemote remote, IrNCode code, int debug, boolean repeat) {
+    Transmit(IrRemote remote, IrNCode code, int debug, boolean repeat) {
         this.remote = remote;
         IrRemote.setRepeat_remote(null);
         valid = init_send(remote, code, debug);
@@ -58,14 +64,35 @@ public class Transmit {
 
     private boolean valid = false;
 
+    /**
+     *
+     * @return true if the rendering produced valid result.
+     */
     public boolean getValid() {
         return valid;
     }
 
+    /**
+     * Returns the rendered durations as an array of ints. Guaranteed to end
+     * with a gap, if not already present, add it of size from the argument.
+     *
+     * @param gap Ending duration to add, if necessary.
+     * @see #getData()
+     *
+     * @return array of durations.
+     */
     public int[] getData(int gap) {
         return valid ? send_buffer.getData(gap) : null;
     }
 
+    /**
+     * Returns the rendered durations as an array of ints. Due to Lirc's
+     * idiosyncrasies, it may be of odd size, i.e. ending with a mark.
+     *
+     * @see #getData(int gap)
+     *
+     * @return array of durations.
+     */
     public int[] getData() {
         return valid ? send_buffer.getData() : null;
     }
@@ -87,30 +114,12 @@ public class Transmit {
     }
 
     /**
-     * if the gap is lower than this value, we will concatenate the
-     * signals and send the signal chain at a single blow
+     * if the gap is lower than this value, we will concatenate the signals and
+     * send the signal chain at a single blow
      */
     private static final int LIRCD_EXACT_GAP_THRESHOLD = 10000;
 
-    //extern IrRemote repeat_remote;
-
-    //struct sbuf send_buffer;
     private Sbuf send_buffer = new Sbuf();
-
-//private void set_bit(long * code, int bit, int data)
-//{
-//	(*code) &= ~((((ir_code) 1) << bit));
-//	(*code) |= ((ir_code) (data ? 1 : 0) << bit);
-//}
-
-/*
-  sending stuff
-*/
-/*
-void init_send_buffer(void)
-{
-	memset(&send_buffer, 0, sizeof(send_buffer));
-}*/
 
     private void clear_send_buffer() {
         LOGPRINTF(3, "clearing transmit buffer");
@@ -251,7 +260,7 @@ void init_send_buffer(void)
                 return;
             }
             for (i = 0; i < bits; i += 2, mask >>= 2) {
-                switch ((int)(data & 3L)) {
+                switch ((int) (data & 3L)) {
                     case 0:
                         send_pulse(remote.pzero);
                         send_space(remote.szero);
@@ -298,13 +307,11 @@ void init_send_buffer(void)
                     if ((remote.toggle_bit_mask_state & mask) != 0) {
                         data |= 1L;
                     }
-                } else {
-                    if ((remote.toggle_bit_mask_state & mask) != 0) {
-                        data ^= 1L;
-                    }
+                } else if ((remote.toggle_bit_mask_state & mask) != 0) {
+                    data ^= 1L;
                 }
             }
-	           if (remote.has_toggle_mask() && (mask & remote.toggle_mask) != 0 && (remote.toggle_mask_state % 2) != 0) {
+            if (remote.has_toggle_mask() && (mask & remote.toggle_mask) != 0 && (remote.toggle_mask_state % 2) != 0) {
                 data ^= 1;
             }
             if ((data & 1) != 0) {
@@ -324,17 +331,15 @@ void init_send_buffer(void)
                     send_pulse(remote.pone);
                     send_space(remote.sone);
                 }
+            } else if ((mask & remote.rc6_mask) != 0) {
+                send_pulse(2 * remote.pzero);
+                send_space(2 * remote.szero);
+            } else if (remote.is_space_first()) {
+                send_space(remote.szero);
+                send_pulse(remote.pzero);
             } else {
-                if ((mask & remote.rc6_mask) != 0) {
-                    send_pulse(2 * remote.pzero);
-                    send_space(2 * remote.szero);
-                } else if (remote.is_space_first()) {
-                    send_space(remote.szero);
-                    send_pulse(remote.pzero);
-                } else {
-                    send_pulse(remote.pzero);
-                    send_space(remote.szero);
-                }
+                send_pulse(remote.pzero);
+                send_space(remote.szero);
             }
             data >>= 1;
         }
@@ -393,7 +398,7 @@ void init_send_buffer(void)
         }
     }
 
-    private void send_signals(ArrayList<Integer> signals) {
+    private void send_signals(List<Integer> signals) {
         for (Integer s : signals)
             add_send_buffer(s);
     }
@@ -401,10 +406,6 @@ void init_send_buffer(void)
     private boolean init_send(IrRemote remote, IrNCode code, int debug) {
         return init_send_or_sim(remote, code, false, 0, debug);
     }
-
-    //private boolean init_sim(IrRemote remote, IrNCode code, int repeat_preset, int debug) {
-    //    return init_send_or_sim(remote, code, true, repeat_preset, debug);
-    //}
 
     private boolean init_send_or_sim(IrRemote remote, IrNCode code, boolean sim, int repeat_preset, int debug) {
         this.debug = debug;
@@ -435,48 +436,45 @@ void init_send_buffer(void)
     }
 
     private boolean send_loop(IrRemote remote, IrNCode code, int repeat, boolean sim) {
-//init_send_loop:
         while (true) {
             if (repeat > 0 && remote.has_repeat()) {
                 if ((remote.flags & IrRemote.REPEAT_HEADER) != 0 && remote.has_header()) {
                     send_header(remote);
                 }
                 send_repeat(remote);
-            } else {
-                if (!remote.is_raw()) {
-                    long next_code;
+            } else if (!remote.is_raw()) {
+                long next_code;
 
-                    if (sim || code.getTransmit_state() == null) {
-                        next_code = code.getCode();
-                    } else {
-                        next_code = code.getTransmit_state().getCode();
-                    }
-                    send_code(remote, next_code, repeat != 0);
-                    if (!sim && remote.has_toggle_mask()) {
-                        remote.toggle_mask_state++;
-                        if (remote.toggle_mask_state == 4) {
-                            remote.toggle_mask_state = 2;
-                        }
-                    }
-                    send_buffer.data = send_buffer._data;
+                if (sim || code.getTransmit_state() == null) {
+                    next_code = code.getCode();
                 } else {
-                    // is_raw
-                    if (code.getSignals() == null) {
-                        if (!sim) {
-                            logprintf(LOG_ERR, "no signals for raw send");
-                        }
-                        return false;
+                    next_code = code.getTransmit_state().getCode();
+                }
+                send_code(remote, next_code, repeat != 0);
+                if (!sim && remote.has_toggle_mask()) {
+                    remote.toggle_mask_state++;
+                    if (remote.toggle_mask_state == 4) {
+                        remote.toggle_mask_state = 2;
                     }
-                    if (send_buffer.wptr > 0) {
-                        send_signals(code.getSignals());
-                    } else {
-                        send_buffer.data = new int[code.getSignals().size()];
-                        //code.signals.toArray(new int[0]);
-                        send_buffer.wptr = code.getSignals().size();//.length;
-                        for (int i = 0; i < code.getSignals().size(); i++) {
-                            send_buffer.data[i] = code.getSignals().get(i);
-                            send_buffer.sum += code.getSignals().get(i);
-                        }
+                }
+                send_buffer.data = send_buffer._data;
+            } else {
+                // is_raw
+                if (code.getSignals() == null) {
+                    if (!sim) {
+                        logprintf(LOG_ERR, "no signals for raw send");
+                    }
+                    return false;
+                }
+                if (send_buffer.wptr > 0) {
+                    send_signals(code.getSignals());
+                } else {
+                    send_buffer.data = new int[code.getSignals().size()];
+                    //code.signals.toArray(new int[0]);
+                    send_buffer.wptr = code.getSignals().size();//.length;
+                    for (int i = 0; i < code.getSignals().size(); i++) {
+                        send_buffer.data[i] = code.getSignals().get(i);
+                        send_buffer.sum += code.getSignals().get(i);
                     }
                 }
             }
@@ -533,7 +531,7 @@ void init_send_buffer(void)
                     send_signals(signals, n);
                 }
                 LOGPRINTF(1, "concatenating low gap signals");
-                if (    code.getNext() == null || code.getTransmit_state() == null) {
+                if (code.getNext() == null || code.getTransmit_state() == null) {
                     remote.repeat_countdown--;
                 }
                 send_space(remote.min_remaining_gap);
@@ -542,8 +540,7 @@ void init_send_buffer(void)
 
                 repeat = 1;
                 //goto init_send_loop;
-            }
-            //if (code.getTransmit_state() != null)
+            } //if (code.getTransmit_state() != null)
             //    ; //goto init_send_loop;
             else
                 return true;
@@ -551,13 +548,13 @@ void init_send_buffer(void)
     }
 
     private boolean final_check(boolean sim) {
-	if (!check_send_buffer()) {
-		if (!sim) {
-			logprintf(LOG_ERR, "invalid send buffer");
-			logprintf(LOG_ERR, "this remote configuration cannot be used to transmit");
-		}
-		return false;
-	}
-	return true;
+        if (!check_send_buffer()) {
+            if (!sim) {
+                logprintf(LOG_ERR, "invalid send buffer");
+                logprintf(LOG_ERR, "this remote configuration cannot be used to transmit");
+            }
+            return false;
+        }
+        return true;
     }
 }

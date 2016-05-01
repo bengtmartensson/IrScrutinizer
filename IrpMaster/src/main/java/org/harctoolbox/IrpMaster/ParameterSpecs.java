@@ -30,29 +30,29 @@ import org.antlr.runtime.tree.CommonTree;
  * @author Bengt Martensson
  */
 public class ParameterSpecs {
-    
+
     private HashMap<String, ParameterSpec>map;
-    
+
     public boolean isEmpty() {
         return map.isEmpty();
     }
-    
+
     public Set<String> getNames() {
         return map.keySet();
     }
-    
+
     public Collection<ParameterSpec> getParams() {
         return map.values();
     }
-    
+
     public ParameterSpec getParameterSpec(String name) {
         return map.get(name);
     }
-    
+
     public ParameterSpecs() {
-        map = new HashMap<String, ParameterSpec>();
-    }   
-        
+        map = new HashMap<>();
+    }
+
     public ParameterSpecs(String parameter_specs) throws ParseException {
         this();
         IrpLexer lex = new IrpLexer(new ANTLRStringStream(parameter_specs));
@@ -67,30 +67,30 @@ public class ParameterSpecs {
             throw new ParseException(ex);
         }
     }
-    
+
     public ParameterSpecs(CommonTree t) {
         this();
         load(t);
     }
-    
+
     private void load(CommonTree t) {
         for (int i = 0; i < t.getChildCount(); i++) {
             ParameterSpec ps = new ParameterSpec((CommonTree)t.getChild(i));
             map.put(ps.getName(), ps);
         }
     }
-    
+
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
         for (ParameterSpec ps : map.values())
             str.append(ps.toString()).append(",");
-        
+
         if (str.length() > 0)
             str.deleteCharAt(str.length()-1);
         return "[" + str.toString() + "]";
     }
-    
+
     /**
      * @param args the command line arguments
      */

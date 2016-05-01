@@ -32,7 +32,6 @@ import javax.swing.MenuElement;
 import org.harctoolbox.harchardware.ir.GlobalCache;
 
 public class GlobalCacheManagerMenu implements Serializable /*extends GlobalCacheManagerAbstractMenu*/ {
-    private static final long serialVersionUID = 1L;
     private final JMenu globalCacheMenu;
     private JRadioButton[] globalCacheRadioButtons = new JRadioButton[0];
     private ButtonGroup buttonGroup = null;

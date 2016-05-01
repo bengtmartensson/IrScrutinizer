@@ -264,7 +264,7 @@ public class Wave {
         }
 
         // Search the largest block of oscillations
-        ArrayList<Integer> durations = new ArrayList<Integer>();
+        ArrayList<Integer> durations = new ArrayList<>();
         int bestLength = -1; // length of longest block this far
         int bestStart = -1;
         boolean isInInterestingBlock = true;
@@ -419,10 +419,10 @@ public class Wave {
      * @throws IOException
      */
     public void play() throws LineUnavailableException, IOException {
-        SourceDataLine line = AudioSystem.getSourceDataLine(audioFormat);
-        line.open(audioFormat);
-        play(line);
-        line.close();
+        try (SourceDataLine line = AudioSystem.getSourceDataLine(audioFormat)) {
+            line.open(audioFormat);
+            play(line);
+        }
     }
 
     private static void usage(int exitcode) {
@@ -480,7 +480,7 @@ public class Wave {
         boolean versionRequested;
 
         @Parameter(description = "[parameters]")
-        private ArrayList<String> parameters = new ArrayList<String>();
+        private ArrayList<String> parameters = new ArrayList<>();
     }
 
     private static JCommander argumentParser;
@@ -577,16 +577,7 @@ parameters: <em>protocol</em> <em>deviceno</em> [<em>subdevice_no</em>] <em>comm
                  if (commandLineArgs.play)
                      wave.play();
              }
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitFatalProgramFailure);
-        } catch (UnsupportedAudioFileException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitFatalProgramFailure);
-        } catch (LineUnavailableException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitFatalProgramFailure);
-        } catch (IrpMasterException ex) {
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException | IrpMasterException ex) {
             System.err.println(ex.getMessage());
             System.exit(IrpUtils.exitFatalProgramFailure);
         }

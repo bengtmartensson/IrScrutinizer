@@ -17,6 +17,8 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.guicomponents.GuiUtils;
 
@@ -24,7 +26,6 @@ import org.harctoolbox.guicomponents.GuiUtils;
  * The mandatory about popup ;-).
  *
  */
-@SuppressWarnings("serial")
 public class AboutPopup extends javax.swing.JDialog {
 
     private GuiUtils guiUtils;
@@ -38,6 +39,9 @@ public class AboutPopup extends javax.swing.JDialog {
      */
     public AboutPopup(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        if (!(parent instanceof GuiMain))
+            throw new RuntimeException("Programming error");
+
         guiUtils = ((GuiMain) parent).getGuiUtils();
         try {
             decodeIRVersion = "DecodeIR version " + DecodeIR.getVersion();
@@ -210,7 +214,11 @@ public class AboutPopup extends javax.swing.JDialog {
     }//GEN-LAST:event_formMouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-                    guiUtils.browse(Version.homepageUrl);
+        try {
+            guiUtils.browse(new URI(Version.homepageUrl));
+        } catch (URISyntaxException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
    /**

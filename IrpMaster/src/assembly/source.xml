@@ -14,7 +14,7 @@
                 <include>*.txt</include>
                 <include>pom.xml</include>
                 <include>src/main/antlr3/*.g</include>
-                <include>src/main/config/*.ini</include>
+                <include>src/main/config/**</include>
                 <include>src/main/doc/*</include>
                 <include>src/main/java/**</include>
                 <include>src/main/xdocs/*.xml</include>

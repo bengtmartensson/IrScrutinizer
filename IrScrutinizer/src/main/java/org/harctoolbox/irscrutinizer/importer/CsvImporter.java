@@ -28,7 +28,6 @@ import org.harctoolbox.IrpMaster.IrpUtils;
  */
 public abstract class CsvImporter extends RemoteSetImporter implements IReaderImporter,Serializable {
     protected final static int invalid = (int) IrpUtils.invalid;
-    private static final long serialVersionUID = 1L;
 
     protected String separator;
     protected int nameColumn;
@@ -99,7 +98,8 @@ public abstract class CsvImporter extends RemoteSetImporter implements IReaderIm
             return aPriori;
         if (column > chunks.length)
             return null;
-
+        if (column + offset > chunks.length)
+            return null;
         StringBuilder str = new StringBuilder(chunks[column-1+offset]);
         if (str.length() > 0 && str.charAt(str.length()-1) == '"')
             str.deleteCharAt(str.length()-1);
@@ -113,7 +113,8 @@ public abstract class CsvImporter extends RemoteSetImporter implements IReaderIm
         return str.toString();
     }
 
-    protected static String[] gobbleString(String[] chunks, int column, boolean nameMultiColumn, int basis, String aPriori) {
+    protected static String[] gobbleString(String[] chunks, int column, boolean nameMultiColumn,
+                                      int basis, String aPriori, boolean rejectNumbers) {
         if (column <= 0)
             return new String[]{ aPriori };
         if (column > chunks.length)
@@ -129,19 +130,17 @@ public abstract class CsvImporter extends RemoteSetImporter implements IReaderIm
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add(str);
         for (int index = column; index < chunks.length; index++) {
-            boolean isNumber = false;
             String chunk = chunks[index];
             if (basis == 16 && chunk.startsWith("0x"))
                 chunk = chunk.substring(2);
-            try {
-                Integer.parseInt(chunk, basis);
-                isNumber = true;
-            } catch (NumberFormatException ex) {
+            if (rejectNumbers && chunk.length() > 2) {
+                try {
+                    Integer.parseInt(chunk, basis);
+                    break;
+                } catch (NumberFormatException ex) {
+                }
             }
-            if (isNumber)
-                break;
-            else
-                arrayList.add(chunk);
+            arrayList.add(chunk);
         }
         return arrayList.toArray(new String[arrayList.size()]);
     }

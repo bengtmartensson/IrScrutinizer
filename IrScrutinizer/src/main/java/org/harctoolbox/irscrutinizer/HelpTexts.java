@@ -64,6 +64,9 @@ class HelpTexts {
             + "The \"Edit/Browse\" button allows to examine the selected "
             + "file with the operating system's standard command.";
 
+    private static final String importCharsetHelp
+            = "The character set used for the import can be selected as Options -> Import options -> Character set.";
+
     public static String scrutinizeSignalHelp = "This panel is devoted to the analysis of a single IR signal. "
             + "The signal is either read from hardware using the \"Capture\" button (requires that "
             + "the capturing hardware has been set on the \"Capturing Hardware\" pane), imported "
@@ -121,6 +124,7 @@ class HelpTexts {
 
     public static String importLircHelp
             = "LIRC files can be imported here, even directory hierarchies of LIRC files.\n\n"
+            + importCharsetHelp + "\n\n"
             + fileUrlImportHelp + "\n\n"
             + "When pressing one of the \"Load\", \"Load File/URL\", or \"Load from clipboard\" buttons, "
             + treeHelp;
@@ -184,12 +188,14 @@ class HelpTexts {
             + "selected in the \"Field separator\" combo box. The column to be used as name is "
             + "entered in the \"Name col.\" combo box, while the data to be interpreted either as "
             + "raw data or CCF format, is entered  in the \"Raw signal col.\". If the \"... and "
-            + "subsequent columns\" is selected, all subsequent columns are added to the data."
+            + "subsequent columns\" is selected, all subsequent columns are added to the data." + "\n\n"
+            + importCharsetHelp + "\n\n"
             + fileImportHelp + "\n\n"
             + "When pressing the \"Load File\" button, " + treeHelp;
 
     public static String importTextRawLineBasedHelp
             = "This pane tries to interpret a line-based file as a number of named IR commands, using heuristics.\n\n"
+            + importCharsetHelp + "\n\n"
             + fileUrlImportHelp + "\n\n"
             + "When pressing one of the \"Load\", \"Load File/URL\", or \"Load from clipboard\" buttons, "
             + treeHelp;
@@ -201,6 +207,7 @@ class HelpTexts {
             + "entered in the \"Name col.\" combo box, while protocol name and the parameters D, "
             + "S, and F are entered in their respective combo boxes. They are parsed in the "
             + "number base selected.\n\n"
+            + importCharsetHelp + "\n\n"
             + fileImportHelp + "\n\n"
             + "When pressing the \"Load File\" button, " + treeHelp;
 
@@ -265,6 +272,9 @@ class HelpTexts {
             + "included 0 or more times), and an (most often empty) ending "
             + "sequence). Using these formats, the number of repetition sequences to include "
             + "can be selected."
+            + "\n\n"
+            + "The character set used by the exports can be selected by Options -> Export options -> Character set..."
+            + "However, some export formats ignore this."
             + "\n\n"
             + "Some export formats have some more parameters, see the help in these sub panes.";
 

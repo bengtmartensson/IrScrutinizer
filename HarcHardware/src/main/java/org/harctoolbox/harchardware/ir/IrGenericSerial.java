@@ -109,4 +109,9 @@ public class IrGenericSerial extends IrSerial<LocalSerialPortBuffered> implement
         str.append(lineEnding);
         return str.toString();
     }
+
+    @Override
+    public void setDebug(int debug) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

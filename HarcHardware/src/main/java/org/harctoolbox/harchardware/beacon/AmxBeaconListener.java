@@ -42,7 +42,7 @@ public class AmxBeaconListener /*implements Serializable*/ {
     private String key = null;
     private String value = null;
     private boolean debug = false;
-    private HashMap<InetAddress, Node>nodes = new HashMap<InetAddress, Node>();
+    private HashMap<InetAddress, Node>nodes = new HashMap<>();
 
     /**
      * This is called when a new node appears, or a node is removed.
@@ -64,7 +64,7 @@ public class AmxBeaconListener /*implements Serializable*/ {
         this.value = value;
         this.callback = callback;
         this.debug = debug;
-        nodes = new HashMap<InetAddress, Node>();
+        nodes = new HashMap<>();
         listenThread = new ListenThread(this);
         grimReaperThread = new GrimReaperThread(this);
     }
@@ -263,7 +263,7 @@ public class AmxBeaconListener /*implements Serializable*/ {
             if (debug)
                 System.err.println(payload);
             String[] pairs = payload.split("><");
-            HashMap<String, String> table = new HashMap<String, String>(pairs.length);
+            HashMap<String, String> table = new HashMap<>(pairs.length);
             for (String pair : pairs) {
                 String[] x = pair.split("=");
                 if (x.length >= 2)
@@ -271,9 +271,9 @@ public class AmxBeaconListener /*implements Serializable*/ {
             }
 
             Node r = new Node(a, port, table);
-            if (key != null && ! r.get(key).equals(value)) {
-                    if (debug)
-                        System.err.println("Wrong value of `" + key + "', discarded.");
+            if (key != null && r.get(key) != null && !r.get(key).equals(value)) {
+                if (debug)
+                    System.err.println("Wrong value of `" + key + "', discarded.");
             } else if (nodes.containsKey(a))  {
                 if (debug)
                     System.err.println("already in table, just refreshing.");

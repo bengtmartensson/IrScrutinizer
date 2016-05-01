@@ -11,11 +11,11 @@
 AppId={{AC1B3ACE-5FFD-A379-472A-D97CE9ED3DE9}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
+VersionInfoCopyright=Copyright (C) 2014-2016 Bengt Martensson.
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
@@ -41,25 +41,21 @@ Name: modifypath; Description: &Add installation directory to path
 Source: "IrScrutinizer-jar-with-dependencies.jar"; DestName: "IrScrutinizer.jar"; DestDir: "{app}"; Flags: ignoreversion; AfterInstall: CreateWrapper
 Source: "..\..\native\Windows-x86\*"; DestDir: "{app}\Windows-x86"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\native\Windows-amd64\*"; DestDir: "{app}\Windows-amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "IrpProtocols.ini"; DestDir: "{app}"; Flags: ignoreversion
-Source: "protocols.ini"; DestDir: "{app}"; Flags: ignoreversion
+Source: "*.ini"; DestDir: "{app}"; Flags: ignoreversion
+Source: "irscrutinizer.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "exportformats.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "generated-documents\*.html"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "contributed\*"; DestDir: "{app}\contributed"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "generated-documents\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: isreadme
 Source: "doc\*.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "doc\IrpMaster.releasenotes.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "doc\IrScrutinizer.releasenotes.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\schemas\*.xsd"; DestDir: "{app}\schemas"
 Source: "{#MyAppName}.ico";  DestDir: "{app}"
 Source: "..\..\IrpMaster\target\generated-documents\IrpMaster.html"; DestDir: "{app}\doc"
-Source: "generated-documents\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: isreadme
-
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppName}.ico";
-Name: "{group}\HTML-Doc\IrpMaster"; Filename: "{app}\doc\IrpMaster.html"
-Name: "{group}\HTML-Doc\IrScrutinizer"; Filename: "{app}\doc\IrScrutinizer.html"
-Name: "{group}\HTML-Doc\Release Notes IRPmaster"; Filename: "{app}\doc\IrpMaster.releasenotes.txt"
-Name: "{group}\HTML-Doc\Release Notes IrScrutinizer"; Filename: "{app}\doc\IrScrutinizer.releasenotes.txt"
+Name: "{group}\HTML-Doc\IrpMaster Documentation"; Filename: "{app}\doc\IrpMaster.html"
+Name: "{group}\HTML-Doc\IrScrutinizer Documentation"; Filename: "{app}\doc\IrScrutinizer.html"
+Name: "{group}\HTML-Doc\Release Notes"; Filename: "{app}\doc\IrScrutinizer.releasenotes.txt"
 Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename: "{app}\{#MyAppName}.ico";
@@ -92,7 +88,7 @@ begin
    SaveStringToFile(wrapperFilename, '@ECHO off' + #13#10, false);
    SaveStringToFile(wrapperFilename, 'set IRSCRUTINIZERHOME=' + ExpandConstant('{app}') + #13#10, true);
    SaveStringToFile(wrapperFilename, 'set JAVA=java' + #13#10, true);
-   SaveStringToFile(wrapperFilename, '"%JAVA%" "-Djava.library.path=%IRSCRUTINIZERHOME%\' + DllLibraryPath() + '" -classpath "%IRSCRUTINIZERHOME%\IrScrutinizer.jar" org.harctoolbox.irscrutinizer.IrpMaster -c "%IRSCRUTINIZERHOME%\IrpProtocols.ini" %*', true);
+   SaveStringToFile(wrapperFilename, '"%JAVA%" -splash: "-Djava.library.path=%IRSCRUTINIZERHOME%\' + DllLibraryPath() + '" -jar "%IRSCRUTINIZERHOME%\IrScrutinizer.jar" --irpmaster -c "%IRSCRUTINIZERHOME%\IrpProtocols.ini" %*', true);
 end;
 
 const

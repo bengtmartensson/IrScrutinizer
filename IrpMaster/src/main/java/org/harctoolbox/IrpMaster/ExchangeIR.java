@@ -162,7 +162,7 @@ public class ExchangeIR {
             try {
                 int[] array = Pronto.parseString(str);
                 return array != null ? Pronto.ccfSignal(array) : parseUeiLearned(str);
-            } catch (IllegalArgumentException ex) {
+            } catch (IllegalArgumentException | IncompatibleArgumentException ex) {
                 return interpretRawString(str, fallbackFrequency, invokeRepeatFinder, invokeAnalyzer);
             }
         } catch (NumberFormatException ex) {
@@ -177,7 +177,8 @@ public class ExchangeIR {
                 return new IrSignal(fallbackFrequency, IrpUtils.invalid, codes[0], codes[1], codes.length > 2 ? codes[2] : null);
 
             IrSequence irSequence = new IrSequence(str, true);
-            return interpretIrSequence(irSequence, invokeRepeatFinder, invokeAnalyzer);
+            ModulatedIrSequence modulatedIrSequence = new ModulatedIrSequence(irSequence, fallbackFrequency, (double) IrpUtils.invalid);
+            return interpretIrSequence(modulatedIrSequence, invokeRepeatFinder, invokeAnalyzer);
         } catch (NumberFormatException ex) {
             throw new ParseException("Could not interpret string " + str + " (" + ex.getMessage() + ")");
         }

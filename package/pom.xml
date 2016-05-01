@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.harctoolbox</groupId>
         <artifactId>HarctoolboxBundle</artifactId>
-        <version>1.0.0</version>
+        <version>1.2</version>
         <relativePath>..</relativePath>
     </parent>
     <properties>
@@ -49,7 +49,7 @@
                                     <classifier>bin</classifier>
                                     <type>tar.gz</type>
                                     <outputDirectory>dist</outputDirectory>
-                                    <includes>*.xml,*.ini,doc/*</includes>
+                                    <includes>*.xml,*.ini,doc/*,contributed/*</includes>                                                                       <includes>*.xml,*/*.ini*</includes>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>

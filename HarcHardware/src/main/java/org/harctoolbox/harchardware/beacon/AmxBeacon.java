@@ -34,7 +34,6 @@ public class AmxBeacon implements Serializable {
     public  final static int broadcastPort = 9131;
     public  final static String beaconPreamble = "AMXB";
     private final static int beaconPeriod = 30 * 1000;
-    private static final long serialVersionUID = 1L;
 
     private final String payload;
 
@@ -100,11 +99,7 @@ public class AmxBeacon implements Serializable {
                 try {
                     beacon.sendCommandUdp();
                     Thread.sleep(beaconPeriod);
-                } catch (UnknownHostException ex) {
-                    System.err.println(ex.getMessage());
-                } catch (IOException ex) {
-                    System.err.println(ex.getMessage());
-                } catch (InterruptedException ex) {
+                } catch (IOException | InterruptedException ex) {
                     System.err.println(ex.getMessage());
                 }
             }

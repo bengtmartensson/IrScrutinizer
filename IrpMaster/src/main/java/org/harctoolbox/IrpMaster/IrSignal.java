@@ -323,7 +323,7 @@ public class IrSignal {
         this.repeatSequence = repeatSequence != null ? repeatSequence : new IrSequence();
         this.endingSequence = ((endingSequence != null) && !endingSequence.isEqual(repeatSequence)) ? endingSequence : new IrSequence();
 
-        map = new EnumMap<Pass, IrSequence>(Pass.class);
+        map = new EnumMap<>(Pass.class);
 
         map.put(Pass.intro, introSequence);
         map.put(Pass.repeat, repeatSequence);
@@ -461,7 +461,7 @@ public class IrSignal {
         } else {
             int arg_i = offset;
             String protocolName = args[arg_i++];
-            LinkedHashMap<String, Long> parameters = new LinkedHashMap<String, Long>();
+            LinkedHashMap<String, Long> parameters = new LinkedHashMap<>();
 
             // Parse name = value assignments
             while (arg_i < args.length && !args[arg_i].isEmpty() && args[arg_i].contains("=")) {
@@ -553,7 +553,7 @@ public class IrSignal {
     /**
      * Returns a ModulatedIrSequence consisting of one intro sequence,
      * count or count-1 number of repeat sequence, dependent on if intro is empty or not, followed by one ending sequence.
-     * @param count Number of times to send signal. Must be > 0.
+     * @param count Number of times to send signal. Must be &gt; 0.
      * @return ModulatedIrSequence.
      */
     public ModulatedIrSequence toModulatedIrSequence(int count) {
@@ -577,7 +577,7 @@ public class IrSignal {
     /**
      * Returns an IrSignal consisting of count repetitions (count semantic) as the intro sequence,
      * while repeat and ending are empty.
-     * @param count Number of times to send signal. Must be > 0.
+     * @param count Number of times to send signal. Must be &gt; 0.
      * @return IrSignal consisting of count repetitions (count semantic) as the intro sequence.
      */
     public IrSignal toOneShot(int count) {
@@ -655,9 +655,7 @@ public class IrSignal {
                 System.out.println(irSignal);
                 System.out.println(irSignal.ccfString());
                 DecodeIR.invoke(irSignal);
-            } catch (IrpMasterException ex) {
-                System.err.println(ex.getMessage());
-            } catch (FileNotFoundException ex) {
+            } catch (IrpMasterException | FileNotFoundException ex) {
                 System.err.println(ex.getMessage());
             }
         }

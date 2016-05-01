@@ -35,6 +35,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.harctoolbox.IrpMaster.XmlUtils;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,48 +47,48 @@ import org.w3c.dom.ProcessingInstruction;
  * Utility class for XML export. Usage in other contexts not recommended.
  */
 public class XmlExporter {
-    /*public static final String flashTagName = "flash";
-    public static final String gapTagName = "gap";
-    public static final String decodeTagName = "decode";
-    public static final String decodesTagName = "decodes";
-    public static final String protocolAttributeName = "protocol";
-    public static final String textTagName = "text";
-    public static final String prontoTagName = "pronto";
-    public static final String introTagName = "intro";
-    public static final String repeatTagName = "repeat";
-    public static final String endingTagName = "ending";
-    public static final String parametersTagName = "parameters";
-    public static final String parameterTagName = "parameter";
-    public static final String parameterNameAttributeName = "name";
-    public static final String parameterValueAttributeName = "value";
-    public static final String irSignalTagName = "irsignal";
-    public static final String nameAttributeName = "name";
-    public static final String frequencyAttributeName = "frequency";
-    public static final String dutyCycleAttributeName = "dutycycle";
-    public static final String rawTagName = "raw";
-    public static final String analyzerTagName = "analyzer";
-    public static final String introBurstsLengthName = "nointrobursts";
-    public static final String repeatBurstsLengthName = "norepeatbursts";
-    public static final String endingBurstsLengthName = "noendingbursts";
-    public static final String burstLengthAttributeName = "burstlength";
-    public static final String commentAttributeName = "comment";*/
 
     /**
      * Name space for the XML Schemas
      */
-    private static final String w3cSchemaNamespace = "http://www.w3.org/2001/XMLSchema-instance";
+    static final String w3cSchemaNamespace = "http://www.w3.org/2001/XMLSchema-instance";
 
     /**
-     * Default location for schema file.
+     * Name space for XLST (1.0)
      */
-    private static final String noNamespaceSchemaLocation = "girr.xsd";
+    static final String xsltNamespace = "http://www.w3.org/1999/XSL/Transform";
+
+    /**
+     * Namespace URI
+     */
+    public static final String girrNamespace = "http://www.harctoolbox.org/Girr";
+
+    /**
+     * URL for schema file supporting name spaces.
+     */
+    public static final String girrSchemaLocationURL = "http://www.harctoolbox.org/schemas/girr_ns.xsd";
+
+    /**
+     * URL for schema file, namespace-less version.
+     */
+    public static final String girrNoNamespaceSchemaLocationURL = "http://www.harctoolbox.org/schemas/girr.xsd";
+
+    //public static final boolean useNamespaces = true;
+
+    private static boolean debug = false;
 
     /**
      * Comment string pointing to Girr docu.
      */
     private static final String girrComment = "This file is in the Girr (General IR Remote) format, see http://www.harctoolbox.org/Girr.html";
 
+    private static final String defaultCharsetName = "UTF-8";
+
     private final Document document;
+
+    public static void setDebug(boolean dbg) {
+        debug = dbg;
+    }
 
     /**
      *
@@ -109,12 +110,20 @@ public class XmlExporter {
                     "type=\"text/" + stylesheetType + "\" href=\"" + stylesheetUrl + "\"");
             document.appendChild(pi);
         }
+
+        // At least in some Java versions (https://bugs.openjdk.java.net/browse/JDK-7150637)
+        // there is no line feed before and after the comment.
+        // This is technically correct, but looks awful to the human reader.
+        // AFAIK, there is no clean way to fix this.
+        // Possibly works with some Java versions?
         Comment comment = document.createComment(girrComment);
         document.appendChild(comment);
         document.appendChild(root);
+        root.setAttribute("girrVersion", RemoteSet.girrVersion);
         if (createSchemaLocation) {
             root.setAttribute("xmlns:xsi", XmlExporter.w3cSchemaNamespace);
-            root.setAttribute("xsi:noNamespaceSchemaLocation", XmlExporter.noNamespaceSchemaLocation);
+            root.setAttribute("xmlns", girrNamespace);
+            root.setAttribute("xsi:schemaLocation", girrSchemaLocationURL);
         }
         return document;
     }
@@ -122,7 +131,7 @@ public class XmlExporter {
     public static Document newDocument() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
-        factory.setNamespaceAware(false);
+        factory.setNamespaceAware(true);
         Document doc = null;
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -133,7 +142,11 @@ public class XmlExporter {
     }
 
     public void printDOM(OutputStream ostr, Document stylesheet, HashMap<String, String>parameters,
-            String doctypeSystemid, boolean binary) throws IOException {
+            boolean binary, String charsetName) throws IOException {
+        if (debug) {
+            XmlUtils.printDOM(new File("girr.girr"), this.document);
+            XmlUtils.printDOM(new File("stylesheet.xsl"), stylesheet);
+        }
         try {
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer tr;
@@ -141,26 +154,33 @@ public class XmlExporter {
                 tr = factory.newTransformer();
 
                 tr.setOutputProperty(OutputKeys.METHOD, "xml");
+                tr.setOutputProperty(OutputKeys.ENCODING, charsetName);
 
             } else {
                 if (parameters != null)
                     for (Map.Entry<String, String> kvp : parameters.entrySet()) {
-                        Element e = stylesheet.createElementNS("http://www.w3.org/1999/XSL/Transform", "param");
+                        Element e = stylesheet.createElementNS(xsltNamespace, "param");
                         e.setAttribute("name", kvp.getKey());
                         e.setAttribute("select", kvp.getValue());
                         stylesheet.getDocumentElement().insertBefore(e, stylesheet.getDocumentElement().getFirstChild());
                     }
-                //XmlUtils.printDOM(System.out, stylesheet, null);
+                NodeList nodeList = stylesheet.getDocumentElement().getElementsByTagNameNS(xsltNamespace, "output");
+                if (nodeList.getLength() > 0) {
+                    Element e = (Element) nodeList.item(0);
+                    e.setAttribute("encoding", charsetName);
+                }
+                if (debug)
+                    XmlUtils.printDOM(new File("stylesheet-params.xsl"), stylesheet);
                 tr = factory.newTransformer(new DOMSource(stylesheet));
             }
             tr.setOutputProperty(OutputKeys.INDENT, "yes");
             tr.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            if (doctypeSystemid != null)
-                tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctypeSystemid);
             if (binary) {
                 DOMResult domResult = new DOMResult();
                 tr.transform(new DOMSource(document), domResult);
                 Document newDoc = (Document) domResult.getNode();
+                if (debug)
+                    XmlUtils.printDOM(new File("girr-binary.xml"), newDoc);
                 NodeList byteElements = newDoc.getDocumentElement().getElementsByTagName("byte");
                 for (int i = 0; i < byteElements.getLength(); i++) {
                     int val = Integer.parseInt(((Element) byteElements.item(i)).getTextContent());
@@ -186,21 +206,21 @@ public class XmlExporter {
         }
     }
 
-    public void printDOM(OutputStream ostr, String doctypeSystemid) throws IOException {
-        printDOM(ostr, null, null, doctypeSystemid, false);
+    public void printDOM(OutputStream ostr, String charsetName) throws IOException {
+        printDOM(ostr, null, null, false, charsetName);
     }
 
-    public void printDOM(File file, String doctypeSystemid) throws IOException  {
+    public void printDOM(File file, String charsetName) throws IOException  {
         if (file == null)
-            printDOM(System.out, doctypeSystemid);
+            printDOM(System.out, charsetName);
         else {
             try (FileOutputStream stream = new FileOutputStream(file)) {
-                printDOM(stream, doctypeSystemid);
+                printDOM(stream, charsetName);
             }
         }
     }
 
     public void printDOM(File file) throws FileNotFoundException, IOException {
-        printDOM(file, null);
+        printDOM(file, defaultCharsetName);
     }
 }

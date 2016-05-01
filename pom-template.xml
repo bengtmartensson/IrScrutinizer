@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.harctoolbox</groupId>
     <artifactId>HarctoolboxBundle</artifactId>
-    <version>1.0.0</version>
+    <version>1.2</version>
     <name>HarctoolboxBundle</name>
     <packaging>pom</packaging>
     <licenses>
@@ -121,7 +121,7 @@
         <module>HarcHardware</module>
         <module>Crystal-Clear-Icons</module>
         <module>rxtx-2.2pre2h</module>
-        <module>package</module>
+        <!--module>package</module-->
     </modules>
 
     <build>
@@ -153,6 +153,32 @@
                         <goals>
                             <goal>single</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <!-- Copy resources  in src/main/config to target dir. -->
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>copy-girr-xsd</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/schemas</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/Girr/src/main/schemas</directory>
+                                    <include>girr_ns.xsd</include>
+                                    <include>girr.xsd</include>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

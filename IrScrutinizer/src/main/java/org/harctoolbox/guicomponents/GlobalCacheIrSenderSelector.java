@@ -30,8 +30,6 @@ import org.harctoolbox.harchardware.ir.GlobalCache;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 
 public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
-    private static final long serialVersionUID = 1L;
-
     private GuiUtils guiUtils;
     private transient GlobalCache globalCache;
     private boolean verbose;

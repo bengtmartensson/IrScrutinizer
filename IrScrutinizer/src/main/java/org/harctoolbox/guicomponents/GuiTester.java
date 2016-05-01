@@ -43,7 +43,6 @@ public class GuiTester extends javax.swing.JFrame {
     boolean verbose = true;
     private final transient LookAndFeelManager lookAndFeelManager;
     private static final String helpText = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
-    private static final long serialVersionUID = 1L;
 
     private GuiUtils guiUtils = new GuiUtils(this, "tester", 1000);
     //private final transient JythonEngine jythonEngine = null;
@@ -52,7 +51,6 @@ public class GuiTester extends javax.swing.JFrame {
     private IrpMaster irpMaster;
 
     private class TestCaller implements LookAndFeelManager.ILookAndFeelManagerCaller {
-        private static final long serialVersionUID = 1L;
         @Override
         public void err(Exception ex, String str) {
             guiUtils.error(ex, str);
@@ -88,9 +86,7 @@ public class GuiTester extends javax.swing.JFrame {
     public GuiTester() {
         try {
             this.irpMaster = new IrpMaster("../IrpMaster/data/IrpProtocols.ini");
-        } catch (FileNotFoundException ex) {
-            guiUtils.error(ex);
-        } catch (IncompatibleArgumentException ex) {
+        } catch (FileNotFoundException | IncompatibleArgumentException ex) {
             guiUtils.error(ex);
         }
         try {
@@ -704,7 +700,7 @@ public class GuiTester extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void statusLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statusLineActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_statusLineActionPerformed
 
     private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
@@ -712,22 +708,26 @@ public class GuiTester extends javax.swing.JFrame {
     }//GEN-LAST:event_jCheckBox2ActionPerformed
 
     private void globalCacheIrSenderSelectorPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_globalCacheIrSenderSelectorPropertyChange
-        if (evt.getPropertyName().equals(GlobalCacheIrSenderSelector.PROP_IPNAME))
-            globalCacheTextField.setText((String) evt.getNewValue());
-        else if (evt.getPropertyName().equals(GlobalCacheIrSenderSelector.PROP_MODULE)
-                || evt.getPropertyName().equals(GlobalCacheIrSenderSelector.PROP_PORT)) {
-            try {
-                GlobalCache.GlobalCacheIrTransmitter transmitter = globalCacheIrSenderSelector.getTransmitter();
-                globalCacheTransmitterTextField.setText(transmitter.toString());
-                globalCacheTextField.setText(globalCacheIrSenderSelector.getIpName());
-            } catch (NoSuchTransmitterException ex) {
-                guiUtils.error(ex);
-            }
+        switch (evt.getPropertyName()) {
+            case GlobalCacheIrSenderSelector.PROP_IPNAME:
+                globalCacheTextField.setText((String) evt.getNewValue());
+                break;
+            case GlobalCacheIrSenderSelector.PROP_MODULE:
+            case GlobalCacheIrSenderSelector.PROP_PORT:
+                try {
+                    GlobalCache.GlobalCacheIrTransmitter transmitter = globalCacheIrSenderSelector.getTransmitter();
+                    globalCacheTransmitterTextField.setText(transmitter.toString());
+                    globalCacheTextField.setText(globalCacheIrSenderSelector.getIpName());
+                } catch (NoSuchTransmitterException ex) {
+                    guiUtils.error(ex);
+                }   break;
+            default:
+                throw new RuntimeException("Programming error detected.");
         }
     }//GEN-LAST:event_globalCacheIrSenderSelectorPropertyChange
 
     private void globalCacheIrSenderSelector1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_globalCacheIrSenderSelector1PropertyChange
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_globalCacheIrSenderSelector1PropertyChange
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed

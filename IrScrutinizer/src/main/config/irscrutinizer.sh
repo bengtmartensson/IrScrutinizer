@@ -13,8 +13,16 @@
 #JAVA=/opt/jdk1.7.0_65/bin/java
 JAVA=java
 
-# Where the programs are installed
-IRSCRUTINIZERHOME=/usr/local/irscrutinizer
+# Where the programs are installed, adjust if required
+#IRSCRUTINIZERHOME=/usr/local/irscrutinizer
+#IRSCRUTINIZERHOME="$( dirname "${BASH_SOURCE[0]}" )"
+export IRSCRUTINIZERHOME="$(dirname -- "$(readlink -f -- "${0}")" )"
+
+if [ `basename "$0"` = "irpmaster" ] ; then
+    exec "${JAVA}" -splash: \
+         -jar "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
+         --irpmaster --config "${IRSCRUTINIZERHOME}/IrpProtocols.ini" "$@"
+fi
 
 # Path to DecodeIR and RXTX
 # If the code below does not work, just set LIBRARY_PATH to the directory
@@ -26,7 +34,9 @@ IRSCRUTINIZERHOME=/usr/local/irscrutinizer
 #else
 #    ARCH=i386
 #fi
-# Use a system supplied librxtxSerial.so if present (e.g. Fedora, "yum install rxtx")
+
+# Use a system supplied librxtxSerial.so if present (e.g. Fedora, "dnf install rxtx")
+# On Ubuntu 15, there appears to be nothing to use.
 if [ -f /usr/lib64/rxtx/librxtxSerial.so ] ; then
     LOAD_RXTX_PATH=-Djava.library.path=/usr/lib64/rxtx
 fi
@@ -39,19 +49,32 @@ fi
 # Use if you need /dev/ttyACM* (IrToy, many Arduino types) and your rxtx does not support it
 #RXTX_SERIAL_PORTS=-Dgnu.io.rxtx.SerialPorts=/dev/ttyS0:/dev/ttyUSB0:/dev/ttyUSB1:/dev/ttyACM0:/dev/ttyACM1
 
-if [ `basename "$0"` = "irpmaster" ] ; then
-    # Run IrpMaster from the current directory
-    cd "${IRSCRUTINIZERHOME}"
-    exec "${JAVA}" -classpath "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" org.harctoolbox.irscrutinizer.IrpMaster --config "${IRSCRUTINIZERHOME}/IrpProtocols.ini" "$@"
-elif [ `basename "$0"` = "irscrutinizer" -o `basename "$0"` = "irscrutinizer.sh" ] ; then
-    # cd to the installation director to get the relative path names in
-    # the default properties to fit, can be omitted if making file names
-    # in the properties absolute.
-
-    cd "${IRSCRUTINIZERHOME}"
-    exec "${JAVA}" ${LOAD_RXTX_PATH} ${RXTX_SERIAL_PORTS} -jar "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" "$@"
-
-else
-    echo "Error, please investigate ${IRSCRUTINIZERHOME}/irscrutinizer.sh and the links to it."
-    exit 1
+if grep dialout /etc/group > /dev/null ; then
+    if ! groups | grep dialout > /dev/null ; then
+        needs_dialout=t
+        MESSAGE="dialout"
+    fi
 fi
+
+if grep lock /etc/group > /dev/null ; then
+    if ! groups | grep lock > /dev/null ; then
+        needs_lock=t
+        MESSAGE="lock"
+    fi
+fi
+
+if [ "x$needs_dialout" != "x" -a "x$needs_lock" != "x" ] ; then
+    MESSAGE="dialout,lock"
+fi
+
+MESSAGEPRE="You are not a member of the group(s) "
+MESSAGETAIL=", so you will probably not have access to the USB serial devices.\nYou probably want to correct this. Otherwise, functionality will be limited.\n\nProceed anyhow?"
+
+if [ "x$MESSAGE" != "x" ] ; then
+    if ! "${JAVA}" ${LOAD_RXTX_PATH} ${RXTX_SERIAL_PORTS} -classpath "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
+           org.harctoolbox.guicomponents.StandalonePopupAnnoyer "${MESSAGEPRE}${MESSAGE}${MESSAGETAIL}" "$@" ; then
+        exit 1
+    fi
+fi
+
+exec "${JAVA}" ${LOAD_RXTX_PATH} ${RXTX_SERIAL_PORTS} -jar "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" ${IRSCRUTINIZER} "$@"

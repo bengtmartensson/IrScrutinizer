@@ -38,7 +38,6 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
 
     private static int invalid = -1;
     private static final int lengthInsertedGap = 100000;
-    private static final long serialVersionUID = 1L;
     private int lineNumber;
     private int frequency = invalid;
     private int sampleCount = invalid;
@@ -126,13 +125,13 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
             System.err.println("Warning: carrier_frequency missing, assuming " + (int) IrpUtils.defaultFrequency);
         }
         IrSignal irSignal = ExchangeIR.interpretIrSequence(dataArray, (double) frequency, isInvokeRepeatFinder(), isInvokeAnalyzer());
-        Command command = new Command(uniqueName(name), origin == null ? "ICT import" : ("ICT import from " + origin), irSignal, isGenerateCcf(), isInvokeDecodeIr());
+        Command command = new Command(uniqueName(name), origin == null ? "ICT import" : ("ICT import from " + origin), irSignal);
         addCommand(command);
     }
 
-    public static Collection<Command> importer(File file) throws IOException, ParseException, IrpMasterException {
+    public static Collection<Command> importer(File file, String charsetName) throws IOException, ParseException, IrpMasterException {
         IctImporter imp = new IctImporter();
-        imp.load(file);
+        imp.load(file, file.getCanonicalPath(), charsetName);
         return imp.getCommands();
     }
 

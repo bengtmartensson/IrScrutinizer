@@ -183,6 +183,8 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
             double frequency = fallbackFrequency;
             if (str.startsWith("f=")) {
                 int indx = str.indexOf(' ');
+                if (indx < 0)
+                    return null;
                 frequency = Integer.parseInt(str.substring(2, indx));
                 str = str.substring(indx + 1);
             }
@@ -313,5 +315,10 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
     @Override
     public boolean ready() throws IOException {
         return serialPort.ready();
+    }
+
+    @Override
+    public void setDebug(int debug) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

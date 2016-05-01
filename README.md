@@ -1,4 +1,4 @@
-# Harctoolboxbundle
+# Harctoolboxbundle [![Build Status](https://travis-ci.org/bengtmartensson/harctoolboxbundle.svg?branch=master)](https://travis-ci.org/bengtmartensson/harctoolboxbundle)
 IrScrutinizer is a powerful program for capturing, generating,
 analyzing, importing, and exporting of infrared (IR) signals.
 
@@ -32,7 +32,7 @@ tools/mk-irscrutinizer-html.sh.  It is also directly accessible
 
 ## Dependencies backup
 
-"Inspired" by the recent Soureforge outage, I decided to make the sources of the
+"Inspired" by the recent Sourceforge outage, I decided to make the sources of the
 dependencies available on www.harctoolbox.org. These are the
 github/sourceforge repositories, corresponding to the right tag or
 commit, but without any patches applies. These are:

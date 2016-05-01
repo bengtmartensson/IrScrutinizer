@@ -95,9 +95,9 @@ public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Lo
 
     private InputVariableSetValues(Protocol protocol) {
         this.protocol = protocol;
-        map = new LinkedHashMap<String, ValueSetList>();
-        currentAssignment = new LinkedHashMap<String, Long>();
-        iterators = new LinkedHashMap<String, Iterator<Long>>();
+        map = new LinkedHashMap<>();
+        currentAssignment = new LinkedHashMap<>();
+        iterators = new LinkedHashMap<>();
     }
 
     public InputVariableSetValues(String[] str, Protocol protocol) throws UnassignedException, IncompatibleArgumentException, ParseException {
@@ -189,8 +189,8 @@ public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Lo
             }
 
             @Override
-            public LinkedHashMap<String, Long> next() {
-                update();
+            public LinkedHashMap<String, Long> next() throws NoSuchElementException {
+                update(); // throws NoSuchElementException
                 return currentAssignment;
             }
 

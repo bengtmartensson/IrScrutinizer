@@ -23,17 +23,15 @@ import java.io.PrintStream;
 import java.io.Serializable;
 
 public class UserComm implements Serializable {
-    private static final long serialVersionUID = 1L;
-
     private boolean quiet = false;
 
     private static UserComm instance = new UserComm();
     private transient PrintStream logfile = null;
-    
+
     public void setLogfile(PrintStream printStream) {
         logfile = printStream;
     }
-    
+
     /** Issue a non-fatal warning.
      * @param msg
      */
@@ -44,28 +42,28 @@ public class UserComm implements Serializable {
         if (logfile != null)
             logfile.println("WARNING: " + msg);
     }
-    
+
     public void errorMsg(String msg) {
         System.err.println("ERROR: " + msg);
         if (logfile != null)
             logfile.println("ERROR: " + msg);
     }
-    
+
     public void exceptionMsg(Exception ex) {
         //if (Debug.getInstance().debugOn(Debug.Item.Main))
         //    ex.printStackTrace();
-        
+
         errorMsg(ex.getMessage());
     }
-    
+
     public void debugMsg(String type, String msg) {
         System.out.println("Debug[" + type + "]: " + msg);
     }
-    
+
     public void printMsg(String msg) {
         System.out.println(msg);
     }
-    
+
     public String getLine(String prompt) throws IOException {
         if (prompt != null && ! prompt.isEmpty())
             System.out.print(prompt);
@@ -76,27 +74,27 @@ public class UserComm implements Serializable {
     public static void setQuiet(boolean quiet) {
         instance.quiet = quiet;
     }
-    
+
     public static void warning(String msg) {
         instance.warningMsg(msg);
     }
-    
+
     public static void error(String msg) {
         instance.errorMsg(msg);
     }
-    
+
     public static void print(String msg) {
         instance.printMsg(msg);
     }
-    
+
     public static void exception(Exception ex) {
         instance.exceptionMsg(ex);
     }
-    
+
     public static void setLogging(PrintStream logfile) {
         instance.setLogfile(logfile);
     }
-   
+
     /**
      * For testing and debugging only.
      * @param args

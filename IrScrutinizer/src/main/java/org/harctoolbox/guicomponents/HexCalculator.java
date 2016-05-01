@@ -18,8 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.guicomponents;
 
 public class HexCalculator extends HarcPanel {
-    private static final long serialVersionUID = 1L;
-
     private static final String versionString = "0.3.0";
     private static final String helpText =
             "This pane computes, for a number given in first row either as decimal or hexadecimal\n"

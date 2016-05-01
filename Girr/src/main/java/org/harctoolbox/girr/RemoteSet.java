@@ -43,12 +43,11 @@ import org.xml.sax.SAXException;
 public class RemoteSet implements Serializable {
 
     /**
-     * String of the form major.<!-- -->minor identifying the protocol version
+     * String of the form major.minor identifying the protocol version
      * (not to be confused with the version of an implementation).
      */
     public final static String girrVersion = "1.0";
 
-    private static final long serialVersionUID = 1L;
     private static String dateFormatString = "yyyy-MM-dd_HH:mm:ss";
 
     /**
@@ -245,18 +244,20 @@ public class RemoteSet implements Serializable {
      */
     public Element xmlExport(Document doc, String title, boolean fatRaw, boolean createSchemaLocation,
             boolean generateRaw, boolean generateCcf, boolean generateParameters) {
-        Element element = doc.createElement("remotes");
+        Element element = doc.createElementNS(XmlExporter.girrNamespace, "remotes");
         element.setAttribute("girrVersion", girrVersion);
         if (createSchemaLocation) {
-            element.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            element.setAttribute("xsi:noNamespaceSchemaLocation", "girr.xsd");
+            element.setAttribute("xmlns:xsi", XmlExporter.w3cSchemaNamespace);
+            element.setAttribute("xsi:schemaLocation",
+                    XmlExporter.girrNamespace + " " + XmlExporter.girrSchemaLocationURL);
         }
+
         if (title != null)
             element.setAttribute("title", title);
 
-        Element adminDataEl = doc.createElement("adminData");
+        Element adminDataEl = doc.createElementNS(XmlExporter.girrNamespace, "adminData");
         element.appendChild(adminDataEl);
-        Element creationEl = doc.createElement("creationData");
+        Element creationEl = doc.createElementNS(XmlExporter.girrNamespace, "creationData");
         adminDataEl.appendChild(creationEl);
         if (creatingUser != null)
             creationEl.setAttribute("creatingUser", creatingUser);
@@ -273,7 +274,7 @@ public class RemoteSet implements Serializable {
         if (tool2Version != null)
             creationEl.setAttribute("tool2Version", tool2Version);
         if (notes != null) {
-            Element notesEl = doc.createElement("notes");
+            Element notesEl = doc.createElementNS(XmlExporter.girrNamespace, "notes");
             notesEl.setTextContent(notes);
             adminDataEl.appendChild(notesEl);
         }

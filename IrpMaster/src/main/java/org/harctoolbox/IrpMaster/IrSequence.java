@@ -40,7 +40,6 @@ import java.util.Collection;
  *
  */
 public class IrSequence implements Cloneable, Serializable {
-    private static final long serialVersionUID = 1L;
     /**
      * Duration data, possibly with signs, which are ignored (by this class).
      */
@@ -166,7 +165,7 @@ public class IrSequence implements Cloneable, Serializable {
      * Constructs an IrSequence from the parameter data.
      * This version does not require flashes and gaps to be interleaved (signs alternating).
      * @param str String of durations, possibly using signed numbers.
-     * @param fixOddSequences it true, odd sequences (ending with space) are silently fixed.
+     * @param fixOddSequences it true, odd sequences (ending with space) are silently fixed by adding a dummy gap.
      * @throws IncompatibleArgumentException If last duration is not a gap, and fixOddSequences false.
      */
     public IrSequence(String str, boolean fixOddSequences) throws IncompatibleArgumentException {
@@ -346,12 +345,12 @@ public class IrSequence implements Cloneable, Serializable {
     }
 
     /**
-     * Chops a IrSequence in parts. Every gap of length >= threshold cause a cut.
+     * Chops a IrSequence in parts. Every gap of length &ge; threshold cause a cut.
      * @param threshold minimal gap in microseconds to cause a cut.
      * @return Array of IrSequences
      */
     public IrSequence[] chop(double threshold) {
-        ArrayList<IrSequence> arrayList = new ArrayList<IrSequence>();
+        ArrayList<IrSequence> arrayList = new ArrayList<>();
         int beg = 0;
         for (int i = 1; i < data.length; i += 2) {
             if (data[i] >= threshold || i == data.length - 1) {

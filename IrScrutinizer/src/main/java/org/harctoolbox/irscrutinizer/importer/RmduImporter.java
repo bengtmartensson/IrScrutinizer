@@ -45,8 +45,6 @@ import org.w3c.dom.Document;
  * This class is a simple-minded importer of RMDU files.
  */
 public class RmduImporter extends RemoteSetImporter implements Serializable, IReaderImporter {
-    private static final long serialVersionUID = 1L;
-
     //public static final String[][] fileExtensions = new String[][]{ new String[]{"rmdu", "RemoteMaster device updates"}};
 
     private HashMap<String,String>parameters;
@@ -57,6 +55,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
 
     public static final String homeUrl = "http://www.hifi-remote.com/wiki/index.php?title=Remote_Master_Manual";
 
+    public static final String defaultCharsetName = "WINDOWS-1252";
     /**
      * @param protocolsIni the protocolsIni to set
      */
@@ -127,6 +126,14 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
         this();
                 }
                 * */
+
+    public void load() throws IOException, ParseException, IrpMasterException {
+        load(defaultCharsetName);
+    }
+
+    public void load(File file) throws IOException, ParseException {
+        load(file, defaultCharsetName);
+    }
 
     @Override
     public void load(Reader reader, String origin) throws IOException, ParseException {
@@ -223,11 +230,13 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
 
         HashMap<String,HashMap<String,String>> appParams = new HashMap<>();
         appParams.put("rmdu", parameters);
-        remote = new Remote(Utils.basename(origin),
+        Remote.MetaData metaData = new Remote.MetaData(Utils.basename(origin),
                 null, // manufacturer,
                 null, // model,
                 parameters.get("DeviceType"), // deviceClass,
-                parameters.get("Remote.name"), // String remoteName,
+                parameters.get("Remote.name") // String remoteName,
+        );
+        remote = new Remote(metaData,
                 parameters.get("Description"), //String comment,
                 parameters.get("Notes"),
                 getCommandIndex(),

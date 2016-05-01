@@ -36,9 +36,8 @@ import java.util.Properties;
 /**
  * This class handles the properties of the program, saved to a file between program invocations.
  */
-public class Props {
+public final class Props {
     private final static boolean useXml = <xsl:value-of select="@useXml"/>;
-    private static final long serialVersionUID = 1L;
     private Properties props;
     private String filename;
     private String applicationHome;
@@ -56,7 +55,7 @@ public class Props {
 
     private HashMap&lt;String,ArrayList&lt;IPropertyChangeListener>> changeListeners;
 
-   private void update(String key, String value) {
+    private void update(String key, String value) {
         if (!props.containsKey(key)) {
             if (value != null) {
                 props.setProperty(key, value);
@@ -82,7 +81,7 @@ public class Props {
      */
     public void reset() {
         props = new Properties();
-        changeListeners = new HashMap<String,ArrayList<IPropertyChangeListener>>();
+        changeListeners = new HashMap<>();
         setupDefaults();
         needSave = true;
         wasReset = true;
@@ -90,6 +89,15 @@ public class Props {
 
     public String getFilename() {
         return filename;
+    }
+
+    private String mkPathRelative(String path) {
+        return path.replace(applicationHome, "");
+    }
+
+    public String mkPathAbsolute(String path) {
+        return new File(path).isAbsolute() ? path
+               : new File(new File(applicationHome), path).getAbsolutePath();
     }
 
     /**
@@ -107,7 +115,7 @@ public class Props {
      */
     public Props(String filename, String applicationHome) {
         this.applicationHome = applicationHome;
-        changeListeners = new HashMap<String,ArrayList<IPropertyChangeListener>>();
+        changeListeners = new HashMap<>();
         this.filename = filename;
         if (filename == null || filename.isEmpty()) {
             if (isWindows) {
@@ -134,8 +142,14 @@ public class Props {
                 if (base == null || base.isEmpty() || !(new File(base)).isAbsolute())
                     base = System.getProperty("user.home") + File.separator + ".config";
                 File baseFile = new File(base + File.separator + Version.appName);
-                if (!baseFile.exists())
-                    baseFile.mkdirs();
+                if (!baseFile.exists()) {
+                    boolean status = baseFile.mkdirs();
+                    if (!status) {
+                        System.err.println("Could not create directory " + baseFile.getAbsolutePath()
+                                + ", saving properites in home direcory");
+                        baseFile = new File(System.getProperty("user.home")); // emergency
+                    }
+                }
                 this.filename = baseFile.getAbsolutePath() + File.separator + "properties.xml";
             }
         }
@@ -386,7 +400,7 @@ public class Props {
     public void set<xsl:apply-templates select="@name" mode="capitalize"/>(String str) {
         String oldValue = props.getProperty("<xsl:value-of select="@name"/>");
         if (!oldValue.equals(str)) {
-            props.setProperty("<xsl:value-of select="@name"/>", str);
+            props.setProperty("<xsl:value-of select="@name"/>", mkPathRelative(str));
             firePropertyChange("<xsl:value-of select="@name"/>", oldValue, str);
             needSave = true;
         }

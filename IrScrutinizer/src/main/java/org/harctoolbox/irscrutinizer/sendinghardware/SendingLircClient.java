@@ -49,9 +49,7 @@ public class SendingLircClient extends SendingHardware<LircCcfClient> implements
             public void propertyChange(PropertyChangeEvent evt) {
                 try {
                     setup();
-                } catch (IOException ex) {
-                    guiUtils.error(ex);
-                } catch (HarcHardwareException ex) {
+                } catch (IOException | HarcHardwareException ex) {
                     guiUtils.error(ex);
                 }
             }

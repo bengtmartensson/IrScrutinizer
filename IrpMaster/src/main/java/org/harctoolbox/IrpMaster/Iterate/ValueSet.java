@@ -111,9 +111,7 @@ public abstract class ValueSet implements Iterable<Long> {
         ValueSet vs = null;
         try {
             vs = newValueSet(0L, 255L, args[arg_i]);
-        } catch (UnassignedException ex) {
-            System.err.println(ex.getMessage());
-        } catch (ParseException ex) {
+        } catch (UnassignedException | ParseException ex) {
             System.err.println(ex.getMessage());
         }
         System.out.println(vs);

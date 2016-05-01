@@ -7,12 +7,12 @@
     <groupId>org.harctoolbox</groupId>
     <artifactId>Jirc</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.3</version>
+    <version>1.2</version>
     <name>Jirc</name>
     <parent>
         <groupId>org.harctoolbox</groupId>
         <artifactId>HarctoolboxBundle</artifactId>
-        <version>1.0.0</version>
+        <version>1.2</version>
         <relativePath>..</relativePath>
     </parent>
     <licenses>
@@ -39,26 +39,6 @@
     </distributionManagement>
     <build>
         <plugins>
-
-            <!-- Use ant to run antlr3.
-                 Generates ConfigFileParser and ConfigFileLexer from
-                 src/main/antrlr3/Config.g -->
-            <plugin>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr3-maven-plugin</artifactId>
-                <version>3.5.2</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>antlr</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <outputDirectory>${project.build.directory}/generated-sources/antlr3/org/harctoolbox/jirc</outputDirectory>
-                </configuration>
-            </plugin>
-
             <!-- Generate Version.java from Version.xml using mkVersion.xsl. -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -139,11 +119,8 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.harctoolbox.irscrutinizer.IrScrutinizer</mainClass>
+                            <mainClass>org.harctoolbox.jirc.Lirc2Xml</mainClass>
                         </manifest>
-                        <manifestEntries>
-                            <SplashScreen-Image>images/splash.png</SplashScreen-Image>
-                        </manifestEntries>
                     </archive>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -194,14 +171,6 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr-runtime</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>stringtemplate</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>

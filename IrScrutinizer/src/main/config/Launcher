@@ -9,9 +9,11 @@ RES="${HERE}/../Resources/Java/repo"
 # Set to the preferred Java VM, >= ${maven.compiler.target} required.
 JAVA=$(which java)
 
+# Cannot just give "$@" to the program, since double clicking stuffs junk in $@. Grrr...
 if [ -f "$JAVA" ] && [ -x "$JAVA" ] ; then
     cd ${RES}
-    exec "${JAVA}" -Xdock:icon="${RES}/${project.artifactId}.icns" -Xdock:name="${project.artifactId}" -jar "${RES}/${project.artifactId}-jar-with-dependencies.jar" -p "${HOME}/.config/${project.artifactId}/properties.xml"
+    exec "${JAVA}" -Xdock:icon="${RES}/${project.artifactId}.icns" -Xdock:name="${project.artifactId}" \
+       -jar "${RES}/${project.artifactId}-jar-with-dependencies.jar" > "${HOME}/.${project.artifactId}.err" 2>&1
 else
     # display error message with applescript
     osascript -e "tell application \"System Events\" to display dialog \"Error launching ${project.artifactId}.\n\nJava JDK (not just JRE) is needed.\nVisit http://java.com for more information...\" with title \"${project.artifactId}\" buttons {\" OK \"} default button 1"

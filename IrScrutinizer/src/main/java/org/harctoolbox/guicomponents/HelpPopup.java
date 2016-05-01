@@ -24,8 +24,6 @@ import java.awt.event.MouseEvent;
  * A class for help popups.
  */
 public class HelpPopup extends javax.swing.JDialog {
-    private static final long serialVersionUID = 1L;
-
     String payload;
 
    /**

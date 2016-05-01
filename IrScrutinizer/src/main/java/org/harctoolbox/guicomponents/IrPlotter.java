@@ -30,11 +30,11 @@ import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 
 // TODO: Generation of hardcopy, svg, postscript, etc.
 // TODO: Copy to clipboard.
-// TODO: Check scaling.
+// TODO: Scaling of axes sometimes silly.
+// TODO: Support some color selection scheme.
 /**
   * A plotter class, specialized for plotting IR signals. Not yet implemented: Printing, clipboard support.
   */
-@SuppressWarnings("serial")
 public class IrPlotter extends HarcPanel {
     private static final String versionString = "0.1.0";
     // FIXME: This help text is not really generically usable.

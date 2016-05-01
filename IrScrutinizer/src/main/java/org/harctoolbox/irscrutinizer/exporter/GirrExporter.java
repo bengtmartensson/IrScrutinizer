@@ -18,7 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.exporter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
@@ -60,12 +59,12 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File file) throws FileNotFoundException, IOException, IrpMasterException {
+    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws IOException, IrpMasterException {
         for (Command.CommandTextFormat formatter : extraFormats)
             remoteSet.addFormat(formatter, count);
         Document document = remoteSet.xmlExportDocument(title, girrStyleSheetType, girrStyleSheetUrl, fatRaw, createSchemaLocation,
                 generateRaw, generateCcf, generateParameters);
-        (new XmlExporter(document)).printDOM(file);
+        (new XmlExporter(document)).printDOM(file, charsetName);
     }
 
     @Override

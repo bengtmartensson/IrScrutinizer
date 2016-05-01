@@ -21,7 +21,6 @@ package org.harctoolbox.harchardware;
  * To be thrown when hardware fails. Used to encapsulate exceptions like UnknownHostException,
  * isolate from the implementation.
  */
-@SuppressWarnings("serial")
 public class HarcHardwareException extends Exception {
     public HarcHardwareException(String str) {
         super("Hardware based exception: " + str);

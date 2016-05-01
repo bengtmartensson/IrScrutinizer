@@ -27,8 +27,6 @@ import org.harctoolbox.harchardware.Utils;
 
 public final class LocalSerialPortRaw extends LocalSerialPort implements IBytesCommand {
 
-    private static final long serialVersionUID = 1L;
-
     public LocalSerialPortRaw(String portName, int baud, int length, int stopBits, Parity parity, FlowControl flowControl, int timeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         super(portName, baud, length, stopBits, parity, flowControl, timeout);
     }
@@ -89,14 +87,13 @@ public final class LocalSerialPortRaw extends LocalSerialPort implements IBytesC
                 }
                 port.close();
             }
-        } catch (NoSuchPortException ex) {
-            System.err.println(ex.getMessage());
-        } catch (PortInUseException ex) {
-            System.err.println(ex.getMessage());
-        } catch (UnsupportedCommOperationException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IOException ex) {
+        } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException ex) {
             System.err.println(ex.getMessage());
         }
+    }
+
+    @Override
+    public void setDebug(int debug) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

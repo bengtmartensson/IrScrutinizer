@@ -1,3 +1,6 @@
+THIS FILE IS NO LONGER MAINTAINED; SEE git log AND
+IrScrutinizer.releasenotes.txt.
+
 2015-04-12: Version 1.0.3:
 
 Changed content model of raw, now  intro?,(repeat,ending?)?

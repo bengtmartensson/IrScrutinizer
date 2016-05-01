@@ -20,8 +20,6 @@ package org.harctoolbox.guicomponents;
 import javax.swing.JButton;
 
 public class HelpButton extends JButton {
-    private static final long serialVersionUID = 1L;
-
     private GuiUtils guiUtils;
     private String helpText;
     public HelpButton(GuiUtils guiUtils, String helpText) {

@@ -171,7 +171,7 @@ public class Main {
         private boolean irtoy = false;
 
         @Parameter(description = "[parameters]")
-        private ArrayList<String> parameters = new ArrayList<String>();
+        private ArrayList<String> parameters = new ArrayList<>();
     }
 
     private static JCommander argumentParser;
@@ -392,22 +392,10 @@ public class Main {
 
             doExit(IrpUtils.exitSuccess);
 
-        } catch (HarcHardwareException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitFatalProgramFailure);
-        } catch (IrpMasterException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitFatalProgramFailure);
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitFatalProgramFailure);
         } catch (NoSuchPortException ex) {
             System.err.println("RXTX: No such port");
             System.exit(IrpUtils.exitFatalProgramFailure);
-        } catch (PortInUseException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitFatalProgramFailure);
-        } catch (UnsupportedCommOperationException ex) {
+        } catch (HarcHardwareException | IrpMasterException | IOException | PortInUseException | UnsupportedCommOperationException ex) {
             System.err.println(ex.getMessage());
             System.exit(IrpUtils.exitFatalProgramFailure);
         }
