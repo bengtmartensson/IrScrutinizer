@@ -659,9 +659,9 @@ public class Protocol {
     }
 
      /**
-     * Returns a parameter HashMap<String, Long> suitable for using as argument to renderIRSignal by evaluating the arguments.
+     * Returns a parameter HashMap&lt;String, Long&gt; suitable for using as argument to renderIRSignal by evaluating the arguments.
      * @param additionalParams String of assignments like a=12 b=34 c=56
-     * @return HashMap<String, Long> for using as argument to renderIrSignal
+     * @return tests- irpmaster?HashMap&lt;String, Long&gt; for using as argument to renderIrSignal
      */
     public static HashMap<String, Long> parseParams(String additionalParams) {
         HashMap<String, Long> params = new HashMap<>();
@@ -675,14 +675,14 @@ public class Protocol {
     }
 
     /**
-     * Returns a parameter HashMap<String, Long> suitable for using as argument to renderIrSignal by evaluating the arguments.
+     * Returns a parameter tests- irpmaster?HashMap&lt;String, Long&gt; suitable for using as argument to renderIrSignal by evaluating the arguments.
      * The four first parameters overwrite the parameters in the additional parameters, if in conflict.
      * @param D device number. Use -1 for not assigned.
      * @param S subdevice number. Use -1 for not assigned.
      * @param F function number (obc, command number). Use -1 for not assigned.
      * @param T toggle. Use -1 for not assigned.
      * @param additionalParams String of assignments like a=12 b=34 c=56
-     * @return HashMap<String, Long> for using as argument to renderIrSignal
+     * @return HashMap&lt;String, Long&gt; for using as argument to renderIrSignal
      */
     public static HashMap<String, Long> parseParams(int D, int S, int F, int T, String additionalParams) {
         HashMap<String, Long> params = parseParams(additionalParams);
@@ -706,7 +706,7 @@ public class Protocol {
      *
      * @param args String array of parameters
      * @param skip Number of elements in the args to skip
-     * @return parameter HashMap<String, Long> suitable for rendering signals
+     * @return parameter HashMap&lt;String, Long&gt; suitable for rendering signals
      * @throws IncompatibleArgumentException
      */
     public static HashMap<String, Long> parseParams(String[] args, int skip) throws IncompatibleArgumentException {

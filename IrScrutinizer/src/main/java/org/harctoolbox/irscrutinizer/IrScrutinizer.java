@@ -103,12 +103,15 @@ public class IrScrutinizer {
      */
     public static void main(String[] args) {
         if (args.length > 0 && args[0].equalsIgnoreCase("--irpmaster")) {
-            String[] newargs = new String[args.length - 1];
-            System.arraycopy(args, 1, newargs, 0, newargs.length);
+            String appHome = findApplicationHome(null);
+            Props properties = new Props(appHome);
+            String[] newargs = new String[args.length + 1];
+            newargs[0] = "--config";
+            newargs[1] = properties.mkPathAbsolute(properties.getIrpProtocolsIniPath());
+            System.arraycopy(args, 1, newargs, 2, newargs.length-2);
             org.harctoolbox.IrpMaster.IrpMaster.main(newargs);
             System.exit(IrpUtils.exitSuccess); // just to be safe
         }
-
         int userLevel = 0; // presently not used
         argumentParser = new JCommander(commandLineArgs);
         argumentParser.setProgramName(Version.appName);
@@ -119,6 +122,9 @@ public class IrScrutinizer {
             System.err.println(ex.getMessage());
             usage(IrpUtils.exitUsageError);
         }
+
+        if (commandLineArgs.irpmaster)
+            usage(IrpUtils.exitUsageError);
 
         if (commandLineArgs.helpRequested)
             usage(IrpUtils.exitSuccess);
@@ -136,7 +142,18 @@ public class IrScrutinizer {
             System.exit(IrpUtils.exitSuccess);
         }
 
-        String applicationHome =  commandLineArgs.applicationHome != null ? commandLineArgs.applicationHome : System.getenv("IRSCRUTINIZERHOME");
+        String applicationHome = findApplicationHome(commandLineArgs.applicationHome);
+
+        if (commandLineArgs.debug > 0)
+            System.err.println("applicationHome = " + applicationHome);
+
+        userLevel = commandLineArgs.experimental ? 1 : 0;
+
+        guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.debug, userLevel);
+    }
+
+    private static String findApplicationHome(String appHome) {
+        String applicationHome =  appHome != null ? appHome : System.getenv("IRSCRUTINIZERHOME");
         if (applicationHome == null) {
             URL url = IrScrutinizer.class.getProtectionDomain().getCodeSource().getLocation();
             File dir = null;
@@ -156,12 +173,7 @@ public class IrScrutinizer {
         if (applicationHome != null && !applicationHome.endsWith(File.separator))
             applicationHome += File.separator;
 
-        if (commandLineArgs.debug > 0)
-            System.err.println("applicationHome = " + applicationHome);
-
-        userLevel = commandLineArgs.experimental ? 1 : 0;
-
-        guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.debug, userLevel);
+        return applicationHome;
     }
 
     private static String nukeProperties(boolean verbose) {
@@ -186,7 +198,8 @@ public class IrScrutinizer {
             public void run() {
                 try {
                     new GuiMain(applicationHome, propsfilename, verbose, debug, userlevel).setVisible(true);
-                } catch (ParseException | IOException | IncompatibleArgumentException | URISyntaxException ex) {
+                } catch (ParseException | IOException | IncompatibleArgumentException | URISyntaxException
+                        | RuntimeException ex) {
                     GuiUtils.fatal(ex, IrpUtils.exitConfigReadError, new GuiUtils.EmergencyFixer () {
                         private String backupfile;
 

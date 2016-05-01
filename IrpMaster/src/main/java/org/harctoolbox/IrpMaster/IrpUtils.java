@@ -261,7 +261,7 @@ public class IrpUtils {
      * Produces a header in the spirit of Makehex. Follows the convention of variable ordering:
      * D, (S), F, (T), then the rest alphabetically ordered,
      *
-     * @param params HashMap<String, Long> of input parameters.
+     * @param params tests- irpmaster?HashMap&lt;String, Long&gt; of input parameters.
      * @return Nicely formatted header (String)
      */
     public static String variableHeader(HashMap<String, Long> params) {

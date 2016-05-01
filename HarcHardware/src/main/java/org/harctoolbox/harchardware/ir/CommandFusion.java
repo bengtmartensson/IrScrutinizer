@@ -37,9 +37,9 @@ import org.harctoolbox.harchardware.comm.LocalSerialPortRaw;
 
 /**
  * This class implements capturing and sending support for the CommandFusion Learner.
- * @see http://www.commandfusion.com/wiki2/hardware/cflink/ir-learner
- * @see http://www.commandfusion.com/wiki2/hardware/cflink/ir-module
- * @see https://docs.google.com/document/d/1BMRwD9RlUYtf4VeJNXgRwo6-lkkSAIVo8tczrynJ7CU/preview?pli=1
+ * see <a href="http://www.commandfusion.com/wiki2/hardware/cflink/ir-learner">IR learner</a>,
+ * <a href="http://www.commandfusion.com/wiki2/hardware/cflink/ir-module">IR Module</a>, and
+ * <a href="https://docs.google.com/document/d/1BMRwD9RlUYtf4VeJNXgRwo6-lkkSAIVo8tczrynJ7CU/preview?pli=1">USB Communication Protocol</a>.
  */
 public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawIrSender, ICapture {
 
@@ -140,11 +140,17 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     }
 
     @Override
-    public void open() throws IOException, HarcHardwareException {
-        super.open();
-        send(encode(versionCommand, "", queryToken));
-        byte[] response = readUntilTwoEndTokens();
-        Payload payload = decode(response, receiveToken);
+    public void open() throws HarcHardwareException, IOException {
+        Payload payload;
+        try {
+            super.open();
+            send(encode(versionCommand, "", queryToken));
+            byte[] response = readUntilTwoEndTokens();
+            payload = decode(response, receiveToken);
+        } catch (IOException ex) {
+            close();
+            throw ex;
+        }
         if (verbose)
             System.err.println("<Received " + payload);
         if (payload == null) {
@@ -158,15 +164,13 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     }
 
     /**
-     * Sends an IR signal from the built-in, proprietary data base.
+     * Sends an IR signal from the <a href="http://www.commandfusion.com/irdatabase">built-in, proprietary data base</a>.
      *
      * @param deviceType
      * @param codeset
      * @param key function code
      * @return success of operation
      * @throws IOException
-     *
-     * @see http://www.commandfusion.com/irdatabase
      */
     public boolean sendIr(int deviceType, int codeset, int key) throws IOException {
         return sendIr(encode(sendCommand,
@@ -262,9 +266,11 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         ArrayList<Byte> data = new ArrayList<>(200);
         int noEndingTokensFound = 0;
         while (noEndingTokensFound < 2) {
-            byte x = (byte) serialPort.readByte();
-            data.add(x);
-            if (x == endingToken)
+            int x = serialPort.readByte();
+            if (x == -1)
+                throw new IOException("EOF from CommandFusion");
+            data.add((byte) x);
+            if ((byte) x == endingToken)
                 noEndingTokensFound++;
         }
         byte[] result = new byte[data.size()];

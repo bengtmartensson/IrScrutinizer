@@ -216,7 +216,7 @@ public class GuiUtils implements Serializable {
     // thereby too error prone.
 
     public void browse(File file) throws MalformedURLException, URISyntaxException {
-        browse(new URL("file", null, file.getAbsolutePath()).toURI());
+        browse(file.toURI());
     }
 
     public void browse(URI uri) {
@@ -337,9 +337,5 @@ public class GuiUtils implements Serializable {
             }
         }
         return current != null && current.equals(versionString);
-    }
-
-    public static void main(String[] args) {
-        fatal("Nasty thing happened", 42, null);
     }
 }

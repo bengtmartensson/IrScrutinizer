@@ -345,7 +345,7 @@ public class IrSequence implements Cloneable, Serializable {
     }
 
     /**
-     * Chops a IrSequence in parts. Every gap of length >= threshold cause a cut.
+     * Chops a IrSequence in parts. Every gap of length &ge; threshold cause a cut.
      * @param threshold minimal gap in microseconds to cause a cut.
      * @return Array of IrSequences
      */

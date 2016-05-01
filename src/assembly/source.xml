@@ -18,6 +18,7 @@
             </includes>
             <excludes>
                 <exclude>native/**</exclude>
+                <exclude>appimagekit/**</exclude>
                 <exclude>repos/**</exclude>
                 <exclude>package/dist/**</exclude>
                 <exclude>package/repos/**</exclude>

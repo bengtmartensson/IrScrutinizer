@@ -10,7 +10,7 @@ IRP notation</title>
 <note>It may not be necessary to read this document. If your are
 looking for a user friendly GUI program for generating IR signals etc,
 please try the program <a href="IrScrutinizer.html">IrScrutinizer</a> (or its
-predecessor <a href="IrMaster.html">IrMaster</a>), and get 
+predecessor <a href="IrMaster.html">IrMaster</a>), and get
 back here if (and only if) you want to know the detail on IR signal
 generation.</note>
 
@@ -47,6 +47,10 @@ documentation is now generated from that file. Many minor fixes and updates.</td
         <tr>
 	  <td>2014-05-30</td>
 	  <td>Minor updates for upcoming release 1.0.1.</td>
+	</tr>
+        <tr>
+	  <td>2016-04-29</td>
+	  <td>Minor updates for release 1.2.</td>
 	</tr>
       </table>
     </section>
@@ -931,7 +935,7 @@ has one introductory <code>IrSequence</code>, one repetition
 The API is documented in standard Javadoc style, which can be installed
 from the source package, just like any other Java package. For the
 convenience of the reader, the Javadoc API documentation is also
-available <a href="http://harctoolbox.org/IrpMaster/javadoc/">here</a>.</p>
+available <a href="apidocs/index.html?org/harctoolbox/IrpMaster/package-summary.html">here</a>.</p>
 <section>
 <title>Example of API usage</title>
 <p>
@@ -941,9 +945,10 @@ function/command/obc number, and send the corresponding IR signal to a <a
  href="http://www.globalcache.com/products/gc-100/models1/">GlobalCaché GC-100-06</a> networked IR-transmitter, having IP address
 192.168.1.70, using its IR Port 1. For this, we use the
 GlobalCaché functionality of the <a
-href="http://www.harctoolbox.org/harctoolbox_doc.html">Harctoolbox</a>, which
+href="http://www.harctoolbox.org/HarcHardware.html">HarcHardware</a>, which
 is also GPL-software written by myself. This task is solved with <a
 href="IRPMasterAPIExample.java">essentially just a few lines of code</a>.</p>
+<!-- verified to work with 1.2 on 2016-04-29 -->
       </section>
     </section>
 <section>
@@ -960,18 +965,20 @@ version for download</a>. A very thorough specification.</li>
   <li><a
 href="http://www.hifi-remote.com/forums/viewtopic.php?t=11850">Discussion
 thread on the IRP documentation</a>  </li>
-  <li><a
-href="http://www.hifi-remote.com/wiki/index.php?title=DecodeIR">DecodeIR.html</a>. (The
-link points to a slightly nicer formatted wiki page, though). Contained within
-the current distribution of <a
- href="http://www.hifi-remote.com/forums/dload.php?action=file&amp;file_id=9980">DecodeIR</a>.</li>
+  <li>
+      <a href="http://www.hifi-remote.com/wiki/index.php?title=DecodeIR">DecodeIR.html</a>. (The
+link points to a slightly nicer formatted wiki page, though).
+Contained within the <a
+ href="http://www.hifi-remote.com/forums/dload.php?action=file&amp;file_id=13104">current distribution of DecodeIR</a>.
+  <a href="https://sourceforge.net/p/controlremote/code/HEAD/tree/trunk/decodeir/">Subversion repository</a>.
+  </li>
   <li id="MakeHex">Makehex. <a
  href="http://www.hifi-remote.com/forums/dload.php?action=file&amp;file_id=8501">Source</a>, <a
  href="http://www.hifi-remote.com/forums/dload.php?action=file&amp;file_id=5209">binary</a>. A
 functional predecessor of the present program. Operates on a predecessor of the
 current version of the IRP. Written in C++, also available as DLL (within the
 first link). <a
- href="https://controlremote.svn.sourceforge.net/svnroot/controlremote/trunk/km/com/hifiremote/makehex/Makehex.java">Java
+ href="https://sourceforge.net/p/controlremote/code/HEAD/tree/trunk/makehex/src/com/hifiremote/makehex/Makehex.java">Java
 translation</a> by myself.</li>
   <li id="MakeLearned"><a
 href="http://www.hifi-remote.com/sony/MakeLearned_b1.zip">MakeLeaned</a>. Windows,

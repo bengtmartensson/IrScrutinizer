@@ -1,3 +1,110 @@
+The notation #n refers to issues number n at
+https://github.com/bengtmartensson/harctoolboxbundle/issues
+
+Version 1.2
+Open Issues:
+  * MacOS 10.11.4: Crash in RXTX when closing serial USB device, #64.
+  * MacOS 10.11.4: LAF Metal on Mac OSX El Capitan broken, #119.
+
+User visible changes:
+General:
+- AppImage (see http://appimage.org/) format available for 64-bit
+  Linux, #65.
+- Misc. minor tweaks in the installation.
+- The installation is now completely relocatable (#100). For this, filenames
+  must not be stored with absolut filenames if they are children of apphome.
+- Does not assume that CWD = applicationHome any more.
+- IrpMaster, as executable, noninteractive program, can now be invoked by
+  giving --irpmaster as the first argument on the command line to IrScrutinizer.
+- Added directory contributed. This should contain "contributed" protocols etc.
+- Wrong parameter spec in RECS80 fixed (#114).
+- Remove unused DTD support (#94).
+- irscrutinizer.sh: (wrapper) improved location of apphome.
+- Added some XML files from W3C and Apache, adapted the XML catalog
+  in order to make the project more self contained, and to allow
+  validation without network access.
+
+GUI:
+- Remove text "Analyzer result unavailable" (it looks like an error),
+  Ditto for DecodeIR. If analyzer not enabled, clean the field "AnalyzeIR"
+  when scrutinizing.
+- Sort export formats in the GUI alpabetically (case insensitively).
+- Load Tonto early, to dispose scary looking (but irrelevant) loading errors.
+- New entries in the Help menu: issues, Feedback, Git repository #115.
+- An active capture on "Scrutinize remote" now disallows capture
+    on "Scrutinize signal" and "Capturing hw"/Test (#109).
+- Store last used import format persistently in properties. #108
+- Handle attempts to hide non-existing columns more gracefully.
+- Middle mouse in the scrutinze-remote tables now transmits the signal
+  under the mouse. 
+- Barf on no and multiple selections in some table functions.
+- Update the GUI menus after reloading export format data base (#83).
+- Issue confirmation if Girr-exporting with "everything" deselected.
+- Paste in the data window of "Scrutinize signal" now replaces newlines
+  by spaces, #75.
+
+Girr:
+- Namespaces are used consequenctly in girr files, schema file now
+  girr_ns.xsd. (#84). New documentation files.
+- xinclude now supported in Girr files. #107.
+- CommandsSet import: Fixed nasty bug in getting the protocol of children, #118.
+- girr[_ns].xsd: change definition of appParameter (allow string as value).
+- Girr instances now accept hexadecimal number prepended by 0x
+  for parameter values. Removed attribute display-name, there is already
+  a displayName. General cleanup in girr.xsd.
+- (Girr) change name uniqueness for command names #85
+  Now the command names are required to be unique within the CommandSets,
+  not in the remote.
+- Implemented multi-toggles for Girr.Command. (#104)
+- Parse hexadecimal numbers (etc) as parameters in Girs import (#70).
+- Girr: cleanup of command API #105.
+
+Export:
+- There is now a schema file for exportformats.xml, exportformats.xsd. (#116).
+- Support xinclude in exportformats.xml #106
+- New export format: Arduino Raw (#17), supports IRremote, IRLib,
+  Infrared4Arduino.
+- New export formats Arduino/Infrared4Arduino & Arduino/IRremote, #17, #116.
+- New export format RemoteMaster (#113)
+- New export format IrPlus https://irplus-remote.github.io. #103
+- DynamicRemoteSetExportFormat now contains main routine for command
+  line processing of exportformats in XSLT.
+- User selectable character set for export #93 (Options -> Export
+  options -> Character set...)
+- IctExporter is now an xslt-export.
+- Fixed two bugs with Lirc export: Names with spaces were
+  generated; RC5: misbehavior on F > 63, #90.
+- fixed bugs in ict export, erroneous line endings on Windows.
+  See http://www.hifi-remote.com/forums/viewtopic.php?t=16645&postdays=0&postorder=asc&&start=21
+- LircExport: do not bail out for single silly signals; set explicitly
+  frequency for NEC1 and RC5 Lirc export.
+- NPE in IrScrutinizer when exporting an exotic Pronto code #77.
+- Girr: do not give up completely on non-renderable signals #69 
+
+Import:
+- Improved error message for parse errors.
+- Minor parse robustness improvements for raw signals.
+- Import signals: if a particular command is erroneous, just ignore
+  *that command* instead of aborting the entrie import.
+- Parser for Lirc files rewritten from scratch (#101).
+- Some cleanup of Jirc API, doc fixes.
+- Mode2Importer: Do not require pulses and spaces to be interleaving.
+- User selectable character set for import #93 (Options -> Import
+  options -> Character set...)
+- IrTransImport: fixed bug in raw import #95.
+- IrTransImporter: Ignore keyword "RO" as junk. Cf. http://www.irtrans.de/forum/viewtopic.php?f=24&t=3970
+- Now handles IRDB entries with null protocol gracefully, ignoring them.
+- Improved parsing of text files with multi column names #78.
+  Multicolumn names may now contain small numbers (at most 2 digits),
+  if the names come after the parameters.
+
+Hardware support:
+- CommandFusion: Detect EOFs from device to prevent endless loop.
+- Fixes for changed syntax of the GlobalCache getversion command (#117).
+- AmxBeaconListener: Avoid null pointer exception.
+- allow the Arduino sending/receiving to use any baud rate.
+- LircMode2.java: Handle timeouts (receive() returning null) better.
+
 Version 1.1.3
 
 Open Issue: MacOS 10.10.5: Crash in RXTX when closing serial USB device,

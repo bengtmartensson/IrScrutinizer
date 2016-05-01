@@ -553,7 +553,7 @@ public class IrSignal {
     /**
      * Returns a ModulatedIrSequence consisting of one intro sequence,
      * count or count-1 number of repeat sequence, dependent on if intro is empty or not, followed by one ending sequence.
-     * @param count Number of times to send signal. Must be > 0.
+     * @param count Number of times to send signal. Must be &gt; 0.
      * @return ModulatedIrSequence.
      */
     public ModulatedIrSequence toModulatedIrSequence(int count) {
@@ -577,7 +577,7 @@ public class IrSignal {
     /**
      * Returns an IrSignal consisting of count repetitions (count semantic) as the intro sequence,
      * while repeat and ending are empty.
-     * @param count Number of times to send signal. Must be > 0.
+     * @param count Number of times to send signal. Must be &gt; 0.
      * @return IrSignal consisting of count repetitions (count semantic) as the intro sequence.
      */
     public IrSignal toOneShot(int count) {
