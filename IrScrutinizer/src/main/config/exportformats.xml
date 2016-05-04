@@ -414,6 +414,7 @@ void loop() {
 static void sendNec1(unsigned D, unsigned S, unsigned F, unsigned times) {
     const IrSignal *irSignal = Nec1Renderer::newIrSignal(D, S, F);
     irsend->sendIrSignal(*irSignal, times);
+    delete irSignal;
 }
 </xsl:text>
     </xsl:template>
@@ -423,6 +424,7 @@ static void sendNec1(unsigned D, unsigned S, unsigned F, unsigned times) {
 static void sendRc5(unsigned D, unsigned F, unsigned times) {
     const IrSignal *irSignal = Rc5Renderer::newIrSignal(D, F);
     irsend->sendIrSignal(*irSignal, times);
+    delete irSignal;
 }
 </xsl:text>
     </xsl:template>
