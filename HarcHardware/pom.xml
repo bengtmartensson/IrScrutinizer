@@ -194,9 +194,5 @@
             <groupId>gnu.io</groupId>
             <artifactId>RXTX</artifactId>
         </dependency>
-        <!--dependency>
-            <groupId>org.gnu</groupId>
-            <artifactId>Readline</artifactId>
-        </dependency-->
     </dependencies>
 </project>
