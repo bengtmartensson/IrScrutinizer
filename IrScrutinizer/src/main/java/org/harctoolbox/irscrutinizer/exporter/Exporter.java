@@ -24,8 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import javax.swing.JFileChooser;
+import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.guicomponents.SelectFile;
-import org.harctoolbox.irscrutinizer.Utils;
 
 /**
  * This class is a common base class of all the exporters.
@@ -79,7 +79,7 @@ public abstract class Exporter {
         File answer = SelectFile.selectFile(parent, "Select file for " + getFormatName() + " export.",
                 exportDir.getPath(), true, false, JFileChooser.FILES_ONLY, getFileExtensions());
         if (answer != null && getPreferredFileExtension() != null && ! getPreferredFileExtension().isEmpty())
-            answer = new File(Utils.addExtensionIfNotPresent(answer.getPath(), getPreferredFileExtension()));
+            answer = new File(IrpUtils.addExtensionIfNotPresent(answer.getPath(), getPreferredFileExtension()));
         return answer;
     }
 

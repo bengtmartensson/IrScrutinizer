@@ -37,7 +37,6 @@ import org.harctoolbox.IrpMaster.XmlUtils;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
-import org.harctoolbox.irscrutinizer.Utils;
 import org.harctoolbox.irscrutinizer.Version;
 import org.w3c.dom.Document;
 
@@ -230,7 +229,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
 
         HashMap<String,HashMap<String,String>> appParams = new HashMap<>();
         appParams.put("rmdu", parameters);
-        Remote.MetaData metaData = new Remote.MetaData(Utils.basename(origin),
+        Remote.MetaData metaData = new Remote.MetaData(IrpUtils.basename(origin),
                 null, // manufacturer,
                 null, // model,
                 parameters.get("DeviceType"), // deviceClass,
@@ -335,7 +334,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
             RemoteSet remoteSet = new RemoteSet(null,
                     configFilename, //String source,
                     rmdu.getRemote());
-            Document doc = remoteSet.xmlExportDocument("Rmdu import of " + Utils.basename(configFilename), "xsl", commandLineArgs.stylesheetUrl, true, true, true, true, true);
+            Document doc = remoteSet.xmlExportDocument("Rmdu import of " + IrpUtils.basename(configFilename), "xsl", commandLineArgs.stylesheetUrl, true, true, true, true, true);
             XmlUtils.printDOM(new File(commandLineArgs.outputfile), doc);
         } catch (IOException | ParseException | IrpMasterException ex) {
             System.err.println(ex.getMessage());

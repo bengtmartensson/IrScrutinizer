@@ -239,7 +239,7 @@ public class GuiMain extends javax.swing.JFrame {
                 properties.getParametricNameColumn(),
                 properties.getParametrizedNameMultiColumn(),
                 properties.getVerbose(),
-                Utils.numberbaseIndex2numberbase(properties.getParametricNumberBaseIndex()),
+                numberbaseIndex2numberbase(properties.getParametricNumberBaseIndex()),
                 properties.getFColumn(),
                 properties.getDColumn(),
                 properties.getSColumn(),
@@ -262,7 +262,7 @@ public class GuiMain extends javax.swing.JFrame {
         properties.addParametricNumberBaseIndexChangeListener(new Props.IPropertyChangeListener() {
             @Override
             public void propertyChange(String name, Object oldValue, Object newValue) {
-                csvParametrizedImporter.setNumberBase(Utils.numberbaseIndex2numberbase((Integer) newValue));
+                csvParametrizedImporter.setNumberBase(numberbaseIndex2numberbase((Integer) newValue));
             }
         });
 
@@ -868,6 +868,12 @@ public class GuiMain extends javax.swing.JFrame {
         setAnalyzeParameters(analyzer);
     }
 
+    private int numberbaseIndex2numberbase(int index) {
+        return index == 0 ? 2
+                : index == 1 ? 8
+                : index == 2 ? 10
+                : 16;
+    }
 
     public void scrutinizeIrSignal(IrSignal irSignal) {
         if (irSignal.isEmpty()) {
@@ -1147,16 +1153,17 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private String analysisString() {
+        String linefeed = System.getProperty("line.separator", "\n");
         StringBuilder str = new StringBuilder();
         str.append("DecodeIR: ");
         str.append(decodeIRTextField.getText());
-        str.append(Utils.linefeed);
+        str.append(linefeed);
         str.append("Analyze: ");
         str.append(analyzerTextField.getText());
-        str.append(Utils.linefeed);
+        str.append(linefeed);
         str.append("Frequency: ");
         str.append(frequencyLabel.getText());
-        str.append(Utils.linefeed);
+        str.append(linefeed);
         str.append(String.format("Introbursts: %s, Repeatbursts: %s, # repeats: %s, Endbursts: %s",
                 introLengthLabel.getText(), repLengthLabel.getText(),
                 noRepsLabel.getText(), endingLengthLabel.getText()));
@@ -7289,7 +7296,7 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void girrWebSiteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_girrWebSiteButtonActionPerformed
         try {
-            guiUtils.browse(new URI(Utils.girrHomepageUrl));
+            guiUtils.browse(new URI(org.harctoolbox.girr.XmlExporter.girrHomePage));
         } catch (URISyntaxException ex) {
             guiUtils.error(ex);
         }

@@ -338,6 +338,39 @@ public class IrpUtils {
         return prefix + map.get(name) + postfix;
     }
 
+    public static String basename(String s) {
+        StringBuilder sb = new StringBuilder(s);
+        int n = sb.lastIndexOf(File.separator);
+        if (n != -1)
+            sb.delete(0, n+1);
+        n = sb.lastIndexOf(".");
+        if (n != -1)
+            sb.delete(n, sb.length());
+        return sb.toString();
+    }
+
+    public static String addExtensionIfNotPresent(String filename, String extension) {
+        return filename + ((extension != null && !hasExtension(filename)) ? ('.' + extension) : "");
+    }
+
+    private static boolean hasExtension(String filename) {
+        int lastSeparator = filename.lastIndexOf(File.separator);
+        int lastPeriod = filename.lastIndexOf('.');
+        return lastPeriod > lastSeparator;
+    }
+
+    public static HashMap<String,Long> mkParameters(long D, long S, long F) {
+        HashMap<String, Long> result = new HashMap<>(3);
+        if (D != IrpUtils.invalid)
+            result.put("D", D);
+        if (S != IrpUtils.invalid)
+            result.put("S", S);
+        if (F != IrpUtils.invalid)
+            result.put("F", F);
+
+        return result;
+    }
+
     public static void main(String[] args) {
         for (String arg : args)
             System.out.println(arg);
