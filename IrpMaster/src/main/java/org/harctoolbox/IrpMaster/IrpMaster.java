@@ -84,7 +84,7 @@ public class IrpMaster implements Serializable {
             + "\n"
             + "where OPTIONS=--stringtree <filename>,--dot <dotfilename>,--xmlprotocol <xmlprotocolfilename>,-c|--config <configfile>,-d|--debug <debugcode>|?,-s|--seed <seed>,"
             + "-q|--quiet,-P|--pass <intro|repeat|ending|all>,--interactive,--decodeir,--analyze,--lirc <lircfilename>,"
-            + "-o|--outfile <outputfilename>, -x|--xml, -I|--ict, -r|--raw, -p|--pronto, -u|--uei, --disregard-repeat-mins, -#|--repetitions <number_repetitions>.\n\n"
+            + "-o|--outfile <outputfilename>, -x|--xml, -r|--raw, -p|--pronto, -u|--uei, --disregard-repeat-mins, -#|--repetitions <number_repetitions>.\n\n"
             + "Any filename can be given as `-', meaning stdin or stdout.\n"
             + "PARAMETERASSIGNMENT is one or more expressions like `name=value' (without spaces!). "
             + "One value without name defaults to `F`, two values defaults to `D` and `F`, three values defaults to `D`, `S`, and `F`, four values to `D`, `S`, `F', and `T`, in the order given.\n\n"
@@ -349,7 +349,6 @@ public class IrpMaster implements Serializable {
         String logFileName = null;
         String lircFileName = null;
         boolean quiet = false;
-        boolean doICT = false;
         boolean doRaw = false;
         boolean doPronto = false;
         boolean doXML = false;
@@ -436,9 +435,6 @@ public class IrpMaster implements Serializable {
                 } else if (args[arg_i].equals("--dump")) {
                     arg_i++;
                     dumpFilename = args[arg_i++];
-                } else if (args[arg_i].equals("-I") || args[arg_i].equals("--ict")) {
-                    arg_i++;
-                    doICT = true;
                 } else if (args[arg_i].equals("-i") || args[arg_i].startsWith("--irp")) {
                     arg_i++;
                     irp = args[arg_i++];
@@ -778,8 +774,6 @@ public class IrpMaster implements Serializable {
                             printStream.println(ExchangeIR.newUeiLearned(irSignal).toString());
                         }
                     }
-                    if (doICT && !doXML && irSignal != null)
-                        printStream.println(ICT.ictString(irSignal.toModulatedIrSequence(true, 1, true)));
 
                     if (invokeDecodeIR) {
                         // If there is a log file, don't babble.
