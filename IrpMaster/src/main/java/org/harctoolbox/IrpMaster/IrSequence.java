@@ -345,6 +345,32 @@ public class IrSequence implements Cloneable, Serializable {
     }
 
     /**
+     * Returns a new IrSequence consisting of the length durations.
+     * @param start Index of first duration
+     * @param length Length of new sequence
+     * @return IrSequence
+     * @throws IncompatibleArgumentException if length or start are not even.
+     */
+    public IrSequence subSequence(int start, int length) throws IncompatibleArgumentException {
+        if (start % 2 != 0)
+            throw new IncompatibleArgumentException("Starting index has to be even, was " + start);
+        double[] newData = new double[length];
+        System.arraycopy(this.data, start, newData, 0, length);
+        return new IrSequence(newData);
+    }
+
+    /**
+     * Returns a new IrSequence consisting of the first length durations.
+     * Equivalent to subSequence with first argument 0.
+     * @param length Length of new sequence
+     * @return IrSequence
+     * @throws IncompatibleArgumentException if length not even.
+     */
+    public IrSequence truncate(int length) throws IncompatibleArgumentException {
+        return subSequence(0, length);
+    }
+
+    /**
      * Chops a IrSequence in parts. Every gap of length &ge; threshold cause a cut.
      * @param threshold minimal gap in microseconds to cause a cut.
      * @return Array of IrSequences
@@ -456,20 +482,39 @@ public class IrSequence implements Cloneable, Serializable {
     }
 
     /**
-     * Compares two IrSequences for equality.
+     * Compares two IrSequences for (approximate) equality.
      *
      * @param irSequence to be compared against this.
-     * @param tolerance tolerance threshold in microseconds.
+     * @param absoluteTolerance tolerance threshold in microseconds.
+     * @param relativeTolerance relative threshold, between 0 and 1.
      * @return equality within tolerance.
      */
-    public boolean isEqual(IrSequence irSequence, double tolerance) {
+    public boolean isEqual(IrSequence irSequence, double absoluteTolerance, double relativeTolerance) {
         if (irSequence == null || (data.length != irSequence.data.length))
             return false;
 
         for (int i = 0; i < data.length; i++)
-            if (Math.abs(data[i] - irSequence.data[i]) > tolerance)
+            if (!IrpUtils.isEqual(data[i], irSequence.data[i], absoluteTolerance, relativeTolerance))
                 return false;
 
+        return true;
+    }
+
+    /**
+     * Compares two segments of the current IrSequences for (approximate) equality.
+     *
+     * @param beginning start of first subsequence
+     * @param compareStart start of second subsequence
+     * @param length length to be compared
+     * @param absoluteTolerance tolerance threshold in microseconds.
+     * @param relativeTolerance relative threshold, between 0 and 1.
+     * @return if the subsequences are approximately equal.
+     */
+    public boolean isEqual(int beginning, int compareStart, int length, double absoluteTolerance, double relativeTolerance) {
+        for (int i = 0; i < length; i++) {
+            if (!IrpUtils.isEqual(data[beginning+i], data[compareStart+i], absoluteTolerance, relativeTolerance))
+                return false;
+        }
         return true;
     }
 
@@ -561,7 +606,18 @@ public class IrSequence implements Cloneable, Serializable {
      * @return Length of the IR sequence in microseconds.
      */
     public double getDuration() {
-        return IrpUtils.l1Norm(data);
+        return getDuration(0, data.length);
+    }
+
+    /**
+     * Computes the total duration of a subsequence of the IR sequence modeled.
+     *
+     * @param begin start of subsequence.
+     * @param length length of subsequence.
+     * @return Length of the IR sequence in microseconds.
+     */
+    public double getDuration(int begin, int length) {
+        return IrpUtils.l1Norm(data, begin, length);
     }
 
     /**

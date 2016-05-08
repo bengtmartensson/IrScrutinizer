@@ -585,6 +585,23 @@ public class IrSignal {
     }
 
     /**
+     * Compares two ModulatedIrSequences for (approximate) equality.
+     *
+     * @param irSignal to be compared against this.
+     * @param absoluteTolerance tolerance threshold in microseconds.
+     * @param relativeTolerance relative threshold, between 0 and 1.
+     * @param frequencyTolerance tolerance (absolute) for frequency in Hz.
+     * @return equality within tolerance.
+     */
+    public boolean isEqual(IrSignal irSignal, double absoluteTolerance, double relativeTolerance,
+            double frequencyTolerance) {
+        return IrpUtils.isEqual(frequency, irSignal.frequency, frequencyTolerance, 0)
+                && introSequence.isEqual(irSignal.introSequence, absoluteTolerance, relativeTolerance)
+                && repeatSequence.isEqual(irSignal.repeatSequence, absoluteTolerance, relativeTolerance)
+                && endingSequence.isEqual(irSignal.endingSequence, absoluteTolerance, relativeTolerance);
+    }
+
+    /**
      *
      * @return the intro sequence, as ModulatedIrSequence
      */

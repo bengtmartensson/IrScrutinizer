@@ -63,6 +63,23 @@ public class IrpUtils {
 
     public final static double microseconds2seconds = 1E-6;
     public final static double seconds2microseconds = 1E6;
+    public final static double milliseconds2seconds = 1E-3;
+    public final static double seconds2milliseconds = 1E3;
+
+    /**
+     * Default absolute tolerance in micro seconds.
+     */
+    public static final double defaultAbsoluteTolerance = 60;
+
+    /**
+     * Default relative tolerance as a number between 0 and 1.
+     */
+    public static final double defaultRelativeTolerance = 0.2;
+
+    /**
+     * Default absolute tolerance for frequency comparison.
+     */
+    public static final double defaultFrequencyTolerance = 500;
 
     /**
      * Joins the Strings in the second argument, starting at the first argument, separating them with the third argument.
@@ -115,10 +132,7 @@ public class IrpUtils {
     }
 
     public static double l1Norm(double[] sequence) {
-        double sum = 0;
-        for (int i = 0; i < sequence.length; i++)
-            sum += Math.abs(sequence[i]);
-        return sum;
+        return l1Norm(sequence, 0, sequence.length);
     }
 
     public static double l1Norm(double[] sequence, int beg, int length) {
@@ -175,6 +189,23 @@ public class IrpUtils {
      */
     public static InputStream getInputSteam(String filename) throws FileNotFoundException {
         return filename.equals("-") ? System.in : new FileInputStream(filename);
+    }
+
+    /**
+     * Tests for approximate equality.
+     *
+     * @param x first argument
+     * @param y second argument
+     * @param absoluteTolerance
+     * @param relativeTolerance
+     * @return true if either absolute or relative requirement is satisfied.
+     */
+    public static boolean isEqual(double x, double y, double absoluteTolerance, double relativeTolerance) {
+        double absDiff = Math.abs(x - y);
+        boolean absoluteOk = absDiff <= absoluteTolerance;
+        double max = Math.max(Math.abs(x), Math.abs(y));
+        boolean relativeOk = max > 0 && absDiff/max <= relativeTolerance;
+        return absoluteOk || relativeOk;
     }
 
     /**
