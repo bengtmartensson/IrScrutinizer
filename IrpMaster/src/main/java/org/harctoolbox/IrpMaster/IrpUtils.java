@@ -209,6 +209,23 @@ public class IrpUtils {
     }
 
     /**
+     * Tests for approximate equality.
+     *
+     * @param x first argument
+     * @param y second argument
+     * @param absoluteTolerance
+     * @param relativeTolerance
+     * @return true if either absolute or relative requirement is satisfied.
+     */
+    public static boolean isEqual(int x, int y, int absoluteTolerance, double relativeTolerance) {
+        int absDiff = Math.abs(x - y);
+        boolean absoluteOk = absDiff <= absoluteTolerance;
+        int max = Math.max(Math.abs(x), Math.abs(y));
+        boolean relativeOk = max > 0 && (double)absDiff/(double)max <= relativeTolerance;
+        return absoluteOk || relativeOk;
+    }
+
+    /**
      * The power function for long arguments.
      *
      * @param x long

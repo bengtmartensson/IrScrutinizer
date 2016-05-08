@@ -471,14 +471,7 @@ public class IrSequence implements Cloneable, Serializable {
      * @return equality
      */
     public boolean isEqual(IrSequence irSequence) {
-        if (irSequence == null || (data.length != irSequence.data.length))
-            return false;
-
-        for (int i = 0; i < data.length; i++)
-            if (Math.abs(data[i] - irSequence.data[i]) > epsilon)
-                return false;
-
-        return true;
+        return isEqual(irSequence, IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance);
     }
 
     /**
