@@ -1493,17 +1493,6 @@
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="invokeAnalyzerCheckBoxMenuItem">
-              <Properties>
-                <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="properties.getInvokeAnalyzer()" type="code"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Invoke analyzer"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="invokeAnalyzerCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="repeatFinderCheckBoxMenuItem">
               <Properties>
                 <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
@@ -1515,12 +1504,35 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="repeatFinderCheckBoxMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cleanerCheckBoxMenuItem">
+              <Properties>
+                <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="properties.getInvokeCleaner()" type="code"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Invoke signal cleaner"/>
+                <Property name="toolTipText" type="java.lang.String" value="If selected, signal cleaning will be invoked on signals from the data pane and from the clipboard"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cleanerCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="invokeAnalyzerCheckBoxMenuItem">
+              <Properties>
+                <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="properties.getInvokeAnalyzer()" type="code"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Invoke analyzer"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="invokeAnalyzerCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="useCleansedCheckBoxMenuItem">
               <Properties>
                 <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="properties.getUseCleansed()" type="code"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Use cleansed captures"/>
+                <Property name="text" type="java.lang.String" value="Use cleansed captures (NO USED)"/>
                 <Property name="toolTipText" type="java.lang.String" value="Remove identified multiple repetitions from captured signals."/>
               </Properties>
               <Events>
@@ -1775,6 +1787,8 @@
                 </MenuItem>
               </SubComponents>
             </Menu>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator22">
+            </MenuItem>
             <Menu class="javax.swing.JMenu" name="debugMenu">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Debug"/>
@@ -1802,8 +1816,6 @@
                 </MenuItem>
               </SubComponents>
             </Menu>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator22">
-            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="toolsMenu">

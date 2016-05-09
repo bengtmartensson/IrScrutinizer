@@ -18,8 +18,8 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer;
 
 import org.harctoolbox.IrpMaster.DomainViolationException;
-import org.harctoolbox.IrpMaster.ExchangeIR;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
+import org.harctoolbox.IrpMaster.InterpretString;
 import org.harctoolbox.IrpMaster.InvalidRepeatException;
 import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.ParseException;
@@ -42,7 +42,7 @@ public class Utils {
      * Smarter version of ExchangeIR.interpretString.
      *
      * @param string
-     * @param fallbackFrequency
+     * @param frequency
      * @param invokeRepeatFinder
      * @param invokeAnalyzer
      * @return Generated IrSignal, or null if failed.
@@ -52,11 +52,11 @@ public class Utils {
      * @throws DomainViolationException
      * @throws InvalidRepeatException
      */
-    public static IrSignal interpretString(String string, double fallbackFrequency, boolean invokeRepeatFinder, boolean invokeAnalyzer)
+    public static IrSignal interpretString(String string, double frequency, boolean invokeRepeatFinder, boolean invokeAnalyzer)
             throws ParseException, IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException {
         return string.startsWith(GlobalCache.sendIrPrefix)
                 ? GlobalCache.parse(string)
-                : ExchangeIR.interpretString(string, fallbackFrequency, invokeRepeatFinder, invokeAnalyzer);
+                : InterpretString.interpretString(string, frequency, invokeRepeatFinder, invokeAnalyzer);
     }
 
     private Utils() {

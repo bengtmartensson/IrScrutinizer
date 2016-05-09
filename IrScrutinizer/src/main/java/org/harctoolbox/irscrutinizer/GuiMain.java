@@ -18,7 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer;
 
 import com.hifiremote.exchangeir.Analyzer;
-import com.hifiremote.exchangeir.RepeatFinder;
 import com.neuron.app.tonto.ProntoModel;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -27,14 +26,7 @@ import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeListener;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -713,7 +705,7 @@ public class GuiMain extends javax.swing.JFrame {
         if (str.trim().isEmpty())
             return null;
 
-        return Utils.interpretString(str, getFrequency() , properties.getInvokeRepeatFinder(), properties.getInvokeAnalyzer());
+        return Utils.interpretString(str, getFrequency() , properties.getInvokeRepeatFinder(), properties.getInvokeCleaner());
     }
 
     private void loadProtocolsIni() throws IOException, java.text.ParseException {
@@ -774,13 +766,15 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private void setRepeatParameters(RepeatFinder repeatFinder) {
-        setRepeatParameters(repeatFinder.getNoIntroBursts(), repeatFinder.getNoRepeatBursts(),
-                repeatFinder.getNoRepeats(), repeatFinder.getNoEndingBursts());
+        setRepeatParameters(repeatFinder.getRepeatFinderData().getBeginLength()/2,
+                repeatFinder.getRepeatFinderData().getRepeatLength()/2,
+                repeatFinder.getRepeatFinderData().getNumberRepeats(),
+                repeatFinder.getRepeatFinderData().getEndingLength()/2);
     }
 
     private void setRepeatParameters(IrSequence irSequence) {
         if (properties.getInvokeRepeatFinder()) {
-            RepeatFinder repeatFinder = ExchangeIR.newRepeatFinder(irSequence);
+            RepeatFinder repeatFinder = new RepeatFinder(irSequence);
             setRepeatParameters(repeatFinder);
         } else
             setRepeatParameters(irSequence.getNumberBursts(), 0, 0, 0);
@@ -799,20 +793,19 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private void setCaptureWindow(IrSequence irSequence) {
-        if (properties.getUseCleansed()) {
-            IrSignal irSignal = ExchangeIR.interpretIrSequence(irSequence, properties.getInvokeRepeatFinder());
-            setCaptureWindow(irSignal);
-        } else {
-            capturedDataTextArea.setText(irSequence.toPrintString(true));
-            if (! rawRadioButtonMenuItem.isSelected())
-                guiUtils.warning("Outputting an uninterpreted IrSequence in the selected output format not possible, using raw format.");
-        }
+        //if (properties.getUseCleansed()) {
+        IrSignal irSignal = InterpretString.interpretIrSequence(irSequence, properties.getInvokeRepeatFinder(), properties.getInvokeCleaner());
+        setCaptureWindow(irSignal);
+        //} else {
+        //    capturedDataTextArea.setText(irSequence.toPrintString(true));
+        //    if (! rawRadioButtonMenuItem.isSelected())
+        //        guiUtils.warning("Outputting an uninterpreted IrSequence in the selected output format not possible, using raw format.");
+        //}
     }
 
     private String formatIrSignal(IrSignal irSignal, OutputTextFormat format) throws IncompatibleArgumentException {
-        return format == OutputTextFormat.uei ? ExchangeIR.newUeiLearned(irSignal).toString()
-                    : format == OutputTextFormat.ccf ? irSignal.ccfString()
-                    : irSignal.toPrintString(true);
+        return format == OutputTextFormat.ccf ? irSignal.ccfString()
+                    : irSignal.toPrintString(true, false, " ");
     }
 
     private String formatIrSignal(IrSignal irSignal, int formatIndex) throws IncompatibleArgumentException {
@@ -903,13 +896,18 @@ public class GuiMain extends javax.swing.JFrame {
             }
         }
 
-        setRepeatParameters(irSignal.getIntroBursts(), irSignal.getRepeatBursts(), 1, irSignal.getEndingBursts());
+        setRepeatParameters(irSignal.getIntroBursts(), irSignal.getRepeatBursts(), irSignal.getRepeatBursts() >  0 ? 1 : 0, irSignal.getEndingBursts());
         //modulatedIrSequence = irSignal.toModulatedIrSequence(1);
-        setFrequencyParameter(irSignal);
+
         if (properties.getInvokeAnalyzer())
             setAnalyzeParameters(irSignal);
         else
             clearAnalyzeParameters();
+        displaySignal(irSignal);
+    }
+
+    private void displaySignal(IrSignal irSignal) {
+        setFrequencyParameter(irSignal);
         setCaptureWindow(irSignal);
         irPlotter.plot(irSignal);
         try {
@@ -924,38 +922,58 @@ public class GuiMain extends javax.swing.JFrame {
             guiUtils.error("Not showing empty sequence.");
             return;
         }
-        setFrequencyParameter(modulatedIrSequence);
+
+        RepeatFinder repeatFinder = new RepeatFinder(modulatedIrSequence);
+        setRepeatParameters(repeatFinder);
+
         if (properties.getInvokeAnalyzer())
             setAnalyzeParameters(modulatedIrSequence);
-        if (properties.getInvokeRepeatFinder()) {
-            RepeatFinder repeatFinder = ExchangeIR.newRepeatFinder(modulatedIrSequence);
-            setRepeatParameters(repeatFinder);
+        else
+            clearAnalyzeParameters();
 
-            IrSignal signal = ExchangeIR.interpretIrSequence(modulatedIrSequence, true);
-            try {
-                setDecodeIrParameters(signal);
-            } catch (IOException ex) {
-                guiUtils.warning("DecodeIR not found");
-            }
-
-            if (properties.getUseCleansed()) {
-                irPlotter.plot(signal);
-                setCaptureWindow(signal);
-            } else {
-                irPlotter.plot(modulatedIrSequence, repeatFinder.getNoIntroBursts(), repeatFinder.getNoRepeatBursts(), repeatFinder.getNoRepeats());
-                setCaptureWindow(signal);
-            }
-        } else {
-            try {
-                setDecodeIrParameters(modulatedIrSequence);
-            } catch (IOException ex) {
-                guiUtils.warning("DecodeIR not found");
-            }
-            setRepeatParameters(modulatedIrSequence);
-            irPlotter.plot(modulatedIrSequence);
-            setCaptureWindow(modulatedIrSequence);
-        }
+        ModulatedIrSequence cleaned = properties.getInvokeCleaner() ? Cleaner.clean(modulatedIrSequence) : modulatedIrSequence;
+        IrSignal irSignal = properties.getInvokeRepeatFinder() ? repeatFinder.getRepeatFinderData().chopIrSequence(cleaned) : cleaned.toIrSignal();
+        displaySignal(irSignal);
     }
+
+//        setFrequencyParameter(modulatedIrSequence);
+//        if (properties.getInvokeAnalyzer())
+//            setAnalyzeParameters(modulatedIrSequence);
+//        else
+//            clearAnalyzeParameters();
+//
+//        //if (properties.getInvokeRepeatFinder()) {
+//        RepeatFinder repeatFinder = new RepeatFinder(modulatedIrSequence);
+//        setRepeatParameters(repeatFinder);
+//
+//        IrSignal signal = InterpretString.interpretIrSequence(modulatedIrSequence, properties.getInvokeRepeatFinder(), properties.getInvokeCleaner());
+//        try {
+//            setDecodeIrParameters(signal);
+//        } catch (IOException ex) {
+//            guiUtils.warning("DecodeIR not found");
+//        }
+//
+//        //if (properties.getUseCleansed()) {
+//        irPlotter.plot(signal);
+//        setCaptureWindow(signal);
+//        //} else {
+//                irPlotter.plot(modulatedIrSequence,
+//                        repeatFinder.getRepeatFinderData().getBeginLength()/2,
+//                        repeatFinder.getRepeatFinderData().getRepeatLength()/2,
+//                        repeatFinder.getRepeatFinderData().getNumberRepeats()/2);
+//                setCaptureWindow(signal);
+//            }
+//        } else {
+//            try {
+//                setDecodeIrParameters(modulatedIrSequence);
+//            } catch (IOException ex) {
+//                guiUtils.warning("DecodeIR not found");
+//            }
+//            setRepeatParameters(modulatedIrSequence);
+//            irPlotter.plot(modulatedIrSequence);
+//            setCaptureWindow(modulatedIrSequence);
+//        }
+//    }
 
     private void saveParametricSignals(RemoteSetExporter exporter) {
         try {
@@ -1353,7 +1371,9 @@ public class GuiMain extends javax.swing.JFrame {
                 try {
                     ModulatedIrSequence sequence = captureIrSequence();
                     if (sequence != null) {
-                        IrSignal irSignal = ExchangeIR.interpretIrSequence(sequence, properties.getInvokeRepeatFinder());
+                        IrSignal irSignal = InterpretString.interpretIrSequence(sequence,
+                                properties.getInvokeRepeatFinder(),
+                                properties.getInvokeCleaner());
                         if (rawPanel.isVisible()) {
                             registerRawSignal(irSignal, null, null);
                         } else {
@@ -1595,7 +1615,10 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private void setCapturedDataTextAreaFromClipboard() {
-        capturedDataTextArea.setText((new CopyClipboardText(null)).fromClipboard().replace('\n', ' '));
+        String clip = (new CopyClipboardText(null)).fromClipboard();
+        if (clip == null)
+            clip = "";
+        capturedDataTextArea.setText(clip.replace('\n', ' '));
     }
 
     private void loadExportFormatsGuiRefresh() {
@@ -2069,8 +2092,9 @@ public class GuiMain extends javax.swing.JFrame {
         verboseCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ignoreEndingSilenceCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
-        invokeAnalyzerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         repeatFinderCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        cleanerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        invokeAnalyzerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         useCleansedCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         printDecodesToConsoleCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         parametrizedLearnIgnoreTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -2097,10 +2121,10 @@ public class GuiMain extends javax.swing.JFrame {
         exportCharsetMenuItem = new javax.swing.JMenuItem();
         creatingUserMenuItem = new javax.swing.JMenuItem();
         inquiryDeviceDataCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        jSeparator22 = new javax.swing.JPopupMenu.Separator();
         debugMenu = new javax.swing.JMenu();
         offerStackTraceCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         debugCodeMenuItem = new javax.swing.JMenuItem();
-        jSeparator22 = new javax.swing.JPopupMenu.Separator();
         toolsMenu = new javax.swing.JMenu();
         hexCalcMenuItem = new javax.swing.JMenuItem();
         timeFrequencyCalcMenuItem = new javax.swing.JMenuItem();
@@ -6195,15 +6219,6 @@ public class GuiMain extends javax.swing.JFrame {
         jCheckBoxMenuItem1.setEnabled(false);
         optionsMenu.add(jCheckBoxMenuItem1);
 
-        invokeAnalyzerCheckBoxMenuItem.setSelected(properties.getInvokeAnalyzer());
-        invokeAnalyzerCheckBoxMenuItem.setText("Invoke analyzer");
-        invokeAnalyzerCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                invokeAnalyzerCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        optionsMenu.add(invokeAnalyzerCheckBoxMenuItem);
-
         repeatFinderCheckBoxMenuItem.setSelected(properties.getInvokeRepeatFinder());
         repeatFinderCheckBoxMenuItem.setText("Invoke repeat finder");
         repeatFinderCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -6213,8 +6228,27 @@ public class GuiMain extends javax.swing.JFrame {
         });
         optionsMenu.add(repeatFinderCheckBoxMenuItem);
 
+        cleanerCheckBoxMenuItem.setSelected(properties.getInvokeCleaner());
+        cleanerCheckBoxMenuItem.setText("Invoke signal cleaner");
+        cleanerCheckBoxMenuItem.setToolTipText("If selected, signal cleaning will be invoked on signals from the data pane and from the clipboard");
+        cleanerCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cleanerCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        optionsMenu.add(cleanerCheckBoxMenuItem);
+
+        invokeAnalyzerCheckBoxMenuItem.setSelected(properties.getInvokeAnalyzer());
+        invokeAnalyzerCheckBoxMenuItem.setText("Invoke analyzer");
+        invokeAnalyzerCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                invokeAnalyzerCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        optionsMenu.add(invokeAnalyzerCheckBoxMenuItem);
+
         useCleansedCheckBoxMenuItem.setSelected(properties.getUseCleansed());
-        useCleansedCheckBoxMenuItem.setText("Use cleansed captures");
+        useCleansedCheckBoxMenuItem.setText("Use cleansed captures (NO USED)");
         useCleansedCheckBoxMenuItem.setToolTipText("Remove identified multiple repetitions from captured signals.");
         useCleansedCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -6419,6 +6453,7 @@ public class GuiMain extends javax.swing.JFrame {
         exportOptionsMenu.add(inquiryDeviceDataCheckBoxMenuItem);
 
         optionsMenu.add(exportOptionsMenu);
+        optionsMenu.add(jSeparator22);
 
         debugMenu.setText("Debug");
         debugMenu.setToolTipText("not documented, really... ;-)");
@@ -6441,7 +6476,6 @@ public class GuiMain extends javax.swing.JFrame {
         debugMenu.add(debugCodeMenuItem);
 
         optionsMenu.add(debugMenu);
-        optionsMenu.add(jSeparator22);
 
         menuBar.add(optionsMenu);
 
@@ -7221,7 +7255,7 @@ public class GuiMain extends javax.swing.JFrame {
         String text = (new CopyClipboardText(null)).fromClipboard();
         try {
             IrSignal irSignal = Utils.interpretString(text, IrpUtils.defaultFrequency,
-                    properties.getInvokeRepeatFinder(), properties.getInvokeAnalyzer());
+                    properties.getInvokeRepeatFinder(), properties.getInvokeCleaner());
             RawIrSignal rawIrSignal = new RawIrSignal(irSignal, "clipboard", "Signal read from clipboard", true);
             registerRawCommand(rawIrSignal);
         } catch (IrpMasterException ex) {
@@ -7747,7 +7781,7 @@ public class GuiMain extends javax.swing.JFrame {
             ModulatedIrSequence modulatedIrSequence = captureIrSequence();
 
             if (modulatedIrSequence != null) {
-                IrSignal signal = ExchangeIR.interpretIrSequence(modulatedIrSequence, true);
+                IrSignal signal = InterpretString.interpretIrSequence(modulatedIrSequence, true, true);
                 /*DecodeIR decodeIr = DecodeIR.newDecodeIR(irSignal);
                  if (decodeIr == null)
                  throw new IOException("DecodeIR was not found");*/
@@ -8013,7 +8047,7 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_rawSorterCheckBoxMenuItemActionPerformed
 
     private void useCleansedCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useCleansedCheckBoxMenuItemActionPerformed
-        properties.setUseCleansed(forgiveSillySignals);
+        properties.setUseCleansed(useCleansedCheckBoxMenuItem.isSelected());
     }//GEN-LAST:event_useCleansedCheckBoxMenuItemActionPerformed
 
     private void transmitSignalButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitSignalButton1ActionPerformed
@@ -8425,6 +8459,10 @@ public class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_homePageMenuItem2ActionPerformed
 
+    private void cleanerCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanerCheckBoxMenuItemActionPerformed
+        properties.setInvokeCleaner(cleanerCheckBoxMenuItem.isSelected());
+    }//GEN-LAST:event_cleanerCheckBoxMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -8471,6 +8509,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel ccfImportPanel;
     private javax.swing.JRadioButtonMenuItem ccfRadioButtonMenuItem;
     private javax.swing.JMenuItem checkUpToDateMenuItem;
+    private javax.swing.JCheckBoxMenuItem cleanerCheckBoxMenuItem;
     private javax.swing.JMenuItem clearConsoleMenuItem;
     private javax.swing.JMenuItem clearMenuItem;
     private javax.swing.JMenuItem clearMenuItem1;
