@@ -1,6 +1,6 @@
 package org.harctoolbox.IrpMaster;
 
-import static junit.framework.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertEquals;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -47,6 +47,11 @@ public class RepeatFinderNGTest {
             irSequence = irSequence.append(junk);
             IrSignal rep = RepeatFinder.findRepeat(irSequence);
             assertEquals(reference.isEqual(rep, 1f, 0.01, 1f), true);
+            // Note: lasts gap is too short, should find three repetitons anyhow.
+            int[] arr = new int[] { 9008, 4516, 552, 552, 552, 552, 552, 552, 552, 552, 552, 552, 552, 552, 552, 552, 552, 1717, 552, 1717, 552, 1717, 552, 1717, 552, 1717, 552, 1717, 552, 1717, 552, 1717, 552, 1717, 552, 1717, 552, 1717, 552, 1717, 552, 1717, 552, 1717, 552, 552, 552, 552, 552, 552, 552, 552, 552, 552, 552, 552, 552, 552, 552, 552, 552, 1717, 552, 1717, 552, 1717, 552, 38902, 9008, 2289, 552, 31080, 9008, 2289, 552, 31080, 9008, 2289, 552, 21080 };
+            ModulatedIrSequence modulatedIrSequence = new ModulatedIrSequence(arr, 38400f);
+            RepeatFinder repeatFinder = new RepeatFinder(modulatedIrSequence);
+            assertEquals(repeatFinder.getRepeatFinderData().getNumberRepeats(), 3);
         } catch (IrpMasterException ex) {
             assert(false);
         }

@@ -60,6 +60,7 @@ public class IrpUtils {
      * Use if no information at all available.
      */
     public final static double defaultFrequency = 38000f;
+    public final static double unknownDutyCycle = -1f;
 
     public final static double microseconds2seconds = 1E-6;
     public final static double seconds2microseconds = 1E6;

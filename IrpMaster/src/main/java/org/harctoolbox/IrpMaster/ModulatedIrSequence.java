@@ -131,7 +131,7 @@ public class ModulatedIrSequence extends IrSequence {
      */
     @Override
     public String toPrintString(boolean alternatingSigns, boolean noSigns, String separator) {
-        return toPrintString(alternatingSigns, noSigns, separator, true);
+        return toPrintString(alternatingSigns, noSigns, separator, false);
     }
 
     /**

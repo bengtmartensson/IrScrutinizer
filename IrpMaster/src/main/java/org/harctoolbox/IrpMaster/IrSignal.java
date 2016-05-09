@@ -206,10 +206,14 @@ public class IrSignal {
      *
      * @see IrSequence
      */
+    public String toPrintString(boolean alternatingSigns, boolean noSigns, String separator) {
+        return introSequence.toPrintString(alternatingSigns, noSigns, separator) + "\n"
+                + repeatSequence.toPrintString(alternatingSigns, noSigns, separator)
+                + (endingSequence.getLength() > 0 ? "\n" + endingSequence.toPrintString(alternatingSigns, noSigns, separator) : "");
+    }
+
     public String toPrintString(boolean alternatingSigns) {
-        return introSequence.toPrintString(alternatingSigns) + "\n"
-                + repeatSequence.toPrintString(alternatingSigns)
-                + (endingSequence.getLength() > 0 ? "\n" + endingSequence.toPrintString(alternatingSigns) : "");
+        return toPrintString(alternatingSigns, false, " ");
     }
 
     public String toPrintString() {
@@ -599,6 +603,16 @@ public class IrSignal {
                 && introSequence.isEqual(irSignal.introSequence, absoluteTolerance, relativeTolerance)
                 && repeatSequence.isEqual(irSignal.repeatSequence, absoluteTolerance, relativeTolerance)
                 && endingSequence.isEqual(irSignal.endingSequence, absoluteTolerance, relativeTolerance);
+    }
+
+    /**
+     * Compares two ModulatedIrSequences for (approximate) equality.
+     *
+     * @param irSignal to be compared against this.
+     * @return equality within tolerance.
+     */
+    public boolean isEqual(IrSignal irSignal) {
+        return isEqual(irSignal, IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance, IrpUtils.defaultFrequencyTolerance);
     }
 
     /**

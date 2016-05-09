@@ -463,7 +463,7 @@ public class DecodeIR {
      * @param frequency
      */
     private DecodeIR(IrSequence irSequence, double frequency) {
-        this(ExchangeIR.interpretIrSequence(irSequence, frequency, true));
+        this(InterpretString.interpretIrSequence(irSequence, frequency, true, true));
     }
 
     /**
@@ -484,7 +484,7 @@ public class DecodeIR {
      * @throws InvalidRepeatException
      */
     private DecodeIR(String ccf) throws ParseException, IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException {
-        IrSignal irSignal = ExchangeIR.interpretString(ccf, false);
+        IrSignal irSignal = InterpretString.interpretString(ccf, false, true);
         if (irSignal == null)
             throw new ParseException("Could not interpret string `" + ccf + "'");
         setup(irSignal);
@@ -582,7 +582,7 @@ public class DecodeIR {
     }
 
     public static void invoke(ModulatedIrSequence seq) {
-        invoke(ExchangeIR.interpretIrSequence(seq, true));
+        invoke(InterpretString.interpretIrSequence(seq, true, true));
     }
 
     /**

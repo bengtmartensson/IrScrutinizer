@@ -501,14 +501,37 @@ public class IrSequence implements Cloneable, Serializable {
      * @param length length to be compared
      * @param absoluteTolerance tolerance threshold in microseconds.
      * @param relativeTolerance relative threshold, between 0 and 1.
+     * @param lastLimit
      * @return if the subsequences are approximately equal.
      */
-    public boolean isEqual(int beginning, int compareStart, int length, double absoluteTolerance, double relativeTolerance) {
-        for (int i = 0; i < length; i++) {
-            if (!IrpUtils.isEqual(data[beginning+i], data[compareStart+i], absoluteTolerance, relativeTolerance))
+    public boolean isEqual(int beginning, int compareStart, int length, double absoluteTolerance, double relativeTolerance, double lastLimit) {
+        boolean specialTreatment = compareStart + length == data.length && lastLimit > 0;
+        for (int i = 0; i < (specialTreatment ? length - 1 : length); i++) {
+            if (!IrpUtils.isEqual(Math.abs(data[beginning+i]), Math.abs(data[compareStart+i]), absoluteTolerance, relativeTolerance))
+                return false;
+        }
+
+        if (specialTreatment) {
+            if (!(
+                    IrpUtils.isEqual(Math.abs(data[beginning+length-1]), Math.abs(data[compareStart+length-1]), absoluteTolerance, relativeTolerance)
+                    || (Math.abs(data[beginning+length-1]) >= lastLimit && Math.abs(data[compareStart+length-1]) >= lastLimit)))
                 return false;
         }
         return true;
+    }
+
+    /**
+     * Compares two segments of the current IrSequences for (approximate) equality.
+     *
+     * @param beginning start of first subsequence
+     * @param compareStart start of second subsequence
+     * @param length length to be compared
+     * @param absoluteTolerance tolerance threshold in microseconds.
+     * @param relativeTolerance relative threshold, between 0 and 1.
+     * @return if the subsequences are approximately equal.
+     */
+    public boolean isEqual(int beginning, int compareStart, int length, double absoluteTolerance, double relativeTolerance) {
+        return isEqual(beginning, compareStart, length, absoluteTolerance, relativeTolerance, 0f);
     }
 
     private static ArrayList<Double> normalize(ArrayList<Double> list, boolean nukeLeadingZeros) {
