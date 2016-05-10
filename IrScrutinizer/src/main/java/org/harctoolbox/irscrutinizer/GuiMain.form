@@ -3076,7 +3076,7 @@
                         </Component>
                         <Component class="org.harctoolbox.irscrutinizer.importer.TreeImporter" name="gcdbTreeImporter">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.TreeImporter(guiUtils)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="TreeImporter.newTreeImporter(guiUtils)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importGlobalCacheHelpButton">
@@ -3243,7 +3243,7 @@
                         </Component>
                         <Component class="org.harctoolbox.irscrutinizer.importer.TreeImporter" name="irdbTreeImporter">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.TreeImporter(guiUtils)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="TreeImporter.newTreeImporter(guiUtils)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="jButton22">

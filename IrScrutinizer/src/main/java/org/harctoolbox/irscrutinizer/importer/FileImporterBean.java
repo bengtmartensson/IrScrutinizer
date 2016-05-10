@@ -138,7 +138,7 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
     private void initComponents() {
 
         copyPastePopupMenu1 = new org.harctoolbox.guicomponents.CopyPastePopupMenu(true);
-        treeImporter = new org.harctoolbox.irscrutinizer.importer.TreeImporter(guiUtils);
+        treeImporter = TreeImporter.newTreeImporter(guiUtils);
         filenameTextField = new javax.swing.JTextField();
         fileUrlLabel = new javax.swing.JLabel();
         selectButton = new javax.swing.JButton();

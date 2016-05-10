@@ -202,6 +202,8 @@ public class IrSignal {
     /**
      * Analog to the IrSequence toPrintString.
      * @param alternatingSigns If true, generated signs will have alternating signs, ignoring original signs, otherwise signs are preserved.
+     * @param noSigns If true, suppress explict signs
+     * @param separator separator between the numbers
      * @return Nicely formatted string.
      *
      * @see IrSequence

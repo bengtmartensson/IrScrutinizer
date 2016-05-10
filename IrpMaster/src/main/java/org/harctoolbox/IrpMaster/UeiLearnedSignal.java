@@ -95,7 +95,7 @@ public class UeiLearnedSignal {
         }
         IrSignal irSignal = parseUeiLearned(str.toString());
         System.out.println(irSignal);
-        ModulatedIrSequence seq = irSignal.toModulatedIrSequence(7);
+        //ModulatedIrSequence seq = irSignal.toModulatedIrSequence(7);
         //RepeatFinder repeatFinder = newRepeatFinder(seq);
         //System.out.println(repeatFinder);
         DecodeIR.invoke(irSignal);

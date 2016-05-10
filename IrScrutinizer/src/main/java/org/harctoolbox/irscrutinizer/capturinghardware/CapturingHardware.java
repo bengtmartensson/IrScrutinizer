@@ -39,9 +39,9 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> {
     protected GuiUtils guiUtils;
     protected boolean verbose;
     //protected int debug = 0;
-    protected int beginTimeout;
-    protected int maxLearnLength;
-    protected int endTimeout;
+    //protected int beginTimeout;
+    //protected int maxLearnLength;
+    //protected int endTimeout;
     private final CapturingHardwareManager capturingHardwareManager;
 
     protected CapturingHardware(JPanel panel, Props properties, GuiUtils guiUtils,
@@ -52,9 +52,9 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> {
         this.capturingHardwareManager = capturingHardwareManager;
         //this.startButton = startButton;
         this.verbose = properties.getVerbose();
-        this.beginTimeout = properties.getCaptureStartTimeout();
-        this.maxLearnLength = properties.getCaptureRunTimeout();
-        this.endTimeout = properties.getCaptureEndingTimeout();
+        //this.beginTimeout = properties.getCaptureStartTimeout();
+        //this.maxLearnLength = properties.getCaptureRunTimeout();
+        //this.endTimeout = properties.getCaptureEndingTimeout();
     }
 
     /**

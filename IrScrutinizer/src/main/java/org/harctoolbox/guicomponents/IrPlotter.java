@@ -114,7 +114,7 @@ public class IrPlotter extends HarcPanel {
         //resetXminXmax();
         this.xmin = irPlotter.xmin;
         this.xmax = irPlotter.xmax;
-        repaint();
+        super.repaint();
     }
 
     /**

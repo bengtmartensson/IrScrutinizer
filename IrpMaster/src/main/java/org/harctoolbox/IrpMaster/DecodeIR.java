@@ -735,7 +735,7 @@ public class DecodeIR {
                     reader.readLine();
 
                 String line = reader.readLine();
-                if (line.startsWith("0000") || line.startsWith("0100"))
+                if (line != null && (line.startsWith("0000") || line.startsWith("0100")))
                     ccfString = line;
                 else
                     rawString = line;

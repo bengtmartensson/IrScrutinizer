@@ -17,6 +17,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.guicomponents;
 
+import java.awt.Container;
 import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -40,7 +41,7 @@ public class CopyPastePopupMenu extends JPopupMenu {
         copyMenuItem.setText("Copy");
         copyMenuItem.setToolTipText("Copy content of window to clipboard (ignoring any selection).");
         copyMenuItem.addActionListener(new ActionListenerImpl());
-        add(copyMenuItem);
+        super.add(copyMenuItem);
 
         if (paste) {
             pasteMenuItem = new JMenuItem();
@@ -48,7 +49,7 @@ public class CopyPastePopupMenu extends JPopupMenu {
             pasteMenuItem.setText("Paste");
             pasteMenuItem.setToolTipText("Paste from clipboard, replacing previous content.");
             pasteMenuItem.addActionListener(new ActionListenerImpl1());
-            add(pasteMenuItem);
+            super.add(pasteMenuItem);
         }
     }
 
@@ -59,8 +60,10 @@ public class CopyPastePopupMenu extends JPopupMenu {
 
         @Override
         public void actionPerformed(java.awt.event.ActionEvent evt) {
-            JMenuItem jmi = (JMenuItem)evt.getSource();
-            JPopupMenu jpm = (JPopupMenu)jmi.getParent();
+            JMenuItem jmi = (JMenuItem) evt.getSource();
+            Container container = jmi.getParent();
+            assert(container instanceof JPopupMenu);
+            JPopupMenu jpm = (JPopupMenu) container;
             JTextComponent jtf = (JTextComponent) jpm.getInvoker();
             (new CopyClipboardText(null)).toClipboard(jtf.getText());
         }
@@ -74,7 +77,9 @@ public class CopyPastePopupMenu extends JPopupMenu {
         @Override
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             JMenuItem jmi = (JMenuItem) evt.getSource();
-            JPopupMenu jpm = (JPopupMenu) jmi.getParent();
+            Container container = jmi.getParent();
+            assert(container instanceof JPopupMenu);
+            JPopupMenu jpm = (JPopupMenu) container;
             JTextComponent jtf = (JTextComponent) jpm.getInvoker();
             jtf.setText((new CopyClipboardText(null)).fromClipboard());
         }

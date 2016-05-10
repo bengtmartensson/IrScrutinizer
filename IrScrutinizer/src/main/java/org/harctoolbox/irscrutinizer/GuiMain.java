@@ -1711,7 +1711,7 @@ public class GuiMain extends javax.swing.JFrame {
         jLabel44 = new javax.swing.JLabel();
         jLabel47 = new javax.swing.JLabel();
         jLabel48 = new javax.swing.JLabel();
-        gcdbTreeImporter = new org.harctoolbox.irscrutinizer.importer.TreeImporter(guiUtils);
+        gcdbTreeImporter = TreeImporter.newTreeImporter(guiUtils);
         importGlobalCacheHelpButton = new javax.swing.JButton();
         irdbPanel = new javax.swing.JPanel();
         irdbBrowseButton = new javax.swing.JButton();
@@ -1722,7 +1722,7 @@ public class GuiMain extends javax.swing.JFrame {
         jLabel45 = new javax.swing.JLabel();
         jLabel46 = new javax.swing.JLabel();
         jLabel49 = new javax.swing.JLabel();
-        irdbTreeImporter = new org.harctoolbox.irscrutinizer.importer.TreeImporter(guiUtils);
+        irdbTreeImporter = TreeImporter.newTreeImporter(guiUtils);
         jButton22 = new javax.swing.JButton();
         importIrdbHelpButton = new javax.swing.JButton();
         girrImportPanel = new javax.swing.JPanel();

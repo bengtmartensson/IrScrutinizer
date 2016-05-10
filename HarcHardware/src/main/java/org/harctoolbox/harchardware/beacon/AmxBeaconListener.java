@@ -31,7 +31,7 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 /**
  * This class listens for an AMX beacon and reports its findings.
  */
-public class AmxBeaconListener /*implements Serializable*/ {
+public class AmxBeaconListener {
     private final static int reapInterval = 60*1000; // 60 seconds
     private final static int reapAge = 2*60*1000; // 2 minutes
 
@@ -369,32 +369,39 @@ public class AmxBeaconListener /*implements Serializable*/ {
      * @param args
      */
     public static void main(String args[]) {
-        if (args.length == 0) {
-            AmxBeaconListener listener = new AmxBeaconListener(new PrintCallback());
-            listener.setDebug(true);
-            listener.start();
-        } else if (args.length == 3) {
-            AmxBeaconListener ab = new AmxBeaconListener();
-            ab.setDebug(true);
-            ab.start();
-            int n = 0;
-            while (true) {
-                System.out.println(new Date());
-                ab.printNodes();
-                try {
-                    Thread.sleep(Integer.parseInt(args[0]));
-                } catch (InterruptedException ex) {
-                    System.err.println(ex.getMessage());
+        switch (args.length) {
+            case 0:
+                AmxBeaconListener listener = new AmxBeaconListener(new PrintCallback());
+                listener.setDebug(true);
+                listener.start();
+                break;
+            case 3:
+                AmxBeaconListener ab = new AmxBeaconListener();
+                ab.setDebug(true);
+                ab.start();
+                int n = 0;
+                while (true) {
+                    System.out.println(new Date());
+                    ab.printNodes();
+                    try {
+                        Thread.sleep(Integer.parseInt(args[0]));
+                    } catch (InterruptedException ex) {
+                        System.err.println(ex.getMessage());
+                    }
                 }
-            }
-        } else if (args.length == 1) {
-            Collection<Node> result = listen(Integer.parseInt(args[0]), true);
-            for (Node r : result) {
-                System.out.println(r);
-            }
-        } else if (args.length == 2) {
-            Node r = listenFor("-Make", args[0], Integer.parseInt(args[1]));
-            System.err.println(r);
+                //break;
+            case 1:
+                Collection<Node> result = listen(Integer.parseInt(args[0]), true);
+                for (Node r : result) {
+                    System.out.println(r);
+                }
+                break;
+            case 2:
+                Node r = listenFor("-Make", args[0], Integer.parseInt(args[1]));
+                System.err.println(r);
+                break;
+            default:
+                break;
         }
     }
 }

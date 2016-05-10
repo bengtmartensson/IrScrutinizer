@@ -179,7 +179,7 @@ public class GuiUtils implements Serializable {
                 : ex.getClass().getSimpleName() + ": " + message;
         boolean result = error(errorMessage, offerStackTrace);
         if (result)
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
     }
 
     public String getInput(String message, String title, String defaultAnswer) {
