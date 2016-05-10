@@ -128,7 +128,6 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="irpMasterCurrentF" type="string" default='"0"' doc='Selected F for generator.'/>
     <property name="exportAutomaticFilenames" type="boolean" default='"true"' doc='Generate automatic file names for exports'/>
     <property name="invokeAnalyzer" type="boolean" default='"false"' doc='If true, the analyzer is invoked on scrutineering and on imports.' />
-    <property name="useCleansed" type="boolean" default='"false"' doc='If true, show captured signals with repeats eliminated, as per repeatfinder.' />
 
     <property name="girrFatRaw" type="boolean" default='"false"' />
     <property name="girrCreateSchemaLocation" type="boolean" default='"true"' />

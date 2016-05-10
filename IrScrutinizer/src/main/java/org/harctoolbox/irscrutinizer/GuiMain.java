@@ -493,7 +493,7 @@ public class GuiMain extends javax.swing.JFrame {
         });
 
         initializePlot();
-        setTitle(System.getenv("APPIMAGE") == null ? Version.versionString : Version.versionString + " AppImage");
+        super.setTitle(System.getenv("APPIMAGE") == null ? Version.versionString : Version.versionString + " AppImage");
         setupAnalyzerMenu();
         updateOutputFormat(properties.getOutputFormatIndex());
 
@@ -507,7 +507,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         Rectangle bounds = properties.getBounds();
         if (bounds != null)
-            setBounds(bounds);
+            super.setBounds(bounds);
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -535,30 +535,30 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        setIconImage((new ImageIcon(GuiMain.class.getResource("/icons/Crystal-Clear/64x64/apps/babelfish.png"))).getImage());
+        super.setIconImage((new ImageIcon(GuiMain.class.getResource("/icons/Crystal-Clear/64x64/apps/babelfish.png"))).getImage());
         console.setErrorFunction(
                 new org.harctoolbox.guicomponents.Console.IErrorFunction() {
-                    @Override
-                    public void err(Exception ex, String message) {
-                        if (ex == null)
-                            guiUtils.error(message);
-                        else
-                            guiUtils.error(ex, message);
-                    }
+            @Override
+            public void err(Exception ex, String message) {
+                if (ex == null)
+                    guiUtils.error(message);
+                else
+                    guiUtils.error(ex, message);
+            }
 
-                    @Override
-                    public void err(String str) {
-                        guiUtils.error(str);
-                    }
-                });
+            @Override
+            public void err(String str) {
+                guiUtils.error(str);
+            }
+        });
 
         // When the Tonto stuff loads, it tries to load a library called jnijcomm,
         // see javax.comm.DriverGenUnix. This will fail, but that is no concern for us.
         // However, it writes an ugly stacktrace on stderr, which is scaring the user.
         // Therefore, redirect stderr to nirvana, and make that call now.
-        PrintStream nullPrintStream = new PrintStream(new ByteArrayOutputStream());
+        PrintStream nullPrintStream = new PrintStream(new ByteArrayOutputStream(), false, IrpUtils.dumbCharsetName);
         System.setErr(nullPrintStream);
-        DriverGenUnix junk = new DriverGenUnix();
+        DriverGenUnix ignored = new DriverGenUnix();
 
         console.setStdErr();
         console.setStdOut();
@@ -772,35 +772,12 @@ public class GuiMain extends javax.swing.JFrame {
                 repeatFinder.getRepeatFinderData().getEndingLength()/2);
     }
 
-    private void setRepeatParameters(IrSequence irSequence) {
-        if (properties.getInvokeRepeatFinder()) {
-            RepeatFinder repeatFinder = new RepeatFinder(irSequence);
-            setRepeatParameters(repeatFinder);
-        } else
-            setRepeatParameters(irSequence.getNumberBursts(), 0, 0, 0);
-    }
-
     private void setFrequencyParameter(double frequency) {
         frequencyLabel.setText(Long.toString(Math.round(frequency)));
     }
 
-    private void setFrequencyParameter(ModulatedIrSequence seq) {
-        setFrequencyParameter(seq.getFrequency());
-    }
-
     private void setFrequencyParameter(IrSignal irSignal) {
         setFrequencyParameter(irSignal.getFrequency());
-    }
-
-    private void setCaptureWindow(IrSequence irSequence) {
-        //if (properties.getUseCleansed()) {
-        IrSignal irSignal = InterpretString.interpretIrSequence(irSequence, properties.getInvokeRepeatFinder(), properties.getInvokeCleaner());
-        setCaptureWindow(irSignal);
-        //} else {
-        //    capturedDataTextArea.setText(irSequence.toPrintString(true));
-        //    if (! rawRadioButtonMenuItem.isSelected())
-        //        guiUtils.warning("Outputting an uninterpreted IrSequence in the selected output format not possible, using raw format.");
-        //}
     }
 
     private String formatIrSignal(IrSignal irSignal, OutputTextFormat format) throws IncompatibleArgumentException {
@@ -837,10 +814,6 @@ public class GuiMain extends javax.swing.JFrame {
             }
         else if (properties.getPrintDecodesToConsole())
             guiUtils.message(DecodeIR.DecodedSignal.toPrintString(decodes, false));
-    }
-
-    private void setDecodeIrParameters(ModulatedIrSequence seq) throws IOException {
-        setDecodeIrParameters(seq.toIrSignal());
     }
 
     private void clearAnalyzeParameters() {
@@ -936,45 +909,6 @@ public class GuiMain extends javax.swing.JFrame {
         displaySignal(irSignal);
     }
 
-//        setFrequencyParameter(modulatedIrSequence);
-//        if (properties.getInvokeAnalyzer())
-//            setAnalyzeParameters(modulatedIrSequence);
-//        else
-//            clearAnalyzeParameters();
-//
-//        //if (properties.getInvokeRepeatFinder()) {
-//        RepeatFinder repeatFinder = new RepeatFinder(modulatedIrSequence);
-//        setRepeatParameters(repeatFinder);
-//
-//        IrSignal signal = InterpretString.interpretIrSequence(modulatedIrSequence, properties.getInvokeRepeatFinder(), properties.getInvokeCleaner());
-//        try {
-//            setDecodeIrParameters(signal);
-//        } catch (IOException ex) {
-//            guiUtils.warning("DecodeIR not found");
-//        }
-//
-//        //if (properties.getUseCleansed()) {
-//        irPlotter.plot(signal);
-//        setCaptureWindow(signal);
-//        //} else {
-//                irPlotter.plot(modulatedIrSequence,
-//                        repeatFinder.getRepeatFinderData().getBeginLength()/2,
-//                        repeatFinder.getRepeatFinderData().getRepeatLength()/2,
-//                        repeatFinder.getRepeatFinderData().getNumberRepeats()/2);
-//                setCaptureWindow(signal);
-//            }
-//        } else {
-//            try {
-//                setDecodeIrParameters(modulatedIrSequence);
-//            } catch (IOException ex) {
-//                guiUtils.warning("DecodeIR not found");
-//            }
-//            setRepeatParameters(modulatedIrSequence);
-//            irPlotter.plot(modulatedIrSequence);
-//            setCaptureWindow(modulatedIrSequence);
-//        }
-//    }
-
     private void saveParametricSignals(RemoteSetExporter exporter) {
         try {
             File file = saveCommands(parameterTableModel, Version.appName + " parametric export", exporter);
@@ -1045,7 +979,6 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private File saveSignal(Command command, String title, ICommandExporter exporter) throws FileNotFoundException, IOException, IrpMasterException {
-        //File file = exporter.exportFilename(properties.getExportAutomaticFilenames(), this);
         return exporter.export(command, "IrScrutinizer captured signal", title,
                 properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
                 new File(properties.getExportDir()), properties.getExportCharsetName());
@@ -1139,22 +1072,6 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private void doExit() {
-        /*try {
-            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, "US-ASCII"));
-            System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err), true, "US-ASCII"));
-        } catch (UnsupportedEncodingException ex) {
-            // This cannot happen
-            assert false;
-        }*/
-
-        //if (socketThread != null)
-        //    socketThread.close();
-        //if (!propertiesWasReset) {
-        //    properties.setBounds(getBounds());
-            //    properties.setHardwareIndex(hardwareIndex);
-        //}
-        //System.err.println("Exiting...");
-        //globalCacheIrSenderSelector.closeGlobalCache();
         capturingHardwareManager.close();
         sendingHardwareManager.close();
         System.exit(0);
@@ -2091,11 +2008,9 @@ public class GuiMain extends javax.swing.JFrame {
         fallbackFrequencyMenuItem = new javax.swing.JMenuItem();
         verboseCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ignoreEndingSilenceCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
         repeatFinderCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         cleanerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         invokeAnalyzerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        useCleansedCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         printDecodesToConsoleCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         parametrizedLearnIgnoreTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         irpProtocolsIniMenu = new javax.swing.JMenu();
@@ -6214,11 +6129,6 @@ public class GuiMain extends javax.swing.JFrame {
         });
         optionsMenu.add(ignoreEndingSilenceCheckBoxMenuItem);
 
-        jCheckBoxMenuItem1.setText("Show pulses instead of times");
-        jCheckBoxMenuItem1.setToolTipText("not yet implemented");
-        jCheckBoxMenuItem1.setEnabled(false);
-        optionsMenu.add(jCheckBoxMenuItem1);
-
         repeatFinderCheckBoxMenuItem.setSelected(properties.getInvokeRepeatFinder());
         repeatFinderCheckBoxMenuItem.setText("Invoke repeat finder");
         repeatFinderCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -6246,16 +6156,6 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
         optionsMenu.add(invokeAnalyzerCheckBoxMenuItem);
-
-        useCleansedCheckBoxMenuItem.setSelected(properties.getUseCleansed());
-        useCleansedCheckBoxMenuItem.setText("Use cleansed captures (NO USED)");
-        useCleansedCheckBoxMenuItem.setToolTipText("Remove identified multiple repetitions from captured signals.");
-        useCleansedCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                useCleansedCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        optionsMenu.add(useCleansedCheckBoxMenuItem);
 
         printDecodesToConsoleCheckBoxMenuItem.setSelected(properties.getPrintDecodesToConsole());
         printDecodesToConsoleCheckBoxMenuItem.setText("Print decodes to console");
@@ -7294,7 +7194,7 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_setProtocolMenuItemActionPerformed
 
     private void exportParametricAsLircMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportParametricAsLircMenuItemActionPerformed
-        saveParametricSignals(new LircExporter(properties.getCreatingUser()/*, new File(properties.getExportDir())*/));
+        saveParametricSignals(new LircExporter(properties.getCreatingUser()));
     }//GEN-LAST:event_exportParametricAsLircMenuItemActionPerformed
 
     private void nukeHexMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nukeHexMenuItemActionPerformed
@@ -7782,9 +7682,6 @@ public class GuiMain extends javax.swing.JFrame {
 
             if (modulatedIrSequence != null) {
                 IrSignal signal = InterpretString.interpretIrSequence(modulatedIrSequence, true, true);
-                /*DecodeIR decodeIr = DecodeIR.newDecodeIR(irSignal);
-                 if (decodeIr == null)
-                 throw new IOException("DecodeIR was not found");*/
                 guiUtils.message(modulatedIrSequence.toPrintString());
                 guiUtils.message("f=" + (int) modulatedIrSequence.getFrequency());
                 DecodeIR.DecodedSignal[] decodes = DecodeIR.decode(signal);
@@ -7796,7 +7693,6 @@ public class GuiMain extends javax.swing.JFrame {
                     }
                 } else
                     guiUtils.message("No decodes.");
-                //setDecodeIrParameters(DecodeIR.DecodedSignal.toPrintString(decodes));
             } else
                 guiUtils.error("No signal received.");
         } catch (TimeoutException ex) {
@@ -7837,13 +7733,6 @@ public class GuiMain extends javax.swing.JFrame {
 
         properties.setIrpProtocolsIniPath(f.getAbsolutePath());
         guiUtils.warning("The program must be restarted for the changes to take effect.");
-        /*try {
-            irpMaster = new IrpMaster(properties.getIrpProtocolsIniPath());
-        } catch (FileNotFoundException ex) {
-            guiUtils.error(ex);
-        } catch (IncompatibleArgumentException ex) {
-            guiUtils.error(ex);
-        }*/
     }//GEN-LAST:event_irpProtocolsSelectMenuItemActionPerformed
 
     private void exportFormatsEditMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportFormatsEditMenuItemActionPerformed
@@ -8045,10 +7934,6 @@ public class GuiMain extends javax.swing.JFrame {
         moveDownMenuItem.setEnabled(!state);
         moveUpMenuItem.setEnabled(!state);
     }//GEN-LAST:event_rawSorterCheckBoxMenuItemActionPerformed
-
-    private void useCleansedCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useCleansedCheckBoxMenuItemActionPerformed
-        properties.setUseCleansed(useCleansedCheckBoxMenuItem.isSelected());
-    }//GEN-LAST:event_useCleansedCheckBoxMenuItemActionPerformed
 
     private void transmitSignalButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitSignalButton1ActionPerformed
         reAnalyze();
@@ -8722,7 +8607,6 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel irtransImportPanel;
     private javax.swing.JButton jButton20;
     private javax.swing.JButton jButton22;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -8954,7 +8838,6 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton transmitSignalButton1;
     private javax.swing.JMenuItem tutorialMenuItem;
     private javax.swing.JMenuItem unsetTMenuItem;
-    private javax.swing.JCheckBoxMenuItem useCleansedCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem usePopupsForErrorsCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem usePopupsForHelpCheckBoxMenuItem;
     private javax.swing.JMenu usePopupsMenu;
