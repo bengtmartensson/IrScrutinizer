@@ -25,7 +25,7 @@ import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.ParseException;
 import org.harctoolbox.girr.Command;
-import org.harctoolbox.irscrutinizer.Utils;
+import org.harctoolbox.harchardware.ir.InterpretStringHardware;
 
 /**
  * This class does something interesting and useful. Or not...
@@ -52,7 +52,7 @@ public class RawLineImporter extends RemoteSetImporter implements IReaderImporte
                 continue;
 
             try {
-                irSignal = Utils.interpretString(line, getFallbackFrequency(), isInvokeRepeatFinder(), isInvokeAnalyzer());
+                irSignal = InterpretStringHardware.interpretString(line, getFallbackFrequency(), isInvokeRepeatFinder(), isInvokeAnalyzer());
             } catch (ParseException ex) {
                 name = line;
                 irSignal = null;
