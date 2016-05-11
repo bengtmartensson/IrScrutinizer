@@ -160,12 +160,15 @@ public class IrpMaster implements Serializable {
      * @throws ParseException
      * @throws org.harctoolbox.IrpMaster.UnknownProtocolException
      */
-
     public Protocol newProtocol(String name) throws UnassignedException, ParseException, UnknownProtocolException {
         UnparsedProtocol protocol = protocols.get(name.toLowerCase(IrpUtils.dumbLocale));
         if (protocol == null)
             throw new UnknownProtocolException(name);
         return new Protocol(protocol.name.toLowerCase(IrpUtils.dumbLocale), protocol.irp, protocol.documentation);
+    }
+
+    public Protocol newProtocolOrNull(String name) throws UnassignedException, ParseException, UnknownProtocolException {
+        return isKnown(name) ? newProtocol(name) : null;
     }
 
     private void expand() throws IncompatibleArgumentException {

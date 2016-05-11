@@ -567,7 +567,7 @@ public class Command implements Serializable {
     @SuppressWarnings("unchecked")
     public Command(String name, String comment, String protocolName, HashMap<String, Long> parameters)
             throws IrpMasterException {
-        this(name, comment, protocolName, irpMaster.newProtocol(protocolName), parameters);
+        this(name, comment, protocolName, irpMaster.newProtocolOrNull(protocolName), parameters);
     }
 
     @SuppressWarnings("unchecked")
