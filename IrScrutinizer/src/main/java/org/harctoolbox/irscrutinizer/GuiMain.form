@@ -1486,24 +1486,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ignoreEndingSilenceCheckBoxMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="jCheckBoxMenuItem1">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Show pulses instead of times"/>
-                <Property name="toolTipText" type="java.lang.String" value="not yet implemented"/>
-                <Property name="enabled" type="boolean" value="false"/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="invokeAnalyzerCheckBoxMenuItem">
-              <Properties>
-                <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="properties.getInvokeAnalyzer()" type="code"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Invoke analyzer"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="invokeAnalyzerCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="repeatFinderCheckBoxMenuItem">
               <Properties>
                 <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
@@ -1515,16 +1497,27 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="repeatFinderCheckBoxMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="useCleansedCheckBoxMenuItem">
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cleanerCheckBoxMenuItem">
               <Properties>
                 <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="properties.getUseCleansed()" type="code"/>
+                  <Connection code="properties.getInvokeCleaner()" type="code"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Use cleansed captures"/>
-                <Property name="toolTipText" type="java.lang.String" value="Remove identified multiple repetitions from captured signals."/>
+                <Property name="text" type="java.lang.String" value="Invoke signal cleaner"/>
+                <Property name="toolTipText" type="java.lang.String" value="If selected, signal cleaning will be invoked on signals from the data pane and from the clipboard"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="useCleansedCheckBoxMenuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cleanerCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="invokeAnalyzerCheckBoxMenuItem">
+              <Properties>
+                <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="properties.getInvokeAnalyzer()" type="code"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Invoke analyzer"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="invokeAnalyzerCheckBoxMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="printDecodesToConsoleCheckBoxMenuItem">
@@ -1737,6 +1730,30 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="girrSchemaLocationMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
+                <Menu class="javax.swing.JMenu" name="toleranceMenu">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Tolerances"/>
+                  </Properties>
+                  <SubComponents>
+                    <MenuItem class="javax.swing.JMenuItem" name="absoluteToleranceMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Absolute..."/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="absoluteToleranceMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="relativeToleranceMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Relative..."/>
+                        <Property name="toolTipText" type="java.lang.String" value="Relative tolerance (between 0 and 1) for durations comparisions"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="relativeToleranceMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                  </SubComponents>
+                </Menu>
               </SubComponents>
             </Menu>
             <Menu class="javax.swing.JMenu" name="exportOptionsMenu">
@@ -1775,6 +1792,8 @@
                 </MenuItem>
               </SubComponents>
             </Menu>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator22">
+            </MenuItem>
             <Menu class="javax.swing.JMenu" name="debugMenu">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Debug"/>
@@ -1802,8 +1821,6 @@
                 </MenuItem>
               </SubComponents>
             </Menu>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator22">
-            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="toolsMenu">
@@ -3083,7 +3100,7 @@
                         </Component>
                         <Component class="org.harctoolbox.irscrutinizer.importer.TreeImporter" name="gcdbTreeImporter">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.TreeImporter(guiUtils)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.TreeImporter(this.guiUtils)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importGlobalCacheHelpButton">
@@ -3250,7 +3267,7 @@
                         </Component>
                         <Component class="org.harctoolbox.irscrutinizer.importer.TreeImporter" name="irdbTreeImporter">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.TreeImporter(guiUtils)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.TreeImporter(this.guiUtils)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="jButton22">

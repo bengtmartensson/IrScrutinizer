@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.harctoolbox.IrpMaster.ExchangeIR;
+import org.harctoolbox.IrpMaster.InterpretString;
 import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
@@ -124,7 +124,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
             frequency = (int) IrpUtils.defaultFrequency;
             System.err.println("Warning: carrier_frequency missing, assuming " + (int) IrpUtils.defaultFrequency);
         }
-        IrSignal irSignal = ExchangeIR.interpretIrSequence(dataArray, (double) frequency, isInvokeRepeatFinder(), isInvokeAnalyzer());
+        IrSignal irSignal = InterpretString.interpretIrSequence(dataArray, (double) frequency, isInvokeRepeatFinder(), isInvokeAnalyzer());
         Command command = new Command(uniqueName(name), origin == null ? "ICT import" : ("ICT import from " + origin), irSignal);
         addCommand(command);
     }

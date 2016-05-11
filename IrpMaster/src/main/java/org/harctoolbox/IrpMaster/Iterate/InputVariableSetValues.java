@@ -66,7 +66,7 @@ public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Lo
         return finished;
     }
 
-    private void update() {
+    private void update() throws NoSuchElementException {
         if (isFinished())
             throw new NoSuchElementException();
 

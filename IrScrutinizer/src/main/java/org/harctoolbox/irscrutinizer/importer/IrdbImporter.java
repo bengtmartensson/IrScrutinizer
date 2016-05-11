@@ -40,7 +40,6 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
-import org.harctoolbox.irscrutinizer.Utils;
 
 public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter {
 
@@ -316,7 +315,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
             //ParametrizedIrSignal paramSig = new ParametrizedIrSignal(pds.getProtocol(), pds.getDevice(), pds.subdevice,
             //        kvp.getValue().longValue(), kvp.getKey(),
             //        "IRDB: " + manufacturer + "/" + deviceType + "/" + pds.toString());
-            HashMap<String, Long> parameters = Utils.mkParameters(pds.getDevice(), pds.subdevice, kvp.getValue());
+            HashMap<String, Long> parameters = IrpUtils.mkParameters(pds.getDevice(), pds.subdevice, kvp.getValue());
             Command command = new Command(kvp.getKey(),
                     "IRDB: " + manufacturer + "/" + deviceType + "/" + pds.toString(),
                     pds.getProtocol(),

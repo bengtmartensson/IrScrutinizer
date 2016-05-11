@@ -64,6 +64,11 @@ public class XmlExporter {
     public static final String girrNamespace = "http://www.harctoolbox.org/Girr";
 
     /**
+     * Homepage URL.
+     */
+    public static final String girrHomePage = "http://www.harctoolbox.org/Girr.html";
+
+    /**
      * URL for schema file supporting name spaces.
      */
     public static final String girrSchemaLocationURL = "http://www.harctoolbox.org/schemas/girr_ns.xsd";

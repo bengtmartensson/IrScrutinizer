@@ -18,6 +18,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.importer;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -230,8 +231,11 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
     }
 
     private void checkGuiMain() {
-        if (guiMain == null)
-            guiMain = (GuiMain) getRootPane().getParent();
+        if (guiMain == null) {
+            Container component = getRootPane().getParent();
+            assert(component instanceof GuiMain);
+            guiMain = (GuiMain) component;
+        }
     }
 
     private int importCommands(Collection<Command> commands, boolean raw) {

@@ -528,15 +528,15 @@ public class IrpMaster implements Serializable {
                             System.exit(IrpUtils.exitSemanticUsageError);
                         }
                         irSignal = prontoPlausible ? Pronto.ccfSignal(ccf)
-                                : rawPlausible ? ExchangeIR.interpretIrSequence(ccf, true)
-                                : ExchangeIR.parseUeiLearned(ccf);
+                                : rawPlausible ? InterpretString.interpretIrSequence(ccf, IrpUtils.defaultFrequency, true, true)
+                                : UeiLearnedSignal.parseUeiLearned(ccf);
                     }
                     if (doRaw)
                         System.out.println(irSignal);
                     if (doPronto)
                         System.out.println(irSignal.ccfString());
                     if (doUei)
-                        System.out.println(ExchangeIR.newUeiLearned(irSignal));
+                        System.out.println(UeiLearnedSignal.newUeiLearned(irSignal));
                     if (invokeDecodeIR)
                         DecodeIR.invoke(irSignal);
                     if (invokeAnalyzeIR)
@@ -755,12 +755,12 @@ public class IrpMaster implements Serializable {
                     }
                     if (doUei && irSignal != null) {
                         if (doXML) {
-                            protocol.addXmlNode("uei-learned", ExchangeIR.newUeiLearned(irSignal).toString());
+                            protocol.addXmlNode("uei-learned", UeiLearnedSignal.newUeiLearned(irSignal).toString());
                         } else {
                             if (!writtenHeader)
                                 printStream.println(IrpUtils.variableHeader(actualParameters));
                             writtenHeader = true;
-                            printStream.println(ExchangeIR.newUeiLearned(irSignal).toString());
+                            printStream.println(UeiLearnedSignal.newUeiLearned(irSignal).toString());
                         }
                     }
 

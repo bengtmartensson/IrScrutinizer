@@ -17,8 +17,8 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.exporter;
 
-import org.harctoolbox.IrpMaster.ExchangeIR;
 import org.harctoolbox.IrpMaster.IrSignal;
+import org.harctoolbox.IrpMaster.UeiLearnedSignal;
 import org.harctoolbox.girr.Command;
 
 /**
@@ -34,7 +34,7 @@ public class UeiFormatter implements Command.CommandTextFormat {
     @Override
     public String format(IrSignal irSignal, int count) {
         try {
-            return ExchangeIR.newUeiLearned(irSignal).toString();
+            return UeiLearnedSignal.newUeiLearned(irSignal).toString();
         } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException("UEI formatting error: " + ex.getMessage());
         }

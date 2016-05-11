@@ -21,6 +21,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 <properties package="org.harctoolbox.irscrutinizer" useXml = "true" appName="Version.appName" home-environment-var="IRSCRUTINIZERHOME">
     <import class="org.harctoolbox.harchardware.ir.IrTrans"/>
     <import class="org.harctoolbox.harchardware.ir.LircClient"/>
+    <import class="org.harctoolbox.IrpMaster.IrpUtils"/>
     <property name="bounds" type="rectangle" default='null' doc='Bounds of IrScrutinizer window.'/>
     <property name="outputFormatIndex" type="int" default='"1"' />
     <property name="irWidgetCapturePortName" type="string" default='ifWindows("COM8","/dev/ttyUSB0")' doc='Name of device to use, e.g. COM8 or /dev/ttyUSB0.' />
@@ -57,6 +58,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="ignoreEndingSilence" type="boolean" default='"false"' doc='If true, the last silence in the recorded signal will not be shown in plots'/>
     <property name="verbose" type="boolean" default='"false"' doc='If true, execute some commands more verbosely' />
     <property name="invokeRepeatFinder" type="boolean" default='"true"' doc="Determines if the repeatfinder is invoked on captures and clipboard."/>
+    <property name="invokeCleaner" type="boolean" default='"true"' doc="Determines if the signal cleaner is invoked on captures and clipboard."/>
     <property name="disregardRepeatMins" type="boolean" default='"false"' doc='Value of the "disregard repeat mins" parameter. See IrpMaster documentation for the semantic.'/>
     <property name="exportDir" type="string" default='System.getProperty("java.io.tmpdir") + File.separator + "exports"' doc='Directory to which to write exports.'/>
     <property name="defaultImportDir" type="string" default='"testfiles"' doc='Just the starting directory for file selectors.'/>
@@ -127,7 +129,6 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="irpMasterCurrentF" type="string" default='"0"' doc='Selected F for generator.'/>
     <property name="exportAutomaticFilenames" type="boolean" default='"true"' doc='Generate automatic file names for exports'/>
     <property name="invokeAnalyzer" type="boolean" default='"false"' doc='If true, the analyzer is invoked on scrutineering and on imports.' />
-    <property name="useCleansed" type="boolean" default='"false"' doc='If true, show captured signals with repeats eliminated, as per repeatfinder.' />
 
     <property name="girrFatRaw" type="boolean" default='"false"' />
     <property name="girrCreateSchemaLocation" type="boolean" default='"true"' />
@@ -141,4 +142,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="prontoScreenSizeY" type="int" default='"220"' doc="Pronto screen height" />
     <property name="prontoButtonSizeX" type="int" default='"80"' doc="Pronto screen width" />
     <property name="prontoButtonSizeY" type="int" default='"30"' doc="Pronto screen height" />
+
+    <property name="absoluteTolerance" type="double" default='Double.toString(IrpUtils.defaultAbsoluteTolerance)' doc="Absolute tolerance for duration comparisions" />
+    <property name="relativeTolerance" type="double" default='Double.toString(IrpUtils.defaultRelativeTolerance)' doc="Relative tolerance for duration comparisions" />
 </properties>

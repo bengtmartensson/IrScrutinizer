@@ -81,15 +81,15 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
                 }
             }
         }
+        String actualPort = initialPort;
         if (!hit) {
             // Got a problem here, want to select a port that is not there, at least not now
             if (model.getSize() > 0) {
                 portComboBox.setSelectedIndex(0);
-                initialPort = (String) portComboBox.getItemAt(0);
+                actualPort = (String) portComboBox.getItemAt(0);
             }
-
         }
-        setPortName(initialPort);
+        setPortName(actualPort);
         setBaudRateUnconditionally(initialBaud);
         this.settableBaudRate = settableBaudRate;
         baudComboBox.setEnabled(settableBaudRate);

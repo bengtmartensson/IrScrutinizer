@@ -31,7 +31,7 @@ import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.girr.Command;
-import org.harctoolbox.irscrutinizer.Utils;
+import org.harctoolbox.harchardware.ir.InterpretStringHardware;
 
 /**
  * This class does something interesting and useful. Or not...
@@ -144,7 +144,8 @@ public class CsvRawImporter extends CsvImporter {
         }
         IrSignal irSignal = null;
         try {
-            irSignal = Utils.interpretString(code, IrpUtils.defaultFrequency, isInvokeRepeatFinder(), isInvokeAnalyzer());
+            irSignal = InterpretStringHardware.interpretString(code, IrpUtils.defaultFrequency, isInvokeRepeatFinder(),
+                    isInvokeAnalyzer());
         } catch (IrpMasterException ex) {
             if (isVerbose())
                 System.err.println("Error parsing code in line " + lineNo + " (" + ex.getMessage() + ")");

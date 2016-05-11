@@ -44,13 +44,13 @@ public class HarcletFrame extends javax.swing.JFrame {
         this.exitOnClose = exitOnClose;
         harclet = panel;
         initComponents();
-        setTitle(harclet.getProgName());
+        super.setTitle(harclet.getProgName());
 
-        setIconImage((new ImageIcon(HarcletFrame.class.getResource(harclet.getIconPath()))).getImage());
-        setResizable(false);
+        super.setIconImage((new ImageIcon(HarcletFrame.class.getResource(harclet.getIconPath()))).getImage());
+        super.setResizable(false);
 
         if (exitOnClose) {
-            setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+            super.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         }
     }
 

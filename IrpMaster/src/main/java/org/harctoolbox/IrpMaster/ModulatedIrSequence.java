@@ -131,7 +131,7 @@ public class ModulatedIrSequence extends IrSequence {
      */
     @Override
     public String toPrintString(boolean alternatingSigns, boolean noSigns, String separator) {
-        return toPrintString(alternatingSigns, noSigns, separator, true);
+        return toPrintString(alternatingSigns, noSigns, separator, false);
     }
 
     /**
@@ -183,6 +183,38 @@ public class ModulatedIrSequence extends IrSequence {
      */
     public IrSignal toIrSignal() {
         return new IrSignal(frequency, dutyCycle, this, new IrSequence(), new IrSequence());
+    }
+
+    /**
+     * Constructs an IrSignal.
+     * @param beginningLength Length of the intro sequence
+     * @param repeatLength Length of the repeat sequence
+     * @param noRepeats Number of occurrences of the repeat sequence
+     * @return IrSignal
+     * @throws IncompatibleArgumentException
+     */
+    public IrSignal toIrSignal(int beginningLength, int repeatLength, int noRepeats) throws IncompatibleArgumentException {
+        IrSequence intro = truncate(beginningLength);
+        IrSequence repeat = subSequence(beginningLength, repeatLength);
+        int startEnding = beginningLength + noRepeats * repeatLength;
+        int lengthEnding = getLength() - startEnding;
+        IrSequence ending = subSequence(startEnding, lengthEnding);
+        return new IrSignal(frequency, dutyCycle, intro, repeat, ending);
+    }
+
+    /**
+     * Compares two ModulatedIrSequences for (approximate) equality.
+     *
+     * @param irSequence to be compared against this.
+     * @param absoluteTolerance tolerance threshold in microseconds.
+     * @param relativeTolerance relative threshold, between 0 and 1.
+     * @param frequencyTolerance tolerance (absolute) for frequency in Hz.
+     * @return equality within tolerance.
+     */
+    public boolean isEqual(ModulatedIrSequence irSequence, double absoluteTolerance,
+            double relativeTolerance, double frequencyTolerance) {
+        return IrpUtils.isEqual(this.getFrequency(), irSequence.getFrequency(), 500, 0)
+                && super.isEqual(irSequence, absoluteTolerance, relativeTolerance);
     }
 
     /**

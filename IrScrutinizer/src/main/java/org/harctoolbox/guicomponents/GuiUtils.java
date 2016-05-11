@@ -179,7 +179,7 @@ public class GuiUtils implements Serializable {
                 : ex.getClass().getSimpleName() + ": " + message;
         boolean result = error(errorMessage, offerStackTrace);
         if (result)
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
     }
 
     public String getInput(String message, String title, String defaultAnswer) {
@@ -196,6 +196,11 @@ public class GuiUtils implements Serializable {
         return s == null ? null
                 : s.trim().isEmpty() ? IrpUtils.invalid
                 : IrpUtils.parseLong(s, false);
+    }
+
+    public Double getDoubleInput(String message, double oldValue) {
+        String s = getInput(message, "Parameter input", Double.toString(oldValue));
+        return s != null ? Double.parseDouble(s) : null;
     }
 
     public boolean confirm(String message) {

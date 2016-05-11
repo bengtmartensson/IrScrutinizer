@@ -60,9 +60,32 @@ public class IrpUtils {
      * Use if no information at all available.
      */
     public final static double defaultFrequency = 38000f;
+    public final static double unknownDutyCycle = -1f;
 
     public final static double microseconds2seconds = 1E-6;
     public final static double seconds2microseconds = 1E6;
+    public final static double milliseconds2seconds = 1E-3;
+    public final static double seconds2milliseconds = 1E3;
+
+    /**
+     * Default absolute tolerance in micro seconds.
+     */
+    public static final double defaultAbsoluteTolerance = 60;
+
+    /**
+     * Default relative tolerance as a number between 0 and 1.
+     */
+    public static final double defaultRelativeTolerance = 0.2;
+
+    /**
+     * Default absolute tolerance for frequency comparison.
+     */
+    public static final double defaultFrequencyTolerance = 500;
+
+    /**
+     * Default min repeat last gap, in milli seconds.
+     */
+    public static final double defaultMinRepeatLastGap = 20000f; // 20 milli seconds minimum for a repetition
 
     /**
      * Joins the Strings in the second argument, starting at the first argument, separating them with the third argument.
@@ -83,6 +106,16 @@ public class IrpUtils {
             res.append(separator).append(s[i]);
 
         return res.toString();
+    }
+
+    public static String join(Iterable<String> payload, String separator) {
+        StringBuilder str = new StringBuilder();
+        for (String s : payload) {
+            if (str.length() > 0)
+                str.append(separator);
+            str.append(s);
+        }
+        return str.toString();
     }
 
     public static String join(String[] s, String separator) {
@@ -115,10 +148,7 @@ public class IrpUtils {
     }
 
     public static double l1Norm(double[] sequence) {
-        double sum = 0;
-        for (int i = 0; i < sequence.length; i++)
-            sum += Math.abs(sequence[i]);
-        return sum;
+        return l1Norm(sequence, 0, sequence.length);
     }
 
     public static double l1Norm(double[] sequence, int beg, int length) {
@@ -175,6 +205,40 @@ public class IrpUtils {
      */
     public static InputStream getInputSteam(String filename) throws FileNotFoundException {
         return filename.equals("-") ? System.in : new FileInputStream(filename);
+    }
+
+    /**
+     * Tests for approximate equality.
+     *
+     * @param x first argument
+     * @param y second argument
+     * @param absoluteTolerance
+     * @param relativeTolerance
+     * @return true if either absolute or relative requirement is satisfied.
+     */
+    public static boolean isEqual(double x, double y, double absoluteTolerance, double relativeTolerance) {
+        double absDiff = Math.abs(x - y);
+        boolean absoluteOk = absDiff <= absoluteTolerance;
+        double max = Math.max(Math.abs(x), Math.abs(y));
+        boolean relativeOk = max > 0 && absDiff/max <= relativeTolerance;
+        return absoluteOk || relativeOk;
+    }
+
+    /**
+     * Tests for approximate equality.
+     *
+     * @param x first argument
+     * @param y second argument
+     * @param absoluteTolerance
+     * @param relativeTolerance
+     * @return true if either absolute or relative requirement is satisfied.
+     */
+    public static boolean isEqual(int x, int y, int absoluteTolerance, double relativeTolerance) {
+        int absDiff = Math.abs(x - y);
+        boolean absoluteOk = absDiff <= absoluteTolerance;
+        int max = Math.max(Math.abs(x), Math.abs(y));
+        boolean relativeOk = max > 0 && (double)absDiff/(double)max <= relativeTolerance;
+        return absoluteOk || relativeOk;
     }
 
     /**
@@ -288,6 +352,39 @@ public class IrpUtils {
             return "";
 
         return prefix + map.get(name) + postfix;
+    }
+
+    public static String basename(String s) {
+        StringBuilder sb = new StringBuilder(s);
+        int n = sb.lastIndexOf(File.separator);
+        if (n != -1)
+            sb.delete(0, n+1);
+        n = sb.lastIndexOf(".");
+        if (n != -1)
+            sb.delete(n, sb.length());
+        return sb.toString();
+    }
+
+    public static String addExtensionIfNotPresent(String filename, String extension) {
+        return filename + ((extension != null && !hasExtension(filename)) ? ('.' + extension) : "");
+    }
+
+    private static boolean hasExtension(String filename) {
+        int lastSeparator = filename.lastIndexOf(File.separator);
+        int lastPeriod = filename.lastIndexOf('.');
+        return lastPeriod > lastSeparator;
+    }
+
+    public static HashMap<String,Long> mkParameters(long D, long S, long F) {
+        HashMap<String, Long> result = new HashMap<>(3);
+        if (D != IrpUtils.invalid)
+            result.put("D", D);
+        if (S != IrpUtils.invalid)
+            result.put("S", S);
+        if (F != IrpUtils.invalid)
+            result.put("F", F);
+
+        return result;
     }
 
     public static void main(String[] args) {

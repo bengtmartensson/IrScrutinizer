@@ -26,10 +26,10 @@ public class StatusLine extends JTextField {
     public StatusLine() {
         super();
         copyPastePopupMenu = new CopyPastePopupMenu(false);
-        setEditable(false);
-        setToolTipText("Status line");
-        setText(null);
-        addMouseListener(new java.awt.event.MouseAdapter() {
+        super.setEditable(false);
+        super.setToolTipText("Status line");
+        super.setText(null);
+        super.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 genericCopyMenu(evt);
