@@ -27,43 +27,24 @@ public class UdpSocketPort implements ICommandLineDevice, IHarcHardware {
 
     UdpSocketChannel udpSocketChannel;
 
-    public UdpSocketPort(String hostIp, int portNumber, int timeout, boolean verbose) throws UnknownHostException {
+    public UdpSocketPort(String hostIp, int portNumber, int timeout, boolean verbose) throws UnknownHostException, SocketException {
         udpSocketChannel = new UdpSocketChannel(hostIp, portNumber, timeout, verbose);
     }
 
     @Override
     public void close() throws IOException {
-        //try {
-            udpSocketChannel.close();
-            udpSocketChannel = null;
-        //} catch (IOException ex) {
-            //throw new HarcHardwareException(ex);
-        //}
+        udpSocketChannel.close();
+        udpSocketChannel = null;
     }
 
     @Override
     public void sendString(String str) throws IOException {
-        //try {
-            udpSocketChannel.connect();
-            udpSocketChannel.sendString(str);
-            udpSocketChannel.close();
-        //} catch (IOException ex) {
-            //ex.printStackTrace();
-        //    throw new HarcHardwareException(ex);
-        //}
+        udpSocketChannel.sendString(str);
     }
 
     @Override
     public String readString() throws IOException {
-        //try {
-            udpSocketChannel.connect();
-            String result = udpSocketChannel.readString();
-            udpSocketChannel.close();
-            return result;
-        //} catch (IOException ex) {
-            //ex.printStackTrace();
-        //    throw new HarcHardwareException(ex);
-        //}
+        return udpSocketChannel.readString();
     }
 
     @Override
@@ -106,10 +87,8 @@ public class UdpSocketPort implements ICommandLineDevice, IHarcHardware {
         try {
             UdpSocketPort port = new UdpSocketPort("irtrans", 21000, 2000, true);
             port.sendString("snd philips_37pfl9603,power_toggle");
-            //port.close();
             String result = port.readString();
             System.out.println(result);
-            //port.close();
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }
@@ -117,7 +96,6 @@ public class UdpSocketPort implements ICommandLineDevice, IHarcHardware {
 
     @Override
     public void open() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

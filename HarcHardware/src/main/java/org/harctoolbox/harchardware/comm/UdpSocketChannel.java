@@ -22,6 +22,7 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -36,40 +37,35 @@ import org.harctoolbox.IrpMaster.IrpUtils;
  * It should therefore throw low-level exceptions, not HarcHardwareException.
  */
 public class UdpSocketChannel {
-    private final String hostIp;
     private final InetAddress inetAddress;
-    //private final String myIp;
     private final int portNumber;
     private boolean verbose;
-    private int timeout;
     private DatagramSocket socket = null;
     private PrintStream outStream = null;
 
     private final static int BUFFERSIZE = 65000;
     private final byte[] byteBuffer = new byte[BUFFERSIZE];
 
-    public UdpSocketChannel(String hostIp, int portNumber, int timeout, boolean verbose) throws UnknownHostException {
-        this.hostIp = hostIp;
-        inetAddress = InetAddress.getByName(hostIp);
-        //this.myIp = myIp;
+    public UdpSocketChannel(InetAddress inetAddress, int portNumber, int timeout, boolean verbose) throws UnknownHostException, SocketException {
+        this.inetAddress = inetAddress;
         this.portNumber = portNumber;
-        this.timeout = timeout;
         this.verbose = verbose;
+        socket = new DatagramSocket();
+        socket.setSoTimeout(timeout);
+        try {
+            outStream = new PrintStream(new FilteredStream(new ByteArrayOutputStream()), false, IrpUtils.dumbCharsetName);
+        } catch (UnsupportedEncodingException ex) {
+            // cannot happen
+        }
     }
 
-    // byte[] buf = cmd.getBytes();
-
-    public void connect() throws IOException {
-        if (socket == null) {
-            socket = new DatagramSocket();
-            socket.setSoTimeout(timeout);
-            outStream = new PrintStream(new FilteredStream(new ByteArrayOutputStream()), false, IrpUtils.dumbCharsetName);
-        }
+    public UdpSocketChannel(String hostIp, int portNumber, int timeout, boolean verbose) throws UnknownHostException, SocketException {
+        this(InetAddress.getByName(hostIp), portNumber, timeout, verbose);
     }
 
     private void send(byte[] buf) throws IOException {
         if (verbose)
-            System.err.println("Sending command `" + new String(buf, IrpUtils.dumbCharset) + "' over UDP to " + hostIp + ":" +  portNumber);
+            System.err.println("Sending command `" + new String(buf, IrpUtils.dumbCharset) + "' over UDP to " + inetAddress.getCanonicalHostName() + ":" +  portNumber);
         DatagramPacket dp = new DatagramPacket(buf, buf.length, inetAddress, portNumber);
         socket.send(dp);
     }
@@ -115,20 +111,17 @@ public class UdpSocketChannel {
     }
 
     public String readString() throws SocketException, IOException {
-        String payload;
-        try (DatagramSocket inSocket = new DatagramSocket(portNumber, inetAddress)) {
-            inSocket.setSoTimeout(timeout);
-            DatagramPacket pack = new DatagramPacket(byteBuffer, byteBuffer.length);
-            if (verbose)
-                System.err.println("listening at:" + portNumber + "...");
-            inSocket.receive(pack);
-            payload = (new String(pack.getData(), 0, pack.getLength(), IrpUtils.dumbCharset));
-            InetAddress a = pack.getAddress();
-            int port = pack.getPort();
-            if (verbose)
-                System.err.println("Got package for " + a + ":" + port + ": " + payload);
-            inSocket.disconnect();
-        }
+        DatagramPacket pack = new DatagramPacket(byteBuffer, byteBuffer.length);
+        if (verbose)
+            System.err.println("listening at:" + portNumber + "...");
+        socket.receive(pack);
+        String payload = (new String(pack.getData(), 0, pack.getLength(), IrpUtils.dumbCharset));
+        InetAddress a = pack.getAddress();
+        int port = pack.getPort();
+        if (verbose)
+            System.err.println("Got package for " + a + ":" + port + ": " + payload);
+        //socket.disconnect();
+        //socket.close();
         return payload;
     }
 
@@ -137,7 +130,6 @@ public class UdpSocketChannel {
     }
 
     public void setTimeout(int timeout) throws SocketException {
-        this.timeout = timeout;
         socket.setSoTimeout(timeout);
     }
 
@@ -151,7 +143,6 @@ public class UdpSocketChannel {
     public static void main(String[] args) {
         try {
             UdpSocketChannel ch = new UdpSocketChannel("irtrans", 21000, 2000, true);
-            ch.connect();
             ch.sendString("snd philips_37pfl9603,power_toggle");
             String response = ch.readString();
             System.out.println(response);

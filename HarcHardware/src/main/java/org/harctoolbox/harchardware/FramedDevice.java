@@ -58,14 +58,12 @@ public class FramedDevice {
         boolean sentStuff = false;
         try {
             for (String cmd : cmds) {
-                if (!cmd.isEmpty()) {
-                    sentStuff = true;
-                    String command = framer.frame(cmd);
-                    for (int c = 0; c < count; c++) {
-                        if (delay > 0 && c > 0)
-                            Thread.sleep(delay);
-                        hardware.sendString(command);
-                    }
+                sentStuff = true;
+                String command = framer.frame(cmd);
+                for (int c = 0; c < count; c++) {
+                    if (delay > 0 && c > 0)
+                        Thread.sleep(delay);
+                    hardware.sendString(command);
                 }
             }
             if (returnLines == 0)
@@ -103,11 +101,11 @@ public class FramedDevice {
     }
 
     public String readString() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return hardware.readString();
     }
 
     public String readString(boolean wait) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return hardware.readString(wait);
     }
 
     public String getVersion() throws IOException {
