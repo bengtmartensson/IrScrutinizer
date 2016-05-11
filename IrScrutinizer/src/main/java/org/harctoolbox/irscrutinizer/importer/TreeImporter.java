@@ -48,7 +48,7 @@ import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 
 public class TreeImporter extends javax.swing.JPanel implements TreeExpansionListener {
     private GuiUtils guiUtils;
-    private GuiMain guiMain;
+    private GuiMain guiMain = null;
     private DefaultMutableTreeNode root;
     private RemoteSet remoteSet;
 
@@ -72,22 +72,21 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
     /**
      * Creates new form TreeImporter
-     * @param guiUtils
      */
-    private TreeImporter(GuiUtils guiUtils) {
-        this.guiUtils = guiUtils;
-        Container container = super.getRootPane().getParent();
-        assert (container instanceof GuiMain);
-        guiMain = (GuiMain) container;
+    public TreeImporter() {
         initComponents();
         tree.setCellRenderer(new MyRenderer());
-        this.guiUtils = guiUtils;
+        tree.addTreeExpansionListener(this);
     }
 
-    public static TreeImporter newTreeImporter(GuiUtils guiUtils) {
-        TreeImporter treeImporter = new TreeImporter(guiUtils);
-        treeImporter.tree.addTreeExpansionListener(treeImporter);
-        return treeImporter;
+    /**
+     * Creates new form TreeImporter
+     * @param guiUtils
+     */
+    public TreeImporter(GuiUtils guiUtils/*, IRemoteSetImporter importer*/) {
+        this();
+        this.guiUtils = guiUtils;
+        //this.importer = importer;
     }
 
     public void setRemoteSet(RemoteSet remoteSet) {
@@ -162,7 +161,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
     private int importSelectedSignals(boolean raw) throws IrpMasterException {
         int count = 0;
         TreePath[] paths = tree.getSelectionPaths();
-        //checkGuiMain();
+        checkGuiMain();
         for (TreePath path : paths) {
             Object thing = ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
             if (Remote.class.isInstance(thing)) {
@@ -184,7 +183,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
             guiMain.selectImportPane(type);
     }
 
-    static class MyRenderer extends DefaultTreeCellRenderer {
+    static class MyRenderer extends DefaultTreeCellRenderer /*implements TreeCellRenderer*/ {
 
         @Override
         public Component getTreeCellRendererComponent(
@@ -229,6 +228,14 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         }
         Command command = (Command) thing;
         return command;
+    }
+
+    private void checkGuiMain() {
+        if (guiMain == null) {
+            Container component = getRootPane().getParent();
+            assert(component instanceof GuiMain);
+            guiMain = (GuiMain) component;
+        }
     }
 
     private int importCommands(Collection<Command> commands, boolean raw) {
@@ -470,7 +477,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         Command command = getSingleCommand();
         if (command == null)
             return;
-        //checkGuiMain();
+        checkGuiMain();
         try {
             guiMain.scrutinizeIrSignal(command.toIrSignal());
             importJump(1, ImportType.signal);
@@ -480,7 +487,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
     }//GEN-LAST:event_importSignalButtonActionPerformed
 
     private void importAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importAllButtonActionPerformed
-        //checkGuiMain();
+        checkGuiMain();
         int result = importCommands(remoteSet.getAllCommands(), false);
         if (result > 0)
             importJump(result, ImportType.parametricRemote);
@@ -509,7 +516,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         Command command = getSingleCommand();
         if (command == null)
             return;
-        //checkGuiMain();
+        checkGuiMain();
         try {
             guiMain.transmit(command);
         } catch (IrpMasterException | IOException | HardwareUnavailableException ex) {
@@ -526,7 +533,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
     }//GEN-LAST:event_transmitSignalMenuItemActionPerformed
 
     private void importAllRawButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importAllRawButtonActionPerformed
-        //checkGuiMain();
+        checkGuiMain();
         int result = importCommands(remoteSet.getAllCommands(), true);
         if (result > 0)
             importJump(result, ImportType.rawRemote);
@@ -556,7 +563,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         if (command == null)
             return;
 
-        //checkGuiMain();
+        checkGuiMain();
         try {
             guiMain.scrutinizeIrSignal(command.toIrSignal());
         } catch (IrpMasterException ex) {

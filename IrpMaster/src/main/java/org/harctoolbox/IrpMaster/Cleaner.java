@@ -119,16 +119,16 @@ public class Cleaner {
         return cleaner.toIrSequence();
     }
 
-    public static IrSequence clean(IrSequence irSequence) {
-         return clean(irSequence, (int) IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance);
-    }
+    //public static IrSequence clean(IrSequence irSequence) {
+    //     return clean(irSequence, (int) IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance);
+    //}
 
     public static ModulatedIrSequence clean(ModulatedIrSequence irSequence, int absoluteTolerance, double relativeTolerance) {
         Cleaner cleaner = new Cleaner(irSequence, absoluteTolerance, relativeTolerance);
         return new ModulatedIrSequence(cleaner.toIrSequence(), irSequence.getFrequency(), irSequence.getDutyCycle());
     }
 
-    public static ModulatedIrSequence clean(ModulatedIrSequence irSequence) {
-         return clean(irSequence, (int) IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance);
-    }
+    //public static ModulatedIrSequence clean(ModulatedIrSequence irSequence) {
+    //     return clean(irSequence, (int) IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance);
+    //}
 }

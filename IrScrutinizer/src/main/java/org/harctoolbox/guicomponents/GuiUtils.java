@@ -198,6 +198,11 @@ public class GuiUtils implements Serializable {
                 : IrpUtils.parseLong(s, false);
     }
 
+    public Double getDoubleInput(String message, double oldValue) {
+        String s = getInput(message, "Parameter input", Double.toString(oldValue));
+        return s != null ? Double.parseDouble(s) : null;
+    }
+
     public boolean confirm(String message) {
         return confirm(frame, message);
     }

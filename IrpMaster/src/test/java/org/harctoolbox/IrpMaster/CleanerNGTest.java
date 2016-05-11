@@ -39,7 +39,7 @@ public class CleanerNGTest {
             irSignal = Pronto.ccfSignal("0000 006C 0022 0002 015B 00AD 0016 0016 0016 0016 0016 0041 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0016 0016 0016 0016 0016 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0041 0016 0041 0016 0016 0016 0016 0016 0041 0016 0041 0016 0041 0016 0016 0016 0016 0016 0016 0016 0041 0016 0041 0016 06A4 015B 0057 0016 0E6C");
             IrSequence irSequence = irSignal.toModulatedIrSequence(5);
             IrSequence noisy = irSequence.noisify(60);
-            IrSequence cleaned = Cleaner.clean(noisy);
+            IrSequence cleaned = Cleaner.clean(noisy, (int) IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance);
             boolean result = irSequence.isEqual(cleaned);
             assertEquals(result, true);
         } catch (IrpMasterException ex) {

@@ -22,7 +22,51 @@ package org.harctoolbox.IrpMaster;
  */
 public class RepeatFinder {
 
-    private static final double minRepeatLastGap = 20000f; // 20 milli seconds minimum for a repetition
+    private static double defaultMinRepeatLastGap = IrpUtils.defaultMinRepeatLastGap; // 20 milli seconds minimum for a repetition
+    private static double defaultRelativeTolerance = IrpUtils.defaultRelativeTolerance;
+    private static double defaultAbsoluteTolerance = IrpUtils.defaultAbsoluteTolerance;
+
+    /**
+     * @return the defaultMinRepeatLastGap
+     */
+    public static double getDefaultMinRepeatLastGap() {
+        return defaultMinRepeatLastGap;
+    }
+
+    /**
+     * @param aDefaultMinRepeatLastGap the defaultMinRepeatLastGap to set
+     */
+    public static void setDefaultMinRepeatLastGap(double aDefaultMinRepeatLastGap) {
+        defaultMinRepeatLastGap = aDefaultMinRepeatLastGap;
+    }
+
+    /**
+     * @return the defaultRelativeTolerance
+     */
+    public static double getDefaultRelativeTolerance() {
+        return defaultRelativeTolerance;
+    }
+
+    /**
+     * @param aDefaultRelativeTolerance the defaultRelativeTolerance to set
+     */
+    public static void setDefaultRelativeTolerance(double aDefaultRelativeTolerance) {
+        defaultRelativeTolerance = aDefaultRelativeTolerance;
+    }
+
+    /**
+     * @return the defaultabsoluteTolerance
+     */
+    public static double getDefaultAbsoluteTolerance() {
+        return defaultAbsoluteTolerance;
+    }
+
+    /**
+     * @param aDefaultAbsoluteTolerance the defaultAbsoluteTolerance to set
+     */
+    public static void setDefaultAbsoluteTolerance(double aDefaultAbsoluteTolerance) {
+        defaultAbsoluteTolerance = aDefaultAbsoluteTolerance;
+    }
 
     public static class RepeatFinderData {
         private int beginLength;
@@ -96,18 +140,20 @@ public class RepeatFinder {
 
     private double relativeTolerance;
     private double absoluteTolerance;
+    private double minRepeatLastGap;
     private IrSequence irSequence;
     private RepeatFinderData repeatFinderData;
 
     public RepeatFinder(IrSequence irSequence, double absoluteTolerance, double relativeTolerance) {
         this.absoluteTolerance = absoluteTolerance;
         this.relativeTolerance = relativeTolerance;
+        this.minRepeatLastGap = defaultMinRepeatLastGap;
         this.irSequence = irSequence;
         analyze();
     }
 
     public RepeatFinder(IrSequence irSequence) {
-        this(irSequence, IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance);
+        this(irSequence, defaultAbsoluteTolerance, defaultRelativeTolerance);
     }
 
     public static IrSignal findRepeat(ModulatedIrSequence irSequence, double absoluteTolerance, double relativeTolerance) {
@@ -116,7 +162,7 @@ public class RepeatFinder {
     }
 
     public static IrSignal findRepeat(ModulatedIrSequence irSequence) {
-        return findRepeat(irSequence, IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance);
+        return findRepeat(irSequence, defaultAbsoluteTolerance, defaultRelativeTolerance);
     }
 
     public static IrSignal findRepeatClean(ModulatedIrSequence irSequence, double absoluteTolerance, double relativeTolerance) {
@@ -125,7 +171,7 @@ public class RepeatFinder {
     }
 
     public static IrSignal findRepeatClean(ModulatedIrSequence irSequence) {
-        return findRepeatClean(irSequence, IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance);
+        return findRepeatClean(irSequence, defaultAbsoluteTolerance, defaultRelativeTolerance);
     }
 
     private void analyze() {

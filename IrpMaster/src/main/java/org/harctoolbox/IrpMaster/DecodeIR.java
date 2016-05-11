@@ -60,7 +60,8 @@ public class DecodeIR {
     }
 
     public static DecodeIR create(IrSequence irSequence, double frequency) {
-        DecodeIR decoder = new DecodeIR(irSequence, frequency);
+        ModulatedIrSequence modulatedIrSequence = new ModulatedIrSequence(irSequence, frequency, IrpUtils.unknownDutyCycle);
+        DecodeIR decoder = new DecodeIR(modulatedIrSequence);
         return decoder.valid ? decoder : null;
     }
 
@@ -457,21 +458,21 @@ public class DecodeIR {
         this(Pronto.ccfSignal(CCF));
     }
 
-    /**
+    /* *
      * Constructs a decoder by invoking ExchangeIR to interpret the sequence.
      * @param irSequence
      * @param frequency
-     */
+     * /
     private DecodeIR(IrSequence irSequence, double frequency) {
         this(InterpretString.interpretIrSequence(irSequence, frequency, true, true));
-    }
+    }*/
 
     /**
      * Constructs a decoder by invoking ExchangeIR to interpret the sequence.
      * @param irSequence
      */
     private DecodeIR(ModulatedIrSequence irSequence) {
-        this(irSequence, irSequence.getFrequency());
+        this(InterpretString.interpretIrSequence(irSequence, true, true));
     }
 
     /**
@@ -484,7 +485,7 @@ public class DecodeIR {
      * @throws InvalidRepeatException
      */
     private DecodeIR(String ccf) throws ParseException, IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException {
-        IrSignal irSignal = InterpretString.interpretString(ccf, false, true);
+        IrSignal irSignal = InterpretString.interpretString(ccf, IrpUtils.defaultFrequency, false, true);
         if (irSignal == null)
             throw new ParseException("Could not interpret string `" + ccf + "'");
         setup(irSignal);

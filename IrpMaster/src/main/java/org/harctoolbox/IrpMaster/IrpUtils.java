@@ -83,6 +83,11 @@ public class IrpUtils {
     public static final double defaultFrequencyTolerance = 500;
 
     /**
+     * Default min repeat last gap, in milli seconds.
+     */
+    public static final double defaultMinRepeatLastGap = 20000f; // 20 milli seconds minimum for a repetition
+
+    /**
      * Joins the Strings in the second argument, starting at the first argument, separating them with the third argument.
      *
      * @param beg Index of first argument to consider,
@@ -101,6 +106,16 @@ public class IrpUtils {
             res.append(separator).append(s[i]);
 
         return res.toString();
+    }
+
+    public static String join(Iterable<String> payload, String separator) {
+        StringBuilder str = new StringBuilder();
+        for (String s : payload) {
+            if (str.length() > 0)
+                str.append(separator);
+            str.append(s);
+        }
+        return str.toString();
     }
 
     public static String join(String[] s, String separator) {

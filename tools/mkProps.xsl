@@ -363,6 +363,32 @@ public final class Props {
     }
     </xsl:template>
 
+    <xsl:template match="property[@type='double']">
+
+        <xsl:apply-templates select="@doc" mode="getter"/>
+    public double get<xsl:apply-templates select="@name" mode="capitalize"/>() {
+        return Double.parseDouble(props.getProperty("<xsl:value-of select="@name"/>"));
+    }
+
+    <xsl:apply-templates select="@doc" mode="int-setter"/>
+    public void set<xsl:apply-templates select="@name" mode="capitalize"/>(double n) {
+        double oldValue = Double.parseDouble(props.getProperty("<xsl:value-of select="@name"/>"));
+        if (oldValue != n) {
+            props.setProperty("<xsl:value-of select="@name"/>", Double.toString(n));
+            needSave = true;
+            firePropertyChange("<xsl:value-of select="@name"/>", oldValue, n);
+        }
+    }
+
+    public void add<xsl:apply-templates select="@name" mode="capitalize"/>ChangeListener(IPropertyChangeListener listener) {
+        addPropertyChangeListener("<xsl:value-of select="@name"/>", listener);
+    }
+
+    public void remove<xsl:apply-templates select="@name" mode="capitalize"/>ChangeListener(IPropertyChangeListener listener) {
+        removePropertyChangeListener("<xsl:value-of select="@name"/>", listener);
+    }
+    </xsl:template>
+
     <xsl:template match="property[@type='boolean']">
 
         <xsl:apply-templates select="@doc" mode="getter"/>
