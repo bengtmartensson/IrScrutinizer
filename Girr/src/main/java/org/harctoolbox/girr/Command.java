@@ -714,6 +714,7 @@ public class Command implements Serializable {
         try {
             return (masterType == MasterType.parameters
                     && !parameters.containsKey(toggleParameterName)
+                    && protocol != null
                     && protocol.hasParameter(toggleParameterName)
                     && protocol.hasParameterMemory(toggleParameterName)) ? ((int)protocol.getParameterMax(toggleParameterName)) + 1 : 1;
         } catch (UnassignedException ex) {
