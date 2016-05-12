@@ -37,7 +37,7 @@ public class ModulatedIrSequence extends IrSequence {
      *
      * @return modulation frequency in Hz.
      */
-    public double getFrequency() {
+    public final double getFrequency() {
         return frequency;
     }
 
@@ -45,7 +45,7 @@ public class ModulatedIrSequence extends IrSequence {
      *
      * @return Duty cycle.
      */
-    public double getDutyCycle() {
+    public final double getDutyCycle() {
         return dutyCycle;
     }
 
@@ -181,7 +181,7 @@ public class ModulatedIrSequence extends IrSequence {
      * Makes the current sequence into an IrSignal by considering the sequence as an intro sequence.
      * @return IrSignal
      */
-    public IrSignal toIrSignal() {
+    public final IrSignal toIrSignal() {
         return new IrSignal(frequency, dutyCycle, this, new IrSequence(), new IrSequence());
     }
 
@@ -221,7 +221,7 @@ public class ModulatedIrSequence extends IrSequence {
      *
      * @return true if and only iff the modulation frequency is zero (in numerical sense).
      */
-    public boolean isZeroModulated() {
+    public final boolean isZeroModulated() {
         return frequency < zeroModulationLimit;
     }
 
@@ -250,7 +250,7 @@ public class ModulatedIrSequence extends IrSequence {
     }
 
     @Override
-    public ModulatedIrSequence[] chop(double amount) {
+    public final ModulatedIrSequence[] chop(double amount) {
         IrSequence[] irSequences = super.chop(amount);
         ModulatedIrSequence[] mods = new ModulatedIrSequence[irSequences.length];
         for (int i = 0; i < irSequences.length; i++)

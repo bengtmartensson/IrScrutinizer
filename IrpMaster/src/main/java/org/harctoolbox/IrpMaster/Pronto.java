@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2011, 2012 Bengt Martensson.
+Copyright (C) 2011, 2012, 2015 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,15 +22,17 @@ import java.util.HashMap;
  * This class allows for the creation of integer arrays
  * and strings containing Pronto (CCF) form of the signal. There are also some static
  * members that can possibly be used in other contexts. Immutable.
- *
  */
 public class Pronto {
     /** Number of characters in the hexadecimal digits of Pronto strings. */
     public final static int charsInDigit = 4;
 
-    private final static double pronto_constant = 0.241246;
-    private final static double dummy_frequency = 100000.0/pronto_constant;
-    private final static String formattingCode = "%04X";
+    /** Constant used for computing the frequency code from the frequency */
+    public final static double prontoConstant = 0.241246;
+    private final static double dummyFrequency = 100000.0/prontoConstant;
+
+    /** Format code used to format integers in the Pronto Hex. */
+    public final static String formattingCode = "%04X";
 
     private final static int learnedCode = 0x0000;
     private final static int learnedZeroFrequencyCode = 0x0100;
@@ -64,11 +66,10 @@ public class Pronto {
 
     /**
      * Formats an integer like seen in CCF strings, in printf-ish, using "%04X".
-     * @param n
+     * @param n Integer to be formatted.
      * @return Formatted string
      */
-
-    public static String formatInteger(int n) {
+    public final static String formatInteger(int n) {
         return String.format(formattingCode, n);
     }
 
@@ -78,8 +79,8 @@ public class Pronto {
      * @param f Frequency in Hz.
      * @return code for the frequency.
      */
-    public static int getProntoCode(double f) {
-        return (int) Math.round(1000000.0 / ((f>0 ? f : dummy_frequency) * pronto_constant));
+    public final static int getProntoCode(double f) {
+        return (int) Math.round(1000000.0 / ((f>0 ? f : dummyFrequency) * prontoConstant));
     }
 
     /**
@@ -87,17 +88,17 @@ public class Pronto {
      * @param code Pronto frequency code
      * @return Frequency in Hz.
      */
-    public static double getFrequency(int code) {
+    public final static double getFrequency(int code) {
         return code == 0
                 ? IrpUtils.invalid // Invalid value
-                : 1000000.0 / ((double) code * pronto_constant);
+                : 1000000.0 / ((double) code * prontoConstant);
     }
 
     /**
      * Computes the carrier frequency in Hz.
      * @return Frequency in Hz.
      */
-    public double getFrequency() {
+    public final double getFrequency() {
         return irSignal.frequency;
     }
 
@@ -106,10 +107,10 @@ public class Pronto {
      * @param code Pronto frequency code
      * @return Duration of one pulse of the carrier in microseconds
      */
-    public static double getPulseTime(int code) { // in microseconds
+    public final static double getPulseTime(int code) { // in microseconds
         return code == 0
                 ? IrpUtils.invalid // Invalid value
-                : code * pronto_constant;
+                : code * prontoConstant;
     }
 
     // TODO: fix for f=0,
@@ -120,17 +121,17 @@ public class Pronto {
      * @param frequency
      * @return number of pulses
      */
-    public static int pulses(double us, double frequency) {
-        return (int)Math.round(Math.abs(us) * (frequency > 0 ? frequency : dummy_frequency)/1000000.0);
+    public final static int pulses(double us, double frequency) {
+        return (int)Math.round(Math.abs(us) * (frequency > 0 ? frequency : dummyFrequency)/1000000.0);
     }
 
     /**
-     * Computes a ccf array
+     * Computes a ccf array, without header.
      * @param frequency
      * @param sequence
      * @return CCF array
      */
-    public static int[] toArray(double frequency, double[] sequence) /*throws RuntimeException*/ {
+    public final static int[] toArray(double frequency, double[] sequence) /*throws RuntimeException*/ {
         if (sequence.length % 2 == 1)
             throw new RuntimeException("IR Sequence must be of even length.");
 
@@ -160,7 +161,7 @@ public class Pronto {
      * @throws DomainViolationException
      * @throws InvalidRepeatException
      */
-    public static IrSignal ccfSignal(int[] ccf) throws ParseException, IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException {
+    public final static IrSignal ccfSignal(int[] ccf) throws ParseException, IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException {
         if (ccf.length < 4)
             throw new IncompatibleArgumentException("CCF is invalid since less than 4 numbers long.");
         if (ccf.length % 2 != 0)
@@ -254,10 +255,10 @@ public class Pronto {
     /**
      * Creates a new IrSignals by interpreting its argument as CCF string.
      * @param ccfString CCF signal
-     * @return  IrSignal
-     * @throws IrpMasterException
+     * @return IrSignal
+     * @throws IncompatibleArgumentException
      */
-    public static IrSignal ccfSignal(String ccfString) throws IrpMasterException {
+    public final static IrSignal ccfSignal(String ccfString) throws IrpMasterException {
         int[] ccf;
         try {
             ccf = parseString(ccfString);
@@ -277,7 +278,7 @@ public class Pronto {
      * @return  IrSignal
      * @throws IrpMasterException
      */
-    public static IrSignal ccfSignal(String[] array, int begin) throws IrpMasterException {
+    public final static IrSignal ccfSignal(String[] array, int begin) throws IrpMasterException {
         int[] ccf;
         try {
             ccf = parseStringArray(array, begin);
@@ -298,7 +299,7 @@ public class Pronto {
      * @return Integer array of numbers if successful, null if unsuccessful.
      * @throws NumberFormatException
      */
-    public static int[] parseString(String ccfString) throws NumberFormatException {
+    public final static int[] parseString(String ccfString) throws NumberFormatException {
         String[] array = ccfString.trim().split("\\s+");
         return parseStringArray(array, 0);
     }
@@ -311,7 +312,7 @@ public class Pronto {
      * @param begin Starting index
      * @return Integer array of numbers if successful, null if unsuccessful.
      */
-    public static int[] parseStringArray(String[] array, int begin) {
+    public final static int[] parseStringArray(String[] array, int begin) {
         int[] ccf = new int[array.length];
 
         for (int i = begin; i < array.length; i++) {
@@ -330,7 +331,7 @@ public class Pronto {
      * CCF array of initial sequence
      * @return CCF array
      */
-    public int[] initArray() {
+    public final int[] initArray() {
         return toArray(irSignal.frequency, irSignal.introSequence.data);
     }
 
@@ -338,7 +339,7 @@ public class Pronto {
      * CCF array of repeat sequence
      * @return CCF array
      */
-    public int[] repeatArray() {
+    public final int[] repeatArray() {
         return toArray(irSignal.frequency, irSignal.repeatSequence.data);
     }
 
@@ -349,7 +350,7 @@ public class Pronto {
      * @param repetition
      * @return CCF array
      */
-    public static int[] toArray(double frequency, double[] intro, double[] repetition) /*throws RuntimeException*/ {
+    public final static int[] toArray(double frequency, double[] intro, double[] repetition) /*throws RuntimeException*/ {
         if (intro.length % 2 == 1 || repetition.length % 2 == 1)
             throw new RuntimeException("IR Sequences must be of even length.");
 
@@ -372,7 +373,7 @@ public class Pronto {
      * CCF array of complete signal, i.e. the CCF string before formatting
      * @return CCF array
      */
-    public int[] toArray() {
+    public final int[] toArray() {
         if (irSignal.getIntroLength() % 2 != 0 || irSignal.getRepeatLength() % 2 != 0)
             // Probably forgot normalize() if I get here.
             throw new RuntimeException("IR Sequences must be of even length.");
@@ -438,7 +439,7 @@ public class Pronto {
      * @return CCF as string, or null on failure.
      * @throws IncompatibleArgumentException
      */
-    public static String shortCCFString(String protocolName, int device, int subdevice, int command)
+    public final static String shortCCFString(String protocolName, int device, int subdevice, int command)
             throws IncompatibleArgumentException {
         int[] ccf = shortCCF(protocolName, device, subdevice, command);
         return ccf == null ? null : toPrintString(ccf);
@@ -454,7 +455,7 @@ public class Pronto {
      * @return integer array of short CCF, or null om failure.
      * @throws IncompatibleArgumentException for paramters outside of its allowed domain.
      */
-    public static int[] shortCCF(String protocolName, int device, int subdevice, int command) throws IncompatibleArgumentException {
+    public final static int[] shortCCF(String protocolName, int device, int subdevice, int command) throws IncompatibleArgumentException {
         int index = 0;
         if (protocolName.equalsIgnoreCase("rc5")) {
             if (device > 31 || subdevice != (int) IrpUtils.invalid || command > 127)

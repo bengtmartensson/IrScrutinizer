@@ -25,7 +25,8 @@ import java.util.LinkedHashMap;
  * This class models a rendered IR signals.
  * It consists of a frequency, a duty cycle, and an intro sequence,
  * a repeat sequence, and an ending sequence. Any of the latter three,
- * but not all, can be empty, but not null.
+ * but not all, can be empty, but not null. If the ending sequence is non-empty,
+ * the repeat sequence has to be non-empty too.
  * <p>
  * The "count" semantic: The "count" argument in functions like toModulatedIrSequece(int count) is interpreted like this:
  * If the intro sequence is null, then "count" copies or the repeat sequence are used, otherwise count-1.
@@ -60,11 +61,11 @@ public class IrSignal {
     /** Duty cycle of the modulation. Between 0 and 1. Use -1 for not assigned. */
     protected double dutyCycle = (double) IrpUtils.invalid;
 
-    public double getFrequency() {
+    public final double getFrequency() {
         return frequency;
     }
 
-    public double getDutyCycle() {
+    public final double getDutyCycle() {
         return dutyCycle;
     }
 
@@ -73,7 +74,7 @@ public class IrSignal {
      * @see IrSequence
      * @return length of intro
      */
-    public int getIntroLength() {
+    public final int getIntroLength() {
         return introSequence.getLength();
     }
 
@@ -82,7 +83,7 @@ public class IrSignal {
      * @see IrSequence
      * @return number of burst pairs in intro sequence
      */
-    public int getIntroBursts() {
+    public final int getIntroBursts() {
         return introSequence.getNumberBursts();
     }
 
@@ -92,7 +93,7 @@ public class IrSignal {
      * @see IrSequence
      * @return integer sequence of durations in microseconds, possibly with sign.
      */
-    public int[] getIntroInts(boolean alternatingSigns) {
+    public final int[] getIntroInts(boolean alternatingSigns) {
         return introSequence.toInts(alternatingSigns);
     }
 
@@ -101,7 +102,7 @@ public class IrSignal {
      * @see IrSequence
      * @return integer array of pulses
      */
-    public int[] getIntroPulses() {
+    public final int[] getIntroPulses() {
         return introSequence.toPulses(frequency);
     }
 
@@ -111,47 +112,47 @@ public class IrSignal {
      * @param i index
      * @return duration, possibly with sign.
      */
-    public double getIntroDouble(int i) {
+    public final double getIntroDouble(int i) {
         return introSequence.get(i);
     }
 
-    public int getRepeatLength() {
+    public final int getRepeatLength() {
         return repeatSequence.getLength();
     }
 
-    public int getRepeatBursts() {
+    public final int getRepeatBursts() {
         return repeatSequence.getNumberBursts();
     }
 
-    public int[] getRepeatInts(boolean alternatingSigns) {
+    public final int[] getRepeatInts(boolean alternatingSigns) {
         return repeatSequence.toInts(alternatingSigns);
     }
 
-    public int[] getRepeatPulses() {
+    public final int[] getRepeatPulses() {
         return repeatSequence.toPulses(frequency);
     }
 
-    public double getRepeatDouble(int i) {
+    public final double getRepeatDouble(int i) {
         return repeatSequence.get(i);
     }
 
-    public int getEndingLength() {
+    public final int getEndingLength() {
         return endingSequence.getLength();
     }
 
-    public int getEndingBursts() {
+    public final int getEndingBursts() {
         return endingSequence.getNumberBursts();
     }
 
-    public int[] getEndingInts(boolean alternatingSigns) {
+    public final int[] getEndingInts(boolean alternatingSigns) {
         return endingSequence.toInts(alternatingSigns);
     }
 
-    public int[] getEndingPulses() {
+    public final int[] getEndingPulses() {
         return endingSequence.toPulses(frequency);
     }
 
-    public double getEndingDouble(int i) {
+    public final double getEndingDouble(int i) {
         return endingSequence.get(i);
     }
 
@@ -160,7 +161,7 @@ public class IrSignal {
      * one repeat sequence, plus the ending sequence.
      * @return duration in microseconds.
      */
-    public double getDuration() {
+    public final double getDuration() {
         return introSequence.getDuration() + repeatSequence.getDuration() + endingSequence.getDuration();
     }
 
@@ -171,15 +172,15 @@ public class IrSignal {
      * @param count Uses count semantic.
      * @return duration in microseconds.
      */
-    public double getDuration(int count) {
+    public final double getDuration(int count) {
         return introSequence.getDuration() + repeatsPerCountSemantic(count)*repeatSequence.getDuration() + endingSequence.getDuration();
     }
 
-    public double getDouble(Pass pass, int i) {
+    public final double getDouble(Pass pass, int i) {
         return map.get(pass).get(i);
     }
 
-    public int getLength(Pass pass) {
+    public final int getLength(Pass pass) {
         return map.get(pass).getLength();
     }
 
@@ -233,7 +234,7 @@ public class IrSignal {
      * @param count
      * @return introSequence.isEmpty() ? count : count - 1
      */
-    public int repeatsPerCountSemantic(int count) {
+    public final int repeatsPerCountSemantic(int count) {
         return introSequence.isEmpty() ? count : count - 1;
     }
 
@@ -243,7 +244,7 @@ public class IrSignal {
      * @param repetitions Number of times of to include the repeat sequence.
      * @return integer array as copy.
      */
-    public int[] toIntArray(int repetitions) {
+    public final int[] toIntArray(int repetitions) {
         int[] result = new int[introSequence.getLength() + repetitions*repeatSequence.getLength() + endingSequence.getLength()];
         append(0, result, introSequence);
         for (int i = 0; i < repetitions; i++)
@@ -255,9 +256,9 @@ public class IrSignal {
 
     /**
      * Equivalent to toIntArray(1)
-     * @return
+     * @return array of ints.
      */
-    public int[] toIntArray() {
+    public final int[] toIntArray() {
         return toIntArray(1);
     }
 
@@ -267,7 +268,7 @@ public class IrSignal {
      * @param count Number of times of the "signal" to send, according to the count semantic.
      * @return integer array as copy.
      */
-    public int[] toIntArrayCount(int count) {
+    public final int[] toIntArrayCount(int count) {
         return toIntArray(repeatsPerCountSemantic(count));
     }
 
@@ -275,7 +276,7 @@ public class IrSignal {
      *
      * @return Emptyness of the signal.
      */
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
         return introSequence.isEmpty() && repeatSequence.isEmpty() && endingSequence.isEmpty();
     }
 
@@ -283,7 +284,7 @@ public class IrSignal {
      * Returns true if and only if the sequence contains durations of zero length.
      * @return existence of zero durations.
      */
-    public boolean containsZeros() {
+    public final boolean containsZeros() {
         return introSequence.containsZeros() || repeatSequence.containsZeros() || endingSequence.containsZeros();
     }
 
@@ -291,7 +292,7 @@ public class IrSignal {
      * Replace all zero durations. Changes the signal in-place.
      * @param replacement Duration in micro seconds to replace zero durations with.
      */
-    public void replaceZeros(double replacement) {
+    public final void replaceZeros(double replacement) {
         introSequence.replaceZeros(replacement);
         repeatSequence.replaceZeros(replacement);
         endingSequence.replaceZeros(replacement);
@@ -299,7 +300,9 @@ public class IrSignal {
 
     /**
      * Replace all zero durations. Changes the signal in-place.
-     * @param replacement Duration in pulses to replace zero durations with. If frequency == 0, interpret as microseconds instead.
+     *
+     * @param replacement Duration in pulses to replace zero durations with.
+     * If frequency == 0, interpret as microseconds instead.
      */
     public void replaceZeros(int replacement) {
         replaceZeros(frequency > 0 ?  replacement / frequency * IrpUtils.seconds2microseconds : (double) replacement);
@@ -307,9 +310,9 @@ public class IrSignal {
 
     /**
      * Returns max gap of intro- and repeat sequences.
-     * @return
+     * @return max gap of intro- and repeat sequences.
      */
-    public double getGap() {
+    public final double getGap() {
         return Math.max(introSequence.getGap(), repeatSequence.getGap());
     }
 
@@ -391,7 +394,7 @@ public class IrSignal {
     }
 
     // Plunders the victim. Therefore private, othewise would violate immutability.
-    private void copyFrom(IrSignal victim) throws IrpMasterException {
+    private void copyFrom(IrSignal victim) {
         dutyCycle = victim.dutyCycle;
         frequency = victim.frequency;
         introSequence = victim.introSequence;
@@ -562,7 +565,7 @@ public class IrSignal {
      * @param count Number of times to send signal. Must be &gt; 0.
      * @return ModulatedIrSequence.
      */
-    public ModulatedIrSequence toModulatedIrSequence(int count) {
+    public final ModulatedIrSequence toModulatedIrSequence(int count) {
         return toModulatedIrSequence(true, this.repeatsPerCountSemantic(count), true);
     }
 
@@ -574,7 +577,7 @@ public class IrSignal {
      * @param ending inclusion of ending sequence.
      * @return ModulatedIrSequence.
      */
-    public ModulatedIrSequence toModulatedIrSequence(boolean intro, int repetitions, boolean ending) {
+    public final ModulatedIrSequence toModulatedIrSequence(boolean intro, int repetitions, boolean ending) {
         IrSequence seq1 = intro ? introSequence : new IrSequence();
         IrSequence seq2 = seq1.append(repeatSequence, repetitions);
         return new ModulatedIrSequence(ending ? seq2.append(endingSequence) : seq2, frequency, dutyCycle);
@@ -586,7 +589,7 @@ public class IrSignal {
      * @param count Number of times to send signal. Must be &gt; 0.
      * @return IrSignal consisting of count repetitions (count semantic) as the intro sequence.
      */
-    public IrSignal toOneShot(int count) {
+    public final IrSignal toOneShot(int count) {
         return new IrSignal(frequency, dutyCycle, toModulatedIrSequence(count), null, null);
     }
 
@@ -621,7 +624,7 @@ public class IrSignal {
      *
      * @return the intro sequence, as ModulatedIrSequence
      */
-    public ModulatedIrSequence getIntroSequence() {
+    public final ModulatedIrSequence getIntroSequence() {
         return new ModulatedIrSequence(introSequence, frequency, dutyCycle);
     }
 
@@ -629,7 +632,7 @@ public class IrSignal {
      *
      * @return the repeat sequence, as ModulatedIrSequence
      */
-    public ModulatedIrSequence getRepeatSequence() {
+    public final ModulatedIrSequence getRepeatSequence() {
         return new ModulatedIrSequence(repeatSequence, frequency, dutyCycle);
     }
 
@@ -637,7 +640,7 @@ public class IrSignal {
      *
      * @return the ending sequence, as ModulatedIrSequence
      */
-    public ModulatedIrSequence getEndingSequence() {
+    public final ModulatedIrSequence getEndingSequence() {
         return new ModulatedIrSequence(endingSequence, frequency, dutyCycle);
     }
 
@@ -648,7 +651,7 @@ public class IrSignal {
      * @return CCF as string.
      * @throws IncompatibleArgumentException
      */
-    public String ccfString() throws IncompatibleArgumentException {
+    public final String ccfString() throws IncompatibleArgumentException {
         return Pronto.toPrintString(this);
     }
 

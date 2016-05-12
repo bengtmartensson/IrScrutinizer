@@ -53,7 +53,7 @@ public class IrSequence implements Cloneable, Serializable {
      * @param i index
      * @return duration in microseconds, possibly with sign,
      */
-    public double get(int i) {
+    public final double get(int i) {
         return data[i];
     }
 
@@ -62,7 +62,7 @@ public class IrSequence implements Cloneable, Serializable {
      * @param i index
      * @return duration in microseconds, possibly with sign.
      */
-    public int iget(int i) {
+    public final int iget(int i) {
         return (int) Math.round(Math.abs(data[i]));
     }
 
@@ -71,7 +71,7 @@ public class IrSequence implements Cloneable, Serializable {
      * This is a copy of the original data, so it might be manipulated without affecting the original instance.
      * @return integer array of durations in micro seconds, all positive.
      */
-    public int[] toInts() {
+    public final int[] toInts() {
         return toInts(false);
     }
 
@@ -81,7 +81,7 @@ public class IrSequence implements Cloneable, Serializable {
      * @param alternatingSigns if true, all the durations with odd index are negative, otherwise, all are positive.
      * @return integer array of durations in micro seconds.
      */
-    public int[] toInts(boolean alternatingSigns) {
+    public final int[] toInts(boolean alternatingSigns) {
         int[] array = new int[data.length];
         for (int i = 0; i < data.length; i++) {
             int duration = (int) Math.round(Math.abs(data[i]));
@@ -96,7 +96,7 @@ public class IrSequence implements Cloneable, Serializable {
      * This is a copy of the original data, so it might be manipulated without affecting the original instance.
      * @return double array of durations in micro seconds.
      */
-    public double[] toDoubles() {
+    public final double[] toDoubles() {
         return data.clone();
     }
 
@@ -105,7 +105,7 @@ public class IrSequence implements Cloneable, Serializable {
      * @param frequency Frequency in Hz.
      * @return integer array of durations in periods of frequency.
      */
-    public int[] toPulses(double frequency) {
+    public final int[] toPulses(double frequency) {
         int[] array = new int[data.length];
         for (int i = 0; i < data.length; i++)
             array[i] = (int) Math.round(Math.abs(frequency*data[i]/1000000.0));
@@ -562,7 +562,7 @@ public class IrSequence implements Cloneable, Serializable {
      * Divide by 2 to get number of bursts.
      * @return number of gaps/flashes.
      */
-    public int getLength() {
+    public final int getLength() {
         return data.length;
     }
 
@@ -578,7 +578,7 @@ public class IrSequence implements Cloneable, Serializable {
      *
      * @return emptyness of the sequence.
      */
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
         return data.length == 0;
     }
 
@@ -586,7 +586,7 @@ public class IrSequence implements Cloneable, Serializable {
      * Returns true if and only if the sequence contains durations of zero length.
      * @return existence of zero durations.
      */
-    public boolean containsZeros() {
+    public final boolean containsZeros() {
         for (double t : data)
             if (Math.abs(t) < epsilon)
                 return true;
@@ -598,7 +598,7 @@ public class IrSequence implements Cloneable, Serializable {
      * @param replacement Duration in micro seconds to replace zero durations with.
      * @return if the signal was changed.
      */
-    public boolean replaceZeros(double replacement) {
+    public final boolean replaceZeros(double replacement) {
         boolean wasChanged = false;
         for (int i = 0; i < data.length; i++)
             if (Math.abs(data[i]) < epsilon) {
@@ -612,7 +612,7 @@ public class IrSequence implements Cloneable, Serializable {
      * Returns the number of bursts, half of the length.
      * @return number bursts.
      */
-    public int getNumberBursts() {
+    public final int getNumberBursts() {
         return data.length/2;
     }
 
