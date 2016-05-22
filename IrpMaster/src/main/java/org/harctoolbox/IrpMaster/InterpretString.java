@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2012,2013,2014 Bengt Martensson.
+Copyright (C) 2012,2013,2014,2016 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,17 +21,6 @@ public class InterpretString {
 
     /** Instantiating this class is meaningless. */
     private InterpretString() {}
-
-    /**
-     * Constructs a RepeatFinder from an IrSequence.
-     *
-     * @param irSequence
-     * @return RepeatFinder
-     */
-//    public static RepeatFinder newRepeatFinder(IrSequence irSequence) { // TODO remove
-//        //return new RepeatFinder(irSequence.toInts(true), errLimit);
-//        return new RepeatFinder(irSequence);
-//    }
 
     /**
      * Tries to interpret the string argument as one of our known formats, and return an IrSignal.
@@ -80,7 +69,8 @@ public class InterpretString {
 
     public static IrSignal interpretString(String str, double frequency, boolean invokeRepeatFinder, boolean invokeCleaner)
             throws ParseException, IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException {
-        return interpretString(str, frequency, invokeRepeatFinder, invokeCleaner);
+        return interpretString(str, frequency, invokeRepeatFinder, invokeCleaner,
+                IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance);
     }
 
     private static IrSignal interpretRawString(String str, double frequency, boolean invokeRepeatFinder, boolean invokeCleaner,
@@ -91,57 +81,12 @@ public class InterpretString {
                 return new IrSignal(frequency, IrpUtils.invalid, codes[0], codes[1], codes.length > 2 ? codes[2] : null);
 
             IrSequence irSequence = new IrSequence(str, true);
-            ModulatedIrSequence modulatedIrSequence = new ModulatedIrSequence(irSequence, frequency, (double) IrpUtils.unknownDutyCycle);
+            ModulatedIrSequence modulatedIrSequence = new ModulatedIrSequence(irSequence, frequency, IrpUtils.unknownDutyCycle);
             return interpretIrSequence(modulatedIrSequence, invokeRepeatFinder, invokeCleaner, absoluteTolerance, relativeTolerance);
         } catch (NumberFormatException ex) {
             throw new ParseException("Could not interpret string " + str + " (" + ex.getMessage() + ")");
         }
     }
-
-    /* *
-     * Tries to interpret the string argument as one of our known formats, and return an IrSignal.
-     * If the string starts with "+", take it as raw. Then, if it contains more than one line, assume
-     * that the caller has split it into intro, repeat, and ending sequences already.
-     * Otherwise invoke ExchangeIR to split it into constituents. If it does not start
-     * with "+", try to interpret as Pronto CCF and UEI learned.
-     *
-     * @param str String to be interpreted.
-     * @param invokeRepeatFinder
-     * @param invokeCleaner
-     * @return IrSignal
-     * @throws IncompatibleArgumentException
-     * @throws UnassignedException
-     * @throws DomainViolationException
-     * @throws InvalidRepeatException
-     * @throws ParseException
-     * /
-    public static IrSignal interpretString(String str, boolean invokeRepeatFinder, boolean invokeCleaner) throws IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException, ParseException {
-        return interpretString(str, IrpUtils.defaultFrequency, invokeRepeatFinder, invokeCleaner);
-    }*/
-
-    //public static IrSignal interpretString(String str, boolean invokeRepeatFinder) throws IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException, ParseException {
-    //    return interpretString(str, invokeRepeatFinder, true);
-    //}
-
-    /**
-     * Tries to interpret the string argument as one of our known formats, and return an IrSignal.
-     * If the string starts with "+", take it as raw. Then, if it contains more than one line, assume
-     * that the caller has split it into intro, repeat, and ending sequences already.
-     * Otherwise invoke ExchangeIR to split it into constituents. If it does not start
-     * with "+", try to interpret as Pronto CCF and UEI learned.
-     *
-     * @param str String to be interpreted.
-     * @param absouluteTolerance
-     * @return IrSignal
-     * @throws IncompatibleArgumentException
-     * @throws UnassignedException
-     * @throws DomainViolationException
-     * @throws InvalidRepeatException
-     * @throws ParseException
-     */
-    //public static IrSignal interpretString(String str) throws IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException, ParseException {
-    //    return interpretString(str, IrpUtils.defaultFrequency, true, true);
-    //}
 
     /**
      * If invokeRepeatFinder is true, tries to identify intro, repeat, and ending applying a RepeatFinder.
@@ -154,12 +99,6 @@ public class InterpretString {
      * @param invokeCleaner If the analyzer is invoked for cleaning the signals.
      * @return IrSignal signal constructed according to rules above.
      */
-//    public static IrSignal interpretIrSequence(IrSequence irSequence, double frequency,
-//            boolean invokeRepeatFinder, boolean invokeCleaner) {
-//        ModulatedIrSequence modulatedIrSequence = new ModulatedIrSequence(irSequence, frequency, (double) IrpUtils.invalid);
-//        return interpretIrSequence(modulatedIrSequence, invokeRepeatFinder, invokeCleaner);
-//    }
-
     public static IrSignal interpretIrSequence(ModulatedIrSequence modulatedIrSequence, boolean invokeRepeatFinder, boolean invokeCleaner,
             double absoluteTolerance, double relativeTolerance) {
         // The analyzer misbehaves for zero length arguments, so treat this case separately.
@@ -179,32 +118,6 @@ public class InterpretString {
         return interpretIrSequence(modulatedIrSequence, invokeRepeatFinder, invokeCleaner,
                 IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance);
     }
-    //public static IrSignal interpretIrSequence(IrSequence irSequence, double frequency, boolean invokeRepeatFinder) {
-    //    return interpretIrSequence(irSequence, frequency, invokeRepeatFinder, true);
-    //}
-
-    /* *
-     * By applying a RepeatFinder, tries to identify intro, repeat, and ending;
-     * thus constructing an IrSignal.
-     * If the first argument happens to be of the subclass ModulatedIrSequence,
-     * the information of the modulation frequency is taken into account,
-     * otherwise a default value of the modulation frequency is used.
-     * @param irSequence
-     * @param invokeRepeatFinder
-     * @param invokeCleaner
-     * @return IrSignal
-     *
-     * /
-    public static IrSignal interpretIrSequence(IrSequence irSequence, boolean invokeRepeatFinder, boolean invokeCleaner) {
-        ModulatedIrSequence modulatedIrSequence = irSequence instanceof ModulatedIrSequence
-                ? (ModulatedIrSequence)irSequence
-        : new ModulatedIrSequence(irSequence, IrpUtils.defaultFrequency, IrpUtils.unknownDutyCycle);
-        return interpretIrSequence(modulatedIrSequence, invokeRepeatFinder, invokeCleaner);
-    }
-
-    //public static IrSignal interpretIrSequence(IrSequence irSequence, boolean invokeRepeatFinder) {
-    //    return interpretIrSequence(irSequence, invokeRepeatFinder, true);
-    //}
 
     /**
      * By applying a RepeatFinder, tries to identify intro, repeat, and ending;
@@ -213,6 +126,8 @@ public class InterpretString {
      * @param frequency
      * @param invokeRepeatFinder
      * @param invokeCleaner
+     * @param absoluteTolerance
+     * @param relativeTolerance
      * @return IrSignal
      */
     public static IrSignal interpretIrSequence(int[] data, double frequency, boolean invokeRepeatFinder, boolean invokeCleaner,
@@ -242,21 +157,4 @@ public class InterpretString {
             return null;
         }
     }
-
-    /**
-     * By applying a RepeatFinder, tries to identify intro, repeat, and ending;
-     * thus constructing an IrSignal.
-     * @param data
-     * @param invokeRepeatFinder
-     * @param invokeCleaner
-     * @return IrSignal
-     */
-    //public static IrSignal interpretIrSequence(int[] data, boolean invokeRepeatFinder, boolean invokeCleaner) {
-    //    return interpretIrSequence(data, IrpUtils.defaultFrequency, invokeRepeatFinder, invokeCleaner);
-    //}
-
-    //public static IrSignal interpretIrSequence(int[] data, boolean invokeRepeatFinder) {
-    //    return interpretIrSequence(data, invokeRepeatFinder, true);
-    //}
-
 }

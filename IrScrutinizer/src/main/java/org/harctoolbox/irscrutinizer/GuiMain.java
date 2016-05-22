@@ -1056,8 +1056,8 @@ public class GuiMain extends javax.swing.JFrame {
         } catch (DomainViolationException | ParseException | UnassignedException | InvalidRepeatException | IncompatibleArgumentException ex) {
             guiUtils.error(ex);
         } catch (RuntimeException ex) {
-            // likely a bug in ExchangeIR was encountered.
-            guiUtils.error(ex, "Programming error detected. Try turning off \"invoke repeatfinder\" and/or \"invoke analyzer\".");
+            // ??? Can be many different causes
+            guiUtils.error("Could not decode the signal: " + ex.getMessage());
         }
     }
 
