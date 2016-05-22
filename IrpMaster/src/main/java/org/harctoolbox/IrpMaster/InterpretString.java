@@ -176,7 +176,8 @@ public class InterpretString {
     }
 
     public static IrSignal interpretIrSequence(ModulatedIrSequence modulatedIrSequence, boolean invokeRepeatFinder, boolean invokeCleaner) {
-        return interpretIrSequence(modulatedIrSequence, invokeRepeatFinder, invokeCleaner);
+        return interpretIrSequence(modulatedIrSequence, invokeRepeatFinder, invokeCleaner,
+                IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance);
     }
     //public static IrSignal interpretIrSequence(IrSequence irSequence, double frequency, boolean invokeRepeatFinder) {
     //    return interpretIrSequence(irSequence, frequency, invokeRepeatFinder, true);
