@@ -534,6 +534,10 @@ public class IrpMaster implements Serializable {
                                 : rawPlausible ? InterpretString.interpretIrSequence(ccf, IrpUtils.defaultFrequency, true, true)
                                 : UeiLearnedSignal.parseUeiLearned(ccf);
                     }
+                    if (irSignal == null) {
+                        System.err.println("Failure"); // not a very good error message...
+                        System.exit(IrpUtils.exitFatalProgramFailure);
+                    }
                     if (doRaw)
                         System.out.println(irSignal);
                     if (doPronto)
@@ -547,6 +551,7 @@ public class IrpMaster implements Serializable {
 
                 } catch (NumberFormatException | IrpMasterException ex) {
                     System.err.println(ex);
+                    System.exit(IrpUtils.exitFatalProgramFailure);
                 }
                 System.exit(IrpUtils.exitSuccess);
             }
