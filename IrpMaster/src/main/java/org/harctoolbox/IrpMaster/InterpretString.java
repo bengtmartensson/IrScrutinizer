@@ -95,7 +95,7 @@ public class InterpretString {
      * If not, the sequence is used as intro on the returned signal.
      * In this case, if invokeCleaner is true, an analyzer is first used to clean the signal.
      * @param modulatedIrSequence
-     * @param invokeRepeatFinder If the repeat finder is invoked. This alse uses the analyzer.
+     * @param invokeRepeatFinder If the repeat finder is invoked. This also uses the analyzer.
      * @param absoluteTolerance
      * @param relativeTolerance
      * @param invokeCleaner If the analyzer is invoked for cleaning the signals.
