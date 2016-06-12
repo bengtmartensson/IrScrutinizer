@@ -85,10 +85,16 @@
                 <groupId>org.harctoolbox</groupId>
                 <artifactId>Jirc</artifactId>
                 <version>${Jirc.version}</version>
-            </dependency><dependency>
+            </dependency>
+            <dependency>
                 <groupId>org.harctoolbox</groupId>
                 <artifactId>HarcHardware</artifactId>
                 <version>${HarcHardware.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.harctoolbox</groupId>
+                <artifactId>LircDevice</artifactId>
+                <version>0.1.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
