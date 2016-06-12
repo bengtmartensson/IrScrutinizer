@@ -76,11 +76,13 @@ public class InterpretString {
     private static IrSignal interpretRawString(String str, double frequency, boolean invokeRepeatFinder, boolean invokeCleaner,
             double absoluteTolerance, double relativeTolerance) throws ParseException, IncompatibleArgumentException {
         try {
-            String[] codes = str.split("[\n\r]+");
-            if (codes.length > 1) // already decomposed in sequences?
+            // IRremote writes spaces after + and -, sigh...
+            String fixedString = str.replaceAll("\\+\\s+", "+").replaceAll("-\\s+", "-");
+            String[] codes = fixedString.split("[\n\r]+");
+            if (codes.length > 1 && codes.length <= 3) // already decomposed in sequences?
                 return new IrSignal(frequency, IrpUtils.invalid, codes[0], codes[1], codes.length > 2 ? codes[2] : null);
 
-            IrSequence irSequence = new IrSequence(str, true);
+            IrSequence irSequence = new IrSequence(fixedString, true);
             ModulatedIrSequence modulatedIrSequence = new ModulatedIrSequence(irSequence, frequency, IrpUtils.unknownDutyCycle);
             return interpretIrSequence(modulatedIrSequence, invokeRepeatFinder, invokeCleaner, absoluteTolerance, relativeTolerance);
         } catch (NumberFormatException ex) {
