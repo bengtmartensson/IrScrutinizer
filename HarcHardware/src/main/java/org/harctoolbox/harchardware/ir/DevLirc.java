@@ -23,26 +23,25 @@ import java.util.logging.Logger;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
 import org.harctoolbox.IrpMaster.IrSequence;
 import org.harctoolbox.IrpMaster.IrSignal;
+import org.harctoolbox.devslashlirc.LircDeviceException;
+import org.harctoolbox.devslashlirc.Mode2LircDevice;
+import org.harctoolbox.devslashlirc.NotSupportedException;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import static org.harctoolbox.lircdevice.LircDevice.defaultDeviceName;
-import org.harctoolbox.lircdevice.LircDeviceException;
-import org.harctoolbox.lircdevice.NotSupportedException;
-// DO NOT import org.harctoolbox.lircdevice.Mode2LircDeviceException;
 
 /**
  *
  */
-public class DevLirc implements IRawIrSender, IReceive, ITransmitter {
-
-    private static final int NOTRANSMITTERSELECTION = -1;
+public class DevLirc implements IRawIrSender, IReceive, ITransmitter, IIrSenderStop {
 
     private boolean verbose = false;
-    private org.harctoolbox.lircdevice.Mode2LircDevice device = null;
+    private Mode2LircDevice device = null;
     private boolean canSend = false;
     private boolean canReceive = false;
     private int numberTransmitters = -1;
     private boolean canSetCarrier = false;
     private boolean canSetTransmitter = false;
+
+    private boolean stopRequested;
 
     /**
      * @return the canSend
@@ -79,42 +78,12 @@ public class DevLirc implements IRawIrSender, IReceive, ITransmitter {
         return canSetTransmitter;
     }
 
-    public class LircTransmitter extends Transmitter {
-        private int number;
-
-        public LircTransmitter(int number) throws NoSuchTransmitterException {
-            if (number < 1 || number > getNumberTransmitters())
-                throw new NoSuchTransmitterException(Integer.toString(number));
-            this.number = number;
-        }
-
-        private LircTransmitter(String connector) throws NoSuchTransmitterException {
-            this(Integer.parseInt(connector));
-        }
-
-        private LircTransmitter() {
-            number = NOTRANSMITTERSELECTION;
-        }
-
-        public boolean isTrivial() {
-            return number == NOTRANSMITTERSELECTION;
-        }
-
-        public int getNumber() {
-            return number;
-        }
-
-        public int getMask() {
-            return 1 << (number - 1);
-        }
-    }
-
     public DevLirc(String deviceName) {
-        device = new org.harctoolbox.lircdevice.Mode2LircDevice(deviceName);
+        device = new Mode2LircDevice(deviceName);
     }
 
     public DevLirc() {
-        this(defaultDeviceName);
+        this(Mode2LircDevice.defaultDeviceName);
     }
 
     private void sendIr(IrSequence irSequence) throws NotSupportedException {
@@ -125,21 +94,30 @@ public class DevLirc implements IRawIrSender, IReceive, ITransmitter {
 
     @Override
     public boolean sendIr(IrSignal irSignal, int count, Transmitter transmitter) throws HarcHardwareException {
-        return sendIr(irSignal, count, (LircTransmitter) transmitter);
+        if (! (transmitter instanceof LircClient.LircIrTransmitter))
+            throw new NoSuchTransmitterException("erroneous transmitter");
+        return sendIr(irSignal, count, (LircClient.LircIrTransmitter) transmitter);
     }
 
-    public boolean sendIr(IrSignal irSignal, int count, LircTransmitter transmitter) throws HarcHardwareException {
+    public boolean sendIr(IrSignal irSignal, int count, LircClient.LircIrTransmitter transmitter) throws HarcHardwareException {
         if (verbose)
             System.err.println("Sending " + count + " IrSignals: " + irSignal);
+
+        stopRequested = false;
         try {
-            if (!transmitter.isTrivial())
-                device.setTransmitterMask(transmitter.getMask()); // checks canSetTransmitter
+            int mask = transmitter.toMask();
+            if (canSetTransmitter && mask != LircClient.LircIrTransmitter.NOMASK)
+                device.setTransmitterMask(mask);
 
             device.setSendCarrier((int) irSignal.getFrequency());
 
             sendIr(irSignal.getIntroSequence());
-            for (int i = 0; i < irSignal.repeatsPerCountSemantic(count); i++)
-                    sendIr(irSignal.getRepeatSequence());
+            for (int i = 0; i < irSignal.repeatsPerCountSemantic(count); i++) {
+                if (stopRequested)
+                    break;
+
+                sendIr(irSignal.getRepeatSequence());
+            }
             sendIr(irSignal.getEndingSequence());
         } catch (LircDeviceException ex) {
             throw new HarcHardwareException(ex);
@@ -167,12 +145,18 @@ public class DevLirc implements IRawIrSender, IReceive, ITransmitter {
     }
 
     @Override
+    public boolean stopIr(Transmitter transmitter) {
+        stopRequested = true;
+        return true;
+    }
+
+    @Override
     public void setTimeout(int timeout) throws IOException {
     }
 
     @Override
     public String getVersion() throws IOException {
-        return org.harctoolbox.lircdevice.LircDevice.getVersion();
+        return device.getVersion();
     }
 
     @Override
@@ -210,12 +194,16 @@ public class DevLirc implements IRawIrSender, IReceive, ITransmitter {
 
     @Override
     public Transmitter getTransmitter() {
-        return new LircTransmitter();
+        return new LircClient.LircIrTransmitter();
     }
 
     @Override
-    public LircTransmitter getTransmitter(String connector) throws NoSuchTransmitterException {
-        return new LircTransmitter(connector);
+    public LircClient.LircIrTransmitter getTransmitter(String connector) throws NoSuchTransmitterException {
+        return new LircClient.LircIrTransmitter(connector);
+    }
+
+    public LircClient.LircIrTransmitter getTransmitter(int number) throws NoSuchTransmitterException {
+        return new LircClient.LircIrTransmitter(number);
     }
 
     @Override
@@ -233,13 +221,22 @@ public class DevLirc implements IRawIrSender, IReceive, ITransmitter {
     }
 
     public static void main(String[] args) {
-        DevLirc instance = new DevLirc();
-        try {
+        try (DevLirc instance = new DevLirc()) {
+            double nec1_frequency = 38400f;
+            int[] nec1_122_27 = {
+                9024, 4512, 564, 564, 564, 1692, 564, 564, 564, 1692, 564, 1692, 564, 1692, 564, 1692, 564, 564, 564, 1692, 564, 564, 564, 1692, 564, 564, 564, 564, 564, 564, 564, 564, 564, 1692, 564, 1692, 564, 1692, 564, 564, 564, 1692, 564, 1692, 564, 564, 564, 564, 564, 564, 564, 564, 564, 564, 564, 1692, 564, 564, 564, 564, 564, 1692, 564, 1692, 564, 1692, 564, 39756
+            };
+            int[] nec1_repeat = { 9024, 2256, 564, 96156 };
+            IrSignal yama_volume_down = new IrSignal(nec1_frequency, -1.0, new IrSequence(nec1_122_27),
+                    new IrSequence(nec1_repeat), null);
             instance.open();
             System.out.println(instance);
-        } catch (HarcHardwareException ex) {
+            System.out.println(">>>>>>>>>>>>> Now send IR <<<<<<<<<<<<<<<");
+            IrSequence irSequence = instance.receive();
+            System.out.println(irSequence);
+            instance.sendIr(yama_volume_down, 10, new LircClient.LircIrTransmitter(1));
+        } catch (HarcHardwareException | IncompatibleArgumentException ex) {
             Logger.getLogger(DevLirc.class.getName()).log(Level.SEVERE, null, ex);
         }
-        instance.close();
     }
 }

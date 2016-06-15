@@ -25,6 +25,7 @@ import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.List;
 import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.comm.TcpSocketChannel;
 
@@ -85,9 +86,10 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
     }
 
     public static class LircIrTransmitter extends Transmitter {
+        public static final int NOMASK = -1;
         private int[] transmitters;
 
-        private LircIrTransmitter() {
+        public LircIrTransmitter() {
             transmitters = null;
         }
 
@@ -95,19 +97,38 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
             this.transmitters = transmitters;
         }
 
-        private LircIrTransmitter(int selectedTransmitter) {
-            if (selectedTransmitter >= 0) {
-                transmitters = new int[1];
-                transmitters[0] = selectedTransmitter;
-            }
+        public LircIrTransmitter(int selectedTransmitter) throws NoSuchTransmitterException {
+            if (selectedTransmitter < 0)
+                throw new NoSuchTransmitterException("Invalid transmitter: " + selectedTransmitter);
+
+            transmitters = new int[] { selectedTransmitter };
         }
 
-        private LircIrTransmitter(boolean[] ports) {
+        public LircIrTransmitter(boolean[] ports) {
+            this(parseBoolean(ports));
+        }
+
+        private static List<Integer> parseBoolean(boolean[] ports) {
             ArrayList<Integer> prts = new ArrayList<>();
             for (int i = 0; i < ports.length; i++)
                 if (ports[i])
                     prts.add(i+1);
+            return prts;
+        }
 
+        public LircIrTransmitter(String str) {
+            this(parseString(str));
+        }
+
+        private static List<Integer> parseString(String str) {
+            String[] pieces = str.split("\\D+");
+            List<Integer> result = new ArrayList<>();
+            for (String s : pieces)
+                result.add(Integer.parseInt(s));
+            return result;
+        }
+
+        private LircIrTransmitter(List<Integer> prts) {
             transmitters = new int[prts.size()];
             for (int i = 0; i < prts.size(); i++)
                 transmitters[i] = prts.get(i);
@@ -122,6 +143,16 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
                 s.append(' ').append(transmitters[i]);
 
             return s.toString();
+        }
+
+        public int toMask() {
+            if (transmitters == null)
+                return NOMASK;
+
+            int mask = 0;
+            for (int i = 0; i < transmitters.length; i++)
+                mask |= (1 << i);
+            return mask;
         }
     }
 

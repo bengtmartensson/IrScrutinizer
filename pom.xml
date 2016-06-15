@@ -93,7 +93,7 @@
             </dependency>
             <dependency>
                 <groupId>org.harctoolbox</groupId>
-                <artifactId>LircDevice</artifactId>
+                <artifactId>DevSlashLirc</artifactId>
                 <version>0.1.0</version>
             </dependency>
         </dependencies>
