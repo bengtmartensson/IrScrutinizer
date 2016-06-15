@@ -133,7 +133,7 @@ public abstract class CsvImporter extends RemoteSetImporter implements IReaderIm
             String chunk = chunks[index];
             if (basis == 16 && chunk.startsWith("0x"))
                 chunk = chunk.substring(2);
-            if (rejectNumbers && chunk.length() > 2) {
+            if (rejectNumbers && chunk.length() > 1) {
                 try {
                     Integer.parseInt(chunk, basis);
                     break;
