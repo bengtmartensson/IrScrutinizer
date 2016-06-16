@@ -78,12 +78,17 @@ public class DevLirc implements IRawIrSender, IReceive, ITransmitter, IIrSenderS
         return canSetTransmitter;
     }
 
-    public DevLirc(String deviceName) {
+    public DevLirc(String deviceName, boolean verbose) {
         device = new Mode2LircDevice(deviceName);
+        this.verbose = verbose;
+    }
+
+    public DevLirc(String deviceName) {
+        this(deviceName, false);
     }
 
     public DevLirc() {
-        this(Mode2LircDevice.defaultDeviceName);
+        this(Mode2LircDevice.defaultDeviceName, false);
     }
 
     private void sendIr(IrSequence irSequence) throws NotSupportedException {
@@ -94,19 +99,19 @@ public class DevLirc implements IRawIrSender, IReceive, ITransmitter, IIrSenderS
 
     @Override
     public boolean sendIr(IrSignal irSignal, int count, Transmitter transmitter) throws HarcHardwareException {
-        if (! (transmitter instanceof LircClient.LircIrTransmitter))
+        if (! (transmitter instanceof LircTransmitter))
             throw new NoSuchTransmitterException("erroneous transmitter");
-        return sendIr(irSignal, count, (LircClient.LircIrTransmitter) transmitter);
+        return sendIr(irSignal, count, (LircTransmitter) transmitter);
     }
 
-    public boolean sendIr(IrSignal irSignal, int count, LircClient.LircIrTransmitter transmitter) throws HarcHardwareException {
+    public boolean sendIr(IrSignal irSignal, int count, LircTransmitter transmitter) throws HarcHardwareException {
         if (verbose)
             System.err.println("Sending " + count + " IrSignals: " + irSignal);
 
         stopRequested = false;
         try {
             int mask = transmitter.toMask();
-            if (canSetTransmitter && mask != LircClient.LircIrTransmitter.NOMASK)
+            if (canSetTransmitter && mask != LircTransmitter.NOMASK)
                 device.setTransmitterMask(mask);
 
             device.setSendCarrier((int) irSignal.getFrequency());
@@ -161,6 +166,7 @@ public class DevLirc implements IRawIrSender, IReceive, ITransmitter, IIrSenderS
 
     @Override
     public void setVerbosity(boolean verbosity) {
+        this.verbose = verbosity;
     }
 
     @Override
@@ -194,16 +200,16 @@ public class DevLirc implements IRawIrSender, IReceive, ITransmitter, IIrSenderS
 
     @Override
     public Transmitter getTransmitter() {
-        return new LircClient.LircIrTransmitter();
+        return new LircTransmitter();
     }
 
     @Override
-    public LircClient.LircIrTransmitter getTransmitter(String connector) throws NoSuchTransmitterException {
-        return new LircClient.LircIrTransmitter(connector);
+    public LircTransmitter getTransmitter(String connector) throws NoSuchTransmitterException {
+        return new LircTransmitter(connector);
     }
 
-    public LircClient.LircIrTransmitter getTransmitter(int number) throws NoSuchTransmitterException {
-        return new LircClient.LircIrTransmitter(number);
+    public LircTransmitter getTransmitter(int number) throws NoSuchTransmitterException {
+        return new LircTransmitter(number);
     }
 
     @Override
@@ -234,7 +240,7 @@ public class DevLirc implements IRawIrSender, IReceive, ITransmitter, IIrSenderS
             System.out.println(">>>>>>>>>>>>> Now send IR <<<<<<<<<<<<<<<");
             IrSequence irSequence = instance.receive();
             System.out.println(irSequence);
-            instance.sendIr(yama_volume_down, 10, new LircClient.LircIrTransmitter(1));
+            instance.sendIr(yama_volume_down, 10, new LircTransmitter(1));
         } catch (HarcHardwareException | IncompatibleArgumentException ex) {
             Logger.getLogger(DevLirc.class.getName()).log(Level.SEVERE, null, ex);
         }

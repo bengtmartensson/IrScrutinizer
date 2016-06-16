@@ -17,6 +17,10 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.harchardware.ir;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterException;
+import com.beust.jcommander.Parameters;
 import org.harctoolbox.harchardware.comm.TcpSocketPort;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,14 +30,17 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import org.harctoolbox.IrpMaster.IrpUtils;
+import org.harctoolbox.IrpMaster.Version;
 import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.comm.TcpSocketChannel;
 
 /**
  * A <a href="http://www.lirc.org">LIRC</a> client, talking to a remote LIRC
  * server through a TCP port.
+ * Functionally, it resembles the command line program irsend.
  */
-public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSenderStop, ITransmitter {
+public class LircClient implements IHarcHardware, IRemoteCommandIrSender, IIrSenderStop, ITransmitter {
 
     private String lircServerIp;
     public final static int lircDefaultPort = 8765;
@@ -55,7 +62,10 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
 
     private String version = null;
 
+    private LircTransmitter lircTransmitter;
+
     public LircClient(String hostname, int port, boolean verbose, int timeout) throws UnknownHostException, IOException {
+        this.lircTransmitter = new LircTransmitter();
         this.timeout = timeout;
         lircServerIp = (hostname != null) ? hostname : defaultLircIP;
         inetAddress = InetAddress.getByName(hostname);
@@ -85,98 +95,20 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
     public void open() {
     }
 
-    public static class LircIrTransmitter extends Transmitter {
-        public static final int NOMASK = -1;
-        private int[] transmitters;
-
-        public LircIrTransmitter() {
-            transmitters = null;
-        }
-
-        private LircIrTransmitter(int[] transmitters) {
-            this.transmitters = transmitters;
-        }
-
-        public LircIrTransmitter(int selectedTransmitter) throws NoSuchTransmitterException {
-            if (selectedTransmitter < 0)
-                throw new NoSuchTransmitterException("Invalid transmitter: " + selectedTransmitter);
-
-            transmitters = new int[] { selectedTransmitter };
-        }
-
-        public LircIrTransmitter(boolean[] ports) {
-            this(parseBoolean(ports));
-        }
-
-        private static List<Integer> parseBoolean(boolean[] ports) {
-            ArrayList<Integer> prts = new ArrayList<>();
-            for (int i = 0; i < ports.length; i++)
-                if (ports[i])
-                    prts.add(i+1);
-            return prts;
-        }
-
-        public LircIrTransmitter(String str) {
-            this(parseString(str));
-        }
-
-        private static List<Integer> parseString(String str) {
-            String[] pieces = str.split("\\D+");
-            List<Integer> result = new ArrayList<>();
-            for (String s : pieces)
-                result.add(Integer.parseInt(s));
-            return result;
-        }
-
-        private LircIrTransmitter(List<Integer> prts) {
-            transmitters = new int[prts.size()];
-            for (int i = 0; i < prts.size(); i++)
-                transmitters[i] = prts.get(i);
-        }
-
-        @Override
-        public String toString() {
-            if (transmitters == null || transmitters.length == 0)
-                return "";
-            StringBuilder s = new StringBuilder();
-            for (int i = 0; i < transmitters.length; i++)
-                s.append(' ').append(transmitters[i]);
-
-            return s.toString();
-        }
-
-        public int toMask() {
-            if (transmitters == null)
-                return NOMASK;
-
-            int mask = 0;
-            for (int i = 0; i < transmitters.length; i++)
-                mask |= (1 << i);
-            return mask;
-        }
-    }
-
     @Override
-    public LircIrTransmitter getTransmitter() {
-        return new LircIrTransmitter();
+    public LircTransmitter getTransmitter() {
+        return new LircTransmitter();
     }
 
-    public LircIrTransmitter getTransmitter(int portNo) throws NoSuchTransmitterException {
+    public LircTransmitter getTransmitter(int portNo) throws NoSuchTransmitterException {
         if (portNo < portMin || portNo > portMax)
             throw new NoSuchTransmitterException(Integer.toString(portNo));
-        return new LircIrTransmitter(portNo);
+        return new LircTransmitter(portNo);
     }
 
     @Override
-    public LircIrTransmitter getTransmitter(String port) throws NoSuchTransmitterException {
-        if (port.equals("default"))
-            return null;
-        try {
-            int portNo = Integer.parseInt(port);
-            return getTransmitter(portNo);
-        } catch (NumberFormatException ex) {
-            throw new NoSuchTransmitterException(port);
-        }
+    public LircTransmitter getTransmitter(String port) throws NoSuchTransmitterException {
+        return new LircTransmitter(port);
     }
 
     @Override
@@ -189,8 +121,6 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
 
         return result;
     }
-
-    private LircIrTransmitter lircIrTransmitter = new LircIrTransmitter();
 
     @Override
     public void setVerbosity(boolean verbosity) {
@@ -356,10 +286,10 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
         this.lastRemote = remote;
         this.lastCommand = command;
         if (transmitter != null) {
-            if (!LircIrTransmitter.class.isInstance(transmitter))
+            if (!LircTransmitter.class.isInstance(transmitter))
                 throw new NoSuchTransmitterException(transmitter);
-            LircIrTransmitter trans = (LircIrTransmitter) transmitter;
-            if (trans.transmitters != null) {
+            LircTransmitter trans = (LircTransmitter) transmitter;
+            if (!trans.isTrivial()) {
                 boolean result = setTransmitters(transmitter);
                 if (!result)
                     throw new NoSuchTransmitterException("Error selecting transmitter " + transmitter);
@@ -369,7 +299,7 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
     }
 
     public boolean sendIrCommand(String remote, String command, int count, int connector) throws IOException, NoSuchTransmitterException {
-        return sendIrCommand(remote, command, count, new LircIrTransmitter(connector));
+        return sendIrCommand(remote, command, count, new LircTransmitter(connector));
     }
 
     @Override
@@ -386,7 +316,7 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
     }
 
     public boolean stopIr(String remote, String command, int port) throws IOException, NoSuchTransmitterException {
-        return stopIr(remote, command, new LircIrTransmitter(port));
+        return stopIr(remote, command, new LircTransmitter(port));
     }
 
     @Override
@@ -413,31 +343,30 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
      * @throws IOException
      * @throws NoSuchTransmitterException
      */
-    public boolean setTransmitters(Transmitter transmitter) throws IOException, NoSuchTransmitterException {
-        if (!LircIrTransmitter.class.isInstance(transmitter))
+    public boolean setTransmitters(Transmitter transmitter) throws NoSuchTransmitterException, IOException {
+        if (transmitter == null)
+            return true;
+        if (!LircTransmitter.class.isInstance(transmitter))
             throw new NoSuchTransmitterException(transmitter);
-        LircIrTransmitter trans = (LircIrTransmitter) transmitter;
-        lircIrTransmitter = trans;
+        lircTransmitter = (LircTransmitter) transmitter;
         return setTransmitters();
     }
 
-    public boolean setTransmitters(int port) throws IOException, NoSuchTransmitterException {
-        return setTransmitters(new LircIrTransmitter(port));
+    public boolean setTransmitters(int port) throws NoSuchTransmitterException, IOException {
+        return setTransmitters(new LircTransmitter(port));
     }
 
     public boolean setTransmitters(boolean[] ports) throws NoSuchTransmitterException, IOException {
-        LircIrTransmitter transmitter = new LircIrTransmitter(ports);
-        if (transmitter.transmitters.length == 0)
-            throw new NoSuchTransmitterException("Cannot disable all transmitters");
+        LircTransmitter transmitter = new LircTransmitter(ports);
         return setTransmitters(transmitter);
     }
 
-    private boolean setTransmitters(/*int[] trans*/) throws IOException {
-        if (lircIrTransmitter.transmitters != null) {
-            String s = "SET_TRANSMITTERS" + lircIrTransmitter.toString();
-            return sendCommand(s, false) != null;
-        }
-        return true;
+    private boolean setTransmitters() throws IOException {
+        if (lircTransmitter.isTrivial())
+            return true;
+
+        String s = "SET_TRANSMITTERS " + lircTransmitter.toString();
+        return sendCommand(s, false) != null;
     }
 
     @Override
@@ -452,5 +381,188 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender,IIrSend
     @Override
     public boolean isValid() {
         return version != null;
+    }
+
+    private static void usage(int exitcode) {
+        StringBuilder str = new StringBuilder();
+        argumentParser.usage(str);
+
+        (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
+        doExit(exitcode); // placifying FindBugs...
+    }
+
+    private static void doExit(int exitcode) {
+        System.exit(exitcode);
+    }
+
+    private static void doExit(boolean success) {
+        if (!success)
+            System.err.println("Failed");
+        System.exit(success ? IrpUtils.exitSuccess : IrpUtils.exitIoError);
+    }
+
+    private static void doExit(String message, int exitcode) {
+        System.err.println(message);
+        System.exit(exitcode);
+    }
+
+    private final static class CommandLineArgs {
+
+        @Parameter(names = {"-a", "--address"}, description = "IP name or address of lircd host")
+        private String address = "localhost";
+
+        @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
+        private boolean helpRequested = false;
+
+        @Parameter(names = {"-p", "--port"}, description = "Port of lircd")
+        private int port = 8765;
+
+        @Parameter(names = {"-t", "--timeout"}, description = "Timeout in milliseconds")
+        private int timeout = 5000;
+
+        @Parameter(names = {"--version"}, description = "Display version information")
+        private boolean versionRequested;
+
+        @Parameter(names = {"-v", "--verbose"}, description = "Have some commands executed verbosely")
+        private boolean verbose;
+    }
+
+    @Parameters(commandDescription = "Send one or many commands")
+    public final static class CommandSendOnce {
+        @Parameter(names = {"-#", "-c", "--count"}, description = "Number of times to send command in send_once")
+        private int count = 1;
+
+        @Parameter(description = "remote command...")
+        private List<String> commands = new ArrayList<>();
+    }
+
+    @Parameters(commandDescription = "Send one commands many times")
+    public final static class CommandSendStart {
+        @Parameter(arity = 2, description = "remote command")
+        private List<String> args = new ArrayList<>();
+    }
+
+    @Parameters(commandDescription = "Send one commands many times")
+    public final static class CommandSendStop {
+        @Parameter(arity = 2, description = "remote command")
+        private List<String> args = new ArrayList<>();
+    }
+
+    @Parameters(commandDescription = "Inquire the known remotes, or the commands in a remote")
+    public final static class CommandList {
+        @Parameter(arity = 1, description = "[remote]")
+        private List<String> remote = new ArrayList<>();
+    }
+
+    @Parameters(commandDescription = "Set transmitters")
+    public final static class CommandSetTransmitters {
+        @Parameter(description = "transmitter...")
+        private List<Integer> transmitters = new ArrayList<>();
+    }
+
+    @Parameters(commandDescription = "Simulate sending")
+    public final static class CommandSimulate {
+    }
+
+    @Parameters(commandDescription = "Inquire version of lircd")
+    public final static class CommandVersion {
+    }
+
+    private static JCommander argumentParser;
+    private static CommandLineArgs commandLineArgs = new CommandLineArgs();
+
+    /**
+     * @param args the command line arguments.
+     */
+    public static void main(String[] args) {
+        argumentParser = new JCommander(commandLineArgs);
+        argumentParser.setCaseSensitiveOptions(false);
+        argumentParser.setAllowAbbreviatedOptions(true);
+        argumentParser.setProgramName("LircClient");
+
+        CommandSendOnce cmdSendOnce = new CommandSendOnce();
+        argumentParser.addCommand("send_once", cmdSendOnce);
+        CommandSendStart cmdSendStart = new CommandSendStart();
+        argumentParser.addCommand("send_start", cmdSendStart);
+        CommandSendStop cmdSendStop = new CommandSendStop();
+        argumentParser.addCommand("send_stop", cmdSendStop);
+        CommandList cmdList = new CommandList();
+        argumentParser.addCommand("list", cmdList);
+        CommandSetTransmitters cmdSetTransmitters = new CommandSetTransmitters();
+        argumentParser.addCommand("set_transmitters", cmdSetTransmitters);
+        CommandSimulate cmdSimulate = new CommandSimulate();
+        argumentParser.addCommand("simulate", cmdSimulate);
+        CommandVersion cmdVersion = new CommandVersion();
+        argumentParser.addCommand("version", cmdVersion);
+
+        try {
+            argumentParser.parse(args);
+        } catch (ParameterException ex) {
+            System.err.println(ex.getMessage());
+            usage(IrpUtils.exitUsageError);
+        }
+
+        if (commandLineArgs.helpRequested)
+            usage(IrpUtils.exitSuccess);
+
+        if (commandLineArgs.versionRequested) {
+            System.out.println(Version.versionString);
+            doExit(true);
+        }
+
+        String[] splitAddress = commandLineArgs.address.split(":");
+        String hostname = splitAddress[0];
+        int port = splitAddress.length == 2 ? Integer.parseInt(splitAddress[1]) : commandLineArgs.port;
+        try (LircClient lircClient = new LircClient(hostname, port,
+                commandLineArgs.verbose, commandLineArgs.timeout)) {
+            if (argumentParser.getParsedCommand() == null)
+                usage(IrpUtils.exitUsageError);
+            boolean success = true;
+            switch (argumentParser.getParsedCommand()) {
+                case "send_once":
+                    String remote = cmdSendOnce.commands.get(0);
+                    cmdSendOnce.commands.remove(0);
+                    for (String command : cmdSendOnce.commands) {
+                        success = lircClient.sendIrCommand(remote, command, cmdSendOnce.count, null);
+                        if (!success)
+                            break;
+                    }
+                    break;
+                case "send_start":
+                    success = lircClient.sendIrCommandRepeat(cmdSendStart.args.get(0), cmdSendStart.args.get(1), null);
+                    break;
+                case "send_stop":
+                    success = lircClient.stopIr(cmdSendStop.args.get(0), cmdSendStop.args.get(1), null);
+                    break;
+                case "list":
+                    String[] result = cmdList.remote == null ? lircClient.getRemotes()
+                            : lircClient.getCommands(cmdList.remote.get(0));
+                    for (String s : result)
+                        System.out.println(s);
+                    break;
+                case "set_transmitters":
+                    if (cmdSetTransmitters.transmitters.size() < 1)
+                        doExit("Command \"set_transmitters\" requires at least one argument", IrpUtils.exitUsageError);
+
+                    LircTransmitter xmitter = new LircTransmitter(cmdSetTransmitters.transmitters);
+                    success = lircClient.setTransmitters(xmitter);
+                    break;
+                case "simulate":
+                    doExit("Command \"simulate\" not implemented", IrpUtils.exitUsageError);
+                    break;
+                case "version":
+                    System.out.println(lircClient.getVersion());
+                    break;
+                default:
+                    doExit("Unknown command", IrpUtils.exitUsageError);
+            }
+            doExit(success);
+        } catch (IOException ex) {
+            doExit(ex.getMessage(), IrpUtils.exitFatalProgramFailure);
+        } catch (IndexOutOfBoundsException ex) {
+            doExit("Too few arguments to command", IrpUtils.exitUsageError);
+        } catch (NoSuchTransmitterException ex) {
+            doExit("No such transmitter " + ex.getMessage(), IrpUtils.exitSemanticUsageError);
+        }
     }
 }
