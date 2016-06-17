@@ -409,4 +409,10 @@ class HelpTexts {
     public static String capturingGirsHelp = "TODO";
 
     public static String capturingCommandFusionHelp = "With this pane, a CommandFusion Learner can be used for capturing IR signals.";
+
+    public static String capturingDevLircHelp = "Using this pane, the Lirc /dev/lirc device can be used to capture IR signals. "
+            + "This requires a so-called mode2 device connected.";
+
+    public static String sendingDevLircHelp = "Using this pane, the Lirc /dev/lirc device can be used to send IR signals. "
+            + "This requires a so-called mode2 device connected, capable of sending.";
 }

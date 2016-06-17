@@ -98,11 +98,12 @@ public class GuiUtils implements Serializable {
         fatal(ex, errorcode, null);
     }
 
-    public static void fatal(Exception ex, int errorcode, EmergencyFixer fixer) {
-        fatal(ex.getClass().getSimpleName() + ": " + ex.getMessage(), errorcode, fixer);
-    }
+//    public static void fatal(Exception ex, int errorcode, EmergencyFixer fixer) {
+//        fatal(ex.getClass().getSimpleName() + ": " + ex.getMessage(), errorcode, fixer);
+//    }
 
-    public static void fatal(String message, int errorcode, EmergencyFixer fixer) {
+    public static void fatal(Exception ex, int errorcode, EmergencyFixer fixer) {
+        String message = ex.getClass().getSimpleName() + ": " + ex.getMessage();
         if (System.console() != null)
             System.err.println(message);
 
@@ -119,6 +120,7 @@ public class GuiUtils implements Serializable {
                         JOptionPane.INFORMATION_MESSAGE,
                         new ImageIcon(GuiUtils.class.getResource("/icons/Crystal-Clear/48x48/actions/info.png")));
         }
+        ex.printStackTrace();
         System.exit(errorcode);
     }
 

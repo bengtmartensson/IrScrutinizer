@@ -17,12 +17,16 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.harchardware.ir;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
 import org.harctoolbox.IrpMaster.IrSequence;
 import org.harctoolbox.IrpMaster.IrSignal;
+import org.harctoolbox.IrpMaster.IrpUtils;
+import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.devslashlirc.LircDeviceException;
 import org.harctoolbox.devslashlirc.Mode2LircDevice;
 import org.harctoolbox.devslashlirc.NotSupportedException;
@@ -31,7 +35,7 @@ import org.harctoolbox.harchardware.HarcHardwareException;
 /**
  *
  */
-public class DevLirc implements IRawIrSender, IReceive, ITransmitter, IIrSenderStop {
+public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, IIrSenderStop {
 
     private boolean verbose = false;
     private Mode2LircDevice device = null;
@@ -42,6 +46,17 @@ public class DevLirc implements IRawIrSender, IReceive, ITransmitter, IIrSenderS
     private boolean canSetTransmitter = false;
 
     private boolean stopRequested;
+
+    public static File[] getCandidates() {
+          return new File("/dev/lirc").isDirectory()
+                  ? new File("/dev/lirc").listFiles()
+                  : new File("/dev").listFiles(new FilenameFilter() {
+              @Override
+              public boolean accept(File dir, String name) {
+                  return name.startsWith("lirc");
+              }
+          });
+    }
 
     /**
      * @return the canSend
@@ -99,20 +114,25 @@ public class DevLirc implements IRawIrSender, IReceive, ITransmitter, IIrSenderS
 
     @Override
     public boolean sendIr(IrSignal irSignal, int count, Transmitter transmitter) throws HarcHardwareException {
-        if (! (transmitter instanceof LircTransmitter))
+        if (transmitter != null && ! (transmitter instanceof LircTransmitter))
             throw new NoSuchTransmitterException("erroneous transmitter");
         return sendIr(irSignal, count, (LircTransmitter) transmitter);
     }
 
     public boolean sendIr(IrSignal irSignal, int count, LircTransmitter transmitter) throws HarcHardwareException {
-        if (verbose)
-            System.err.println("Sending " + count + " IrSignals: " + irSignal);
-
         stopRequested = false;
         try {
-            int mask = transmitter.toMask();
-            if (canSetTransmitter && mask != LircTransmitter.NOMASK)
-                device.setTransmitterMask(mask);
+            if (transmitter != null && canSetTransmitter) {
+                int mask = transmitter.toMask();
+                if (mask != LircTransmitter.NOMASK) {
+                    device.setTransmitterMask(mask);
+                    if (verbose)
+                        System.err.println("Setting transmitter mask " + mask);
+                }
+            }
+
+            if (verbose)
+                System.err.println("DevLirc sending " + count + " IrSignals: " + irSignal);
 
             device.setSendCarrier((int) irSignal.getFrequency());
 
@@ -175,7 +195,7 @@ public class DevLirc implements IRawIrSender, IReceive, ITransmitter, IIrSenderS
 
     @Override
     public boolean isValid() {
-        return device.isValid();
+        return device != null && device.isValid();
     }
 
     @Override
@@ -194,8 +214,10 @@ public class DevLirc implements IRawIrSender, IReceive, ITransmitter, IIrSenderS
 
     @Override
     public void close() {
-        device.close();
-        device = null;
+        if (device != null)  {
+            device.close();
+            //device = null;
+        }
     }
 
     @Override
@@ -226,7 +248,28 @@ public class DevLirc implements IRawIrSender, IReceive, ITransmitter, IIrSenderS
         return device.toString();
     }
 
+    @Override
+    public ModulatedIrSequence capture() throws HarcHardwareException, IncompatibleArgumentException {
+        IrSequence irSequence = receive();
+        return irSequence != null
+                ? new ModulatedIrSequence(irSequence, IrpUtils.defaultFrequency, IrpUtils.invalid)
+                : null;
+    }
+
+    @Override
+    public boolean stopCapture() {
+        return false; //throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setTimeout(int beginTimeout, int maxLearnLength, int endTimeout) {
+        throw new UnsupportedOperationException("/dev/lirc does not support user timeouts.");
+    }
+
     public static void main(String[] args) {
+        File[] candidates = getCandidates();
+        for (File f : candidates)
+            System.out.println(f);
         try (DevLirc instance = new DevLirc()) {
             double nec1_frequency = 38400f;
             int[] nec1_122_27 = {

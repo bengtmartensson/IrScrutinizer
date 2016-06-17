@@ -98,8 +98,8 @@ public class LircTransmitter extends Transmitter {
             return NOMASK;
 
         int mask = 0;
-        for (int i = 0; i < transmitters.length; i++)
-            mask |= (1 << i);
+        for (int t : transmitters)
+            mask |= (1 << (t-1));
         return mask;
     }
 
