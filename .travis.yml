@@ -9,7 +9,7 @@ install:
 - sudo apt-get update -qq
 - sudo apt-get install -y autoconf dos2unix icoutils python-requests
 script:
-- tools/build-DevSlashLirc.sh && cp DevSlashLirc/target/libdevslashlirc.so native/Linux-amd64
+- tools/build-DevSlashLirc.sh
 - tools/build-appimagekit.sh
 - tools/build-decodeir.sh
 - tools/build-exchangeir.sh
