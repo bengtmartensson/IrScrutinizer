@@ -7,4 +7,4 @@ cd DevSlashLirc
 #wget -O  target/generated-sources/c++/org/harctoolbox/devslashlirc/media/lirc.h https://sourceforge.net/p/lirc/git/ci/master/tree/include/media/lirc.h?format=raw
 
 #make lib
-mvn package -Dmaven.test.skip=true
+mvn install -Dmaven.test.skip=true
