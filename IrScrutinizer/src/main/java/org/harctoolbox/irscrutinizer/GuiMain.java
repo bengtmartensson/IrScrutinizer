@@ -52,6 +52,7 @@ import javax.swing.table.TableRowSorter;
 import javax.xml.parsers.ParserConfigurationException;
 import org.harctoolbox.IrpMaster.*;
 import org.harctoolbox.IrpMaster.DecodeIR.DecodeIrException;
+import org.harctoolbox.devslashlirc.LircHardware;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.guicomponents.*;
@@ -153,7 +154,10 @@ public class GuiMain extends javax.swing.JFrame {
         this.debug = debug;
         this.applicationHome = applicationHome;
         System.setProperty("harctoolbox.jniLibsHome", applicationHome);
-
+        try {
+            LircHardware.loadLibrary(LibraryLoader.fileName(applicationHome, LircHardware.libraryName));
+        } catch (UnsatisfiedLinkError ex) {
+        }
         properties = new Props(propsfilename, this.applicationHome);
         if (verbose)
             properties.setVerbose(true);
@@ -409,9 +413,11 @@ public class GuiMain extends javax.swing.JFrame {
                 arduinoSerialPortBean, properties, guiUtils);
         sendingHardwareManager.add(sendingArduino);
 
-        SendingDevLirc sendingDevLirc = new SendingDevLirc(devLircPanel, //arduinoVersionLabel,
-                devLircBean, properties, guiUtils);
-        sendingHardwareManager.add(sendingDevLirc);
+        if (LircHardware.isLibraryLoaded()) {
+            SendingDevLirc sendingDevLirc = new SendingDevLirc(devLircPanel, //arduinoVersionLabel,
+                    devLircBean, properties, guiUtils);
+            sendingHardwareManager.add(sendingDevLirc);
+        }
 
         //SendingSerial<GirsClient> sendingGirs = new SendingSerial<GirsClient>(GirsClient.class, girsSendingPanel,
         //        girsSendingSerialPortBean, properties, guiUtils);
@@ -456,8 +462,9 @@ public class GuiMain extends javax.swing.JFrame {
         //capturingHardwareManager.add(new CapturingSerial<GirsClient>(GirsClient.class, captureGirsPanel, girsClientSerialPortSimpleBean,
         //        properties, guiUtils, capturingHardwareManager));
 
-        capturingHardwareManager.add(new CapturingDevLirc(captureDevLircPanel, devLircCaptureBean,
-                properties, guiUtils, capturingHardwareManager));
+        if (LircHardware.isLibraryLoaded())
+            capturingHardwareManager.add(new CapturingDevLirc(captureDevLircPanel, devLircCaptureBean,
+                    properties, guiUtils, capturingHardwareManager));
 
         capturingHardwareManager.add(new CapturingSerial<>(CommandFusion.class, captureCommandFusionPanel, commandFusionSerialPortSimpleBean,
                 properties, guiUtils, capturingHardwareManager));
@@ -578,6 +585,10 @@ public class GuiMain extends javax.swing.JFrame {
             sendingHardwareTabbedPane.remove(genericSerialPanel);
             sendingHardwareTabbedPane.remove(girsSendingPanel);  // temporarily, not yet working
             capturingHardwareTabbedPane.remove(captureGirsPanel);// temporarily, not yet working
+        }
+        if (!LircHardware.isLibraryLoaded()) {
+            sendingHardwareTabbedPane.remove(devLircPanel);
+            capturingHardwareTabbedPane.remove(captureDevLircPanel);
         }
     } // end of constructor
 
