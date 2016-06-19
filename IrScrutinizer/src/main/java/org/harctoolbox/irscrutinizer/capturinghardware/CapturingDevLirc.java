@@ -1,0 +1,105 @@
+/*
+Copyright (C) 2016 Bengt Martensson.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at
+your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see http://www.gnu.org/licenses/.
+*/
+
+package org.harctoolbox.irscrutinizer.capturinghardware;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import javax.swing.JPanel;
+import org.harctoolbox.guicomponents.DevLircBean;
+import org.harctoolbox.guicomponents.GuiUtils;
+import org.harctoolbox.harchardware.HarcHardwareException;
+import org.harctoolbox.harchardware.IHarcHardware;
+import org.harctoolbox.harchardware.ir.DevLirc;
+import org.harctoolbox.irscrutinizer.Props;
+
+/**
+ *
+ */
+
+// This code sucks, but less than before.
+public class CapturingDevLirc extends CapturingHardware<DevLirc> implements ICapturingHardware<DevLirc>, IHarcHardware {
+
+    private DevLircBean devLircBean;
+    private String portName = null;
+
+    public CapturingDevLirc(JPanel panel, DevLircBean devLircBean,
+            Props properties_, GuiUtils guiUtils_,
+            CapturingHardwareManager capturingHardwareManager) {
+        super(panel, properties_, guiUtils_, capturingHardwareManager);
+        this.devLircBean = devLircBean;
+        this.portName = devLircBean.getPortName();
+
+        devLircBean.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                String propertyName = evt.getPropertyName();
+
+                try {
+                    switch (propertyName) {
+                        case DevLircBean.PROP_PORT:
+                            if (evt.getNewValue() == null)
+                                return;
+                            setup();
+                            break;
+                        case DevLircBean.PROP_PROPS:
+                        case DevLircBean.PROP_ISOPEN:
+                            break;
+                        default:
+                            throw new RuntimeException("Unknown property " + propertyName);
+                    }
+                } catch (IOException ex) {
+                    guiUtils.error(ex);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void setup() throws IOException {
+        String newPort = devLircBean.getPortName();
+        if (hardware != null && (newPort == null || newPort.equals(portName)))
+            return;
+
+        if (hardware != null)
+            hardware.close();
+        portName = newPort;
+        hardware = new DevLirc(newPort, properties.getVerbose());
+        properties.setDevLircCaptureName(newPort);
+        devLircBean.setHardware(hardware);
+        try {
+            selectMe();
+        } catch (HarcHardwareException ex) {
+            guiUtils.error(ex);
+        }
+    }
+
+    @Override
+    public String getName() {
+        return "/dev/lirc";
+    }
+
+    @Override
+    public void open() throws HarcHardwareException, IOException {
+        hardware.open();
+    }
+
+    @Override
+    public void setDebug(int debug) {
+    }
+}

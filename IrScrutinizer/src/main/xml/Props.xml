@@ -43,7 +43,9 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="irToyPortBaudRate" type="int" default='"9600"' doc="Baudrate for IrToy (sending)"/>
     <property name="irToyCapturePortName" type="string" default='ifWindows("COM13", "/dev/ttyACM0")' doc='Name of device to use, e.g. COM1 or /dev/ttyUSB0.' />
     <property name="irToyCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for IrToy (capturing).' />
-    <property name="captureDevice" type="string" default='"LIRC Mode 2"' />
+    <property name="devLircName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc."/>
+    <property name="devLircCaptureName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc captures."/>
+   <property name="captureDevice" type="string" default='"LIRC Mode 2"' />
     <property name="sorterOnParametrizedTable" type="boolean" default='"false"' />
     <property name="sorterOnRawTable" type="boolean" default='"false"' />
 

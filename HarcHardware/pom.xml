@@ -178,6 +178,15 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <skipTests>false</skipTests>
+                    <argLine>-Djava.library.path=${basedir}/../native/Linux-amd64</argLine>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -193,6 +202,16 @@
         <dependency>
             <groupId>gnu.io</groupId>
             <artifactId>RXTX</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.harctoolbox</groupId>
+            <artifactId>DevSlashLirc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.8.1</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

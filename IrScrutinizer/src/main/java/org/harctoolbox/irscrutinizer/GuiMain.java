@@ -52,6 +52,7 @@ import javax.swing.table.TableRowSorter;
 import javax.xml.parsers.ParserConfigurationException;
 import org.harctoolbox.IrpMaster.*;
 import org.harctoolbox.IrpMaster.DecodeIR.DecodeIrException;
+import org.harctoolbox.devslashlirc.LircHardware;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.guicomponents.*;
@@ -153,7 +154,10 @@ public class GuiMain extends javax.swing.JFrame {
         this.debug = debug;
         this.applicationHome = applicationHome;
         System.setProperty("harctoolbox.jniLibsHome", applicationHome);
-
+        try {
+            LircHardware.loadLibrary(LibraryLoader.fileName(applicationHome, LircHardware.libraryName));
+        } catch (UnsatisfiedLinkError ex) {
+        }
         properties = new Props(propsfilename, this.applicationHome);
         if (verbose)
             properties.setVerbose(true);
@@ -409,6 +413,12 @@ public class GuiMain extends javax.swing.JFrame {
                 arduinoSerialPortBean, properties, guiUtils);
         sendingHardwareManager.add(sendingArduino);
 
+        if (LircHardware.isLibraryLoaded()) {
+            SendingDevLirc sendingDevLirc = new SendingDevLirc(devLircPanel, //arduinoVersionLabel,
+                    devLircBean, properties, guiUtils);
+            sendingHardwareManager.add(sendingDevLirc);
+        }
+
         //SendingSerial<GirsClient> sendingGirs = new SendingSerial<GirsClient>(GirsClient.class, girsSendingPanel,
         //        girsSendingSerialPortBean, properties, guiUtils);
         //sendingHardwareManager.add(sendingGirs);
@@ -451,6 +461,10 @@ public class GuiMain extends javax.swing.JFrame {
 
         //capturingHardwareManager.add(new CapturingSerial<GirsClient>(GirsClient.class, captureGirsPanel, girsClientSerialPortSimpleBean,
         //        properties, guiUtils, capturingHardwareManager));
+
+        if (LircHardware.isLibraryLoaded())
+            capturingHardwareManager.add(new CapturingDevLirc(captureDevLircPanel, devLircCaptureBean,
+                    properties, guiUtils, capturingHardwareManager));
 
         capturingHardwareManager.add(new CapturingSerial<>(CommandFusion.class, captureCommandFusionPanel, commandFusionSerialPortSimpleBean,
                 properties, guiUtils, capturingHardwareManager));
@@ -571,6 +585,10 @@ public class GuiMain extends javax.swing.JFrame {
             sendingHardwareTabbedPane.remove(genericSerialPanel);
             sendingHardwareTabbedPane.remove(girsSendingPanel);  // temporarily, not yet working
             capturingHardwareTabbedPane.remove(captureGirsPanel);// temporarily, not yet working
+        }
+        if (!LircHardware.isLibraryLoaded()) {
+            sendingHardwareTabbedPane.remove(devLircPanel);
+            capturingHardwareTabbedPane.remove(captureDevLircPanel);
         }
     } // end of constructor
 
@@ -1870,6 +1888,9 @@ public class GuiMain extends javax.swing.JFrame {
         startMode2Button = new javax.swing.JButton();
         stopMode2Button = new javax.swing.JButton();
         capturingMode2HardwareHelpButton = new javax.swing.JButton();
+        captureDevLircPanel = new javax.swing.JPanel();
+        devLircCaptureBean = new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getDevLircCaptureName(), false);
+        capturingDevLircHardwareHelpButton = new javax.swing.JButton();
         captureIrToyPanel = new javax.swing.JPanel();
         irToySerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrToyCapturePortName(), properties.getIrToyCapturePortBaudRate(), true);
         capturingIrToyHardwareHelpButton = new javax.swing.JButton();
@@ -1893,6 +1914,9 @@ public class GuiMain extends javax.swing.JFrame {
         lircInternetHostPanel = new org.harctoolbox.guicomponents.InternetHostPanel(guiUtils, true, true, true);
         lircNamedCommandLauncher = new org.harctoolbox.guicomponents.NamedCommandLauncher(guiUtils);
         sendingLircHelpButton = new javax.swing.JButton();
+        devLircPanel = new javax.swing.JPanel();
+        devLircBean = new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getDevLircName(), true);
+        sendingDevLircHardwareHelpButton = new javax.swing.JButton();
         irTransPanel = new javax.swing.JPanel();
         irTransInternetHostPanel = new org.harctoolbox.guicomponents.InternetHostPanel(guiUtils, false, true, true);
         irTransNamedCommandLauncher = new org.harctoolbox.guicomponents.NamedCommandLauncher(guiUtils);
@@ -4887,6 +4911,39 @@ public class GuiMain extends javax.swing.JFrame {
 
         capturingHardwareTabbedPane.addTab("LIRC Mode 2", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), captureLircMode2Panel); // NOI18N
 
+        capturingDevLircHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        capturingDevLircHardwareHelpButton.setText("Help");
+        capturingDevLircHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capturingDevLircHardwareHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout captureDevLircPanelLayout = new javax.swing.GroupLayout(captureDevLircPanel);
+        captureDevLircPanel.setLayout(captureDevLircPanelLayout);
+        captureDevLircPanelLayout.setHorizontalGroup(
+            captureDevLircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureDevLircPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(devLircCaptureBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(31, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureDevLircPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(capturingDevLircHardwareHelpButton)
+                .addContainerGap())
+        );
+        captureDevLircPanelLayout.setVerticalGroup(
+            captureDevLircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureDevLircPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(devLircCaptureBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
+                .addComponent(capturingDevLircHardwareHelpButton)
+                .addContainerGap())
+        );
+
+        capturingHardwareTabbedPane.addTab("/dev/lirc", captureDevLircPanel);
+
         capturingIrToyHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         capturingIrToyHardwareHelpButton.setText("Help");
         capturingIrToyHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
@@ -5101,7 +5158,7 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(globalCachePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(globalCacheIrSenderSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
                 .addComponent(sendingGlobalCacheHelpButton)
                 .addContainerGap())
         );
@@ -5143,12 +5200,45 @@ public class GuiMain extends javax.swing.JFrame {
                 .addComponent(lircInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(lircNamedCommandLauncher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(sendingLircHelpButton)
                 .addContainerGap())
         );
 
         sendingHardwareTabbedPane.addTab("Lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), lircPanel); // NOI18N
+
+        sendingDevLircHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        sendingDevLircHardwareHelpButton.setText("Help");
+        sendingDevLircHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sendingDevLircHardwareHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout devLircPanelLayout = new javax.swing.GroupLayout(devLircPanel);
+        devLircPanel.setLayout(devLircPanelLayout);
+        devLircPanelLayout.setHorizontalGroup(
+            devLircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(devLircPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(devLircBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(31, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, devLircPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(sendingDevLircHardwareHelpButton)
+                .addContainerGap())
+        );
+        devLircPanelLayout.setVerticalGroup(
+            devLircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(devLircPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(devLircBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addComponent(sendingDevLircHardwareHelpButton)
+                .addContainerGap())
+        );
+
+        sendingHardwareTabbedPane.addTab("/dev/lirc", devLircPanel);
 
         irTransInternetHostPanel.setIpName(null);
         irTransInternetHostPanel.setPortNumber(IrTrans.portNumber);
@@ -5190,7 +5280,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(irTransNamedCommandLauncher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(sendingIrTransHelpButton)
                 .addContainerGap())
         );
@@ -5223,7 +5313,7 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(audioPanelLayout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addComponent(transmitAudioParametersBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
                 .addComponent(sendingAudioHelpButton)
                 .addContainerGap())
         );
@@ -5256,7 +5346,7 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(irToyPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(irToySerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
                 .addComponent(sendingIrToyHelpButton)
                 .addContainerGap())
         );
@@ -5289,7 +5379,7 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(arduinoPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(arduinoSerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
                 .addComponent(sendingArduinoHelpButton)
                 .addContainerGap())
         );
@@ -5333,7 +5423,7 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(girsSendingPanelLayout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(tcpSerialComboBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
                 .addComponent(sendingGirsClientHelpButton)
                 .addContainerGap())
         );
@@ -5368,7 +5458,7 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(commandFusionSendPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(commandFusionSendingSerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
                 .addComponent(sendingCommandFusionHelpButton)
                 .addContainerGap())
         );
@@ -5402,7 +5492,7 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(genericSerialPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(genericSerialSenderBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(sendingGenericSerialPortHelpButton)
                 .addContainerGap())
         );
@@ -8404,6 +8494,14 @@ public class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_absoluteToleranceMenuItemActionPerformed
 
+    private void capturingDevLircHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingDevLircHardwareHelpButtonActionPerformed
+        HelpPopup.newHelpPopup(this, HelpTexts.capturingDevLircHelp);
+    }//GEN-LAST:event_capturingDevLircHardwareHelpButtonActionPerformed
+
+    private void sendingDevLircHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingDevLircHardwareHelpButtonActionPerformed
+        HelpPopup.newHelpPopup(this, HelpTexts.sendingDevLircHelp);
+    }//GEN-LAST:event_sendingDevLircHardwareHelpButtonActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -8429,6 +8527,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem beaconListenerMenuItem;
     private javax.swing.JPanel captureArduinoPanel;
     private javax.swing.JPanel captureCommandFusionPanel;
+    private javax.swing.JPanel captureDevLircPanel;
     private javax.swing.JPanel captureGirsPanel;
     private javax.swing.JPanel captureGlobalCachePanel;
     private javax.swing.JPanel captureIrToyPanel;
@@ -8439,6 +8538,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JTextArea capturedDataTextArea;
     private javax.swing.JButton capturingArduinoHardwareHelpButton;
     private javax.swing.JButton capturingCommandFusionHardwareHelpButton;
+    private javax.swing.JButton capturingDevLircHardwareHelpButton;
     private javax.swing.JButton capturingGirsHardwareHelpButton;
     private javax.swing.JButton capturingGlobalCacheHardwareHelpButton;
     private javax.swing.JButton capturingHardwareHelpButton;
@@ -8486,6 +8586,9 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JTextField decodeIRTextField;
     private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JMenuItem deleteMenuItem1;
+    private org.harctoolbox.guicomponents.DevLircBean devLircBean;
+    private org.harctoolbox.guicomponents.DevLircBean devLircCaptureBean;
+    private javax.swing.JPanel devLircPanel;
     private javax.swing.JCheckBoxMenuItem disregardRepeatMinsCheckBoxMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JTextField editingTextField;
@@ -8844,6 +8947,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton sendingArduinoHelpButton;
     private javax.swing.JButton sendingAudioHelpButton;
     private javax.swing.JButton sendingCommandFusionHelpButton;
+    private javax.swing.JButton sendingDevLircHardwareHelpButton;
     private javax.swing.JButton sendingGenericSerialPortHelpButton;
     private javax.swing.JButton sendingGirsClientHelpButton;
     private javax.swing.JButton sendingGlobalCacheHelpButton;
