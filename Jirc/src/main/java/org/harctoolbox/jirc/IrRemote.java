@@ -285,7 +285,7 @@ final public class IrRemote {
 
     public static RemoteSet newRemoteSet(Collection<IrRemote> remotes, String configFilename,
             String creatingUser, boolean alternatingSigns, int debug) {
-        if (remotes == null || remotes.isEmpty())
+        if (remotes == null)
             return null;
         String decodeir_version = DecodeIR.getVersion();
 

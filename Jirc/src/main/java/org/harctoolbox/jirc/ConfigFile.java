@@ -231,11 +231,13 @@ public final class ConfigFile {
             if (line == null)
                 throw new EofException();
 
+            line = line.trim();
+
             int idx = line.indexOf('#');
             if (idx != -1)
                 line = line.substring(0, idx).trim();
             if (!line.isEmpty())
-                words = line.trim().split("\\s+");
+                words = line.split("\\s+");
         }
     }
 
