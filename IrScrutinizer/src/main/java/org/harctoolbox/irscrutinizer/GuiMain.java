@@ -180,6 +180,14 @@ public class GuiMain extends javax.swing.JFrame {
             prontoModelNames[i] = prontomodels[i].toString();
 
         lircImporter = new LircImporter();
+        LircImporter.setRejectLircCode(properties.getRejectLircCodeImports());
+        properties.addRejectLircCodeImportsChangeListener(new Props.IPropertyChangeListener() {
+            @Override
+            public void propertyChange(String name, Object oldValue, Object newValue) {
+                lircImporter.setRejectLircCode((Boolean) newValue);
+            }
+        });
+
         irTransImporter = new IrTransImporter();
         cmlImporter = new CmlImporter();
         commandFusionImporter = new CommandFusionImporter();
@@ -2063,6 +2071,7 @@ public class GuiMain extends javax.swing.JFrame {
         translateProntoFontCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         girrValidateCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         girrSchemaLocationMenuItem = new javax.swing.JMenuItem();
+        rejectLircCodeImports = new javax.swing.JCheckBoxMenuItem();
         toleranceMenu = new javax.swing.JMenu();
         absoluteToleranceMenuItem = new javax.swing.JMenuItem();
         relativeToleranceMenuItem = new javax.swing.JMenuItem();
@@ -6421,6 +6430,15 @@ public class GuiMain extends javax.swing.JFrame {
         });
         importOptionsMenu.add(girrSchemaLocationMenuItem);
 
+        rejectLircCodeImports.setSelected(properties.getRejectLircCodeImports());
+        rejectLircCodeImports.setText("Reject Lirc Imports without timings");
+        rejectLircCodeImports.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rejectLircCodeImportsActionPerformed(evt);
+            }
+        });
+        importOptionsMenu.add(rejectLircCodeImports);
+
         toleranceMenu.setText("Tolerances");
 
         absoluteToleranceMenuItem.setText("Absolute...");
@@ -8502,6 +8520,10 @@ public class GuiMain extends javax.swing.JFrame {
         HelpPopup.newHelpPopup(this, HelpTexts.sendingDevLircHelp);
     }//GEN-LAST:event_sendingDevLircHardwareHelpButtonActionPerformed
 
+    private void rejectLircCodeImportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rejectLircCodeImportsActionPerformed
+        properties.setRejectLircCodeImports(rejectLircCodeImports.isSelected());
+    }//GEN-LAST:event_rejectLircCodeImportsActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -8914,6 +8936,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPopupMenu rawTablePopupMenu;
     private javax.swing.JScrollPane rawTableScrollPane;
     private javax.swing.JMenuItem reAnalyzeMenuItem;
+    private javax.swing.JCheckBoxMenuItem rejectLircCodeImports;
     private javax.swing.JMenuItem relativeToleranceMenuItem;
     private javax.swing.JMenuItem releaseNotesMenuItem;
     private javax.swing.JPanel remoteScrutinizerPanel;

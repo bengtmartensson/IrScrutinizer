@@ -39,9 +39,13 @@ public class LircImporter extends RemoteSetImporter implements IReaderImporter, 
     private static final int debug = 0;
 
     /** We ignore LircCode remotes. */
-    private static final boolean acceptLircCode = false;
+    private static boolean rejectLircCode = false;
 
     private static final boolean alternatingSigns = true;
+
+    public static void setRejectLircCode(boolean newRejectLircCode) {
+        rejectLircCode = newRejectLircCode;
+    }
 
     public LircImporter() {
         super();
@@ -56,22 +60,22 @@ public class LircImporter extends RemoteSetImporter implements IReaderImporter, 
 
     @Override
     public void load(InputStream inputStream, String origin, String charsetName) throws IOException {
-        load(ConfigFile.readConfig(new InputStreamReader(inputStream, charsetName), origin, acceptLircCode), origin);
+        load(ConfigFile.readConfig(new InputStreamReader(inputStream, charsetName), origin, rejectLircCode), origin);
     }
 
     @Override
     public void load(String input, String origin) throws IOException {
-        load(ConfigFile.readConfig(new StringReader(input), origin, acceptLircCode), origin);
+        load(ConfigFile.readConfig(new StringReader(input), origin, rejectLircCode), origin);
     }
 
     @Override
     public void load(File file, String origin, String charsetName) throws IOException {
-        load(ConfigFile.readConfig(file, charsetName, acceptLircCode), origin);
+        load(ConfigFile.readConfig(file, charsetName, rejectLircCode), origin);
     }
 
     @Override
     public void load(Reader reader, String origin) throws IOException {
-        load(ConfigFile.readConfig(reader, origin, acceptLircCode), origin);
+        load(ConfigFile.readConfig(reader, origin, rejectLircCode), origin);
     }
 
     @Override
