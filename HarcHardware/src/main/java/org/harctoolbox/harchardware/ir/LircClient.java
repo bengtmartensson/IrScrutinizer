@@ -155,6 +155,20 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender, IIrSen
         }
     }
 
+    protected void readLoop() throws IOException {
+        TcpSocketChannel tcpSocketChannel = new TcpSocketChannel(lircServerIp, lircPort,
+                0 /*timeout*/, verbose, TcpSocketPort.ConnectionMode.keepAlive);
+        tcpSocketChannel.connect();
+        //OutputStream outToServer = tcpSocketChannel.getOut();
+        BufferedReader inFromServer = tcpSocketChannel.getBufferedIn();
+        if (inFromServer == null)
+            throw new IOException("Could not open socket connection to LIRC server " + lircServerIp);
+        while (true) {
+            String line = inFromServer.readLine();
+            System.out.println(line);
+        }
+    }
+
     protected final String[] sendCommand(String packet, boolean oneWord) throws IOException {
         if (verbose)
             System.err.println("Sending command `" + packet + "' to Lirc@" + lircServerIp);
@@ -414,6 +428,9 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender, IIrSen
         @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
         private boolean helpRequested = false;
 
+        @Parameter(names = {"-l", "--listen"}, description = "Listen for messages, like irw")
+        private boolean listen = false;
+
         @Parameter(names = {"-p", "--port"}, description = "Port of lircd")
         private int port = 8765;
 
@@ -515,6 +532,12 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender, IIrSen
         int port = splitAddress.length == 2 ? Integer.parseInt(splitAddress[1]) : commandLineArgs.port;
         try (LircClient lircClient = new LircClient(hostname, port,
                 commandLineArgs.verbose, commandLineArgs.timeout)) {
+
+            if (commandLineArgs.listen) {
+                lircClient.readLoop();
+                System.exit(IrpUtils.exitSuccess);
+            }
+
             if (argumentParser.getParsedCommand() == null)
                 usage(IrpUtils.exitUsageError);
             boolean success = true;
