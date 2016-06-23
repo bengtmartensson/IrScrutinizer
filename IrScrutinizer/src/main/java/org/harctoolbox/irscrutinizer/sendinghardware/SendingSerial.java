@@ -56,10 +56,10 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
                         case SerialPortSimpleBean.PROP_PORT:
                             if (evt.getNewValue() == null)
                                 return;
-                            setupSerial();
+                            setup();
                             break;
                         case SerialPortSimpleBean.PROP_BAUD:
-                            setupSerial();
+                            setup();
                             break;
                         case SerialPortSimpleBean.PROP_ISOPEN:
                             break;
@@ -74,7 +74,8 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
         });
     }
 
-    private void setupSerial() throws IOException {
+    @Override
+    public void setup() throws IOException {
         int newBaud = serialPortSimpleBean.getBaudRate();
         String newPort = serialPortSimpleBean.getPortName();
         if (newPort == null || (rawIrSender != null && newPort.equals(portName) && (baudRate == newBaud)))
@@ -100,11 +101,6 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
                 guiUtils.error(ex);
             guiUtils.error(ex.getCause().getClass().getName() + " " + ex.getCause().getMessage());
         }
-    }
-
-    @Override
-    public void setup() throws IOException {
-        setupSerial();
     }
 
     @Override

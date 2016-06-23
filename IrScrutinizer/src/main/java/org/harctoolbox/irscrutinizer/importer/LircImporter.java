@@ -39,11 +39,11 @@ public class LircImporter extends RemoteSetImporter implements IReaderImporter, 
     private static final int debug = 0;
 
     /** We ignore LircCode remotes. */
-    private static boolean rejectLircCode = false;
+    private boolean rejectLircCode = false;
 
     private static final boolean alternatingSigns = true;
 
-    public static void setRejectLircCode(boolean newRejectLircCode) {
+    public void setRejectLircCode(boolean newRejectLircCode) {
         rejectLircCode = newRejectLircCode;
     }
 

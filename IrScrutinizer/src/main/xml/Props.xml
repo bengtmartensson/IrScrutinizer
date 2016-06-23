@@ -146,6 +146,6 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="prontoButtonSizeX" type="int" default='"80"' doc="Pronto screen width" />
     <property name="prontoButtonSizeY" type="int" default='"30"' doc="Pronto screen height" />
 
-    <property name="absoluteTolerance" type="double" default='Double.toString(IrpUtils.defaultAbsoluteTolerance)' doc="Absolute tolerance for duration comparisions" />
-    <property name="relativeTolerance" type="double" default='Double.toString(IrpUtils.defaultRelativeTolerance)' doc="Relative tolerance for duration comparisions" />
+    <property name="absoluteTolerance" type="double" default='Double.toString(IrpUtils.defaultAbsoluteTolerance)' doc="Absolute tolerance for duration comparisons" />
+    <property name="relativeTolerance" type="double" default='Double.toString(IrpUtils.defaultRelativeTolerance)' doc="Relative tolerance for duration comparisons" />
 </properties>

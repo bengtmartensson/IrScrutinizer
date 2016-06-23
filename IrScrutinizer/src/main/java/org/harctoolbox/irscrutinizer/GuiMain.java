@@ -180,7 +180,7 @@ public class GuiMain extends javax.swing.JFrame {
             prontoModelNames[i] = prontomodels[i].toString();
 
         lircImporter = new LircImporter();
-        LircImporter.setRejectLircCode(properties.getRejectLircCodeImports());
+        lircImporter.setRejectLircCode(properties.getRejectLircCodeImports());
         properties.addRejectLircCodeImportsChangeListener(new Props.IPropertyChangeListener() {
             @Override
             public void propertyChange(String name, Object oldValue, Object newValue) {
@@ -421,9 +421,9 @@ public class GuiMain extends javax.swing.JFrame {
                 arduinoSerialPortBean, properties, guiUtils);
         sendingHardwareManager.add(sendingArduino);
 
+        SendingDevLirc sendingDevLirc = null;
         if (LircHardware.isLibraryLoaded()) {
-            SendingDevLirc sendingDevLirc = new SendingDevLirc(devLircPanel, //arduinoVersionLabel,
-                    devLircBean, properties, guiUtils);
+            sendingDevLirc = new SendingDevLirc(devLircPanel, devLircBean, properties, guiUtils);
             sendingHardwareManager.add(sendingDevLirc);
         }
 
@@ -443,15 +443,11 @@ public class GuiMain extends javax.swing.JFrame {
         if (userlevel != 0)
             sendingHardwareManager.add(sendingGenericSerialPort);
 
-        try {
-            sendingHardwareManager.select(properties.getTransmitHardware());
-        } catch (HarcHardwareException ex) {
-            guiUtils.error(ex);
-        }
+        sendingHardwareManager.select(properties.getTransmitHardware());
 
         optionsMenu.add(sendingHardwareManager.getMenu());
 
-        capturingHardwareManager = new CapturingHardwareManager(guiUtils, properties,
+        capturingHardwareManager = new CapturingHardwareManager(properties,
                 capturingHardwareTabbedPane, startButton);
 
         capturingHardwareManager.add(new CapturingSerial<>(IrWidget.class, captureIrWidgetPanel,
@@ -464,27 +460,28 @@ public class GuiMain extends javax.swing.JFrame {
         capturingHardwareManager.add(new CapturingLircMode2(properties.getLircMode2Command(),
                 captureLircMode2Panel, properties, guiUtils, capturingHardwareManager));
 
-        capturingHardwareManager.add(new CapturingSerial<>(Arduino.class, captureArduinoPanel, arduinoSerialPortSimpleBean,
+        capturingHardwareManager.add(new CapturingSendingHardware<>(captureArduinoPanel, arduinoPanel,
+                arduinoCapturingSendingBean, arduinoSerialPortBean, sendingArduino,
                 properties, guiUtils, capturingHardwareManager));
 
         //capturingHardwareManager.add(new CapturingSerial<GirsClient>(GirsClient.class, captureGirsPanel, girsClientSerialPortSimpleBean,
         //        properties, guiUtils, capturingHardwareManager));
 
         if (LircHardware.isLibraryLoaded())
-            capturingHardwareManager.add(new CapturingDevLirc(captureDevLircPanel, devLircCaptureBean,
+            capturingHardwareManager.add(new CapturingSendingHardware<>(captureDevLircPanel, devLircPanel,
+                    devLircCapturingSendingBean, devLircBean, sendingDevLirc,
                     properties, guiUtils, capturingHardwareManager));
 
-        capturingHardwareManager.add(new CapturingSerial<>(CommandFusion.class, captureCommandFusionPanel, commandFusionSerialPortSimpleBean,
+        capturingHardwareManager.add(new CapturingSendingHardware<>(captureCommandFusionPanel, commandFusionSendPanel,
+                commandFusionCapturingSendingBean, commandFusionSendingSerialPortBean, sendingcommandFusion,
                 properties, guiUtils, capturingHardwareManager));
 
-        capturingHardwareManager.add(new CapturingSerial<>(IrToy.class, captureIrToyPanel, irToySerialPortSimpleBean,
+        capturingHardwareManager.add(new CapturingSendingHardware<>(captureIrToyPanel, irToyPanel,
+                irtoyCapturingSendingBean, irToySerialPortBean, sendingIrToy,
                 properties, guiUtils, capturingHardwareManager));
 
-        try {
-            capturingHardwareManager.select(properties.getCaptureDevice(), true);
-        } catch (IOException | HarcHardwareException ex) {
-            guiUtils.error(ex);
-        }
+        capturingHardwareManager.select(properties.getCaptureDevice());
+
         properties.addVerboseChangeListener(new Props.IPropertyChangeListener() {
             @Override
             public void propertyChange(String name, Object oldValue, Object newValue) {
@@ -599,6 +596,12 @@ public class GuiMain extends javax.swing.JFrame {
             capturingHardwareTabbedPane.remove(captureDevLircPanel);
         }
     } // end of constructor
+
+    public void selectSenderHardware(javax.swing.JPanel panel) {
+        lastPane = topLevelTabbedPane.getSelectedComponent();
+        topLevelTabbedPane.setSelectedComponent(sendingPanel);
+        sendingHardwareTabbedPane.setSelectedComponent(panel);
+    }
 
     private Command.CommandTextFormat[] setupExtraTextFormats() {
         ArrayList<Command.CommandTextFormat> formats = new ArrayList<>();
@@ -1897,20 +1900,20 @@ public class GuiMain extends javax.swing.JFrame {
         stopMode2Button = new javax.swing.JButton();
         capturingMode2HardwareHelpButton = new javax.swing.JButton();
         captureDevLircPanel = new javax.swing.JPanel();
-        devLircCaptureBean = new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getDevLircCaptureName(), false);
         capturingDevLircHardwareHelpButton = new javax.swing.JButton();
+        devLircCapturingSendingBean = new CapturingSendingBean(this);
         captureIrToyPanel = new javax.swing.JPanel();
-        irToySerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrToyCapturePortName(), properties.getIrToyCapturePortBaudRate(), true);
         capturingIrToyHardwareHelpButton = new javax.swing.JButton();
+        irtoyCapturingSendingBean = new CapturingSendingBean(this);
         captureArduinoPanel = new javax.swing.JPanel();
-        arduinoSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoCapturePortName(),Arduino.defaultBaudRate, true);
         capturingArduinoHardwareHelpButton = new javax.swing.JButton();
+        arduinoCapturingSendingBean = new CapturingSendingBean(this);
         captureGirsPanel = new javax.swing.JPanel();
-        girsClientSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getGirsClientCapturePortName(),GirsClient.defaultBaudRate, false);
         capturingGirsHardwareHelpButton = new javax.swing.JButton();
+        girsClientCapturingSendingBean = new CapturingSendingBean(this);
         captureCommandFusionPanel = new javax.swing.JPanel();
-        commandFusionSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionCapturePortName(),CommandFusion.defaultBaudRate, false);
         capturingCommandFusionHardwareHelpButton = new javax.swing.JButton();
+        commandFusionCapturingSendingBean = new CapturingSendingBean(this);
         captureTestButton = new javax.swing.JButton();
         capturingHardwareHelpButton = new javax.swing.JButton();
         sendingPanel = new javax.swing.JPanel();
@@ -4932,21 +4935,21 @@ public class GuiMain extends javax.swing.JFrame {
         captureDevLircPanel.setLayout(captureDevLircPanelLayout);
         captureDevLircPanelLayout.setHorizontalGroup(
             captureDevLircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureDevLircPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(devLircCaptureBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureDevLircPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(763, Short.MAX_VALUE)
                 .addComponent(capturingDevLircHardwareHelpButton)
                 .addContainerGap())
+            .addGroup(captureDevLircPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(devLircCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         captureDevLircPanelLayout.setVerticalGroup(
             captureDevLircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(captureDevLircPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(devLircCaptureBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
+                .addComponent(devLircCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                 .addComponent(capturingDevLircHardwareHelpButton)
                 .addContainerGap())
         );
@@ -4965,21 +4968,21 @@ public class GuiMain extends javax.swing.JFrame {
         captureIrToyPanel.setLayout(captureIrToyPanelLayout);
         captureIrToyPanelLayout.setHorizontalGroup(
             captureIrToyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureIrToyPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irToySerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(261, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureIrToyPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(763, Short.MAX_VALUE)
                 .addComponent(capturingIrToyHardwareHelpButton)
                 .addContainerGap())
+            .addGroup(captureIrToyPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(irtoyCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         captureIrToyPanelLayout.setVerticalGroup(
             captureIrToyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(captureIrToyPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(irToySerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
+                .addComponent(irtoyCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                 .addComponent(capturingIrToyHardwareHelpButton)
                 .addContainerGap())
         );
@@ -4998,21 +5001,21 @@ public class GuiMain extends javax.swing.JFrame {
         captureArduinoPanel.setLayout(captureArduinoPanelLayout);
         captureArduinoPanelLayout.setHorizontalGroup(
             captureArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureArduinoPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(arduinoSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(261, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureArduinoPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(763, Short.MAX_VALUE)
                 .addComponent(capturingArduinoHardwareHelpButton)
                 .addContainerGap())
+            .addGroup(captureArduinoPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(arduinoCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         captureArduinoPanelLayout.setVerticalGroup(
             captureArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(captureArduinoPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(arduinoSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
+                .addComponent(arduinoCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                 .addComponent(capturingArduinoHardwareHelpButton)
                 .addContainerGap())
         );
@@ -5031,21 +5034,21 @@ public class GuiMain extends javax.swing.JFrame {
         captureGirsPanel.setLayout(captureGirsPanelLayout);
         captureGirsPanelLayout.setHorizontalGroup(
             captureGirsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureGirsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(girsClientSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureGirsPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(763, Short.MAX_VALUE)
                 .addComponent(capturingGirsHardwareHelpButton)
                 .addContainerGap())
+            .addGroup(captureGirsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(girsClientCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         captureGirsPanelLayout.setVerticalGroup(
             captureGirsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(captureGirsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(girsClientSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
+                .addComponent(girsClientCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                 .addComponent(capturingGirsHardwareHelpButton)
                 .addContainerGap())
         );
@@ -5064,21 +5067,21 @@ public class GuiMain extends javax.swing.JFrame {
         captureCommandFusionPanel.setLayout(captureCommandFusionPanelLayout);
         captureCommandFusionPanelLayout.setHorizontalGroup(
             captureCommandFusionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureCommandFusionPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(commandFusionSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureCommandFusionPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(763, Short.MAX_VALUE)
                 .addComponent(capturingCommandFusionHardwareHelpButton)
                 .addContainerGap())
+            .addGroup(captureCommandFusionPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(commandFusionCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         captureCommandFusionPanelLayout.setVerticalGroup(
             captureCommandFusionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(captureCommandFusionPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(commandFusionSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
+                .addComponent(commandFusionCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                 .addComponent(capturingCommandFusionHardwareHelpButton)
                 .addContainerGap())
         );
@@ -7760,10 +7763,7 @@ public class GuiMain extends javax.swing.JFrame {
         try {
             for (ISendingHardware<?> hardware : sendingHardwareManager.getSendingHardware()) {
                 if (hardware.getPanel() == sendingHardwareTabbedPane.getSelectedComponent()) {
-                    String name = hardware.getName();
-                    sendingHardwareManager.select(name);
-                    properties.setTransmitHardware(name);
-                    //System.err.println(name);
+                    sendingHardwareManager.selectDoWork(hardware.getName());
                     break;
                 }
             }
@@ -7789,10 +7789,7 @@ public class GuiMain extends javax.swing.JFrame {
         try {
             for (ICapturingHardware<?> hardware : capturingHardwareManager.getCapturingHardware()) {
                 if (hardware.getPanel() == capturingHardwareTabbedPane.getSelectedComponent()) {
-                    String name = hardware.getName();
-                    capturingHardwareManager.select(name, true);
-                    properties.setCaptureDevice(name);
-                    //System.err.println(name);
+                    capturingHardwareManager.selectDoWork(hardware.getName());
                     break;
                 }
             }
@@ -7813,7 +7810,7 @@ public class GuiMain extends javax.swing.JFrame {
             return;
         }
         if (!capturingHardwareManager.isReady()) {
-            guiUtils.error("Selected capture device not ready.");
+            guiUtils.error("Selected capture device not ready (not opened?).");
             return;
         }
 
@@ -8541,9 +8538,9 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu analyzerBasisMenu;
     private javax.swing.JTextField analyzerTextField;
     private javax.swing.JButton apiKeyButton;
+    private org.harctoolbox.guicomponents.CapturingSendingBean arduinoCapturingSendingBean;
     private javax.swing.JPanel arduinoPanel;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean arduinoSerialPortBean;
-    private org.harctoolbox.guicomponents.SerialPortSimpleBean arduinoSerialPortSimpleBean;
     private javax.swing.JPanel audioPanel;
     private javax.swing.JCheckBox automaticExportFilenamesCheckBox;
     private javax.swing.JMenuItem beaconListenerMenuItem;
@@ -8583,11 +8580,11 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem clonePlotMenuItem;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean cmlFileImporterBean;
     private javax.swing.JPanel cmlImportPanel;
+    private org.harctoolbox.guicomponents.CapturingSendingBean commandFusionCapturingSendingBean;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean commandFusionFileImporterBean;
     private javax.swing.JPanel commandFusionImportPanel;
     private javax.swing.JPanel commandFusionSendPanel;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean commandFusionSendingSerialPortBean;
-    private org.harctoolbox.guicomponents.SerialPortSimpleBean commandFusionSerialPortSimpleBean;
     private org.harctoolbox.guicomponents.Console console;
     private javax.swing.JPanel cookedPanel;
     private javax.swing.JMenuItem copyConsoleToClipboardMenuItem;
@@ -8609,7 +8606,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JMenuItem deleteMenuItem1;
     private org.harctoolbox.guicomponents.DevLircBean devLircBean;
-    private org.harctoolbox.guicomponents.DevLircBean devLircCaptureBean;
+    private org.harctoolbox.guicomponents.CapturingSendingBean devLircCapturingSendingBean;
     private javax.swing.JPanel devLircPanel;
     private javax.swing.JCheckBoxMenuItem disregardRepeatMinsCheckBoxMenuItem;
     private javax.swing.JMenu editMenu;
@@ -8688,7 +8685,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JTextField girrStylesheetUrlTextField;
     private javax.swing.JCheckBoxMenuItem girrValidateCheckBoxMenuItem;
     private javax.swing.JButton girrWebSiteButton;
-    private org.harctoolbox.guicomponents.SerialPortSimpleBean girsClientSerialPortSimpleBean;
+    private org.harctoolbox.guicomponents.CapturingSendingBean girsClientCapturingSendingBean;
     private javax.swing.JPanel girsSendingPanel;
     private javax.swing.JMenuItem gitMenuItem;
     private org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector globalCacheCaptureSelector;
@@ -8766,7 +8763,6 @@ public class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.guicomponents.IrPlotter irPlotter;
     private javax.swing.JPanel irToyPanel;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean irToySerialPortBean;
-    private org.harctoolbox.guicomponents.SerialPortSimpleBean irToySerialPortSimpleBean;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean irTransFileImporterBean;
     private org.harctoolbox.guicomponents.InternetHostPanel irTransInternetHostPanel;
     private org.harctoolbox.guicomponents.NamedCommandLauncher irTransNamedCommandLauncher;
@@ -8786,6 +8782,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem irpProtocolsEditMenuItem;
     private javax.swing.JMenu irpProtocolsIniMenu;
     private javax.swing.JMenuItem irpProtocolsSelectMenuItem;
+    private org.harctoolbox.guicomponents.CapturingSendingBean irtoyCapturingSendingBean;
     private javax.swing.JPanel irtransImportPanel;
     private javax.swing.JButton jButton20;
     private javax.swing.JButton jButton22;
