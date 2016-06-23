@@ -21,50 +21,47 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.JPanel;
+import org.harctoolbox.guicomponents.CapturingSendingBean;
 import org.harctoolbox.guicomponents.DevLircBean;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ir.DevLirc;
 import org.harctoolbox.irscrutinizer.Props;
+import org.harctoolbox.irscrutinizer.sendinghardware.SendingDevLirc;
 
 /**
  *
  */
-
-// This code sucks, but less than before.
 public class CapturingDevLirc extends CapturingHardware<DevLirc> implements ICapturingHardware<DevLirc>, IHarcHardware {
 
-    private DevLircBean devLircBean;
-    private String portName = null;
+    private final SendingDevLirc sendingDevLirc;
+    private final CapturingSendingBean capturingSendingBean;
+    private final DevLircBean devLircBean;
 
-    public CapturingDevLirc(JPanel panel, DevLircBean devLircBean,
-            Props properties_, GuiUtils guiUtils_,
-            CapturingHardwareManager capturingHardwareManager) {
+    public CapturingDevLirc(JPanel panel, JPanel jumpPanel, CapturingSendingBean bean, DevLircBean devLircBean,
+            final SendingDevLirc sendingDevLirc, Props properties_,
+            GuiUtils guiUtils_, CapturingHardwareManager capturingHardwareManager) {
         super(panel, properties_, guiUtils_, capturingHardwareManager);
+        this.sendingDevLirc = sendingDevLirc;
+        this.capturingSendingBean = bean;
         this.devLircBean = devLircBean;
-        this.portName = devLircBean.getPortName();
+        capturingSendingBean.setOpened(sendingDevLirc.getRawIrSender() != null && sendingDevLirc.getRawIrSender().isValid());
+        capturingSendingBean.setSenderPanel(jumpPanel);
 
         devLircBean.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 String propertyName = evt.getPropertyName();
-
-                try {
-                    switch (propertyName) {
-                        case DevLircBean.PROP_PORT:
-                            if (evt.getNewValue() == null)
-                                return;
-                            setup();
-                            break;
-                        case DevLircBean.PROP_PROPS:
-                        case DevLircBean.PROP_ISOPEN:
-                            break;
-                        default:
-                            throw new RuntimeException("Unknown property " + propertyName);
-                    }
-                } catch (IOException ex) {
-                    guiUtils.error(ex);
+                switch (propertyName) {
+                    case DevLircBean.PROP_PROPS:
+                        // TODO?
+                        break;
+                    case DevLircBean.PROP_ISOPEN:
+                        capturingSendingBean.setOpened(sendingDevLirc.getRawIrSender().isValid());
+                        break;
+                    default:
+                        break;
                 }
             }
         });
@@ -72,34 +69,32 @@ public class CapturingDevLirc extends CapturingHardware<DevLirc> implements ICap
 
     @Override
     public void setup() throws IOException {
-        String newPort = devLircBean.getPortName();
-        if (hardware != null && (newPort == null || newPort.equals(portName)))
-            return;
-
-        if (hardware != null)
-            hardware.close();
-        portName = newPort;
-        hardware = new DevLirc(newPort, properties.getVerbose());
-        properties.setDevLircCaptureName(newPort);
-        devLircBean.setHardware(hardware);
+        sendingDevLirc.setup();
         try {
             selectMe();
         } catch (HarcHardwareException ex) {
             guiUtils.error(ex);
         }
+        capturingSendingBean.setOpened(sendingDevLirc.getRawIrSender().isValid());
     }
 
     @Override
     public String getName() {
-        return "/dev/lirc";
+        return sendingDevLirc.getName();
     }
 
     @Override
     public void open() throws HarcHardwareException, IOException {
-        hardware.open();
+        getCapturer().open();
+        capturingSendingBean.setOpened(sendingDevLirc.getRawIrSender().isValid());
     }
 
     @Override
     public void setDebug(int debug) {
+    }
+
+    @Override
+    public DevLirc getCapturer() {
+        return sendingDevLirc.getRawIrSender();
     }
 }
