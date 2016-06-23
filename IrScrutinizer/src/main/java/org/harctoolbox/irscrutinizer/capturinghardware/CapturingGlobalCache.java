@@ -37,6 +37,7 @@ public class CapturingGlobalCache extends CapturingHardware<GlobalCache> impleme
 
     private String initialIp;
     GlobalCacheIrSenderSelector globalCacheIrSenderSelector;
+    private GlobalCache hardware;
 
     public CapturingGlobalCache(String hostname, final GlobalCacheIrSenderSelector globalCacheIrSenderSelector,
             JPanel panel, Props properties_, GuiUtils guiUtils, CapturingHardwareManager capturingHardwareManager) {
@@ -92,5 +93,10 @@ public class CapturingGlobalCache extends CapturingHardware<GlobalCache> impleme
     @Override
     public String getName() {
         return "Global Caché";
+    }
+
+    @Override
+    public GlobalCache getCapturer() {
+        return hardware;
     }
 }

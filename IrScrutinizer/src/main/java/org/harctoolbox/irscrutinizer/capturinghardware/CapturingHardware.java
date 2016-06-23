@@ -33,15 +33,9 @@ import org.harctoolbox.irscrutinizer.Props;
  */
 public abstract class CapturingHardware <T extends ICapture & IHarcHardware> {
     private final JPanel panel;
-
-    protected T hardware = null;
     protected Props properties;
     protected GuiUtils guiUtils;
     protected boolean verbose;
-    //protected int debug = 0;
-    //protected int beginTimeout;
-    //protected int maxLearnLength;
-    //protected int endTimeout;
     private final CapturingHardwareManager capturingHardwareManager;
 
     protected CapturingHardware(JPanel panel, Props properties, GuiUtils guiUtils,
@@ -50,11 +44,7 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> {
         this.properties = properties;
         this.guiUtils = guiUtils;
         this.capturingHardwareManager = capturingHardwareManager;
-        //this.startButton = startButton;
         this.verbose = properties.getVerbose();
-        //this.beginTimeout = properties.getCaptureStartTimeout();
-        //this.maxLearnLength = properties.getCaptureRunTimeout();
-        //this.endTimeout = properties.getCaptureEndingTimeout();
     }
 
     /**
@@ -67,9 +57,7 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> {
     /**
      * @return the hardware
      */
-    public T getCapturer() {
-        return hardware;
-    }
+    public abstract T getCapturer();
 
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
@@ -77,37 +65,29 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> {
 
     public void close() {
         try {
-            if (hardware != null && hardware.isValid())// && captureDevice != lircMode2command)
-                hardware.close();
+            if (getCapturer() != null && getCapturer().isValid())// && captureDevice != lircMode2command)
+                getCapturer().close();
         } catch (IOException ex) {
             guiUtils.warning("Could not close present capture device: " + ex.getMessage());
         }
     }
 
-    //public void open() throws IOException, NoSuchPortException, PortInUseException, UnsupportedCommOperationException {
-    //    hardware.open();
-    //}
-
     protected void setupHardwareCommonEnd() {
-        if (verbose && hardware != null)
+        if (verbose && getCapturer() != null)
             try {
-                guiUtils.info("Capture device: " + hardware.getClass().getSimpleName() + ", Hardware version: " + hardware.getVersion());
+                guiUtils.info("Capture device: " + getCapturer().getClass().getSimpleName() + ", Hardware version: " + getCapturer().getVersion());
             } catch (IOException ex) {
                 guiUtils.error(ex);
             }
-        //startButton.setEnabled(hardware != null);
+        //startButton.setEnabled(getCapturer() != null);
     }
 
     protected void selectMe() throws IOException, HarcHardwareException {
-        capturingHardwareManager.select(getName(), false);
+        capturingHardwareManager.select(getName());
     }
 
-    //public ModulatedIrSequence capture() throws HarcHardwareException, IOException {
-    //    return hardware.capture(beginTimeout, maxLearnLength, endTimeout);
-    //}
-
     public ModulatedIrSequence capture() throws HarcHardwareException, IOException, IrpMasterException {
-        return hardware.capture();
+        return getCapturer().capture();
     }
 
     public boolean stopCapture() {
@@ -115,19 +95,19 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> {
     }
 
     public String getVersion() throws IOException {
-        return hardware.getVersion();
+        return getCapturer().getVersion();
     }
 
     public void setVerbosity(boolean verbosity) {
-        hardware.setVerbosity(verbosity);
+        getCapturer().setVerbosity(verbosity);
     }
 
     public void setTimeout(int i) throws IOException {
-        hardware.setTimeout(i);
+        getCapturer().setTimeout(i);
     }
 
     public boolean isValid() {
-        return hardware != null && hardware.isValid();
+        return getCapturer() != null && getCapturer().isValid();
     }
 
     public abstract String getName();

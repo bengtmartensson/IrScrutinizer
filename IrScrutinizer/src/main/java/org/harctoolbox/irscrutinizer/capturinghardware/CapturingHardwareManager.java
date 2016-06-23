@@ -30,7 +30,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
-import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.irscrutinizer.Props;
@@ -44,13 +43,11 @@ public class CapturingHardwareManager {
     private JMenu menu = null;
     private final AbstractButton startButton;
     private ButtonGroup buttonGroup;
-    private final GuiUtils guiUtils;
     private final Props properties;
     private ICapturingHardware<? extends IHarcHardware> selected;
     private boolean verbosity;
 
-    public CapturingHardwareManager(GuiUtils guiUtils, Props properties, JTabbedPane tabbedPane, AbstractButton startButton) {
-        this.guiUtils = guiUtils;
+    public CapturingHardwareManager(Props properties, JTabbedPane tabbedPane, AbstractButton startButton) {
         this.properties = properties;
         this.tabbedPane = tabbedPane;
         this.startButton = startButton;
@@ -92,10 +89,6 @@ public class CapturingHardwareManager {
         selected.setVerbose(verbosity);
     }
 
-    //public String getSelectedHardwareName() {
-    //    return selected.getName();
-    //}
-
     public boolean isReady() {
         return (selected != null) && selected.isValid();
     }
@@ -124,11 +117,7 @@ public class CapturingHardwareManager {
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    try {
-                        select(hardware, true);
-                    } catch (IOException | HarcHardwareException ex) {
-                        guiUtils.error(ex);
-                    }
+                    select(hardware);
                 }
             });
 
@@ -146,32 +135,48 @@ public class CapturingHardwareManager {
     /**
      *
      * @param name
-     * @param setup
-     * @throws IOException
-     * @throws HarcHardwareException
-     * @throws IllegalArgumentException
      */
-    public void select(String name, boolean setup) throws IOException, HarcHardwareException {
+    public void select(String name) {
         ICapturingHardware<?> hardware = table.get(name);
         if (hardware == null) {
             if (startButton != null)
                 startButton.setEnabled(false);
             throw new IllegalArgumentException(name + " does not exist in map.");
         }
-        select(hardware, setup);
+        select(hardware);
     }
 
     /**
      *
      * @param hardware
+     * @throws IllegalArgumentException
+     */
+    private void select(ICapturingHardware<?> hardware) {
+        // this calls selectHardware(...)
+        tabbedPane.setSelectedComponent(hardware.getPanel()); // throws IllegalArgumentException
+    }
+
+    /**
+     *
+     * @param name
      * @throws IOException
      * @throws HarcHardwareException
      * @throws IllegalArgumentException
      */
-    private void select(ICapturingHardware<?> hardware, boolean setup) throws IOException, HarcHardwareException {
-        if (setup && selected != hardware) {
-            if (selected != null)
-                selected.close();
+    public void selectDoWork(String name) throws IOException, HarcHardwareException {
+        ICapturingHardware<?> hardware = table.get(name);
+        if (hardware == null) {
+            if (startButton != null)
+                startButton.setEnabled(false);
+            throw new IllegalArgumentException(name + " does not exist in map.");
+        }
+        selectDoWork(hardware);
+    }
+
+    private void selectDoWork(ICapturingHardware<?> hardware) throws IOException, HarcHardwareException {
+        if (selected != hardware) {
+            //if (selected != null)
+            //    selected.close();
             hardware.setup();
         }
         selected = hardware;
@@ -187,8 +192,6 @@ public class CapturingHardwareManager {
                 menuItem.setSelected(menuItem.getText().equals(hardware.getName()));
             }
         }
-        // this calls select(...) again
-        tabbedPane.setSelectedComponent(hardware.getPanel()); // throws IllegalArgumentException
     }
 
     public void close() {

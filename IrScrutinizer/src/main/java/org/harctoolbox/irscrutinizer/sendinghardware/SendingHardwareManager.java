@@ -101,11 +101,7 @@ public class SendingHardwareManager {
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    try {
-                        select(hardware);
-                    } catch (HarcHardwareException ex) {
-                        guiUtils.error(ex);
-                    }
+                    select(hardware);
                 }
             });
 
@@ -123,10 +119,8 @@ public class SendingHardwareManager {
     /**
      *
      * @param name
-     * @throws HarcHardwareException
-     * @throws IllegalArgumentException
      */
-    public void select(String name) throws HarcHardwareException {
+    public void select(String name) {
         ISendingHardware<?> hardware = table.get(name);
         if (hardware == null)
             //throw new IllegalArgumentException(name + " does not exist in map.");
@@ -138,11 +132,32 @@ public class SendingHardwareManager {
     /**
      *
      * @param hardware
-     * @throws HarcHardwareException
-     * @throws IllegalArgumentException
      */
-    private void select(ISendingHardware<?> hardware) throws HarcHardwareException {
+    private void select(ISendingHardware<?> hardware) {
+        // invokes selectHardware through capturingHardwareTabbedPaneStateChanged
         tabbedPane.setSelectedComponent(hardware.getPanel()); // throws IllegalArgumentException
+    }
+
+    /**
+     *
+     * @param name
+     * @throws HarcHardwareException
+     */
+    public void selectDoWork(String name) throws HarcHardwareException {
+        ISendingHardware<?> hardware = table.get(name);
+        if (hardware == null)
+            //throw new IllegalArgumentException(name + " does not exist in map.");
+            return;
+
+        selectDoWork(hardware);
+    }
+
+    /**
+     *
+     * @param hardware
+     * @throws HarcHardwareException
+     */
+    private void selectDoWork(ISendingHardware<?> hardware) throws HarcHardwareException {
         selected = null;
         try {
             hardware.setup();

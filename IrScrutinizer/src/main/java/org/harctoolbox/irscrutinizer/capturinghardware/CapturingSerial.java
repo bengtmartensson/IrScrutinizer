@@ -43,6 +43,7 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
     private String portName = null;
     private int baudRate = -1;
     private Class<T> clazz;
+    private T hardware;
 
     public CapturingSerial(final Class<T> clazz, JPanel panel, SerialPortSimpleBean serialPortSimpleBean,
             Props properties_, GuiUtils guiUtils_,
@@ -137,5 +138,10 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
 
     @Override
     public void setDebug(int debug) {
+    }
+
+    @Override
+    public T getCapturer() {
+        return hardware;
     }
 }

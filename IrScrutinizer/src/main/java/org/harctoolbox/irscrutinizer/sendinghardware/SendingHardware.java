@@ -31,7 +31,6 @@ import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 import org.harctoolbox.irscrutinizer.Props;
 
 /**
- * This class does something interesting and useful. Or not...
  * @param <T>
  */
 public abstract class SendingHardware <T extends IRawIrSender & IHarcHardware> {
@@ -71,9 +70,6 @@ public abstract class SendingHardware <T extends IRawIrSender & IHarcHardware> {
      * @param verbose the verbose to set
      */
     public void setVerbosity(boolean verbose) {
-        //boolean oldVerbose = this.verbose;
-        //this.verbose = verbose;
-        //propertyChangeSupport.firePropertyChange(PROP_VERBOSE, oldVerbose, verbose);
         if (rawIrSender != null)
             rawIrSender.setVerbosity(verbose);
     }
@@ -111,4 +107,8 @@ public abstract class SendingHardware <T extends IRawIrSender & IHarcHardware> {
     public boolean isValid() {
         return rawIrSender.isValid();
     }
+
+    public abstract void setup() throws IOException, HarcHardwareException;
+
+    public abstract String getName();
 }

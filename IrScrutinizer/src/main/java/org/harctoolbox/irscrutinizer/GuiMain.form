@@ -5757,15 +5757,15 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="devLircCaptureBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="31" max="32767" attributes="0"/>
-                              </Group>
                               <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
+                                  <EmptySpace pref="763" max="32767" attributes="0"/>
                                   <Component id="capturingDevLircHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="devLircCapturingSendingBean" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -5773,8 +5773,8 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="devLircCaptureBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="75" max="32767" attributes="0"/>
+                                  <Component id="devLircCapturingSendingBean" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="21" max="32767" attributes="0"/>
                                   <Component id="capturingDevLircHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -5782,11 +5782,6 @@
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.DevLircBean" name="devLircCaptureBean">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getDevLircCaptureName(), false)"/>
-                          </AuxValues>
-                        </Component>
                         <Component class="javax.swing.JButton" name="capturingDevLircHardwareHelpButton">
                           <Properties>
                             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -5797,6 +5792,11 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="capturingDevLircHardwareHelpButtonActionPerformed"/>
                           </Events>
+                        </Component>
+                        <Component class="org.harctoolbox.guicomponents.CapturingSendingBean" name="devLircCapturingSendingBean">
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new CapturingSendingBean(this)"/>
+                          </AuxValues>
                         </Component>
                       </SubComponents>
                     </Container>
@@ -5815,15 +5815,15 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="irToySerialPortSimpleBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="261" max="32767" attributes="0"/>
-                              </Group>
                               <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
+                                  <EmptySpace pref="763" max="32767" attributes="0"/>
                                   <Component id="capturingIrToyHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="irtoyCapturingSendingBean" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -5831,8 +5831,8 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="irToySerialPortSimpleBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="67" max="32767" attributes="0"/>
+                                  <Component id="irtoyCapturingSendingBean" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="21" max="32767" attributes="0"/>
                                   <Component id="capturingIrToyHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -5840,12 +5840,6 @@
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.SerialPortSimpleBean" name="irToySerialPortSimpleBean">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrToyCapturePortName(), properties.getIrToyCapturePortBaudRate(), true)"/>
-                            <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="GuiMain_irToySerialPortSimpleBean"/>
-                          </AuxValues>
-                        </Component>
                         <Component class="javax.swing.JButton" name="capturingIrToyHardwareHelpButton">
                           <Properties>
                             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -5856,6 +5850,11 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="capturingIrToyHardwareHelpButtonActionPerformed"/>
                           </Events>
+                        </Component>
+                        <Component class="org.harctoolbox.guicomponents.CapturingSendingBean" name="irtoyCapturingSendingBean">
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new CapturingSendingBean(this)"/>
+                          </AuxValues>
                         </Component>
                       </SubComponents>
                     </Container>
@@ -5871,15 +5870,15 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="arduinoSerialPortSimpleBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="261" max="32767" attributes="0"/>
-                              </Group>
                               <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
+                                  <EmptySpace pref="763" max="32767" attributes="0"/>
                                   <Component id="capturingArduinoHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="arduinoCapturingSendingBean" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -5887,8 +5886,8 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="arduinoSerialPortSimpleBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="67" max="32767" attributes="0"/>
+                                  <Component id="arduinoCapturingSendingBean" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="21" max="32767" attributes="0"/>
                                   <Component id="capturingArduinoHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -5896,11 +5895,6 @@
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.SerialPortSimpleBean" name="arduinoSerialPortSimpleBean">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoCapturePortName(),Arduino.defaultBaudRate, true)"/>
-                          </AuxValues>
-                        </Component>
                         <Component class="javax.swing.JButton" name="capturingArduinoHardwareHelpButton">
                           <Properties>
                             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -5911,6 +5905,11 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="capturingArduinoHardwareHelpButtonActionPerformed"/>
                           </Events>
+                        </Component>
+                        <Component class="org.harctoolbox.guicomponents.CapturingSendingBean" name="arduinoCapturingSendingBean">
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new CapturingSendingBean(this)"/>
+                          </AuxValues>
                         </Component>
                       </SubComponents>
                     </Container>
@@ -5926,15 +5925,15 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="girsClientSerialPortSimpleBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="31" max="32767" attributes="0"/>
-                              </Group>
                               <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
+                                  <EmptySpace pref="763" max="32767" attributes="0"/>
                                   <Component id="capturingGirsHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="girsClientCapturingSendingBean" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -5942,8 +5941,8 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="girsClientSerialPortSimpleBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="75" max="32767" attributes="0"/>
+                                  <Component id="girsClientCapturingSendingBean" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="21" max="32767" attributes="0"/>
                                   <Component id="capturingGirsHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -5951,11 +5950,6 @@
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.SerialPortSimpleBean" name="girsClientSerialPortSimpleBean">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getGirsClientCapturePortName(),GirsClient.defaultBaudRate, false)"/>
-                          </AuxValues>
-                        </Component>
                         <Component class="javax.swing.JButton" name="capturingGirsHardwareHelpButton">
                           <Properties>
                             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -5966,6 +5960,11 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="capturingGirsHardwareHelpButtonActionPerformed"/>
                           </Events>
+                        </Component>
+                        <Component class="org.harctoolbox.guicomponents.CapturingSendingBean" name="girsClientCapturingSendingBean">
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new CapturingSendingBean(this)"/>
+                          </AuxValues>
                         </Component>
                       </SubComponents>
                     </Container>
@@ -5981,15 +5980,15 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="commandFusionSerialPortSimpleBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="31" max="32767" attributes="0"/>
-                              </Group>
                               <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
+                                  <EmptySpace pref="763" max="32767" attributes="0"/>
                                   <Component id="capturingCommandFusionHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="commandFusionCapturingSendingBean" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -5997,8 +5996,8 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="commandFusionSerialPortSimpleBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="75" max="32767" attributes="0"/>
+                                  <Component id="commandFusionCapturingSendingBean" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="21" max="32767" attributes="0"/>
                                   <Component id="capturingCommandFusionHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -6006,11 +6005,6 @@
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.SerialPortSimpleBean" name="commandFusionSerialPortSimpleBean">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionCapturePortName(),CommandFusion.defaultBaudRate, false)"/>
-                          </AuxValues>
-                        </Component>
                         <Component class="javax.swing.JButton" name="capturingCommandFusionHardwareHelpButton">
                           <Properties>
                             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -6021,6 +6015,11 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="capturingCommandFusionHardwareHelpButtonActionPerformed"/>
                           </Events>
+                        </Component>
+                        <Component class="org.harctoolbox.guicomponents.CapturingSendingBean" name="commandFusionCapturingSendingBean">
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new CapturingSendingBean(this)"/>
+                          </AuxValues>
                         </Component>
                       </SubComponents>
                     </Container>

@@ -31,9 +31,7 @@ import org.harctoolbox.harchardware.ir.LircTransmitter;
 /**
  *
  */
-public class DevLircBean extends javax.swing.JPanel {
-    public static final String PROP_ISOPEN = "PROP_ISOPEN";
-    public static final String PROP_PROPS = "PROP_PROPS";
+public class DevLircBean extends javax.swing.JPanel implements ISendingReceivingBean {
     private static final String notInitialized = "not initialized";
 
     private String portName;
@@ -42,6 +40,7 @@ public class DevLircBean extends javax.swing.JPanel {
     private transient DevLirc hardware;
     private boolean listenable;
     private boolean enableSending;
+    private final transient PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
 
     /**
      * Creates new form DevLircBean
@@ -54,7 +53,6 @@ public class DevLircBean extends javax.swing.JPanel {
         this(guiUtils, null, true);
     }
 
-    @SuppressWarnings("unchecked")
     public DevLircBean(GuiUtils guiUtils, String initialPort, boolean enableSending) {
         initComponents();
         this.enableSending = enableSending;
@@ -83,7 +81,7 @@ public class DevLircBean extends javax.swing.JPanel {
             // Got a problem here, want to select a port that is not there, at least not now
             if (model.getSize() > 0) {
                 portComboBox.setSelectedIndex(0);
-                actualPort = (String) portComboBox.getItemAt(0);
+                actualPort = portComboBox.getItemAt(0);
             }
         }
         setPortName(actualPort);
@@ -157,11 +155,8 @@ public class DevLircBean extends javax.swing.JPanel {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
-    private final transient PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
-    public static final String PROP_PORT = "PROP_PORT";
-
     public void setup(String desiredPort) throws IOException {
-        ComboBoxModel model = portComboBox.getModel();
+        ComboBoxModel<String> model = portComboBox.getModel();
         if (model == null || model.getSize() == 0 || ((model.getSize() == 1) && ((String)portComboBox.getSelectedItem()).equals(notInitialized)))
             setupPortComboBox(/*true*/);
 
@@ -187,7 +182,7 @@ public class DevLircBean extends javax.swing.JPanel {
                 hardware.open();
                 listenable = true;
                 if (hardware.canSetTransmitter()) {
-                    DefaultComboBoxModel transmitterComboBoxModel = new javax.swing.DefaultComboBoxModel(
+                    DefaultComboBoxModel<String> transmitterComboBoxModel = new javax.swing.DefaultComboBoxModel<>(
                             hardware.getNumberTransmitters() > 1
                                     ? hardware.getTransmitterNames()
                                     : new String[]{"default", "1", "2", "3", "4", "5", "6", "7", "8"});
@@ -236,7 +231,7 @@ public class DevLircBean extends javax.swing.JPanel {
         openToggleButton = new javax.swing.JToggleButton();
         versionLiteralLabel = new javax.swing.JLabel();
         propsLabel = new javax.swing.JLabel();
-        transmitterComboBox = new javax.swing.JComboBox();
+        transmitterComboBox = new javax.swing.JComboBox<>();
         transmitterLabel = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(800, 80));
@@ -281,7 +276,7 @@ public class DevLircBean extends javax.swing.JPanel {
         propsLabel.setEnabled(false);
         propsLabel.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 
-        transmitterComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "default", "1", "2", "3", "4" }));
+        transmitterComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "default", "1", "2", "3", "4" }));
         transmitterComboBox.setToolTipText("The transmitter to use to send the command");
         transmitterComboBox.setEnabled(false);
 
@@ -331,7 +326,7 @@ public class DevLircBean extends javax.swing.JPanel {
                         .addComponent(transmitterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(portComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(refreshButton)))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -366,10 +361,10 @@ public class DevLircBean extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JToggleButton openToggleButton;
-    private javax.swing.JComboBox portComboBox;
+    private javax.swing.JComboBox<String> portComboBox;
     private javax.swing.JLabel propsLabel;
     private javax.swing.JButton refreshButton;
-    private javax.swing.JComboBox transmitterComboBox;
+    private javax.swing.JComboBox<String> transmitterComboBox;
     private javax.swing.JLabel transmitterLabel;
     private javax.swing.JLabel versionLiteralLabel;
     // End of variables declaration//GEN-END:variables
