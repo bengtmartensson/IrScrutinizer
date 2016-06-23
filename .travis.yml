@@ -4,9 +4,10 @@ email: false
 language: java
 jdk:
 - openjdk7
-install:
+before_install:
 - sudo add-apt-repository ppa:dns/gnu -y
 - sudo apt-get update -qq
+install:
 - sudo apt-get install -y autoconf dos2unix icoutils python-requests
 script:
 - tools/build-DevSlashLirc.sh
