@@ -188,9 +188,9 @@ public class CapturingHardwareManager {
         if (selected != hardware) {
             //if (selected != null)
             //    selected.close();
+            selected = hardware;
             hardware.setup();
         }
-        selected = hardware;
         selected.setVerbose(verbosity);
         if (startButton != null)
             startButton.setEnabled(true);
