@@ -95,6 +95,10 @@ public class DevLircBean extends javax.swing.JPanel implements ISendingReceiving
         return candidates;
     }
 
+    private void conditionallyEnableOpen() {
+        openToggleButton.setEnabled(hardware != null && portComboBox.getSelectedItem() != null);
+    }
+
     /**
      * @return the port
      */
@@ -109,7 +113,7 @@ public class DevLircBean extends javax.swing.JPanel implements ISendingReceiving
         if (portName == null || portName.isEmpty())
             return;
 
-        openToggleButton.setEnabled(hardware != null);
+        conditionallyEnableOpen();
         String oldPort = this.portName;
         this.portName = portName;
         // this propery changer should set up the hardware and call setHardware()
@@ -118,7 +122,7 @@ public class DevLircBean extends javax.swing.JPanel implements ISendingReceiving
 
     public void setHardware(DevLirc hardware) {
         this.hardware = hardware;
-        openToggleButton.setEnabled(hardware != null);
+        conditionallyEnableOpen();
         openToggleButton.setSelected(hardware.isValid());
     }
 
@@ -334,6 +338,7 @@ public class DevLircBean extends javax.swing.JPanel implements ISendingReceiving
         Cursor oldCursor = setBusyCursor();
         try {
             setupPortComboBox();
+            conditionallyEnableOpen();
         } catch (IOException ex) {
             guiUtils.error(ex);
         } finally {
