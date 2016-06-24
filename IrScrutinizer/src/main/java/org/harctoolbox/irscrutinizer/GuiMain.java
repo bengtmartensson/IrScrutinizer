@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
 import javax.comm.DriverGenUnix;
 import javax.swing.DefaultComboBoxModel;
@@ -55,6 +56,7 @@ import org.harctoolbox.IrpMaster.DecodeIR.DecodeIrException;
 import org.harctoolbox.devslashlirc.LircHardware;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
+import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.guicomponents.*;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.TimeoutException;
@@ -143,6 +145,7 @@ public class GuiMain extends javax.swing.JFrame {
      * @param verbose Verbose execution of some commands, dependent on invoked programs.
      * @param debug Debug value handed over to invoked programs/functions.
      * @param userlevel Presently not used.
+     * @param arguments
      * @throws ParserConfigurationException
      * @throws SAXException
      * @throws IOException
@@ -150,7 +153,9 @@ public class GuiMain extends javax.swing.JFrame {
      * @throws java.text.ParseException
      * @throws URISyntaxException
      */
-    public GuiMain(String applicationHome, String propsfilename, boolean verbose, int debug, int userlevel) throws ParserConfigurationException, SAXException, IOException, IncompatibleArgumentException, java.text.ParseException, URISyntaxException {
+    public GuiMain(String applicationHome, String propsfilename, boolean verbose,
+            int debug, int userlevel, List<String> arguments)
+            throws ParserConfigurationException, SAXException, IOException, IncompatibleArgumentException, java.text.ParseException, URISyntaxException {
         this.debug = debug;
         this.applicationHome = applicationHome;
         System.setProperty("harctoolbox.jniLibsHome", applicationHome);
@@ -443,11 +448,15 @@ public class GuiMain extends javax.swing.JFrame {
         if (userlevel != 0)
             sendingHardwareManager.add(sendingGenericSerialPort);
 
-        sendingHardwareManager.select(properties.getTransmitHardware());
+        try {
+            sendingHardwareManager.select(properties.getTransmitHardware());
+        } catch (HarcHardwareException ex) {
+            guiUtils.error(ex);
+        }
 
         optionsMenu.add(sendingHardwareManager.getMenu());
 
-        capturingHardwareManager = new CapturingHardwareManager(properties,
+        capturingHardwareManager = new CapturingHardwareManager(guiUtils, properties,
                 capturingHardwareTabbedPane, startButton);
 
         capturingHardwareManager.add(new CapturingSerial<>(IrWidget.class, captureIrWidgetPanel,
@@ -480,7 +489,11 @@ public class GuiMain extends javax.swing.JFrame {
                 irtoyCapturingSendingBean, irToySerialPortBean, sendingIrToy,
                 properties, guiUtils, capturingHardwareManager));
 
-        capturingHardwareManager.select(properties.getCaptureDevice());
+        try {
+            capturingHardwareManager.select(properties.getCaptureDevice());
+        } catch (HarcHardwareException ex) {
+            guiUtils.error(ex);
+        }
 
         properties.addVerboseChangeListener(new Props.IPropertyChangeListener() {
             @Override
@@ -595,7 +608,28 @@ public class GuiMain extends javax.swing.JFrame {
             sendingHardwareTabbedPane.remove(devLircPanel);
             capturingHardwareTabbedPane.remove(captureDevLircPanel);
         }
+
+        processArguments(arguments);
     } // end of constructor
+
+    private void processArguments(List<String> arguments) {
+        int sum = 0;
+        for (String str : arguments) {
+            try {
+                sum += importGirr(new File(str), properties.getImportCharsetName());
+            } catch (java.text.ParseException | IrpMasterException | IOException ex) {
+                guiUtils.error(ex);
+            }
+        }
+        if (sum > 0)
+            selectImportPane(ImportType.parametricRemote);
+    }
+
+    public int importGirr(File file, String charsetName) throws java.text.ParseException, IOException, IrpMasterException {
+        girrImporter.possiblyZipLoad(file, charsetName);
+        RemoteSet remoteSet = girrImporter.getRemoteSet();
+        return importCommands(remoteSet.getAllCommands(), false /*raw*/);
+    }
 
     public void selectSenderHardware(javax.swing.JPanel panel) {
         lastPane = topLevelTabbedPane.getSelectedComponent();
@@ -1179,10 +1213,12 @@ public class GuiMain extends javax.swing.JFrame {
         processIr(concatenateAsSequence(commands));
     }
 
-    public void importCommands(Collection<Command> commands, boolean raw) throws IrpMasterException {
+    public int importCommands(Collection<Command> commands, boolean raw) throws IrpMasterException {
+        int count = 0;
         for (Command command : commands) {
             try {
                 importCommand(command, raw);
+                count++;
             } catch (IrpMasterException ex) {
                 if (forgiveSillySignals) {
                     guiUtils.warning("Erroneous signal ignored: " + ex.getMessage());
@@ -1192,6 +1228,7 @@ public class GuiMain extends javax.swing.JFrame {
                 }
             }
         }
+        return count;
     }
 
     public void importCommand(Command command, boolean raw) throws IrpMasterException {

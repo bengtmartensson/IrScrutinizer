@@ -8,3 +8,4 @@ Version=1.0
 Type=Application
 Terminal=false
 StartupNotify=true
+MimeType=text/girr

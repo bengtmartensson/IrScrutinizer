@@ -27,6 +27,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
 import org.harctoolbox.IrpMaster.IrpUtils;
@@ -93,6 +95,9 @@ public class IrScrutinizer {
 
         @Parameter(names = {"-x", "--experimental"}, description = "Enable experimental features")
         private boolean experimental;
+
+        @Parameter(description = "Arguments to the program")
+        private List<String> arguments = new ArrayList<>();
     }
 
     private static JCommander argumentParser;
@@ -149,7 +154,8 @@ public class IrScrutinizer {
 
         userLevel = commandLineArgs.experimental ? 1 : 0;
 
-        guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.debug, userLevel);
+        guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.debug,
+                userLevel, commandLineArgs.arguments);
     }
 
     private static String findApplicationHome(String appHome) {
@@ -191,13 +197,14 @@ public class IrScrutinizer {
         }
     }
 
-    private static void guiExecute(final String applicationHome, final String propsfilename, final boolean verbose, final int debug, final int userlevel) {
+    private static void guiExecute(final String applicationHome, final String propsfilename,
+            final boolean verbose, final int debug, final int userlevel, final List<String> arguments) {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    new GuiMain(applicationHome, propsfilename, verbose, debug, userlevel).setVisible(true);
+                    new GuiMain(applicationHome, propsfilename, verbose, debug, userlevel, arguments).setVisible(true);
                 } catch (ParseException | IOException | IncompatibleArgumentException | URISyntaxException
                         | RuntimeException ex) {
                     GuiUtils.fatal(ex, IrpUtils.exitConfigReadError, new GuiUtils.EmergencyFixer () {
