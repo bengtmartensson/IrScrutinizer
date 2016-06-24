@@ -48,7 +48,10 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
     private boolean stopRequested;
 
     public static File[] getCandidates() {
-          return new File("/dev/lirc").isDirectory()
+        if (!new File("/dev").isDirectory())
+            return new File[0];
+
+        return new File("/dev/lirc").isDirectory()
                   ? new File("/dev/lirc").listFiles()
                   : new File("/dev").listFiles(new FilenameFilter() {
               @Override
