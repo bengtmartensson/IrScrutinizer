@@ -90,6 +90,12 @@ ln -sf ../xml/harctoolbox ${MYPROG_HOME}/schemas
 install -d ${LIB}
 install --mode=444 ${FROMLIB}/libDecodeIR.* ${LIB}
 
+# Install devslashlirc
+if [ -e ${FROMLIB}/libdevslashlirc.so ] ; then
+    install -d ${LIB}
+    install --mode=444 ${FROMLIB}/libdevslashlirc.* ${LIB}
+fi
+
 # Install RXTX serial
 if [ $(uname -m) = 'x86_64' -a -f /usr/lib64/rxtx/librxtxSerial.so -a $UNCONDITIONAL_INSTALL_LIB = 'no' ] ; then
     echo "System librxtxSerial.so found, linking to that instead of installing ours."

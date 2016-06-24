@@ -159,10 +159,18 @@ public class GuiMain extends javax.swing.JFrame {
         this.debug = debug;
         this.applicationHome = applicationHome;
         System.setProperty("harctoolbox.jniLibsHome", applicationHome);
+        // First try to load library from absolute path,
         try {
             LircHardware.loadLibrary(LibraryLoader.fileName(applicationHome, LircHardware.libraryName));
         } catch (UnsatisfiedLinkError ex) {
         }
+
+        // ... then try system path.
+        try {
+            LircHardware.loadLibrary();
+        } catch (UnsatisfiedLinkError e) {
+        }
+
         properties = new Props(propsfilename, this.applicationHome);
         if (verbose)
             properties.setVerbose(true);
