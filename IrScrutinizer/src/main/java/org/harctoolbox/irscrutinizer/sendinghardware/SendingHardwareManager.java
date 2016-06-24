@@ -101,7 +101,11 @@ public class SendingHardwareManager {
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    select(hardware);
+                    try {
+                        select(hardware);
+                    } catch (HarcHardwareException ex) {
+                        guiUtils.error(ex);
+                    }
                 }
             });
 
@@ -119,8 +123,9 @@ public class SendingHardwareManager {
     /**
      *
      * @param name
+     * @throws HarcHardwareException
      */
-    public void select(String name) {
+    public void select(String name) throws HarcHardwareException {
         ISendingHardware<?> hardware = table.get(name);
         if (hardware == null)
             //throw new IllegalArgumentException(name + " does not exist in map.");
@@ -129,13 +134,11 @@ public class SendingHardwareManager {
         select(hardware);
     }
 
-    /**
-     *
-     * @param hardware
-     */
-    private void select(ISendingHardware<?> hardware) {
+    private void select(ISendingHardware<?> hardware) throws HarcHardwareException {
         // invokes selectHardware through capturingHardwareTabbedPaneStateChanged
         tabbedPane.setSelectedComponent(hardware.getPanel()); // throws IllegalArgumentException
+        if (selected == null) // if capturingHardwareTabbedPaneStateChanged did not invoke selectDoWork
+            selectDoWork(hardware);
     }
 
     /**

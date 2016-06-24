@@ -30,6 +30,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
+import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.irscrutinizer.Props;
@@ -46,8 +47,10 @@ public class CapturingHardwareManager {
     private final Props properties;
     private ICapturingHardware<? extends IHarcHardware> selected;
     private boolean verbosity;
+    private final GuiUtils guiUtils;
 
-    public CapturingHardwareManager(Props properties, JTabbedPane tabbedPane, AbstractButton startButton) {
+    public CapturingHardwareManager(GuiUtils guiUtils, Props properties, JTabbedPane tabbedPane, AbstractButton startButton) {
+        this.guiUtils = guiUtils;
         this.properties = properties;
         this.tabbedPane = tabbedPane;
         this.startButton = startButton;
@@ -117,7 +120,11 @@ public class CapturingHardwareManager {
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    select(hardware);
+                    try {
+                        select(hardware);
+                    } catch (IOException | HarcHardwareException ex) {
+                        guiUtils.error(ex);
+                    }
                 }
             });
 
@@ -135,8 +142,10 @@ public class CapturingHardwareManager {
     /**
      *
      * @param name
+     * @throws java.io.IOException
+     * @throws org.harctoolbox.harchardware.HarcHardwareException
      */
-    public void select(String name) {
+    public void select(String name) throws IOException, HarcHardwareException {
         ICapturingHardware<?> hardware = table.get(name);
         if (hardware == null) {
             if (startButton != null)
@@ -151,9 +160,11 @@ public class CapturingHardwareManager {
      * @param hardware
      * @throws IllegalArgumentException
      */
-    private void select(ICapturingHardware<?> hardware) {
+    private void select(ICapturingHardware<?> hardware) throws IOException, HarcHardwareException {
         // this calls selectHardware(...)
         tabbedPane.setSelectedComponent(hardware.getPanel()); // throws IllegalArgumentException
+        if (selected == null)
+            selectDoWork(hardware);
     }
 
     /**

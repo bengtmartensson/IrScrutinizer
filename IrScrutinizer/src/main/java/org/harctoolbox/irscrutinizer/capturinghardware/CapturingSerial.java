@@ -63,12 +63,12 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
                 try {
                     switch (propertyName) {
                         case SerialPortSimpleBean.PROP_BAUD:
-                            setupSerial();
+                            setup();
                             break;
                         case SerialPortSimpleBean.PROP_PORT:
                             if (evt.getNewValue() == null)
                                 return;
-                            setupSerial();
+                            setup();
                             break;
                         case SerialPortSimpleBean.PROP_VERSION:
                         case SerialPortSimpleBean.PROP_ISOPEN:
@@ -83,7 +83,8 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
         });
     }
 
-    private void setupSerial() throws IOException {
+    @Override
+    public void setup() throws IOException {
         String newPort = serialPortSimpleBean.getPortName();
         int newBaud = serialPortSimpleBean.getBaudRate();
         if (hardware != null && (newPort == null || newPort.equals(portName)) && (baudRate == newBaud))
@@ -119,11 +120,6 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
                 guiUtils.error(ex);
             guiUtils.error(ex.getCause().getMessage());
         }
-    }
-
-    @Override
-    public void setup() throws IOException {
-        setupSerial();
     }
 
     @Override
