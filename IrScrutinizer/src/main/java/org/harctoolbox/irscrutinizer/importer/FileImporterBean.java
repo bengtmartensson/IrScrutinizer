@@ -18,10 +18,15 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.importer;
 
 import java.awt.Cursor;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 import javax.swing.JFileChooser;
+import javax.swing.TransferHandler;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.guicomponents.CopyClipboardText;
@@ -38,10 +43,48 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
     private GuiUtils guiUtils;
     private transient Props properties;
 
-   public FileImporterBean(GuiUtils guiUtils, Props properties, T importer) {
+    private class FileImporterBeanTransferHandler extends TransferHandler {
+
+        @Override
+        public boolean canImport(TransferHandler.TransferSupport support) {
+            if (!support.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
+                return false;
+
+            boolean copySupported = (COPY & support.getSourceDropActions()) == COPY;
+            if (!copySupported)
+                return false;
+
+            support.setDropAction(COPY);
+            return true;
+        }
+
+        @Override
+        public boolean importData(TransferHandler.TransferSupport support) {
+            if (!canImport(support))
+                return false;
+
+            Transferable transferable = support.getTransferable();
+            try {
+                List<File> list = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                if (list.size() != 1) {
+                    guiUtils.error("Only one file may be dropped");
+                    return false;
+                }
+
+                String filename = list.get(0).getCanonicalPath();
+                importSetUrl(filename);
+            } catch (UnsupportedFlavorException | IOException e) {
+                return false;
+            }
+            return true;
+        }
+    };
+
+    public FileImporterBean(GuiUtils guiUtils, Props properties, T importer) {
         this.guiUtils = guiUtils;
         this.importer = importer;
         this.properties = properties;
+        setTransferHandler(new FileImporterBeanTransferHandler());
         initComponents();
         boolean sane = isSane();
         setEnabled(sane);
@@ -72,6 +115,33 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
         return true;
     }
 
+    private void importSetUrl(String url) {
+        filenameTextField.setText(url.trim());
+        importUrl(url.trim());
+    }
+
+    private void importUrl(String url) {
+        if (url.isEmpty())
+            return;
+
+        Cursor oldCursor = getCursor();
+        repaint();
+        try {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+            }
+            RemoteSet remoteSet = remoteSetImporterLoadFile(url);
+            treeImporter.setRemoteSet(remoteSet);
+        } catch (IOException | ParseException | IrpMasterException | UnsupportedOperationException ex) {
+            treeImporter.clear();
+            guiUtils.error(ex);
+        } finally {
+            setCursor(oldCursor);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private RemoteSet getRemoteSet(T importer) {
         return IRemoteSetImporter.class.isInstance(importer) ? ((IRemoteSetImporter)importer).getRemoteSet()
@@ -81,18 +151,12 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
     }
 
     @SuppressWarnings("unchecked")
-    private RemoteSet remoteSetImporterLoadFile() throws IOException, ParseException, IrpMasterException {
-        Cursor oldCursor = getCursor();
-        try {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            if (IReaderImporter.class.isInstance(importer))
-                ((IReaderImporter)importer).load(filenameTextField.getText().trim(), properties.getImportOpensZipFiles(), properties.getImportCharsetName());
-            else
-                importer.possiblyZipLoad(new File(filenameTextField.getText().trim()), properties.getImportCharsetName());
-            return getRemoteSet(importer);
-        } finally {
-            setCursor(oldCursor);
-        }
+    private RemoteSet remoteSetImporterLoadFile(String url) throws IOException, ParseException, IrpMasterException {
+        if (IReaderImporter.class.isInstance(importer))
+            ((IReaderImporter) importer).load(url, properties.getImportOpensZipFiles(), properties.getImportCharsetName());
+        else
+            importer.possiblyZipLoad(new File(url), properties.getImportCharsetName());
+        return getRemoteSet(importer);
     }
 
     @SuppressWarnings("unchecked")
@@ -146,6 +210,8 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
         loadClipboardButton = new javax.swing.JButton();
         editBrowseButton = new javax.swing.JButton();
         loadHardwareButton = new javax.swing.JButton();
+
+        setToolTipText("Files \"dropped\" here will be imported.");
 
         filenameTextField.setComponentPopupMenu(copyPastePopupMenu1);
 
@@ -265,26 +331,7 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
         if (filenameTextField.getText().isEmpty())
             selectButtonActionPerformed(evt);
 
-        // if it still is empty, bail out
-        if (filenameTextField.getText().isEmpty())
-            return;
-
-        Cursor oldCursor = getCursor();
-        repaint();
-        try {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException ex) {
-            }
-            RemoteSet remoteSet = remoteSetImporterLoadFile();
-            treeImporter.setRemoteSet(remoteSet);
-        } catch (IOException | ParseException | IrpMasterException | UnsupportedOperationException ex) {
-            treeImporter.clear();
-            guiUtils.error(ex);
-        } finally {
-            setCursor(oldCursor);
-        }
+        importUrl(filenameTextField.getText().trim());
     }//GEN-LAST:event_loadFileButtonActionPerformed
 
     private void editBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBrowseButtonActionPerformed
