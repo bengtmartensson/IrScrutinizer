@@ -189,7 +189,6 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
             loadFileButton.setText("Load File");
             fileUrlLabel.setText("File");
         }
-        loadHardwareButton.setVisible(false); // Better to nuke it?
     }
 
     /**
@@ -209,7 +208,6 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
         loadFileButton = new javax.swing.JButton();
         loadClipboardButton = new javax.swing.JButton();
         editBrowseButton = new javax.swing.JButton();
-        loadHardwareButton = new javax.swing.JButton();
 
         setToolTipText("Files \"dropped\" here will be imported.");
 
@@ -247,20 +245,13 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
             }
         });
 
-        loadHardwareButton.setText("Load from Hardware");
-        loadHardwareButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loadHardwareButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(treeImporter, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(treeImporter, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 595, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -268,8 +259,6 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
                                 .addComponent(loadFileButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(loadClipboardButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(loadHardwareButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(editBrowseButton)
                                 .addGap(0, 0, Short.MAX_VALUE))
@@ -295,8 +284,7 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(loadFileButton)
                     .addComponent(loadClipboardButton)
-                    .addComponent(editBrowseButton)
-                    .addComponent(loadHardwareButton))
+                    .addComponent(editBrowseButton))
                 .addGap(6, 6, 6)
                 .addComponent(treeImporter, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE))
         );
@@ -352,14 +340,6 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
         }
     }//GEN-LAST:event_loadClipboardButtonActionPerformed
 
-    private void loadHardwareButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadHardwareButtonActionPerformed
-        boolean ack = guiUtils.confirm("This may take several minutes and cannot be interrupted. Continue?");
-        if (!ack)
-            return;
-        getParent().repaint(); // necessary to have the cursor change take effect
-
-    }//GEN-LAST:event_loadHardwareButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.harctoolbox.guicomponents.CopyPastePopupMenu copyPastePopupMenu1;
     private javax.swing.JButton editBrowseButton;
@@ -367,7 +347,6 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
     private javax.swing.JTextField filenameTextField;
     private javax.swing.JButton loadClipboardButton;
     private javax.swing.JButton loadFileButton;
-    private javax.swing.JButton loadHardwareButton;
     private javax.swing.JButton selectButton;
     private org.harctoolbox.irscrutinizer.importer.TreeImporter treeImporter;
     // End of variables declaration//GEN-END:variables
