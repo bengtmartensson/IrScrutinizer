@@ -2526,7 +2526,7 @@
                       <SubComponents>
                         <Container class="javax.swing.JScrollPane" name="parameterTableScrollPane">
                           <Properties>
-                            <Property name="toolTipText" type="java.lang.String" value="Press right button for a menu of table actions."/>
+                            <Property name="toolTipText" type="java.lang.String" value="Girr files can be directly imported by dropping them here."/>
                             <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
                               <ComponentRef name="parameterTablePopupMenu"/>
                             </Property>
@@ -2592,7 +2592,7 @@
                       <SubComponents>
                         <Container class="javax.swing.JScrollPane" name="rawTableScrollPane">
                           <Properties>
-                            <Property name="toolTipText" type="java.lang.String" value="Press right button for a menu of table actions."/>
+                            <Property name="toolTipText" type="java.lang.String" value="Girr files can be directly imported by dropping them here."/>
                             <Property name="autoscrolls" type="boolean" value="true"/>
                             <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
                               <ComponentRef name="rawTablePopupMenu"/>

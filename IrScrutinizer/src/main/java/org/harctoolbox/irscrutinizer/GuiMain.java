@@ -23,6 +23,9 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeListener;
@@ -47,6 +50,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JPopupMenu.Separator;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTable;
+import javax.swing.TransferHandler;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -132,6 +136,48 @@ public class GuiMain extends javax.swing.JFrame {
             properties.setLookAndFeel(index);
         }
     }
+
+    private class GirrImporterBeanTransferHandler extends TransferHandler {
+        private final boolean raw;
+
+        private GirrImporterBeanTransferHandler(boolean raw) {
+            super();
+            this.raw = raw;
+        }
+
+        @Override
+        public boolean canImport(TransferHandler.TransferSupport support) {
+            if (!support.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
+                return false;
+
+            boolean copySupported = (COPY & support.getSourceDropActions()) == COPY;
+            if (!copySupported)
+                return false;
+
+            support.setDropAction(COPY);
+            return true;
+        }
+
+        @Override
+        public boolean importData(TransferHandler.TransferSupport support) {
+            if (!canImport(support))
+                return false;
+
+            Transferable transferable = support.getTransferable();
+            try {
+                List<File> list = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                for (File file : list)
+                    try {
+                        importGirr(file, raw);
+                    } catch (java.text.ParseException | IrpMasterException ex) {
+                        guiUtils.error(ex);
+                    }
+            } catch (UnsupportedFlavorException | IOException e) {
+                return false;
+            }
+            return true;
+        }
+    };
 
     /**
      * Main class for the GUI. Throws exceptions if configuration files cannot be found or on similar errors.
@@ -358,6 +404,9 @@ public class GuiMain extends javax.swing.JFrame {
         loadProtocolsIni();
 
         initComponents();
+
+        cookedPanel.setTransferHandler(new GirrImporterBeanTransferHandler(false));
+        rawPanel.setTransferHandler(new GirrImporterBeanTransferHandler(true));
 
         // Cannot do this in initComponents, since then it will be called therein
         importTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -622,7 +671,7 @@ public class GuiMain extends javax.swing.JFrame {
         int sum = 0;
         for (String str : arguments) {
             try {
-                sum += importGirr(new File(str), properties.getImportCharsetName());
+                sum += importGirr(new File(str), true);
             } catch (java.text.ParseException | IrpMasterException | IOException ex) {
                 guiUtils.error(ex);
             }
@@ -631,10 +680,14 @@ public class GuiMain extends javax.swing.JFrame {
             selectImportPane(ImportType.parametricRemote);
     }
 
-    public int importGirr(File file, String charsetName) throws java.text.ParseException, IOException, IrpMasterException {
+    public int importGirr(File file, boolean raw, String charsetName) throws java.text.ParseException, IOException, IrpMasterException {
         girrImporter.possiblyZipLoad(file, charsetName);
         RemoteSet remoteSet = girrImporter.getRemoteSet();
-        return importCommands(remoteSet.getAllCommands(), false /*raw*/);
+        return importCommands(remoteSet.getAllCommands(), raw);
+    }
+
+    public int importGirr(File file, boolean raw) throws java.text.ParseException, IOException, IrpMasterException {
+        return importGirr(file, raw, properties.getImportCharsetName());
     }
 
     public void selectSenderHardware(javax.swing.JPanel panel) {
@@ -2993,7 +3046,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         remoteScrutinizerPanel.setToolTipText("This panel handles the case of several signals and saving them as a unit.");
 
-        parameterTableScrollPane.setToolTipText("Press right button for a menu of table actions.");
+        parameterTableScrollPane.setToolTipText("Girr files can be directly imported by dropping them here.");
         parameterTableScrollPane.setComponentPopupMenu(parameterTablePopupMenu);
 
         parameterTable.setModel(parameterTableModel);
@@ -3020,7 +3073,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         rawCookedTabbedPane.addTab("Parametric Remote", cookedPanel);
 
-        rawTableScrollPane.setToolTipText("Press right button for a menu of table actions.");
+        rawTableScrollPane.setToolTipText("Girr files can be directly imported by dropping them here.");
         rawTableScrollPane.setAutoscrolls(true);
         rawTableScrollPane.setComponentPopupMenu(rawTablePopupMenu);
 
