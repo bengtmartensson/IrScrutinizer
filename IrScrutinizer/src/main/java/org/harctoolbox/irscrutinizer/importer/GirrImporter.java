@@ -78,7 +78,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
 
     private void load(Document doc, String origin) throws ParseException, MalformedURLException, SAXException {
         if (!doc.getDocumentElement().getTagName().equals("remotes")) {
-            throw new UnsupportedOperationException("Import of Girr files with other root elements as remotes not yet implemented.");
+            throw new UnsupportedOperationException("This is not a Girr file with root element \"remotes\".");
         }
         //this.lircRemotes = lircRemotes;
         prepareLoad(origin);
