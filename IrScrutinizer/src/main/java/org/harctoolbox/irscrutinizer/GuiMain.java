@@ -115,8 +115,6 @@ public class GuiMain extends javax.swing.JFrame {
 
     private Remote.MetaData metaData = new Remote.MetaData("unnamed");
 
-    // FIXME: make user settable??
-    private final static boolean forgiveSillySignals = true;
     private final static int importSequenceAskThreshold = 3;
     private final static int maxCharsInGuiMessages = 150;
     private final static int transmitSignalMouseButton = 2;
@@ -1031,7 +1029,7 @@ public class GuiMain extends javax.swing.JFrame {
             guiUtils.error("No " + tableModel.getType() + " signals present; export aborted.");
             return null;
         }
-        return tableModel.getCommands(forgiveSillySignals);
+        return tableModel.getCommands(true);
     }
 
     private File saveCommands(HashMap<String, Command> commands, String source, String title, RemoteSetExporter exporter) throws FileNotFoundException, IrpMasterException, IOException {
@@ -1221,18 +1219,21 @@ public class GuiMain extends javax.swing.JFrame {
         processIr(concatenateAsSequence(commands));
     }
 
-    public int importCommands(Collection<Command> commands, boolean raw) throws IrpMasterException {
+    public int importCommands(Collection<Command> commands, boolean raw) {
+        boolean observeErrors = true;
         int count = 0;
         for (Command command : commands) {
             try {
                 importCommand(command, raw);
                 count++;
             } catch (IrpMasterException ex) {
-                if (forgiveSillySignals) {
-                    guiUtils.warning("Erroneous signal ignored: " + ex.getMessage());
-                } else {
-                    guiUtils.error("Erroneous signal: " + ex.getMessage() + ", aborting import.");
-                    throw ex;
+                if (observeErrors) {
+                    guiUtils.error("Erroneous signal: " + ex.getMessage());
+                    boolean ans = guiUtils.confirm("Continue import and ignore further erroneous signals?");
+                    if (ans)
+                        observeErrors = false;
+                    else
+                        return -count;
                 }
             }
         }

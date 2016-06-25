@@ -238,28 +238,6 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         }
     }
 
-    private int importCommands(Collection<Command> commands, boolean raw) {
-        boolean observeErrors = true;
-        int count = 0;
-        for (Command command : commands) {
-            try {
-                guiMain.importCommand(command, raw);
-                count++;
-            } catch (IrpMasterException ex) {
-                if (observeErrors) {
-                    guiUtils.error("Erroneous signal: " + ex.getMessage());
-                    boolean ans = guiUtils.confirm("Continue import (and just ignore further erroneous signals)?");
-                    if (ans) {
-                        observeErrors = false;
-                    } else {
-                        return -count;
-                    }
-                }
-            }
-        }
-        return count;
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -488,7 +466,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
     private void importAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importAllButtonActionPerformed
         checkGuiMain();
-        int result = importCommands(remoteSet.getAllCommands(), false);
+        int result = guiMain.importCommands(remoteSet.getAllCommands(), false);
         if (result > 0)
             importJump(result, ImportType.parametricRemote);
         else
@@ -534,7 +512,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
     private void importAllRawButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importAllRawButtonActionPerformed
         checkGuiMain();
-        int result = importCommands(remoteSet.getAllCommands(), true);
+        int result = guiMain.importCommands(remoteSet.getAllCommands(), true);
         if (result > 0)
             importJump(result, ImportType.rawRemote);
         else
