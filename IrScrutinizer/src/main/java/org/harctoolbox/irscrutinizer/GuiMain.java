@@ -1261,7 +1261,7 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void importSequence(ICommandImporter importer) throws IrpMasterException {
         Collection<Command> commands = importer.getCommands();
-                if (commands.isEmpty()) {
+        if (commands.isEmpty()) {
             guiUtils.error("Import does not contain any signals; aborting.");
             return;
         }
@@ -1455,14 +1455,14 @@ public class GuiMain extends javax.swing.JFrame {
         if (command == null)
             throw new IllegalArgumentException("No command selected.");
         ArrayList<Long> presentFs = parameterTableModel.listF(command);
-        String protocolName = command.getProtocol();
+        String protocolName = command.getProtocolName();
         Protocol protocol = irpMaster.newProtocol(protocolName);
         for (Long F = protocol.getParameterMin("F"); F <= protocol.getParameterMax("F"); F++) {
             if (!presentFs.contains(F)) {
                 @SuppressWarnings("unchecked")
                 /*Linked*/HashMap<String, Long> params = (/*Linked*/HashMap<String, Long>) command.getParameters().clone();
                 params.put("F", F);
-                String cmdname = (new IrpMasterBean.DefaultSignalNameFormatter()).format(command.getProtocol(), params);
+                String cmdname = (new IrpMasterBean.DefaultSignalNameFormatter()).format(command.getProtocolName(), params);
                 Command cmd = new Command(cmdname, null, protocolName, params);
                 registerParameterCommand(cmd);
             }

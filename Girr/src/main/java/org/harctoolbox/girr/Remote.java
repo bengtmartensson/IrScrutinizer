@@ -280,7 +280,7 @@ public class Remote implements Serializable {
      */
     public boolean hasThisProtocol(String protocolName) throws IrpMasterException {
         for (Command command : commands.values()) {
-            String prtcl = command.getProtocol();
+            String prtcl = command.getProtocolName();
             if (prtcl == null || !prtcl.equalsIgnoreCase(protocolName))
                 return false;
         }

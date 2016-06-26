@@ -32,6 +32,7 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.Pronto;
 import org.harctoolbox.IrpMaster.Protocol;
 import org.harctoolbox.IrpMaster.UnassignedException;
+import org.harctoolbox.IrpMaster.UnknownProtocolException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -150,6 +151,10 @@ public class Command implements Serializable {
      * @return duty cycle, a number between 0 and 1.
      */
     public double getDutyCycle() {
+        if (masterType == MasterType.parameters) {
+            checkForProtocol();
+            return protocol.getDutyCycle();
+        }
         return dutyCycle;
     }
 
@@ -185,7 +190,7 @@ public class Command implements Serializable {
      * @return name of the protocol
      * @throws org.harctoolbox.IrpMaster.IrpMasterException
      */
-    public String getProtocol() throws IrpMasterException {
+    public String getProtocolName() throws IrpMasterException {
         checkForParameters();
         return protocolName;
     }
@@ -202,8 +207,20 @@ public class Command implements Serializable {
     /**
      * @return the frequency
      */
-    public int getFrequency() {
-        return masterType == MasterType.parameters ? (int) Math.round(protocol.getFrequency()) : frequency;
+    public double getFrequency() {
+        if (masterType == MasterType.parameters) {
+            checkForProtocol();
+            return protocol.getFrequency();
+        }
+        return frequency;
+    }
+
+    private void checkForProtocol() {
+        if (protocol == null)
+            try {
+                protocol = irpMaster.newProtocol(protocolName);
+            } catch (UnassignedException | org.harctoolbox.IrpMaster.ParseException | UnknownProtocolException ex) {
+            }
     }
 
     /**

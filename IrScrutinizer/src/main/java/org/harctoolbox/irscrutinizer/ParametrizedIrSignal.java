@@ -65,7 +65,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
 
     public ParametrizedIrSignal(Command command) throws IrpMasterException {
         super(command.getName(), command.getComment());
-        this.protocolName = command.getProtocol();
+        this.protocolName = command.getProtocolName();
         this.parameters = command.getParameters();
     }
 
@@ -333,7 +333,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
             params.remove("F");
             for (int row =  0; row < getRowCount(); row++) {
                 Command cmd = toCommand(row);
-                if (!reference.getProtocol().equalsIgnoreCase(cmd.getProtocol()))
+                if (!reference.getProtocolName().equalsIgnoreCase(cmd.getProtocolName()))
                     continue;
 
                 boolean eq = true;
