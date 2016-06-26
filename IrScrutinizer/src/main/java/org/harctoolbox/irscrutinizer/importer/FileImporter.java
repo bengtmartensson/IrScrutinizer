@@ -46,6 +46,8 @@ public abstract class FileImporter extends Importer {
     public abstract void load(File file, String origin, String charsetName) throws IOException, ParseException;
 
     public final void load(File file, String charsetName) throws IOException, ParseException {
+        if (!file.exists())
+            throw new IOException("File does not exist.");
         if (!file.isFile() && !canImportDirectories())
             throw new IOException("Not a normal file. Selected importer cannot import directories.");
 
