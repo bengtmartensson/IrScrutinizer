@@ -1889,6 +1889,10 @@ public class GuiMain extends javax.swing.JFrame {
         ictFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, ictImporter);
         jLabel15 = new javax.swing.JLabel();
         importIctHelpButton = new javax.swing.JButton();
+        mode2ImportPanel = new javax.swing.JPanel();
+        mode2FileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, new Mode2Importer());
+        jLabel17 = new javax.swing.JLabel();
+        importMode2HelpButton = new javax.swing.JButton();
         csvImportPanel = new javax.swing.JPanel();
         parametrizedRawTabbedPane = new javax.swing.JTabbedPane();
         csvRawImportPanel = new javax.swing.JPanel();
@@ -3861,6 +3865,45 @@ public class GuiMain extends javax.swing.JFrame {
         );
 
         importTabbedPane.addTab("ICT", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/usb.png")), ictImportPanel); // NOI18N
+
+        jLabel17.setText("Note: invokeRepeatFinder is used.");
+
+        importMode2HelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        importMode2HelpButton.setText("Help");
+        importMode2HelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importMode2HelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout mode2ImportPanelLayout = new javax.swing.GroupLayout(mode2ImportPanel);
+        mode2ImportPanel.setLayout(mode2ImportPanelLayout);
+        mode2ImportPanelLayout.setHorizontalGroup(
+            mode2ImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mode2ImportPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel17)
+                .addContainerGap(749, Short.MAX_VALUE))
+            .addGroup(mode2ImportPanelLayout.createSequentialGroup()
+                .addComponent(mode2FileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(importMode2HelpButton)
+                .addContainerGap())
+        );
+        mode2ImportPanelLayout.setVerticalGroup(
+            mode2ImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mode2ImportPanelLayout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(jLabel17)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mode2FileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mode2ImportPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(importMode2HelpButton)
+                .addGap(12, 12, 12))
+        );
+
+        importTabbedPane.addTab("mode2", mode2ImportPanel);
 
         rawNameColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
         rawNameColumnComboBox.setSelectedIndex(properties.getRawNameColumn());
@@ -8019,7 +8062,7 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_importProntoClassicHelpButtonActionPerformed
 
     private void importIctHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importIctHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.importIctHelpHelp);
+        HelpPopup.newHelpPopup(this, HelpTexts.importIctHelp);
     }//GEN-LAST:event_importIctHelpButtonActionPerformed
 
     private void importProntoProfessionalHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importProntoProfessionalHelpButtonActionPerformed
@@ -8620,6 +8663,10 @@ public class GuiMain extends javax.swing.JFrame {
         properties.setRejectLircCodeImports(rejectLircCodeImports.isSelected());
     }//GEN-LAST:event_rejectLircCodeImportsActionPerformed
 
+    private void importMode2HelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importMode2HelpButtonActionPerformed
+        HelpPopup.newHelpPopup(this, HelpTexts.importMode2Help);
+    }//GEN-LAST:event_importMode2HelpButtonActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -8827,6 +8874,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton importLircHelpButton;
     private javax.swing.JMenuItem importLircMenuItem;
     private javax.swing.JMenuItem importLircMenuItem1;
+    private javax.swing.JButton importMode2HelpButton;
     private javax.swing.JMenu importOptionsMenu;
     private javax.swing.JPanel importPanel;
     private javax.swing.JMenu importParametricMenu;
@@ -8893,6 +8941,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
@@ -8964,6 +9013,8 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu loadMenu;
     private javax.swing.JMenuItem mainDocuMenuItem;
     private javax.swing.JMenuBar menuBar;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean mode2FileImporterBean;
+    private javax.swing.JPanel mode2ImportPanel;
     private javax.swing.JMenuItem moveDownMenuItem;
     private javax.swing.JMenuItem moveDownMenuItem1;
     private javax.swing.JMenuItem moveUpMenuItem;

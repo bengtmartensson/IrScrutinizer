@@ -28,7 +28,7 @@ import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 /**
  * This class imports Lirc's mode2 files.
  */
-public class Mode2Importer extends ReaderImporter implements IModulatedIrSequenceImporter,IFileImporter {
+public class Mode2Importer extends ReaderImporter implements IModulatedIrSequenceImporter,IReaderImporter {
 
     private ModulatedIrSequence sequence;
 

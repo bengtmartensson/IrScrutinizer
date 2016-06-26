@@ -185,6 +185,13 @@ class HelpTexts {
             + treeHelpReaderImporterIntro
             + treeHelp;
 
+    public static String importMode2Help
+            = "The mode2 \"format\" just consists of interleaved mark and space lines. It is output  by the Lirc \"mode2\" program."
+            + "\n\n"
+            + fileUrlImportHelp + "\n\n"
+            + treeHelpReaderImporterIntro
+            + treeHelp;
+
     public static String importProntoProfessionalHelp
             = "Pronto Professional XCF files are found for example at RemoteCentral. "
             + "IrScrutinizer can read in these files to its import tree, even "
