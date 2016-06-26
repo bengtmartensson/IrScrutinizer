@@ -36,6 +36,12 @@ class HelpTexts {
     private HelpTexts() {
     }
 
+    private static final String treeHelpReaderImporterIntro
+            = "When pressing one of the \"Load\", \"Load File/URL\", or \"Load from clipboard\" buttons, ";
+
+    private static final String treeHelpFileImporterIntro
+            = "When pressing the \"Load File\" button, ";
+
     private static final String treeHelp
             = "the selected information is downloaded, and presented in the format of "
             + "an expandable tree. By placing the mouse cursor over a command, additional information, like decode, is presented. A single "
@@ -55,14 +61,18 @@ class HelpTexts {
             + "entered, for subsequent import without downloading to a local disc. By pressing "
             + "the \"...\"-Button, a file selector allows the selection of a local file. For "
             + "files and URLs, the \"Edit/Browse\" button allows to examine the selected "
-            + "file/URL with the operating system's standard command.";
+            + "file/URL with the operating system's standard command."
+            + "\n\n"
+            + "It is also possible to import a file by \"dropping\" it on the window.";
 
     private static final String fileImportHelp
             = "There is a text field, named File, where a local file name can be "
             + "entered. By pressing "
             + "the \"...\"-Button, a file selector allows the selection of a local file. "
             + "The \"Edit/Browse\" button allows to examine the selected "
-            + "file with the operating system's standard command.";
+            + "file with the operating system's standard command."
+            + "\n\n"
+            + "It is also possible to import a file by \"dropping\" it on the window.";
 
     private static final String importCharsetHelp
             = "The character set used for the import can be selected as Options -> Import options -> Character set.";
@@ -113,20 +123,20 @@ class HelpTexts {
     public static String importGirrHelp
             = "Girr is the native format of IrScrutinizer.\n\n"
             + fileUrlImportHelp + "\n\n"
-            + "When pressing one of the \"Load\", \"Load File/URL\", or \"Load from clipboard\" buttons, "
+            + treeHelpReaderImporterIntro
             + treeHelp;
 
     public static String importIrTransHelp
             = "IrTrans' configuration files can be imported here.\n\n"
             + fileUrlImportHelp + "\n\n"
-            + "When pressing one of the \"Load\", \"Load File/URL\", or \"Load from clipboard\" buttons, "
+            + treeHelpReaderImporterIntro
             + treeHelp;
 
     public static String importLircHelp
             = "LIRC files can be imported here, even directory hierarchies of LIRC files.\n\n"
             + importCharsetHelp + "\n\n"
             + fileUrlImportHelp + "\n\n"
-            + "When pressing one of the \"Load\", \"Load File/URL\", or \"Load from clipboard\" buttons, "
+            + treeHelpReaderImporterIntro
             + treeHelp;
 
     public static String importRemoteMasterHelp
@@ -142,7 +152,7 @@ class HelpTexts {
             + "as raw signals, or to \"Scrutinize signal\", is not possible. However, they can "
             + "always be imported as parametric signals, possibly for manual edit.\n\n"
             + fileUrlImportHelp + "\n\n"
-            + "When pressing one of the \"Load\", \"Load File/URL\", or \"Load from clipboard\" buttons, "
+            + treeHelpReaderImporterIntro
             + treeHelp;
 
     public static String importProntoClassicHelp
@@ -150,7 +160,7 @@ class HelpTexts {
             + "IrScrutinizer can read in these files to its import tree, even "
             + "preserving the Pronto \"devices\" as nodes in the tree.\n\n"
             + fileImportHelp + "\n\n"
-            + "When pressing the \"Load File\" button, " + treeHelp;
+            + treeHelpFileImporterIntro + treeHelp;
 
     public static String importCmlHelp
             = "Many CML files are available in Internet, in particular by RemoteCentral. "
@@ -158,21 +168,21 @@ class HelpTexts {
             + "IrScrutinizer can import these files to its import tree, "
             + "making every remote a nodes in the tree.\n\n"
             + fileImportHelp + "\n\n"
-            + "When pressing the \"Load File\" button, " + treeHelp;
+            + treeHelpFileImporterIntro + treeHelp;
 
     public static String importCommandFusionHelp
             = "The native format for CommandFusion equipment (for example, their freely available IR Learner) "
             + "is a Json based text format, having the file extension \".cfir\". "
             + "IrScrutinizer can read in these files to its import tree, "
             + "making every remote a nodes in the tree.\n\n"
-            + "When pressing one of the \"Load\", \"Load File/URL\", or \"Load from clipboard\" buttons, "
+            + treeHelpReaderImporterIntro
             + treeHelp;
 
-    public static String importIctHelpHelp
+    public static String importIctHelp
             = "The ICT format, introduced by Kevin Timmerman's  IrScope, contains one or many IR signals, "
             + "optionally with names.\n\n"
             + fileUrlImportHelp + "\n\n"
-            + "When pressing one of the \"Load\", \"Load File/URL\", or \"Load from clipboard\" buttons, "
+            + treeHelpReaderImporterIntro
             + treeHelp;
 
     public static String importProntoProfessionalHelp
@@ -180,7 +190,7 @@ class HelpTexts {
             + "IrScrutinizer can read in these files to its import tree, even "
             + "preserving the Pronto \"devices\" as nodes in the tree.\n\n"
             + fileImportHelp + "\n\n"
-            + "When pressing the \"Load File\" button, " + treeHelp;
+            + treeHelpFileImporterIntro + treeHelp;
 
     public static String importTextRawHelp
             = "The sub-pane allows for the parsing of text files separated by a certain "
@@ -191,13 +201,13 @@ class HelpTexts {
             + "subsequent columns\" is selected, all subsequent columns are added to the data." + "\n\n"
             + importCharsetHelp + "\n\n"
             + fileImportHelp + "\n\n"
-            + "When pressing the \"Load File\" button, " + treeHelp;
+            + treeHelpFileImporterIntro + treeHelp;
 
     public static String importTextRawLineBasedHelp
             = "This pane tries to interpret a line-based file as a number of named IR commands, using heuristics.\n\n"
             + importCharsetHelp + "\n\n"
             + fileUrlImportHelp + "\n\n"
-            + "When pressing one of the \"Load\", \"Load File/URL\", or \"Load from clipboard\" buttons, "
+            + treeHelpReaderImporterIntro
             + treeHelp;
 
     public static String importTextParametrizedHelp
@@ -209,7 +219,7 @@ class HelpTexts {
             + "number base selected.\n\n"
             + importCharsetHelp + "\n\n"
             + fileImportHelp + "\n\n"
-            + "When pressing the \"Load File\" button, " + treeHelp;
+            + treeHelpFileImporterIntro + treeHelp;
 
     public static String importWaveHelp
             = "The pane imports and analyzes wave files, considered to represent IR "
@@ -217,7 +227,7 @@ class HelpTexts {
             + "of channels, and in the case of two channels, the number of sample times the "
             + "left and right channels are in phase or anti-phase) is printed to the console.\n\n"
             + fileImportHelp + "\n\n"
-            + "When pressing the \"Load File\" button, " + treeHelp;
+            + treeHelpFileImporterIntro + treeHelp;
 
     public static String exportHelp
             = "Using this pane, export files can be generated,  allowing "
