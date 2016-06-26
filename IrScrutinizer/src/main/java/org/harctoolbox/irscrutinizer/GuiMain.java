@@ -179,6 +179,41 @@ public class GuiMain extends javax.swing.JFrame {
         }
     };
 
+    private class SignalScrutinizerTransferHandler extends TransferHandler {
+        @Override
+        public boolean canImport(TransferHandler.TransferSupport support) {
+            if (!support.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
+                return false;
+
+            boolean copySupported = (COPY & support.getSourceDropActions()) == COPY;
+            if (!copySupported)
+                return false;
+
+            support.setDropAction(COPY);
+            return true;
+        }
+
+        @Override
+        public boolean importData(TransferHandler.TransferSupport support) {
+            if (!canImport(support))
+                return false;
+
+            Transferable transferable = support.getTransferable();
+            try {
+                List<File> list = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                if (list.size() > 1) {
+                    guiUtils.error("Only one file can be dropped");
+                    return false;
+                }
+
+                importModulatedIrSequenceFile(list.get(0));
+            } catch (UnsupportedFlavorException | IOException e) {
+                return false;
+            }
+            return true;
+        }
+    };
+
     /**
      * Main class for the GUI. Throws exceptions if configuration files cannot be found or on similar errors.
      * It may of course be questioned if this is necessary, however, it is faster for the user to
@@ -407,6 +442,9 @@ public class GuiMain extends javax.swing.JFrame {
 
         cookedPanel.setTransferHandler(new GirrImporterBeanTransferHandler(false));
         rawPanel.setTransferHandler(new GirrImporterBeanTransferHandler(true));
+
+        signalScrutinizerPanel.setTransferHandler(new SignalScrutinizerTransferHandler());
+        capturedDataTextArea.setTransferHandler(new SignalScrutinizerTransferHandler());
 
         // Cannot do this in initComponents, since then it will be called therein
         importTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -1342,6 +1380,41 @@ public class GuiMain extends javax.swing.JFrame {
         } finally {
             resetCursor(oldCursor);
         }
+    }
+
+    private <T extends IFileImporter & IModulatedIrSequenceImporter> ModulatedIrSequence importSequence(File file, T importer) {
+        try {
+            importer.load(file, properties.getImportCharsetName());
+            return importer.getModulatedIrSequence();
+        } catch (IOException | java.text.ParseException | IrpMasterException ex) {
+        }
+        return null;
+    }
+
+    private <T extends IFileImporter & ICommandImporter> ModulatedIrSequence importCommands(File file, T importer) {
+        try {
+            importer.load(file, properties.getImportCharsetName());
+            return importer.getConcatenatedCommands();
+        } catch (IOException | java.text.ParseException | IrpMasterException ex) {
+        }
+        return null;
+    }
+
+    public void importModulatedIrSequenceFile(File file) {
+        ModulatedIrSequence sequence = importCommands(file, girrImporter);
+        if (sequence == null || sequence.isEmpty())
+            sequence = importCommands(file, ictImporter);
+
+        if (sequence == null || sequence.isEmpty())
+            sequence = importSequence(file, new Mode2Importer());
+
+        if (sequence == null || sequence.isEmpty())
+            sequence = importSequence(file, waveImporter);
+
+        if (sequence == null || sequence.isEmpty())
+            guiUtils.error("File not recoginzed, ignored");
+        else
+            processIr(sequence);
     }
 
     private void registerRawCommands(Collection<Command> commands) throws IrpMasterException {
