@@ -81,6 +81,11 @@ public class LircExporter extends RemoteSetExporter implements IRemoteSetExporte
         return "LIRC";
     }
 
+    @Override
+    public boolean supportsMetaData() {
+        return true;
+    }
+
     // Jirc's definition of Lirc names:
     // ('!' .. '{' | '}' .. '~' | '\u00A1' .. '\u00FF')+
     private static String lircName(String key) {

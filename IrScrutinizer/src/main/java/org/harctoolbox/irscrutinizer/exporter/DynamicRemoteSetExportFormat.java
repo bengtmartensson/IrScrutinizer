@@ -51,6 +51,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     private final String extension;
     private final boolean simpleSequence;
     private final boolean binary;
+    private final boolean metadata;
     private final Document xslt;
 
     private DynamicRemoteSetExportFormat(Element el) {
@@ -59,6 +60,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         this.extension = el.getAttribute("extension");
         this.simpleSequence = Boolean.parseBoolean(el.getAttribute("simpleSequence"));
         this.binary = Boolean.parseBoolean(el.getAttribute("binary"));
+        this.metadata = Boolean.parseBoolean(el.getAttribute("metadata"));
 
         xslt = XmlUtils.newDocument(true);
         Node stylesheet = el.getElementsByTagNameNS("http://www.w3.org/1999/XSL/Transform", "stylesheet").item(0);
@@ -111,6 +113,11 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     @Override
     public String getPreferredFileExtension() {
         return extension;
+    }
+
+    @Override
+    public boolean supportsMetaData() {
+        return metadata;
     }
 
     @Override

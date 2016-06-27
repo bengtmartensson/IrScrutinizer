@@ -134,4 +134,8 @@ public abstract class RemoteSetExporter extends Exporter {
     public boolean considersRepetitions() {
         return false;
     }
+
+    public boolean supportsMetaData() {
+        return false;
+    }
 }

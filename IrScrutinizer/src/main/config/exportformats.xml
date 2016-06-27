@@ -1463,7 +1463,7 @@ carrier_frequency </xsl:text>
     </xsl:stylesheet>
 </exportformats:exportformat>
 
-<exportformats:exportformat name="irplus" extension="irplus" multiSignal="true" simpleSequence="false">
+<exportformats:exportformat name="irplus" extension="irplus" multiSignal="true" simpleSequence="false" metadata="true">
 <xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr" exclude-result-prefixes="girr"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>

@@ -1124,7 +1124,7 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private File saveCommands(HashMap<String, Command> commands, String source, String title, RemoteSetExporter exporter) throws FileNotFoundException, IrpMasterException, IOException {
-        if (properties.getExportInquireDeviceData()) {
+        if (properties.getExportInquireDeviceData() && exporter.supportsMetaData()) {
             Remote.MetaData newMetaData = MetaDataDialog.inquireMetaData(metaData, this);
             if (newMetaData == null) // user bailed out
                 return null;

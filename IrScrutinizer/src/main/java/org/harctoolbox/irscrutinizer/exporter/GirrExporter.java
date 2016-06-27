@@ -86,4 +86,9 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     public boolean supportsEmbeddedFormats() {
         return true;
     }
+
+    @Override
+    public boolean supportsMetaData() {
+        return true;
+    }
 }
