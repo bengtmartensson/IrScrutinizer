@@ -265,6 +265,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         HashMap<String, Long> commandMap = map.get(pds);
         load(commandMap, pds, deviceType);
         Remote.MetaData metaData = new Remote.MetaData(manufacturer + "_" + deviceType + "_" + pds.toString(), //java.lang.String name,
+                null, // displayName
                 null, //java.lang.String manufacturer,
                 null, //java.lang.String model,
                 deviceType,//java.lang.String deviceClass,
@@ -293,6 +294,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
             ProtocolDeviceSubdevice pds = kvp.getKey();
             HashMap<String, Command> cmds = load(commandMap, pds, deviceType);
             Remote.MetaData metaData = new Remote.MetaData(manufacturer + "_" + deviceType + "_" + pds.toString(), //java.lang.String name,
+                    null, // displayName
                     null, //java.lang.String manufacturer,
                     null, //java.lang.String model,
                     deviceType,//java.lang.String deviceClass,

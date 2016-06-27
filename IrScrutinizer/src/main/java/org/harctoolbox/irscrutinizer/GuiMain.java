@@ -1131,7 +1131,7 @@ public class GuiMain extends javax.swing.JFrame {
             String model = inquire("Enter model", "Model entry", metaData.getModel());
             String deviceClass = inquire("Enter device class", "Device Class entry", metaData.getDeviceClass());
             String remoteName = inquire("Enter manufacturers name of the remote", "Remote name entry", metaData.getRemoteName());
-            metaData = new Remote.MetaData(name, manufacturer, model, deviceClass, remoteName);
+            metaData = new Remote.MetaData(name, null, manufacturer, model, deviceClass, remoteName);
         }
 
         File file = exporter.export(commands, source, title, metaData,

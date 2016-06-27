@@ -123,11 +123,12 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
                     "GCDB: " + manufacturer + "/" + deviceType + "/" + codeSet, irSignal);
             addCommand(cmd);
         }
-        Remote.MetaData metaData = new Remote.MetaData(manufacturer + "_" + deviceType + "_" + codeSet, //java.lang.String name,
+        Remote.MetaData metaData = new Remote.MetaData(manufacturer + "_" + deviceType + "_" + codeSet, // name,
+                null, // displayName
                 manufacturer,
-                null, //java.lang.String model,
-                deviceType, //java.lang.String deviceClass,
-                null //java.lang.String remoteName,
+                null, // model,
+                deviceType, // deviceClass,
+                null // remoteName,
         );
         Remote remote = new Remote(metaData,
                 null, //java.lang.String comment,

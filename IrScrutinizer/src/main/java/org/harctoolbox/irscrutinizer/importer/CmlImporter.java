@@ -150,7 +150,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
             System.err.println("Remote " + remoteName + " has no commands, ignored.");
             return null;
         }
-        Remote.MetaData metaData = new Remote.MetaData(remoteName, vendor, model, kind, null);
+        Remote.MetaData metaData = new Remote.MetaData(remoteName, null, vendor, model, kind, null);
         return new Remote(metaData, null, null, commands, null);
     }
 
