@@ -1125,13 +1125,11 @@ public class GuiMain extends javax.swing.JFrame {
 
     private File saveCommands(HashMap<String, Command> commands, String source, String title, RemoteSetExporter exporter) throws FileNotFoundException, IrpMasterException, IOException {
         if (properties.getExportInquireDeviceData()) {
-            // TODO: replace with a custom dialog.
-            String name = inquire("Enter your name of this remote", "Remote name entry", metaData.getName());
-            String manufacturer = inquire("Enter manufacturer", "Manufacturer entry", metaData.getManufacturer());
-            String model = inquire("Enter model", "Model entry", metaData.getModel());
-            String deviceClass = inquire("Enter device class", "Device Class entry", metaData.getDeviceClass());
-            String remoteName = inquire("Enter manufacturers name of the remote", "Remote name entry", metaData.getRemoteName());
-            metaData = new Remote.MetaData(name, null, manufacturer, model, deviceClass, remoteName);
+            Remote.MetaData newMetaData = MetaDataDialog.inquireMetaData(metaData, this);
+            if (newMetaData == null) // user bailed out
+                return null;
+
+            metaData = newMetaData;
         }
 
         File file = exporter.export(commands, source, title, metaData,
