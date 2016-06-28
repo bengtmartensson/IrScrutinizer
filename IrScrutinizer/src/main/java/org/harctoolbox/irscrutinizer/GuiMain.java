@@ -7782,7 +7782,9 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_automaticExportFilenamesCheckBoxActionPerformed
 
     private void openLastFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openLastFileButtonActionPerformed
-        if (Exporter.getLastSaveFile() != null)
+        if (Exporter.getLastSaveFile() == null)
+            guiUtils.error("There is no \"last file\".");
+        else
             guiUtils.editOrOpen(Exporter.getLastSaveFile());
     }//GEN-LAST:event_openLastFileButtonActionPerformed
 

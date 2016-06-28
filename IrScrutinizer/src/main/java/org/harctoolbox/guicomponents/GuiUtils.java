@@ -237,10 +237,10 @@ public class GuiUtils implements Serializable {
         }
         try {
             if (verbose)
-                trace("Browsing URI `" + uri.toString() + "'");
+                trace("Browsing URI \"" + uri.toString() + "\"");
             Desktop.getDesktop().browse(uri);
         } catch (IOException ex) {
-            boolean stacktrace = error("Could not start browser using uri `" + uri.toString() + "'.", offerStackTrace);
+            boolean stacktrace = error("Could not start browser using uri \"" + uri.toString() + "\".", offerStackTrace);
             if (stacktrace)
                 ex.printStackTrace(System.err);
         }
@@ -259,12 +259,12 @@ public class GuiUtils implements Serializable {
         try {
             Desktop.getDesktop().open(file);
             if (verbose)
-                trace("open file `" + file.toString() + "'");
+                trace("open file \"" + file.toString() + "\"");
        } catch (IllegalArgumentException ex) {
             error(ex);
        } catch (IOException ex) {
            // According to javadoc for Desktop.getDesktop().open
-            error("File `" + file.toString() + "' has no associated application or the associated application failed.");
+            error("File \"" + file.toString() + "\" has no associated application or the associated application failed.");
         }
     }
 
@@ -278,10 +278,10 @@ public class GuiUtils implements Serializable {
             try {
                 Desktop.getDesktop().edit(file);
                 if (verbose)
-                    trace("edit file `" + file.toString() + "'");
+                    trace("edit file \"" + file.toString() + "\"");
             } catch (IOException ex) {
                 if (verbose)
-                    trace("edit file `" + file.toString() + "' failed, trying open...'");
+                    trace("edit file \"" + file.toString() + "\" failed, trying open...");
                 open(file);
             } catch (UnsupportedOperationException ex) {
                 error("Edit not supported.");
