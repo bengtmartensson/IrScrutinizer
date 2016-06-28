@@ -48,12 +48,11 @@ public class ExportFormatManager {
 
     public ExportFormatManager(GuiUtils guiUtils, File exportFormatFile, IExportFormatSelector exportFormatSelector,
             IExporterFactory girrExporter, IExporterFactory waveExporter, IExporterFactory textExporter,
-            IExporterFactory lircExporter, IExporterFactory prontoExporter) throws ParserConfigurationException, SAXException, IOException {
+            IExporterFactory prontoExporter) throws ParserConfigurationException, SAXException, IOException {
         this.exportFormatSelector = exportFormatSelector;
         exportFormats = new LinkedHashMap<>();
         exportFormats.put("Girr", girrExporter);
         exportFormats.put("Text", textExporter);
-        exportFormats.put("LIRC", lircExporter);
         exportFormats.put("Wave", waveExporter);
         exportFormats.put("ProntoClassic", prontoExporter);
 

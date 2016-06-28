@@ -793,14 +793,6 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportParametricAsGirrMenuItemActionPerformed"/>
                       </Events>
                     </MenuItem>
-                    <MenuItem class="javax.swing.JMenuItem" name="exportParametricAsLircMenuItem">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="LIRC"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportParametricAsLircMenuItemActionPerformed"/>
-                      </Events>
-                    </MenuItem>
                     <MenuItem class="javax.swing.JMenuItem" name="exportParametricAsTextMenuItem">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Text"/>
@@ -822,14 +814,6 @@
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportRawAsGirrMenuItemActionPerformed"/>
-                      </Events>
-                    </MenuItem>
-                    <MenuItem class="javax.swing.JMenuItem" name="exportRawAsLircMenuItem">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="LIRC"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportRawAsLircMenuItemActionPerformed"/>
                       </Events>
                     </MenuItem>
                     <MenuItem class="javax.swing.JMenuItem" name="exportRawAsTextMenuItem">

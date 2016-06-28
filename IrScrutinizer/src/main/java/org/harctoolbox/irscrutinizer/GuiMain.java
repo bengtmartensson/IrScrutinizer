@@ -781,10 +781,6 @@ public class GuiMain extends javax.swing.JFrame {
                 setupExtraTextFormats());
     }
 
-    private LircExporter newLircExporter() {
-        return new LircExporter(properties.getCreatingUser()/*, new File(properties.getExportDir())*/);
-    }
-
     public ProntoClassicExporter newProntoClassicExporter() {
         ProntoModel prontomodel = ProntoModel.getModelByName((String) prontoModelComboBox.getSelectedItem());
         int buttonwidth = Integer.parseInt(prontoExportButtonWidthTextField.getText());
@@ -821,12 +817,6 @@ public class GuiMain extends javax.swing.JFrame {
             @Override
             public ICommandExporter newExporter() {
                 return newTextExporter();
-            }
-        },
-                new IExporterFactory() {
-            @Override
-            public ICommandExporter newExporter() {
-                return newLircExporter();
             }
         },
                 new IExporterFactory() {
@@ -2139,11 +2129,9 @@ public class GuiMain extends javax.swing.JFrame {
         exportSignalWaveMenuItem = new javax.swing.JMenuItem();
         saveParametrizedMenu = new javax.swing.JMenu();
         exportParametricAsGirrMenuItem = new javax.swing.JMenuItem();
-        exportParametricAsLircMenuItem = new javax.swing.JMenuItem();
         exportParametricAsTextMenuItem = new javax.swing.JMenuItem();
         saveRawMenu = new javax.swing.JMenu();
         exportRawAsGirrMenuItem = new javax.swing.JMenuItem();
-        exportRawAsLircMenuItem = new javax.swing.JMenuItem();
         exportRawAsTextMenuItem = new javax.swing.JMenuItem();
         loadMenu = new javax.swing.JMenu();
         importSignalMenu = new javax.swing.JMenu();
@@ -5861,14 +5849,6 @@ public class GuiMain extends javax.swing.JFrame {
         });
         saveParametrizedMenu.add(exportParametricAsGirrMenuItem);
 
-        exportParametricAsLircMenuItem.setText("LIRC");
-        exportParametricAsLircMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportParametricAsLircMenuItemActionPerformed(evt);
-            }
-        });
-        saveParametrizedMenu.add(exportParametricAsLircMenuItem);
-
         exportParametricAsTextMenuItem.setText("Text");
         exportParametricAsTextMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -5888,14 +5868,6 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
         saveRawMenu.add(exportRawAsGirrMenuItem);
-
-        exportRawAsLircMenuItem.setText("LIRC");
-        exportRawAsLircMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportRawAsLircMenuItemActionPerformed(evt);
-            }
-        });
-        saveRawMenu.add(exportRawAsLircMenuItem);
 
         exportRawAsTextMenuItem.setText("Text");
         exportRawAsTextMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -7527,10 +7499,6 @@ public class GuiMain extends javax.swing.JFrame {
         properties.setInvokeRepeatFinder(repeatFinderCheckBoxMenuItem.isSelected());
     }//GEN-LAST:event_repeatFinderCheckBoxMenuItemActionPerformed
 
-    private void exportRawAsLircMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRawAsLircMenuItemActionPerformed
-        saveRawSignals(new LircExporter(properties.getCreatingUser()/*, new File(properties.getExportDir())*/));
-    }//GEN-LAST:event_exportRawAsLircMenuItemActionPerformed
-
     private void importRmduMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importRmduMenuItemActionPerformed
         importRemoteByFileSelector(xcfImporter, true);
     }//GEN-LAST:event_importRmduMenuItemActionPerformed
@@ -7548,10 +7516,6 @@ public class GuiMain extends javax.swing.JFrame {
             //parameterTable.repaint();
         }
     }//GEN-LAST:event_setProtocolMenuItemActionPerformed
-
-    private void exportParametricAsLircMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportParametricAsLircMenuItemActionPerformed
-        saveParametricSignals(new LircExporter(properties.getCreatingUser()));
-    }//GEN-LAST:event_exportParametricAsLircMenuItemActionPerformed
 
     private void nukeHexMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nukeHexMenuItemActionPerformed
         parameterTableModel.nukeHex();
@@ -8855,12 +8819,10 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu exportOptionsMenu;
     private javax.swing.JPanel exportPanel;
     private javax.swing.JMenuItem exportParametricAsGirrMenuItem;
-    private javax.swing.JMenuItem exportParametricAsLircMenuItem;
     private javax.swing.JMenuItem exportParametricAsTextMenuItem;
     private javax.swing.JButton exportParametricRemoteButton;
     private javax.swing.JButton exportProntoHelpButton;
     private javax.swing.JMenuItem exportRawAsGirrMenuItem;
-    private javax.swing.JMenuItem exportRawAsLircMenuItem;
     private javax.swing.JMenuItem exportRawAsTextMenuItem;
     private javax.swing.JButton exportRawRemoteButton;
     private javax.swing.JButton exportRawRemoteButton1;
