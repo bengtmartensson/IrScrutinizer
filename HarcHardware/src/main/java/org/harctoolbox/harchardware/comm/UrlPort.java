@@ -128,4 +128,9 @@ public class UrlPort implements ICommandLineDevice {
     public boolean ready() throws IOException {
         return answer != null;
     }
+
+    @Override
+    public void flushInput() throws IOException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

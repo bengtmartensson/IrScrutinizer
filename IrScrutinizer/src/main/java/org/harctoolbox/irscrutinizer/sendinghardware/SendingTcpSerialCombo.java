@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013, 2014 Bengt Martensson.
+Copyright (C) 2016 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,35 +17,33 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.sendinghardware;
 
-import gnu.io.NoSuchPortException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import javax.swing.JPanel;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.guicomponents.SerialPortSimpleBean;
+import org.harctoolbox.guicomponents.TcpSerialComboBean;
 import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ir.IRawIrSender;
 import org.harctoolbox.irscrutinizer.Props;
 
 /**
- * This class does something interesting and useful. Or not...
  * @param <T>
  */
-public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends SendingHardware<T> implements ISendingHardware<T> {
-    private SerialPortSimpleBean serialPortSimpleBean;
+public class SendingTcpSerialCombo<T extends IRawIrSender & IHarcHardware> extends SendingHardware<T> implements ISendingHardware<T> {
+    private TcpSerialComboBean tcpSerialComboBean;
     private String portName;
     private int baudRate;
     private Class<T> clazz;
 
-    public SendingSerial(final Class<T> clazz, JPanel panel, SerialPortSimpleBean serialPortSimpleBean, Props props, GuiUtils guiUtils_) {
+    public SendingTcpSerialCombo(final Class<T> clazz, JPanel panel, TcpSerialComboBean tcpSerialComboBean, Props props, GuiUtils guiUtils_) {
         super(panel, props, guiUtils_);
-        this.serialPortSimpleBean = serialPortSimpleBean;
-        this.baudRate = serialPortSimpleBean.getBaudRate();
-        this.portName = serialPortSimpleBean.getPortName();
+        this.tcpSerialComboBean = tcpSerialComboBean;
+        this.baudRate = tcpSerialComboBean.getBaudRate();
+        this.portName = tcpSerialComboBean.getPortName();
         this.clazz = clazz;
-        serialPortSimpleBean.addPropertyChangeListener(new PropertyChangeListener() {
+        tcpSerialComboBean.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 String propertyName = evt.getPropertyName();
@@ -75,9 +73,9 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
     }
 
     @Override
-    public void setup() throws IOException {
-        int newBaud = serialPortSimpleBean.getBaudRate();
-        String newPort = serialPortSimpleBean.getPortName();
+    public void setup() throws IOException {/*
+        int newBaud = tcpSerialComboBean.getBaudRate();
+        String newPort = tcpSerialComboBean.getPortName();
         if (newPort == null || (rawIrSender != null && newPort.equals(portName) && (baudRate == newBaud)))
             return;
 
@@ -90,7 +88,7 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
             Props.class.getMethod("set" + clazz.getSimpleName() + "PortName", String.class).invoke(properties, portName);
             this.baudRate = newBaud;
             Props.class.getMethod("set" + clazz.getSimpleName() + "PortBaudRate", int.class).invoke(properties, newBaud);
-            serialPortSimpleBean.setHardware(rawIrSender);
+            tcpSerialComboBean.setHardware(rawIrSender);
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException ex) {
             guiUtils.error(ex);
         } catch (InvocationTargetException ex) {
@@ -100,7 +98,8 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
             else
                 guiUtils.error(ex);
             guiUtils.error(ex.getCause().getClass().getName() + " " + ex.getCause().getMessage());
-        }
+        }*/
+        tcpSerialComboBean.setHardware(properties.getVerbose());
     }
 
     @Override

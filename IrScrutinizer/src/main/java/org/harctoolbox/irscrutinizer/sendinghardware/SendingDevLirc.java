@@ -44,7 +44,7 @@ public class SendingDevLirc extends SendingHardware<DevLirc> implements ISending
                 switch (propertyName) {
                     case DevLircBean.PROP_PROPS:
                         break;
-                    case DevLircBean.PROP_PORT:
+                    case DevLircBean.PROP_PORTNAME:
                         if (evt.getNewValue() == null)
                             return;
                         setup();

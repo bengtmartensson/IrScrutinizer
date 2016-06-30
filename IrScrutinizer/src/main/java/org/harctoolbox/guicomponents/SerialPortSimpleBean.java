@@ -21,7 +21,7 @@ import java.awt.Cursor;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import org.harctoolbox.harchardware.HarcHardwareException;
@@ -61,7 +61,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel implements ISending
         listenable = false;
         DefaultComboBoxModel<String> model;
         try {
-            ArrayList<String> portList = LocalSerialPort.getSerialPortNames(true);
+            List<String> portList = LocalSerialPort.getSerialPortNames(true);
             model = new DefaultComboBoxModel<>(portList.toArray(new String[portList.size()]));
         } catch (IOException | LinkageError ex) {
             model =  new DefaultComboBoxModel<>(new String[]{ initialPort != null ? initialPort : notInitialized });
@@ -111,7 +111,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel implements ISending
         String oldPort = this.portName;
         this.portName = portName;
         // this propery changer should set up the hardware and call setHardware()
-        propertyChangeSupport.firePropertyChange(PROP_PORT, oldPort, portName);
+        propertyChangeSupport.firePropertyChange(PROP_PORTNAME, oldPort, portName);
     }
 
     /**
@@ -194,7 +194,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel implements ISending
         if (hardware != null)
             hardware.close();
 
-        ArrayList<String> portNames = LocalSerialPort.getSerialPortNames(useCached);
+        List<String> portNames = LocalSerialPort.getSerialPortNames(useCached);
         portNames.add(0, "");
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(portNames.toArray(new String[portNames.size()]));
         portComboBox.setModel(model);

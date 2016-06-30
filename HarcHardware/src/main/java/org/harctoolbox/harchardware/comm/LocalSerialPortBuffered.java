@@ -106,51 +106,6 @@ public final class LocalSerialPortBuffered extends LocalSerialPort implements IC
         }
     }
 
-    public void waitFor(String goal, String areUThere, int delay, int tries) throws IOException, HarcHardwareException {
-        try {
-            Thread.sleep(delay);
-        } catch (InterruptedException ex) {
-            // nothing
-        }
-        flushIn();
-        for (int i = 0; i < tries; i++) {
-            sendString(areUThere);
-            String answer = readString(true);
-            if (answer == null)
-                continue;
-            answer = answer.trim();
-            if (answer.startsWith(goal)) {// success!
-                flushIn();
-                return;
-            }
-            if (delay > 0)
-                try {
-                    Thread.sleep(delay);
-                } catch (InterruptedException ex) {
-                    break;
-                }
-        }
-        // Failure if we get here.
-        throw new HarcHardwareException("Hardware not responding");
-    }
-
-    private void flushIn() /*throws IOException*/ {
-        try {
-            while (true) {
-                String junk = readString();
-                if (junk == null)
-                    break;
-                if (verbose)
-                    System.err.println("LocalSerialPortBuffered.flushIn: junked '" + junk + "'.");
-            }
-        } catch (IOException ex) {
-            // This bizarre code actually both seems to work, and be needed (at least using my Mega2560),
-            // the culprit is probably rxtx.
-             if (verbose)
-                    System.err.println("IOException in LocalSerialPortBuffered.flushIn ignored: " + ex.getMessage());
-        }
-    }
-
     @Override
     public boolean ready() throws IOException {
         return bufferedInStream.ready();

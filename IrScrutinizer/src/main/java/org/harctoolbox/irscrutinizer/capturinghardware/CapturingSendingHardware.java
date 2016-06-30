@@ -52,7 +52,7 @@ public class CapturingSendingHardware <T extends ICapture & IHarcHardware> exten
                 String propertyName = evt.getPropertyName();
                 switch (propertyName) {
                     case ISendingReceivingBean.PROP_BAUD:
-                    case ISendingReceivingBean.PROP_PORT:
+                    case ISendingReceivingBean.PROP_PORTNAME:
                     case ISendingReceivingBean.PROP_VERSION:
                     case ISendingReceivingBean.PROP_PROPS:
                         break;

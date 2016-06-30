@@ -121,11 +121,56 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
     @Override
     public void open() throws IOException, HarcHardwareException {
         super.open();
-        serialPort.waitFor(okString, lineEnding, /*delay*/ 100, /* tries = */ 10);
+        waitFor(okString, lineEnding, /*delay*/ 100, /* tries = */ 10);
         serialPort.sendString(versionCommand + lineEnding);
         versionString = serialPort.readString(true).trim();
         if (verbose)
             System.err.println(versionCommand + " returned '" + versionString + "'.");
+    }
+
+    public void waitFor(String goal, String areUThere, int delay, int tries) throws IOException, HarcHardwareException {
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException ex) {
+            // nothing
+        }
+        flushIn();
+        for (int i = 0; i < tries; i++) {
+            sendString(areUThere);
+            String answer = readString(true);
+            if (answer == null)
+                continue;
+            answer = answer.trim();
+            if (answer.startsWith(goal)) {// success!
+                flushIn();
+                return;
+            }
+            if (delay > 0)
+                try {
+                    Thread.sleep(delay);
+                } catch (InterruptedException ex) {
+                    break;
+                }
+        }
+        // Failure if we get here.
+        throw new HarcHardwareException("Hardware not responding");
+    }
+
+    private void flushIn() /*throws IOException*/ {
+        try {
+            while (true) {
+                String junk = readString();
+                if (junk == null)
+                    break;
+                if (verbose)
+                    System.err.println("LocalSerialPortBuffered.flushIn: junked '" + junk + "'.");
+            }
+        } catch (IOException ex) {
+            // This bizarre code actually both seems to work, and be needed (at least using my Mega2560),
+            // the culprit is probably rxtx.
+             if (verbose)
+                    System.err.println("IOException in LocalSerialPortBuffered.flushIn ignored: " + ex.getMessage());
+        }
     }
 
     private StringBuilder join(IrSequence irSequence, String separator) {
@@ -320,5 +365,10 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
     @Override
     public void setDebug(int debug) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void flushInput() throws IOException {
+        serialPort.flushInput();
     }
 }

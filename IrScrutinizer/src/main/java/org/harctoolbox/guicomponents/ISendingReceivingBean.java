@@ -11,8 +11,8 @@ public interface ISendingReceivingBean {
     public static final String PROP_BAUD = "PROP_BAUD";
     public static final String PROP_ISOPEN = "PROP_ISOPEN";
     public static final String PROP_PROPS = "PROP_PROPS";
-    public static final String PROP_PORT = "PROP_PORT";
-    
+    public static final String PROP_PORTNAME = "PROP_PORTNAME";
+
     public void addPropertyChangeListener(PropertyChangeListener propertyChangeListener);
 
 }

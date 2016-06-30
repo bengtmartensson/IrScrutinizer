@@ -117,7 +117,7 @@ public class DevLircBean extends javax.swing.JPanel implements ISendingReceiving
         String oldPort = this.portName;
         this.portName = portName;
         // this propery changer should set up the hardware and call setHardware()
-        propertyChangeSupport.firePropertyChange(PROP_PORT, oldPort, portName);
+        propertyChangeSupport.firePropertyChange(PROP_PORTNAME, oldPort, portName);
     }
 
     public void setHardware(DevLirc hardware) {

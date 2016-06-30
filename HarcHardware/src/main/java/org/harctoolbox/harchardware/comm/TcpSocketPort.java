@@ -39,6 +39,11 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
         return tcpSocketChannel.ready();
     }
 
+    @Override
+    public void flushInput() throws IOException {
+        tcpSocketChannel.flushInput();
+    }
+
     public enum ConnectionMode {
         keepAlive,
         justInTime;
@@ -72,7 +77,8 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
     @Override
     public void close() {
         try {
-            tcpSocketChannel.close(true);
+            if (tcpSocketChannel != null)
+                tcpSocketChannel.close(true);
         } catch (IOException ex) {
         } finally {
             tcpSocketChannel = null;

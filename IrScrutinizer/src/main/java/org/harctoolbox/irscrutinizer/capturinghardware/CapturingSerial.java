@@ -65,7 +65,7 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
                         case SerialPortSimpleBean.PROP_BAUD:
                             setup();
                             break;
-                        case SerialPortSimpleBean.PROP_PORT:
+                        case SerialPortSimpleBean.PROP_PORTNAME:
                             if (evt.getNewValue() == null)
                                 return;
                             setup();

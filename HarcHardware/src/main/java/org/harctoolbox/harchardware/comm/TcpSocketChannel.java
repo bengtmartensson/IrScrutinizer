@@ -210,4 +210,10 @@ public class TcpSocketChannel implements ICommandLineDevice, IBytesCommand {
     public boolean ready() throws IOException {
         return bufferedInStream != null && bufferedInStream.ready();
     }
+
+    @Override
+    public void flushInput() throws IOException {
+        while (inStream.available() > 0)
+            inStream.read();
+    }
 }

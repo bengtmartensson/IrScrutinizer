@@ -198,6 +198,11 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
         public boolean ready() throws IOException {
             return tcpSocketChannel.ready();
         }
+
+        @Override
+        public void flushInput() throws IOException {
+            tcpSocketChannel.flushInput();
+        }
     }
 
     /**
