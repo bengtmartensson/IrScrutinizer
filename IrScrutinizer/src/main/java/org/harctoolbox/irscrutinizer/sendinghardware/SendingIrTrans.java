@@ -39,6 +39,7 @@ public class SendingIrTrans extends SendingHardware<IrTransIRDB> implements ISen
     NamedCommandLauncher namedCommandLauncher;
     String desiredIp;
     String currentIp = null;
+    private IrTransIRDB rawIrSender;
 
     public SendingIrTrans(JPanel panel, Props properties, GuiUtils gui,
             InternetHostPanel internetHostPanel, NamedCommandLauncher namedCommandLauncher) {
@@ -82,5 +83,10 @@ public class SendingIrTrans extends SendingHardware<IrTransIRDB> implements ISen
             currentIp = internetHostPanel.getIpName();
             properties.setIrTransIpName(internetHostPanel.getIpName());
         }
+    }
+
+    @Override
+    public IrTransIRDB getRawIrSender() {
+        return rawIrSender;
     }
 }

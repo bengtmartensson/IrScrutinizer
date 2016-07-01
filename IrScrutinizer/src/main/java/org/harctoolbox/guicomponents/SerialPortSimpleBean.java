@@ -156,7 +156,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel implements ISending
         versionLabel.setEnabled(hardware.isValid());
         versionLiteralLabel.setEnabled(hardware.isValid());
         versionLabel.setText(version);
-        propertyChangeSupport.firePropertyChange(PROP_VERSION, oldVersion, version);
+        //propertyChangeSupport.firePropertyChange(PROP_VERSION, oldVersion, version);
     }
 
     private void setVersion() {

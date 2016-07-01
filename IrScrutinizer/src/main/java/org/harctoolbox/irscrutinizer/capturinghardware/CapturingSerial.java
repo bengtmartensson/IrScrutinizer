@@ -70,7 +70,7 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
                                 return;
                             setup();
                             break;
-                        case SerialPortSimpleBean.PROP_VERSION:
+                        //case SerialPortSimpleBean.PROP_VERSION:
                         case SerialPortSimpleBean.PROP_ISOPEN:
                             break;
                         default:

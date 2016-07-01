@@ -216,4 +216,8 @@ public class TcpSocketChannel implements ICommandLineDevice, IBytesCommand {
         while (inStream.available() > 0)
             inStream.read();
     }
+
+    public boolean getVerbose() {
+        return verbose;
+    }
 }

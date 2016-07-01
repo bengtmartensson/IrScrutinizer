@@ -39,6 +39,7 @@ public class SendingGlobalCache extends SendingHardware<GlobalCache> implements 
 
     private GlobalCacheIrSenderSelector globalCacheIrSenderSelector;
     private String initialIp;
+    private GlobalCache rawIrSender;
 
     public SendingGlobalCache(JPanel panel, final Props properties, GuiUtils gui,
             GlobalCacheIrSenderSelector newGlobalCacheIrSenderSelector) {
@@ -113,5 +114,10 @@ public class SendingGlobalCache extends SendingHardware<GlobalCache> implements 
         if (globalCacheIp != null)
             properties.setGlobalCacheIpName(globalCacheIp);
         rawIrSender = globalCacheIrSenderSelector.getGlobalCache();
+    }
+
+    @Override
+    public GlobalCache getRawIrSender() {
+        return rawIrSender;
     }
 }

@@ -50,7 +50,7 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
     private T hardware;
     private boolean verbose;
     private int debug;
-    //private boolean useReceiveForCapture;
+    private boolean useReceiveForCapture;
     private String lineEnding;
     private int beginTimeout;
     private int maxCaptureLength;
@@ -80,7 +80,11 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
         this.lineEnding = defaultLineEnding;
         this.verbose = false;
         this.hardware = hardware;
-        //this.useReceiveForCapture = false;
+        this.useReceiveForCapture = false;
+    }
+
+    public void setUseReceiveForCapture(boolean val) {
+        this.useReceiveForCapture = val;
     }
 
     @Override
@@ -95,6 +99,7 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
 
     @Override
     public void setVerbosity(boolean verbose) {
+        hardware.setVerbosity(verbose);
         this.verbose = verbose;
     }
 
@@ -284,7 +289,16 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
     }
 
     @Override
-    public ModulatedIrSequence capture() throws IOException, HarcHardwareException {
+    public ModulatedIrSequence capture() throws IOException, HarcHardwareException, IrpMasterException {
+        return useReceiveForCapture ? mockModulatedIrSequence() : realCapture();
+    }
+
+    private ModulatedIrSequence mockModulatedIrSequence() throws HarcHardwareException, IOException, IrpMasterException {
+        IrSequence irSequence = receive();
+        return irSequence == null ? null : new ModulatedIrSequence(irSequence, fallbackFrequency);
+    }
+
+    private ModulatedIrSequence realCapture() throws HarcHardwareException, IOException {
         if (stopRequested) // ???
             return null;
         if (!isValid())

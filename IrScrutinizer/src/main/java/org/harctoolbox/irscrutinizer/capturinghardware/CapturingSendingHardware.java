@@ -22,6 +22,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.JPanel;
 import org.harctoolbox.guicomponents.CapturingSendingBean;
+import org.harctoolbox.guicomponents.GirsClientBean;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.guicomponents.ISendingReceivingBean;
 import org.harctoolbox.harchardware.HarcHardwareException;
@@ -53,7 +54,8 @@ public class CapturingSendingHardware <T extends ICapture & IHarcHardware> exten
                 switch (propertyName) {
                     case ISendingReceivingBean.PROP_BAUD:
                     case ISendingReceivingBean.PROP_PORTNAME:
-                    case ISendingReceivingBean.PROP_VERSION:
+                    case GirsClientBean.PROP_IPNAME:
+                    case GirsClientBean.PROP_TYPE:
                     case ISendingReceivingBean.PROP_PROPS:
                         break;
                     case ISendingReceivingBean.PROP_ISOPEN:
@@ -68,7 +70,8 @@ public class CapturingSendingHardware <T extends ICapture & IHarcHardware> exten
 
     @Override
     public void setup() throws IOException, HarcHardwareException {
-        sendingHardware.setup();
+        if (!sendingHardware.isValid())
+            sendingHardware.setup();
         selectMe();
         capturingSendingBean.setOpened(sendingHardware.getRawIrSender().isValid());
     }

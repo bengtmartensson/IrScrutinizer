@@ -30,6 +30,7 @@ import org.harctoolbox.irscrutinizer.Props;
  */
 public class SendingIrAudioPort extends SendingHardware<IrAudioDevice> implements ISendingHardware<IrAudioDevice> {
     private final AudioParametersBean audioParametersBean;
+    private IrAudioDevice rawIrSender;
 
     public SendingIrAudioPort(JPanel panel, AudioParametersBean audioParametersBean, Props properties, GuiUtils guiUtils) {
         super(panel, properties, guiUtils);
@@ -46,5 +47,10 @@ public class SendingIrAudioPort extends SendingHardware<IrAudioDevice> implement
     @Override
     public String getName() {
         return "Audio Port";
+    }
+
+    @Override
+    public IrAudioDevice getRawIrSender() {
+        return rawIrSender;
     }
 }

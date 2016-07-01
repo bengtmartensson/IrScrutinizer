@@ -6642,11 +6642,10 @@
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
+                                  <Component id="girsTcpSerialComboBean" min="-2" pref="168" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="girsTcpSerialComboBean" pref="123" max="32767" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="sendingGirsClientHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -6663,9 +6662,9 @@
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sendingGirsClientHelpButtonActionPerformed"/>
                           </Events>
                         </Component>
-                        <Component class="org.harctoolbox.guicomponents.TcpSerialComboBean" name="girsTcpSerialComboBean">
+                        <Component class="org.harctoolbox.guicomponents.GirsClientBean" name="girsTcpSerialComboBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.TcpSerialComboBean(guiUtils, &quot;initialPort&quot;, 115200,&#xa;    &quot;arduino&quot;, 44444, TcpSerialComboBean.Type.serial, true,&#xa;    true, true, true)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.GirsClientBean(guiUtils, properties)"/>
                           </AuxValues>
                         </Component>
                       </SubComponents>

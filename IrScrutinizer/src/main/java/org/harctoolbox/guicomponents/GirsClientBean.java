@@ -27,23 +27,20 @@ import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
-import java.net.UnknownHostException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.ICommandLineDevice;
-import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.comm.LocalSerialPortBuffered;
 import org.harctoolbox.harchardware.comm.TcpSocketPort;
+import org.harctoolbox.harchardware.ir.GirsClient;
+import org.harctoolbox.irscrutinizer.Props;
 
 /**
  *
  */
-public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingReceivingBean {
+public class GirsClientBean extends javax.swing.JPanel implements ISendingReceivingBean {
 
     //public static final String PROP_VERSION = "PROP_VERSION";
     //public static final String PROP_PORTNAME = "PROP_PORTNAME";
@@ -56,6 +53,11 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
     public static final int defaultPingTimeout = 5000;
 
     private static final int defaultBaudRate = 115200;//9600;
+    private static final int defaultPortNumber = 33333;
+    private static final int defaultSerialTimeout = 12000; // 10 seconds + a bit
+    private static final Type defaultType = Type.serial;
+    private static final String defaultPortName = "/dev/arduino";
+    private static final String defaultHost = "localhost";
     private static final String notInitialized = "not initialized";
     private static final String notConnected = "not connected";
     private static final String noVersionAvailable = "no version available";
@@ -63,49 +65,48 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
 
     private String portName;
     private int baudRate;
-    private boolean usePort;
-    private boolean usePing;
-    private boolean useBrowse;
-    private String version;
+//    private boolean usePort;
+//    private boolean usePing;
+//    private boolean useBrowse;
+//    private String version;
     private GuiUtils guiUtils;
-    private transient IHarcHardware hardware;
-    private final boolean settableBaudRate;
+    private transient GirsClient<?> hardware;
+    //private final boolean settableBaudRate;
     private boolean listenable;
     private int portNumber;
     private String ipName;
     private int pingTimeout;
     private Type type;
+    private final Props properties;
 
-    public void setHardware(boolean verbose) {
-        ICommandLineDevice comm = createComm(verbose);
-        if (comm == null)
-            return;
-      
-    }
 
-    private ICommandLineDevice createComm(boolean verbose) {
-        ICommandLineDevice comm = null;
+    public void initHardware() throws HarcHardwareException, IOException {
+        if (hardware != null)
+            hardware.close();
+
+        boolean verbose = properties.getVerbose();
         switch (getType()) {
             case serial: {
                 try {
-                    comm = new LocalSerialPortBuffered(getPortName(), getBaudRate(), verbose);
-                } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException ex) {
+                    LocalSerialPortBuffered comm = new LocalSerialPortBuffered(getPortName(), getBaudRate(), defaultSerialTimeout, verbose);
+                    hardware = new GirsClient<>(comm);
+                } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException | HarcHardwareException ex) {
                     guiUtils.error(ex);
                 }
             }
             break;
             case tcp: {
                 try {
-                    comm = new TcpSocketPort(getIpName(), getPortNumber(), verbose, TcpSocketPort.ConnectionMode.keepAlive);
-                } catch (UnknownHostException ex) {
-                    Logger.getLogger(TcpSerialComboBean.class.getName()).log(Level.SEVERE, null, ex);
+                    TcpSocketPort comm = new TcpSocketPort(ipName, portNumber, defaultSerialTimeout, verbose, TcpSocketPort.ConnectionMode.keepAlive);
+                    hardware = new GirsClient<>(comm);
+                } catch (HarcHardwareException | IOException ex) {
+                    guiUtils.error(ex);
                 }
             }
             break;
             default:
-                throw new IllegalArgumentException("Type " + type + " not yet supported");
+                throw new IllegalArgumentException("Type " + getType() + " not yet supported");
         }
-        return comm;
     }
 
     public static enum Type {
@@ -116,22 +117,32 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
     }
 
     /**
-     * Creates new form SerialPortSimpleBean
+     *
      */
-    public TcpSerialComboBean() {
-        this(null);
+    public GirsClientBean() {
+        this(null, null);
     }
 
-    public TcpSerialComboBean(GuiUtils guiUtils) {
-        this(guiUtils, null, defaultBaudRate, "localhost", 0, Type.serial, true, false, true, true);
-    }
-
-    @SuppressWarnings("unchecked")
-    public TcpSerialComboBean(GuiUtils guiUtils, String initialPort, int initialBaud,
-            String initialIp, int initialPortNumber, Type type, boolean settableBaudRate,
-            boolean usePort, boolean usePing, boolean useBrowse) {
-        initComponents();
+    public GirsClientBean(GuiUtils guiUtils, Props properties) {
+//        this(guiUtils, properties.getGirsClientSerialPortName(), properties.getGirsClientSerialPortBaudRate(),
+//                properties.getGirsClientIPName(), properties.getGirsClientPortNumber(), Type.valueOf(properties.getGirsClientType()));
+//        this.properties = properties;
+//    }
+//
+//    public GirsClientBean(GuiUtils guiUtils, Props properties, String initialPort, int initialBaud,
+//            String initialIp, int initialPortNumber, Type type) {
+//        this(guiUtils, properties.getGirsClientSerialPortName(), properties.getGirsClientSerialPortBaudRate(),
+//                properties.getGirsClientIPName(), properties.getGirsClientPortNumber(), Type.valueOf(properties.getGirsClientType()));
+//    }
+//
+//    public GirsClientBean(GuiUtils guiUtils, String initialPort, int initialBaud,
+//            String initialIp, int initialPortNumber, Type type/*, boolean settableBaudRate,
+//            boolean usePort, boolean usePing, boolean useBrowse*/) {
         this.guiUtils = guiUtils;
+        this.properties = properties;
+        this.pingTimeout = defaultPingTimeout;
+        initComponents();
+        String initialPort = properties != null ? properties.getGirsClientSerialPortName() : defaultPortName;
         listenable = false;
         DefaultComboBoxModel<String> model;
         try {
@@ -161,23 +172,54 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
             }
         }
         setPortName(actualPort);
-        setBaudRateUnconditionally(initialBaud);
-        this.settableBaudRate = settableBaudRate;
-        baudComboBox.setEnabled(settableBaudRate);
-        baudRateLabel.setEnabled(settableBaudRate);
-        setIpName(ipName);
-        setPortNumber(initialPortNumber);
-        setType(type);
+        setBaudRate(properties != null ? properties.getGirsClientSerialPortBaudRate() : defaultBaudRate);
+        //this.settableBaudRate = settableBaudRate;
+        //baudComboBox.setEnabled(settableBaudRate);
+        //baudRateLabel.setEnabled(settableBaudRate);
+        setIpName(properties != null ? properties.getGirsClientIPName() : defaultHost);
+        setPortNumber(properties != null ? properties.getGirsClientPortNumber() : defaultPortNumber);
+        setType(properties != null ? Type.valueOf(properties.getGirsClientType()) : defaultType);
+        //setSerial(properties != null ? properties.getGirsClientIsSerial() : true);
+        //setEthernetType(properties != null ? properties.getGirsClientEthernetType() : "tcp");
+
+        if (properties != null) { // to be javabeans safe...
+            properties.addVerboseChangeListener(new Props.IPropertyChangeListener() {
+                @Override
+                public void propertyChange(String name, Object oldValue, Object newValue) {
+                    if (hardware != null)
+                        hardware.setVerbosity((Boolean) newValue);
+                }
+            });
+        }
     }
 
-    public final void setType(Type type) {
-        Type oldType = type;
+//    private void setSerial(boolean isSerial) {
+//        serialTcpTabbedPane.setSelectedIndex(isSerial ? 0 : 1);
+//    }
+//
+//    private void setEthernetType(String type) {
+//        typeComboBox.setSelectedItem(type);
+//    }
+
+//        properties != null ? properties.getGirsClientEthernetType() : "tcp"
+//            });
+//
+    private void setType(Type type) {
+        Type oldType = this.type;
         this.type = type;
-        serialTcpTabbedPane.setSelectedIndex(type == Type.serial ? 0 : 1);
-        if (type != Type.serial)
-            typeComboBox.setSelectedItem(type.toString());
+        //serialTcpTabbedPane.setSelectedIndex(type == Type.serial ? 0 : 1);
+        //if (type != Type.serial)
+        //    typeComboBox.setSelectedItem(type.toString());
         propertyChangeSupport.firePropertyChange(PROP_TYPE, oldType, type);
+        properties.setGirsClientType(type.toString());
     }
+
+//    private void setType() {
+//        setType(serialTcpTabbedPane.getSelectedIndex() == 0
+//                ? Type.serial
+//                : Type.valueOf((String) typeComboBox.getSelectedItem()));
+//    }
+//
 
     public Type getType() {
         return type;
@@ -193,15 +235,17 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
     /**
      * @param portName the port to set
      */
-    public final void setPortName(String portName) {
+    private void setPortName(String portName) {
         if (portName == null || portName.isEmpty())
             return;
 
-        openToggleButton.setEnabled(hardware != null);
+        //openToggleButton.setEnabled(hardware != null);
         String oldPort = this.portName;
         this.portName = portName;
-        // this propery changer should set up the hardware and call setHardware()
+
         propertyChangeSupport.firePropertyChange(PROP_PORTNAME, oldPort, portName);
+        if (properties != null)
+            properties.setGirsClientSerialPortName(portName);
     }
 
     /**
@@ -211,24 +255,26 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
         return baudRate;
     }
 
-    /**
-     * @param baudRate the baudRate to set
-     */
-    public void setBaudRate(int baudRate) {
-        int oldBaudRate = baudRate;
-        if (settableBaudRate)
-            setBaudRateUnconditionally(baudRate);
-        propertyChangeSupport.firePropertyChange(PROP_BAUD, oldBaudRate, baudRate);
-    }
+//    /**
+//     * @param baudRate the baudRate to set
+//     */
+//    public void setBaudRate(int baudRate) {
+//        int oldBaudRate = baudRate;
+//        if (settableBaudRate)
+//            setBaudRateUnconditionally(baudRate);
+//        propertyChangeSupport.firePropertyChange(PROP_BAUD, oldBaudRate, baudRate);
+//    }
 
-    private void setBaudRateUnconditionally(int baudRate) {
+    private void setBaudRate(int baudRate) {
         int oldBaud = this.baudRate;
         this.baudRate = baudRate;
         this.baudComboBox.setSelectedItem(Integer.toString(baudRate));
         propertyChangeSupport.firePropertyChange(PROP_BAUD, oldBaud, baudRate);
+        if (properties != null)
+            properties.setGirsClientSerialPortBaudRate(baudRate);
     }
 
-    public void setHardware(IHarcHardware hardware) {
+    private void setHardware(GirsClient<?> hardware) {
         this.hardware = hardware;
         openToggleButton.setEnabled(hardware != null);
         openToggleButton.setSelected(hardware.isValid());
@@ -239,23 +285,30 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
      * @return the version
      */
     public String getVersion() {
-        return version;
+        return isValid() ? versionTextField.getText() : null;
     }
 
     private void setVersion(String version) {
-        String oldVersion = this.version;
-        this.version = version;
+        //String oldVersion = this.version;
+        //this.version = version;
         versionLabel.setEnabled(hardware.isValid());
         versionTextField.setEnabled(hardware.isValid());
         versionTextField.setText(version);
-        propertyChangeSupport.firePropertyChange(PROP_VERSION, oldVersion, version);
+        //propertyChangeSupport.firePropertyChange(PROP_VERSION, oldVersion, version);
     }
 
     private void setVersion() {
         try {
             setVersion(hardware.isValid() ? hardware.getVersion() : notConnected);
+            setModules(hardware.isValid() ? hardware.getModules() : null);
         } catch (IOException ex) {
+            setVersion(notConnected);
+            setModules(null);
         }
+    }
+
+    private void setModules(List<String>modules) {
+        modulesTextField.setText(modules == null ? "" : String.join(" ", modules));
     }
 
     @Override
@@ -274,10 +327,10 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
 
     private final transient PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
 
-    public void setup(String desiredPort, int baud, String ip, int port, Type type) throws IOException {
+    private void setup(String desiredPort, int baud, String ip, int port, Type type) throws IOException {
         if (type == Type.serial) {
-            ComboBoxModel model = portComboBox.getModel();
-            if (model == null || model.getSize() == 0 || ((model.getSize() == 1) && ((String) portComboBox.getSelectedItem()).equals(notInitialized)))
+            ComboBoxModel<String> model = portComboBox.getModel();
+            if (model == null || model.getSize() == 0 || ((model.getSize() == 1) && portComboBox.getSelectedItem().equals(notInitialized)))
                 setupPortComboBox(true);
 
             portComboBox.setSelectedItem(desiredPort != null ? desiredPort : portName);
@@ -298,57 +351,67 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
         portComboBox.setModel(model);
     }
 
-    public boolean isListenable() {
-        return listenable;
-    }
+//    public boolean isListenable() {
+//        return listenable;
+//    }
 
-    private int getPortNumber() {
-        return portNumber;
-    }
+//    private int getPortNumber() {
+//        return portNumber;
+//    }
 
     private void setIpName(String name) {
+        ipNameTextField.setText(name);
         String old = ipName;
         ipName = name;
         propertyChangeSupport.firePropertyChange(PROP_IPNAME, old, name);
+        if (properties != null)
+            properties.setGirsClientIPName(name);
     }
 
     private void setPortNumber(int val) {
+        portNumberTextField.setText(Integer.toString(val));
         int old = portNumber;
         portNumber = val;
         propertyChangeSupport.firePropertyChange(PROP_PORTNAME, old, val);
+        if (properties != null)
+            properties.setGirsClientPortNumber(val);
     }
 
-    private String getIpName() {
-        return ipName;
-    }
-
-    public int getPingTimeout() {
-        return pingTimeout;
-    }
+//    private String getIpName() {
+//        return ipName;
+//    }
+//
+//    public int getPingTimeout() {
+//        return pingTimeout;
+//    }
 
     public void setPingTimeout(int val) {
         pingTimeout = val;
     }
 
-    public void setGuiUtils(GuiUtils guiUtils) {
-        this.guiUtils = guiUtils;
+//    private void setGuiUtils(GuiUtils guiUtils) {
+//        this.guiUtils = guiUtils;
+//    }
+
+    public GirsClient<?> getHardware() {
+        return hardware;
     }
 
-    public boolean isPingable() {
+    public boolean isPingable(boolean useGui) {
+        Cursor oldCursor = setBusyCursor();
         boolean success = false;
-        String host = getIpName();
+        //String ipName = getIpName();
         try {
-            success = InetAddress.getByName(host).isReachable(pingTimeout);
-            guiUtils.info(host + (success ? " is reachable" : " is not reachable (using Java's isReachable)"));
+            success = InetAddress.getByName(ipName).isReachable(pingTimeout);
+            if (useGui)
+                guiUtils.info(ipName + (success ? " is reachable" : " is not reachable (using Java's isReachable)"));
         } catch (IOException ex) {
-            guiUtils.info(host + " is not reachable (using Java's isReachable): " + ex.getMessage());
+            if (useGui)
+                guiUtils.info(ipName + " is not reachable (using Java's isReachable): " + ex.getMessage());
+        } finally {
+            resetCursor(oldCursor);
         }
         return success;
-    }
-
-    public void testPing() {
-        boolean result = isPingable();
-        System.err.println(result);
     }
 
     private void openClose(boolean opening) throws IOException, HarcHardwareException {
@@ -356,7 +419,9 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
         boolean oldIsOpen = hardware.isValid();
         try {
             if (opening) {
+                initHardware();
                 hardware.open();
+                hardware.setUseReceiveForCapture(useReceiveForCaptureCheckBox.isSelected());
                 listenable = true;
                 //openToggleButton.setSelected(hardware.isValid());
                 //refreshButton.setEnabled(!hardware.isValid());
@@ -377,8 +442,18 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
     private void enableStuff(boolean isOpen) {
         serialTcpTabbedPane.setEnabled(!isOpen);
         refreshButton.setEnabled(!isOpen);
-        baudComboBox.setEnabled(!isOpen && settableBaudRate);
+        baudComboBox.setEnabled(!isOpen /*&& settableBaudRate*/);
+        baudRateLabel.setEnabled(!isOpen);
         portComboBox.setEnabled(!isOpen);
+        serialPortLabel.setEnabled(!isOpen);
+        ipNameTextField.setEnabled(!isOpen);
+        ipLabel.setEnabled(!isOpen);
+        portNumberTextField.setEnabled(!isOpen);
+        portNumberLabel.setEnabled(!isOpen);
+        typeComboBox.setEnabled(!isOpen);
+        typeLabel.setEnabled(!isOpen);
+        modulesTextField.setEnabled(isOpen);
+        modulesLabel.setEnabled(isOpen);
     }
 
     private Cursor setBusyCursor() {
@@ -405,22 +480,31 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
         refreshButton = new javax.swing.JButton();
         portComboBox = new javax.swing.JComboBox<>();
         baudComboBox = new javax.swing.JComboBox<>();
-        jLabel2 = new javax.swing.JLabel();
+        serialPortLabel = new javax.swing.JLabel();
         baudRateLabel = new javax.swing.JLabel();
         ethernetPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        ipLabel = new javax.swing.JLabel();
         ipNameTextField = new javax.swing.JTextField();
-        portLabel = new javax.swing.JLabel();
-        portTextField = new javax.swing.JTextField();
+        portNumberLabel = new javax.swing.JLabel();
+        portNumberTextField = new javax.swing.JTextField();
         browseButton = new javax.swing.JButton();
         pingButton = new javax.swing.JButton();
         typeComboBox = new javax.swing.JComboBox<>();
-        jLabel4 = new javax.swing.JLabel();
+        typeLabel = new javax.swing.JLabel();
         openToggleButton = new javax.swing.JToggleButton();
         versionLabel = new javax.swing.JLabel();
         versionTextField = new javax.swing.JTextField();
+        modulesTextField = new javax.swing.JTextField();
+        modulesLabel = new javax.swing.JLabel();
+        useReceiveForCaptureCheckBox = new javax.swing.JCheckBox();
 
         setPreferredSize(new java.awt.Dimension(800, 120));
+
+        serialTcpTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                serialTcpTabbedPaneStateChanged(evt);
+            }
+        });
 
         serialPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -445,14 +529,13 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
         });
 
         baudComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "115200", "57600", "38400", "19200", "9600", "4800", "2400", "1200" }));
-        baudComboBox.setSelectedItem("9600");
         baudComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 baudComboBoxActionPerformed(evt);
             }
         });
 
-        jLabel2.setText("Serial Port");
+        serialPortLabel.setText("Serial Port");
 
         baudRateLabel.setText("bits/s");
 
@@ -466,7 +549,7 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(serialPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(portComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                    .addComponent(serialPortLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(serialPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(baudRateLabel)
@@ -478,7 +561,7 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, serialPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(serialPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                    .addComponent(serialPortLabel)
                     .addComponent(baudRateLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(serialPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -496,9 +579,9 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
             }
         });
 
-        jLabel1.setText("IP Name/Address");
+        ipLabel.setText("IP Name/Address");
 
-        ipNameTextField.setText(getIpName());
+        ipNameTextField.setText("192.168.1.29");
         ipNameTextField.setToolTipText("IP-Name or -address of host");
         ipNameTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -506,13 +589,13 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
             }
         });
 
-        portLabel.setText("Port");
+        portNumberLabel.setText("Port");
 
-        portTextField.setText(Integer.toString(getPortNumber()));
-        portTextField.setToolTipText("Portnumber");
-        portTextField.addActionListener(new java.awt.event.ActionListener() {
+        portNumberTextField.setText("33333");
+        portNumberTextField.setToolTipText("Port Number");
+        portNumberTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                portTextFieldActionPerformed(evt);
+                portNumberTextFieldActionPerformed(evt);
             }
         });
 
@@ -544,7 +627,7 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
             }
         });
 
-        jLabel4.setText("Type");
+        typeLabel.setText("Type");
 
         javax.swing.GroupLayout ethernetPanelLayout = new javax.swing.GroupLayout(ethernetPanel);
         ethernetPanel.setLayout(ethernetPanelLayout);
@@ -553,12 +636,12 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
             .addGroup(ethernetPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(ethernetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
+                    .addComponent(ipLabel)
                     .addComponent(ipNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ethernetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(portLabel))
+                    .addComponent(portNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(portNumberLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(ethernetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ethernetPanelLayout.createSequentialGroup()
@@ -567,7 +650,7 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
                         .addComponent(browseButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(pingButton))
-                    .addComponent(jLabel4))
+                    .addComponent(typeLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         ethernetPanelLayout.setVerticalGroup(
@@ -575,13 +658,13 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ethernetPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(ethernetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(portLabel)
-                    .addComponent(jLabel4))
+                    .addComponent(ipLabel)
+                    .addComponent(portNumberLabel)
+                    .addComponent(typeLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(ethernetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ipNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(portNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(typeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(browseButton)
                     .addComponent(pingButton))
@@ -602,10 +685,19 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
         versionLabel.setText("Version");
         versionLabel.setEnabled(false);
 
+        versionTextField.setEditable(false);
         versionTextField.setEnabled(false);
-        versionTextField.addActionListener(new java.awt.event.ActionListener() {
+
+        modulesTextField.setEditable(false);
+        modulesTextField.setEnabled(false);
+
+        modulesLabel.setText("Modules:");
+        modulesLabel.setEnabled(false);
+
+        useReceiveForCaptureCheckBox.setText("Use receive instead of capture");
+        useReceiveForCaptureCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                versionTextFieldActionPerformed(evt);
+                useReceiveForCaptureCheckBoxActionPerformed(evt);
             }
         });
 
@@ -614,30 +706,44 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(serialTcpTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(openToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(versionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(49, 49, 49))
+                        .addComponent(serialTcpTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 517, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(versionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(versionTextField))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(openToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(useReceiveForCaptureCheckBox))
+                                .addGap(0, 37, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(versionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addComponent(modulesLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(modulesTextField)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(serialTcpTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(openToggleButton)
-                    .addComponent(versionLabel, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(openToggleButton)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(versionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(versionLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(useReceiveForCaptureCheckBox))
+                    .addComponent(serialTcpTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(versionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(modulesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(modulesLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -662,36 +768,29 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
     }//GEN-LAST:event_baudComboBoxActionPerformed
 
     private void ipNameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ipNameTextFieldActionPerformed
-        String name = ipNameTextField.getText();
-        try {
-            InetAddress.getByName(name);
-            setIpName(name);
-        } catch (UnknownHostException ex) {
-            guiUtils.warning(name + " does not resolve.");
-        }
+        setIpName(ipNameTextField.getText());
     }//GEN-LAST:event_ipNameTextFieldActionPerformed
 
-    private void portTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_portTextFieldActionPerformed
+    private void portNumberTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_portNumberTextFieldActionPerformed
         try {
-            int val = Integer.parseInt(portTextField.getText());
+            int val = Integer.parseInt(portNumberTextField.getText());
             setPortNumber(val);
         } catch (NumberFormatException ex) {
-            guiUtils.error("Cannot parse " + portTextField.getText());
-            portTextField.setText(Integer.toString(portNumber));
+            guiUtils.error("Cannot parse " + portNumberTextField.getText());
         }
-    }//GEN-LAST:event_portTextFieldActionPerformed
+    }//GEN-LAST:event_portNumberTextFieldActionPerformed
 
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
-        ipName = ipNameTextField.getText();
         try {
-            Desktop.getDesktop().browse(URI.create("http://" + this.getIpName()));
+            Desktop.getDesktop().browse(URI.create("http://" + ipName));
         } catch (IOException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_browseButtonActionPerformed
 
     private void pingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pingButtonActionPerformed
-        isPingable();
+        setIpName(ipNameTextField.getText());
+        isPingable(true);
     }//GEN-LAST:event_pingButtonActionPerformed
 
     private void typeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeComboBoxActionPerformed
@@ -703,6 +802,8 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
             openClose(openToggleButton.isSelected());
         } catch (IOException | HarcHardwareException ex) {
             guiUtils.error(ex);
+        } finally {
+            openToggleButton.setSelected(hardware.isValid());
         }
     }//GEN-LAST:event_openToggleButtonActionPerformed
 
@@ -714,28 +815,36 @@ public class TcpSerialComboBean extends javax.swing.JPanel implements ISendingRe
         setType(Type.valueOf((String)typeComboBox.getSelectedItem()));
     }//GEN-LAST:event_ethernetPanelComponentShown
 
-    private void versionTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_versionTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_versionTextFieldActionPerformed
+    private void useReceiveForCaptureCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useReceiveForCaptureCheckBoxActionPerformed
+        if (hardware.isValid())
+            hardware.setUseReceiveForCapture(useReceiveForCaptureCheckBox.isSelected());
+    }//GEN-LAST:event_useReceiveForCaptureCheckBoxActionPerformed
+
+    private void serialTcpTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_serialTcpTabbedPaneStateChanged
+        //setType();
+    }//GEN-LAST:event_serialTcpTabbedPaneStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> baudComboBox;
     private javax.swing.JLabel baudRateLabel;
     private javax.swing.JButton browseButton;
     private javax.swing.JPanel ethernetPanel;
+    private javax.swing.JLabel ipLabel;
     private javax.swing.JTextField ipNameTextField;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel modulesLabel;
+    private javax.swing.JTextField modulesTextField;
     private javax.swing.JToggleButton openToggleButton;
     private javax.swing.JButton pingButton;
     private javax.swing.JComboBox<String> portComboBox;
-    private javax.swing.JLabel portLabel;
-    private javax.swing.JTextField portTextField;
+    private javax.swing.JLabel portNumberLabel;
+    private javax.swing.JTextField portNumberTextField;
     private javax.swing.JButton refreshButton;
     private javax.swing.JPanel serialPanel;
+    private javax.swing.JLabel serialPortLabel;
     private javax.swing.JTabbedPane serialTcpTabbedPane;
     private javax.swing.JComboBox<String> typeComboBox;
+    private javax.swing.JLabel typeLabel;
+    private javax.swing.JCheckBox useReceiveForCaptureCheckBox;
     private javax.swing.JLabel versionLabel;
     private javax.swing.JTextField versionTextField;
     // End of variables declaration//GEN-END:variables

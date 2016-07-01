@@ -525,7 +525,7 @@ public class GuiMain extends javax.swing.JFrame {
             sendingHardwareManager.add(sendingDevLirc);
         }
 
-        SendingTcpSerialCombo<GirsClient> sendingGirsClient = new SendingTcpSerialCombo<GirsClient>(GirsClient.class, girsClientPanel,
+        SendingGirsClient sendingGirsClient = new SendingGirsClient(girsClientPanel,
                 girsTcpSerialComboBean, properties, guiUtils);
         sendingHardwareManager.add(sendingGirsClient);
 
@@ -2108,9 +2108,7 @@ public class GuiMain extends javax.swing.JFrame {
         sendingArduinoHelpButton = new javax.swing.JButton();
         girsClientPanel = new javax.swing.JPanel();
         sendingGirsClientHelpButton = new javax.swing.JButton();
-        girsTcpSerialComboBean = new org.harctoolbox.guicomponents.TcpSerialComboBean(guiUtils, "initialPort", 115200,
-            "arduino", 44444, TcpSerialComboBean.Type.serial, true,
-            true, true, true);
+        girsTcpSerialComboBean = new org.harctoolbox.guicomponents.GirsClientBean(guiUtils, properties);
         commandFusionSendPanel = new javax.swing.JPanel();
         commandFusionSendingSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionPortName(), CommandFusion.defaultBaudRate, false);
         sendingCommandFusionHelpButton = new javax.swing.JButton();
@@ -5626,11 +5624,10 @@ public class GuiMain extends javax.swing.JFrame {
         girsClientPanelLayout.setVerticalGroup(
             girsClientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(girsClientPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(girsTcpSerialComboBean, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(girsTcpSerialComboBean, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(sendingGirsClientHelpButton)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         sendingHardwareTabbedPane.addTab("Girs Client", girsClientPanel);
@@ -7985,6 +7982,7 @@ public class GuiMain extends javax.swing.JFrame {
             return;
         }
 
+        Cursor oldCursor = setBusyCursor();
         try {
             ModulatedIrSequence modulatedIrSequence = captureIrSequence();
 
@@ -8007,6 +8005,8 @@ public class GuiMain extends javax.swing.JFrame {
             guiUtils.error("Timeout capturing signal");
         } catch (IOException | HarcHardwareException | IrpMasterException ex) {
             guiUtils.error(ex);
+        } finally {
+            resetCursor(oldCursor);
         }
     }//GEN-LAST:event_captureTestButtonActionPerformed
 
@@ -8860,7 +8860,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton girrWebSiteButton;
     private org.harctoolbox.guicomponents.CapturingSendingBean girsClientCapturingSendingBean;
     private javax.swing.JPanel girsClientPanel;
-    private org.harctoolbox.guicomponents.TcpSerialComboBean girsTcpSerialComboBean;
+    private org.harctoolbox.guicomponents.GirsClientBean girsTcpSerialComboBean;
     private javax.swing.JMenuItem gitMenuItem;
     private org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector globalCacheCaptureSelector;
     private javax.swing.JButton globalCacheDBBrowseButton;
