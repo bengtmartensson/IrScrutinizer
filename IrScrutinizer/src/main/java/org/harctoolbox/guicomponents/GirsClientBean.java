@@ -30,6 +30,7 @@ import java.net.URI;
 import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.comm.LocalSerialPortBuffered;
@@ -308,7 +309,7 @@ public class GirsClientBean extends javax.swing.JPanel implements ISendingReceiv
     }
 
     private void setModules(List<String>modules) {
-        modulesTextField.setText(modules == null ? "" : String.join(" ", modules));
+        modulesTextField.setText(modules == null ? "" : IrpUtils.join(modules, " "));
     }
 
     @Override
