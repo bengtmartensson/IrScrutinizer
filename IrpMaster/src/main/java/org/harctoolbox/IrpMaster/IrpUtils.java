@@ -108,6 +108,7 @@ public class IrpUtils {
         return res.toString();
     }
 
+    // For Java >= 1.8, this can/should be replaced by String.join.
     public static String join(Iterable<String> payload, String separator) {
         StringBuilder str = new StringBuilder();
         for (String s : payload) {

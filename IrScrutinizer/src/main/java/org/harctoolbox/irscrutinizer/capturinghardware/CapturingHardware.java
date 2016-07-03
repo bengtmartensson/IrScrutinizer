@@ -28,7 +28,7 @@ import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.irscrutinizer.Props;
 
 /**
- * This class does something interesting and useful. Or not...
+ *
  * @param <T>
  */
 public abstract class CapturingHardware <T extends ICapture & IHarcHardware> {

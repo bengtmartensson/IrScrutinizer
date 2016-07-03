@@ -92,16 +92,6 @@ public abstract class SendingHardware <T extends IRawIrSender & IHarcHardware> {
         return getRawIrSender().sendIr(irSignal, count, getTransmitter());
     }
 
-//    public void close() {
-//        try {
-//            if (rawIrSender != null) {
-//                rawIrSender.close();
-//                rawIrSender = null;
-//            }
-//        } catch (IOException ex) {
-//        }
-//    }
-
     public void close() {
         if (getRawIrSender() != null)
             try {

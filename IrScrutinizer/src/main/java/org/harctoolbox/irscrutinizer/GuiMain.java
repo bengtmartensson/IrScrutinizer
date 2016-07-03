@@ -695,8 +695,8 @@ public class GuiMain extends javax.swing.JFrame {
         guiUtils.setUsePopupsForErrors(properties.getUsePopupsForErrors());
         if (userlevel == 0) { // ! experimental
             sendingHardwareTabbedPane.remove(genericSerialPanel);
-            //sendingHardwareTabbedPane.remove(girsSendingPanel);  // temporarily, not yet working
-            //capturingHardwareTabbedPane.remove(captureGirsPanel);// temporarily, not yet working
+            sendingHardwareTabbedPane.remove(arduinoPanel);
+            capturingHardwareTabbedPane.remove(captureArduinoPanel);
         }
         if (!LircHardware.isLibraryLoaded()) {
             sendingHardwareTabbedPane.remove(devLircPanel);
@@ -1127,11 +1127,6 @@ public class GuiMain extends javax.swing.JFrame {
                 properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
                 new File(properties.getExportDir()), properties.getExportCharsetName());
         return file;
-    }
-
-    private String inquire(String prompt, String title, String dflt) {
-        String answer = guiUtils.getInput(prompt, title, dflt);
-        return answer != null ? answer : dflt;
     }
 
     private File saveSignal(Command command, String title, ICommandExporter exporter) throws FileNotFoundException, IOException, IrpMasterException {
@@ -5586,7 +5581,7 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(arduinoPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(arduinoSerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(261, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
         arduinoPanelLayout.setVerticalGroup(
             arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -5625,9 +5620,9 @@ public class GuiMain extends javax.swing.JFrame {
             girsClientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(girsClientPanelLayout.createSequentialGroup()
                 .addComponent(girsTcpSerialComboBean, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(sendingGirsClientHelpButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         sendingHardwareTabbedPane.addTab("Girs Client", girsClientPanel);

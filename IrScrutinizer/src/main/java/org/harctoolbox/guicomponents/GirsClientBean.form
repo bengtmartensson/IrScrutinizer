@@ -24,7 +24,7 @@
           <Group type="102" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="serialTcpTabbedPane" pref="517" max="32767" attributes="0"/>
+                      <Component id="serialTcpTabbedPane" pref="535" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
@@ -37,7 +37,7 @@
                                   <Component id="openToggleButton" min="-2" pref="108" max="-2" attributes="0"/>
                                   <Component id="useReceiveForCaptureCheckBox" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="0" pref="37" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="54" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -80,9 +80,6 @@
   </Layout>
   <SubComponents>
     <Container class="javax.swing.JTabbedPane" name="serialTcpTabbedPane">
-      <Events>
-        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="serialTcpTabbedPaneStateChanged"/>
-      </Events>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
       <SubComponents>
@@ -380,7 +377,7 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="useReceiveForCaptureCheckBox">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Use receive instead of capture"/>
+        <Property name="text" type="java.lang.String" value="Use receive for capture"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="useReceiveForCaptureCheckBoxActionPerformed"/>
