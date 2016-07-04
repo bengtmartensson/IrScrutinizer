@@ -37,6 +37,7 @@ public class SendingLircClient extends SendingHardware<LircCcfClient> implements
 
     InternetHostPanel internetHostPanel;
     NamedCommandLauncher namedCommandLauncher;
+    private LircCcfClient rawIrSender;
 
     public SendingLircClient(JPanel panel, Props properties, GuiUtils gui,
             InternetHostPanel internetHostPanel, NamedCommandLauncher namedCommandLauncher) {
@@ -81,5 +82,10 @@ public class SendingLircClient extends SendingHardware<LircCcfClient> implements
         namedCommandLauncher.setHardware(rawIrSender);
         properties.setLircIpName(lircIp);
         properties.setLircPort(lircPort);
+    }
+
+    @Override
+    public LircCcfClient getRawIrSender() {
+        return rawIrSender;
     }
 }

@@ -29,7 +29,7 @@
                       </Group>
                   </Group>
               </Group>
-              <EmptySpace pref="31" max="32767" attributes="0"/>
+              <EmptySpace pref="21" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -53,7 +53,7 @@
   <SubComponents>
     <Component class="javax.swing.JButton" name="configureOpenButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Configure/Open"/>
+        <Property name="text" type="java.lang.String" value="Jump to Configure/Open"/>
         <Property name="toolTipText" type="java.lang.String" value="Press to jump to the panel for configuring and opening."/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
@@ -77,7 +77,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Configure and open from the &quot;Sending hw&quot; pane."/>
+        <Property name="text" type="java.lang.String" value="It is configured and opened from the &quot;Sending hw&quot; pane."/>
       </Properties>
     </Component>
   </SubComponents>

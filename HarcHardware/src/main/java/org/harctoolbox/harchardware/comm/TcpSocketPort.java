@@ -29,6 +29,8 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
 
     public final static int defaultTimeout = 2000;
 
+    private TcpSocketChannel tcpSocketChannel;
+
     @Override
     public void open() throws IOException {
         tcpSocketChannel.connect();
@@ -37,6 +39,11 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
     @Override
     public boolean ready() throws IOException {
         return tcpSocketChannel.ready();
+    }
+
+    @Override
+    public void flushInput() throws IOException {
+        tcpSocketChannel.flushInput();
     }
 
     public enum ConnectionMode {
@@ -59,8 +66,6 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
         return result;
     }
 
-    TcpSocketChannel tcpSocketChannel;
-
     public TcpSocketPort(String hostIp, int portNumber, int timeout, boolean verbose, ConnectionMode connectionMode) throws UnknownHostException {
         tcpSocketChannel = new TcpSocketChannel(hostIp, portNumber, timeout, verbose, connectionMode);
     }
@@ -72,7 +77,8 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
     @Override
     public void close() {
         try {
-            tcpSocketChannel.close(true);
+            if (tcpSocketChannel != null)
+                tcpSocketChannel.close(true);
         } catch (IOException ex) {
         } finally {
             tcpSocketChannel = null;
@@ -81,12 +87,17 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
 
     @Override
     public void sendString(String str) throws IOException {
+        if (tcpSocketChannel.getVerbose())
+            System.err.println(">" + str);
         sendBytes(str.getBytes(IrpUtils.dumbCharset));
     }
 
     @Override
     public String readString() throws IOException {
-        return readString(true);
+        String str = readString(true);
+        if (tcpSocketChannel.getVerbose())
+            System.err.println("<" + str);
+        return str;
     }
 
     @Override

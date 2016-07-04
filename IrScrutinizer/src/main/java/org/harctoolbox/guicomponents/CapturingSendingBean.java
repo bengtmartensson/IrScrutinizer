@@ -67,7 +67,7 @@ public class CapturingSendingBean extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
 
-        configureOpenButton.setText("Configure/Open");
+        configureOpenButton.setText("Jump to Configure/Open");
         configureOpenButton.setToolTipText("Press to jump to the panel for configuring and opening.");
         configureOpenButton.setEnabled(false);
         configureOpenButton.addActionListener(new java.awt.event.ActionListener() {
@@ -82,7 +82,7 @@ public class CapturingSendingBean extends javax.swing.JPanel {
 
         jLabel2.setText("This device can be used both for capturing and sending.");
 
-        jLabel1.setText("Configure and open from the \"Sending hw\" pane.");
+        jLabel1.setText("It is configured and opened from the \"Sending hw\" pane.");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -98,7 +98,7 @@ public class CapturingSendingBean extends javax.swing.JPanel {
                             .addComponent(openedLabel)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(configureOpenButton))))
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

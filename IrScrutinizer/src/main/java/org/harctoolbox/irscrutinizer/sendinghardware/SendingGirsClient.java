@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013 Bengt Martensson.
+Copyright (C) 2016 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,38 +19,32 @@ package org.harctoolbox.irscrutinizer.sendinghardware;
 
 import java.io.IOException;
 import javax.swing.JPanel;
-import org.harctoolbox.guicomponents.AudioParametersBean;
 import org.harctoolbox.guicomponents.GuiUtils;
+import org.harctoolbox.guicomponents.GirsClientBean;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.ir.IrAudioDevice;
+import org.harctoolbox.harchardware.ir.GirsClient;
 import org.harctoolbox.irscrutinizer.Props;
 
-/**
- * This class does something interesting and useful. Or not...
- */
-public class SendingIrAudioPort extends SendingHardware<IrAudioDevice> implements ISendingHardware<IrAudioDevice> {
-    private final AudioParametersBean audioParametersBean;
-    private IrAudioDevice rawIrSender;
+public class SendingGirsClient extends SendingHardware<GirsClient<?>> implements ISendingHardware<GirsClient<?>> {
+    private GirsClientBean girsClientBean;
 
-    public SendingIrAudioPort(JPanel panel, AudioParametersBean audioParametersBean, Props properties, GuiUtils guiUtils) {
-        super(panel, properties, guiUtils);
-        this.audioParametersBean = audioParametersBean;
-        audioParametersBean.setVerbose(properties.getVerbose());
+    public SendingGirsClient(JPanel panel, GirsClientBean girsClientBean, Props props, GuiUtils guiUtils_) {
+        super(panel, props, guiUtils_);
+        this.girsClientBean = girsClientBean;
     }
 
     @Override
     public void setup() throws IOException, HarcHardwareException {
-        audioParametersBean.setVerbose(properties.getVerbose());
-        rawIrSender = audioParametersBean.newIrAudioDevice();
+        girsClientBean.initHardware();
     }
 
     @Override
     public String getName() {
-        return "Audio Port";
+        return "GirsClient";
     }
 
     @Override
-    public IrAudioDevice getRawIrSender() {
-        return rawIrSender;
+    public GirsClient<?> getRawIrSender() {
+        return girsClientBean.getHardware();
     }
 }

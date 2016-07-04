@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2015 Bengt Martensson.
+Copyright (C) 2015, 2016 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,9 +21,12 @@ import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
 import org.harctoolbox.IrpMaster.IrSequence;
@@ -34,24 +37,24 @@ import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ICommandLineDevice;
-import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.comm.LocalSerialPortBuffered;
+import org.harctoolbox.harchardware.comm.TcpSocketPort;
 
 /**
  *
+ * @param <T>
  */
-public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawIrSenderRepeat, IRemoteCommandIrSender, IIrSenderStop, ITransmitter, ICapture, ICommandLineDevice {
+public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implements IHarcHardware, IReceive, IRawIrSender, IRawIrSenderRepeat, IRemoteCommandIrSender, IIrSenderStop, ITransmitter, ICapture, ICommandLineDevice {
     private String version;
     private List<String> modules;
-    private LocalSerialPortBuffered hardware; // FIXME
-    private boolean verbosity;
+    private T hardware;
+    private boolean verbose;
     private int debug;
     private boolean useReceiveForCapture;
     private String lineEnding;
     private int beginTimeout;
     private int maxCaptureLength;
     private int endingTimeout;
-    private int serialTimeout = 10000;
     private int fallbackFrequency = (int) IrpUtils.defaultFrequency;
     private boolean stopRequested = false;
     private boolean pendingCapture = false;
@@ -60,28 +63,28 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
     private final static int defaultMiddleTimeout = 1000;
     private final static int defaultEndingTimeout = 500;
     private final static int defaultSerialTimeout = 10000;
+    private final static String defaultLineEnding = "\r";
     private final static String sendCommand = "send";
     private final static String captureCommand = "analyze";
     private final static String receiveCommand = "receive";
     private final static String versionCommand = "version";
     private final static String modulesCommand = "modules";
-    private final static String resetCommand = "Reset"; // FIXME
+    private final static String resetCommand = "reset";
     private final static String ledCommand = "led";
-    private final static String lcdCommand = "LCD"; // FIXME
+    private final static String lcdCommand = "lcd";
     private final static String okString = "OK";
     private final static String timeoutString = ".";
     private final static String separator = " ";
-    public final static int defaultBaudRate = 115200;
-    private final static int dataSize = 8;
-    private final static int stopBits = 1;
-    private final static LocalSerialPort.Parity parity = LocalSerialPort.Parity.NONE;
-    private final static LocalSerialPort.FlowControl defaultFlowControl = LocalSerialPort.FlowControl.NONE;
 
-
-    public GirsClient(LocalSerialPortBuffered hardware) throws HarcHardwareException, IOException {
-        this.debug = 0;
+    public GirsClient(T hardware) throws HarcHardwareException, IOException {
+        this.lineEnding = defaultLineEnding;
+        this.verbose = false;
         this.hardware = hardware;
         this.useReceiveForCapture = false;
+    }
+
+    public void setUseReceiveForCapture(boolean val) {
+        this.useReceiveForCapture = val;
     }
 
     @Override
@@ -95,8 +98,9 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
     }
 
     @Override
-    public void setVerbosity(boolean verbosity) {
-        this.verbosity = verbosity;
+    public void setVerbosity(boolean verbose) {
+        hardware.setVerbosity(verbose);
+        this.verbose = verbose;
     }
 
     @Override
@@ -175,9 +179,9 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
         return modules;
     }
 
-    //private boolean checkModule(String module) {
-    //    return modules.contains(module.toLowerCase(Locale.US));
-    //}
+    public boolean hasModule(String module) {
+        return modules.contains(module.toLowerCase(Locale.US));
+    }
 
     /**
      * @param fallbackFrequency the fallbackFrequency to set
@@ -190,49 +194,71 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
     public synchronized boolean sendIr(IrSignal irSignal, int count, Transmitter transmitter) throws NoSuchTransmitterException, IrpMasterException, IOException {
         String payload = formatSendString(irSignal, count);
         hardware.sendString(payload + lineEnding);
-        if (verbosity)
+        if (verbose)
             System.err.println(payload);
-        String response = hardware.readString();
+        String response = hardware.readString(true);
         return response != null && response.trim().equals(okString);
-    }
-
-    public GirsClient(String portName) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException, HarcHardwareException {
-        this(portName, defaultBaudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, false);
-    }
-
-    public GirsClient(String portName, int baudRate, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException, HarcHardwareException {
-        this(portName, baudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, verbose);
-    }
-
-    public GirsClient(String portName, int baudRate, int beginTimeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException, HarcHardwareException {
-        this(portName, baudRate, beginTimeout, defaultMiddleTimeout, defaultEndingTimeout, verbose);
-    }
-
-    public GirsClient(String portName, int beginTimeout, int middleTimeout, int endingTimeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException, HarcHardwareException {
-        this(portName, defaultBaudRate, beginTimeout, defaultMiddleTimeout, defaultEndingTimeout, verbose);
-    }
-
-    public GirsClient(String portName, int baudRate, int beginTimeout, int middleTimeout, int endingTimeout, boolean verbose)
-            throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException, HarcHardwareException {
-        this(new LocalSerialPortBuffered(portName, baudRate, dataSize, stopBits,
-                parity, defaultFlowControl, defaultSerialTimeout, verbose));
-        //super(LocalSerialPortBuffered.class, portName, baudRate, dataSize, stopBits, parity, defaultFlowControl, serialTimeout, verbose);
     }
 
     @Override
     public void open() throws IOException, HarcHardwareException {
         hardware.open();
-        hardware.waitFor(okString, lineEnding, /*delay*/ 100, /* tries = */ 10);
+        waitFor(okString, lineEnding, /*delay*/ 100, /* tries = */ 3);
         hardware.sendString(versionCommand + lineEnding);
         version = hardware.readString(true).trim();
-        if (verbosity)
+        if (verbose)
             System.err.println(versionCommand + " returned '" + version + "'.");
         hardware.sendString(modulesCommand + lineEnding);
         String line = hardware.readString(true);
-        if (verbosity)
+        if (verbose)
             System.err.println(versionCommand + " returned '" + version + "'.");
         if (line != null)
             modules = Arrays.asList(line.toLowerCase(Locale.US).split("\\s+"));
+    }
+
+    public void waitFor(String goal, String areUThere, int delay, int tries) throws IOException, HarcHardwareException {
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException ex) {
+            // nothing
+        }
+        flushIn();
+        for (int i = 0; i < tries; i++) {
+            sendString(areUThere);
+            String answer = readString(true);
+            if (answer == null)
+                continue;
+            answer = answer.trim();
+            if (answer.startsWith(goal)) {// success!
+                flushIn();
+                return;
+            }
+            if (delay > 0)
+                try {
+                    Thread.sleep(delay);
+                } catch (InterruptedException ex) {
+                    break;
+                }
+        }
+        // Failure if we get here.
+        throw new HarcHardwareException("Hardware not responding");
+    }
+
+    private void flushIn() /*throws IOException*/ {
+        try {
+            while (true) {
+                String junk = readString(false);
+                if (junk == null)
+                    break;
+                if (verbose)
+                    System.err.println("LocalSerialPortBuffered.flushIn: junked '" + junk + "'.");
+            }
+        } catch (IOException ex) {
+            // This bizarre code actually both seems to work, and be needed (at least using my Mega2560),
+            // the culprit is probably rxtx.
+             if (verbose)
+                    System.err.println("IOException in LocalSerialPortBuffered.flushIn ignored: " + ex.getMessage());
+        }
     }
 
     private StringBuilder join(IrSequence irSequence, String separator) {
@@ -263,13 +289,22 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
     }
 
     @Override
-    public ModulatedIrSequence capture() throws IOException, HarcHardwareException {
+    public ModulatedIrSequence capture() throws IOException, HarcHardwareException, IrpMasterException {
+        return useReceiveForCapture ? mockModulatedIrSequence() : realCapture();
+    }
+
+    private ModulatedIrSequence mockModulatedIrSequence() throws HarcHardwareException, IOException, IrpMasterException {
+        IrSequence irSequence = receive();
+        return irSequence == null ? null : new ModulatedIrSequence(irSequence, fallbackFrequency);
+    }
+
+    private ModulatedIrSequence realCapture() throws HarcHardwareException, IOException {
         if (stopRequested) // ???
             return null;
         if (!isValid())
             throw new HarcHardwareException("Port not initialized");
         if (!pendingCapture) {
-            hardware.sendString((useReceiveForCapture ? receiveCommand : captureCommand) + lineEnding);
+            hardware.sendString(captureCommand + lineEnding);
             pendingCapture = true;
         }
         ModulatedIrSequence seq = null;
@@ -277,7 +312,7 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
             //open();
             String str = hardware.readString(true);
             pendingCapture = false;
-            if (str == null || str.length() == 0 || str.startsWith("null"))
+            if (str == null || str.length() == 0 || str.startsWith("null") || str.startsWith(timeoutString))
                 return null;
 
             str = str.trim();
@@ -285,10 +320,14 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
             double frequency = fallbackFrequency;
             if (str.startsWith("f=")) {
                 int indx = str.indexOf(' ');
+                if (indx < 0)
+                    return null;
                 frequency = Integer.parseInt(str.substring(2, indx));
                 str = str.substring(indx + 1);
             }
             seq = new ModulatedIrSequence(new IrSequence(str), frequency, -1.0);
+        } catch (SocketTimeoutException ex) {
+            return null;
         } catch (IOException ex) {
             //close();
             if (ex.getMessage().equals("Underlying input stream returned zero bytes")) //RXTX timeout
@@ -310,7 +349,40 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
 
     @Override
     public IrSequence receive() throws HarcHardwareException, IOException, IrpMasterException {
-        throw new UnsupportedOperationException("Not supported yet.");// TODO
+        if (stopRequested) // ???
+            return null;
+        if (!isValid())
+            throw new HarcHardwareException("Port not initialized");
+        if (!pendingCapture) {
+            hardware.sendString(receiveCommand + lineEnding);
+            pendingCapture = true;
+        }
+
+        IrSequence seq = null;
+        try {
+            //open();
+            String str = hardware.readString(true);
+            //pendingCapture = false;
+            if (str == null || str.length() == 0 || str.startsWith("null") || str.startsWith(timeoutString))
+                return null;
+
+            str = str.trim();
+
+            //double frequency = fallbackFrequency;
+            seq = new IrSequence(str);
+        } catch (SocketTimeoutException ex) {
+            return null;
+        } catch (IOException ex) {
+            //close();
+            if (ex.getMessage().equals("Underlying input stream returned zero bytes")) //RXTX timeout
+                return null;
+            throw ex;
+        } catch (IncompatibleArgumentException ex) {
+            //close();
+            throw new HarcHardwareException(ex);
+        }
+        //close();
+        return seq;
     }
 
     @Override
@@ -318,8 +390,11 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
         throw new UnsupportedOperationException("Not supported yet.");// TODO
     }
 
-    public void reset() {
-        hardware.dropDTR(100);
+    public void reset() throws IOException {
+        hardware.sendString(resetCommand);
+        // ???
+        if (hardware instanceof LocalSerialPortBuffered)
+            ((LocalSerialPortBuffered) hardware).dropDTR(100);
     }
 
     @Override
@@ -342,6 +417,7 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
         return hardware.ready();
     }
 
+    @Override
     public void flushInput() throws IOException {
         hardware.flushInput();
     }
@@ -391,16 +467,16 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
         throw new UnsupportedOperationException("Not supported yet."); // TODO (later)
     }
 
-    public void setLed(int led, boolean state) throws IOException {
-        hardware.sendString(ledCommand + separator + led + separator + (state ? "1" : "0"));
+    public void setLed(int led, boolean state) throws IOException, HarcHardwareException {
+        sendStringWaitOk(ledCommand + separator + led + separator + (state ? "1" : "0"));
     }
 
     public void setLed(int led, int flashTime) {
         // TODO
     }
 
-    public void setLcd(String message) {
-        // TODO
+    public void setLcd(String message) throws IOException, HarcHardwareException {
+        sendStringWaitOk(lcdCommand + " " + message);
     }
 
     public void setLcd(String message, int x, int y) {
@@ -415,26 +491,47 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
         // TODO
     }
 
+    private void sendStringWaitOk(String line) throws IOException, HarcHardwareException {
+        hardware.sendString(line + lineEnding);
+        String answer = readString(true);
+        if (answer == null)
+            throw new HarcHardwareException("No \"" + okString + "\" received.");
+        answer = answer.trim();
+        if (!answer.startsWith(okString))
+            throw new HarcHardwareException("No \"" + okString + "\" received, instead \"" + answer + "\".");
+    }
+
     /**
      * Just for testing.
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String portName = "/dev/arduino";
-        GirsClient w = null;
-        boolean verbose = true;
+        //testGirsSerial("/dev/arduino", 115200, true);
+        testGirsTcp("arduino", 33333, true);
+    }
+
+    private static void testGirsTcp(String ip, int portnumber, boolean verbose) {
+        GirsClient<TcpSocketPort> gc = null;
         try {
-            w = new GirsClient(portName, 10000, verbose);
-            w.open();
-            System.out.println(w.getVersion());
-            ModulatedIrSequence seq = w.capture();
-            if (seq == null) {
-                System.err.println("No input");
-                w.close();
-                System.exit(1);
-            }
-            System.out.println(seq);
-            DecodeIR.invoke(seq);
+            TcpSocketPort tcp = new TcpSocketPort(ip, portnumber, verbose, TcpSocketPort.ConnectionMode.keepAlive);
+            gc = new GirsClient<>(tcp);
+            testGirs(gc);
+        } catch (HarcHardwareException | IOException ex) {
+            Logger.getLogger(GirsClient.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (gc != null)
+                try {
+                    gc.close();
+                } catch (IOException ex) {
+                }
+        }
+    }
+
+    private static void testGirsSerial(String portName, int baud, boolean verbose) {
+        GirsClient<LocalSerialPortBuffered> w = null;
+        try {
+            w = new GirsClient<>(new LocalSerialPortBuffered(portName, 115200, verbose));
+            testGirs(w);
         } catch (IOException ex) {
             System.err.println("exception: " + ex.toString() + ex.getMessage());
             //ex.printStackTrace();
@@ -451,6 +548,32 @@ public class GirsClient  implements IHarcHardware, IReceive, IRawIrSender, IRawI
                 } catch (IOException ex) {
                 }
         }
-        System.exit(IrpUtils.exitSuccess);
+    }
+
+    private static void testGirs(GirsClient<?> gc) {
+        try {
+            gc.open();
+            System.out.println(gc.getVersion());
+            if (gc.hasModule("lcd"))
+                gc.setLcd("Now send an IR signal");
+            //ModulatedIrSequence seq = gc.capture();
+            IrSequence irSequence = gc.receive();
+            if (irSequence == null) {
+                System.err.println("No input");
+                gc.close();
+                System.exit(1);
+            }
+            ModulatedIrSequence seq = new ModulatedIrSequence(irSequence, IrpUtils.defaultFrequency);
+            System.out.println(seq);
+            DecodeIR.invoke(seq);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(GirsClient.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            gc.close();
+        } catch (IOException | HarcHardwareException | IrpMasterException ex) {
+            Logger.getLogger(GirsClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

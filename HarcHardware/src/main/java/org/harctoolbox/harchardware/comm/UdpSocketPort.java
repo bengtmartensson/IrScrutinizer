@@ -102,4 +102,9 @@ public class UdpSocketPort implements ICommandLineDevice, IHarcHardware {
     public boolean ready() {
         return true; // ???
     }
+
+    @Override
+    public void flushInput() throws IOException {
+        // ?
+    }
 }

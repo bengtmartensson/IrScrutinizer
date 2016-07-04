@@ -32,6 +32,7 @@ import org.harctoolbox.irscrutinizer.Props;
 public class SendingDevLirc extends SendingHardware<DevLirc> implements ISendingHardware<DevLirc> {
     private DevLircBean devLircBean;
     private String portName;
+    private DevLirc rawIrSender;
 
     public SendingDevLirc(JPanel panel, DevLircBean devLircBean, Props props, GuiUtils guiUtils_) {
         super(panel, props, guiUtils_);
@@ -44,7 +45,7 @@ public class SendingDevLirc extends SendingHardware<DevLirc> implements ISending
                 switch (propertyName) {
                     case DevLircBean.PROP_PROPS:
                         break;
-                    case DevLircBean.PROP_PORT:
+                    case DevLircBean.PROP_PORTNAME:
                         if (evt.getNewValue() == null)
                             return;
                         setup();
@@ -81,5 +82,10 @@ public class SendingDevLirc extends SendingHardware<DevLirc> implements ISending
     @Override
     public LircTransmitter getTransmitter() {
         return devLircBean.getTransmitter();
+    }
+
+    @Override
+    public DevLirc getRawIrSender() {
+        return rawIrSender;
     }
 }

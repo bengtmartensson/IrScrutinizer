@@ -56,4 +56,6 @@ public interface ICommandLineDevice extends IHarcHardware {
      * @throws IOException  If an I/O error occurs
      */
     boolean ready() throws IOException;
+
+    void flushInput() throws IOException;
 }

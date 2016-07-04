@@ -42,6 +42,7 @@ public class SendingGenericSerialPort extends SendingHardware<IrGenericSerial> i
 //    private String lineEnding;
     private String initialPort;
     private String portName;
+    private IrGenericSerial rawIrSender;
 
     /**
      *
@@ -137,5 +138,10 @@ public class SendingGenericSerialPort extends SendingHardware<IrGenericSerial> i
     @Override
     public String getName() {
         return "Generic serial port";
+    }
+
+    @Override
+    public IrGenericSerial getRawIrSender() {
+        return rawIrSender;
     }
 }
