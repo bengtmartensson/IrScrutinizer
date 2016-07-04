@@ -51,6 +51,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
     private GuiMain guiMain = null;
     private DefaultMutableTreeNode root;
     private RemoteSet remoteSet;
+    private boolean restrictedMode = false;
 
     private static final int maxRemotesForImportAll = 10;
 
@@ -74,19 +75,28 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
      * Creates new form TreeImporter
      */
     public TreeImporter() {
-        initComponents();
-        tree.setCellRenderer(new MyRenderer());
-        tree.addTreeExpansionListener(this);
+        this(null, false);
+    }
+
+    public TreeImporter(GuiUtils guiUtils) {
+        this(guiUtils, false);
     }
 
     /**
      * Creates new form TreeImporter
      * @param guiUtils
+     * @param restrictedMode
      */
-    public TreeImporter(GuiUtils guiUtils/*, IRemoteSetImporter importer*/) {
-        this();
+    public TreeImporter(GuiUtils guiUtils, boolean restrictedMode) {
         this.guiUtils = guiUtils;
-        //this.importer = importer;
+        this.restrictedMode = restrictedMode;
+        initComponents();
+        tree.setCellRenderer(new MyRenderer());
+        tree.addTreeExpansionListener(this);
+        if (restrictedMode) {
+            tree.setComponentPopupMenu(null);
+            tree.setToolTipText(null);
+        }
     }
 
     public void setRemoteSet(RemoteSet remoteSet) {
@@ -109,7 +119,8 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         enableStuff(false);
     }
 
-    private void enableStuff(boolean val) {
+    private void enableStuff(boolean value) {
+        boolean val = value && !restrictedMode;
         importAllButton.setEnabled(val && enableImportAll());
         importSelectionButton.setEnabled(val);
         transmitSelectedButton.setEnabled(val);

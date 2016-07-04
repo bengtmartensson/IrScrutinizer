@@ -78,6 +78,8 @@ public class GuiMain extends javax.swing.JFrame {
     private final transient LookAndFeelManager lookAndFeelManager;
     private GuiUtils guiUtils;
     private GlobalCacheIrDatabase globalCacheIrDatabase = null;
+    private ControlTowerIrDatabase controlTowerIrDatabase = null;
+    private HashMap<String, String> controlTowerCodesetTable = null;
     private IrdbImporter irdbImporter = null;
     private IrpMaster irpMaster = null;
     private ProtocolsIni protocolsIni = null;
@@ -1909,6 +1911,17 @@ public class GuiMain extends javax.swing.JFrame {
         jLabel48 = new javax.swing.JLabel();
         gcdbTreeImporter = new org.harctoolbox.irscrutinizer.importer.TreeImporter(this.guiUtils);
         importGlobalCacheHelpButton = new javax.swing.JButton();
+        controlTowerPanel = new javax.swing.JPanel();
+        controlTowerImportButton = new javax.swing.JButton();
+        controlTowerBrowseButton = new javax.swing.JButton();
+        controlTowerManufacturerComboBox = new javax.swing.JComboBox();
+        controlTowerDeviceTypeComboBox = new javax.swing.JComboBox();
+        controlTowerCodeSetComboBox = new javax.swing.JComboBox();
+        jLabel50 = new javax.swing.JLabel();
+        jLabel51 = new javax.swing.JLabel();
+        jLabel52 = new javax.swing.JLabel();
+        controlTowerTreeImporter = new org.harctoolbox.irscrutinizer.importer.TreeImporter(this.guiUtils, true);
+        importControlTowerHelpButton = new javax.swing.JButton();
         irdbPanel = new javax.swing.JPanel();
         irdbBrowseButton = new javax.swing.JButton();
         irdbImportButton = new javax.swing.JButton();
@@ -3440,35 +3453,37 @@ public class GuiMain extends javax.swing.JFrame {
         gcdbPanelLayout.setHorizontalGroup(
             gcdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(gcdbPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(gcdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel44)
+                    .addComponent(gcdbManufacturerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(gcdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(gcdbDeviceTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel47))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(gcdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(gcdbPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(gcdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel44)
-                            .addComponent(gcdbManufacturerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(gcdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(gcdbDeviceTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel47))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(gcdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel48)
-                            .addGroup(gcdbPanelLayout.createSequentialGroup()
-                                .addComponent(gcdbCodeSetComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(gcdbImportButton))))
+                        .addComponent(jLabel48)
+                        .addGap(461, 461, 461))
                     .addGroup(gcdbPanelLayout.createSequentialGroup()
-                        .addComponent(gcdbTreeImporter, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(13, 13, 13)
+                        .addComponent(gcdbCodeSetComboBox, 0, 339, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(gcdbImportButton)
+                        .addGap(169, 169, 169))))
+            .addGroup(gcdbPanelLayout.createSequentialGroup()
+                .addComponent(gcdbTreeImporter, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(gcdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(gcdbPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
+                        .addComponent(importGlobalCacheHelpButton)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, gcdbPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(gcdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(gcdbPanelLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
-                                .addComponent(importGlobalCacheHelpButton)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, gcdbPanelLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(gcdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(apiKeyButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(globalCacheDBBrowseButton, javax.swing.GroupLayout.Alignment.TRAILING))))))
+                            .addComponent(apiKeyButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(globalCacheDBBrowseButton, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
 
@@ -3502,6 +3517,117 @@ public class GuiMain extends javax.swing.JFrame {
         );
 
         importTabbedPane.addTab("GlobalCache Database", gcdbPanel);
+
+        controlTowerImportButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/reload.png"))); // NOI18N
+        controlTowerImportButton.setText("Load");
+        controlTowerImportButton.setEnabled(false);
+        controlTowerImportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                controlTowerImportButtonActionPerformed(evt);
+            }
+        });
+
+        controlTowerBrowseButton.setText("Web site");
+        controlTowerBrowseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                controlTowerBrowseButtonActionPerformed(evt);
+            }
+        });
+
+        controlTowerManufacturerComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Select me to load" }));
+        controlTowerManufacturerComboBox.setToolTipText(properties.getGlobalCacheApiKey().isEmpty() ? "API-Key not entered" : null);
+        controlTowerManufacturerComboBox.setEnabled(!properties.getGlobalCacheApiKey().isEmpty());
+        controlTowerManufacturerComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                controlTowerManufacturerComboBoxActionPerformed(evt);
+            }
+        });
+
+        controlTowerDeviceTypeComboBox.setEnabled(false);
+        controlTowerDeviceTypeComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                controlTowerDeviceTypeComboBoxActionPerformed(evt);
+            }
+        });
+
+        controlTowerCodeSetComboBox.setEnabled(false);
+
+        jLabel50.setText("Manufacturer");
+
+        jLabel51.setText("Device Type");
+
+        jLabel52.setText("Setup Code");
+
+        importControlTowerHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        importControlTowerHelpButton.setText("Help");
+        importControlTowerHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importControlTowerHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout controlTowerPanelLayout = new javax.swing.GroupLayout(controlTowerPanel);
+        controlTowerPanel.setLayout(controlTowerPanelLayout);
+        controlTowerPanelLayout.setHorizontalGroup(
+            controlTowerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(controlTowerPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(controlTowerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel50)
+                    .addComponent(controlTowerManufacturerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(controlTowerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(controlTowerDeviceTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel51))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(controlTowerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(controlTowerPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel52)
+                        .addGap(461, 461, 461))
+                    .addGroup(controlTowerPanelLayout.createSequentialGroup()
+                        .addComponent(controlTowerCodeSetComboBox, 0, 352, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(controlTowerImportButton)
+                        .addGap(169, 169, 169))))
+            .addGroup(controlTowerPanelLayout.createSequentialGroup()
+                .addComponent(controlTowerTreeImporter, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(controlTowerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(importControlTowerHelpButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(controlTowerBrowseButton, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        controlTowerPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {controlTowerBrowseButton, importControlTowerHelpButton});
+
+        controlTowerPanelLayout.setVerticalGroup(
+            controlTowerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(controlTowerPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(controlTowerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel50)
+                    .addComponent(jLabel51)
+                    .addComponent(jLabel52))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(controlTowerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(controlTowerManufacturerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(controlTowerDeviceTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(controlTowerCodeSetComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(controlTowerImportButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(controlTowerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(controlTowerTreeImporter, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
+                    .addGroup(controlTowerPanelLayout.createSequentialGroup()
+                        .addGap(52, 52, 52)
+                        .addComponent(controlTowerBrowseButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(importControlTowerHelpButton)
+                        .addContainerGap())))
+        );
+
+        controlTowerPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {controlTowerBrowseButton, importControlTowerHelpButton});
+
+        importTabbedPane.addTab("ControlTower Database", controlTowerPanel);
 
         irdbBrowseButton.setText("Visit Web site");
         irdbBrowseButton.addActionListener(new java.awt.event.ActionListener() {
@@ -7317,15 +7443,6 @@ public class GuiMain extends javax.swing.JFrame {
         importRemoteByFileSelector(xcfImporter, true);
     }//GEN-LAST:event_importXcfMenuItemActionPerformed
 
-    private void apiKeyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apiKeyButtonActionPerformed
-        String apiKey = guiUtils.getInput("Enter GlobalCache API key", "API key entry", properties.getGlobalCacheApiKey());
-        if (apiKey != null && !apiKey.trim().isEmpty()) {
-            properties.setGlobalCacheApiKey(apiKey.trim());
-            gcdbManufacturerComboBox.setEnabled(true);
-            gcdbManufacturerComboBox.setToolTipText(null);
-        }
-    }//GEN-LAST:event_apiKeyButtonActionPerformed
-
     private void globalCacheDBBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_globalCacheDBBrowseButtonActionPerformed
         try {
             guiUtils.browse(new URI("http", GlobalCacheIrDatabase.globalCacheIrDatabaseHost, null));
@@ -7341,7 +7458,6 @@ public class GuiMain extends javax.swing.JFrame {
                 globalCacheIrDatabase = new GlobalCacheIrDatabase(properties.getGlobalCacheApiKey(), properties.getVerbose());
                 Collection<String> manufacturers = globalCacheIrDatabase.getManufacturers();
                 String[] arr = manufacturers.toArray(new String[manufacturers.size()]);
-                resetCursor(oldCursor);
                 Arrays.sort(arr);
                 DefaultComboBoxModel dcbm = new DefaultComboBoxModel(arr);
                 gcdbManufacturerComboBox.setModel(dcbm);
@@ -8704,6 +8820,92 @@ public class GuiMain extends javax.swing.JFrame {
         HelpPopup.newHelpPopup(this, HelpTexts.importMode2Help);
     }//GEN-LAST:event_importMode2HelpButtonActionPerformed
 
+    private void controlTowerImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_controlTowerImportButtonActionPerformed
+        Cursor oldCursor = this.setBusyCursor();
+        try {
+            String manufacturer = (String) controlTowerManufacturerComboBox.getSelectedItem();
+            String deviceType = (String) controlTowerDeviceTypeComboBox.getSelectedItem();
+            String modelName = (String) controlTowerCodeSetComboBox.getSelectedItem();
+            String codeSet = controlTowerCodesetTable.get(modelName);
+            controlTowerIrDatabase.load(manufacturer, deviceType, codeSet);
+            controlTowerTreeImporter.setRemoteSet(controlTowerIrDatabase.getRemoteSet());
+        } catch (IOException ex) {
+            guiUtils.error(ex);
+        } finally {
+            resetCursor(oldCursor);
+        }
+    }//GEN-LAST:event_controlTowerImportButtonActionPerformed
+
+    private void controlTowerBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_controlTowerBrowseButtonActionPerformed
+        try {
+            guiUtils.browse(new URI("http", ControlTowerIrDatabase.controlTowerIrDatabaseHost, null));
+        } catch (URISyntaxException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_controlTowerBrowseButtonActionPerformed
+
+    private void controlTowerManufacturerComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_controlTowerManufacturerComboBoxActionPerformed
+        Cursor oldCursor = setBusyCursor();
+        try {
+            if (controlTowerIrDatabase == null) {
+                controlTowerIrDatabase = new ControlTowerIrDatabase(properties.getVerbose());
+                Collection<String> manufacturers = controlTowerIrDatabase.getManufacturers();
+                String[] arr = manufacturers.toArray(new String[manufacturers.size()]);
+                //resetCursor(oldCursor);
+                Arrays.sort(arr, String.CASE_INSENSITIVE_ORDER);
+                DefaultComboBoxModel dcbm = new DefaultComboBoxModel(arr);
+                controlTowerManufacturerComboBox.setModel(dcbm);
+                controlTowerManufacturerComboBoxActionPerformed(null);
+            } else {
+                String manufacturer = (String) controlTowerManufacturerComboBox.getSelectedItem();
+                Collection<String> devTypes = controlTowerIrDatabase.getDeviceTypes(manufacturer);
+                String[] arr = devTypes.toArray(new String[devTypes.size()]);
+                Arrays.sort(arr, String.CASE_INSENSITIVE_ORDER);
+                DefaultComboBoxModel dcbm = new DefaultComboBoxModel(arr);
+                controlTowerDeviceTypeComboBox.setModel(dcbm);
+                controlTowerDeviceTypeComboBoxActionPerformed(null);
+                controlTowerDeviceTypeComboBox.setEnabled(true);
+            }
+            controlTowerTreeImporter.clear();
+        } catch (IOException ex) {
+            guiUtils.error(ex);
+        } finally {
+            resetCursor(oldCursor);
+        }
+    }//GEN-LAST:event_controlTowerManufacturerComboBoxActionPerformed
+
+    private void controlTowerDeviceTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_controlTowerDeviceTypeComboBoxActionPerformed
+        Cursor oldCursor = this.setBusyCursor();
+        try {
+            String manufacturer = (String) controlTowerManufacturerComboBox.getSelectedItem();
+            String deviceType = (String) controlTowerDeviceTypeComboBox.getSelectedItem();
+            controlTowerCodesetTable = controlTowerIrDatabase.getCodesetTable(manufacturer, deviceType);
+            String[] arr = controlTowerCodesetTable.keySet().toArray(new String[controlTowerCodesetTable.size()]);
+            Arrays.sort(arr, String.CASE_INSENSITIVE_ORDER);
+            DefaultComboBoxModel dcbm = new DefaultComboBoxModel(arr);
+            controlTowerCodeSetComboBox.setModel(dcbm);
+            controlTowerCodeSetComboBox.setEnabled(true);
+            controlTowerImportButton.setEnabled(true);
+        } catch (IOException ex) {
+            guiUtils.error(ex);
+        } finally {
+            resetCursor(oldCursor);
+        }
+    }//GEN-LAST:event_controlTowerDeviceTypeComboBoxActionPerformed
+
+    private void importControlTowerHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importControlTowerHelpButtonActionPerformed
+        HelpPopup.newHelpPopup(this, HelpTexts.importControlTowerHelp);
+    }//GEN-LAST:event_importControlTowerHelpButtonActionPerformed
+
+    private void apiKeyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apiKeyButtonActionPerformed
+        String apiKey = guiUtils.getInput("Enter GlobalCache API key", "API key entry", properties.getGlobalCacheApiKey());
+        if (apiKey != null && !apiKey.trim().isEmpty()) {
+            properties.setGlobalCacheApiKey(apiKey.trim());
+            gcdbManufacturerComboBox.setEnabled(true);
+            gcdbManufacturerComboBox.setToolTipText(null);
+        }
+    }//GEN-LAST:event_apiKeyButtonActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -8769,6 +8971,13 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel commandFusionSendPanel;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean commandFusionSendingSerialPortBean;
     private org.harctoolbox.guicomponents.Console console;
+    private javax.swing.JButton controlTowerBrowseButton;
+    private javax.swing.JComboBox controlTowerCodeSetComboBox;
+    private javax.swing.JComboBox controlTowerDeviceTypeComboBox;
+    private javax.swing.JButton controlTowerImportButton;
+    private javax.swing.JComboBox controlTowerManufacturerComboBox;
+    private javax.swing.JPanel controlTowerPanel;
+    private org.harctoolbox.irscrutinizer.importer.TreeImporter controlTowerTreeImporter;
     private javax.swing.JPanel cookedPanel;
     private javax.swing.JMenuItem copyConsoleToClipboardMenuItem;
     private javax.swing.JMenuItem copyDataToClipboardMenuItem;
@@ -8897,6 +9106,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton importCommandFusionHelpButton;
     private javax.swing.JMenuItem importCommandFusionMenuItem;
     private javax.swing.JMenuItem importCommandFusionMenuItem2;
+    private javax.swing.JButton importControlTowerHelpButton;
     private javax.swing.JMenuItem importGirrMenuItem;
     private javax.swing.JMenuItem importGirrMenuItem1;
     private javax.swing.JButton importGirrSignalHelpButton;
@@ -9002,6 +9212,9 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel48;
     private javax.swing.JLabel jLabel49;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel50;
+    private javax.swing.JLabel jLabel51;
+    private javax.swing.JLabel jLabel52;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;

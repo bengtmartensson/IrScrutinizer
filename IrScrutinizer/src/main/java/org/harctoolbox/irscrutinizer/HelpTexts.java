@@ -115,6 +115,12 @@ class HelpTexts {
             + "To use, select, in order, a manufacturer, a device type, and a setup code, the latter possibly by trial-and-error.\n\n"
             + "When pressing the \"Load\" button, " + treeHelp;
 
+    public static String importControlTowerHelp
+            = "The support for the Control Tower Data base is limited. It can be used for browsing the data base "
+            + "for devices and the contained commands, but it cannot retreive the very codes of the commands. "
+            + "For this, access http://irdb.globalcache.com, login there, and have the codes emailed. "
+            + "The received email can be parsed by Import -> Raw; use Name col. = 1 and Raw signal col. = 3 (or 2), Field separator \", (comma)\".";
+
     public static String importIrdbHelp
             = "To use the IRDB data base, select, in order, a manufacturer, a device type, and a protocol/parameter combination, the latter possibly by trial-and-error.\n\n"
             + "Pressing the \"Load all\" button transfers all present protocol/parameters combinations to the tree.\n\n"
