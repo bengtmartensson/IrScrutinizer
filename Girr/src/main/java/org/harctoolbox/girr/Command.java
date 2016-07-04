@@ -103,7 +103,10 @@ public class Command implements Serializable {
         ccf,
 
         /** The protocol/parameter version is the master. May have multiple CCF/raw representations if the protocol has a toggle. */
-        parameters;
+        parameters,
+
+        /** This is a dummy signal, without data. */
+        empty;
 
         public static MasterType safeValueOf(String s) {
             try {
@@ -403,6 +406,9 @@ public class Command implements Serializable {
      * @return Nicely formatted string the way the user would like to see it if truncated to "small" length.
      */
     public String prettyValueString() {
+        if (masterType == MasterType.empty)
+            return "no information present";
+
         try {
             checkForParameters();
         } catch (IrpMasterException ex) {
@@ -433,6 +439,8 @@ public class Command implements Serializable {
 
     @Override
     public String toString() {
+        if (masterType == MasterType.empty)
+            return "no information present";
         try {
             return toPrintString();
         } catch (IrpMasterException ex) {
@@ -653,6 +661,10 @@ public class Command implements Serializable {
         this.ccf = new String[1];
         this.ccf[0] = ccf;
         sanityCheck();
+    }
+
+    public Command(String name) {
+        this(MasterType.empty, name, null);
     }
 
     private void generateDecode(IrSignal irSignal) {
