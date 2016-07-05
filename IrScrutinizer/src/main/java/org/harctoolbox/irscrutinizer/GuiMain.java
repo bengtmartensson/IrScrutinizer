@@ -1928,7 +1928,7 @@ public class GuiMain extends javax.swing.JFrame {
         jLabel46 = new javax.swing.JLabel();
         jLabel49 = new javax.swing.JLabel();
         irdbTreeImporter = new org.harctoolbox.irscrutinizer.importer.TreeImporter(this.guiUtils);
-        jButton22 = new javax.swing.JButton();
+        irdbImportAllButton = new javax.swing.JButton();
         importIrdbHelpButton = new javax.swing.JButton();
         girrImportPanel = new javax.swing.JPanel();
         girrWebSiteButton = new javax.swing.JButton();
@@ -3634,6 +3634,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         irdbImportButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/reload.png"))); // NOI18N
         irdbImportButton.setText("Load");
+        irdbImportButton.setEnabled(false);
         irdbImportButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 irdbImportButtonActionPerformed(evt);
@@ -3664,11 +3665,12 @@ public class GuiMain extends javax.swing.JFrame {
 
         jLabel49.setText("Protocol & Parameters");
 
-        jButton22.setText("Load all");
-        jButton22.setToolTipText("Load for all parameters and protocols");
-        jButton22.addActionListener(new java.awt.event.ActionListener() {
+        irdbImportAllButton.setText("Load all");
+        irdbImportAllButton.setToolTipText("Load for all parameters and protocols");
+        irdbImportAllButton.setEnabled(false);
+        irdbImportAllButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton22ActionPerformed(evt);
+                irdbImportAllButtonActionPerformed(evt);
             }
         });
 
@@ -3704,12 +3706,12 @@ public class GuiMain extends javax.swing.JFrame {
                 .addGroup(irdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(importIrdbHelpButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(irdbBrowseButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton22, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(irdbImportAllButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(irdbImportButton, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
 
-        irdbPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {importIrdbHelpButton, irdbBrowseButton, irdbImportButton, jButton22});
+        irdbPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {importIrdbHelpButton, irdbBrowseButton, irdbImportAllButton, irdbImportButton});
 
         irdbPanelLayout.setVerticalGroup(
             irdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3730,7 +3732,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addGap(75, 75, 75)
                 .addComponent(irdbImportButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton22)
+                .addComponent(irdbImportAllButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(irdbBrowseButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -3738,7 +3740,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        irdbPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {importIrdbHelpButton, irdbBrowseButton, irdbImportButton, jButton22});
+        irdbPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {importIrdbHelpButton, irdbBrowseButton, irdbImportAllButton, irdbImportButton});
 
         importTabbedPane.addTab("IRDB", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/database.png")), irdbPanel); // NOI18N
 
@@ -7519,6 +7521,8 @@ public class GuiMain extends javax.swing.JFrame {
                 irdbDeviceTypeComboBox.setModel(dcbm);
                 irdbDeviceTypeComboBox.setEnabled(true);
                 irdbDeviceTypeComboBoxActionPerformed(null);
+                irdbImportButton.setEnabled(true);
+                irdbImportAllButton.setEnabled(true);
             }
         } catch (IOException ex) {
             guiUtils.error(ex);
@@ -7672,7 +7676,7 @@ public class GuiMain extends javax.swing.JFrame {
         properties.setTranslateProntoFont(translateProntoFontCheckBoxMenuItem.isSelected());
     }//GEN-LAST:event_translateProntoFontCheckBoxMenuItemActionPerformed
 
-    private void jButton22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton22ActionPerformed
+    private void irdbImportAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irdbImportAllButtonActionPerformed
         String deviceType = (String) irdbDeviceTypeComboBox.getSelectedItem();
         try {
             irdbImporter.load(deviceType);
@@ -7680,7 +7684,7 @@ public class GuiMain extends javax.swing.JFrame {
         } catch (IrpMasterException ex) {
             guiUtils.error(ex);
         }
-    }//GEN-LAST:event_jButton22ActionPerformed
+    }//GEN-LAST:event_irdbImportAllButtonActionPerformed
 
     private void jButton20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton20ActionPerformed
         try {
@@ -9152,6 +9156,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton irdbBrowseButton;
     private javax.swing.JComboBox irdbCodeSetComboBox;
     private javax.swing.JComboBox irdbDeviceTypeComboBox;
+    private javax.swing.JButton irdbImportAllButton;
     private javax.swing.JButton irdbImportButton;
     private javax.swing.JComboBox irdbManufacturerComboBox;
     private javax.swing.JPanel irdbPanel;
@@ -9165,7 +9170,6 @@ public class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.guicomponents.CapturingSendingBean irtoyCapturingSendingBean;
     private javax.swing.JPanel irtransImportPanel;
     private javax.swing.JButton jButton20;
-    private javax.swing.JButton jButton22;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

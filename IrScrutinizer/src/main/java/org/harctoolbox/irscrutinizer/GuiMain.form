@@ -3322,7 +3322,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="importIrdbHelpButton" linkSize="33" alignment="1" min="-2" pref="110" max="-2" attributes="0"/>
                                       <Component id="irdbBrowseButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jButton22" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
+                                      <Component id="irdbImportAllButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
                                       <Component id="irdbImportButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
@@ -3351,7 +3351,7 @@
                                   <EmptySpace min="-2" pref="75" max="-2" attributes="0"/>
                                   <Component id="irdbImportButton" linkSize="34" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="jButton22" linkSize="34" min="-2" max="-2" attributes="0"/>
+                                  <Component id="irdbImportAllButton" linkSize="34" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="irdbBrowseButton" linkSize="34" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="32767" attributes="0"/>
@@ -3376,6 +3376,7 @@
                               <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/reload.png"/>
                             </Property>
                             <Property name="text" type="java.lang.String" value="Load"/>
+                            <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irdbImportButtonActionPerformed"/>
@@ -3436,13 +3437,14 @@
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.TreeImporter(this.guiUtils)"/>
                           </AuxValues>
                         </Component>
-                        <Component class="javax.swing.JButton" name="jButton22">
+                        <Component class="javax.swing.JButton" name="irdbImportAllButton">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Load all"/>
                             <Property name="toolTipText" type="java.lang.String" value="Load for all parameters and protocols"/>
+                            <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton22ActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irdbImportAllButtonActionPerformed"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JButton" name="importIrdbHelpButton">
