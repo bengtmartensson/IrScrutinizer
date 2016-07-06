@@ -165,10 +165,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
                         || file.getName().endsWith(".gif") || file.getName().endsWith(".html")) {
                     continue;
                 }
-                try {
-                    loadRecursive(file, file.getCanonicalPath());
-                } catch (UnsupportedOperationException ex) {
-                }
+                loadRecursive(file, file.getCanonicalPath());
             }
         } else {
             try {
