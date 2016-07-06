@@ -232,6 +232,14 @@ public class RemoteSet implements Serializable {
     }
 
     /**
+     * Copies the Remotes in the RemoteSet as argument, possibly replacing already existing.
+     * @param remoteSet
+     */
+    public void append(RemoteSet remoteSet) {
+        remotes.putAll(remoteSet.remotes);
+    }
+
+    /**
      * Generates an W3C Element from a RemoteList.
      * @param doc
      * @param title
