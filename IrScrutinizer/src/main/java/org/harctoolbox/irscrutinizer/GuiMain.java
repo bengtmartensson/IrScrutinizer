@@ -7512,6 +7512,9 @@ public class GuiMain extends javax.swing.JFrame {
                 Arrays.sort(manufacturers);
                 DefaultComboBoxModel<String> dcbm = new DefaultComboBoxModel<>(manufacturers);
                 irdbManufacturerComboBox.setModel(dcbm);
+                irdbManufacturerComboBox.setSelectedIndex(0);
+                if (irdbManufacturerComboBox.getModel().getSize() != 1)
+                    irdbManufacturerComboBoxActionPerformed(null);
             } else {
                 String manufacturer = (String) irdbManufacturerComboBox.getSelectedItem();
                 irdbImporter = new IrdbImporter(manufacturer, properties.getVerbose());
