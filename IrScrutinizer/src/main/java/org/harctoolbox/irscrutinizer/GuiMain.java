@@ -116,7 +116,7 @@ public class GuiMain extends javax.swing.JFrame {
     private transient CaptureThread captureThread = null;
     private final String[] prontoModelNames;
     private transient ExportFormatManager exportFormatManager;
-    private transient SendingHardwareManager sendingHardwareManager;
+    private transient SendingHardwareManager sendingHardwareManager = null;
     private transient CapturingHardwareManager capturingHardwareManager;
 
     private Remote.MetaData metaData = new Remote.MetaData("unnamed");
@@ -126,6 +126,7 @@ public class GuiMain extends javax.swing.JFrame {
     private final static int transmitSignalMouseButton = 2;
 
     private AboutPopup aboutBox;
+    private Component currentPane = null;
 
     private class ScrutinizeIrCaller implements LookAndFeelManager.ILookAndFeelManagerCaller {
         @Override
@@ -441,6 +442,8 @@ public class GuiMain extends javax.swing.JFrame {
         loadProtocolsIni();
 
         initComponents();
+
+        currentPane = topLevelTabbedPane.getSelectedComponent();
 
         cookedPanel.setTransferHandler(new GirrImporterBeanTransferHandler(false));
         rawPanel.setTransferHandler(new GirrImporterBeanTransferHandler(true));
@@ -2882,6 +2885,11 @@ public class GuiMain extends javax.swing.JFrame {
         topLevelSplitPane.setBottomComponent(console);
 
         topLevelTabbedPane.setToolTipText("This tabbed pane selects between different use cases.");
+        topLevelTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                topLevelTabbedPaneStateChanged(evt);
+            }
+        });
 
         signalScrutinizerPanel.setToolTipText("This panel is devoted to the use case of capturing and analyzing ONE infrared signal.");
         signalScrutinizerPanel.setPreferredSize(new java.awt.Dimension(1016, 300));
@@ -3124,6 +3132,12 @@ public class GuiMain extends javax.swing.JFrame {
 
         remoteScrutinizerPanel.setToolTipText("This panel handles the case of several signals and saving them as a unit.");
 
+        rawCookedTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                rawCookedTabbedPaneStateChanged(evt);
+            }
+        });
+
         parameterTableScrollPane.setToolTipText("Girr files can be directly imported by dropping them here.");
         parameterTableScrollPane.setComponentPopupMenu(parameterTablePopupMenu);
 
@@ -3186,6 +3200,8 @@ public class GuiMain extends javax.swing.JFrame {
         );
 
         rawCookedTabbedPane.addTab("Raw Remote", rawPanel);
+
+        rawCookedTabbedPane.setSelectedIndex(properties.getSelectedRemoteIndex());
 
         startStopToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_record.png"))); // NOI18N
         startStopToggleButton.setMnemonic('C');
@@ -5910,6 +5926,8 @@ public class GuiMain extends javax.swing.JFrame {
         );
 
         topLevelTabbedPane.addTab("Sending hw", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/hardware.png")), sendingPanel); // NOI18N
+
+        topLevelTabbedPane.setSelectedIndex(properties.getSelectedMainPaneIndex());
 
         topLevelSplitPane.setTopComponent(topLevelTabbedPane);
 
@@ -8905,6 +8923,21 @@ public class GuiMain extends javax.swing.JFrame {
             gcdbManufacturerComboBox.setToolTipText(null);
         }
     }//GEN-LAST:event_apiKeyButtonActionPerformed
+
+    private void topLevelTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_topLevelTabbedPaneStateChanged
+        // Must make sure this is not effective during early initComponents().
+        if (sendingHardwareManager != null) {
+            lastPane = currentPane;
+            currentPane = topLevelTabbedPane.getSelectedComponent();
+            properties.setSelectedMainPaneIndex(topLevelTabbedPane.getSelectedIndex());
+        }
+    }//GEN-LAST:event_topLevelTabbedPaneStateChanged
+
+    private void rawCookedTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rawCookedTabbedPaneStateChanged
+        // Must make sure this is not effective during early initComponents().
+        if (sendingHardwareManager != null)
+            properties.setSelectedRemoteIndex(rawCookedTabbedPane.getSelectedIndex());
+    }//GEN-LAST:event_rawCookedTabbedPaneStateChanged
 
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables

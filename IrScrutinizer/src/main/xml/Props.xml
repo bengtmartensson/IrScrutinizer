@@ -46,9 +46,12 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="irToyCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for IrToy (capturing).' />
     <property name="devLircName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc."/>
     <property name="devLircCaptureName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc captures."/>
-   <property name="captureDevice" type="string" default='"LIRC Mode 2"' />
+    <property name="captureDevice" type="string" default='"LIRC Mode 2"' />
     <property name="sorterOnParametrizedTable" type="boolean" default='"false"' />
     <property name="sorterOnRawTable" type="boolean" default='"false"' />
+
+    <property name="selectedMainPaneIndex" type="int" default='"0"' doc='Index of selected pane.'/>
+    <property name="selectedRemoteIndex" type="int" default='"0"' doc='Index of selected remote subpane.'/>
 
     <property name="captureStartTimeout" type="int" default='"3000"' doc='Timeout when capturing, in milliseconds. Exact semantics may depend on the hardware selected.' />
     <property name="captureRunTimeout" type="int" default='"1000"' doc='Maximal length of recorded signal, in milliseconds' />

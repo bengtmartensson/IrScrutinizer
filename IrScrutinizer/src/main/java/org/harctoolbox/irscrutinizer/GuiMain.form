@@ -2059,8 +2059,14 @@
         </Component>
         <Container class="javax.swing.JTabbedPane" name="topLevelTabbedPane">
           <Properties>
+            <Property name="selectedIndex" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="properties.getSelectedMainPaneIndex()" type="code"/>
+            </Property>
             <Property name="toolTipText" type="java.lang.String" value="This tabbed pane selects between different use cases."/>
           </Properties>
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="topLevelTabbedPaneStateChanged"/>
+          </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
               <JSplitPaneConstraints position="top"/>
@@ -2483,6 +2489,14 @@
               </Layout>
               <SubComponents>
                 <Container class="javax.swing.JTabbedPane" name="rawCookedTabbedPane">
+                  <Properties>
+                    <Property name="selectedIndex" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="properties.getSelectedRemoteIndex()" type="code"/>
+                    </Property>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="rawCookedTabbedPaneStateChanged"/>
+                  </Events>
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
                   <SubComponents>
