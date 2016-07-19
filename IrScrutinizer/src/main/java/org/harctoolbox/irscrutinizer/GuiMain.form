@@ -2826,7 +2826,7 @@
                     </Property>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpMaster, properties.getIrpMasterCurrentProtocol(), properties.getIrpMasterCurrentD(), properties.getIrpMasterCurrentS(), properties.getIrpMasterCurrentF(), properties.getDisregardRepeatMins())"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpMaster, properties.getIrpMasterCurrentProtocol(), properties.getIrpMasterCurrentD(), properties.getIrpMasterCurrentS(), properties.getIrpMasterCurrentF(), properties.getIrpMasterCurrentT(), properties.getIrpMasterCurrentAdditionalParameters(), properties.getDisregardRepeatMins())"/>
                   </AuxValues>
                 </Component>
                 <Component class="javax.swing.JButton" name="generateButton">

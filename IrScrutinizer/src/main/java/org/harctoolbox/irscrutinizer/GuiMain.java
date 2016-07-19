@@ -616,8 +616,14 @@ public class GuiMain extends javax.swing.JFrame {
                     case IrpMasterBean.PROP_F:
                         properties.setIrpMasterCurrentF((String) evt.getNewValue());
                         break;
+                    case IrpMasterBean.PROP_T:
+                        properties.setIrpMasterCurrentT((String) evt.getNewValue());
+                        break;
+                    case IrpMasterBean.PROP_ADDITIONAL_PARAMS:
+                        properties.setIrpMasterCurrentAdditionalParameters((String) evt.getNewValue());
+                        break;
                     default:
-                        guiUtils.error("Programming error detected.");
+                        guiUtils.error("Programming error detected: " + evt.getPropertyName());
                         break;
                 }
             }
@@ -1888,7 +1894,7 @@ public class GuiMain extends javax.swing.JFrame {
         generateExportButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         generateTextArea = new javax.swing.JTextArea();
-        irpMasterBean = new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpMaster, properties.getIrpMasterCurrentProtocol(), properties.getIrpMasterCurrentD(), properties.getIrpMasterCurrentS(), properties.getIrpMasterCurrentF(), properties.getDisregardRepeatMins());
+        irpMasterBean = new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpMaster, properties.getIrpMasterCurrentProtocol(), properties.getIrpMasterCurrentD(), properties.getIrpMasterCurrentS(), properties.getIrpMasterCurrentF(), properties.getIrpMasterCurrentT(), properties.getIrpMasterCurrentAdditionalParameters(), properties.getDisregardRepeatMins());
         generateButton = new javax.swing.JButton();
         generateHelpButton = new javax.swing.JButton();
         transferToParametricRemoteButton = new javax.swing.JButton();

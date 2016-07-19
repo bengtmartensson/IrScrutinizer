@@ -47,13 +47,14 @@ import org.harctoolbox.girr.Command;
  *
  */
 public class IrpMasterBean extends javax.swing.JPanel {
-    private static final long invalidParameter = IrpUtils.invalid;
     private static final String invalidParameterString = Long.toString(IrpUtils.invalid);
 
     public static final String PROP_PROTOCOL_NAME = "protocolName";
     public static final String PROP_D = "D";
     public static final String PROP_S = "S";
     public static final String PROP_F = "F";
+    public static final String PROP_T = "T";
+    public static final String PROP_ADDITIONAL_PARAMS = "ADDITIONAL_PARAMS";
     private JFrame frame;
     private IrpMaster irpMaster;
     private String protocolName;
@@ -65,6 +66,8 @@ public class IrpMasterBean extends javax.swing.JPanel {
     private String D = invalidParameterString;
     private String S = invalidParameterString;
     private String F = invalidParameterString;
+    private String T = invalidParameterString;
+    private String additionalParameters = "";
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -144,11 +147,11 @@ public class IrpMasterBean extends javax.swing.JPanel {
     }
 
     public IrpMasterBean(JFrame frame, GuiUtils guiUtils, IrpMaster irpMaster, String intialProtocol, boolean disregardRepeatMins) {
-        this(frame, guiUtils, irpMaster, intialProtocol, "0", invalidParameterString, "0", disregardRepeatMins);
+        this(frame, guiUtils, irpMaster, intialProtocol, "0", invalidParameterString, "0", "-", "", disregardRepeatMins);
     }
 
     public IrpMasterBean(JFrame frame, GuiUtils guiUtils, IrpMaster irpMaster, String intialProtocol,
-            String initialD, String initialS, String initialF, boolean disregardRepeatMins) {
+            String initialD, String initialS, String initialF, String initialT, String initialAdditionalParameters, boolean disregardRepeatMins) {
         this.signalNameFormatter = new DefaultSignalNameFormatter();
         this.frame = frame;
         this.guiUtils = guiUtils;
@@ -157,10 +160,12 @@ public class IrpMasterBean extends javax.swing.JPanel {
         this.protocolName = intialProtocol;
         initComponents();
         try {
-            setupProtocol(protocolName, initialD, initialS, initialF);
+            setupProtocol(protocolName, initialD, initialS, initialF, initialT, initialAdditionalParameters);
             D = initialD;
             S = initialS;
             F = initialF;
+            T = initialT;
+            additionalParameters = initialAdditionalParameters;
         } catch (ParseException | UnassignedException | UnknownProtocolException ex) {
             guiUtils.error(ex);
         }
@@ -189,23 +194,24 @@ public class IrpMasterBean extends javax.swing.JPanel {
         }
     }
 
-    private void checkParam(Protocol protocol, JComboBox comboBox, JLabel label, String parameterName) {
-        if (!protocol.hasParameter(parameterName))
-            comboBox.setSelectedIndex(0);
+    private void checkParam(Protocol protocol, JComboBox comboBox, JLabel label, String parameterName, String initalValue) {
+        if (protocol.hasParameter(parameterName))
+            comboBox.setSelectedItem(initalValue);
 
         comboBox.setEnabled(protocol.hasParameter(parameterName));
         label.setEnabled(protocol.hasParameter(parameterName));
     }
 
-    private void setupProtocol(String protocolName, String initialD, String initialS, String initialF) throws UnassignedException, ParseException, UnknownProtocolException {
+    private void setupProtocol(String protocolName, String initialD, String initialS, String initialF,
+            String initalT, String initialAdditionalParameters) throws UnassignedException, ParseException, UnknownProtocolException {
         Protocol protocol = irpMaster.newProtocol(protocolName);
 
         checkParam(protocol, dTextField, dLabel, "D", initialD);
         checkParam(protocol, sTextField, sLabel, "S", initialS);
         checkParam(protocol, fTextField, fLabel, "F", initialF);
-        checkParam(protocol, toggleComboBox, tLabel, "T");
+        checkParam(protocol, toggleComboBox, tLabel, "T", initalT);
 
-        additionalParametersTextField.setText(null);
+        additionalParametersTextField.setText(initialAdditionalParameters);
         additionalParametersLabel.setEnabled(protocol.hasAdvancedParameters());
         additionalParametersTextField.setEnabled(protocol.hasAdvancedParameters());
 
@@ -295,8 +301,8 @@ public class IrpMasterBean extends javax.swing.JPanel {
 
         copyPastePopupMenu = new org.harctoolbox.guicomponents.CopyPastePopupMenu(true);
         copyPopupMenu = new org.harctoolbox.guicomponents.CopyPastePopupMenu();
-        protocolComboBox = new javax.swing.JComboBox();
-        toggleComboBox = new javax.swing.JComboBox();
+        protocolComboBox = new javax.swing.JComboBox<>();
+        toggleComboBox = new javax.swing.JComboBox<>();
         protocolDocuButton = new javax.swing.JButton();
         dTextField = new javax.swing.JTextField();
         sTextField = new javax.swing.JTextField();
@@ -319,9 +325,14 @@ public class IrpMasterBean extends javax.swing.JPanel {
             }
         });
 
-        toggleComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-", "0", "1", "*" }));
+        toggleComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-", "0", "1", "*" }));
         toggleComboBox.setToolTipText("toggle code");
         toggleComboBox.setEnabled(false);
+        toggleComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                toggleComboBoxActionPerformed(evt);
+            }
+        });
 
         protocolDocuButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/mimetypes/man.png"))); // NOI18N
         protocolDocuButton.setText("Docu");
@@ -334,28 +345,28 @@ public class IrpMasterBean extends javax.swing.JPanel {
 
         dTextField.setToolTipText("device number");
         dTextField.setComponentPopupMenu(copyPastePopupMenu);
-        dTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dTextFieldActionPerformed(evt);
-            }
-        });
         dTextField.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 dTextFieldFocusLost(evt);
+            }
+        });
+        dTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dTextFieldActionPerformed(evt);
             }
         });
 
         sTextField.setToolTipText("subdevice number");
         sTextField.setComponentPopupMenu(copyPastePopupMenu);
         sTextField.setEnabled(false);
-        sTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sTextFieldActionPerformed(evt);
-            }
-        });
         sTextField.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 sTextFieldFocusLost(evt);
+            }
+        });
+        sTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sTextFieldActionPerformed(evt);
             }
         });
 
@@ -375,6 +386,16 @@ public class IrpMasterBean extends javax.swing.JPanel {
         additionalParametersTextField.setToolTipText("Other parameters than D, S, F, T, in syntayx variable1=val1 variable2=val2");
         additionalParametersTextField.setComponentPopupMenu(copyPastePopupMenu);
         additionalParametersTextField.setEnabled(false);
+        additionalParametersTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                additionalParametersTextFieldFocusLost(evt);
+            }
+        });
+        additionalParametersTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                additionalParametersTextFieldActionPerformed(evt);
+            }
+        });
 
         irpTextField.setEditable(false);
         irpTextField.setText("{38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,1,^108m,(16,-4,1,^108m)*) [D:0..255,S:0..255=255-D,F:0..255]");
@@ -476,7 +497,7 @@ public class IrpMasterBean extends javax.swing.JPanel {
         try {
             String oldProtocolName = protocolName;
             protocolName = (String) protocolComboBox.getSelectedItem();
-            setupProtocol(protocolName, invalidParameterString, invalidParameterString, invalidParameterString);
+            setupProtocol(protocolName, invalidParameterString, invalidParameterString, invalidParameterString, invalidParameterString, "");
             propertyChangeSupport.firePropertyChange(PROP_PROTOCOL_NAME, oldProtocolName, protocolName);
         } catch (UnassignedException | ParseException | UnknownProtocolException ex) {
             guiUtils.error(ex);
@@ -516,6 +537,23 @@ public class IrpMasterBean extends javax.swing.JPanel {
         fTextFieldActionPerformed(null);
     }//GEN-LAST:event_fTextFieldFocusLost
 
+    private void toggleComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleComboBoxActionPerformed
+        String oldT = T;
+        T = (String) toggleComboBox.getSelectedItem();
+        propertyChangeSupport.firePropertyChange(PROP_T, oldT, T);
+    }//GEN-LAST:event_toggleComboBoxActionPerformed
+
+    private void additionalParametersTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_additionalParametersTextFieldActionPerformed
+        String oldParams = additionalParameters;
+        additionalParameters = additionalParametersTextField.getText().trim();
+        // TODO: Validity check?
+        propertyChangeSupport.firePropertyChange(PROP_ADDITIONAL_PARAMS, oldParams, additionalParameters);
+    }//GEN-LAST:event_additionalParametersTextFieldActionPerformed
+
+    private void additionalParametersTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_additionalParametersTextFieldFocusLost
+        additionalParametersTextFieldActionPerformed(null);
+    }//GEN-LAST:event_additionalParametersTextFieldFocusLost
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel additionalParametersLabel;
     private javax.swing.JTextField additionalParametersTextField;
@@ -527,11 +565,11 @@ public class IrpMasterBean extends javax.swing.JPanel {
     private javax.swing.JTextField fTextField;
     private javax.swing.JTextField irpTextField;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JComboBox protocolComboBox;
+    private javax.swing.JComboBox<String> protocolComboBox;
     private javax.swing.JButton protocolDocuButton;
     private javax.swing.JLabel sLabel;
     private javax.swing.JTextField sTextField;
     private javax.swing.JLabel tLabel;
-    private javax.swing.JComboBox toggleComboBox;
+    private javax.swing.JComboBox<String> toggleComboBox;
     // End of variables declaration//GEN-END:variables
 }

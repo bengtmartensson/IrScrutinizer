@@ -130,6 +130,8 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="irpMasterCurrentD" type="string" default='"0"' doc='Selected D for generator.'/>
     <property name="irpMasterCurrentS" type="string" default='"-1"' doc='Selected S for generator.'/>
     <property name="irpMasterCurrentF" type="string" default='"0"' doc='Selected F for generator.'/>
+    <property name="irpMasterCurrentT" type="string" default='"-"' doc='Selected T for generator.'/>
+    <property name="irpMasterCurrentAdditionalParameters" type="string" default='""' doc='Selected \"Additional parameters\" for generator.'/>
     <property name="exportAutomaticFilenames" type="boolean" default='"true"' doc='Generate automatic file names for exports'/>
     <property name="invokeAnalyzer" type="boolean" default='"false"' doc='If true, the analyzer is invoked on scrutineering and on imports.' />
 
