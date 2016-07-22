@@ -6,6 +6,7 @@ The "low-level" issues are kept as [harctoolbox issues](https://github.com/bengt
 ## Vocabulary
 * _IrScrutinizer_ denotes the interactive program, and the source packages `org.harctoolbox.irscrutinizer` and subordinate packages,
 * _IrpMaster_ denotes the IRP rendering engine irpmaster.jar, source package `org.harctoolbox.IrpMaster` and subordinate packages,
+* _IrpTransmogrifier_ is [this project](https://github.com/bengtmartensson/IrpTransmogrifier), intended to replace IrpMaster, DecodeIR, Analyzer, and much more,
 * _HarcHardware_ denotes a collection of "drivers" and other software that accesses hardware more or less directly,
   source package `org.harctoolbox.harchardware` and subordinate packages,
 * _harctoolboxbundle_ is a Github project containing the sources of IrScrutinizer, IrpMaster, HarcHardware and some the other packages.
@@ -31,7 +32,7 @@ There may possibly also be more subtools, cf. [issue #74](https://github.com/ben
 Here is an example of programming [internal frames in Java Swing](https://docs.oracle.com/javase/tutorial/uiswing/components/internalframe.html).
 
 ## 2. An advanced "abstract remote" editor.
-("Abstract remote" denotes a collection of IR commands with (unique) names, but with no assignment of the commands to
+(By "abstract remote" I mean a collection of IR commands with (unique) names, but with no assignment of the commands to
 buttons on a physical remote.) This covers the issues
 [#89](https://github.com/bengtmartensson/harctoolboxbundle/issues/89),
 [#88](https://github.com/bengtmartensson/harctoolboxbundle/issues/88),
@@ -45,24 +46,27 @@ buttons on a physical remote.) This covers the issues
 [#48](https://github.com/bengtmartensson/harctoolboxbundle/issues/48).
 
 ## 3. Replace the repeatfinder and the analysis function.
-See [#20](https://github.com/bengtmartensson/harctoolboxbundle/issues/20) and
+See [#21](https://github.com/bengtmartensson/harctoolboxbundle/issues/21) (DONE) and
 [#23](https://github.com/bengtmartensson/harctoolboxbundle/issues/23).
 The (third-party) code is unreliable and impossible to maintain.
 See [IrpTransmogrifier](https://github.com/bengtmartensson/IrpTransmogrifier),
-use case 5.
+use case 5, which is intended to replace the analyzer.
 
 ## 4. Modernize the IRP engine, couple to the decoding, thus replacing DecodeIR.
 The decoding is unreliable, inflexible, completely decoupled with the IRP engine,
 and constitutes a completely unnecessary JNI-library
-(translating numbers to strings and numbers). See [IrpTransmogrifier](https://github.com/bengtmartensson/IrpTransmogrifier).
-The decoding should be governed by the same data base (IrpProtocols.ini) that governs the generation.
+(translating numbers to strings and numbers). See [IrpTransmogrifier](https://github.com/bengtmartensson/IrpTransmogrifier),
+which should basically replace IrpMaster.
+The decoding should be governed by the same data base (IrpProtocols.ini) that governs the generation,
+but using XML technologies instead of the primitive .ini format.
 
 ## 5. Replace RXTX
 See [#20](https://github.com/bengtmartensson/harctoolboxbundle/issues/20).
-and also [#64](https://github.com/bengtmartensson/harctoolboxbundle/issues/64).
 
 ## 6. Documentation system
-See [#15](https://github.com/bengtmartensson/harctoolboxbundle/issues/15).
+See [#15](https://github.com/bengtmartensson/harctoolboxbundle/issues/15). The
+[article on the web site](http://harctoolbox.org/IrScrutinizer.html) should be a "cool" article,
+not a "dry" reference manual.
 
 ## 7. Porting/packaging
 ... to Android ([#81](https://github.com/bengtmartensson/harctoolboxbundle/issues/81)),
@@ -71,14 +75,17 @@ misc systems ([#68](https://github.com/bengtmartensson/harctoolboxbundle/issues/
 Any way to build inno setups in Travis?
 
 ## 8. Hardware support
-Have send- and capturing co-exist better [#54](https://github.com/bengtmartensson/harctoolboxbundle/issues/54).
-Tuning: [#58](https://github.com/bengtmartensson/harctoolboxbundle/issues/58). New devices:
+Have send- and capturing co-exist better [#54](https://github.com/bengtmartensson/harctoolboxbundle/issues/54) (DONE).
+New devices:
 [#53](https://github.com/bengtmartensson/harctoolboxbundle/issues/53). On Linux, possibly support reading from and writing to
-[/dev/lirc0](http://lirc.org/html/lirc.html)?
+[/dev/lirc0](http://lirc.org/html/lirc.html)? (DONE, [#122](https://github.com/bengtmartensson/harctoolboxbundle/issues/122))
 To the extent possible, use [Girs as command language](http://www.harctoolbox.org/Girs.html) instead
-of special hardware interfaces ([#24](https://github.com/bengtmartensson/harctoolboxbundle/issues/24)).
+of special hardware interfaces ([#24](https://github.com/bengtmartensson/harctoolboxbundle/issues/24)) (DONE).
 
-## 9. Testing
+## 9. Advanced command line support.
+Better to couple this to IrpTransmogrifier
+
+## 10. Testing
 I strive to have [TestNG](http://testng.org) based Java testing, integrated in Maven and Netbeans.
 
 ## -1. Internationalization
