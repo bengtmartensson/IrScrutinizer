@@ -197,6 +197,8 @@ public class IrpMasterBean extends javax.swing.JPanel {
     private void checkParam(Protocol protocol, JComboBox comboBox, JLabel label, String parameterName, String initalValue) {
         if (protocol.hasParameter(parameterName))
             comboBox.setSelectedItem(initalValue);
+        else
+            comboBox.setSelectedItem("-");
 
         comboBox.setEnabled(protocol.hasParameter(parameterName));
         label.setEnabled(protocol.hasParameter(parameterName));
