@@ -1414,10 +1414,10 @@ necessary adaptations.
           <p>No.</p>
       </section>
 </section>
-<section>
+<section id="building-from-sources">
     <title>Appendix. Building from sources</title>
-<p>"IrScrutinizer" is one subproject (corresponding to a Java package) within "harctoolbox.org".
-    It depends on several other subprojects within harctoolbox. The project "harctoolboxbundle" consists
+    <p>"IrScrutinizer" is one subproject (corresponding to a Java <em>package</em>) within <a href="http://harctoolbox.org">harctoolbox.org</a>.
+    It depends on several other subprojects within harctoolbox. The project <code>harctoolboxbundle</code> consists
     of these subproject bundled together, with some dependent third-party components added.</p>
 
     <p>The released versions are found on the <a href="http://www.harctoolbox.org/downloads/index.html">download page</a>.
@@ -1432,9 +1432,7 @@ The dependent packages need to be installed also in
     maven in order for the build to work. With the dependencies available, the script <code>tools/install-deps.sh</code>
 can be used to install  them in the local maven repository before building.</p>
 
-<p>Presently, Fedora RPMs are available for all dependencies.
-    Installing the <code>harctoolbox</code> package will also install all dependencies, in which case
-the information in this chapter is not needed.</p>
+<p>Presently, Fedora RPMs are available for all dependencies.</p>
 
     <section>
         <title>The Crystal icons</title>
@@ -1444,7 +1442,7 @@ the information in this chapter is not needed.</p>
     <section>
         <title>RXTX</title>
 <p>The serial communication packate RXTX is also included in the source package. This builds a shared library and a jar file.
-    If there is a system supported RXTX (librxtxSerial really), it should be preferred.
+    If there is a system supported RXTX (<code>librxtxSerial</code> really), it should be preferred.
     The distribution constains pre-compiled binaries for Linux, Windows, and Mac OS X, both in 32- and 64-bit versions.
     To compile the C sources, see the sub-directory <code>rxtx-pre2h</code> and the instructions therein.</p>
 
@@ -1464,7 +1462,7 @@ To download and compile the sources, see (or execute) the script <code>tools/bui
 
     <section>
         <title>ExchangeIR</title>
-        <p>It the system supports ExchangeIR (java), use the system version. (On recent Fedora, use <code>sudo dnf install ExchangeIR</code>.)
+        <p>It the system supports ExchangeIR, use the system version. (On recent Fedora, use <code>sudo dnf install ExchangeIR</code>.)
         Otherwise, it can be downloaded and installed by the script <code>tools/build-exchangeir.sh</code>.</p>
     </section>
 
@@ -1498,7 +1496,7 @@ Modern IDEs like Netbeans and Eclips integrate Maven, so build etc can be initia
 Of course, the shell command <code>mvn install</code> can also be used. It creates some artifacts which can
 be used to run IrScrutinizer in the <code>IrScrutinizer/target</code> directory.</p>
 <p>It also creates a <code>package/dist</code> directory containing jars
-(without dependencies), docs, and configurations files. This is intened to support
+(without dependencies), docs, and configurations files. This is intended to support
 packaging.</p>
 
 <p>To prepare the Windows version, some shell tools are needed. These are:</p>
@@ -1511,7 +1509,7 @@ packaging.</p>
 <section>
     <title>Windows setup.exe creation</title>
     <p>For building the Windows setup.exe, the <a href="http://www.jrsoftware.org/download.php/is.exe">Inno Installer version 5</a>
-    is needed. To build the Windows setup.exe file, preferrably the work area should
+    is needed. To build the Windows <code>setup.exe</code> file, preferrably the work area should
 be mounted on a Windows computer. Then, on the Windows computer, open
         the generated file <code>IrScrutinizer/target/IrScrutinizer_inno.iss</code> with
         the Inno installer, and start the compile. This will generate the desired file
@@ -1529,7 +1527,7 @@ be mounted on a Windows computer. Then, on the Windows computer, open
     <p>The Maven build creates a file
 <code>IrScrutinizer-</code><em><code>version</code></em><code>-app.zip</code>.
 This file can be directly distributed to the users, to be installed according to
-<a href="http://localhost:8888/IrScrutinizer.html#Mac+OS+X+app">these instructions</a>.</p>
+<a href="#Mac+OS+X+app">these instructions</a>.</p>
 
 <p>The icon file <code>IrScrutinizer.icns</code> was produced from the Crystal-Clear
 icon <code>babelfish.png</code> in 128x128 resolution, using the procedure
@@ -1543,11 +1541,11 @@ described
     <p>For testing purposes, the programs can be invoked from their different target directories.
         IrScrutinizer can be invoked as</p>
 <source>$ cd IrScrutinizer
-$ java -jar target/IrScrutinizer-jar-with-dependencies.jar
+    $ java -jar target/IrScrutinizer-jar-with-dependencies.jar
 </source>
 <p>and IrpMaster as</p>
     <source>$ cd IrpMaster
-$ java -jar target/IrpMaster-jar-with-dependencies.jar <em>[arguments...]</em>
+    $ java -jar target/IrpMaster-jar-with-dependencies.jar <em>[arguments...]</em>
     </source>
 <p>IrScrutinizer can also be started by double clicking the mentioned jar file,
     provided that the desktop has been configured to start executable jar with "java".</p>

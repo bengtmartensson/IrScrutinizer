@@ -203,6 +203,20 @@
                                 </fileMapper>
                             </fileMappers>
                         </transformationSet>
+                        <transformationSet>
+                            <dir>src/main/xdocs</dir>
+                            <outputDir>${basedir}/..</outputDir>
+                            <includes>
+                                <include>${project.name}.xml</include>
+                            </includes>
+                            <stylesheet>../tools/generate-build.xsl</stylesheet>
+                            <fileMappers>
+                                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                    <pattern>IrScrutinizer.xml</pattern>
+                                    <replacement>BUILD.md</replacement>
+                                </fileMapper>
+                            </fileMappers>
+                        </transformationSet>
                     </transformationSets>
                     <catalogs>
                         <catalog>../schemas/catalog.xml</catalog>
