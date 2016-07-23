@@ -3236,9 +3236,6 @@
                             <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                               <Connection code="properties.getGlobalCacheApiKey().isEmpty() ? &quot;API-Key not entered&quot; : null" type="code"/>
                             </Property>
-                            <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                              <Connection code="!properties.getGlobalCacheApiKey().isEmpty()" type="code"/>
-                            </Property>
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="controlTowerManufacturerComboBoxActionPerformed"/>

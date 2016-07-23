@@ -3555,7 +3555,6 @@ public class GuiMain extends javax.swing.JFrame {
 
         controlTowerManufacturerComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Select me to load" }));
         controlTowerManufacturerComboBox.setToolTipText(properties.getGlobalCacheApiKey().isEmpty() ? "API-Key not entered" : null);
-        controlTowerManufacturerComboBox.setEnabled(!properties.getGlobalCacheApiKey().isEmpty());
         controlTowerManufacturerComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 controlTowerManufacturerComboBoxActionPerformed(evt);
