@@ -28,6 +28,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -8319,6 +8320,11 @@ public class GuiMain extends javax.swing.JFrame {
     private void capturedDataTextAreaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_capturedDataTextAreaMousePressed
         if (evt.isPopupTrigger())
             CCFCodePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+        else if (evt.getButton() == MouseEvent.BUTTON2) { // X-Windows type paste
+            String selection = CopyClipboardText.getSelection();
+            int where = capturedDataTextArea.viewToModel(evt.getPoint());
+            capturedDataTextArea.insert(selection, where);
+        }
     }//GEN-LAST:event_capturedDataTextAreaMousePressed
 
     private void transferToParametricRemoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transferToParametricRemoteButtonActionPerformed
