@@ -7967,6 +7967,7 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void disregardRepeatMinsCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disregardRepeatMinsCheckBoxMenuItemActionPerformed
         properties.setDisregardRepeatMins(disregardRepeatMinsCheckBoxMenuItem.isSelected());
+        irpMasterBean.setDisregardRepeatMins(disregardRepeatMinsCheckBoxMenuItem.isSelected());
     }//GEN-LAST:event_disregardRepeatMinsCheckBoxMenuItemActionPerformed
 
     private void openLastExportFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openLastExportFileMenuItemActionPerformed
