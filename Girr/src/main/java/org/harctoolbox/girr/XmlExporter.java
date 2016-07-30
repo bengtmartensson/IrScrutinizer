@@ -164,7 +164,7 @@ public class XmlExporter {
             } else {
                 if (parameters != null)
                     for (Map.Entry<String, String> kvp : parameters.entrySet()) {
-                        Element e = stylesheet.createElementNS(xsltNamespace, "param");
+                        Element e = stylesheet.createElementNS(xsltNamespace, "xsl:param");
                         e.setAttribute("name", kvp.getKey());
                         e.setAttribute("select", kvp.getValue());
                         stylesheet.getDocumentElement().insertBefore(e, stylesheet.getDocumentElement().getFirstChild());
@@ -195,7 +195,8 @@ public class XmlExporter {
                 tr.transform(new DOMSource(document), new StreamResult(ostr));
             if (parameters != null && stylesheet != null) {
                 NodeList nl = stylesheet.getDocumentElement().getChildNodes();
-                for (int i = 0; i < nl.getLength(); i++) {
+                // Must remove children in backward order not to invalidate nl, #139.
+                for (int i = nl.getLength() - 1; i >= 0; i--) {
                     Node n = nl.item(i);
                     if (n.getNodeType() != Node.ELEMENT_NODE)
                         continue;
