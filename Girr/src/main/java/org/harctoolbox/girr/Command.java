@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map.Entry;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
@@ -840,7 +841,7 @@ public class Command implements Serializable {
                 if (parameters != null) {
                     Element parametersEl = doc.createElementNS(XmlExporter.girrNamespace, "parameters");
                     if (protocolName != null)
-                        parametersEl.setAttribute("protocol", protocolName);
+                        parametersEl.setAttribute("protocol", protocolName.toLowerCase(Locale.US));
                     element.appendChild(parametersEl);
                     for (Entry<String, Long> parameter : parameters.entrySet()) {
                         Element parameterEl = doc.createElementNS(XmlExporter.girrNamespace, "parameter");

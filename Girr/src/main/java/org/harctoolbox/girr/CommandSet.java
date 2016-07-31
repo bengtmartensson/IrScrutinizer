@@ -19,6 +19,7 @@ package org.harctoolbox.girr;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map.Entry;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
@@ -131,7 +132,7 @@ public class CommandSet {
         }
         if (parameters != null && generateParameters) {
             Element parametersEl = doc.createElementNS(XmlExporter.girrNamespace, "parameters");
-            parametersEl.setAttribute("protocol", protocol);
+            parametersEl.setAttribute("protocol", protocol.toLowerCase(Locale.US));
             element.appendChild(parametersEl);
             for (Entry<String, Long> parameter : parameters.entrySet()) {
                 Element parameterEl = doc.createElementNS(XmlExporter.girrNamespace, "parameter");
