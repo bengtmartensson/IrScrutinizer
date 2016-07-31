@@ -722,7 +722,7 @@ public class GuiMain extends javax.swing.JFrame {
         int sum = 0;
         for (String str : arguments) {
             try {
-                sum += importGirr(new File(str), true);
+                sum += importGirr(new File(str), false);
             } catch (java.text.ParseException | IrpMasterException | IOException ex) {
                 guiUtils.error(ex);
             }
