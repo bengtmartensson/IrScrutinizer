@@ -1457,7 +1457,9 @@ carrier_frequency </xsl:text>
 
         <xsl:template match="girr:flash|girr:gap">
             <xsl:value-of select="round(number(.) * number(../../@frequency) div 1000000)"/>
-            <xsl:text>,</xsl:text>
+            <xsl:if test="position()!=last()">
+                <xsl:text>,</xsl:text>
+            </xsl:if>
         </xsl:template>
 
     </xsl:stylesheet>
