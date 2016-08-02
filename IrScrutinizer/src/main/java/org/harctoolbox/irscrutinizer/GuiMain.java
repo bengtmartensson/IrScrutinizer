@@ -6400,6 +6400,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         outputFormatMenu.setText("Output Text Format");
 
+        rawRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
         rawRadioButtonMenuItem.setText("Raw");
         rawRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -6408,6 +6409,7 @@ public class GuiMain extends javax.swing.JFrame {
         });
         outputFormatMenu.add(rawRadioButtonMenuItem);
 
+        ccfRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_MASK));
         ccfRadioButtonMenuItem.setSelected(true);
         ccfRadioButtonMenuItem.setText("Pronto Hex (\"CCF\")");
         ccfRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
