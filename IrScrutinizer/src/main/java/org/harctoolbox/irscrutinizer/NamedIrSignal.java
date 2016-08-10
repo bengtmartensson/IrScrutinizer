@@ -215,6 +215,7 @@ public abstract class NamedIrSignal {
     public abstract static class LearnedIrSignalTableModel extends DefaultTableModel {
         private final AbstractColumnFunction columnsFunc;
         private boolean scrollRequest = false;
+        protected boolean unsavedChanges;
 
         public abstract String getType();
 
@@ -247,6 +248,7 @@ public abstract class NamedIrSignal {
                 nir.setComment(null);
                 setValueAt(null, row, columnsFunc.getPosComment());
             }
+            unsavedChanges = true;
         }
 
         public ArrayList<String> getNonUniqueNames() {
@@ -338,6 +340,7 @@ public abstract class NamedIrSignal {
         protected synchronized void addSignal(NamedIrSignal cir) {
             addRow(columnsFunc.toObjectArray(cir));
             scrollRequest = true;
+            unsavedChanges = true;
         }
 
         public synchronized boolean getAndResetScrollRequest() {
@@ -358,6 +361,7 @@ public abstract class NamedIrSignal {
         protected LearnedIrSignalTableModel(AbstractColumnFunction columnFunc) {
             //super(columnFunc.dummyArray(), columnFunc.headers());
             super(columnFunc.headers(), 0);
+            this.unsavedChanges = false;
             this.columnsFunc = columnFunc;
         }
 
@@ -375,6 +379,14 @@ public abstract class NamedIrSignal {
                 str.append(" ").append(thing != null ? thing.toString() : "null");
             }
             return str.toString();
+        }
+
+        void clearUnsavedChanges() {
+            unsavedChanges = false;
+        }
+
+        boolean hasUnsavedChanges() {
+            return unsavedChanges;
         }
     }
 }

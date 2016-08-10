@@ -154,4 +154,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
     <property name="absoluteTolerance" type="double" default='Double.toString(IrpUtils.defaultAbsoluteTolerance)' doc="Absolute tolerance for duration comparisons" />
     <property name="relativeTolerance" type="double" default='Double.toString(IrpUtils.defaultRelativeTolerance)' doc="Relative tolerance for duration comparisons" />
+    <property name="dontInquire4UnsavedParametricRemotes" type="boolean" default='"false"' doc="Skip acknowledge when exiting with unsaved changes in parameteric remotes."/>
+    <property name="dontInquire4UnsavedRawRemotes" type="boolean" default='"false"' doc="Skip acknowledge when exiting with unsaved changes in raw remotes."/>
 </properties>

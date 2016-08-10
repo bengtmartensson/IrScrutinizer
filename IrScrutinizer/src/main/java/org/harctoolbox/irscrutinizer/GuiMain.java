@@ -29,6 +29,8 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -653,26 +655,18 @@ public class GuiMain extends javax.swing.JFrame {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                capturingHardwareManager.close();
-                sendingHardwareManager.close();
-                try {
-                    System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, IrpUtils.dumbCharsetName));
-                    System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err), true, IrpUtils.dumbCharsetName));
-                } catch (UnsupportedEncodingException ex) {
-                    // This cannot happen
-                    assert false;
-                }
-                try {
-                    if (!properties.getWasReset())
-                        properties.setBounds(getBounds());
+                System.err.println("shutdownhook");
+                cleanupForShutdown();
+            }
+        });
 
-                    properties.save();
-
-                    capturingHardwareManager.close();
-                } catch (IOException e) {
-                    System.err.println("Problems saving properties; " + e.getMessage());
-                }
-                sendingHardwareManager.close();
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+                System.err.println("windowClosing");
+                boolean leave = checkUnsavedStuff();
+                if (leave)
+                    System.exit(IrpUtils.exitSuccess);
             }
         });
 
@@ -729,6 +723,59 @@ public class GuiMain extends javax.swing.JFrame {
         }
         if (sum > 0)
             selectImportPane(ImportType.parametricRemote);
+    }
+
+    private boolean checkUnsavedStuff() {
+        AckWithMemoryDialog.PropertyFlip parameterFlip = new AckWithMemoryDialog.PropertyFlip() {
+            @Override
+            public boolean getProperty() {
+                return properties.getDontInquire4UnsavedParametricRemotes();
+            }
+
+            @Override
+            public void setProperty(boolean value) {
+                properties.setDontInquire4UnsavedParametricRemotes(value);
+            }
+        };
+
+
+
+        AckWithMemoryDialog.PropertyFlip rawFlip = new AckWithMemoryDialog.PropertyFlip() {
+            @Override
+            public boolean getProperty() {
+                return properties.getDontInquire4UnsavedRawRemotes();
+            }
+
+            @Override
+            public void setProperty(boolean value) {
+                properties.setDontInquire4UnsavedRawRemotes(value);
+            }
+        };
+
+        boolean exitOk = !parameterTableModel.hasUnsavedChanges()
+                || AckWithMemoryDialog.ackWithMemoryDialog("There is unsaved data in \"Parametetric Remote\".", "Really exit?", parameterFlip, this);
+        exitOk = exitOk && (!rawTableModel.hasUnsavedChanges()
+                || AckWithMemoryDialog.ackWithMemoryDialog("There is unsaved data in \"Raw Remote\".", "Really exit?", rawFlip, this));
+
+        return exitOk;
+    }
+
+    private void cleanupForShutdown() {
+        try {
+            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, IrpUtils.dumbCharsetName));
+            System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err), true, IrpUtils.dumbCharsetName));
+        } catch (UnsupportedEncodingException ex) {
+            throw new InternalError("This cannot happen");
+        }
+        capturingHardwareManager.close();
+        sendingHardwareManager.close();
+        try {
+            if (!properties.getWasReset())
+                properties.setBounds(getBounds());
+            properties.save();
+        } catch (IOException e) {
+            System.err.println("Problems saving properties; " + e.getMessage());
+        }
     }
 
     public int importGirr(File file, boolean raw, String charsetName) throws java.text.ParseException, IOException, IrpMasterException {
@@ -1103,7 +1150,10 @@ public class GuiMain extends javax.swing.JFrame {
         HashMap<String, Command> commands = getCommands(tableModel);
         if (commands == null)
             return null;
-        return saveCommands(commands, "IrScrutinizer " + tableModel.getType() + " table", title, exporter);
+        File file = saveCommands(commands, "IrScrutinizer " + tableModel.getType() + " table", title, exporter);
+        if (file != null)
+            tableModel.clearUnsavedChanges();
+        return file;
     }
 
     private HashMap<String, Command> getCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel) throws IrpMasterException {
@@ -1232,12 +1282,6 @@ public class GuiMain extends javax.swing.JFrame {
         } catch (IrpMasterException | IOException ex) {
             guiUtils.error(ex);
         }
-    }
-
-    private void doExit() {
-        capturingHardwareManager.close();
-        sendingHardwareManager.close();
-        System.exit(0);
     }
 
     GuiUtils getGuiUtils() {
@@ -1639,6 +1683,7 @@ public class GuiMain extends javax.swing.JFrame {
     private void clearTableConfirm(JTable table) {
         if (guiUtils.confirm("Delete it all?")) {
             ((DefaultTableModel) table.getModel()).setRowCount(0);
+            ((NamedIrSignal.LearnedIrSignalTableModel) table.getModel()).clearUnsavedChanges();
         }
     }
 
@@ -2878,7 +2923,7 @@ public class GuiMain extends javax.swing.JFrame {
         });
         rawTablePopupMenu.add(clearRawCommentMenuItem);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         topLevelSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
@@ -7043,7 +7088,9 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_protocolSpecMenuItemActionPerformed
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
-        doExit();
+        boolean shouldQuit = checkUnsavedStuff();
+        if (shouldQuit)
+            System.exit(IrpUtils.exitSuccess);
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void verboseCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verboseCheckBoxMenuItemActionPerformed

@@ -428,6 +428,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         public void fireTableCellUpdated(int row, int column) {
             //System.err.println("************" + row + "-" + column);
             ParametrizedIrSignal pir = getParameterIrSignal(row);
+            this.unsavedChanges = true;
             switch (column) {
                 case ParameterIrSignalColumns.posProtocol:
                     pir.protocolName = (String) getValueAt(row, column);
