@@ -21,15 +21,32 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import org.harctoolbox.IrpMaster.IrpUtils;
-import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ICommandLineDevice;
+import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.Utils;
 
 public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHardware {
 
     public final static int defaultTimeout = 2000;
+    public static void main(String[] args) {
+        try {
+            try (TcpSocketPort port = new TcpSocketPort("denon", 23, defaultTimeout, true, ConnectionMode.keepAlive)) {
+                port.sendString("MVDOWN\r");
+                String result = port.readString();
+                System.out.println(result);
+            }
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
 
     private TcpSocketChannel tcpSocketChannel;
+    public TcpSocketPort(String hostIp, int portNumber, int timeout, boolean verbose, ConnectionMode connectionMode) throws UnknownHostException {
+        tcpSocketChannel = new TcpSocketChannel(hostIp, portNumber, timeout, verbose, connectionMode);
+    }
+    public TcpSocketPort(String hostIp, int portNumber, boolean verbose, ConnectionMode connectionMode) throws UnknownHostException {
+        tcpSocketChannel = new TcpSocketChannel(hostIp, portNumber, defaultTimeout, verbose, connectionMode);
+    }
 
     @Override
     public void open() throws IOException {
@@ -46,10 +63,6 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
         tcpSocketChannel.flushInput();
     }
 
-    public enum ConnectionMode {
-        keepAlive,
-        justInTime;
-    };
 
     @Override
     public void sendBytes(byte[] cmd) throws IOException {
@@ -64,14 +77,6 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
         byte[] result = Utils.readBytes(tcpSocketChannel.getIn(), length);
         tcpSocketChannel.close(false);
         return result;
-    }
-
-    public TcpSocketPort(String hostIp, int portNumber, int timeout, boolean verbose, ConnectionMode connectionMode) throws UnknownHostException {
-        tcpSocketChannel = new TcpSocketChannel(hostIp, portNumber, timeout, verbose, connectionMode);
-    }
-
-    public TcpSocketPort(String hostIp, int portNumber, boolean verbose, ConnectionMode connectionMode) throws UnknownHostException {
-        tcpSocketChannel = new TcpSocketChannel(hostIp, portNumber, defaultTimeout, verbose, connectionMode);
     }
 
     @Override
@@ -136,15 +141,8 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
         tcpSocketChannel.setDebug(debug);
     }
 
-    public static void main(String[] args) {
-        try {
-            try (TcpSocketPort port = new TcpSocketPort("denon", 23, defaultTimeout, true, ConnectionMode.keepAlive)) {
-                port.sendString("MVDOWN\r");
-                String result = port.readString();
-                System.out.println(result);
-            }
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
+    public enum ConnectionMode {
+        keepAlive,
+        justInTime;
     }
 }

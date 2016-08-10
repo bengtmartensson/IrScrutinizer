@@ -110,6 +110,9 @@
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="Number of times to send command"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JComboBox" name="transmitterComboBox">
       <Properties>
@@ -118,6 +121,9 @@
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="The transmitter to use to send the command"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JComboBox" name="remoteComboBox">
       <Properties>
@@ -129,6 +135,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="remoteComboBoxActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JComboBox" name="commandComboBox">
       <Properties>
@@ -137,6 +146,9 @@
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="Command name"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="sendButton">
       <Properties>

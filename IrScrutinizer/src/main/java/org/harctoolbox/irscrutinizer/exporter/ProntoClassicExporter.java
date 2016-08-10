@@ -47,7 +47,7 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
     private static final int buttonLabelLength = 100;
 
     private ProntoModel prontoModel;
-    CCF ccf = null;
+    private CCF ccf;
     private int buttonWidth;
     private int buttonHeight;
     private int screenWidth;
@@ -55,11 +55,12 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
 
     public ProntoClassicExporter() {
         super();
+        this.ccf = null;
     }
 
     public ProntoClassicExporter(ProntoModel prontomodel,
             int buttonwidth, int buttonheight, int screenwidth, int screenheight) {
-        super();
+        this();
         this.prontoModel = prontomodel;
         this.buttonWidth = buttonwidth;
         this.buttonHeight = buttonheight;

@@ -17,10 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.harchardware;
 
-import org.harctoolbox.harchardware.ir.GlobalCache;
-import org.harctoolbox.harchardware.comm.TcpSocketPort;
-import org.harctoolbox.harchardware.comm.UrlPort;
-import org.harctoolbox.harchardware.comm.UdpSocketPort;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
@@ -31,6 +27,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.harchardware.comm.LocalSerialPortBuffered;
+import org.harctoolbox.harchardware.comm.TcpSocketPort;
+import org.harctoolbox.harchardware.comm.UdpSocketPort;
+import org.harctoolbox.harchardware.comm.UrlPort;
+import org.harctoolbox.harchardware.ir.GlobalCache;
 
 /**
  * Gives possibilities to invoke many of the functions from the command line. Demonstrates the interfaces.
@@ -40,11 +40,11 @@ public class MainString {
     //private final static int invalidPort = -1;
     private final static int defaultPortNumber = 1;
 
-    private MainString() {
-    }
+    private static JCommander argumentParser;
+    private static final CommandLineArgs commandLineArgs = new CommandLineArgs();
 
     private static String join(Iterable<String> arr, String separator) {
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(32);
         for (String s : arr)
             result.append(result.length() == 0 ? "" : separator).append(s);
         return result.toString();
@@ -61,7 +61,7 @@ public class MainString {
     }
 
     private static void usage(int exitcode) {
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(128);
         argumentParser.usage(str);
 
         (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
@@ -72,107 +72,6 @@ public class MainString {
         System.exit(exitcode);
     }
 
-    private final static class CommandLineArgs {
-
-        @Parameter(names = {"-1"}, description = "Expect one line of response")
-        private boolean oneLine;
-
-        @Parameter(names = {"-2"}, description = "Expect two line of response")
-        private boolean twoLines;
-
-        @Parameter(names = {"-#", "--count"}, description = "Number of times to send sequence")
-        private int count = 1;
-
-        //@Parameter(names = {"-a", "--appname"}, description = "Appname for readline.")
-        //private String appName = "noname";
-
-        @Parameter(names = {"-b", "--baud"}, description = "Baud rate for the serial port")
-        private int baud = 115200; //9600;
-
-        //@Parameter(names = {"-d", "--debug"}, description = "Debug code")
-        //private int debug = 0;
-
-        //@Parameter(names = {"-c", "--comment"}, description = "Comment char for command line parser")
-        //private char commentChar = '#';
-
-        @Parameter(names = {"--delay"}, description = "Delay between commands in milliseconds")
-        private int delay = 0;
-
-        @Parameter(names = {"-d", "--device"}, description = "Device name for serial device")
-        private String device = null;
-
-        //@Parameter(names = {"-e", "--escape"}, description = "Escape char for command line parser")
-        //private char escapeChar = '\\';
-
-        @Parameter(names = {"-g", "--globalcache"}, description = "Use GlobalCache")
-        private boolean globalcache = false;
-
-        @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
-        private boolean helpRequested = false;
-
-        @Parameter(names = {"--http", "--url"}, description = "Use URLs (http)")
-        private boolean url = false;
-
-        @Parameter(names = {"-i", "--ip"}, description = "IP address or name")
-        private String ip = null;
-
-        @Parameter(names = {      "--opendelay"}, description = "Delay after opening, in milliseconds")
-        private int openDelay = 0;
-
-        @Parameter(names = {"-m", "--myip"}, description = "For UPD only: IP number to listen to")
-        private String myIp = null;
-
-        @Parameter(names = {"-p", "--port"}, description = "Port number, either TCP port number, or serial port number (counting the first as 1).")
-        private int portNumber = defaultPortNumber;
-
-        @Parameter(names = {"--prefix"}, description = "Prefix to be prepended to all sent commands.")
-        private String prefix = "";
-
-        //@Parameter(names = {"--prompt"}, description = "Readline prompt -- use `_' for SPACE.")
-        //private String prompt = "--> ";
-
-        @Parameter(names = {"-n", "--newline"}, description = "Append a newline at the end of the command.")
-        private boolean appendNewline;
-
-        @Parameter(names = {"-r", "--return"}, description = "Append a carrage return at the end of the command.")
-        private boolean appendReturn;
-
-        @Parameter(names = {"-s", "--serial"}, description = "Use local serial port.")
-        private boolean serial;
-
-        @Parameter(names = {"--suffix"}, description = "Sufffix to be appended to all sent commands.")
-        private String suffix = "";
-
-        @Parameter(names = {"-t", "--tcp"}, description = "Use tcp sockets")
-        private boolean tcp;
-
-        @Parameter(names = {"-T", "--timeout"}, description = "Timeout in milliseconds")
-        private int timeout = 15000;
-
-        //@Parameter(names = {"--telnet"}, description = "Go in interactive telnet mode")
-        //private boolean telnet;
-
-        @Parameter(names = {"-u", "--upper"}, description = "Translate commands to upper case.")
-        private boolean toUpper;
-
-        @Parameter(names = {"--udp"}, description = "Use Udp sockets.")
-        private boolean udp;
-
-        @Parameter(names = {"-v", "--version"}, description = "Display version information")
-        private boolean versionRequested;
-
-        @Parameter(names = {"-V", "--verbose"}, description = "Turn on verbose reporting")
-        private boolean verbose;
-
-        //@Parameter(names = {"-w", "--waitforanswer"}, description = "Time to wait for answer in milli seconds")
-        //private int waitForAnswer = 0;
-
-        @Parameter(description = "[parameters]")
-        private ArrayList<String> parameters = new ArrayList<>();
-    }
-
-    private static JCommander argumentParser;
-    private static CommandLineArgs commandLineArgs = new CommandLineArgs();
 
     public static void main(String[] args) {
         argumentParser = new JCommander(commandLineArgs);
@@ -202,13 +101,13 @@ public class MainString {
         }
 
         boolean didSomethingUseful = false;
-        GlobalCache globalCache = null;
-        LocalSerialPortBuffered localSerialPortBuffered = null;
-        TcpSocketPort tcpPort = null;
-        UdpSocketPort udpPort = null;
-        UrlPort urlPort = null;
-        ICommandLineDevice hardware = null;
-        String localIpAddress = commandLineArgs.myIp; // TODO: presently not used
+        GlobalCache globalCache;
+        LocalSerialPortBuffered localSerialPortBuffered;
+        TcpSocketPort tcpPort;
+        UdpSocketPort udpPort;
+        UrlPort urlPort;
+        ICommandLineDevice hardware;
+        String localIpAddress; // TODO: presently not used
 
         try {
             if (commandLineArgs.globalcache) {
@@ -315,5 +214,105 @@ public class MainString {
             System.err.println("No such port: " + ex.getMessage());
             System.exit(IrpUtils.exitFatalProgramFailure);
         }
+    }
+    private MainString() {
+    }
+    private final static class CommandLineArgs {
+
+        @Parameter(names = {"-1"}, description = "Expect one line of response")
+        private boolean oneLine;
+
+        @Parameter(names = {"-2"}, description = "Expect two line of response")
+        private boolean twoLines;
+
+        @Parameter(names = {"-#", "--count"}, description = "Number of times to send sequence")
+        private int count = 1;
+
+        //@Parameter(names = {"-a", "--appname"}, description = "Appname for readline.")
+        //private String appName = "noname";
+
+        @Parameter(names = {"-b", "--baud"}, description = "Baud rate for the serial port")
+        private int baud = 115200; //9600;
+
+        //@Parameter(names = {"-d", "--debug"}, description = "Debug code")
+        //private int debug = 0;
+
+        //@Parameter(names = {"-c", "--comment"}, description = "Comment char for command line parser")
+        //private char commentChar = '#';
+
+        @Parameter(names = {"--delay"}, description = "Delay between commands in milliseconds")
+        private int delay = 0;
+
+        @Parameter(names = {"-d", "--device"}, description = "Device name for serial device")
+        private String device = null;
+
+        //@Parameter(names = {"-e", "--escape"}, description = "Escape char for command line parser")
+        //private char escapeChar = '\\';
+
+        @Parameter(names = {"-g", "--globalcache"}, description = "Use GlobalCache")
+        private boolean globalcache = false;
+
+        @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
+        private boolean helpRequested = false;
+
+        @Parameter(names = {"--http", "--url"}, description = "Use URLs (http)")
+        private boolean url = false;
+
+        @Parameter(names = {"-i", "--ip"}, description = "IP address or name")
+        private String ip = null;
+
+        @Parameter(names = {      "--opendelay"}, description = "Delay after opening, in milliseconds")
+        private int openDelay = 0;
+
+        @Parameter(names = {"-m", "--myip"}, description = "For UPD only: IP number to listen to")
+        private String myIp = null;
+
+        @Parameter(names = {"-p", "--port"}, description = "Port number, either TCP port number, or serial port number (counting the first as 1).")
+        private int portNumber = defaultPortNumber;
+
+        @Parameter(names = {"--prefix"}, description = "Prefix to be prepended to all sent commands.")
+        private String prefix = "";
+
+        //@Parameter(names = {"--prompt"}, description = "Readline prompt -- use `_' for SPACE.")
+        //private String prompt = "--> ";
+
+        @Parameter(names = {"-n", "--newline"}, description = "Append a newline at the end of the command.")
+        private boolean appendNewline;
+
+        @Parameter(names = {"-r", "--return"}, description = "Append a carrage return at the end of the command.")
+        private boolean appendReturn;
+
+        @Parameter(names = {"-s", "--serial"}, description = "Use local serial port.")
+        private boolean serial;
+
+        @Parameter(names = {"--suffix"}, description = "Sufffix to be appended to all sent commands.")
+        private String suffix = "";
+
+        @Parameter(names = {"-t", "--tcp"}, description = "Use tcp sockets")
+        private boolean tcp;
+
+        @Parameter(names = {"-T", "--timeout"}, description = "Timeout in milliseconds")
+        private int timeout = 15000;
+
+        //@Parameter(names = {"--telnet"}, description = "Go in interactive telnet mode")
+        //private boolean telnet;
+
+        @Parameter(names = {"-u", "--upper"}, description = "Translate commands to upper case.")
+        private boolean toUpper;
+
+        @Parameter(names = {"--udp"}, description = "Use Udp sockets.")
+        private boolean udp;
+
+        @Parameter(names = {"-v", "--version"}, description = "Display version information")
+        private boolean versionRequested;
+
+        @Parameter(names = {"-V", "--verbose"}, description = "Turn on verbose reporting")
+        private boolean verbose;
+
+        //@Parameter(names = {"-w", "--waitforanswer"}, description = "Time to wait for answer in milli seconds")
+        //private int waitForAnswer = 0;
+
+        @Parameter(description = "[parameters]")
+        private ArrayList<String> parameters = new ArrayList<>(16);
     }
 }

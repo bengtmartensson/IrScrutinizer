@@ -385,7 +385,7 @@ public class IrSequence implements Cloneable, Serializable {
                 try {
                     arrayList.add(new IrSequence(arr));
                 } catch (IncompatibleArgumentException ex) {
-                    assert(false);
+                    throw new InternalError();
                 }
                 beg = i + 1;
             }

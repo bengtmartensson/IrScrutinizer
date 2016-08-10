@@ -44,11 +44,13 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
     private transient URL url;
     private boolean validate;
 
-    private static class NotGirrRemoteSetException extends Exception {
-        NotGirrRemoteSetException() {
-            super("Not a Girr file with root element \"remotes\".");
-        }
+    public GirrImporter(boolean validate, URL url) {
+        super();
+        schema = null;
+        this.url = url;
+        this.validate = validate;
     }
+
     /**
      * @return the schema
      */
@@ -68,12 +70,6 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
         this.validate = validate;
     }
 
-    public GirrImporter(boolean validate, URL url) {
-        super();
-        schema = null;
-        this.url = url;
-        this.validate = validate;
-    }
 
     private void loadSchema() throws SAXException {
         if (validate && schema == null && url != null)
@@ -191,5 +187,10 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
     @Override
     public String getFormatName() {
         return "Girr";
+    }
+    private static class NotGirrRemoteSetException extends Exception {
+        NotGirrRemoteSetException() {
+            super("Not a Girr file with root element \"remotes\".");
+        }
     }
 }

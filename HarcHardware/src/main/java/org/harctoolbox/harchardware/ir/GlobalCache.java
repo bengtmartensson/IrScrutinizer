@@ -17,8 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.harchardware.ir;
 
-import org.harctoolbox.harchardware.beacon.AmxBeaconListener;
-import org.harctoolbox.harchardware.comm.TcpSocketPort;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import java.io.IOException;
@@ -40,190 +38,17 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.IrpMaster.Pronto;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.comm.IBytesCommand;
-import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ICommandLineDevice;
+import org.harctoolbox.harchardware.IHarcHardware;
+import org.harctoolbox.harchardware.Utils;
+import org.harctoolbox.harchardware.beacon.AmxBeaconListener;
+import org.harctoolbox.harchardware.comm.IBytesCommand;
 import org.harctoolbox.harchardware.comm.IWeb;
 import org.harctoolbox.harchardware.comm.TcpSocketChannel;
-import org.harctoolbox.harchardware.Utils;
+import org.harctoolbox.harchardware.comm.TcpSocketPort;
 
 public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, ITransmitter, ICapture, IWeb/*, Serializable*/ {
 
-    private static String camelCase2uppercase(String cc) {
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < cc.length(); i++) {
-            char ch = cc.charAt(i);
-            if (Character.isUpperCase(ch))
-                result.append('_');
-            result.append(Character.toUpperCase(ch));
-        }
-        return result.toString();
-    }
-
-    @Override
-    public URI getUri(String user, String password) {
-        try {
-            return new URI("http", hostIp, null, null);
-        } catch (URISyntaxException ex) {
-            return null;
-        }
-    }
-
-    /**
-     * Possible arguments to the set_IR command.
-     */
-    public enum IrConfiguration {
-        ir, // all
-        sensor, // GC-100, iTach
-        sensorNotify, // GC-100, iTach
-        irNocarrier, // GC-100
-        serial, // iTachFlex
-        irBlaster, // iTach, iTachFlex
-        irtriport, // iTachFlex
-        irtriportBlaster, // iTachFlex
-        ledLighting;   //iTach
-
-        @Override
-        public String toString() {
-            return camelCase2uppercase(this.name());
-        }
-    }
-
-
-    public enum ModuleType {
-        unknown,
-	ir,         // all
-        //three_ir,   // iTach
-        //irBlaster, // only iTachFlex
-        //irtriport,  // only iTachFlex
-        //irtriportBlaster, // only iTachFlex
-        serial,     // all
-        //one_serial, // iTach
-        relay,      // GC-100
-        //three_relay,// iTach
-        wifi,       // iTach, iTachFlex
-        ethernet,   // iTach, ITachFlex
-        net;
-
-        @Override
-        public String toString() {
-            return camelCase2uppercase(this.name());
-        }
-    };
-
-    public class SerialPort implements ICommandLineDevice, IBytesCommand {
-        private int portIndex; // 0 or 1, i.e. zero based.
-        private TcpSocketChannel tcpSocketChannel;
-
-        /** Do not use, use getSerialPort instead. */
-        private SerialPort(int portNumber) throws NoSuchTransmitterException {
-            portIndex = portNumber - 1;
-            if (portIndex < 0 || portIndex > serialPorts.length - 1)
-                throw new NoSuchTransmitterException(Integer.toString(portNumber));
-
-            tcpSocketChannel = new TcpSocketChannel(inetAddress, gcFirstSerialPort + portIndex,
-                    timeout, verbose, TcpSocketPort.ConnectionMode.keepAlive);
-        }
-
-        @Override
-        public void sendString(String cmd) throws IOException {
-            sendBytes(cmd.getBytes(IrpUtils.dumbCharset));
-        }
-
-        @Override
-        public synchronized String readString(boolean wait) throws IOException {
-            tcpSocketChannel.connect();
-            String result = tcpSocketChannel.readString(wait);
-            tcpSocketChannel.close(false);
-            return result;
-        }
-
-        @Override
-        public synchronized String readString() throws IOException {
-            return readString(false);
-        }
-
-        @Override
-        public synchronized void close() throws IOException {
-            tcpSocketChannel.close(true);
-            serialPorts[portIndex] = null;
-        }
-
-        @Override
-        public synchronized void sendBytes(byte[] cmd) throws IOException {
-            tcpSocketChannel.connect();
-            tcpSocketChannel.getOut().write(cmd);
-            tcpSocketChannel.close(false);
-        }
-
-        @Override
-        public synchronized byte[] readBytes(int length) throws IOException {
-            tcpSocketChannel.connect();
-            byte[] result = Utils.readBytes(tcpSocketChannel.getIn(), length);
-            tcpSocketChannel.close(false);
-            return result;
-        }
-
-        @Override
-        public String getVersion() {
-            return tcpSocketChannel.getVersion();
-        }
-
-        @Override
-        public void setVerbosity(boolean verbosity) {
-            tcpSocketChannel.setVerbosity(verbose);
-        }
-
-        @Override
-        public void setDebug(int debug) {
-            tcpSocketChannel.setDebug(debug);
-        }
-
-        @Override
-        public void setTimeout(int timeout) throws SocketException {
-            tcpSocketChannel.setTimeout(timeout);
-        }
-
-        @Override
-        public boolean isValid() {
-            return tcpSocketChannel.isValid();
-        }
-
-        @Override
-        public void open() {
-            tcpSocketChannel.open();
-        }
-
-        @Override
-        public boolean ready() throws IOException {
-            return tcpSocketChannel.ready();
-        }
-
-        @Override
-        public void flushInput() throws IOException {
-            tcpSocketChannel.flushInput();
-        }
-    }
-
-    /**
-     * Returns a serial port from the GlobalCache.
-     * @param portNumber 1-based port  number, i.e. use 1 for first, not 0.
-     * @return serial port implementing ICommandLineDevice
-     * @throws NoSuchTransmitterException
-     */
-    public synchronized SerialPort getSerialPort(int portNumber) throws NoSuchTransmitterException {
-        int portIndex = portNumber - 1;
-        if (portIndex < 0 || portIndex > serialPorts.length - 1)
-            throw new NoSuchTransmitterException(Integer.toString(portNumber));
-
-        if (serialPorts[portIndex] == null) {
-            serialPorts[portIndex] = new SerialPort(portNumber);
-        } else {
-            throw new NoSuchTransmitterException("Requested port " + portNumber
-                    + " in GlobalCache " + hostIp + " is already in use.");
-        }
-        return serialPorts[portIndex];
-    }
 
     private final static int smallDelay = 10; // ms
     private final static int gcPort = 4998;
@@ -239,7 +64,373 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
     public  final static int maxCompressedLetters = 15;
 
     private final static String apiAddressFragment = "/api/v1/";
+    /**
+     * GlobalCache default connector
+     */
+    private final static int defaultConnector = 1;
 
+    private static String camelCase2uppercase(String cc) {
+        StringBuilder result = new StringBuilder(32);
+        for (int i = 0; i < cc.length(); i++) {
+            char ch = cc.charAt(i);
+            if (Character.isUpperCase(ch))
+                result.append('_');
+            result.append(Character.toUpperCase(ch));
+        }
+        return result.toString();
+    }
+
+    private static boolean validConnector(int c) {
+        return (c >= connectorMin) && (c <= connectorsPerModule + connectorMin - 1);
+    }
+
+    private static String gcJoiner(int[] array) {
+        StringBuilder result = new StringBuilder(32);
+        for (int i = 0; i < array.length; i++) {
+            result.append(",").append(array[i]);
+        }
+        return result.toString();
+    }
+
+    private static String gcCompressedJoiner(int[]intro, int[]repeat) {
+        LinkedHashMap<String, Character> index = new LinkedHashMap<>(32);
+        return gcCompressedJoiner(intro, index) + gcCompressedJoiner(repeat, index);
+    }
+
+    private static String gcCompressedJoiner(int seq[], HashMap<String, Character> index) {
+        StringBuilder result = new StringBuilder(32);
+        for (int i = 0; i < seq.length / 2; i++) {
+            String key = "," + seq[2 * i] + "," + seq[2 * i + 1];
+            if (index.containsKey(key))
+                result.append(index.get(key));
+            else {
+                if (index.size() < maxCompressedLetters) {
+                    Character letter = (char) ('A' + (char) index.size());
+                    index.put(key, letter);
+                }
+                result.append(key);
+            }
+        }
+        return result.toString();
+    }
+
+    private static String globalCacheString(IrSignal code, int count, boolean compressed) {
+        int[] intro = code.getIntroPulses();
+        int[] repeat = code.getRepeatPulses();
+        return ((int)code.getFrequency()) + "," + count + "," + (1 + intro.length)
+                + (compressed ? gcCompressedJoiner(intro, repeat) : (gcJoiner(intro) + gcJoiner(repeat)));
+    }
+
+    private static String transmitterAddress(int module, int connector) throws NoSuchTransmitterException {
+        if (connector < connectorMin || connector > connectorsPerModule + connectorMin - 1)
+            throw new NoSuchTransmitterException("" + module + ":" + connector);
+        return "" + module + ":" + connector;
+    }
+
+    private static String transmitterAddress(int module) {
+        return "" + module + ":1";
+    }
+
+    /**
+     * Formats a string suitable for sending to a GlobalCache.
+     *
+     * @param code
+     * @param count
+     * @param module
+     * @param connector
+     * @param sendIndex
+     * @param compressed
+     * @return
+     * @throws NoSuchTransmitterException
+     */
+    public static String sendIrString(IrSignal code, int count, int module, int connector, int sendIndex, boolean compressed) throws NoSuchTransmitterException {
+        return sendIrPrefix + "," + transmitterAddress(module, connector)
+                + "," + (sendIndex % 65536) + "," + globalCacheString(code, count, compressed);
+    }
+
+    public static AmxBeaconListener.Node listenBeacon(int timeout) {
+        return AmxBeaconListener.listenFor("-Make", "GlobalCache", timeout);
+    }
+
+    public static AmxBeaconListener.Node listenBeacon() {
+        return listenBeacon(beaconTimeout);
+    }
+
+    public static AmxBeaconListener newListener(AmxBeaconListener.Callback callback, boolean debug) {
+        AmxBeaconListener abl = new AmxBeaconListener(callback,  "-Make", "GlobalCache", debug);
+        abl.start();
+        return abl;
+    }
+
+    /**
+     * Parses a string intended as command to a GlobalCache and return it as a IrSignal.
+     * Presently only the uncompressed form is parsed.
+     *
+     * @param gcString
+     * @return IrSignal representing the signal, with begin and repeat part.
+     */
+    public static IrSignal parse(String gcString) {
+        String[] chunks = gcString.split(",");
+        if (chunks.length < 6)
+            return null;
+        int index = 0;
+        if (!chunks[index++].trim().equals(sendIrPrefix))
+            return null;
+
+        index++; // module, discard
+        index++; // send index, discard
+        int frequency = Integer.parseInt(chunks[index++].trim());
+        index++; // number repetitions, discard
+        int repIndex = Integer.parseInt(chunks[index++].trim());
+        int[] durations = new int[chunks.length - index];
+        double T = 1000000f / (double) frequency; // period time in micro seconds
+        for (int i = 0; i < chunks.length - index; i++)
+            durations[i] = (int) Math.round(Integer.parseInt(chunks[i + index]) * T);
+
+        return new IrSignal(durations, (repIndex - 1) / 2, (durations.length - repIndex + 1) / 2, frequency);
+    }
+
+    private static void usage() {
+        System.err.println("Usagex:");
+        System.err.println("GlobalCache [options] <command> [<argument>]");
+        System.err.println("where options=-# <count>,-h <hostname>,-c <connector>,-m <module>,-b <baudrate>,-t <timeout>,-p <sendirstring>,-v,-B,-j");
+        System.err.println("and command=send_ir,send_serial,listen_serial,set_relay,get_devices,get_version,set_blink,[set|get]_serial,[set|get]_ir,[set|get]_net,[get|set]_state,get_learn,ccf");
+        doExit(IrpUtils.exitUsageError);
+    }
+
+    private static void doExit(int exitcode) {
+        System.exit(exitcode);
+    }
+
+    public static void main(String[] args) {
+        //String str = "sendir,4:1,0,38380,1,69,347,173,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,65,22,65,22,65,22,65,22,65,22,65,22,65,22,65,22,22,22,22,22,65,22,22,22,22,22,22,22,22,22,22,22,22,22,65,22,22,22,65,22,65,22,65,22,65,22,65,22,65,22,1527,347,87,22,3692";
+        String hostname = defaultGlobalCacheIP;
+        int connector = 1;
+        int module = 2;
+        int count = 1;
+        boolean verbose = false;
+        boolean beacon = false;
+        int baudrate = 0; // invalid value
+        GlobalCache gc;
+        String cmd;
+        String arg;
+        int arg_i = 0;
+        int timeout = defaultSocketTimeout;
+        String parserFood = null;
+        boolean json = false;
+
+        if (args.length == 0)
+            usage();
+
+        try {
+            while (arg_i < args.length && args[arg_i].charAt(0) == '-') {
+                switch (args[arg_i]) {
+                    case "-h":
+                        hostname = args[arg_i + 1];
+                        arg_i += 2;
+                        break;
+                    case "-m":
+                        module = Integer.parseInt(args[arg_i + 1]);
+                        arg_i += 2;
+                        break;
+                    case "-c":
+                        connector = Integer.parseInt(args[arg_i + 1]);
+                        arg_i += 2;
+                        break;
+                    case "-#":
+                        count = Integer.parseInt(args[arg_i + 1]);
+                        arg_i += 2;
+                        break;
+                    case "-b":
+                        baudrate = Integer.parseInt(args[arg_i + 1]);
+                        arg_i += 2;
+                        break;
+                    case "-v":
+                        verbose = true;
+                        arg_i++;
+                        break;
+                    case "-t":
+                        timeout = Integer.parseInt(args[arg_i + 1]);
+                        arg_i += 2;
+                        break;
+                    case "-B":
+                        beacon = true;
+                        arg_i++;
+                        break;
+                    case "-j":
+                        json = true;
+                        arg_i++;
+                        break;
+                    case "-p":
+                        parserFood = args[arg_i + 1];
+                        arg_i += 2;
+                        break;
+                    default:
+                        usage();
+                        break;
+                }
+            }
+
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            usage();
+        } catch (NumberFormatException ex) {
+            System.err.println(ex.getMessage());
+        }
+
+        if (parserFood != null) {
+            IrSignal sig = parse(parserFood);
+            System.out.println(sig);
+            System.exit(IrpUtils.exitSuccess);
+        }
+
+        String output = "";
+
+        if (beacon) {
+            AmxBeaconListener.Node r = listenBeacon();
+            if (r != null) {
+                String model = r.get("-Model");
+                //GlobalCacheModel gcModel = GlobalCacheModel.newGlobalCacheModel(model);
+
+                //System.err.println(r + gcModel.getName());
+                hostname = r.getInetAddress().getHostName();
+            } else {
+                System.err.println("none found");
+                System.exit(1);
+            }
+        }
+
+
+        try {
+            gc = new GlobalCache(hostname, verbose, timeout);
+
+            if (json) {
+                try {
+                    JsonObject obj = gc.getJsonVersion();
+                    System.out.println(obj);
+                    System.out.println(obj.get("firmwareVersion").asString());
+                    System.out.println(gc.getJsonNetwork());
+                    System.out.println(gc.getJsonSsid());
+                    System.out.println(gc.getJsonConnectors());
+                    System.out.println(gc.getJsonFiles());
+                } catch (IOException ex) {
+                    System.err.println(ex.getMessage());
+                }
+                System.exit(0);
+            }
+
+            if (args.length - 1 < arg_i)
+                System.exit(IrpUtils.exitSuccess);
+
+            cmd = args[arg_i];
+            arg = (args.length > arg_i + 1) ? args[arg_i + 1] : null;
+
+
+            switch (cmd) {
+                case "set_blink":
+                    if (arg == null || !arg.equals("1")) {
+                        gc.setBlink(0);
+                    } else {
+                        gc.setBlink(1);
+                    }   break;
+                case "get_devices":
+                    output = IrpUtils.join(gc.getDevices(), System.getProperty("line.separator"));
+                    break;
+                case "get_version":
+                    output = gc.getVersion(module);
+                    break;
+                case "get_net":
+                    // Only v3
+                    output = gc.getNet();
+                    break;
+                case "set_net":
+                    // Only v3
+                    // Syntax: see API-document
+                    output = gc.setNet(arg);
+                    break;
+                case "get_ir":
+                    //Only v3
+                    output = gc.getIr(module, connector);
+                    break;
+                case "set_ir":
+                    output = gc.setIr(module, connector, arg);
+                    break;
+                case "get_serial":
+                    output = gc.getSerial(module);
+                    break;
+                case "set_serial":
+                    if (baudrate > 0) {
+                        output = gc.setSerial(module, baudrate);
+                    } else {
+                        output = gc.setSerial(module, arg);
+                    }   break;
+                case "get_state":
+                    output = gc.getState(module, connector) == 1 ? "on" : "off";
+                    break;
+                case "toggle_state":
+                    output = gc.toggleState(connector) ? "ok" : "not ok";
+                    break;
+                case "set_state":
+                case "set_relay":
+                    // Just a convenience version of the above
+                    output = gc.setState(connector, (arg == null || arg.equals("0") ? 0 : 1)) ? "on" : "off";
+                    break;
+                case "send_ir":
+                    if (arg_i + 2 == args.length) {
+                        output = gc.sendIr(args[arg_i + 1]) ? "ok" : "error";
+                    } else {
+                        StringBuilder ccf = new StringBuilder(6 * args.length);
+                        for (int i = arg_i + 1; i < args.length; i++) {
+                            ccf.append(' ').append(args[i]);
+                        }
+
+                        output = gc.sendIr(ccf.toString(), count, module, connector) ? "ok" : "error";
+                    }   break;
+                case "send_serial":
+                    StringBuilder transmit = new StringBuilder(2 * args.length);
+                    for (int i = arg_i + 1; i < args.length; i++) {
+                        transmit.append(' ').append(args[i]);
+                    }
+
+                    //output = gc.sendStringCommand(module, transmit, 0);
+                    break;
+                case "stop_ir":
+                    gc.stopIr(module, connector);
+                    break;
+                case "get_learn":
+                    ModulatedIrSequence seq = gc.capture();
+                    System.out.println(seq);
+                    if (seq != null) {
+                        System.out.println(DecodeIR.DecodedSignal.toPrintString(DecodeIR.decode(seq)));
+                    }   break;
+                case "listen_serial":
+                    System.err.println("Press Ctrl-C to interrupt.");
+                    // Never returns
+                    //gc.listenStringCommands(module);
+                    //} else if (cmd.equals("ccf")) {
+                    //    String s = "";
+                    //    for (int i = arg_i + 1; i < args.length; i++)
+                    //        s = s + args[i];
+                    //    System.out.println(gc2Ccf(s));
+                    break;
+                default:
+                    usage();
+                    break;
+            }
+            gc.close();
+        } catch (HarcHardwareException e) {
+            System.err.println(e.getMessage());
+        } catch (UnknownHostException e) {
+            System.err.println("Host " + hostname + " does not resolve.");
+            System.exit(1);
+        } catch (IOException e) {
+            System.err.println("IOException occured.");
+            System.exit(1);
+        } catch (IrpMasterException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+        System.err.println(output);
+    }
 
     private String hostIp;
     private InetAddress inetAddress;
@@ -274,48 +465,64 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
     private int defaultSerialModule = 1; // mostly right
 
     /**
-     * GlobalCache default connector
-     */
-    private final static int defaultConnector = 1;
-
-    /**
      * The Global Cache IR index.
      * Should turn around at 65536, see GC API docs.
      */
     private int sendIndex;
 
-    public static class GlobalCacheIrTransmitter extends Transmitter {
-        private int module; // 1,2,4,5 (on present models)
-        private int port; // 1,2,3
+    public GlobalCache(String hostIp, boolean verbose, int timeout, boolean compressed) throws UnknownHostException, IOException {
+        //globalCacheModel = GlobalCacheModel.newGlobalCacheModel(model);
+        this.timeout = timeout;
+        this.hostIp = (hostIp != null) ? hostIp : defaultGlobalCacheIP;
+        inetAddress = InetAddress.getByName(hostIp);
+        this.verbose = verbose;
+        this.compressed = compressed;
+        open();
+    }
 
-        private GlobalCacheIrTransmitter(int module, int port) throws NoSuchTransmitterException {
-            if (!GlobalCache.validConnector(port))
-                throw new NoSuchTransmitterException(Integer.toString(port));
+    public GlobalCache(String hostIp, boolean verbose, int timeout) throws UnknownHostException, IOException {
+        this(hostIp, verbose, timeout, false);
+    }
 
-            this.module = module;
-            this.port = port;
+    public GlobalCache(String hostname) throws UnknownHostException, IOException {
+        this(hostname, false, defaultSocketTimeout, false);
+    }
+
+    public GlobalCache(String hostname, boolean verbose, boolean compressed) throws UnknownHostException, IOException {
+        this(hostname, verbose, defaultSocketTimeout, compressed);
+    }
+
+    public GlobalCache(String hostname, boolean verbose) throws UnknownHostException, IOException {
+        this(hostname, verbose, defaultSocketTimeout, false);
+    }
+
+    @Override
+    public URI getUri(String user, String password) {
+        try {
+            return new URI("http", hostIp, null, null);
+        } catch (URISyntaxException ex) {
+            return null;
         }
+    }
 
-        private GlobalCacheIrTransmitter(int port) throws NoSuchTransmitterException {
-            this(invalidDevice, port);
-        }
+    /**
+     * Returns a serial port from the GlobalCache.
+     * @param portNumber 1-based port  number, i.e. use 1 for first, not 0.
+     * @return serial port implementing ICommandLineDevice
+     * @throws NoSuchTransmitterException
+     */
+    public synchronized SerialPort getSerialPort(int portNumber) throws NoSuchTransmitterException {
+        int portIndex = portNumber - 1;
+        if (portIndex < 0 || portIndex > serialPorts.length - 1)
+            throw new NoSuchTransmitterException(Integer.toString(portNumber));
 
-        private GlobalCacheIrTransmitter() {
-            this.module = invalidDevice;
-            this.port = defaultConnector;
+        if (serialPorts[portIndex] == null) {
+            serialPorts[portIndex] = new SerialPort(portNumber);
+        } else {
+            throw new NoSuchTransmitterException("Requested port " + portNumber
+                    + " in GlobalCache " + hostIp + " is already in use.");
         }
-
-        private void normalize(int defaultIrModule) {
-            if (module == invalidDevice) {
-                module = (port - connectorMin)/connectorsPerModule + defaultIrModule;
-                port = (port - connectorMin) % connectorsPerModule + connectorMin;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return Integer.toString(module) + ":" + Integer.toString(port);
-        }
+        return serialPorts[portIndex];
     }
 
     @Override
@@ -358,10 +565,6 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
          return tr;
     }
 
-    private static boolean validConnector(int c) {
-        return (c >= connectorMin) && (c <= connectorsPerModule + connectorMin - 1);
-    }
-
     @Override
     public void setTimeout(int timeout) {
         this.timeout = timeout;
@@ -370,53 +573,6 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
                 tcpSocketChannel.setTimeout(timeout);
             } catch (SocketException ex) {
             }
-    }
-
-    private static String gcJoiner(int[] array) {
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < array.length; i++) {
-            result.append(",").append(array[i]);
-        }
-        return result.toString();
-    }
-
-    private static String gcCompressedJoiner(int[]intro, int[]repeat) {
-        LinkedHashMap<String, Character> index = new LinkedHashMap<>();
-        return gcCompressedJoiner(intro, index) + gcCompressedJoiner(repeat, index);
-    }
-
-    private static String gcCompressedJoiner(int seq[], HashMap<String, Character> index) {
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < seq.length / 2; i++) {
-            String key = "," + seq[2 * i] + "," + seq[2 * i + 1];
-            if (index.containsKey(key))
-                result.append(index.get(key));
-            else {
-                if (index.size() < maxCompressedLetters) {
-                    Character letter = (char) ('A' + (char) index.size());
-                    index.put(key, letter);
-                }
-                result.append(key);
-            }
-        }
-        return result.toString();
-    }
-
-    private static String globalCacheString(IrSignal code, int count, boolean compressed) {
-        int[] intro = code.getIntroPulses();
-        int[] repeat = code.getRepeatPulses();
-        return ((int)code.getFrequency()) + "," + count + "," + (1 + intro.length)
-                + (compressed ? gcCompressedJoiner(intro, repeat) : (gcJoiner(intro) + gcJoiner(repeat)));
-    }
-
-    public GlobalCache(String hostIp, boolean verbose, int timeout, boolean compressed) throws UnknownHostException, IOException {
-        //globalCacheModel = GlobalCacheModel.newGlobalCacheModel(model);
-        this.timeout = timeout;
-        this.hostIp = (hostIp != null) ? hostIp : defaultGlobalCacheIP;
-        inetAddress = InetAddress.getByName(hostIp);
-        this.verbose = verbose;
-        this.compressed = compressed;
-        open();
     }
 
     @Override
@@ -432,22 +588,6 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
         serialPorts = new SerialPort[serialModules.size()];
         relayModules = getRelayModules();
         defaultRelayModule = relayModules.isEmpty() ? invalidDevice : relayModules.get(0);
-    }
-
-    public GlobalCache(String hostIp, boolean verbose, int timeout) throws UnknownHostException, IOException {
-        this(hostIp, verbose, timeout, false);
-    }
-
-    public GlobalCache(String hostname) throws UnknownHostException, IOException {
-        this(hostname, false, defaultSocketTimeout, false);
-    }
-
-    public GlobalCache(String hostname, boolean verbose, boolean compressed) throws UnknownHostException, IOException {
-        this(hostname, verbose, defaultSocketTimeout, compressed);
-    }
-
-    public GlobalCache(String hostname, boolean verbose) throws UnknownHostException, IOException {
-        this(hostname, verbose, defaultSocketTimeout, false);
     }
 
     public String getIp() {
@@ -472,16 +612,6 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
 
     public void setCompressed(boolean compressed) {
         this.compressed = compressed;
-    }
-
-    private static String transmitterAddress(int module, int connector) throws NoSuchTransmitterException {
-        if (connector < connectorMin || connector > connectorsPerModule + connectorMin - 1)
-            throw new NoSuchTransmitterException("" + module + ":" + connector);
-        return "" + module + ":" + connector;
-    }
-
-    private static String transmitterAddress(int module) {
-        return "" + module + ":1";
     }
 
     private synchronized String[] sendCommand(String cmd, int noLines, int delay, String expectedFirstLine) throws IOException {
@@ -521,7 +651,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
                 //}
             }
         } else {
-            ArrayList<String> array = new ArrayList<>();
+            ArrayList<String> array = new ArrayList<>(8);
             String lineRead = tcpSocketChannel.readString(); // may hang
             if (lineRead != null) {
                 array.add(lineRead);
@@ -558,23 +688,6 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
     public boolean sendIr(String cmd) throws IOException {
         String result = sendCommand(cmd);
         return result.startsWith("completeir");
-    }
-
-    /**
-     * Formats a string suitable for sending to a GlobalCache.
-     *
-     * @param code
-     * @param count
-     * @param module
-     * @param connector
-     * @param sendIndex
-     * @param compressed
-     * @return
-     * @throws NoSuchTransmitterException
-     */
-    public static String sendIrString(IrSignal code, int count, int module, int connector, int sendIndex, boolean compressed) throws NoSuchTransmitterException {
-        return sendIrPrefix + "," + transmitterAddress(module, connector)
-                + "," + (sendIndex % 65536) + "," + globalCacheString(code, count, compressed);
     }
 
     public String sendIrString(IrSignal code, int count, int module, int connector) throws NoSuchTransmitterException {
@@ -649,7 +762,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
 
     private ArrayList<Integer> getModules(String moduleType) {
         //String[] dvs = getdevicesResult.split("\n");
-        ArrayList<Integer> modules = new ArrayList<>();
+        ArrayList<Integer> modules = new ArrayList<>(5);
         for (String devicesResult : getdevicesResult) {
             String[] s = devicesResult.split(" ");
             if (s.length > 1 && s[1].startsWith(moduleType))
@@ -800,20 +913,6 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
         return response.startsWith("IR Learner Disabled");
     }
 
-    public static AmxBeaconListener.Node listenBeacon(int timeout) {
-        return AmxBeaconListener.listenFor("-Make", "GlobalCache", timeout);
-    }
-
-    public static AmxBeaconListener.Node listenBeacon() {
-        return listenBeacon(beaconTimeout);
-    }
-
-    public static AmxBeaconListener newListener(AmxBeaconListener.Callback callback, boolean debug) {
-        AmxBeaconListener abl = new AmxBeaconListener(callback,  "-Make", "GlobalCache", debug);
-        abl.start();
-        return abl;
-    }
-
     private InputStreamReader getJsonReader(String thing) throws IOException {
         URL url = new URL("http", hostIp, apiAddressFragment + thing);
         URLConnection urlConnection = url.openConnection();
@@ -853,273 +952,172 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
         return getJsonArray("files");
     }
 
+    public static class GlobalCacheIrTransmitter extends Transmitter {
+        private int module; // 1,2,4,5 (on present models)
+        private int port; // 1,2,3
+
+        private GlobalCacheIrTransmitter(int module, int port) throws NoSuchTransmitterException {
+            if (!GlobalCache.validConnector(port))
+                throw new NoSuchTransmitterException(Integer.toString(port));
+
+            this.module = module;
+            this.port = port;
+        }
+
+        private GlobalCacheIrTransmitter(int port) throws NoSuchTransmitterException {
+            this(invalidDevice, port);
+        }
+
+        private GlobalCacheIrTransmitter() {
+            this.module = invalidDevice;
+            this.port = defaultConnector;
+        }
+
+        private void normalize(int defaultIrModule) {
+            if (module == invalidDevice) {
+                module = (port - connectorMin)/connectorsPerModule + defaultIrModule;
+                port = (port - connectorMin) % connectorsPerModule + connectorMin;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return Integer.toString(module) + ":" + Integer.toString(port);
+        }
+    }
+
     /**
-     * Parses a string intended as command to a GlobalCache and return it as a IrSignal.
-     * Presently only the uncompressed form is parsed.
-     *
-     * @param gcString
-     * @return IrSignal representing the signal, with begin and repeat part.
+     * Possible arguments to the set_IR command.
      */
-    public static IrSignal parse(String gcString) {
-        String[] chunks = gcString.split(",");
-        if (chunks.length < 6)
-            return null;
-        int index = 0;
-        if (!chunks[index++].trim().equals(sendIrPrefix))
-            return null;
+    public enum IrConfiguration {
+        ir, // all
+        sensor, // GC-100, iTach
+        sensorNotify, // GC-100, iTach
+        irNocarrier, // GC-100
+        serial, // iTachFlex
+        irBlaster, // iTach, iTachFlex
+        irtriport, // iTachFlex
+        irtriportBlaster, // iTachFlex
+        ledLighting;   //iTach
 
-        index++; // module, discard
-        index++; // send index, discard
-        int frequency = Integer.parseInt(chunks[index++].trim());
-        index++; // number repetitions, discard
-        int repIndex = Integer.parseInt(chunks[index++].trim());
-        int[] durations = new int[chunks.length - index];
-        double T = 1000000f / (double) frequency; // period time in micro seconds
-        for (int i = 0; i < chunks.length - index; i++)
-            durations[i] = (int) Math.round(Integer.parseInt(chunks[i + index]) * T);
-
-        return new IrSignal(durations, (repIndex - 1) / 2, (durations.length - repIndex + 1) / 2, frequency);
+        @Override
+        public String toString() {
+            return camelCase2uppercase(this.name());
+        }
     }
 
-    private static void usage() {
-        System.err.println("Usagex:");
-        System.err.println("GlobalCache [options] <command> [<argument>]");
-        System.err.println("where options=-# <count>,-h <hostname>,-c <connector>,-m <module>,-b <baudrate>,-t <timeout>,-p <sendirstring>,-v,-B,-j");
-        System.err.println("and command=send_ir,send_serial,listen_serial,set_relay,get_devices,get_version,set_blink,[set|get]_serial,[set|get]_ir,[set|get]_net,[get|set]_state,get_learn,ccf");
-        doExit(IrpUtils.exitUsageError);
+    public enum ModuleType {
+        unknown,
+        ir,         // all
+        //three_ir,   // iTach
+        //irBlaster, // only iTachFlex
+        //irtriport,  // only iTachFlex
+        //irtriportBlaster, // only iTachFlex
+        serial,     // all
+        //one_serial, // iTach
+        relay,      // GC-100
+        //three_relay,// iTach
+        wifi,       // iTach, iTachFlex
+        ethernet,   // iTach, ITachFlex
+        net;
+
+        @Override
+        public String toString() {
+            return camelCase2uppercase(this.name());
+        }
     }
 
-    private static void doExit(int exitcode) {
-        System.exit(exitcode);
-    }
+    public class SerialPort implements ICommandLineDevice, IBytesCommand {
+        private final int portIndex; // 0 or 1, i.e. zero based.
+        private TcpSocketChannel tcpSocketChannel;
 
-    public static void main(String[] args) {
-        //String str = "sendir,4:1,0,38380,1,69,347,173,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,65,22,65,22,65,22,65,22,65,22,65,22,65,22,65,22,22,22,22,22,65,22,22,22,22,22,22,22,22,22,22,22,22,22,65,22,22,22,65,22,65,22,65,22,65,22,65,22,65,22,1527,347,87,22,3692";
-        String hostname = defaultGlobalCacheIP;
-        int connector = 1;
-        int module = 2;
-        int count = 1;
-        boolean verbose = false;
-        boolean beacon = false;
-        int baudrate = 0; // invalid value
-        GlobalCache gc = null;
-        String cmd = null;
-        String arg = null;
-        int arg_i = 0;
-        int timeout = defaultSocketTimeout;
-        String parserFood = null;
-        boolean json = false;
+        /** Do not use, use getSerialPort instead. */
+        private SerialPort(int portNumber) throws NoSuchTransmitterException {
+            portIndex = portNumber - 1;
+            if (portIndex < 0 || portIndex > serialPorts.length - 1)
+                throw new NoSuchTransmitterException(Integer.toString(portNumber));
 
-        if (args.length == 0)
-            usage();
-
-        try {
-            while (arg_i < args.length && args[arg_i].charAt(0) == '-') {
-                switch (args[arg_i]) {
-                    case "-h":
-                        hostname = args[arg_i + 1];
-                        arg_i += 2;
-                        break;
-                    case "-m":
-                        module = Integer.parseInt(args[arg_i + 1]);
-                        arg_i += 2;
-                        break;
-                    case "-c":
-                        connector = Integer.parseInt(args[arg_i + 1]);
-                        arg_i += 2;
-                        break;
-                    case "-#":
-                        count = Integer.parseInt(args[arg_i + 1]);
-                        arg_i += 2;
-                        break;
-                    case "-b":
-                        baudrate = Integer.parseInt(args[arg_i + 1]);
-                        arg_i += 2;
-                        break;
-                    case "-v":
-                        verbose = true;
-                        arg_i++;
-                        break;
-                    case "-t":
-                        timeout = Integer.parseInt(args[arg_i + 1]);
-                        arg_i += 2;
-                        break;
-                    case "-B":
-                        beacon = true;
-                        arg_i++;
-                        break;
-                    case "-j":
-                        json = true;
-                        arg_i++;
-                        break;
-                    case "-p":
-                        parserFood = args[arg_i + 1];
-                        arg_i += 2;
-                        break;
-                    default:
-                        usage();
-                        break;
-                }
-            }
-
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            usage();
-        } catch (NumberFormatException ex) {
-            System.err.println(ex.getMessage());
+            tcpSocketChannel = new TcpSocketChannel(inetAddress, gcFirstSerialPort + portIndex,
+                    timeout, verbose, TcpSocketPort.ConnectionMode.keepAlive);
         }
 
-        if (parserFood != null) {
-            IrSignal sig = parse(parserFood);
-            System.out.println(sig);
-            System.exit(IrpUtils.exitSuccess);
+        @Override
+        public void sendString(String cmd) throws IOException {
+            sendBytes(cmd.getBytes(IrpUtils.dumbCharset));
         }
 
-        String output = "";
-
-        if (beacon) {
-            AmxBeaconListener.Node r = listenBeacon();
-            if (r != null) {
-                String model = r.get("-Model");
-                //GlobalCacheModel gcModel = GlobalCacheModel.newGlobalCacheModel(model);
-
-                //System.err.println(r + gcModel.getName());
-                hostname = r.getInetAddress().getHostName();
-            } else {
-                System.err.println("none found");
-                System.exit(1);
-            }
+        @Override
+        public synchronized String readString(boolean wait) throws IOException {
+            tcpSocketChannel.connect();
+            String result = tcpSocketChannel.readString(wait);
+            tcpSocketChannel.close(false);
+            return result;
         }
 
-
-        try {
-            gc = new GlobalCache(hostname, verbose, timeout);
-
-            if (json) {
-                try {
-                    JsonObject obj = gc.getJsonVersion();
-                    System.out.println(obj);
-                    System.out.println(obj.get("firmwareVersion").asString());
-                    System.out.println(gc.getJsonNetwork());
-                    System.out.println(gc.getJsonSsid());
-                    System.out.println(gc.getJsonConnectors());
-                    System.out.println(gc.getJsonFiles());
-                } catch (IOException ex) {
-                    System.err.println(ex.getMessage());
-                }
-                System.exit(0);
-            }
-
-            if (args.length - 1 < arg_i)
-                System.exit(IrpUtils.exitSuccess);
-
-            cmd = args[arg_i];
-            arg = (args.length > arg_i + 1) ? args[arg_i + 1] : null;
-
-
-            switch (cmd) {
-                case "set_blink":
-                    if (arg == null || !arg.equals("1")) {
-                        gc.setBlink(0);
-                    } else {
-                        gc.setBlink(1);
-                    }   break;
-                case "get_devices":
-                    output = IrpUtils.join(gc.getDevices(), System.getProperty("line.separator"));
-                    break;
-                case "get_version":
-                    output = gc.getVersion(module);
-                    break;
-                case "get_net":
-                    // Only v3
-                    output = gc.getNet();
-                    break;
-                case "set_net":
-                    // Only v3
-                    // Syntax: see API-document
-                    output = gc.setNet(arg);
-                    break;
-                case "get_ir":
-                    //Only v3
-                    output = gc.getIr(module, connector);
-                    break;
-                case "set_ir":
-                    output = gc.setIr(module, connector, arg);
-                    break;
-                case "get_serial":
-                    output = gc.getSerial(module);
-                    break;
-                case "set_serial":
-                    if (baudrate > 0) {
-                        output = gc.setSerial(module, baudrate);
-                    } else {
-                        output = gc.setSerial(module, arg);
-                }   break;
-                case "get_state":
-                    output = gc.getState(module, connector) == 1 ? "on" : "off";
-                    break;
-                case "toggle_state":
-                    output = gc.toggleState(connector) ? "ok" : "not ok";
-                    break;
-                case "set_state":
-                case "set_relay":
-                    // Just a convenience version of the above
-                    output = gc.setState(connector, (arg == null || arg.equals("0") ? 0 : 1)) ? "on" : "off";
-                    break;
-                case "send_ir":
-                    if (arg_i + 2 == args.length) {
-                        output = gc.sendIr(args[arg_i + 1]) ? "ok" : "error";
-                    } else {
-                        StringBuilder ccf = new StringBuilder();
-                        for (int i = arg_i + 1; i < args.length; i++) {
-                            ccf.append(' ').append(args[i]);
-                        }
-
-                        output = gc.sendIr(ccf.toString(), count, module, connector) ? "ok" : "error";
-                    }   break;
-                case "send_serial":
-                    StringBuilder transmit = new StringBuilder();
-                    for (int i = arg_i + 1; i < args.length; i++) {
-                        transmit.append(' ').append(args[i]);
-                }
-
-                    //output = gc.sendStringCommand(module, transmit, 0);
-                    break;
-                case "stop_ir":
-                    gc.stopIr(module, connector);
-                    break;
-                case "get_learn":
-                    ModulatedIrSequence seq = gc.capture();
-                    System.out.println(seq);
-                    if (seq != null) {
-                        System.out.println(DecodeIR.DecodedSignal.toPrintString(DecodeIR.decode(seq)));
-                    }   break;
-                case "listen_serial":
-                    System.err.println("Press Ctrl-C to interrupt.");
-                    // Never returns
-                    //gc.listenStringCommands(module);
-                    //} else if (cmd.equals("ccf")) {
-                    //    String s = "";
-                    //    for (int i = arg_i + 1; i < args.length; i++)
-                    //        s = s + args[i];
-                //    System.out.println(gc2Ccf(s));
-                    break;
-                default:
-                    usage();
-                    break;
-            }
-            gc.close();
-        } catch (HarcHardwareException e) {
-            System.err.println(e.getMessage());
-        } catch (UnknownHostException e) {
-            System.err.println("Host " + hostname + " does not resolve.");
-            System.exit(1);
-        } catch (IOException e) {
-            System.err.println("IOException occured.");
-            System.exit(1);
-        } catch (IrpMasterException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
+        @Override
+        public synchronized String readString() throws IOException {
+            return readString(false);
         }
-        System.err.println(output);
+
+        @Override
+        public synchronized void close() throws IOException {
+            tcpSocketChannel.close(true);
+            serialPorts[portIndex] = null;
+        }
+
+        @Override
+        public synchronized void sendBytes(byte[] cmd) throws IOException {
+            tcpSocketChannel.connect();
+            tcpSocketChannel.getOut().write(cmd);
+            tcpSocketChannel.close(false);
+        }
+
+        @Override
+        public synchronized byte[] readBytes(int length) throws IOException {
+            tcpSocketChannel.connect();
+            byte[] result = Utils.readBytes(tcpSocketChannel.getIn(), length);
+            tcpSocketChannel.close(false);
+            return result;
+        }
+
+        @Override
+        public String getVersion() {
+            return tcpSocketChannel.getVersion();
+        }
+
+        @Override
+        public void setVerbosity(boolean verbosity) {
+            tcpSocketChannel.setVerbosity(verbose);
+        }
+
+        @Override
+        public void setDebug(int debug) {
+            tcpSocketChannel.setDebug(debug);
+        }
+
+        @Override
+        public void setTimeout(int timeout) throws SocketException {
+            tcpSocketChannel.setTimeout(timeout);
+        }
+
+        @Override
+        public boolean isValid() {
+            return tcpSocketChannel.isValid();
+        }
+
+        @Override
+        public void open() {
+            tcpSocketChannel.open();
+        }
+
+        @Override
+        public boolean ready() throws IOException {
+            return tcpSocketChannel.ready();
+        }
+
+        @Override
+        public void flushInput() throws IOException {
+            tcpSocketChannel.flushInput();
+        }
     }
 }

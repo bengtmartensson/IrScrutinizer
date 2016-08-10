@@ -36,6 +36,43 @@ import org.harctoolbox.harchardware.IHarcHardware;
  * and evaluates its output, which is assumed to be in the LIRC mode2 format.
  */
 public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
+    private static int parseMode2Line(String str) {
+        return
+                str == null ? 0
+                : str.startsWith("pulse") ? Integer.parseInt(str.substring(6))
+                : str.startsWith("space") ? -Integer.parseInt(str.substring(6))
+                : 0;
+    }
+
+    private static int timeleft(int timeout, Date old) {
+        return timeout - (int) (((new Date())).getTime() - old.getTime());
+    }
+
+    public static void main(String[] args) {
+        String[] cmd = new String[]{"/usr/local/bin/mode2", "-H", "commandIR"};
+        try {
+            try (LircMode2 lircMode2 = new LircMode2(cmd, true, 3000, 1000, 300)) {
+                lircMode2.open();
+                int noNulls = 0;
+                for (int i = 0; i < 20 && noNulls < 3; i++) {
+                    lircMode2.setTimeout(5000, 1000, 300);
+                    IrSequence seq = lircMode2.receive();
+                    if (seq == null) {
+                        System.err.println("Got null");
+                        noNulls++;
+                    } else {
+                        noNulls = 0;
+                        System.out.println(seq);
+                        ModulatedIrSequence mseq = new ModulatedIrSequence(seq, IrpUtils.defaultFrequency, IrpUtils.invalid);
+                        DecodeIR.invoke(mseq);
+                    }
+                }
+            }
+            Thread.sleep(3000);
+        } catch (InterruptedException | IOException | HarcHardwareException ex) {
+            System.err.println(ex);
+        }
+    }
 
     private boolean verbose;
     private final ArrayList<Integer> data;
@@ -51,7 +88,7 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
     private String[] cmdArray;
 
     private LircMode2(String cmd, String[] cmdArray, boolean verbose, int beginTimeout, int maxLearnLength, int endTimeout, boolean ignoreSillyLines) {
-        this.data = new ArrayList<>();
+        this.data = new ArrayList<>(64);
         this.verbose = verbose;
         this.beginTimeout = beginTimeout;
         this.maxLearnedLength = maxLearnLength;
@@ -115,13 +152,6 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
         progThread = null;
     }
 
-    private static int parseMode2Line(String str) {
-        return
-                str == null ? 0
-                : str.startsWith("pulse") ? Integer.parseInt(str.substring(6))
-                : str.startsWith("space") ? -Integer.parseInt(str.substring(6))
-                : 0;
-    }
 
     @Override
     public void open() throws IOException {
@@ -143,88 +173,11 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    private static class ProgThread extends Thread {
-
-        final BufferedReader outFromProc;
-        final Process process;
-        final LircMode2 lircMode2;
-
-        ProgThread(LircMode2 lircMode2) throws IOException {
-            process = lircMode2.cmd != null
-                    ? Runtime.getRuntime().exec(lircMode2.cmd)
-                    : Runtime.getRuntime().exec(lircMode2.cmdArray);
-            this.lircMode2 = lircMode2;
-
-            outFromProc = new BufferedReader(new InputStreamReader(process.getInputStream(), IrpUtils.dumbCharsetName));
-            if (lircMode2.verbose) {
-                if (lircMode2.cmd != null)
-                    System.err.println("Now started shell command \"" + lircMode2.cmd + "\"");
-                else {
-                    System.err.print("Now started shell command ");
-                    for (String s : lircMode2.cmdArray) {
-                        System.err.print(s + " ");
-                    }
-                    System.err.println();
-                }
-            }
-        }
-
-        @Override
-        public void run() {
-            lircMode2.currentStart = new Date();
-            boolean hasWarned = false;
-            while (!lircMode2.stopRequest) {
-                try {
-                    String line = outFromProc.readLine();
-                    int duration = parseMode2Line(line);
-                    if (duration == 0) {
-                        // silly line read
-                        if (lircMode2.ignoreSillyLines)
-                            continue;
-                        else
-                            break;
-                    }
-                    synchronized (lircMode2.data) {
-                        if (lircMode2.data.isEmpty()) {
-                            if (duration <= 0) // ignore starting spaces
-                                continue;
-                            // if two starting pulses, ignore the first
-                            int next = parseMode2Line(outFromProc.readLine());
-                            if (next < 0) // normal case
-                                lircMode2.data.add(duration);
-
-                            lircMode2.data.add(next);
-                            lircMode2.currentStart = new Date();
-                            hasWarned = false;
-                        } else if (timeleft(lircMode2.maxLearnedLength, lircMode2.currentStart) > 0) {
-                            lircMode2.data.add(duration);
-                        } else {
-                            if (!hasWarned && lircMode2.verbose) {
-                                System.err.println("Warning. Max capture length = "
-                                        + lircMode2.maxLearnedLength + "ms exceeded. Ignoring excess pairs. Capture will resume after next silence period.");
-                                hasWarned = true;
-                            }
-                        }
-                        lircMode2.lastRead = new Date();
-                    }
-                } catch (IOException ex) {
-                    System.err.println(ex);
-                    break;
-                }
-            }
-            if (lircMode2.verbose)
-                System.err.println("done, killing mode2 process");
-            process.destroy();
-        }
-    }
 
     public boolean isAlive() {
         return progThread.isAlive();
     }
 
-    private static int timeleft(int timeout, Date old) {
-        return timeout - (int) (((new Date())).getTime() - old.getTime());
-    }
 
     private void waitInitialSilence() {
         while (data.isEmpty() && timeleft(beginTimeout, currentStart) > 0) {
@@ -320,29 +273,78 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
         return true;
     }
 
-    public static void main(String[] args) {
-        String[] cmd = new String[]{"/usr/local/bin/mode2", "-H", "commandIR"};
-        try {
-            try (LircMode2 lircMode2 = new LircMode2(cmd, true, 3000, 1000, 300)) {
-                lircMode2.open();
-                int noNulls = 0;
-                for (int i = 0; i < 20 && noNulls < 3; i++) {
-                    lircMode2.setTimeout(5000, 1000, 300);
-                    IrSequence seq = lircMode2.receive();
-                    if (seq == null) {
-                        System.err.println("Got null");
-                        noNulls++;
-                    } else {
-                        noNulls = 0;
-                        System.out.println(seq);
-                        ModulatedIrSequence mseq = new ModulatedIrSequence(seq, IrpUtils.defaultFrequency, (double) IrpUtils.invalid);
-                        DecodeIR.invoke(mseq);
+    private static class ProgThread extends Thread {
+
+        final BufferedReader outFromProc;
+        final Process process;
+        final LircMode2 lircMode2;
+
+        ProgThread(LircMode2 lircMode2) throws IOException {
+            process = lircMode2.cmd != null
+                    ? Runtime.getRuntime().exec(lircMode2.cmd)
+                    : Runtime.getRuntime().exec(lircMode2.cmdArray);
+            this.lircMode2 = lircMode2;
+
+            outFromProc = new BufferedReader(new InputStreamReader(process.getInputStream(), IrpUtils.dumbCharsetName));
+            if (lircMode2.verbose) {
+                if (lircMode2.cmd != null)
+                    System.err.println("Now started shell command \"" + lircMode2.cmd + "\"");
+                else {
+                    System.err.print("Now started shell command ");
+                    for (String s : lircMode2.cmdArray) {
+                        System.err.print(s + " ");
                     }
+                    System.err.println();
                 }
             }
-            Thread.sleep(3000);
-        } catch (InterruptedException | IOException | HarcHardwareException ex) {
-            System.err.println(ex);
+        }
+
+        @Override
+        public void run() {
+            lircMode2.currentStart = new Date();
+            boolean hasWarned = false;
+            while (!lircMode2.stopRequest) {
+                try {
+                    String line = outFromProc.readLine();
+                    int duration = parseMode2Line(line);
+                    if (duration == 0) {
+                        // silly line read
+                        if (lircMode2.ignoreSillyLines)
+                            continue;
+                        else
+                            break;
+                    }
+                    synchronized (lircMode2.data) {
+                        if (lircMode2.data.isEmpty()) {
+                            if (duration <= 0) // ignore starting spaces
+                                continue;
+                            // if two starting pulses, ignore the first
+                            int next = parseMode2Line(outFromProc.readLine());
+                            if (next < 0) // normal case
+                                lircMode2.data.add(duration);
+
+                            lircMode2.data.add(next);
+                            lircMode2.currentStart = new Date();
+                            hasWarned = false;
+                        } else if (timeleft(lircMode2.maxLearnedLength, lircMode2.currentStart) > 0) {
+                            lircMode2.data.add(duration);
+                        } else {
+                            if (!hasWarned && lircMode2.verbose) {
+                                System.err.println("Warning. Max capture length = "
+                                        + lircMode2.maxLearnedLength + "ms exceeded. Ignoring excess pairs. Capture will resume after next silence period.");
+                                hasWarned = true;
+                            }
+                        }
+                        lircMode2.lastRead = new Date();
+                    }
+                } catch (IOException ex) {
+                    System.err.println(ex);
+                    break;
+                }
+            }
+            if (lircMode2.verbose)
+                System.err.println("done, killing mode2 process");
+            process.destroy();
         }
     }
 }

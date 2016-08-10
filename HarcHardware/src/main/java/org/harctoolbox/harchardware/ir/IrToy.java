@@ -90,9 +90,9 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
     private final static byte cmdBootloaderMode = (byte) '$';
 
     private final static byte endOfData = (byte) 0xff;
-    private final static int transmitByteCountToken = (int) 't';
-    private final static int transmitCompleteSuccess = (int) 'C';
-    private final static int transmitCompleteFailure = (int) 'F';
+    private final static int transmitByteCountToken = 't';
+    private final static int transmitCompleteSuccess = 'C';
+    private final static int transmitCompleteFailure = 'F';
 
     // Versions strings are exactly 4 chars in length, see http://dangerousprototypes.com/docs/USB_IR_Toy:_IRman_decoder_mode
     private final static int lengthVersionString = 4;
@@ -104,6 +104,49 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
     private final static int powerPin = 5;
     private final static int receivePin = 3;
     private final static int sendingPin = 4;
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        String portName = "/dev/ttyACM0";
+        IrToy toy = null;
+        try {
+            toy = new IrToy(portName);
+            toy.open();
+            if (args.length >= 1 && args[0].equals("-b"))
+                toy.bootloaderMode();
+            else {
+                //int[] data = new int[]{889, 889, 1778, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 90886};
+                System.out.println(toy.getVersion());
+                //String result = toy.selftest();
+                //System.out.println(result);
+                toy.setLed(true);
+                toy.setLedMute(false);
+                IrSignal signal = new IrSignal("../IrpMaster/data/IrpProtocols.ini", "nec1", "D=122 F=26");
+                boolean success = toy.sendIr(signal, 10, null);
+                //String success = toy.selftest();
+                toy.setPin(powerPin, true);
+                toy.setPin(receivePin, true);
+                toy.setPin(sendingPin, true);
+
+                System.out.println(success);
+            }
+        } catch (NoSuchPortException ex) {
+            System.err.println("Port for IRToy " + portName + " was not found");
+        } catch (PortInUseException ex) {
+            System.err.println("Port for IRToy in use");
+        } catch (HarcHardwareException | UnsupportedCommOperationException | IOException | IrpMasterException ex) {
+            System.err.println(ex.getMessage());
+        } finally {
+            if (toy != null) {
+                try {
+                    toy.close();
+                } catch (IOException ex) {
+                }
+            }
+        }
+    }
 
     private boolean stopCaptureRequest = true;
     private String protocolVersion;
@@ -245,7 +288,7 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
     private byte[] toByteArray(int[] data) {
         byte[] buf = new byte[2*data.length];
         for (int i = 0; i < data.length; i++) {
-            int periods = (int)Math.round(((double)data[i])/period);
+            int periods = (int)Math.round(data[i]/period);
             buf[2*i] = (byte)(periods / 256);
             buf[2*i+1] = (byte) (periods % 256);
         }
@@ -258,7 +301,7 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
     private int[] recv() throws IOException  {
         int[] result = null;
         try {
-            ArrayList<Integer> array = new ArrayList<>();
+            ArrayList<Integer> array = new ArrayList<>(16);
             stopCaptureRequest = false;
             long maxLearnLengthMicroSeconds = maxLearnLength * 1000L;
             long sum = 0;
@@ -294,7 +337,7 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
         int count = read2Bytes();
         //System.err.println(t1);System.err.println(t2);System.err.println(t3);System.err.println(count);System.err.println(onTimes);
         //return (2*PICClockFrequency)/((double)(t3 - t1));
-        return ((double)count)/(((double) onTimes) * IrpUtils.microseconds2seconds) ;
+        return count/(onTimes * IrpUtils.microseconds2seconds) ;
     }
 
     @Override
@@ -397,7 +440,7 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
     }
 
     private int byte2unsignedInt(byte b) {
-        return b >= 0 ? (int) b : b + 256;
+        return b >= 0 ? b : b + 256;
     }
 
     private String readString(int length) throws IOException {
@@ -479,48 +522,6 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
         throw new UnsupportedOperationException("Not supported due to hardware restrictions.");
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        String portName = "/dev/ttyACM0";
-        IrToy toy = null;
-        try {
-            toy = new IrToy(portName);
-            toy.open();
-            if (args.length >= 1 && args[0].equals("-b"))
-                toy.bootloaderMode();
-            else {
-                //int[] data = new int[]{889, 889, 1778, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 889, 90886};
-                System.out.println(toy.getVersion());
-                //String result = toy.selftest();
-                //System.out.println(result);
-                toy.setLed(true);
-                toy.setLedMute(false);
-                IrSignal signal = new IrSignal("../IrpMaster/data/IrpProtocols.ini", "nec1", "D=122 F=26");
-                boolean success = toy.sendIr(signal, 10, null);
-                //String success = toy.selftest();
-                toy.setPin(powerPin, true);
-                toy.setPin(receivePin, true);
-                toy.setPin(sendingPin, true);
-
-                System.out.println(success);
-            }
-        } catch (NoSuchPortException ex) {
-            System.err.println("Port for IRToy " + portName + " was not found");
-        } catch (PortInUseException ex) {
-            System.err.println("Port for IRToy in use");
-        } catch (HarcHardwareException | UnsupportedCommOperationException | IOException | IrpMasterException ex) {
-            System.err.println(ex.getMessage());
-        } finally {
-            if (toy != null) {
-                try {
-                    toy.close();
-                } catch (IOException ex) {
-                }
-            }
-        }
-    }
 
     @Override
     public void setDebug(int debug) {

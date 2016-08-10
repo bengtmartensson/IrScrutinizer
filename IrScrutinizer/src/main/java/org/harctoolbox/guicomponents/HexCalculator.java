@@ -17,6 +17,8 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.guicomponents;
 
+import java.io.IOException;
+
 public class HexCalculator extends HarcPanel {
     private static final String versionString = "0.3.0";
     private static final String helpText =
@@ -91,6 +93,12 @@ public class HexCalculator extends HarcPanel {
         reverseComplementHexTextField.setText(invalidString);
         statusLine.setStatus(str);
     }
+
+    @Override
+    public void close() throws IOException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

@@ -55,7 +55,7 @@ public class CapturingHardwareManager {
         this.tabbedPane = tabbedPane;
         this.startButton = startButton;
         this.startButton.setEnabled(false);
-        table = new LinkedHashMap<>();
+        table = new LinkedHashMap<>(16);
     }
 
     public Collection<ICapturingHardware<?>> getCapturingHardware() {

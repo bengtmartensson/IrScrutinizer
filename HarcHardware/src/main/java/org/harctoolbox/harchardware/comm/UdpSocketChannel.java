@@ -37,13 +37,25 @@ import org.harctoolbox.IrpMaster.IrpUtils;
  * It should therefore throw low-level exceptions, not HarcHardwareException.
  */
 public class UdpSocketChannel {
+    private final static int BUFFERSIZE = 65000;
+    public static void main(String[] args) {
+        try {
+            UdpSocketChannel ch = new UdpSocketChannel("irtrans", 21000, 2000, true);
+            ch.sendString("snd philips_37pfl9603,power_toggle");
+            String response = ch.readString();
+            System.out.println(response);
+            ch.close();
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
     private final InetAddress inetAddress;
     private final int portNumber;
     private boolean verbose;
     private DatagramSocket socket = null;
     private PrintStream outStream = null;
 
-    private final static int BUFFERSIZE = 65000;
     private final byte[] byteBuffer = new byte[BUFFERSIZE];
 
     public UdpSocketChannel(InetAddress inetAddress, int portNumber, int timeout, boolean verbose) throws UnknownHostException, SocketException {
@@ -72,25 +84,6 @@ public class UdpSocketChannel {
 
     public void sendString(String string) throws IOException {
         send(string.getBytes("US-ASCII"));
-    }
-
-    private class FilteredStream extends FilterOutputStream {
-
-        FilteredStream(OutputStream stream) {
-            super(stream);
-        }
-
-        @Override
-        public void write(byte b[]) throws IOException {
-            send(b);
-        }
-
-        @Override
-        public void write(byte b[], int off, int len) throws IOException {
-            byte[] buf = new byte[len];
-            System.arraycopy(b, off, buf, 0, len);
-            send(buf);
-        }
     }
 
     public void close() throws IOException {
@@ -140,15 +133,22 @@ public class UdpSocketChannel {
     public void setDebug(int debug) {
     }
 
-    public static void main(String[] args) {
-        try {
-            UdpSocketChannel ch = new UdpSocketChannel("irtrans", 21000, 2000, true);
-            ch.sendString("snd philips_37pfl9603,power_toggle");
-            String response = ch.readString();
-            System.out.println(response);
-            ch.close();
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
+    private class FilteredStream extends FilterOutputStream {
+
+        FilteredStream(OutputStream stream) {
+            super(stream);
+        }
+
+        @Override
+        public void write(byte b[]) throws IOException {
+            send(b);
+        }
+
+        @Override
+        public void write(byte b[], int off, int len) throws IOException {
+            byte[] buf = new byte[len];
+            System.arraycopy(b, off, buf, 0, len);
+            send(buf);
         }
     }
 }

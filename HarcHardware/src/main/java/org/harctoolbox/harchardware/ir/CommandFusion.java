@@ -43,46 +43,6 @@ import org.harctoolbox.harchardware.comm.LocalSerialPortRaw;
  */
 public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawIrSender, ICapture {
 
-    @Override
-    public void setDebug(int debug) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    // USB parameters:
-    //    VID = 0403
-    //    PID = 6001
-
-    /*
-    From http://www.commandfusion.com/wiki2/hardware/cflink/ir-module
-    Error numbers:
-    003 = Invalid Port Number
-    004 = Invalid Module Number
-    450 = Invalid IR Format Type
-    451 = Invalid IR Database Parameters
-    452 = Invalid IR Memory Parameters
-    453 = Invalid IR Raw Hex Code
-    454 = Invalid CF IR format
-    */
-
-    private static enum Status {
-        ok,
-        timeout,
-        error
-    }
-
-    private static class Payload {
-        public String command;
-        public String data;
-
-        @Override
-        public String toString() {
-            return "command \"" + command + "\", data \"" + data + "\"";
-        }
-    }
-
-    private int beginTimeout;
-    private int middleTimeout;
-    private int endingTimeout;
-
     private final static int defaultBeginTimeout = 20000;
     private final static int defaultMiddleTimeout = 2000;
     private final static int defaultEndingTimeout = -1;
@@ -112,6 +72,58 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     private static final int stopBits = 1;
     private static final LocalSerialPort.Parity parity = LocalSerialPort.Parity.NONE;
     private static final LocalSerialPort.FlowControl defaultFlowControl = LocalSerialPort.FlowControl.NONE;
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        String portName = defaultPortName;
+        CommandFusion commandFusion = null;
+        boolean verbose = true;
+        boolean send = true;
+        try {
+            commandFusion = new CommandFusion(portName, verbose);
+            commandFusion.open();
+            System.out.println("Version: " + commandFusion.getVersion());
+            if (send) {
+                IrSignal irSignal = new IrSignal("/local/irscrutinizer/IrpProtocols.ini", "rc5", "D=0 F=0");
+                boolean success = commandFusion.sendIr(irSignal, 1, null);
+                //boolean success = w.sendIr(0, 556, 18);
+                System.out.println(success ? "Sending succeeded" : "Sending failed");
+            } else {
+                System.out.println("Press a key");
+                ModulatedIrSequence seq = commandFusion.capture();
+                if (seq == null) {
+                    System.err.println("No input");
+                    commandFusion.close();
+                    System.exit(1);
+                }
+                System.out.println(seq);
+                DecodeIR.invoke(seq);
+            }
+        } catch (IOException ex) {
+            System.err.println("exception: " + ex.toString() + ex.getMessage());
+            //ex.printStackTrace();
+        } catch (NoSuchPortException ex) {
+            System.err.println("No such port: " + portName);
+        } catch (PortInUseException ex) {
+            System.err.println("Port " + portName + " in use.");
+        } catch (HarcHardwareException | UnsupportedCommOperationException ex) {
+            System.err.println(ex.getMessage());
+        } catch (IrpMasterException ex) {
+            Logger.getLogger(CommandFusion.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (commandFusion != null)
+                try {
+                    commandFusion.close();
+                } catch (IOException ex) {
+                    System.err.println(ex.getMessage());
+                }
+        }
+        System.exit(0);
+    }
+    private int beginTimeout;
+    private int middleTimeout;
+    private int endingTimeout;
     private boolean stopRequested = false;
     private int serialTimeout = 30000;//12345;
     private String versionString = "n/a";
@@ -138,6 +150,13 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         this.serialTimeout = beginTimeout;
         this.middleTimeout = middleTimeout;
     }
+    @Override
+    public void setDebug(int debug) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    // USB parameters:
+    //    VID = 0403
+    //    PID = 6001
 
     @Override
     public void open() throws HarcHardwareException, IOException {
@@ -393,53 +412,30 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         return versionString;
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        String portName = defaultPortName;
-        CommandFusion commandFusion = null;
-        boolean verbose = true;
-        boolean send = true;
-        try {
-            commandFusion = new CommandFusion(portName, verbose);
-            commandFusion.open();
-            System.out.println("Version: " + commandFusion.getVersion());
-            if (send) {
-                IrSignal irSignal = new IrSignal("/local/irscrutinizer/IrpProtocols.ini", "rc5", "D=0 F=0");
-                boolean success = commandFusion.sendIr(irSignal, 1, null);
-                //boolean success = w.sendIr(0, 556, 18);
-                System.out.println(success ? "Sending succeeded" : "Sending failed");
-            } else {
-                System.out.println("Press a key");
-                ModulatedIrSequence seq = commandFusion.capture();
-                if (seq == null) {
-                    System.err.println("No input");
-                    commandFusion.close();
-                    System.exit(1);
-                }
-                System.out.println(seq);
-                DecodeIR.invoke(seq);
-            }
-        } catch (IOException ex) {
-            System.err.println("exception: " + ex.toString() + ex.getMessage());
-            //ex.printStackTrace();
-        } catch (NoSuchPortException ex) {
-            System.err.println("No such port: " + portName);
-        } catch (PortInUseException ex) {
-            System.err.println("Port " + portName + " in use.");
-        } catch (HarcHardwareException | UnsupportedCommOperationException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IrpMasterException ex) {
-            Logger.getLogger(CommandFusion.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (commandFusion != null)
-                try {
-                    commandFusion.close();
-                } catch (IOException ex) {
-                    System.err.println(ex.getMessage());
-                }
+    /*
+    From http://www.commandfusion.com/wiki2/hardware/cflink/ir-module
+    Error numbers:
+    003 = Invalid Port Number
+    004 = Invalid Module Number
+    450 = Invalid IR Format Type
+    451 = Invalid IR Database Parameters
+    452 = Invalid IR Memory Parameters
+    453 = Invalid IR Raw Hex Code
+    454 = Invalid CF IR format
+    */
+
+    private static enum Status {
+        ok,
+        timeout,
+        error
+    }
+    private static class Payload {
+        public String command;
+        public String data;
+
+        @Override
+        public String toString() {
+            return "command \"" + command + "\", data \"" + data + "\"";
         }
-        System.exit(0);
     }
 }

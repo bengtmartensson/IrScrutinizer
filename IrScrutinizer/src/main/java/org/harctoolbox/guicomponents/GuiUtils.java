@@ -41,7 +41,7 @@ public class GuiUtils implements Serializable {
     private boolean offerStackTrace = false;
     private final String programName;
     private final JFrame frame;
-    boolean verbose = false;
+    private boolean verbose = false;
 
     public interface EmergencyFixer {
         public void fix();

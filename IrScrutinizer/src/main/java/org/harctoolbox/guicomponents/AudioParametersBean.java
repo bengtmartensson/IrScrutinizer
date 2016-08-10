@@ -119,19 +119,19 @@ public class AudioParametersBean extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        sampleFrequencyComboBox = new javax.swing.JComboBox();
-        channelsComboBox = new javax.swing.JComboBox();
+        sampleFrequencyComboBox = new javax.swing.JComboBox<>();
+        channelsComboBox = new javax.swing.JComboBox<>();
         omitTrailingGapCheckBox = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        sampleSizeComboBox = new javax.swing.JComboBox();
+        sampleSizeComboBox = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
 
-        sampleFrequencyComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "44100", "48000", "96000", "192000" }));
+        sampleFrequencyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "44100", "48000", "96000", "192000" }));
         sampleFrequencyComboBox.setSelectedIndex(1);
         sampleFrequencyComboBox.setToolTipText("Sample frequency of the generated signal.");
 
-        channelsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2" }));
+        channelsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2" }));
         channelsComboBox.setToolTipText("Number of channnels in generated signal. Normal is one channel. If two, the second channel is just exactly the opposite of the first.");
 
         omitTrailingGapCheckBox.setMnemonic('O');
@@ -142,7 +142,7 @@ public class AudioParametersBean extends javax.swing.JPanel {
 
         jLabel2.setText("# Channels");
 
-        sampleSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "8", "16" }));
+        sampleSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "8", "16" }));
         sampleSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sampleSizeComboBoxActionPerformed(evt);
@@ -198,12 +198,12 @@ public class AudioParametersBean extends javax.swing.JPanel {
     }//GEN-LAST:event_sampleSizeComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox channelsComboBox;
+    private javax.swing.JComboBox<String> channelsComboBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JCheckBox omitTrailingGapCheckBox;
-    private javax.swing.JComboBox sampleFrequencyComboBox;
-    private javax.swing.JComboBox sampleSizeComboBox;
+    private javax.swing.JComboBox<String> sampleFrequencyComboBox;
+    private javax.swing.JComboBox<String> sampleSizeComboBox;
     // End of variables declaration//GEN-END:variables
 }

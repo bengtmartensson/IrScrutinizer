@@ -51,7 +51,7 @@ public class Utils {
     public static String getMacAddress(InetAddress address) {
         try {
             NetworkInterface ni = NetworkInterface.getByInetAddress(address);
-            StringBuilder macAddress = new StringBuilder();
+            StringBuilder macAddress = new StringBuilder(32);
             if (ni != null) {
                 byte[] mac = ni.getHardwareAddress();
                 if (mac != null) {

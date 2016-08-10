@@ -1,5 +1,6 @@
 package org.harctoolbox.IrpMaster;
 
+import static org.testng.Assert.fail;
 import static org.testng.AssertJUnit.assertEquals;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -53,7 +54,7 @@ public class RepeatFinderNGTest {
             RepeatFinder repeatFinder = new RepeatFinder(modulatedIrSequence);
             assertEquals(repeatFinder.getRepeatFinderData().getNumberRepeats(), 3);
         } catch (IrpMasterException ex) {
-            assert(false);
+            fail();
         }
     }
 }

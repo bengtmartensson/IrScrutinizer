@@ -21,7 +21,6 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
-import org.harctoolbox.harchardware.comm.TcpSocketPort;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -34,6 +33,7 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.Version;
 import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.comm.TcpSocketChannel;
+import org.harctoolbox.harchardware.comm.TcpSocketPort;
 
 /**
  * A <a href="http://www.lirc.org">LIRC</a> client, talking to a remote LIRC
@@ -42,11 +42,143 @@ import org.harctoolbox.harchardware.comm.TcpSocketChannel;
  */
 public class LircClient implements IHarcHardware, IRemoteCommandIrSender, IIrSenderStop, ITransmitter {
 
-    private String lircServerIp;
     public final static int lircDefaultPort = 8765;
-    private int lircPort;
     public final static String defaultLircIP = "127.0.0.1"; // localhost
     public final static int defaultTimeout = 5000; // WinLirc can be really slow...
+    private final static int P_BEGIN = 0;
+    private final static int P_MESSAGE = 1;
+    private final static int P_STATUS = 2;
+    private final static int P_DATA = 3;
+    private final static int P_N = 4;
+    private final static int P_DATA_N = 5;
+    private final static int P_END = 6;
+    private static JCommander argumentParser;
+    private static CommandLineArgs commandLineArgs = new CommandLineArgs();
+
+    private static void usage(int exitcode) {
+        StringBuilder str = new StringBuilder(256);
+        argumentParser.usage(str);
+
+        (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
+        doExit(exitcode); // placifying FindBugs...
+    }
+
+    private static void doExit(int exitcode) {
+        System.exit(exitcode);
+    }
+
+    private static void doExit(boolean success) {
+        if (!success)
+            System.err.println("Failed");
+        System.exit(success ? IrpUtils.exitSuccess : IrpUtils.exitIoError);
+    }
+    private static void doExit(String message, int exitcode) {
+        System.err.println(message);
+        System.exit(exitcode);
+    }
+
+    /**
+     * @param args the command line arguments.
+     */
+    public static void main(String[] args) {
+        argumentParser = new JCommander(commandLineArgs);
+        argumentParser.setCaseSensitiveOptions(false);
+        argumentParser.setAllowAbbreviatedOptions(true);
+        argumentParser.setProgramName("LircClient");
+
+        CommandSendOnce cmdSendOnce = new CommandSendOnce();
+        argumentParser.addCommand("send_once", cmdSendOnce);
+        CommandSendStart cmdSendStart = new CommandSendStart();
+        argumentParser.addCommand("send_start", cmdSendStart);
+        CommandSendStop cmdSendStop = new CommandSendStop();
+        argumentParser.addCommand("send_stop", cmdSendStop);
+        CommandList cmdList = new CommandList();
+        argumentParser.addCommand("list", cmdList);
+        CommandSetTransmitters cmdSetTransmitters = new CommandSetTransmitters();
+        argumentParser.addCommand("set_transmitters", cmdSetTransmitters);
+        CommandSimulate cmdSimulate = new CommandSimulate();
+        argumentParser.addCommand("simulate", cmdSimulate);
+        CommandVersion cmdVersion = new CommandVersion();
+        argumentParser.addCommand("version", cmdVersion);
+
+        try {
+            argumentParser.parse(args);
+        } catch (ParameterException ex) {
+            System.err.println(ex.getMessage());
+            usage(IrpUtils.exitUsageError);
+        }
+
+        if (commandLineArgs.helpRequested)
+            usage(IrpUtils.exitSuccess);
+
+        if (commandLineArgs.versionRequested) {
+            System.out.println(Version.versionString);
+            doExit(true);
+        }
+
+        String[] splitAddress = commandLineArgs.address.split(":");
+        String hostname = splitAddress[0];
+        int port = splitAddress.length == 2 ? Integer.parseInt(splitAddress[1]) : commandLineArgs.port;
+        try (LircClient lircClient = new LircClient(hostname, port,
+                commandLineArgs.verbose, commandLineArgs.timeout)) {
+
+            if (commandLineArgs.listen) {
+                lircClient.readLoop();
+                System.exit(IrpUtils.exitSuccess);
+            }
+
+            if (argumentParser.getParsedCommand() == null)
+                usage(IrpUtils.exitUsageError);
+            boolean success = true;
+            switch (argumentParser.getParsedCommand()) {
+                case "send_once":
+                    String remote = cmdSendOnce.commands.get(0);
+                    cmdSendOnce.commands.remove(0);
+                    for (String command : cmdSendOnce.commands) {
+                        success = lircClient.sendIrCommand(remote, command, cmdSendOnce.count, null);
+                        if (!success)
+                            break;
+                    }
+                    break;
+                case "send_start":
+                    success = lircClient.sendIrCommandRepeat(cmdSendStart.args.get(0), cmdSendStart.args.get(1), null);
+                    break;
+                case "send_stop":
+                    success = lircClient.stopIr(cmdSendStop.args.get(0), cmdSendStop.args.get(1), null);
+                    break;
+                case "list":
+                    String[] result = cmdList.remote == null ? lircClient.getRemotes()
+                            : lircClient.getCommands(cmdList.remote.get(0));
+                    for (String s : result)
+                        System.out.println(s);
+                    break;
+                case "set_transmitters":
+                    if (cmdSetTransmitters.transmitters.size() < 1)
+                        doExit("Command \"set_transmitters\" requires at least one argument", IrpUtils.exitUsageError);
+
+                    LircTransmitter xmitter = new LircTransmitter(cmdSetTransmitters.transmitters);
+                    success = lircClient.setTransmitters(xmitter);
+                    break;
+                case "simulate":
+                    doExit("Command \"simulate\" not implemented", IrpUtils.exitUsageError);
+                    break;
+                case "version":
+                    System.out.println(lircClient.getVersion());
+                    break;
+                default:
+                    doExit("Unknown command", IrpUtils.exitUsageError);
+            }
+            doExit(success);
+        } catch (IOException ex) {
+            doExit(ex.getMessage(), IrpUtils.exitFatalProgramFailure);
+        } catch (IndexOutOfBoundsException ex) {
+            doExit("Too few arguments to command", IrpUtils.exitUsageError);
+        } catch (NoSuchTransmitterException ex) {
+            doExit("No such transmitter " + ex.getMessage(), IrpUtils.exitSemanticUsageError);
+        }
+    }
+    private String lircServerIp;
+    private int lircPort;
 
     private final int portMin = 1;
     private final int portMax = 8;
@@ -132,28 +264,12 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender, IIrSen
         this.debug = debug;
     }
 
-    private final static int P_BEGIN = 0;
-    private final static int P_MESSAGE = 1;
-    private final static int P_STATUS = 2;
-    private final static int P_DATA = 3;
-    private final static int P_N = 4;
-    private final static int P_DATA_N = 5;
-    private final static int P_END = 6;
 
     @Override
     public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
 
-    private static class BadPacketException extends Exception {
-        BadPacketException() {
-            super();
-        }
-
-        BadPacketException(String message) {
-            super(message);
-        }
-    }
 
     protected void readLoop() throws IOException {
         TcpSocketChannel tcpSocketChannel = new TcpSocketChannel(lircServerIp, lircPort,
@@ -183,7 +299,7 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender, IIrSen
 
         tcpSocketChannel.sendString(packet + '\n');
 
-        ArrayList<String> result = new ArrayList<>();
+        ArrayList<String> result = new ArrayList<>(8);
         int status = 0;
         try {
             int state = P_BEGIN;
@@ -397,27 +513,14 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender, IIrSen
         return version != null;
     }
 
-    private static void usage(int exitcode) {
-        StringBuilder str = new StringBuilder();
-        argumentParser.usage(str);
+    private static class BadPacketException extends Exception {
+        BadPacketException() {
+            super();
+        }
 
-        (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
-        doExit(exitcode); // placifying FindBugs...
-    }
-
-    private static void doExit(int exitcode) {
-        System.exit(exitcode);
-    }
-
-    private static void doExit(boolean success) {
-        if (!success)
-            System.err.println("Failed");
-        System.exit(success ? IrpUtils.exitSuccess : IrpUtils.exitIoError);
-    }
-
-    private static void doExit(String message, int exitcode) {
-        System.err.println(message);
-        System.exit(exitcode);
+        BadPacketException(String message) {
+            super(message);
+        }
     }
 
     private final static class CommandLineArgs {
@@ -450,31 +553,31 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender, IIrSen
         private int count = 1;
 
         @Parameter(description = "remote command...")
-        private List<String> commands = new ArrayList<>();
+        private List<String> commands = new ArrayList<>(16);
     }
 
     @Parameters(commandDescription = "Send one commands many times")
     public final static class CommandSendStart {
         @Parameter(arity = 2, description = "remote command")
-        private List<String> args = new ArrayList<>();
+        private List<String> args = new ArrayList<>(2);
     }
 
     @Parameters(commandDescription = "Send one commands many times")
     public final static class CommandSendStop {
         @Parameter(arity = 2, description = "remote command")
-        private List<String> args = new ArrayList<>();
+        private List<String> args = new ArrayList<>(2);
     }
 
     @Parameters(commandDescription = "Inquire the known remotes, or the commands in a remote")
     public final static class CommandList {
         @Parameter(arity = 1, description = "[remote]")
-        private List<String> remote = new ArrayList<>();
+        private List<String> remote = new ArrayList<>(1);
     }
 
     @Parameters(commandDescription = "Set transmitters")
     public final static class CommandSetTransmitters {
         @Parameter(description = "transmitter...")
-        private List<Integer> transmitters = new ArrayList<>();
+        private List<Integer> transmitters = new ArrayList<>(8);
     }
 
     @Parameters(commandDescription = "Simulate sending")
@@ -485,107 +588,4 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender, IIrSen
     public final static class CommandVersion {
     }
 
-    private static JCommander argumentParser;
-    private static CommandLineArgs commandLineArgs = new CommandLineArgs();
-
-    /**
-     * @param args the command line arguments.
-     */
-    public static void main(String[] args) {
-        argumentParser = new JCommander(commandLineArgs);
-        argumentParser.setCaseSensitiveOptions(false);
-        argumentParser.setAllowAbbreviatedOptions(true);
-        argumentParser.setProgramName("LircClient");
-
-        CommandSendOnce cmdSendOnce = new CommandSendOnce();
-        argumentParser.addCommand("send_once", cmdSendOnce);
-        CommandSendStart cmdSendStart = new CommandSendStart();
-        argumentParser.addCommand("send_start", cmdSendStart);
-        CommandSendStop cmdSendStop = new CommandSendStop();
-        argumentParser.addCommand("send_stop", cmdSendStop);
-        CommandList cmdList = new CommandList();
-        argumentParser.addCommand("list", cmdList);
-        CommandSetTransmitters cmdSetTransmitters = new CommandSetTransmitters();
-        argumentParser.addCommand("set_transmitters", cmdSetTransmitters);
-        CommandSimulate cmdSimulate = new CommandSimulate();
-        argumentParser.addCommand("simulate", cmdSimulate);
-        CommandVersion cmdVersion = new CommandVersion();
-        argumentParser.addCommand("version", cmdVersion);
-
-        try {
-            argumentParser.parse(args);
-        } catch (ParameterException ex) {
-            System.err.println(ex.getMessage());
-            usage(IrpUtils.exitUsageError);
-        }
-
-        if (commandLineArgs.helpRequested)
-            usage(IrpUtils.exitSuccess);
-
-        if (commandLineArgs.versionRequested) {
-            System.out.println(Version.versionString);
-            doExit(true);
-        }
-
-        String[] splitAddress = commandLineArgs.address.split(":");
-        String hostname = splitAddress[0];
-        int port = splitAddress.length == 2 ? Integer.parseInt(splitAddress[1]) : commandLineArgs.port;
-        try (LircClient lircClient = new LircClient(hostname, port,
-                commandLineArgs.verbose, commandLineArgs.timeout)) {
-
-            if (commandLineArgs.listen) {
-                lircClient.readLoop();
-                System.exit(IrpUtils.exitSuccess);
-            }
-
-            if (argumentParser.getParsedCommand() == null)
-                usage(IrpUtils.exitUsageError);
-            boolean success = true;
-            switch (argumentParser.getParsedCommand()) {
-                case "send_once":
-                    String remote = cmdSendOnce.commands.get(0);
-                    cmdSendOnce.commands.remove(0);
-                    for (String command : cmdSendOnce.commands) {
-                        success = lircClient.sendIrCommand(remote, command, cmdSendOnce.count, null);
-                        if (!success)
-                            break;
-                    }
-                    break;
-                case "send_start":
-                    success = lircClient.sendIrCommandRepeat(cmdSendStart.args.get(0), cmdSendStart.args.get(1), null);
-                    break;
-                case "send_stop":
-                    success = lircClient.stopIr(cmdSendStop.args.get(0), cmdSendStop.args.get(1), null);
-                    break;
-                case "list":
-                    String[] result = cmdList.remote == null ? lircClient.getRemotes()
-                            : lircClient.getCommands(cmdList.remote.get(0));
-                    for (String s : result)
-                        System.out.println(s);
-                    break;
-                case "set_transmitters":
-                    if (cmdSetTransmitters.transmitters.size() < 1)
-                        doExit("Command \"set_transmitters\" requires at least one argument", IrpUtils.exitUsageError);
-
-                    LircTransmitter xmitter = new LircTransmitter(cmdSetTransmitters.transmitters);
-                    success = lircClient.setTransmitters(xmitter);
-                    break;
-                case "simulate":
-                    doExit("Command \"simulate\" not implemented", IrpUtils.exitUsageError);
-                    break;
-                case "version":
-                    System.out.println(lircClient.getVersion());
-                    break;
-                default:
-                    doExit("Unknown command", IrpUtils.exitUsageError);
-            }
-            doExit(success);
-        } catch (IOException ex) {
-            doExit(ex.getMessage(), IrpUtils.exitFatalProgramFailure);
-        } catch (IndexOutOfBoundsException ex) {
-            doExit("Too few arguments to command", IrpUtils.exitUsageError);
-        } catch (NoSuchTransmitterException ex) {
-            doExit("No such transmitter " + ex.getMessage(), IrpUtils.exitSemanticUsageError);
-        }
-    }
 }

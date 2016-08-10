@@ -40,49 +40,8 @@ public class Ethers {
 
     private static String pathname = defaultPathname;
 
-    private HashMap<String, String> table = null;
-
     public static void setPathname(String pathname_) {
         pathname = pathname_;
-    }
-
-    public Ethers(String filename) throws FileNotFoundException {
-        table = new HashMap<>();
-        BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(filename), Charset.defaultCharset()));
-
-        try {
-            for (String line = r.readLine(); line != null; line = r.readLine()) {
-                if (!line.startsWith("#")) {
-                    String[] str = line.split("[\\s]+");
-                    if (str.length == 2) {
-                        String mac = str[0];
-                        String hostname = str[1];
-                        table.put(hostname, mac);
-                    }
-                }
-            }
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        } finally {
-            try {
-                r.close();
-            } catch (IOException ex) {
-                System.err.println(ex.getMessage());
-            }
-        }
-    }
-
-    public Ethers() throws FileNotFoundException {
-        this(pathname);
-    }
-
-    /**
-     * Returns MAC address.
-     * @param hostname
-     * @return Mac-address belonging to the host in the argument, if found.
-     */
-    public String getMac(String hostname) {
-        return table.get(hostname);
     }
 
     public static String getEtherAddress(String hostname, String ethersPathname) {
@@ -109,5 +68,42 @@ public class Ethers {
             System.out.println(result != null ? result : "Not found");
         } else
             System.err.println("Usage:\n\tethers host");
+    }
+    private HashMap<String, String> table = null;
+    public Ethers(String filename) throws FileNotFoundException {
+        table = new HashMap<>(64);
+        BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(filename), Charset.defaultCharset()));
+
+        try {
+            for (String line = r.readLine(); line != null; line = r.readLine()) {
+                if (!line.startsWith("#")) {
+                    String[] str = line.split("[\\s]+");
+                    if (str.length == 2) {
+                        String mac = str[0];
+                        String hostname = str[1];
+                        table.put(hostname, mac);
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        } finally {
+            try {
+                r.close();
+            } catch (IOException ex) {
+                System.err.println(ex.getMessage());
+            }
+        }
+    }
+    public Ethers() throws FileNotFoundException {
+        this(pathname);
+    }
+    /**
+     * Returns MAC address.
+     * @param hostname
+     * @return Mac-address belonging to the host in the argument, if found.
+     */
+    public String getMac(String hostname) {
+        return table.get(hostname);
     }
 }

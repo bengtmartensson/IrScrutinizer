@@ -247,8 +247,7 @@ final public class IrRemote {
             return new Command(code.getName(), null, "lircdriver:" + driver, parameters);
         } catch (IrpMasterException ex) {
             // this cannot happen
-            assert(false);
-            return null;
+            throw new InternalError();
         }
     }
 

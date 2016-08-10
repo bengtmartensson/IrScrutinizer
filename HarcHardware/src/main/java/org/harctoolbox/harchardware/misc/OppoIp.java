@@ -59,6 +59,38 @@ public class OppoIp implements Closeable {
     private final static String requestName = "request";
     private final static String ackName = "ack";
 
+    private static InetAddress myBroadcastAddress() {
+        InetAddress myIp;
+        try {
+            myIp = InetAddress.getByName(Utils.getHostname());
+            byte[] ipNumeric = myIp.getAddress();
+            ipNumeric[3] = 0;
+            return InetAddress.getByAddress(ipNumeric);
+        } catch (UnknownHostException ex) {
+            return null;
+        }
+    }
+
+    private static String dom2String(Document doc) throws TransformerException {
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        StringWriter writer = new StringWriter();
+        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+        String output = writer.getBuffer().toString().replaceAll("\n|\r", "");
+        return output;
+    }
+
+    /**
+     * Just for testing.
+     * @param args
+     */
+    public static void main(String[] args) {
+        try (OppoIp oppoIp = new OppoIp(true)) {
+            oppoIp.sendCommand(args[0]);
+        } catch (IOException | TransformerException ex) {
+            Logger.getLogger(OppoIp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     private boolean verbose;
 
     private InetAddress ip;
@@ -108,18 +140,6 @@ public class OppoIp implements Closeable {
         String[] arr = answer.split(":");
         ip = InetAddress.getByName(arr[1].trim());
         port = Integer.parseInt(arr[2].trim());
-    }
-
-    private static InetAddress myBroadcastAddress() {
-        InetAddress myIp;
-        try {
-            myIp = InetAddress.getByName(Utils.getHostname());
-            byte[] ipNumeric = myIp.getAddress();
-            ipNumeric[3] = 0;
-            return InetAddress.getByAddress(ipNumeric);
-        } catch (UnknownHostException ex) {
-            return null;
-        }
     }
 
     private void signIn() throws TransformerException, IOException {
@@ -195,25 +215,5 @@ public class OppoIp implements Closeable {
             request.appendChild(signinType);
         }
         return doc;
-    }
-
-    private static String dom2String(Document doc) throws TransformerException {
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        StringWriter writer = new StringWriter();
-        transformer.transform(new DOMSource(doc), new StreamResult(writer));
-        String output = writer.getBuffer().toString().replaceAll("\n|\r", "");
-        return output;
-    }
-
-    /**
-     * Just for testing.
-     * @param args
-     */
-    public static void main(String[] args) {
-        try (OppoIp oppoIp = new OppoIp(true)) {
-            oppoIp.sendCommand(args[0]);
-        } catch (IOException | TransformerException ex) {
-            Logger.getLogger(OppoIp.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 }

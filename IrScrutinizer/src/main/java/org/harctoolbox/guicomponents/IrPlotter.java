@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -335,10 +336,10 @@ public class IrPlotter extends HarcPanel {
         if (xmin == xmax)
             return new int[0];
         double goalNoTicks = ((double)pixelWidth)/pixelsPerTick;
-        double goalWidth = ((double)(xmax-xmin))/goalNoTicks; // microseconds
+        double goalWidth = (xmax-xmin)/goalNoTicks; // microseconds
         int tickWidth = rounder((int)Math.round(goalWidth));
         useMilliSeconds = tickWidth >= 5000;
-        int newXmin = (int) ((double) xmin)/tickWidth*tickWidth;
+        int newXmin = xmin/tickWidth*tickWidth;
         this.xmin = newXmin;
         int noTicks = (int) Math.ceil(((double)(xmax-newXmin))/tickWidth) + 1;
         if (noTicks <= 0) {
@@ -502,5 +503,9 @@ public class IrPlotter extends HarcPanel {
     @Override
     public String getIconPath() {
         return "/icons/Crystal-Clear/22x22/actions/pert_chart.png";
+    }
+
+    @Override
+    public void close() throws IOException {
     }
 }

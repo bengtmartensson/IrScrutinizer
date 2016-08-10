@@ -42,7 +42,7 @@ public abstract class RemoteSetImporter extends ReaderImporter implements IRemot
 
     protected Remote setupRemote() {
 
-        HashMap<String, HashMap<String, String>> appParams = new HashMap<>();
+        HashMap<String, HashMap<String, String>> appParams = new HashMap<>(8);
         appParams.put(getClass().getSimpleName(), null);
         Remote.MetaData metaData =new Remote.MetaData(IrpUtils.basename(origin));
         Remote remote = new Remote(metaData,

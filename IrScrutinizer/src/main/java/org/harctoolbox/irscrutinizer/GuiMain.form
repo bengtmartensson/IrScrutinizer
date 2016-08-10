@@ -3079,6 +3079,9 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gcdbManufacturerComboBoxActionPerformed"/>
                           </Events>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JComboBox" name="gcdbDeviceTypeComboBox">
                           <Properties>
@@ -3090,6 +3093,9 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gcdbDeviceTypeComboBoxActionPerformed"/>
                           </Events>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JComboBox" name="gcdbCodeSetComboBox">
                           <Properties>
@@ -3098,6 +3104,9 @@
                             </Property>
                             <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel44">
                           <Properties>
@@ -3246,6 +3255,9 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="controlTowerManufacturerComboBoxActionPerformed"/>
                           </Events>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JComboBox" name="controlTowerDeviceTypeComboBox">
                           <Properties>
@@ -3257,6 +3269,9 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="controlTowerDeviceTypeComboBoxActionPerformed"/>
                           </Events>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JComboBox" name="controlTowerCodeSetComboBox">
                           <Properties>
@@ -3265,6 +3280,9 @@
                             </Property>
                             <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel50">
                           <Properties>
@@ -3410,6 +3428,9 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irdbManufacturerComboBoxActionPerformed"/>
                           </Events>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JComboBox" name="irdbDeviceTypeComboBox">
                           <Properties>
@@ -3423,6 +3444,9 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irdbDeviceTypeComboBoxActionPerformed"/>
                           </Events>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JComboBox" name="irdbCodeSetComboBox">
                           <Properties>
@@ -3433,6 +3457,9 @@
                             </Property>
                             <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel45">
                           <Properties>
@@ -3531,6 +3558,7 @@
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="girrFileImporterBean">
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, girrImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;GirrImporter&gt;"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importGirrSignalHelpButton">
@@ -3601,6 +3629,7 @@
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="lircFileImporterBean">
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, lircImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;LircImporter&gt;"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importLircHelpButton">
@@ -3714,6 +3743,7 @@
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="rmduImporterBean">
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, rmduImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;RmduImporter&gt;"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importRemoteMasterHelpButton">
@@ -3784,6 +3814,7 @@
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="irTransFileImporterBean">
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, irTransImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;IrTransImporter&gt;"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importIrTransHelpButton">
@@ -3834,6 +3865,7 @@
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="ccfFileImporterBean">
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, ccfImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;CcfImporter&gt;"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importProntoClassicHelpButton">
@@ -3884,6 +3916,7 @@
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="xcfFileImporterBean">
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, xcfImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;XcfImporter&gt;"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importProntoProfessionalHelpButton">
@@ -3947,6 +3980,7 @@
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="ictFileImporterBean">
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, ictImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;IctImporter&gt;"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel15">
@@ -4012,6 +4046,7 @@
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="mode2FileImporterBean">
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, new Mode2Importer())"/>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Mode2Importer&gt;"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel17">
@@ -4175,6 +4210,9 @@
                                   <Events>
                                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rawNameColumnComboBoxActionPerformed"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                                  </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JComboBox" name="rawCodeColumnComboBox1">
                                   <Properties>
@@ -4200,6 +4238,9 @@
                                   <Events>
                                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rawCodeColumnComboBox1ActionPerformed"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                                  </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JCheckBox" name="includeSubsequenctColumnsCheckBox1">
                                   <Properties>
@@ -4235,6 +4276,9 @@
                                   <Events>
                                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="csvRawSeparatorComboBoxActionPerformed"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                                  </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="jLabel30">
                                   <Properties>
@@ -4244,6 +4288,7 @@
                                 <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="csvRawFileImporterBean">
                                   <AuxValues>
                                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, csvRawImporter)"/>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;CsvRawImporter&gt;"/>
                                   </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JButton" name="importTextRawHelpButton">
@@ -4308,6 +4353,7 @@
                                 <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="rawLineCsvFileImporterBean">
                                   <AuxValues>
                                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, new RawLineImporter())"/>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;RawLineImporter&gt;"/>
                                   </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JButton" name="importTextRawLineBasedHelpButton">
@@ -4463,6 +4509,9 @@
                                   <Events>
                                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="parametrizedNameColumnComboBoxActionPerformed"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                                  </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JComboBox" name="protocolColumnComboBox">
                                   <Properties>
@@ -4490,6 +4539,9 @@
                                   <Events>
                                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="protocolColumnComboBoxActionPerformed"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                                  </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JComboBox" name="dColumnComboBox">
                                   <Properties>
@@ -4517,6 +4569,9 @@
                                   <Events>
                                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dColumnComboBoxActionPerformed"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                                  </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JComboBox" name="sColumnComboBox">
                                   <Properties>
@@ -4544,6 +4599,9 @@
                                   <Events>
                                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sColumnComboBoxActionPerformed"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                                  </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JComboBox" name="fColumnComboBox">
                                   <Properties>
@@ -4571,6 +4629,9 @@
                                   <Events>
                                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fColumnComboBoxActionPerformed"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                                  </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="jLabel18">
                                   <Properties>
@@ -4605,10 +4666,14 @@
                                   <Events>
                                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="parametrizedCsvSeparatorComboBoxActionPerformed"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                                  </AuxValues>
                                 </Component>
                                 <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="csvParametrizedFileImporterBean">
                                   <AuxValues>
                                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, csvParametrizedImporter)"/>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;CsvParametrizedImporter&gt;"/>
                                   </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="jLabel14">
@@ -4633,6 +4698,9 @@
                                   <Events>
                                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="parametrizedBaseComboBoxActionPerformed"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                                  </AuxValues>
                                 </Component>
                                 <Component class="javax.swing.JButton" name="importTextParametrizedHelpButton">
                                   <Properties>
@@ -4721,6 +4789,7 @@
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="waveFileImporterBean">
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, waveImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;WaveImporter&gt;"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="importWaveDivideCarrierCheckBox1">
@@ -4782,6 +4851,7 @@
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="cmlFileImporterBean">
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, cmlImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;CmlImporter&gt;"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importCmlHelpButton">
@@ -4832,6 +4902,7 @@
                         <Component class="org.harctoolbox.irscrutinizer.importer.FileImporterBean" name="commandFusionFileImporterBean">
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.FileImporterBean&lt;&gt;(guiUtils, properties, commandFusionImporter)"/>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;CommandFusionImporter&gt;"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="importCommandFusionHelpButton">
@@ -5006,6 +5077,9 @@
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportFormatComboBoxActionPerformed"/>
                   </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                  </AuxValues>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel6">
                   <Properties>
@@ -5248,6 +5322,9 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="girrStylesheetTypeComboBoxActionPerformed"/>
                           </Events>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel33">
                           <Properties>
@@ -5397,6 +5474,9 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sendirModuleComboBoxActionPerformed"/>
                           </Events>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JComboBox" name="sendirConnectorComboBox">
                           <Properties>
@@ -5414,6 +5494,9 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sendirConnectorComboBoxActionPerformed"/>
                           </Events>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JCheckBox" name="sendirCompressedCheckBox">
                           <Properties>
@@ -5523,6 +5606,9 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="prontoModelComboBoxActionPerformed"/>
                           </Events>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JTextField" name="prontoExportScreenWidthTextField">
                           <Properties>
@@ -5661,6 +5747,9 @@
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportRepeatComboBoxActionPerformed"/>
                   </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                  </AuxValues>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel16">
                   <Properties>
@@ -7011,6 +7100,9 @@
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="noTransmitsComboBoxActionPerformed"/>
                   </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                  </AuxValues>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel5">
                   <Properties>

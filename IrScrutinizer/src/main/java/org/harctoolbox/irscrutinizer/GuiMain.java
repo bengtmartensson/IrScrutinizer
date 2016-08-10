@@ -47,11 +47,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import javax.comm.DriverGenUnix;
+import javax.swing.AbstractButton;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JPopupMenu.Separator;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTable;
 import javax.swing.TransferHandler;
 import javax.swing.table.DefaultTableModel;
@@ -238,6 +238,7 @@ public class GuiMain extends javax.swing.JFrame {
      * @throws java.text.ParseException
      * @throws URISyntaxException
      */
+    @SuppressWarnings({"OverridableMethodCallInConstructor", "OverridableMethodCallInConstructor"})
     public GuiMain(String applicationHome, String propsfilename, boolean verbose,
             int debug, int userlevel, List<String> arguments)
             throws ParserConfigurationException, SAXException, IOException, IncompatibleArgumentException, java.text.ParseException, URISyntaxException {
@@ -795,7 +796,7 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private Command.CommandTextFormat[] setupExtraTextFormats() {
-        ArrayList<Command.CommandTextFormat> formats = new ArrayList<>();
+        ArrayList<Command.CommandTextFormat> formats = new ArrayList<>(8);
         if (properties.getExportGenerateUei())
             formats.add(new UeiFormatter());
         if (properties.getExportGenerateShortCcf())
@@ -1212,7 +1213,7 @@ public class GuiMain extends javax.swing.JFrame {
         } catch (NumberFormatException | NullPointerException ex) {
         }
         int f = properties.getFallbackFrequency();
-        return f > 0 ? (double) f : IrpUtils.defaultFrequency;
+        return f > 0 ? f : IrpUtils.defaultFrequency;
     }
 
     private void saveSignals(LinkedHashMap<String, Command> commands) throws FileNotFoundException, IOException, IrpMasterException {
@@ -1296,7 +1297,7 @@ public class GuiMain extends javax.swing.JFrame {
 
     private String analysisString() {
         String linefeed = System.getProperty("line.separator", "\n");
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(128);
         str.append("DecodeIR: ");
         str.append(decodeIRTextField.getText());
         str.append(linefeed);
@@ -1314,18 +1315,18 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void setupAnalyzerMenu() {
         for (Component component : analyzerBasisMenu.getMenuComponents()) {
-            int numberAtMenuItem = Integer.parseInt(((JRadioButtonMenuItem) component).getText());
+            int numberAtMenuItem = Integer.parseInt(((AbstractButton) component).getText());
             if (numberAtMenuItem == properties.getAnalyzerBase()) {
-                ((JRadioButtonMenuItem) component).setSelected(true);
+                ((AbstractButton) component).setSelected(true);
                 ExchangeIR.setAnalyzerBasis(numberAtMenuItem);
             } else
-                ((JRadioButtonMenuItem) component).setSelected(false);
+                ((AbstractButton) component).setSelected(false);
         }
     }
 
     private static ModulatedIrSequence concatenateAsSequence(Collection<Command>commands) throws IrpMasterException {
-        double frequency = (double) IrpUtils.invalid;
-        double dutyCycle = (double) IrpUtils.invalid;
+        double frequency = IrpUtils.invalid;
+        double dutyCycle = IrpUtils.invalid;
         IrSequence seq = new IrSequence();
         for (Command c : commands) {
             if (frequency < 0) // take the first sensible frequency
@@ -1509,7 +1510,7 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private <T extends TableModel> void copyTableToClipboard(JTable table, boolean useSelection) {
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(1024);
         for (int i = 0; i < table.getRowCount(); i++) {
             if (!useSelection || table.isRowSelected(i)) {
                 if (str.length() > 0)
@@ -1765,7 +1766,7 @@ public class GuiMain extends javax.swing.JFrame {
         enableSubFormats(supportsEmbedded);
         exportRepeatComboBox.setEnabled(supportsEmbedded && exportGenerateSendIrCheckBox.isSelected() || exporter.considersRepetitions());
         //enableRemoteExporers(IRemoteSetExporter.class.isInstance(exporter));
-        if (!formatName.equals((String) exportFormatComboBox.getSelectedItem()))
+        if (!formatName.equals(exportFormatComboBox.getSelectedItem()))
             exportFormatComboBox.setSelectedItem(formatName);
         exportFormatManager.setMenuSelection(formatName);
     }
@@ -1954,9 +1955,9 @@ public class GuiMain extends javax.swing.JFrame {
         gcdbImportButton = new javax.swing.JButton();
         globalCacheDBBrowseButton = new javax.swing.JButton();
         apiKeyButton = new javax.swing.JButton();
-        gcdbManufacturerComboBox = new javax.swing.JComboBox();
-        gcdbDeviceTypeComboBox = new javax.swing.JComboBox();
-        gcdbCodeSetComboBox = new javax.swing.JComboBox();
+        gcdbManufacturerComboBox = new javax.swing.JComboBox<>();
+        gcdbDeviceTypeComboBox = new javax.swing.JComboBox<>();
+        gcdbCodeSetComboBox = new javax.swing.JComboBox<>();
         jLabel44 = new javax.swing.JLabel();
         jLabel47 = new javax.swing.JLabel();
         jLabel48 = new javax.swing.JLabel();
@@ -1965,9 +1966,9 @@ public class GuiMain extends javax.swing.JFrame {
         controlTowerPanel = new javax.swing.JPanel();
         controlTowerImportButton = new javax.swing.JButton();
         controlTowerBrowseButton = new javax.swing.JButton();
-        controlTowerManufacturerComboBox = new javax.swing.JComboBox();
-        controlTowerDeviceTypeComboBox = new javax.swing.JComboBox();
-        controlTowerCodeSetComboBox = new javax.swing.JComboBox();
+        controlTowerManufacturerComboBox = new javax.swing.JComboBox<>();
+        controlTowerDeviceTypeComboBox = new javax.swing.JComboBox<>();
+        controlTowerCodeSetComboBox = new javax.swing.JComboBox<>();
         jLabel50 = new javax.swing.JLabel();
         jLabel51 = new javax.swing.JLabel();
         jLabel52 = new javax.swing.JLabel();
@@ -1976,9 +1977,9 @@ public class GuiMain extends javax.swing.JFrame {
         irdbPanel = new javax.swing.JPanel();
         irdbBrowseButton = new javax.swing.JButton();
         irdbImportButton = new javax.swing.JButton();
-        irdbManufacturerComboBox = new javax.swing.JComboBox();
-        irdbDeviceTypeComboBox = new javax.swing.JComboBox();
-        irdbCodeSetComboBox = new javax.swing.JComboBox();
+        irdbManufacturerComboBox = new javax.swing.JComboBox<>();
+        irdbDeviceTypeComboBox = new javax.swing.JComboBox<>();
+        irdbCodeSetComboBox = new javax.swing.JComboBox<>();
         jLabel45 = new javax.swing.JLabel();
         jLabel46 = new javax.swing.JLabel();
         jLabel49 = new javax.swing.JLabel();
@@ -2021,12 +2022,12 @@ public class GuiMain extends javax.swing.JFrame {
         csvImportPanel = new javax.swing.JPanel();
         parametrizedRawTabbedPane = new javax.swing.JTabbedPane();
         csvRawImportPanel = new javax.swing.JPanel();
-        rawNameColumnComboBox = new javax.swing.JComboBox();
-        rawCodeColumnComboBox1 = new javax.swing.JComboBox();
+        rawNameColumnComboBox = new javax.swing.JComboBox<>();
+        rawCodeColumnComboBox1 = new javax.swing.JComboBox<>();
         includeSubsequenctColumnsCheckBox1 = new javax.swing.JCheckBox();
         jLabel25 = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
-        csvRawSeparatorComboBox = new javax.swing.JComboBox();
+        csvRawSeparatorComboBox = new javax.swing.JComboBox<>();
         jLabel30 = new javax.swing.JLabel();
         csvRawFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, csvRawImporter);
         importTextRawHelpButton = new javax.swing.JButton();
@@ -2035,19 +2036,19 @@ public class GuiMain extends javax.swing.JFrame {
         rawLineCsvFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, new RawLineImporter());
         importTextRawLineBasedHelpButton = new javax.swing.JButton();
         parametrizedCsvImportPanel = new javax.swing.JPanel();
-        parametrizedNameColumnComboBox = new javax.swing.JComboBox();
-        protocolColumnComboBox = new javax.swing.JComboBox();
-        dColumnComboBox = new javax.swing.JComboBox();
-        sColumnComboBox = new javax.swing.JComboBox();
-        fColumnComboBox = new javax.swing.JComboBox();
+        parametrizedNameColumnComboBox = new javax.swing.JComboBox<>();
+        protocolColumnComboBox = new javax.swing.JComboBox<>();
+        dColumnComboBox = new javax.swing.JComboBox<>();
+        sColumnComboBox = new javax.swing.JComboBox<>();
+        fColumnComboBox = new javax.swing.JComboBox<>();
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
-        parametrizedCsvSeparatorComboBox = new javax.swing.JComboBox();
+        parametrizedCsvSeparatorComboBox = new javax.swing.JComboBox<>();
         csvParametrizedFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, csvParametrizedImporter);
         jLabel14 = new javax.swing.JLabel();
-        parametrizedBaseComboBox = new javax.swing.JComboBox();
+        parametrizedBaseComboBox = new javax.swing.JComboBox<>();
         importTextParametrizedHelpButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
@@ -2063,7 +2064,7 @@ public class GuiMain extends javax.swing.JFrame {
         commandFusionFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, commandFusionImporter);
         importCommandFusionHelpButton = new javax.swing.JButton();
         exportPanel = new javax.swing.JPanel();
-        exportFormatComboBox = new javax.swing.JComboBox();
+        exportFormatComboBox = new javax.swing.JComboBox<>();
         jLabel6 = new javax.swing.JLabel();
         exportDirectoryTextField = new javax.swing.JTextField();
         exportDirSelectButton = new javax.swing.JButton();
@@ -2082,21 +2083,21 @@ public class GuiMain extends javax.swing.JFrame {
         jLabel28 = new javax.swing.JLabel();
         girrSchemaLinkCheckBox = new javax.swing.JCheckBox();
         girrFatRawCheckBox = new javax.swing.JCheckBox();
-        girrStylesheetTypeComboBox = new javax.swing.JComboBox();
+        girrStylesheetTypeComboBox = new javax.swing.JComboBox<>();
         jLabel33 = new javax.swing.JLabel();
         exportGirrHelpButton = new javax.swing.JButton();
         waveExportOptionsPanel = new javax.swing.JPanel();
         exportAudioParametersBean = new org.harctoolbox.guicomponents.AudioParametersBean();
         exportWaveHelpButton = new javax.swing.JButton();
         sendirExportOptionsPanel = new javax.swing.JPanel();
-        sendirModuleComboBox = new javax.swing.JComboBox();
-        sendirConnectorComboBox = new javax.swing.JComboBox();
+        sendirModuleComboBox = new javax.swing.JComboBox<>();
+        sendirConnectorComboBox = new javax.swing.JComboBox<>();
         sendirCompressedCheckBox = new javax.swing.JCheckBox();
         jLabel10 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         exportSendirHelpButton = new javax.swing.JButton();
         prontoClassicExportOptionsPanel = new javax.swing.JPanel();
-        prontoModelComboBox = new javax.swing.JComboBox();
+        prontoModelComboBox = new javax.swing.JComboBox<>();
         prontoExportScreenWidthTextField = new javax.swing.JTextField();
         prontoExportScreenHeightTextField = new javax.swing.JTextField();
         prontoExportButtonWidthTextField = new javax.swing.JTextField();
@@ -2108,7 +2109,7 @@ public class GuiMain extends javax.swing.JFrame {
         exportParametricRemoteButton = new javax.swing.JButton();
         exportGenerateUeiCheckBox = new javax.swing.JCheckBox();
         exportGenerateSendIrCheckBox = new javax.swing.JCheckBox();
-        exportRepeatComboBox = new javax.swing.JComboBox();
+        exportRepeatComboBox = new javax.swing.JComboBox<>();
         jLabel16 = new javax.swing.JLabel();
         exportHelpButton = new javax.swing.JButton();
         exportRawRemoteButton1 = new javax.swing.JButton();
@@ -2178,7 +2179,7 @@ public class GuiMain extends javax.swing.JFrame {
         genericSerialPanel = new javax.swing.JPanel();
         genericSerialSenderBean = new org.harctoolbox.irscrutinizer.sendinghardware.GenericSerialSenderBean(guiUtils);
         sendingGenericSerialPortHelpButton = new javax.swing.JButton();
-        noTransmitsComboBox = new javax.swing.JComboBox();
+        noTransmitsComboBox = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
         transmitScrutinizedButton = new javax.swing.JButton();
         transmitGenerateButton2 = new javax.swing.JButton();
@@ -3480,7 +3481,7 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        gcdbManufacturerComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Select me to load" }));
+        gcdbManufacturerComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select me to load" }));
         gcdbManufacturerComboBox.setToolTipText(properties.getGlobalCacheApiKey().isEmpty() ? "API-Key not entered" : null);
         gcdbManufacturerComboBox.setEnabled(!properties.getGlobalCacheApiKey().isEmpty());
         gcdbManufacturerComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -3598,7 +3599,7 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        controlTowerManufacturerComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Select me to load" }));
+        controlTowerManufacturerComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select me to load" }));
         controlTowerManufacturerComboBox.setToolTipText(properties.getGlobalCacheApiKey().isEmpty() ? "API-Key not entered" : null);
         controlTowerManufacturerComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -3708,14 +3709,14 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        irdbManufacturerComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Select me to load" }));
+        irdbManufacturerComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select me to load" }));
         irdbManufacturerComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 irdbManufacturerComboBoxActionPerformed(evt);
             }
         });
 
-        irdbDeviceTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "__" }));
+        irdbDeviceTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "__" }));
         irdbDeviceTypeComboBox.setEnabled(false);
         irdbDeviceTypeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -3723,7 +3724,7 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        irdbCodeSetComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--" }));
+        irdbCodeSetComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--" }));
         irdbCodeSetComboBox.setEnabled(false);
 
         jLabel45.setText("Manufacturer");
@@ -4155,7 +4156,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         importTabbedPane.addTab("mode2", mode2ImportPanel);
 
-        rawNameColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
+        rawNameColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
         rawNameColumnComboBox.setSelectedIndex(properties.getRawNameColumn());
         rawNameColumnComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4163,7 +4164,7 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        rawCodeColumnComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "-1" }));
+        rawCodeColumnComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "-1" }));
         rawCodeColumnComboBox1.setSelectedItem(Integer.toString(properties.getCodeColumn()));
         rawCodeColumnComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4299,7 +4300,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         parametrizedRawTabbedPane.addTab("Raw, line-based", rawLineCsvImportPanel);
 
-        parametrizedNameColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
+        parametrizedNameColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
         parametrizedNameColumnComboBox.setSelectedIndex(properties.getParametricNameColumn() - 1);
         parametrizedNameColumnComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4307,7 +4308,7 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        protocolColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
+        protocolColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
         protocolColumnComboBox.setSelectedIndex(properties.getProtocolColumn());
         protocolColumnComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4315,7 +4316,7 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        dColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
+        dColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
         dColumnComboBox.setSelectedIndex(properties.getDColumn());
         dColumnComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4323,7 +4324,7 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        sColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
+        sColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
         sColumnComboBox.setSelectedIndex(properties.getSColumn());
         sColumnComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4331,7 +4332,7 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        fColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "-1" }));
+        fColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "-1" }));
         fColumnComboBox.setSelectedItem(Integer.toString(properties.getFColumn()));
         fColumnComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4358,7 +4359,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         jLabel14.setText("F");
 
-        parametrizedBaseComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2", "8", "10", "16" }));
+        parametrizedBaseComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2", "8", "10", "16" }));
         parametrizedBaseComboBox.setSelectedIndex(properties.getParametricNumberBaseIndex());
         parametrizedBaseComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4730,7 +4731,7 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        girrStylesheetTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "xslt", "css" }));
+        girrStylesheetTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "xslt", "css" }));
         girrStylesheetTypeComboBox.setSelectedItem(properties.getGirrStyleSheetType());
         girrStylesheetTypeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4827,7 +4828,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         exportSpecificOptionsTabbedPane.addTab("Wave", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_audio.png")), waveExportOptionsPanel); // NOI18N
 
-        sendirModuleComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "4", "5" }));
+        sendirModuleComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "4", "5" }));
         sendirModuleComboBox.setSelectedItem(Integer.toString(properties.getExportSendIrModule()));
         sendirModuleComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4835,7 +4836,7 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        sendirConnectorComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3" }));
+        sendirConnectorComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3" }));
         sendirConnectorComboBox.setSelectedItem(Integer.toString(properties.getExportSendIrConnector()));
         sendirConnectorComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -5036,7 +5037,7 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        exportRepeatComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0", "1", "2", "3", "4", "5", "7", "10", "15", "20", "30", "50", "70", "100" }));
+        exportRepeatComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "0", "1", "2", "3", "4", "5", "7", "10", "15", "20", "30", "50", "70", "100" }));
         exportRepeatComboBox.setSelectedItem(Integer.toString(properties.getExportNoRepeats()));
         exportRepeatComboBox.setEnabled(this.exportGenerateSendIrCheckBox.isSelected());
         exportRepeatComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -5891,7 +5892,7 @@ public class GuiMain extends javax.swing.JFrame {
 
         sendingHardwareTabbedPane.addTab("Generic serial port", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/filesystems/socket.png")), genericSerialPanel); // NOI18N
 
-        noTransmitsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "10", "12", "15", "20", "30", "40", "50", "70", "100" }));
+        noTransmitsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "10", "12", "15", "20", "30", "40", "50", "70", "100" }));
         noTransmitsComboBox.setSelectedItem(Integer.toString(properties.getTransmitGeneratedCount()));
         noTransmitsComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -7225,9 +7226,8 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_ignoreEndingSilenceCheckBoxMenuItemActionPerformed
 
     private void testSignalMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testSignalMenuItemActionPerformed
-        IrSignal irSignal = null;
         try {
-            irSignal = new IrSignal(testSignalCcf);
+            IrSignal irSignal = new IrSignal(testSignalCcf);
             if (rawPanel.isShowing()) {
                 RawIrSignal cir = new RawIrSignal(irSignal, "test_signal", "Generated signal (NEC1 12.34 56)", true);
                 registerRawCommand(cir);
@@ -9039,7 +9039,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton capturingIrWidgetHardwareHelpButton;
     private javax.swing.JButton capturingMode2HardwareHelpButton;
     private javax.swing.JPanel capturingPanel;
-    private org.harctoolbox.irscrutinizer.importer.FileImporterBean ccfFileImporterBean;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CcfImporter> ccfFileImporterBean;
     private javax.swing.JPanel ccfImportPanel;
     private javax.swing.JRadioButtonMenuItem ccfRadioButtonMenuItem;
     private javax.swing.JMenuItem checkUpToDateMenuItem;
@@ -9051,19 +9051,19 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem clearRawCommentMenuItem;
     private javax.swing.JMenuItem clearSignalMenuItem;
     private javax.swing.JMenuItem clonePlotMenuItem;
-    private org.harctoolbox.irscrutinizer.importer.FileImporterBean cmlFileImporterBean;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CmlImporter> cmlFileImporterBean;
     private javax.swing.JPanel cmlImportPanel;
     private org.harctoolbox.guicomponents.CapturingSendingBean commandFusionCapturingSendingBean;
-    private org.harctoolbox.irscrutinizer.importer.FileImporterBean commandFusionFileImporterBean;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CommandFusionImporter> commandFusionFileImporterBean;
     private javax.swing.JPanel commandFusionImportPanel;
     private javax.swing.JPanel commandFusionSendPanel;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean commandFusionSendingSerialPortBean;
     private org.harctoolbox.guicomponents.Console console;
     private javax.swing.JButton controlTowerBrowseButton;
-    private javax.swing.JComboBox controlTowerCodeSetComboBox;
-    private javax.swing.JComboBox controlTowerDeviceTypeComboBox;
+    private javax.swing.JComboBox<String> controlTowerCodeSetComboBox;
+    private javax.swing.JComboBox<String> controlTowerDeviceTypeComboBox;
     private javax.swing.JButton controlTowerImportButton;
-    private javax.swing.JComboBox controlTowerManufacturerComboBox;
+    private javax.swing.JComboBox<String> controlTowerManufacturerComboBox;
     private javax.swing.JPanel controlTowerPanel;
     private org.harctoolbox.irscrutinizer.importer.TreeImporter controlTowerTreeImporter;
     private javax.swing.JPanel cookedPanel;
@@ -9073,11 +9073,11 @@ public class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.guicomponents.CopyPastePopupMenu copyPopupMenu;
     private javax.swing.JMenuItem creatingUserMenuItem;
     private javax.swing.JPanel csvImportPanel;
-    private org.harctoolbox.irscrutinizer.importer.FileImporterBean csvParametrizedFileImporterBean;
-    private org.harctoolbox.irscrutinizer.importer.FileImporterBean csvRawFileImporterBean;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CsvParametrizedImporter> csvParametrizedFileImporterBean;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CsvRawImporter> csvRawFileImporterBean;
     private javax.swing.JPanel csvRawImportPanel;
-    private javax.swing.JComboBox csvRawSeparatorComboBox;
-    private javax.swing.JComboBox dColumnComboBox;
+    private javax.swing.JComboBox<String> csvRawSeparatorComboBox;
+    private javax.swing.JComboBox<String> dColumnComboBox;
     private javax.swing.JMenuItem debugCodeMenuItem;
     private javax.swing.JMenu debugMenu;
     private javax.swing.JMenuItem debugTableRowMenuItem;
@@ -9100,7 +9100,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton exportDirOpenButton;
     private javax.swing.JButton exportDirSelectButton;
     private javax.swing.JTextField exportDirectoryTextField;
-    private javax.swing.JComboBox exportFormatComboBox;
+    private javax.swing.JComboBox<String> exportFormatComboBox;
     private javax.swing.JMenuItem exportFormatsEditMenuItem;
     private javax.swing.JMenu exportFormatsMenu;
     private javax.swing.JMenuItem exportFormatsReloadMenuItem;
@@ -9123,7 +9123,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem exportRawAsTextMenuItem;
     private javax.swing.JButton exportRawRemoteButton;
     private javax.swing.JButton exportRawRemoteButton1;
-    private javax.swing.JComboBox exportRepeatComboBox;
+    private javax.swing.JComboBox<String> exportRepeatComboBox;
     private javax.swing.JButton exportSendirHelpButton;
     private javax.swing.JButton exportSignalButton;
     private javax.swing.JMenuItem exportSignalGirrMenuItem;
@@ -9134,14 +9134,14 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem exportSignalWaveMenuItem1;
     private javax.swing.JTabbedPane exportSpecificOptionsTabbedPane;
     private javax.swing.JButton exportWaveHelpButton;
-    private javax.swing.JComboBox fColumnComboBox;
+    private javax.swing.JComboBox<String> fColumnComboBox;
     private javax.swing.JMenuItem fallbackFrequencyMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JLabel frequencyLabel;
-    private javax.swing.JComboBox gcdbCodeSetComboBox;
-    private javax.swing.JComboBox gcdbDeviceTypeComboBox;
+    private javax.swing.JComboBox<String> gcdbCodeSetComboBox;
+    private javax.swing.JComboBox<String> gcdbDeviceTypeComboBox;
     private javax.swing.JButton gcdbImportButton;
-    private javax.swing.JComboBox gcdbManufacturerComboBox;
+    private javax.swing.JComboBox<String> gcdbManufacturerComboBox;
     private javax.swing.JPanel gcdbPanel;
     private org.harctoolbox.irscrutinizer.importer.TreeImporter gcdbTreeImporter;
     private javax.swing.JButton generateButton;
@@ -9155,11 +9155,11 @@ public class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.irscrutinizer.sendinghardware.GenericSerialSenderBean genericSerialSenderBean;
     private javax.swing.JPanel girrExportOptionsPanel;
     private javax.swing.JCheckBox girrFatRawCheckBox;
-    private org.harctoolbox.irscrutinizer.importer.FileImporterBean girrFileImporterBean;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<GirrImporter> girrFileImporterBean;
     private javax.swing.JPanel girrImportPanel;
     private javax.swing.JCheckBox girrSchemaLinkCheckBox;
     private javax.swing.JMenuItem girrSchemaLocationMenuItem;
-    private javax.swing.JComboBox girrStylesheetTypeComboBox;
+    private javax.swing.JComboBox<String> girrStylesheetTypeComboBox;
     private javax.swing.JTextField girrStylesheetUrlTextField;
     private javax.swing.JCheckBoxMenuItem girrValidateCheckBoxMenuItem;
     private javax.swing.JButton girrWebSiteButton;
@@ -9182,7 +9182,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem homePageMenuItem;
     private javax.swing.JMenuItem homePageMenuItem1;
     private javax.swing.JMenuItem homePageMenuItem2;
-    private org.harctoolbox.irscrutinizer.importer.FileImporterBean ictFileImporterBean;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<IctImporter> ictFileImporterBean;
     private javax.swing.JPanel ictImportPanel;
     private javax.swing.JCheckBoxMenuItem ignoreEndingSilenceCheckBoxMenuItem;
     private javax.swing.JMenu importCaptureMenu;
@@ -9244,18 +9244,18 @@ public class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.guicomponents.IrPlotter irPlotter;
     private javax.swing.JPanel irToyPanel;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean irToySerialPortBean;
-    private org.harctoolbox.irscrutinizer.importer.FileImporterBean irTransFileImporterBean;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<IrTransImporter> irTransFileImporterBean;
     private org.harctoolbox.guicomponents.InternetHostPanel irTransInternetHostPanel;
     private org.harctoolbox.guicomponents.NamedCommandLauncher irTransNamedCommandLauncher;
     private javax.swing.JPanel irTransPanel;
     private javax.swing.JButton irTransWebButton;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean irWidgetSerialPortSimpleBean;
     private javax.swing.JButton irdbBrowseButton;
-    private javax.swing.JComboBox irdbCodeSetComboBox;
-    private javax.swing.JComboBox irdbDeviceTypeComboBox;
+    private javax.swing.JComboBox<String> irdbCodeSetComboBox;
+    private javax.swing.JComboBox<String> irdbDeviceTypeComboBox;
     private javax.swing.JButton irdbImportAllButton;
     private javax.swing.JButton irdbImportButton;
-    private javax.swing.JComboBox irdbManufacturerComboBox;
+    private javax.swing.JComboBox<String> irdbManufacturerComboBox;
     private javax.swing.JPanel irdbPanel;
     private org.harctoolbox.irscrutinizer.importer.TreeImporter irdbTreeImporter;
     private javax.swing.JMenuItem irpFormatsIniReloadMenuItem;
@@ -9341,7 +9341,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator9;
     private javax.swing.JMenu lafMenu;
     private javax.swing.JMenuItem lengthMenuItem;
-    private org.harctoolbox.irscrutinizer.importer.FileImporterBean lircFileImporterBean;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<LircImporter> lircFileImporterBean;
     private javax.swing.JPanel lircImportPanel;
     private org.harctoolbox.guicomponents.InternetHostPanel lircInternetHostPanel;
     private javax.swing.JTextField lircMode2CommandTextField;
@@ -9350,14 +9350,14 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu loadMenu;
     private javax.swing.JMenuItem mainDocuMenuItem;
     private javax.swing.JMenuBar menuBar;
-    private org.harctoolbox.irscrutinizer.importer.FileImporterBean mode2FileImporterBean;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<Mode2Importer> mode2FileImporterBean;
     private javax.swing.JPanel mode2ImportPanel;
     private javax.swing.JMenuItem moveDownMenuItem;
     private javax.swing.JMenuItem moveDownMenuItem1;
     private javax.swing.JMenuItem moveUpMenuItem;
     private javax.swing.JMenuItem moveUpMenuItem1;
     private javax.swing.JLabel noRepsLabel;
-    private javax.swing.JComboBox noTransmitsComboBox;
+    private javax.swing.JComboBox<String> noTransmitsComboBox;
     private javax.swing.JMenuItem nukeHexMenuItem;
     private javax.swing.JCheckBoxMenuItem offerStackTraceCheckBoxMenuItem;
     private javax.swing.JMenuItem openLastExportFileMenuItem;
@@ -9372,14 +9372,14 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton parametricOrRawExportButton;
     private javax.swing.JCheckBoxMenuItem parametricSorterCheckBoxMenuItem;
     private javax.swing.JMenu parametrizedAdvancedMenu;
-    private javax.swing.JComboBox parametrizedBaseComboBox;
+    private javax.swing.JComboBox<String> parametrizedBaseComboBox;
     private javax.swing.JMenuItem parametrizedCopyAllMenuItem;
     private javax.swing.JMenuItem parametrizedCopySelectionMenuItem;
     private javax.swing.JPanel parametrizedCsvImportPanel;
-    private javax.swing.JComboBox parametrizedCsvSeparatorComboBox;
+    private javax.swing.JComboBox<String> parametrizedCsvSeparatorComboBox;
     private javax.swing.JCheckBoxMenuItem parametrizedLearnIgnoreTCheckBoxMenuItem;
     private javax.swing.JCheckBox parametrizedMultiColumnNameCheckBox;
-    private javax.swing.JComboBox parametrizedNameColumnComboBox;
+    private javax.swing.JComboBox<String> parametrizedNameColumnComboBox;
     private javax.swing.JTabbedPane parametrizedRawTabbedPane;
     private javax.swing.JButton pasteAnalyzeButton;
     private javax.swing.JMenuItem pasteScrutinizeToDataWindowMenuItem;
@@ -9392,13 +9392,13 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JTextField prontoExportButtonWidthTextField;
     private javax.swing.JTextField prontoExportScreenHeightTextField;
     private javax.swing.JTextField prontoExportScreenWidthTextField;
-    private javax.swing.JComboBox prontoModelComboBox;
-    private javax.swing.JComboBox protocolColumnComboBox;
+    private javax.swing.JComboBox<String> prontoModelComboBox;
+    private javax.swing.JComboBox<String> protocolColumnComboBox;
     private javax.swing.JMenuItem protocolSpecMenuItem;
     private javax.swing.JTextField protocolsIniTextField;
     private javax.swing.JMenuItem rawCodeAnalyzeMenuItem;
     private javax.swing.JMenuItem rawCodeClearMenuItem;
-    private javax.swing.JComboBox rawCodeColumnComboBox1;
+    private javax.swing.JComboBox<String> rawCodeColumnComboBox1;
     private javax.swing.JMenuItem rawCodeCopyAllMenuItem;
     private javax.swing.JMenuItem rawCodeCopyMenuItem;
     private javax.swing.JMenuItem rawCodePasteAnalyzeMenuItem;
@@ -9409,10 +9409,10 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem rawCopyAllMenuItem;
     private javax.swing.JMenuItem rawCopySelectionMenuItem;
     private javax.swing.JMenuItem rawFromClipboardMenuItem;
-    private org.harctoolbox.irscrutinizer.importer.FileImporterBean rawLineCsvFileImporterBean;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<RawLineImporter> rawLineCsvFileImporterBean;
     private javax.swing.JPanel rawLineCsvImportPanel;
     private javax.swing.JCheckBox rawMultiColumnNameCheckBox;
-    private javax.swing.JComboBox rawNameColumnComboBox;
+    private javax.swing.JComboBox<String> rawNameColumnComboBox;
     private javax.swing.JPanel rawPanel;
     private javax.swing.JRadioButtonMenuItem rawRadioButtonMenuItem;
     private javax.swing.JCheckBoxMenuItem rawSorterCheckBoxMenuItem;
@@ -9431,8 +9431,8 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem resetRawTableColumnsMenuItem;
     private javax.swing.JMenuItem resetRawTableColumnsMenuItem1;
     private javax.swing.JPanel rmduImportPanel;
-    private org.harctoolbox.irscrutinizer.importer.FileImporterBean rmduImporterBean;
-    private javax.swing.JComboBox sColumnComboBox;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<RmduImporter> rmduImporterBean;
+    private javax.swing.JComboBox<String> sColumnComboBox;
     private javax.swing.JMenu saveCapturedMenu;
     private javax.swing.JMenuItem saveConsoleTextAsMenuItem;
     private javax.swing.JMenuItem saveCookedMenuItem;
@@ -9466,9 +9466,9 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel sendingPanel;
     private javax.swing.JMenuItem sendingTimeoutMenuItem;
     private javax.swing.JCheckBox sendirCompressedCheckBox;
-    private javax.swing.JComboBox sendirConnectorComboBox;
+    private javax.swing.JComboBox<String> sendirConnectorComboBox;
     private javax.swing.JPanel sendirExportOptionsPanel;
-    private javax.swing.JComboBox sendirModuleComboBox;
+    private javax.swing.JComboBox<String> sendirModuleComboBox;
     private javax.swing.JMenuItem setDMenuItem;
     private javax.swing.JMenuItem setFFromHexMenuItem;
     private javax.swing.JMenuItem setFMenuItem;
@@ -9512,10 +9512,10 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu usePopupsMenu;
     private javax.swing.JCheckBoxMenuItem verboseCheckBoxMenuItem;
     private javax.swing.JPanel waveExportOptionsPanel;
-    private org.harctoolbox.irscrutinizer.importer.FileImporterBean waveFileImporterBean;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<WaveImporter> waveFileImporterBean;
     private javax.swing.JPanel waveImportPanel;
     private javax.swing.JButton webRmduButton;
-    private org.harctoolbox.irscrutinizer.importer.FileImporterBean xcfFileImporterBean;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<XcfImporter> xcfFileImporterBean;
     private javax.swing.JPanel xcfImportPanel;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>

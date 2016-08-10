@@ -84,14 +84,10 @@ public class Console extends javax.swing.JScrollPane {
      * @throws FileNotFoundException
      */
     public void save(File file) throws FileNotFoundException {
-        PrintStream ps = null;
-        try {
-            ps = new PrintStream(new FileOutputStream(file), true, IrpUtils.dumbCharsetName);
-            //if (consoleTextArea != null)
+        try (PrintStream ps = new PrintStream(new FileOutputStream(file), true, IrpUtils.dumbCharsetName)) {
             ps.println(consoleTextArea.getText());
-            ps.close();
         } catch (UnsupportedEncodingException ex) {
-            assert false; // cannot happen
+            throw new InternalError();
         }
     }
 

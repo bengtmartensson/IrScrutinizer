@@ -17,7 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.harchardware.ir;
 
-import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
@@ -26,6 +25,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
+import org.harctoolbox.harchardware.comm.LocalSerialPort;
 
 /**
  * This class models a serial device that takes text commands from a serial port, like the Arduino.
@@ -43,6 +43,20 @@ public abstract class IrSerial<T extends LocalSerialPort> implements IHarcHardwa
     private LocalSerialPort.Parity parity;
     private LocalSerialPort.FlowControl flowControl;
     private final Class<T> clazz;
+
+    public IrSerial(Class<T> clazz, String portName, int baudRate, int dataSize, int stopBits, LocalSerialPort.Parity parity, LocalSerialPort.FlowControl flowControl, int timeout, boolean verbose)
+            throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this.clazz = clazz;
+        this.portName = portName;
+        this.baudRate = baudRate;
+        this.dataSize = dataSize;
+        this.stopBits = stopBits;
+        this.parity = parity;
+        this.flowControl = flowControl;
+        this.timeout = timeout;
+        this.verbose = verbose;
+        //open();
+    }
 
     /**
      * @param baudRate the baudRate to set
@@ -132,19 +146,6 @@ public abstract class IrSerial<T extends LocalSerialPort> implements IHarcHardwa
         return null;
     }
 
-    public IrSerial(Class<T> clazz, String portName, int baudRate, int dataSize, int stopBits, LocalSerialPort.Parity parity, LocalSerialPort.FlowControl flowControl, int timeout, boolean verbose)
-            throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this.clazz = clazz;
-        this.portName = portName;
-        this.baudRate = baudRate;
-        this.dataSize = dataSize;
-        this.stopBits = stopBits;
-        this.parity = parity;
-        this.flowControl = flowControl;
-        this.timeout = timeout;
-        this.verbose = verbose;
-        //open();
-    }
 
     @Override
     @SuppressWarnings("unchecked")

@@ -39,22 +39,27 @@ import org.harctoolbox.harchardware.ir.InterpretStringHardware;
  * Columns are numbered starting with 1.
  */
 public class CsvRawImporter extends CsvImporter {
+
+    public static Collection<Command> process(File file, String separator, int nameColumn, boolean nameMultiColumn, int codeColumn, boolean includeTail,
+            boolean invokeAnalyzer, boolean invokeRepeatFinder, boolean verbose, String charsetName) throws IOException, ParseException, IrpMasterException {
+        CsvRawImporter csvImportRaw = new CsvRawImporter(separator, nameColumn, nameMultiColumn, codeColumn, includeTail);
+        csvImportRaw.load(file, charsetName);
+        return csvImportRaw.getCommands();
+    }
+
+    public static void main(String[] args) {
+        try {
+            Collection<Command> signals = process(new File(args[0]), " ", 3, false, 6, true, true, true, true, "WINDOWS-1252");
+            for (Command signal : signals)
+                System.out.println(signal.toPrintString());
+        } catch (IOException | IrpMasterException | ParseException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
     private int codeColumn;
     private boolean includeTail;
 
-    /**
-     * @param codeColumn the codeColumn to set
-     */
-    public void setCodeColumn(int codeColumn) {
-        this.codeColumn = codeColumn;
-    }
-
-    /**
-     * @param includeTail the includeTail to set
-     */
-    public void setIncludeTail(boolean includeTail) {
-        this.includeTail = includeTail;
-    }
 
     public CsvRawImporter(int separatorIndex, int nameColumn, boolean nameMultiColumn, int codeColumn, boolean includeTail) {
         this(CsvImporter.getSeparator(separatorIndex), nameColumn, nameMultiColumn, codeColumn, includeTail);
@@ -71,6 +76,19 @@ public class CsvRawImporter extends CsvImporter {
     private CsvRawImporter() { // ???
         this(0, 0, false, 1, false);
     }
+    /**
+     * @param codeColumn the codeColumn to set
+     */
+    public void setCodeColumn(int codeColumn) {
+        this.codeColumn = codeColumn;
+    }
+
+    /**
+     * @param includeTail the includeTail to set
+     */
+    public void setIncludeTail(boolean includeTail) {
+        this.includeTail = includeTail;
+    }
 
     @Override
     public void load(File file, String origin, String charsetName) throws IOException, ParseException {
@@ -83,7 +101,7 @@ public class CsvRawImporter extends CsvImporter {
     // String.split and make the necessary fixes to it.
     private String[] csvSplit(String line, String separator) {
         StringBuilder str = new StringBuilder(line.trim());
-        ArrayList<String> chunks = new ArrayList<>();
+        ArrayList<String> chunks = new ArrayList<>(16);
         Pattern pattern = Pattern.compile(separator);
 
         while (str.length() > 0) {
@@ -142,7 +160,7 @@ public class CsvRawImporter extends CsvImporter {
                 System.err.println("Empty code in line " + lineNo);
             return null;
         }
-        IrSignal irSignal = null;
+        IrSignal irSignal;
         try {
             irSignal = InterpretStringHardware.interpretString(code, IrpUtils.defaultFrequency, isInvokeRepeatFinder(),
                     isInvokeAnalyzer());
@@ -154,22 +172,5 @@ public class CsvRawImporter extends CsvImporter {
         return irSignal != null ?
                 new Command(uniqueName(name), "Line " + lineNo + ", " + origin, irSignal)
                 : null;
-    }
-
-    public static Collection<Command> process(File file, String separator, int nameColumn, boolean nameMultiColumn, int codeColumn, boolean includeTail,
-            boolean invokeAnalyzer, boolean invokeRepeatFinder, boolean verbose, String charsetName) throws IOException, ParseException, IrpMasterException {
-        CsvRawImporter csvImportRaw = new CsvRawImporter(separator, nameColumn, nameMultiColumn, codeColumn, includeTail);
-        csvImportRaw.load(file, charsetName);
-        return csvImportRaw.getCommands();
-    }
-
-    public static void main(String[] args) {
-        try {
-            Collection<Command> signals = process(new File(args[0]), " ", 3, false, 6, true, true, true, true, "WINDOWS-1252");
-            for (Command signal : signals)
-                System.out.println(signal.toPrintString());
-        } catch (IOException | IrpMasterException | ParseException ex) {
-            System.err.println(ex.getMessage());
-        }
     }
 }

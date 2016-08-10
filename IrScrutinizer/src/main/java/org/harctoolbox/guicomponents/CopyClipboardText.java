@@ -27,6 +27,10 @@ import java.io.IOException;
 
 public class CopyClipboardText implements ClipboardOwner {
 
+    public static String getSelection() {
+        return (new CopyClipboardText(null)).fromSystemSelection();
+    }
+
     private GuiUtils guiUtils = null;
 
     public CopyClipboardText(GuiUtils guiUtils) {
@@ -66,9 +70,5 @@ public class CopyClipboardText implements ClipboardOwner {
                 System.err.println(ex);
         }
         return null;
-    }
-
-    public static String getSelection() {
-        return (new CopyClipboardText(null)).fromSystemSelection();
     }
 }

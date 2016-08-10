@@ -70,10 +70,10 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
     }
 
     public static class Model {
-        public String brand;
-        public String type;
-        public String name;
-        public String notes;
+        private final String brand;
+        private final String type;
+        private final String name;
+        private final String notes;
 
         public Model(JsonObject obj) {
             brand = obj.get("Brand").asString();
@@ -190,7 +190,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
 
     private HashMap<String, String> getMap(String urlFragment, String keyName, String valueName) throws IOException {
         JsonArray array = getJsonArray(urlFragment);
-        HashMap<String,String> map = new HashMap<>();
+        HashMap<String,String> map = new HashMap<>(16);
         for (JsonValue val : array) {
             JsonObject obj = val.asObject();
             map.put(obj.get(keyName).asString(), obj.get(valueName).asString());

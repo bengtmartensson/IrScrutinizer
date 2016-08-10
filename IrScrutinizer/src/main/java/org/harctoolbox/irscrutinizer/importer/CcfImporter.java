@@ -45,18 +45,29 @@ import org.harctoolbox.irscrutinizer.Version;
  * Class for importing Pronto CCF files of the first generation.
  */
 public class CcfImporter extends RemoteSetImporter implements IFileImporter {
+    public static RemoteSet importCcf(String filename, String creatingUser) throws IOException, ParseException, IrpMasterException {
+        CcfImporter importer = new CcfImporter();
+        importer.load(filename);
+        return importer.remoteSet;
+    }
+    public static void main(String args[]) {
+        try {
+            RemoteSet remoteSet = importCcf(args[0], "The Creator");
+            System.out.println(remoteSet);
+        } catch (IOException | IrpMasterException | ParseException e) {
+        }
+    }
     private CCF ccf;
     private boolean translateProntoFont = true;
 
+    public CcfImporter() {
+        super();
+    }
     /**
      * @param translateProntoFont the translateProntoFont to set
      */
     public void setTranslateProntoFont(boolean translateProntoFont) {
         this.translateProntoFont = translateProntoFont;
-    }
-
-    public CcfImporter() {
-        super();
     }
 
     @Override
@@ -67,7 +78,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
     private Remote loadDevice(CCFDevice dev) {
         boolean totalUniqueNames = true;
         String deviceName = dev.getName();
-        HashMap<java.lang.String,Command> commands = new HashMap<>();
+        HashMap<java.lang.String,Command> commands = new HashMap<>(64);
         for (CCFPanel panel = dev.getFirstPanel(); panel != null; panel = panel.getNextPanel()) {
             String panelName = panel.getName();
             ArrayList<Command> commandList = loadChildren(panel.getChildren(), deviceName, panelName);
@@ -87,7 +98,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
     }
 
     private ArrayList<Command> loadChildren(CCFChild children[], String deviceName, String panelName) {
-        ArrayList<Command> commandList = new ArrayList<>();
+        ArrayList<Command> commandList = new ArrayList<>(16);
         for (CCFChild child : children) {
             CCFButton button = child.getButton();
             String ccfString = null;
@@ -146,7 +157,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
 
     private void load(CCF ccf, String origin) throws IOException {
         prepareLoad(origin);
-        HashMap<String,Remote> remotes = new HashMap<>();
+        HashMap<String,Remote> remotes = new HashMap<>(16);
 
         for (CCFDevice dev = ccf.getFirstDevice(); dev != null; dev = dev.getNextDevice()) {
             Remote remote = loadDevice(dev);
@@ -174,22 +185,8 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
                  remotes);
     }
 
-    public static RemoteSet importCcf(String filename, String creatingUser) throws IOException, ParseException, IrpMasterException {
-        CcfImporter importer = new CcfImporter();
-        importer.load(filename);
-        return importer.remoteSet;
-    }
-
     @Override
     public String getFormatName() {
         return "Pronto CCF";
-    }
-
-    public static void main(String args[]) {
-        try {
-            RemoteSet remoteSet = importCcf(args[0], "The Creator");
-            System.out.println(remoteSet);
-        } catch (IOException | IrpMasterException | ParseException e) {
-        }
     }
 }

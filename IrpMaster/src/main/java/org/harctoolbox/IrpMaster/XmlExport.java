@@ -64,7 +64,7 @@ public class XmlExport {
     public static final String burstLengthAttributeName = "burstlength";
     public static final String commentAttributeName = "comment";
 
-    private Document doc;
+    private final Document doc;
 
     public XmlExport(Document doc) {
         this.doc = doc;

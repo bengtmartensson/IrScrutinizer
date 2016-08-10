@@ -22,7 +22,7 @@ import org.harctoolbox.irscrutinizer.GuiMain;
 
 public class CapturingSendingBean extends javax.swing.JPanel {
 
-    GuiMain guiMain;
+    private GuiMain guiMain;
     private JPanel senderPanel;
 
     /**

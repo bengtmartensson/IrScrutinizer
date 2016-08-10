@@ -76,35 +76,6 @@ public class InterpretStringHardware {
                 ? GlobalCache.parse(string)
                 : InterpretString.interpretString(string, frequency, invokeRepeatFinder, invokeCleaner);
     }
-
-    private InterpretStringHardware() {
-    }
-
-    private final static class CommandLineArgs {
-        private final static int defaultTimeout = 2000;
-
-        @Parameter(names = {"-h", "-?", "--clean"}, description = "Invoke help")
-        private boolean helpRequested = false;
-
-        @Parameter(names = {"-c", "--clean"}, description = "Invoke cleaner")
-        private boolean invokeCleaner = false;
-
-        @Parameter(names = {"-r", "--repeatfinder"}, description = "Invoke repeatfinder")
-        private boolean invokeRepeatFinder = false;
-
-        @Parameter(names = {"-f", "--frequency"}, description = "Modulation frequency")
-        private double frequency = IrpUtils.defaultFrequency;
-
-        @Parameter(names = {"-a", "--absolutetolearance"}, description = "Absoulte Tolerance")
-        private double absouteTolerance = IrpUtils.defaultAbsoluteTolerance;
-
-        @Parameter(names = {"-r", "--relativetolearance"}, description = "Relative Tolerance")
-        private double relativeTolerance = IrpUtils.defaultRelativeTolerance;
-
-        @Parameter(description = "[arguments]")
-        private ArrayList<String> arguments = new ArrayList<>();
-    }
-
     public static void main(String[] args) {
 
         commandLineArgs = new CommandLineArgs();
@@ -137,4 +108,33 @@ public class InterpretStringHardware {
             System.exit(IrpUtils.exitFatalProgramFailure);
         }
     }
+
+    private InterpretStringHardware() {
+    }
+
+    private final static class CommandLineArgs {
+        private final static int defaultTimeout = 2000;
+
+        @Parameter(names = {"-h", "-?", "--clean"}, description = "Invoke help")
+        private boolean helpRequested = false;
+
+        @Parameter(names = {"-c", "--clean"}, description = "Invoke cleaner")
+        private boolean invokeCleaner = false;
+
+        @Parameter(names = {"-r", "--repeatfinder"}, description = "Invoke repeatfinder")
+        private boolean invokeRepeatFinder = false;
+
+        @Parameter(names = {"-f", "--frequency"}, description = "Modulation frequency")
+        private double frequency = IrpUtils.defaultFrequency;
+
+        @Parameter(names = {"-a", "--absolutetolearance"}, description = "Absoulte Tolerance")
+        private double absouteTolerance = IrpUtils.defaultAbsoluteTolerance;
+
+        @Parameter(names = {"-r", "--relativetolearance"}, description = "Relative Tolerance")
+        private double relativeTolerance = IrpUtils.defaultRelativeTolerance;
+
+        @Parameter(description = "[arguments]")
+        private ArrayList<String> arguments = new ArrayList<>(8);
+    }
+
 }

@@ -37,6 +37,47 @@ import org.harctoolbox.harchardware.HarcHardwareException;
  */
 public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, IIrSenderStop {
 
+    public static final String DEV = "/dev";
+    public static final String DEVSLASHLIRC = "/dev/lirc";
+    public static final String LIRC = "lirc";
+
+    public static File[] getCandidates() {
+        if (!new File(DEV).isDirectory())
+            return new File[0];
+
+        return new File("DEVSLASHLIRC").isDirectory()
+                ? new File("DEVSLASHLIRC").listFiles()
+                : new File("DEV").listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return name.startsWith(LIRC);
+                    }
+                });
+    }
+
+    public static void main(String[] args) {
+        File[] candidates = getCandidates();
+        for (File f : candidates)
+            System.out.println(f);
+        try (DevLirc instance = new DevLirc()) {
+            double nec1_frequency = 38400f;
+            int[] nec1_122_27 = {
+                9024, 4512, 564, 564, 564, 1692, 564, 564, 564, 1692, 564, 1692, 564, 1692, 564, 1692, 564, 564, 564, 1692, 564, 564, 564, 1692, 564, 564, 564, 564, 564, 564, 564, 564, 564, 1692, 564, 1692, 564, 1692, 564, 564, 564, 1692, 564, 1692, 564, 564, 564, 564, 564, 564, 564, 564, 564, 564, 564, 1692, 564, 564, 564, 564, 564, 1692, 564, 1692, 564, 1692, 564, 39756
+            };
+            int[] nec1_repeat = { 9024, 2256, 564, 96156 };
+            IrSignal yama_volume_down = new IrSignal(nec1_frequency, -1.0, new IrSequence(nec1_122_27),
+                    new IrSequence(nec1_repeat), null);
+            instance.open();
+            System.out.println(instance);
+            System.out.println(">>>>>>>>>>>>> Now send IR <<<<<<<<<<<<<<<");
+            IrSequence irSequence = instance.receive();
+            System.out.println(irSequence);
+            instance.sendIr(yama_volume_down, 10, new LircTransmitter(1));
+        } catch (HarcHardwareException | IncompatibleArgumentException ex) {
+            Logger.getLogger(DevLirc.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     private boolean verbose = false;
     private Mode2LircDevice device = null;
     private boolean canSend = false;
@@ -44,21 +85,19 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
     private int numberTransmitters = -1;
     private boolean canSetCarrier = false;
     private boolean canSetTransmitter = false;
-
     private boolean stopRequested;
 
-    public static File[] getCandidates() {
-        if (!new File("/dev").isDirectory())
-            return new File[0];
+    public DevLirc(String deviceName, boolean verbose) {
+        device = new Mode2LircDevice(deviceName);
+        this.verbose = verbose;
+    }
 
-        return new File("/dev/lirc").isDirectory()
-                  ? new File("/dev/lirc").listFiles()
-                  : new File("/dev").listFiles(new FilenameFilter() {
-              @Override
-              public boolean accept(File dir, String name) {
-                  return name.startsWith("lirc");
-              }
-          });
+    public DevLirc(String deviceName) {
+        this(deviceName, false);
+    }
+
+    public DevLirc() {
+        this(Mode2LircDevice.defaultDeviceName, false);
     }
 
     /**
@@ -96,18 +135,6 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
         return canSetTransmitter;
     }
 
-    public DevLirc(String deviceName, boolean verbose) {
-        device = new Mode2LircDevice(deviceName);
-        this.verbose = verbose;
-    }
-
-    public DevLirc(String deviceName) {
-        this(deviceName, false);
-    }
-
-    public DevLirc() {
-        this(Mode2LircDevice.defaultDeviceName, false);
-    }
 
     private void sendIr(IrSequence irSequence) throws NotSupportedException {
         if (irSequence.isEmpty())
@@ -254,9 +281,8 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
     @Override
     public ModulatedIrSequence capture() throws HarcHardwareException, IncompatibleArgumentException {
         IrSequence irSequence = receive();
-        return irSequence != null
-                ? new ModulatedIrSequence(irSequence, IrpUtils.defaultFrequency, IrpUtils.invalid)
-                : null;
+        return irSequence.isEmpty() ? null
+                : new ModulatedIrSequence(irSequence, IrpUtils.defaultFrequency, IrpUtils.invalid);
     }
 
     @Override
@@ -267,28 +293,5 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
     @Override
     public void setTimeout(int beginTimeout, int maxLearnLength, int endTimeout) {
         throw new UnsupportedOperationException("/dev/lirc does not support user timeouts.");
-    }
-
-    public static void main(String[] args) {
-        File[] candidates = getCandidates();
-        for (File f : candidates)
-            System.out.println(f);
-        try (DevLirc instance = new DevLirc()) {
-            double nec1_frequency = 38400f;
-            int[] nec1_122_27 = {
-                9024, 4512, 564, 564, 564, 1692, 564, 564, 564, 1692, 564, 1692, 564, 1692, 564, 1692, 564, 564, 564, 1692, 564, 564, 564, 1692, 564, 564, 564, 564, 564, 564, 564, 564, 564, 1692, 564, 1692, 564, 1692, 564, 564, 564, 1692, 564, 1692, 564, 564, 564, 564, 564, 564, 564, 564, 564, 564, 564, 1692, 564, 564, 564, 564, 564, 1692, 564, 1692, 564, 1692, 564, 39756
-            };
-            int[] nec1_repeat = { 9024, 2256, 564, 96156 };
-            IrSignal yama_volume_down = new IrSignal(nec1_frequency, -1.0, new IrSequence(nec1_122_27),
-                    new IrSequence(nec1_repeat), null);
-            instance.open();
-            System.out.println(instance);
-            System.out.println(">>>>>>>>>>>>> Now send IR <<<<<<<<<<<<<<<");
-            IrSequence irSequence = instance.receive();
-            System.out.println(irSequence);
-            instance.sendIr(yama_volume_down, 10, new LircTransmitter(1));
-        } catch (HarcHardwareException | IncompatibleArgumentException ex) {
-            Logger.getLogger(DevLirc.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 }

@@ -18,8 +18,8 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.harchardware.ir;
 
 import java.io.IOException;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrSequence;
+import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
 

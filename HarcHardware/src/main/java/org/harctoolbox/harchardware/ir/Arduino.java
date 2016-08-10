@@ -51,43 +51,57 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
     public static final String defaultPortName = "/dev/ttyACM0";
     public static final String okString = "OK";
     public static final String timeoutString = ".";
-    private String lineEnding = "\r";
     private static final String separator = " ";
     //private String portName;
     public static final int defaultBaudRate = 115200;
     private static final int dataSize = 8;
     private static final int stopBits = 1;
-    private double fallbackFrequency = 38000;
     private static final LocalSerialPort.Parity parity = LocalSerialPort.Parity.NONE;
     private static final LocalSerialPort.FlowControl defaultFlowControl = LocalSerialPort.FlowControl.NONE;
+    private final static int serialTimeout = 12345;
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        String portName = defaultPortName;
+        Arduino w = null;
+        boolean verbose = true;
+        try {
+            w = new Arduino(portName, 10000, verbose);
+            w.open();
+            System.out.println(w.getVersion());
+            ModulatedIrSequence seq = w.capture();
+            if (seq == null) {
+                System.err.println("No input");
+                w.close();
+                System.exit(1);
+            }
+            System.out.println(seq);
+            DecodeIR.invoke(seq);
+        } catch (IOException ex) {
+            System.err.println("exception: " + ex.toString() + ex.getMessage());
+            //ex.printStackTrace();
+        } catch (NoSuchPortException ex) {
+            System.err.println("No such port: " + portName);
+        } catch (HarcHardwareException | UnsupportedCommOperationException ex) {
+            System.err.println(ex.getMessage());
+        } catch (PortInUseException ex) {
+            System.err.println("Port " + portName + " in use.");
+        } finally {
+            if (w != null)
+                try {
+                    w.close();
+                } catch (IOException ex) {
+                }
+        }
+        System.exit(0);
+    }
+    private String lineEnding = "\r";
+    private double fallbackFrequency = 38000;
     private boolean stopRequested = false;
     private String versionString = "n/a";
-    private final static int serialTimeout = 12345;
     private boolean pendingCapture = false;
 
-    /**
-     * @param lineEnding the lineEnding to set
-     */
-    public void setLineEnding(String lineEnding) {
-        this.lineEnding = lineEnding;
-    }
-
-    /**
-     * @param fallbackFrequency the fallbackFrequency to set
-     */
-    public void setFallbackFrequency(double fallbackFrequency) {
-        this.fallbackFrequency = fallbackFrequency;
-    }
-
-    @Override
-    public synchronized boolean sendIr(IrSignal irSignal, int count, Transmitter transmitter) throws NoSuchTransmitterException, IrpMasterException, IOException {
-        String payload = formatString(irSignal, count);
-        serialPort.sendString(payload + lineEnding);
-        if (verbose)
-            System.err.println(payload);
-        String response = serialPort.readString(true);
-        return response != null && response.trim().equals(okString);
-    }
 
     public Arduino() throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         this(defaultPortName, defaultBaudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, false);
@@ -116,6 +130,27 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
     public Arduino(String portName, int baudRate, int beginTimeout, int middleTimeout, int endingTimeout, boolean verbose)
             throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         super(LocalSerialPortBuffered.class, portName, baudRate, dataSize, stopBits, parity, defaultFlowControl, serialTimeout, verbose);
+    }
+    /**
+     * @param lineEnding the lineEnding to set
+     */
+    public void setLineEnding(String lineEnding) {
+        this.lineEnding = lineEnding;
+    }
+    /**
+     * @param fallbackFrequency the fallbackFrequency to set
+     */
+    public void setFallbackFrequency(double fallbackFrequency) {
+        this.fallbackFrequency = fallbackFrequency;
+    }
+    @Override
+    public synchronized boolean sendIr(IrSignal irSignal, int count, Transmitter transmitter) throws NoSuchTransmitterException, IrpMasterException, IOException {
+        String payload = formatString(irSignal, count);
+        serialPort.sendString(payload + lineEnding);
+        if (verbose)
+            System.err.println(payload);
+        String response = serialPort.readString(true);
+        return response != null && response.trim().equals(okString);
     }
 
     @Override
@@ -175,9 +210,9 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
 
     private StringBuilder join(IrSequence irSequence, String separator) {
         if (irSequence == null || irSequence.isEmpty())
-            return new StringBuilder();
+            return new StringBuilder(0);
 
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(128);
         for (int i = 0; i < irSequence.getLength(); i++)
             str.append(separator).append(Integer.toString(irSequence.iget(i)));
         return str;
@@ -304,43 +339,6 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
         serialPort.dropDTR(100);
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        String portName = defaultPortName;
-        Arduino w = null;
-        boolean verbose = true;
-        try {
-            w = new Arduino(portName, 10000, verbose);
-            w.open();
-            System.out.println(w.getVersion());
-            ModulatedIrSequence seq = w.capture();
-            if (seq == null) {
-                System.err.println("No input");
-                w.close();
-                System.exit(1);
-            }
-            System.out.println(seq);
-            DecodeIR.invoke(seq);
-        } catch (IOException ex) {
-            System.err.println("exception: " + ex.toString() + ex.getMessage());
-            //ex.printStackTrace();
-        } catch (NoSuchPortException ex) {
-            System.err.println("No such port: " + portName);
-        } catch (HarcHardwareException | UnsupportedCommOperationException ex) {
-            System.err.println(ex.getMessage());
-        } catch (PortInUseException ex) {
-            System.err.println("Port " + portName + " in use.");
-        } finally {
-            if (w != null)
-                try {
-                    w.close();
-                } catch (IOException ex) {
-                }
-        }
-        System.exit(0);
-    }
 
     @Override
     public void sendString(String cmd) throws IOException {

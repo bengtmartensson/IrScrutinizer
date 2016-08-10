@@ -132,8 +132,7 @@ public class RepeatFinder {
                         : // no repeat found, just do the trival
                         irSequence.toIrSignal();
             } catch (IncompatibleArgumentException ex) {
-                assert(false); // cannot happen: repeatStart repeatLength have been checked to be even.
-                return null;
+                throw new InternalError(); // cannot happen: repeatStart repeatLength have been checked to be even.
             }
         }
     }

@@ -30,6 +30,27 @@ import org.harctoolbox.harchardware.comm.TcpSocketPort;
  */
 
 public class FramedDevice {
+    /*
+    public static void telnet(ICommandLineDevice hardware, Framer commandFramer) {
+    StringReaderThread readerThread = new StringReaderThread(hardware, System.out);
+    readerThread.start();
+    StringWriterThread writerThread = new StringWriterThread(hardware, new BufferedReader(new InputStreamReader(System.in, IrpUtils.dumbCharset)), commandFramer);
+    writerThread.start();
+    }
+
+    public static void telnet(ICommandLineDevice hardware) {
+    telnet(hardware, new Framer());
+    }*/
+
+    public static void main(String[] args) {
+        try (ICommandLineDevice denon = new TcpSocketPort("denon", 23, 2000, true, TcpSocketPort.ConnectionMode.keepAlive)) {
+            FramedDevice commandLineDevice = new FramedDevice(denon, "{0}\r", true);
+            String[] result = commandLineDevice.sendString("mvdown", 1, 0);
+            System.out.println(result[0]);
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
 
     private ICommandLineDevice hardware;
     private IFramer framer;
@@ -76,7 +97,7 @@ public class FramedDevice {
             } else {
                 if (!hardware.ready() && waitForAnswer > 0)
                     Thread.sleep(waitForAnswer);
-                List<String> answer = new ArrayList<>();
+                List<String> answer = new ArrayList<>(16);
                 while (hardware.ready()) {
                     String ans = hardware.readString(false);
                     answer.add(ans);
@@ -224,7 +245,7 @@ public class FramedDevice {
     }
 
     public static class Framer implements IFramer {
-        MessageFormat format;
+        private MessageFormat format;
         private final boolean toUpper;
 
         public Framer(String format, boolean toUpper) {
@@ -244,30 +265,7 @@ public class FramedDevice {
 
         @Override
         public String frame(Object[] args) {
-            return format.format(args, new StringBuffer(), new FieldPosition(0)).toString();
-        }
-    }
-
-/*
-    public static void telnet(ICommandLineDevice hardware, Framer commandFramer) {
-        StringReaderThread readerThread = new StringReaderThread(hardware, System.out);
-        readerThread.start();
-        StringWriterThread writerThread = new StringWriterThread(hardware, new BufferedReader(new InputStreamReader(System.in, IrpUtils.dumbCharset)), commandFramer);
-        writerThread.start();
-    }
-
-    public static void telnet(ICommandLineDevice hardware) {
-        telnet(hardware, new Framer());
-    }*/
-
-    public static void main(String[] args) {
-        try (ICommandLineDevice denon = new TcpSocketPort("denon", 23, 2000, true, TcpSocketPort.ConnectionMode.keepAlive)) {
-            FramedDevice commandLineDevice = new FramedDevice(denon, "{0}\r", true);
-            String[] result = commandLineDevice.sendString("mvdown", 1, 0);
-            System.out.println(result[0]);
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
+            return format.format(args, new StringBuffer(256), new FieldPosition(0)).toString();
         }
     }
 }
-

@@ -18,6 +18,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.guicomponents;
 
 import java.awt.Component;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.ImageIcon;
@@ -26,7 +27,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 public class HarcletFrame extends javax.swing.JFrame {
-    boolean exitOnClose;
+    private final boolean exitOnClose;
 
     /**
      * Creates new form
@@ -163,12 +164,15 @@ public class HarcletFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_helpMenuItemActionPerformed
 
     private void closeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeMenuItemActionPerformed
-         if (exitOnClose)
-             doExit(0);
-         else {
-             harclet.close();
-             dispose();
-         }
+        if (exitOnClose)
+            doExit(0);
+        else {
+            try {
+                harclet.close();
+            } catch (IOException ex) {
+            }
+            dispose();
+        }
     }//GEN-LAST:event_closeMenuItemActionPerformed
 
     private static void doExit(int exitcode) {

@@ -52,7 +52,7 @@ public class SendingHardwareManager {
         this.guiUtils = guiUtils;
         this.properties = properties;
         this.tabbedPane = tabbedPane;
-        table = new LinkedHashMap<>();
+        table = new LinkedHashMap<>(16);
     }
 
     public Collection<ISendingHardware<?>> getSendingHardware() {

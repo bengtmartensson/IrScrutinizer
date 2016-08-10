@@ -17,18 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.harchardware;
 
-import org.harctoolbox.harchardware.ir.IRemoteCommandIrSender;
-import org.harctoolbox.harchardware.ir.IrTransIRDB;
-import org.harctoolbox.harchardware.ir.LircCcfClient;
-import org.harctoolbox.harchardware.ir.IrWidget;
-import org.harctoolbox.harchardware.ir.IrToy;
-import org.harctoolbox.harchardware.ir.IRawIrSender;
-import org.harctoolbox.harchardware.ir.ICapture;
-import org.harctoolbox.harchardware.ir.GlobalCache;
-import org.harctoolbox.harchardware.ir.LircClient;
-import org.harctoolbox.harchardware.beacon.AmxBeaconListener;
-import org.harctoolbox.harchardware.ir.Arduino;
-import org.harctoolbox.harchardware.ir.Transmitter;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
@@ -48,6 +36,18 @@ import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
+import org.harctoolbox.harchardware.beacon.AmxBeaconListener;
+import org.harctoolbox.harchardware.ir.Arduino;
+import org.harctoolbox.harchardware.ir.GlobalCache;
+import org.harctoolbox.harchardware.ir.ICapture;
+import org.harctoolbox.harchardware.ir.IRawIrSender;
+import org.harctoolbox.harchardware.ir.IRemoteCommandIrSender;
+import org.harctoolbox.harchardware.ir.IrToy;
+import org.harctoolbox.harchardware.ir.IrTransIRDB;
+import org.harctoolbox.harchardware.ir.IrWidget;
+import org.harctoolbox.harchardware.ir.LircCcfClient;
+import org.harctoolbox.harchardware.ir.LircClient;
+import org.harctoolbox.harchardware.ir.Transmitter;
 
 /**
  * Gives possibilities to invoke many of the functions from the command line. Demonstrates the interfaces.
@@ -57,8 +57,21 @@ public class Main {
     private final static int invalidPort = -1;
     private static IHarcHardware harcHardware = null;
 
-    private Main() {
-    }
+    private static JCommander argumentParser;
+    private static final CommandLineArgs commandLineArgs = new CommandLineArgs();
+
+    private static final Thread closeOnShutdown = new Thread() {
+        @Override
+        public void run() {
+            try {
+                //System.err.println("Running shutdown");
+                if (harcHardware != null)
+                    harcHardware.close();
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+        }
+    };
 
     private static void printTable(String title, String[] arr, PrintStream str) {
         if (arr != null) {
@@ -80,7 +93,7 @@ public class Main {
     }
 
     private static void usage(int exitcode) {
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(256);
         argumentParser.usage(str);
 
         str.append("\n"
@@ -95,100 +108,6 @@ public class Main {
         System.exit(exitcode);
     }
 
-    private final static class CommandLineArgs {
-        private final static int defaultTimeout = 2000;
-
-        @Parameter(names = {"-#", "--count"}, description = "Number of times to send sequence")
-        private int count = 1;
-
-        @Parameter(names = {"-a", "--arduino"}, description = "Use Ardiono")
-        private boolean arduino = false;
-
-        @Parameter(names = {"-B", "--beacon"}, description = "Run the beacon listener")
-        private boolean beacon = false;
-
-        @Parameter(names = {"-C", "--capture"}, description = "Capture \"learned\" signal")
-        private boolean capture = false;
-
-        @Parameter(names = {"-c", "--config"}, description = "Path to IrpProtocols.ini")
-        private String irprotocolsIniFilename = "config" + File.separator + "IrpProtocols.ini";
-
-        //@Parameter(names = {"-D", "--debug"}, description = "Debug code")
-        //private int debug = 0;
-
-        @Parameter(names = {"-d", "--device"}, description = "Device name, e.g. COM7: or /dev/ttyS0")
-        private String device = null;
-
-        @Parameter(names = {"-g", "--globalcache"}, description = "Use GlobalCache")
-        private boolean globalcache = false;
-
-        @Parameter(names = {"--getversion"}, description = "Call the getVersion() function")
-        private boolean getversion = false;
-
-        @Parameter(names = {"--getremotes"}, description = "Call the getRemotes() function")
-        private boolean getremotes = false;
-
-        @Parameter(names = {"--getcommands"}, description = "Call the getCommands() function")
-        private String getcommands = null;
-
-        @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
-        private boolean helpRequested = false;
-
-        @Parameter(names = {"-i", "--ip"}, description = "IP address or name")
-        private String ip = null;
-
-        @Parameter(names = {"-I", "--irtrans"}, description = "Use IrTrans")
-        private boolean irtrans = false;
-
-        @Parameter(names = {"-l", "--lirc"}, description = "Use Lirc Client")
-        private boolean lirc = false;
-
-        @Parameter(names = {"--loop"}, description = "Send the irsignal this many times (taking the -# parameter into account)")
-        private int loop = 1;
-
-        @Parameter(names = {"-p", "--port"}, description = "Port number")
-        private int port = invalidPort;
-
-        @Parameter(names = {"-s", "--sendircommand"}, arity = 2, description = "Send a preprogrammed IR command by name of remote and command")
-        private List<String> remotecommand = null;
-
-        @Parameter(names = {"-t", "--transmitter"}, description = "Transmitter, semantic device dependent")
-        private String transmitter = null;
-
-        @Parameter(names = {"-T", "--timeout"}, description = "Timeout in milliseconds")
-        private int timeout = defaultTimeout;
-
-        @Parameter(names = {"-v", "--version"}, description = "Display version information")
-        private boolean versionRequested;
-
-        @Parameter(names = {"-V", "--verbose"}, description = "Execute commands verbosely")
-        private boolean verbose;
-
-        @Parameter(names = {"-w", "--irwidget"}, description = "Use IrWidget")
-        private boolean irwidget;
-
-        @Parameter(names = {"-y", "--irtoy"}, description = "Use IrToy")
-        private boolean irtoy = false;
-
-        @Parameter(description = "[parameters]")
-        private ArrayList<String> parameters = new ArrayList<>();
-    }
-
-    private static JCommander argumentParser;
-    private static CommandLineArgs commandLineArgs = new CommandLineArgs();
-
-    private static Thread closeOnShutdown = new Thread() {
-        @Override
-        public void run() {
-            try {
-                //System.err.println("Running shutdown");
-                if (harcHardware != null)
-                    harcHardware.close();
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-            }
-        }
-    };
 
     public static void main(String[] args) {
         argumentParser = new JCommander(commandLineArgs);
@@ -230,12 +149,12 @@ public class Main {
         }
 
         boolean didSomethingUseful = false;
-        GlobalCache globalCache = null;
-        IrTransIRDB irTrans = null;
-        IrToy irtoy = null;
-        LircCcfClient lircClient = null;
-        IrWidget irWidget = null;
-        Arduino arduino = null;
+        GlobalCache globalCache;
+        IrTransIRDB irTrans;
+        IrToy irtoy;
+        LircCcfClient lircClient;
+        IrWidget irWidget;
+        Arduino arduino;
         IRemoteCommandIrSender remoteCommandIrSender = null;
         IRawIrSender rawIrSender = null;
         ICapture captureDevice = null;
@@ -399,5 +318,85 @@ public class Main {
             System.err.println(ex.getMessage());
             System.exit(IrpUtils.exitFatalProgramFailure);
         }
+    }
+    private Main() {
+    }
+    private final static class CommandLineArgs {
+        private final static int defaultTimeout = 2000;
+
+        @Parameter(names = {"-#", "--count"}, description = "Number of times to send sequence")
+        private int count = 1;
+
+        @Parameter(names = {"-a", "--arduino"}, description = "Use Ardiono")
+        private boolean arduino = false;
+
+        @Parameter(names = {"-B", "--beacon"}, description = "Run the beacon listener")
+        private boolean beacon = false;
+
+        @Parameter(names = {"-C", "--capture"}, description = "Capture \"learned\" signal")
+        private boolean capture = false;
+
+        @Parameter(names = {"-c", "--config"}, description = "Path to IrpProtocols.ini")
+        private String irprotocolsIniFilename = "config" + File.separator + "IrpProtocols.ini";
+
+        //@Parameter(names = {"-D", "--debug"}, description = "Debug code")
+        //private int debug = 0;
+
+        @Parameter(names = {"-d", "--device"}, description = "Device name, e.g. COM7: or /dev/ttyS0")
+        private String device = null;
+
+        @Parameter(names = {"-g", "--globalcache"}, description = "Use GlobalCache")
+        private boolean globalcache = false;
+
+        @Parameter(names = {"--getversion"}, description = "Call the getVersion() function")
+        private boolean getversion = false;
+
+        @Parameter(names = {"--getremotes"}, description = "Call the getRemotes() function")
+        private boolean getremotes = false;
+
+        @Parameter(names = {"--getcommands"}, description = "Call the getCommands() function")
+        private String getcommands = null;
+
+        @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
+        private boolean helpRequested = false;
+
+        @Parameter(names = {"-i", "--ip"}, description = "IP address or name")
+        private String ip = null;
+
+        @Parameter(names = {"-I", "--irtrans"}, description = "Use IrTrans")
+        private boolean irtrans = false;
+
+        @Parameter(names = {"-l", "--lirc"}, description = "Use Lirc Client")
+        private boolean lirc = false;
+
+        @Parameter(names = {"--loop"}, description = "Send the irsignal this many times (taking the -# parameter into account)")
+        private int loop = 1;
+
+        @Parameter(names = {"-p", "--port"}, description = "Port number")
+        private int port = invalidPort;
+
+        @Parameter(names = {"-s", "--sendircommand"}, arity = 2, description = "Send a preprogrammed IR command by name of remote and command")
+        private List<String> remotecommand = null;
+
+        @Parameter(names = {"-t", "--transmitter"}, description = "Transmitter, semantic device dependent")
+        private String transmitter = null;
+
+        @Parameter(names = {"-T", "--timeout"}, description = "Timeout in milliseconds")
+        private int timeout = defaultTimeout;
+
+        @Parameter(names = {"-v", "--version"}, description = "Display version information")
+        private boolean versionRequested;
+
+        @Parameter(names = {"-V", "--verbose"}, description = "Execute commands verbosely")
+        private boolean verbose;
+
+        @Parameter(names = {"-w", "--irwidget"}, description = "Use IrWidget")
+        private boolean irwidget;
+
+        @Parameter(names = {"-y", "--irtoy"}, description = "Use IrToy")
+        private boolean irtoy = false;
+
+        @Parameter(description = "[parameters]")
+        private ArrayList<String> parameters = new ArrayList<>(8);
     }
 }

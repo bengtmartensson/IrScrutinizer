@@ -37,20 +37,17 @@ import org.xml.sax.SAXException;
  * This class does something interesting and useful. Or not...
  */
 public class ExportFormatManager {
-    public interface IExportFormatSelector {
-        public void select(String name);
-    }
 
     private final HashMap<String, IExporterFactory> exportFormats;
     private final IExportFormatSelector exportFormatSelector;
-    JMenu menu;
-    ButtonGroup buttonGroup;
+    private JMenu menu;
+    private ButtonGroup buttonGroup;
 
     public ExportFormatManager(GuiUtils guiUtils, File exportFormatFile, IExportFormatSelector exportFormatSelector,
             IExporterFactory girrExporter, IExporterFactory waveExporter, IExporterFactory textExporter,
             IExporterFactory prontoExporter) throws ParserConfigurationException, SAXException, IOException {
         this.exportFormatSelector = exportFormatSelector;
-        exportFormats = new LinkedHashMap<>();
+        exportFormats = new LinkedHashMap<>(32);
         exportFormats.put("Girr", girrExporter);
         exportFormats.put("Text", textExporter);
         exportFormats.put("Wave", waveExporter);
@@ -110,5 +107,8 @@ public class ExportFormatManager {
         ArrayList<String> list = new ArrayList<>(exportFormats.keySet());
         Collections.sort(list, String.CASE_INSENSITIVE_ORDER);
         return list.toArray(new String[list.size()]);
+    }
+    public interface IExportFormatSelector {
+        public void select(String name);
     }
 }

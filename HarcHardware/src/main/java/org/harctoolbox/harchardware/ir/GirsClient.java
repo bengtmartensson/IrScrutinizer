@@ -17,9 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.harchardware.ir;
 
-import gnu.io.NoSuchPortException;
-import gnu.io.PortInUseException;
-import gnu.io.UnsupportedCommOperationException;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
@@ -35,8 +32,9 @@ import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ICommandLineDevice;
+import org.harctoolbox.harchardware.IHarcHardware;
+import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.comm.LocalSerialPortBuffered;
 import org.harctoolbox.harchardware.comm.TcpSocketPort;
 
@@ -45,19 +43,6 @@ import org.harctoolbox.harchardware.comm.TcpSocketPort;
  * @param <T>
  */
 public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implements IHarcHardware, IReceive, IRawIrSender, IRawIrSenderRepeat, IRemoteCommandIrSender, IIrSenderStop, ITransmitter, ICapture, ICommandLineDevice {
-    private String version;
-    private List<String> modules;
-    private T hardware;
-    private boolean verbose;
-    private int debug;
-    private boolean useReceiveForCapture;
-    private String lineEnding;
-    private int beginTimeout;
-    private int maxCaptureLength;
-    private int endingTimeout;
-    private int fallbackFrequency = (int) IrpUtils.defaultFrequency;
-    private boolean stopRequested = false;
-    private boolean pendingCapture = false;
 
     private final static int defaultBeginTimeout = 5000;
     private final static int defaultMiddleTimeout = 1000;
@@ -75,6 +60,96 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
     private final static String okString = "OK";
     private final static String timeoutString = ".";
     private final static String separator = " ";
+
+    /**
+     * Just for testing.
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        //testGirsSerial("/dev/arduino", 115200, true);
+        testGirsTcp("arduino", 33333, true);
+    }
+
+    private static void testGirsTcp(String ip, int portnumber, boolean verbose) {
+        GirsClient<TcpSocketPort> gc = null;
+        try {
+            TcpSocketPort tcp = new TcpSocketPort(ip, portnumber, verbose, TcpSocketPort.ConnectionMode.keepAlive);
+            gc = new GirsClient<>(tcp);
+            testGirs(gc);
+        } catch (HarcHardwareException | IOException ex) {
+            Logger.getLogger(GirsClient.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (gc != null)
+                try {
+                    gc.close();
+                } catch (IOException ex) {
+                }
+        }
+    }
+
+//    private static void testGirsSerial(String portName, int baud, boolean verbose) {
+//        GirsClient<LocalSerialPortBuffered> w = null;
+//        try {
+//            w = new GirsClient<>(new LocalSerialPortBuffered(portName, 115200, verbose));
+//            testGirs(w);
+//        } catch (IOException ex) {
+//            System.err.println("exception: " + ex.toString() + ex.getMessage());
+//            //ex.printStackTrace();
+//        } catch (NoSuchPortException ex) {
+//            System.err.println("No such port: " + portName);
+//        } catch (HarcHardwareException | UnsupportedCommOperationException ex) {
+//            System.err.println(ex.getMessage());
+//        } catch (PortInUseException ex) {
+//            System.err.println("Port " + portName + " in use.");
+//        } finally {
+//            if (w != null)
+//                try {
+//                    w.close();
+//                } catch (IOException ex) {
+//                }
+//        }
+//    }
+
+    private static void testGirs(GirsClient<?> gc) {
+        try {
+            gc.open();
+            System.out.println(gc.getVersion());
+            if (gc.hasModule("lcd"))
+                gc.setLcd("Now send an IR signal");
+            //ModulatedIrSequence seq = gc.capture();
+            IrSequence irSequence = gc.receive();
+            if (irSequence == null) {
+                System.err.println("No input");
+                gc.close();
+                System.exit(1);
+            }
+            ModulatedIrSequence seq = new ModulatedIrSequence(irSequence, IrpUtils.defaultFrequency);
+            System.out.println(seq);
+            DecodeIR.invoke(seq);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(GirsClient.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            gc.close();
+        } catch (IOException | HarcHardwareException | IrpMasterException ex) {
+            Logger.getLogger(GirsClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private String version;
+    private List<String> modules;
+    private final T hardware;
+    private boolean verbose;
+    private int debug;
+    private boolean useReceiveForCapture;
+    private String lineEnding;
+    private int beginTimeout;
+    private int maxCaptureLength;
+    private int endingTimeout;
+    private int fallbackFrequency = (int) IrpUtils.defaultFrequency;
+    private boolean stopRequested = false;
+    private boolean pendingCapture = false;
 
     public GirsClient(T hardware) throws HarcHardwareException, IOException {
         this.lineEnding = defaultLineEnding;
@@ -263,9 +338,9 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
 
     private StringBuilder join(IrSequence irSequence, String separator) {
         if (irSequence == null || irSequence.isEmpty())
-            return new StringBuilder();
+            return new StringBuilder(0);
 
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(128);
         for (int i = 0; i < irSequence.getLength(); i++)
             str.append(separator).append(Integer.toString(irSequence.iget(i)));
         return str;
@@ -394,7 +469,7 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
         hardware.sendString(resetCommand);
         // ???
         if (hardware instanceof LocalSerialPortBuffered)
-            ((LocalSerialPortBuffered) hardware).dropDTR(100);
+            ((LocalSerialPort) hardware).dropDTR(100);
     }
 
     @Override
@@ -499,81 +574,5 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
         answer = answer.trim();
         if (!answer.startsWith(okString))
             throw new HarcHardwareException("No \"" + okString + "\" received, instead \"" + answer + "\".");
-    }
-
-    /**
-     * Just for testing.
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        //testGirsSerial("/dev/arduino", 115200, true);
-        testGirsTcp("arduino", 33333, true);
-    }
-
-    private static void testGirsTcp(String ip, int portnumber, boolean verbose) {
-        GirsClient<TcpSocketPort> gc = null;
-        try {
-            TcpSocketPort tcp = new TcpSocketPort(ip, portnumber, verbose, TcpSocketPort.ConnectionMode.keepAlive);
-            gc = new GirsClient<>(tcp);
-            testGirs(gc);
-        } catch (HarcHardwareException | IOException ex) {
-            Logger.getLogger(GirsClient.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (gc != null)
-                try {
-                    gc.close();
-                } catch (IOException ex) {
-                }
-        }
-    }
-
-    private static void testGirsSerial(String portName, int baud, boolean verbose) {
-        GirsClient<LocalSerialPortBuffered> w = null;
-        try {
-            w = new GirsClient<>(new LocalSerialPortBuffered(portName, 115200, verbose));
-            testGirs(w);
-        } catch (IOException ex) {
-            System.err.println("exception: " + ex.toString() + ex.getMessage());
-            //ex.printStackTrace();
-        } catch (NoSuchPortException ex) {
-            System.err.println("No such port: " + portName);
-        } catch (HarcHardwareException | UnsupportedCommOperationException ex) {
-            System.err.println(ex.getMessage());
-        } catch (PortInUseException ex) {
-            System.err.println("Port " + portName + " in use.");
-        } finally {
-            if (w != null)
-                try {
-                    w.close();
-                } catch (IOException ex) {
-                }
-        }
-    }
-
-    private static void testGirs(GirsClient<?> gc) {
-        try {
-            gc.open();
-            System.out.println(gc.getVersion());
-            if (gc.hasModule("lcd"))
-                gc.setLcd("Now send an IR signal");
-            //ModulatedIrSequence seq = gc.capture();
-            IrSequence irSequence = gc.receive();
-            if (irSequence == null) {
-                System.err.println("No input");
-                gc.close();
-                System.exit(1);
-            }
-            ModulatedIrSequence seq = new ModulatedIrSequence(irSequence, IrpUtils.defaultFrequency);
-            System.out.println(seq);
-            DecodeIR.invoke(seq);
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(GirsClient.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            gc.close();
-        } catch (IOException | HarcHardwareException | IrpMasterException ex) {
-            Logger.getLogger(GirsClient.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 }

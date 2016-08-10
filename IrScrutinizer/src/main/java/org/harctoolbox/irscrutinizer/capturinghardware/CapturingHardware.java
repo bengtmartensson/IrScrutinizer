@@ -23,8 +23,8 @@ import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.ir.ICapture;
 import org.harctoolbox.harchardware.IHarcHardware;
+import org.harctoolbox.harchardware.ir.ICapture;
 import org.harctoolbox.irscrutinizer.Props;
 
 /**

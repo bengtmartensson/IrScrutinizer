@@ -47,20 +47,11 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     private final static long invalid = -1L;
     private final static String irdbOriginName = "IRDB";
 
-    private boolean verbose = false;
-    private String manufacturer;
-    //private HashMap<String,Command> commands = null;
-    private RemoteSet remoteSet;
+    private static ArrayList<String> manufacturers;
 
-    @Override
-    public RemoteSet getRemoteSet() {
-        return remoteSet;
-    }
-
-    @Override
-    public String getFormatName() {
-        return "IRDB";
-    }
+    private final static String irdbHost = "irdb.tk";
+    private final static String urlFormat = "/api/code/?brand=%s&page=%d";
+    private final static String urlFormatBrands = "/api/brand/?page=%d";
 
     public static URI getHomeUri() {
         try {
@@ -69,95 +60,6 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
             return null;
         }
     }
-
-    /*@Override
-    public HashMap<String, Remote> getRemotes() {
-        HashMap<String, Remote> result = new HashMap<String,Remote>(1);
-        result.put(remote.getName(), remote);
-        return result;
-    }
-
-    @Override
-    public Remote getFirstRemote() {
-        return remote;
-    }* /
-
-    @Override
-    public Collection<Command> getCommands() {
-        return commands.values();
-    }
-
-    @Override
-    public Command getCommand(String name) {
-        return commands.get(name);
-    }*/
-
-    public static class ProtocolDeviceSubdevice implements Serializable {
-        private String protocol;
-        private long device;
-        private long subdevice; // use -1 for no subdevice
-
-        public long getDevice() {
-            return device;
-        }
-
-        public long getSubdevice() {
-            return subdevice;
-        }
-
-        public String getProtocol() {
-            return protocol;
-        }
-
-        public ProtocolDeviceSubdevice(String protocol, long device, long subdevice) {
-            this.protocol = protocol;
-            this.device = device;
-            this.subdevice = subdevice;
-        }
-
-        public ProtocolDeviceSubdevice(JsonValue jprotocol, long device, long subdevice) {
-            this(jprotocol.isString() ? jprotocol.asString() : null, device, subdevice);
-        }
-
-        public ProtocolDeviceSubdevice(String protocol, long device) {
-            this(protocol, device, invalid);
-        }
-
-        public ProtocolDeviceSubdevice(JsonObject json) {
-            this(json.get("protocol"),
-                    parseLong(json.get("device").asString()),
-                    parseLong(json.get("subdevice").asString()));
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o == null ||  o.getClass() != this.getClass())
-                    return false;
-            ProtocolDeviceSubdevice dsd = (ProtocolDeviceSubdevice) o;
-            return protocol.equals(dsd.protocol) && (device == dsd.device) && (subdevice == dsd.subdevice);
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 97 * hash + (this.protocol != null ? this.protocol.hashCode() : 0);
-            hash = 97 * hash + (int) (this.device ^ (this.device >>> 32));
-            hash = 97 * hash + (int) (this.subdevice ^ (this.subdevice >>> 32));
-            return hash;
-        }
-
-        @Override
-        public String toString() {
-            return "protocol=" + protocol
-                    + ", device=" + Long.toString(device)
-                    + (subdevice == invalid ? "" : (", subdevice=" + Long.toString(subdevice)));
-        }
-    }
-
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
-    }
-
     private static long parseLong(String str) {
         try {
             return ((str == null) || str.isEmpty()) ? invalid : Long.parseLong(str);
@@ -165,20 +67,11 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
             return invalid;
         }
     }
-
-    private HashMap<String, HashMap<ProtocolDeviceSubdevice, HashMap<String, Long>>> deviceTypes;
-
-    private static ArrayList<String> manufacturers;
-
     public static String[] getManufacturers(boolean verbose) throws IOException {
         if (manufacturers == null)
             setupManufacturers(verbose);
         return manufacturers.toArray(new String[manufacturers.size()]);
     }
-
-    private final static String irdbHost = "irdb.tk";
-    private final static String urlFormat = "/api/code/?brand=%s&page=%d";
-    private final static String urlFormatBrands = "/api/brand/?page=%d";
 
     private static JsonObject getJsonObject(String urlString, boolean verbose) throws IOException {
         URL url = urlString.contains("//") ? new URL(urlString) : new URL("http", irdbHost, urlString);
@@ -190,7 +83,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     }
 
     private static void setupManufacturers(boolean verbose) throws IOException {
-        manufacturers = new ArrayList<>();
+        manufacturers = new ArrayList<>(1024);
         String path = String.format(urlFormatBrands, 1);
         for (int index = 1; index <= 100 && !path.isEmpty(); index++) {
             JsonObject o = getJsonObject(path, verbose);
@@ -209,11 +102,33 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         }
     }
 
+    public static void main(String[] args) {
+        try {
+            String[] manufacturers = getManufacturers(true);
+            IrdbImporter irdb = new IrdbImporter(manufacturers[11], true);
+            System.out.println(irdb.deviceTypes);
+            System.out.println(irdb.getDeviceTypes());
+            for (String type : irdb.getDeviceTypes()) {
+                System.out.println(irdb.getProtocolDeviceSubdevice(type));
+                for (ProtocolDeviceSubdevice pds : irdb.getProtocolDeviceSubdevice(type))
+                    System.out.println(irdb.getCommands(type, pds));
+            }
+        } catch (IOException | IrpMasterException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    private boolean verbose = false;
+    private String manufacturer;
+    //private HashMap<String,Command> commands = null;
+    private RemoteSet remoteSet;
+    private HashMap<String, HashMap<ProtocolDeviceSubdevice, HashMap<String, Long>>> deviceTypes;
+
     public IrdbImporter(String manufacturer, boolean verbose) throws IOException {
         super(irdbOriginName);
         this.manufacturer = manufacturer;
         this.verbose = verbose;
-        deviceTypes = new LinkedHashMap<>();
+        deviceTypes = new LinkedHashMap<>(16);
         String path = String.format(urlFormat, URLEncoder.encode(manufacturer, "utf-8"), 1);
         for (int index = 1; index <= 100 && !path.isEmpty(); index++) {
             JsonObject o = getJsonObject(path, verbose);
@@ -227,7 +142,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
                 JsonObject obj = val.asObject();
                 String deviceType = obj.get("devicetype").asString();
                 if (!deviceTypes.containsKey(deviceType))
-                    deviceTypes.put(deviceType, new LinkedHashMap<ProtocolDeviceSubdevice, HashMap<String, Long>>());
+                    deviceTypes.put(deviceType, new LinkedHashMap<ProtocolDeviceSubdevice, HashMap<String, Long>>(8));
                 HashMap<ProtocolDeviceSubdevice, HashMap<String, Long>> devCollection = deviceTypes.get(deviceType);
                 ProtocolDeviceSubdevice pds = new ProtocolDeviceSubdevice(obj);
                 if (pds.getProtocol() == null) {
@@ -235,7 +150,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
                     continue;
                 }
                 if (!devCollection.containsKey(pds))
-                    devCollection.put(pds, new LinkedHashMap<String, Long>());
+                    devCollection.put(pds, new LinkedHashMap<String, Long>(8));
                 HashMap<String, Long> cmnds = devCollection.get(pds);
                 long function = parseLong(obj.get("function").asString()); // barfs for illegal
                 String functionName = obj.get("functionname").asString();
@@ -244,6 +159,17 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
                 cmnds.put(functionName, function);
             }
         }
+    }
+    @Override
+    public RemoteSet getRemoteSet() {
+        return remoteSet;
+    }
+    @Override
+    public String getFormatName() {
+        return "IRDB";
+    }
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     public Set<String> getDeviceTypes() {
@@ -286,7 +212,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         if (map == null)
             return;
 
-        HashMap<String, Remote> remoteList = new LinkedHashMap<>();
+        HashMap<String, Remote> remoteList = new LinkedHashMap<>(16);
 
         //HashMap<String,Command> cmds;
         for (Entry<ProtocolDeviceSubdevice, HashMap<String, Long>> kvp : map.entrySet()) {
@@ -312,7 +238,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     }
 
     private HashMap<String, Command> load(HashMap<String, Long> commandMap, ProtocolDeviceSubdevice pds, String deviceType) throws IrpMasterException {
-        HashMap<String,Command> cmds = new LinkedHashMap<>();
+        HashMap<String,Command> cmds = new LinkedHashMap<>(16);
         for (Entry<String, Long> kvp : commandMap.entrySet()) {
             //ParametrizedIrSignal paramSig = new ParametrizedIrSignal(pds.getProtocol(), pds.getDevice(), pds.subdevice,
             //        kvp.getValue().longValue(), kvp.getKey(),
@@ -346,21 +272,66 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         return getCommand(functionName);
     }
 
-    public static void main(String[] args) {
-        try {
-            String[] manufacturers = getManufacturers(true);
-            IrdbImporter irdb = new IrdbImporter(manufacturers[11], true);
-            System.out.println(irdb.deviceTypes);
-            System.out.println(irdb.getDeviceTypes());
-            for (String type : irdb.getDeviceTypes()) {
-                System.out.println(irdb.getProtocolDeviceSubdevice(type));
-                for (ProtocolDeviceSubdevice pds : irdb.getProtocolDeviceSubdevice(type))
-                    System.out.println(irdb.getCommands(type, pds));
-            }
-        } catch (IOException | IrpMasterException ex) {
-            System.err.println(ex.getMessage());
+    public static class ProtocolDeviceSubdevice implements Serializable {
+        private String protocol;
+        private long device;
+        private long subdevice; // use -1 for no subdevice
+
+        public ProtocolDeviceSubdevice(String protocol, long device, long subdevice) {
+            this.protocol = protocol;
+            this.device = device;
+            this.subdevice = subdevice;
+        }
+
+        public ProtocolDeviceSubdevice(JsonValue jprotocol, long device, long subdevice) {
+            this(jprotocol.isString() ? jprotocol.asString() : null, device, subdevice);
+        }
+
+        public ProtocolDeviceSubdevice(String protocol, long device) {
+            this(protocol, device, invalid);
+        }
+
+        public ProtocolDeviceSubdevice(JsonObject json) {
+            this(json.get("protocol"),
+                    parseLong(json.get("device").asString()),
+                    parseLong(json.get("subdevice").asString()));
+        }
+
+        public long getDevice() {
+            return device;
+        }
+
+        public long getSubdevice() {
+            return subdevice;
+        }
+
+        public String getProtocol() {
+            return protocol;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null ||  o.getClass() != this.getClass())
+                return false;
+            ProtocolDeviceSubdevice dsd = (ProtocolDeviceSubdevice) o;
+            return protocol.equals(dsd.protocol) && (device == dsd.device) && (subdevice == dsd.subdevice);
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 97 * hash + (this.protocol != null ? this.protocol.hashCode() : 0);
+            hash = 97 * hash + (int) (this.device ^ (this.device >>> 32));
+            hash = 97 * hash + (int) (this.subdevice ^ (this.subdevice >>> 32));
+            return hash;
+        }
+
+        @Override
+        public String toString() {
+            return "protocol=" + protocol
+                    + ", device=" + Long.toString(device)
+                    + (subdevice == invalid ? "" : (", subdevice=" + Long.toString(subdevice)));
         }
     }
-
 }
 

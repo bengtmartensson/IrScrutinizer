@@ -31,15 +31,18 @@ import org.harctoolbox.guicomponents.SelectFile;
  * This class is a common base class of all the exporters.
  */
 public abstract class Exporter {
+
+    private static File lastSaveFile = null;
+    private static final String defaultDateFormatString = "yyyy-MM-dd_HH:mm:ss";
+    private static final String defaultDateFormatFileString = "yyyy-MM-dd_HH-mm-ss";
+    private static String dateFormatString = defaultDateFormatString;
+    private static String dateFormatFileString = defaultDateFormatFileString;
+
     /**
      * @param aDateFormatString the dateFormatString to set
      */
     public static void setDateFormatString(String aDateFormatString) {
         dateFormatString = aDateFormatString;
-    }
-
-    public String getDateFormatString() {
-        return dateFormatString;
     }
 
     /**
@@ -48,20 +51,6 @@ public abstract class Exporter {
     public static void setDateFormatFileString(String aDateFormatFileString) {
         dateFormatFileString = aDateFormatFileString;
     }
-
-    private static File lastSaveFile = null;
-    private static final String defaultDateFormatString = "yyyy-MM-dd_HH:mm:ss";
-    private static final String defaultDateFormatFileString = "yyyy-MM-dd_HH-mm-ss";
-    private static String dateFormatString = defaultDateFormatString;
-    private static String dateFormatFileString = defaultDateFormatFileString;
-
-    protected Exporter() {
-    }
-
-    public abstract String[][] getFileExtensions();
-
-    // Dummy
-    public abstract String getPreferredFileExtension();
 
     private static void checkExportDir(File exportDir) throws IOException {
         if (!exportDir.exists()) {
@@ -72,6 +61,29 @@ public abstract class Exporter {
         if (!exportDir.isDirectory() || !exportDir.canWrite())
             throw new IOException("Export directory `" + exportDir + "' is not a writable directory.");
     }
+    protected static String getDateString() {
+        return (new SimpleDateFormat(dateFormatString)).format(new Date());
+    }
+
+    public synchronized static File getLastSaveFile() {
+        return lastSaveFile;
+    }
+
+    private synchronized static void setLastSaveFile(File theLastSaveFile) {
+        lastSaveFile = theLastSaveFile;
+    }
+
+    protected Exporter() {
+    }
+    public String getDateFormatString() {
+        return dateFormatString;
+    }
+
+    public abstract String[][] getFileExtensions();
+
+    // Dummy
+    public abstract String getPreferredFileExtension();
+
 
     public abstract String getFormatName();
 
@@ -96,17 +108,5 @@ public abstract class Exporter {
         if (file != null)
             setLastSaveFile(file);
         return file;
-    }
-
-    protected static String getDateString() {
-        return (new SimpleDateFormat(dateFormatString)).format(new Date());
-    }
-
-    public synchronized static File getLastSaveFile() {
-        return lastSaveFile;
-    }
-
-    private synchronized static void setLastSaveFile(File theLastSaveFile) {
-        lastSaveFile = theLastSaveFile;
     }
 }

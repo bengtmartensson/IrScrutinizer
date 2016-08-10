@@ -30,17 +30,234 @@ import org.w3c.dom.Element;
 
 public class EzControlT10 implements IHarcHardware, IWeb {
 
+    public final static String defaultEzcontrolIP = "192.168.1.42";
+    private final static int ezcontrolPortno = 7042;
+    private final static int ezcontrolQueryPortno = 7044;
+    private final static int bufferSize = 352;
+    public static final int t10NumberPresets = 32;
+    private final static String[] daynames = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+    public static final int t10NumberTimers = 26;
+
+    private static int fs20Time(double secs) {
+        int quartersecs = (int) (4*secs);
+        int qMin = (int) Math.round(java.lang.Math.log(quartersecs/15.0)/java.lang.Math.log(2))+1;
+        if (qMin < 0)
+            qMin = 0;
+
+        int mult = (((qMin & 1) == 1) ? 2 : 1)
+                * (((qMin & 2) == 2) ? 4 : 1)
+                * (((qMin & 4) == 4) ? 16 : 1)
+                * (((qMin & 8) == 8) ? 256 : 1);
+
+        int m = quartersecs/mult;
+        int res = (qMin << 4) + m;
+        return res;
+    }
+
+    private static int encodeCommand(EZSystem system, Command cmd) {
+        return system == EZSystem.FS20 ? fs20EncodeCommand(cmd) : simpleEncodeCommand(cmd);
+    }
+
+    private static int fs20EncodeCommand(Command cmd) {
+        return cmd == Command.power_on ? 255
+                : cmd == Command.power_off ? 0
+                : cmd == Command.power_toggle ? 18
+                : cmd == Command.dim_up ? 19
+                : cmd == Command.dim_down ? 20
+                : cmd == Command.dim_max_time ? 48
+                : cmd == Command.dim_off_time ? 32
+                : cmd == Command.set_time ? 54
+                : -1;
+    }
+
+    private static int simpleEncodeCommand(Command cmd) {
+        return cmd == Command.power_on ? 1
+                : cmd == Command.power_off ? 0
+                : -1;
+    }
+
+    public static String getTimers(String hostname) {
+        return (new EzControlT10(hostname)).getTimers();
+    }
+
+    public static String getTimer(String hostname, int n) {
+        return (new EzControlT10(hostname)).getTimer(n);
+    }
+
+    public static String getTimer(String hostname, String name) {
+        return (new EzControlT10(hostname)).getTimer(name);
+    }
+
+    public static String getStatus(String hostname) {
+        return (new EzControlT10(hostname)).getStatus();
+    }
+
+    private static void usage() {
+        System.err.println("Usage:\n" + "ezcontrol [<options>] get_status [<presetNumber>]\n"
+                + "or\n" + "ezcontrol [<options>] get_timer [<timername>]\n"
+                + "or\n" + "ezcontrol [<options>] <presetNumber> <command>\n"
+                + "or\n" + "ezcontrol [<options>] <presetNumber> <value_in_percent>\n"
+                + "or\n" + "ezcontrol [<options>] <systemName> <housecode> <deviceNumber> <command> [<arg>]\n"
+                + "or\n" + "ezcontrol [<options>] xml\n"
+                + "\nwhere options=-h <hostname>,-d <debugcode>,-# <count>,-v, -u\n"
+                + "and command=power_on,power_off,power_toggle,get_status,...");
+        doExit(IrpUtils.exitUsageError);
+    }
+
+    private static void doExit(int exitcode) {
+        System.exit(exitcode);
+    }
+
+    public static void main(String args[]) {
+        boolean verbose = false;
+        String ezcontrolHost = defaultEzcontrolIP;
+        //int debug = 0;
+        int arg_i = 0;
+        int count = 1;
+        boolean presetMode = false;
+        boolean doGetStatus = false;
+        boolean doGetTimers = false;
+        boolean doXml = false;
+        Command cmd = Command.invalid;
+        //String commandName = null;
+        String timerName = null;
+        EZSystem system = null;
+        String housecode = null;
+        int deviceNumber = -1;
+        int numArg = -1;
+        int percentValue = -1;
+        int value = -1;
+        int arg = -1;
+        boolean udp = false;
+
+        try {
+            while (arg_i < args.length && (args[arg_i].length() > 0) && args[arg_i].charAt(0) == '-') {
+
+                switch (args[arg_i]) {
+                    case "-v":
+                        verbose = true;
+                        arg_i++;
+                        break;
+                    case "-u":
+                        arg_i++;
+                        udp = true;
+                        break;
+                    case "-h":
+                        arg_i++;
+                        ezcontrolHost = args[arg_i++];
+                        break;
+                    case "-d":
+                        arg_i++;
+                        //debug = Integer.parseInt(args[arg_i++]);
+                        break;
+                    case "-#":
+                        arg_i++;
+                        count = Integer.parseInt(args[arg_i++]);
+                        break;
+                    default:
+                        usage();
+                        break;
+                }
+            }
+
+            if (args[arg_i].equals("getStatus")) {
+                doGetStatus = true;
+                if (args.length - arg_i > 1) {
+                    numArg = Integer.parseInt(args[arg_i + 1]);
+                }
+            } else if (args[arg_i].equals("getTimer")) {
+                doGetTimers = true;
+                if (args.length - arg_i > 1) {
+                    timerName = args[arg_i + 1];
+                }
+            } else if (args[arg_i].equals("xml")) {
+                doXml = true;
+            } else if (args.length - arg_i == 2) {// Preset command
+                presetMode = true;
+                numArg = Integer.parseInt(args[arg_i]);
+                try {
+                    cmd = Command.valueOf(args[arg_i + 1]);
+                } catch (IllegalArgumentException e) { // FIXME
+                    cmd = Command.set_power;
+                    percentValue = Integer.parseInt(args[arg_i + 1]);
+                }
+            } else {
+                system = EZSystem.valueOf(args[arg_i].toUpperCase(Locale.US));
+                housecode = args[arg_i + 1];
+                String devString = args[arg_i + 2];
+
+                deviceNumber = devString.charAt(0) > '9'
+                        ? devString.toUpperCase(Locale.US).charAt(0) - 'A'
+                        : Integer.parseInt(devString);
+                cmd = Command.valueOf(args[arg_i + 3].toLowerCase(Locale.US));
+
+                value = encodeCommand(system, cmd);
+                arg = args.length > arg_i + 4 ? Integer.parseInt(args[arg_i + 4]) : -1;
+                if (cmd.hasTimeArgument())
+                    arg = fs20Time(arg);
+            }
+        } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
+            usage();
+        }
+
+        if (numArg != -1 && (numArg < 1 || numArg > t10NumberPresets)) {
+            System.err.println("Numerical argument not valid.");
+            System.exit(45);
+        }
+        if (deviceNumber != -1 && value == -1) {
+            System.err.println("Only commands power_on and power_off allowed.");
+            System.exit(46);
+        }
+        EzControlT10 ez = new EzControlT10(ezcontrolHost, verbose, udp ? Interface.udp : Interface.http);
+
+        try {
+            if (doGetStatus) {
+                if (numArg > 0) {
+                    System.out.println(ez.getPresetString(numArg));
+                    System.out.println(ez.getPresetName(numArg));
+                } else {
+                    System.out.println(ez.getStatus());
+                }
+            } else if (doGetTimers) {
+                if (timerName != null) {
+                    System.out.println(ez.getTimer(timerName));
+                } else {
+                    System.out.println(ez.getTimers());
+                }
+            } else if (doXml) {
+                ez.generateXml();
+            } else if (presetMode) {
+                if (cmd == Command.set_power)
+                    ez.sendPreset(numArg, percentValue);
+                else
+                    ez.sendPreset(numArg, cmd);
+            } else {
+                ez.sendManual(system, housecode, deviceNumber, value, arg, count);
+            }
+        } catch (HarcHardwareException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
     // UDP control presently not implemented for manual selection.
 
     private String ezcontrolIP;
-    public final static String defaultEzcontrolIP = "192.168.1.42";
     private int soTimeout = 1000;
-    private final static int ezcontrolPortno = 7042;
-    private final static int ezcontrolQueryPortno = 7044;
     private boolean verbose = true;
     private int debug = 0;
+    private Interface interfaze = Interface.http;
+    private Status[] state = null; // Note: element 0 unused,
+    //starts with 0, T10 starts with 1
+    private Timer[] timers = null;
 
-    private final static int bufferSize = 352;
+    public EzControlT10(String hostname, boolean verbose, Interface interfaze) {
+        ezcontrolIP = (hostname != null && ! hostname.isEmpty()) ? hostname : defaultEzcontrolIP;
+        this.verbose = verbose;
+        this.interfaze = interfaze;
+    }
+
+    public EzControlT10(String hostname) {
+        this(hostname, false, Interface.http);
+    }
 
     @Override
     public void close() {
@@ -65,144 +282,6 @@ public class EzControlT10 implements IHarcHardware, IWeb {
         this.debug = debug;
     }
 
-    /** Interfaces that can be used to command an T10 */
-    public enum Interface {
-        udp,
-        http
-    }
-
-    private Interface interfaze = Interface.http;
-
-    private static class Status {
-
-        public final static int on = 1;
-        public final static int off = 0;
-        public final static int unknown = -1;
-        public String name;
-        public int state;
-
-        Status(String n, int s) {
-            name = n;
-            state = s;
-        }
-
-        public String stateStr() {
-            return state == on ? "on" : state == off ? "off" : "?";
-        }
-
-        @Override
-        public String toString() {
-            return name + ": " + stateStr();
-        }
-    }
-    public static final int t10NumberPresets = 32;
-    private Status[] state = null; // Note: element 0 unused,
-    //starts with 0, T10 starts with 1
-
-    public enum EZSystem {
-        /** The FS-10 system, now obsolete. */
-        FS10, // 1
-
-        /** The FS-20 system from ELV or Conrad. */
-        FS20, // 2
-
-        /** The RS200 system, once sold by Conrad. */
-        RS200,
-
-        /** ELRO AB400 */
-        AB400,
-
-        /** ELRO AB601 */
-        AB601,
-
-        /** Intertechno, and similar (Düwi, One 4 all, etc) "with codewheel" */
-        IT, // Intertechno, 6
-
-        /** REV Ritter */
-        REV,
-
-        /** Brennenstuhl und Quigg */
-        BS_QU,
-
-        /** The X10 system, for example by Marmitek. */
-        MARMI, // X10, 9
-
-        /** InScenio OASE FM-Master */
-        OA_FM,
-
-        /** Kopp first control, only first generation */
-        KO_FC,
-
-        /** Europe Supplies Ltd. */
-        RS862;
-
-        public static EZSystem parse(String systemName) {
-            return systemName.toLowerCase(IrpUtils.dumbLocale).equals("intertechno") ? IT
-                    : systemName.toLowerCase(IrpUtils.dumbLocale).equals("conrad") ? RS200
-                    : systemName.toLowerCase(IrpUtils.dumbLocale).equals("x10") ? MARMI
-                    : valueOf(systemName.replace('-', '_').toUpperCase(IrpUtils.dumbLocale));
-        }
-
-        /**
-         * Returns the system number as used in the official documentation.
-         * @return
-         */
-        public int systemNumber() {
-            return ordinal() + 1;
-        }
-
-        public boolean hasHouseLetter() {
-            //int sysno = systemNumber(system);
-            return this == AB601 || this == IT || this == MARMI;
-        }
-
-        public boolean hasDeviceLetter() {
-            //int sysno = systemNumber(system);
-            return this == AB400;
-        }
-    }
-
-    /**
-     * An enum consisting of the commands this class understands.
-     */
-    public enum Command {
-        power_on,
-        power_off,
-        power_toggle,
-        dim_up,
-        dim_down,
-        dim_max_time,
-        dim_off_time,
-        set_time,
-
-        /** Takes two arguments, the goal power, and the time to be taken. */
-        dim_value_time,
-
-        /** Takes an argument, power in percents. */
-        set_power,
-        get_status,
-
-        /** Marker for invalid command. */
-        invalid;
-
-        /**
-         * Returns true iff the command can be used as a present command.
-         * @return
-         */
-        public boolean isPresetCommand() {
-            return this == get_status || this == set_power // Requires FW 2.26
-                || this == power_toggle || this == power_on
-                || this == power_off;
-        }
-
-        /**
-         * Returns true iff the command uses a time argument.
-         * @return
-         */
-        public boolean hasTimeArgument() {
-            return this == dim_max_time || this == dim_off_time || this == set_time;
-        }
-    }
 
     @Override
     public void setTimeout(int timeout) {
@@ -227,87 +306,6 @@ public class EzControlT10 implements IHarcHardware, IWeb {
         return true;
     }
 
-    private final static String[] daynames = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
-
-    private class Timer {
-
-        boolean[] presets;
-        boolean[] days;
-        boolean enabled;
-
-        private class Clock {
-
-            int hour;
-            int minute;
-
-            Clock(int h, int m) {
-                hour = h;
-                minute = m;
-            }
-
-            @Override
-            public String toString() {
-                return "" + (hour >= 0
-                        ? (hour < 10 ? "0" : "") + (hour + ":" + (minute < 10 ? "0" : "") + minute)
-                        : "     ");
-            }
-        }
-        Clock onTime;
-        Clock offTime;
-
-        Timer(boolean[] presets, boolean[] days, boolean enabled, int onH, int onM, int offH, int offM) {
-            this.presets = presets;
-            this.days = days;
-            this.enabled = enabled;
-            onTime = new Clock(onH, onM);
-            offTime = new Clock(offH, offM);
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder result = new StringBuilder(onTime.toString() + "-" + offTime.toString() + " ");
-
-            boolean virgin = true;
-            for (int i = 0; i < 7; i++) {
-                if (days[i]) {
-                    if (((i == 0) || !days[i - 1]) || ((i == 6) || !days[i + 1])) {
-                        result.append(virgin ? "" : (days[i - 1] ? "-" : ",")).append(daynames[i]);
-                    }
-                    virgin = false;
-                }
-            }
-
-            for (int i = result.length(); i < 30; i++) {
-                result.append(" ");
-            }
-
-            result.append(" ");
-            virgin = true;
-            for (int i = 1; i < t10NumberPresets; i++) {
-                if (presets[i]) {
-                    result.append(virgin ? "" : ", ").append(state[i].name);
-                    virgin = false;
-                }
-            }
-            for (int i = result.length(); i < 65; i++) {
-                result.append(" ");
-            }
-            return result.append(" ").append(enabled ? "(enabled)" : "(disabled)").toString();
-        }
-    }
-    public static final int t10NumberTimers = 26;
-    private Timer[] timers = null;
-
-    public EzControlT10(String hostname, boolean verbose, Interface interfaze) {
-        ezcontrolIP = (hostname != null && ! hostname.isEmpty()) ? hostname : defaultEzcontrolIP;
-        this.verbose = verbose;
-        this.interfaze = interfaze;
-    }
-
-    public EzControlT10(String hostname) {
-        this(hostname, false, Interface.http);
-    }
-
     @Override
     public void setVerbosity(boolean verbosity) {
         this.verbose = verbosity;
@@ -327,22 +325,6 @@ public class EzControlT10 implements IHarcHardware, IWeb {
         } catch (IOException ex) {
             throw new HarcHardwareException(ex);
         }
-    }
-
-    private static int fs20Time(double secs) {
-        int quartersecs = (int) (4*secs);
-        int qMin = (int)(java.lang.Math.log(quartersecs/15)/java.lang.Math.log(2))+1;
-        if (qMin < 0)
-            qMin = 0;
-
-        int mult = (((qMin & 1) == 1) ? 2 : 1)
-                * (((qMin & 2) == 2) ? 4 : 1)
-                * (((qMin & 4) == 4) ? 16 : 1)
-                * (((qMin & 8) == 8) ? 256 : 1);
-
-        int m = (int)(quartersecs/mult);
-        int res = (qMin << 4) + m;
-        return res;
     }
 
     public boolean sendManual(EZSystem system, String house, int device,
@@ -616,27 +598,6 @@ public class EzControlT10 implements IHarcHardware, IWeb {
         return "http://" + ezcontrolIP + "/preset?switch=" + switchNumber + "&value=" + val;
     }
 
-    private static int encodeCommand(EZSystem system, Command cmd) {
-        return system == EZSystem.FS20 ? fs20EncodeCommand(cmd) : simpleEncodeCommand(cmd);
-    }
-
-    private static int fs20EncodeCommand(Command cmd) {
-        return cmd == Command.power_on ? 255
-                : cmd == Command.power_off ? 0
-                : cmd == Command.power_toggle ? 18
-                : cmd == Command.dim_up ? 19
-                : cmd == Command.dim_down ? 20
-                : cmd == Command.dim_max_time ? 48
-                : cmd == Command.dim_off_time ? 32
-                : cmd == Command.set_time ? 54
-                : -1;
-    }
-
-    private static int simpleEncodeCommand(Command cmd) {
-        return cmd == Command.power_on ? 1
-                : cmd == Command.power_off ? 0
-                : -1;
-    }
 
     private boolean getUrl(String url) throws MalformedURLException, IOException {
         if (verbose)
@@ -648,7 +609,7 @@ public class EzControlT10 implements IHarcHardware, IWeb {
 
     public String getStatus() {
         setupStatus();
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(32);
         for (int i = 0; i < t10NumberPresets; i++) {
             if (state[i] != null) {
                 result.append(i).append(".\t").append(state[i].toString()).append("\n");
@@ -704,7 +665,7 @@ public class EzControlT10 implements IHarcHardware, IWeb {
         if (verbose) {
             System.err.println("Getting URL " + url);
         }
-        StringBuilder data = new StringBuilder();
+        StringBuilder data = new StringBuilder(32);
 
         BufferedReader r = null;
         boolean success = true;
@@ -773,7 +734,7 @@ public class EzControlT10 implements IHarcHardware, IWeb {
         if (verbose) {
             System.err.println("Getting URL " + url);
         }
-        StringBuilder data = new StringBuilder();
+        StringBuilder data = new StringBuilder(32);
 
         BufferedReader r = null;
         try {
@@ -857,10 +818,10 @@ public class EzControlT10 implements IHarcHardware, IWeb {
             System.err.println("Could not get timers");
             return null;
         }
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(32);
         for (int i = 0; i < t10NumberTimers; i++) {
             if (timers[i].enabled) {
-                result.append((char) (i + (int) 'A')).append(": ").append(timers[i].toString()).append("\n");
+                result.append((char) (i + 'A')).append(": ").append(timers[i].toString()).append("\n");
             }
         }
 
@@ -875,30 +836,14 @@ public class EzControlT10 implements IHarcHardware, IWeb {
     }
 
     public String getTimer(String name) {
-        int n = ((int) name.charAt(0) - (int) 'A') % 32;
+        int n = (name.charAt(0) - 'A') % 32;
         String result = "";
         if (n >= 0 && n < t10NumberTimers) {
-            result = getTimer(((int) name.charAt(0) - (int) 'A') % 32);
+            result = getTimer((name.charAt(0) - 'A') % 32);
         } else {
             System.err.println("Erroneous timer name \"" + name + "\".");
         }
         return result;
-    }
-
-    public static String getTimers(String hostname) {
-        return (new EzControlT10(hostname)).getTimers();
-    }
-
-    public static String getTimer(String hostname, int n) {
-        return (new EzControlT10(hostname)).getTimer(n);
-    }
-
-    public static String getTimer(String hostname, String name) {
-        return (new EzControlT10(hostname)).getTimer(name);
-    }
-
-    public static String getStatus(String hostname) {
-        return (new EzControlT10(hostname)).getStatus();
     }
 
     public Document xmlConfig() {
@@ -928,7 +873,7 @@ public class EzControlT10 implements IHarcHardware, IWeb {
         for (int i = 0; i < t10NumberTimers; i++) {
             if (timers[i] != null) {
                 Element t = doc.createElement("timer");
-                t.setAttribute("name", "" + (char) (i + (int) 'A'));
+                t.setAttribute("name", "" + (char) (i + 'A'));
                 t.setAttribute("enabled", timers[i].enabled ? "yes" : "no");
                 if (timers[i].onTime.hour != -1) {
                     Element on = doc.createElement("on");
@@ -1000,150 +945,201 @@ public class EzControlT10 implements IHarcHardware, IWeb {
         }
     }
 
-    private static void usage() {
-        System.err.println("Usage:\n" + "ezcontrol [<options>] get_status [<presetNumber>]\n"
-                + "or\n" + "ezcontrol [<options>] get_timer [<timername>]\n"
-                + "or\n" + "ezcontrol [<options>] <presetNumber> <command>\n"
-                + "or\n" + "ezcontrol [<options>] <presetNumber> <value_in_percent>\n"
-                + "or\n" + "ezcontrol [<options>] <systemName> <housecode> <deviceNumber> <command> [<arg>]\n"
-                + "or\n" + "ezcontrol [<options>] xml\n"
-                + "\nwhere options=-h <hostname>,-d <debugcode>,-# <count>,-v, -u\n"
-                + "and command=power_on,power_off,power_toggle,get_status,...");
-        doExit(IrpUtils.exitUsageError);
+    private static class Status {
+
+        public final static int on = 1;
+        public final static int off = 0;
+        public final static int unknown = -1;
+        public String name;
+        public int state;
+
+        Status(String n, int s) {
+            name = n;
+            state = s;
+        }
+
+        public String stateStr() {
+            return state == on ? "on" : state == off ? "off" : "?";
+        }
+
+        @Override
+        public String toString() {
+            return name + ": " + stateStr();
+        }
     }
-
-    private static void doExit(int exitcode) {
-        System.exit(exitcode);
+    /** Interfaces that can be used to command an T10 */
+    public enum Interface {
+        udp,
+        http
     }
+    public enum EZSystem {
+        /** The FS-10 system, now obsolete. */
+        FS10, // 1
 
-    public static void main(String args[]) {
-        boolean verbose = false;
-        String ezcontrolHost = defaultEzcontrolIP;
-        //int debug = 0;
-        int arg_i = 0;
-        int count = 1;
-        boolean presetMode = false;
-        boolean doGetStatus = false;
-        boolean doGetTimers = false;
-        boolean doXml = false;
-        Command cmd = Command.invalid;
-        //String commandName = null;
-        String timerName = null;
-        EZSystem system = null;
-        String housecode = null;
-        int deviceNumber = -1;
-        int numArg = -1;
-        int percentValue = -1;
-        int value = -1;
-        int arg = -1;
-        boolean udp = false;
+        /** The FS-20 system from ELV or Conrad. */
+        FS20, // 2
 
-        try {
-            while (arg_i < args.length && (args[arg_i].length() > 0) && args[arg_i].charAt(0) == '-') {
+        /** The RS200 system, once sold by Conrad. */
+        RS200,
 
-                switch (args[arg_i]) {
-                    case "-v":
-                        verbose = true;
-                        arg_i++;
-                        break;
-                    case "-u":
-                        arg_i++;
-                        udp = true;
-                        break;
-                    case "-h":
-                        arg_i++;
-                        ezcontrolHost = args[arg_i++];
-                        break;
-                    case "-d":
-                        arg_i++;
-                        //debug = Integer.parseInt(args[arg_i++]);
-                        break;
-                    case "-#":
-                        arg_i++;
-                        count = Integer.parseInt(args[arg_i++]);
-                        break;
-                    default:
-                        usage();
-                        break;
+        /** ELRO AB400 */
+        AB400,
+
+        /** ELRO AB601 */
+        AB601,
+
+        /** Intertechno, and similar (Düwi, One 4 all, etc) "with codewheel" */
+        IT, // Intertechno, 6
+
+        /** REV Ritter */
+        REV,
+
+        /** Brennenstuhl und Quigg */
+        BS_QU,
+
+        /** The X10 system, for example by Marmitek. */
+        MARMI, // X10, 9
+
+        /** InScenio OASE FM-Master */
+        OA_FM,
+
+        /** Kopp first control, only first generation */
+        KO_FC,
+
+        /** Europe Supplies Ltd. */
+        RS862;
+
+        public static EZSystem parse(String systemName) {
+            return systemName.toLowerCase(IrpUtils.dumbLocale).equals("intertechno") ? IT
+                    : systemName.toLowerCase(IrpUtils.dumbLocale).equals("conrad") ? RS200
+                    : systemName.toLowerCase(IrpUtils.dumbLocale).equals("x10") ? MARMI
+                    : valueOf(systemName.replace('-', '_').toUpperCase(IrpUtils.dumbLocale));
+        }
+
+        /**
+         * Returns the system number as used in the official documentation.
+         * @return
+         */
+        public int systemNumber() {
+            return ordinal() + 1;
+        }
+
+        public boolean hasHouseLetter() {
+            //int sysno = systemNumber(system);
+            return this == AB601 || this == IT || this == MARMI;
+        }
+
+        public boolean hasDeviceLetter() {
+            //int sysno = systemNumber(system);
+            return this == AB400;
+        }
+    }
+    /**
+     * An enum consisting of the commands this class understands.
+     */
+    public enum Command {
+        power_on,
+        power_off,
+        power_toggle,
+        dim_up,
+        dim_down,
+        dim_max_time,
+        dim_off_time,
+        set_time,
+
+        /** Takes two arguments, the goal power, and the time to be taken. */
+        dim_value_time,
+
+        /** Takes an argument, power in percents. */
+        set_power,
+        get_status,
+
+        /** Marker for invalid command. */
+        invalid;
+
+        /**
+         * Returns true iff the command can be used as a present command.
+         * @return
+         */
+        public boolean isPresetCommand() {
+            return this == get_status || this == set_power // Requires FW 2.26
+                    || this == power_toggle || this == power_on
+                    || this == power_off;
+        }
+
+        /**
+         * Returns true iff the command uses a time argument.
+         * @return
+         */
+        public boolean hasTimeArgument() {
+            return this == dim_max_time || this == dim_off_time || this == set_time;
+        }
+    }
+    private class Timer {
+
+        boolean[] presets;
+        boolean[] days;
+        boolean enabled;
+
+        Clock onTime;
+        Clock offTime;
+
+        Timer(boolean[] presets, boolean[] days, boolean enabled, int onH, int onM, int offH, int offM) {
+            this.presets = presets;
+            this.days = days;
+            this.enabled = enabled;
+            onTime = new Clock(onH, onM);
+            offTime = new Clock(offH, offM);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder result = new StringBuilder(onTime.toString() + "-" + offTime.toString() + " ");
+
+            boolean virgin = true;
+            for (int i = 0; i < 7; i++) {
+                if (days[i]) {
+                    if (((i == 0) || !days[i - 1]) || ((i == 6) || !days[i + 1])) {
+                        result.append(virgin ? "" : (days[i - 1] ? "-" : ",")).append(daynames[i]);
+                    }
+                    virgin = false;
                 }
             }
 
-            if (args[arg_i].equals("getStatus")) {
-                doGetStatus = true;
-                if (args.length - arg_i > 1) {
-                    numArg = Integer.parseInt(args[arg_i + 1]);
-                }
-            } else if (args[arg_i].equals("getTimer")) {
-                doGetTimers = true;
-                if (args.length - arg_i > 1) {
-                    timerName = args[arg_i + 1];
-                }
-            } else if (args[arg_i].equals("xml")) {
-                doXml = true;
-            } else if (args.length - arg_i == 2) {// Preset command
-                presetMode = true;
-                numArg = Integer.parseInt(args[arg_i]);
-                try {
-                    cmd = Command.valueOf(args[arg_i + 1]);
-                } catch (IllegalArgumentException e) { // FIXME
-                    cmd = Command.set_power;
-                    percentValue = Integer.parseInt(args[arg_i + 1]);
-                }
-            } else {
-                system = EZSystem.valueOf(args[arg_i].toUpperCase(Locale.US));
-                housecode = args[arg_i + 1];
-                String devString = args[arg_i + 2];
-
-                deviceNumber = (int) devString.charAt(0) > (int) '9'
-                        ? (int) devString.toUpperCase(Locale.US).charAt(0) - (int) 'A'
-                        : Integer.parseInt(devString);
-                cmd = Command.valueOf(args[arg_i + 3].toLowerCase(Locale.US));
-
-                value = encodeCommand(system, cmd);
-                arg = args.length > arg_i + 4 ? Integer.parseInt(args[arg_i + 4]) : -1;
-                if (cmd.hasTimeArgument())
-                    arg = fs20Time(arg);
+            for (int i = result.length(); i < 30; i++) {
+                result.append(" ");
             }
-        } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
-            usage();
-        }
 
-        if (numArg != -1 && (numArg < 1 || numArg > t10NumberPresets)) {
-            System.err.println("Numerical argument not valid.");
-            System.exit(45);
-        }
-        if (deviceNumber != -1 && value == -1) {
-            System.err.println("Only commands power_on and power_off allowed.");
-            System.exit(46);
-        }
-        EzControlT10 ez = new EzControlT10(ezcontrolHost, verbose, udp ? Interface.udp : Interface.http);
-
-        try {
-            if (doGetStatus) {
-                if (numArg > 0) {
-                    System.out.println(ez.getPresetString(numArg));
-                    System.out.println(ez.getPresetName(numArg));
-                } else {
-                    System.out.println(ez.getStatus());
+            result.append(" ");
+            virgin = true;
+            for (int i = 1; i < t10NumberPresets; i++) {
+                if (presets[i]) {
+                    result.append(virgin ? "" : ", ").append(state[i].name);
+                    virgin = false;
                 }
-            } else if (doGetTimers) {
-                if (timerName != null) {
-                    System.out.println(ez.getTimer(timerName));
-                } else {
-                    System.out.println(ez.getTimers());
-                }
-            } else if (doXml) {
-                ez.generateXml();
-            } else if (presetMode) {
-                if (cmd == Command.set_power)
-                    ez.sendPreset(numArg, percentValue);
-                else
-                    ez.sendPreset(numArg, cmd);
-            } else {
-                ez.sendManual(system, housecode, deviceNumber, value, arg, count);
             }
-        } catch (HarcHardwareException ex) {
-            System.err.println(ex.getMessage());
+            for (int i = result.length(); i < 65; i++) {
+                result.append(" ");
+            }
+            return result.append(" ").append(enabled ? "(enabled)" : "(disabled)").toString();
+        }
+
+        private class Clock {
+
+            int hour;
+            int minute;
+
+            Clock(int h, int m) {
+                hour = h;
+                minute = m;
+            }
+
+            @Override
+            public String toString() {
+                return "" + (hour >= 0
+                        ? (hour < 10 ? "0" : "") + (hour + ":" + (minute < 10 ? "0" : "") + minute)
+                        : "     ");
+            }
         }
     }
 }

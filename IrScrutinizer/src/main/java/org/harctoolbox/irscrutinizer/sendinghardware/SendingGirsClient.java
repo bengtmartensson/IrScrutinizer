@@ -19,14 +19,14 @@ package org.harctoolbox.irscrutinizer.sendinghardware;
 
 import java.io.IOException;
 import javax.swing.JPanel;
-import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.guicomponents.GirsClientBean;
+import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.ir.GirsClient;
 import org.harctoolbox.irscrutinizer.Props;
 
 public class SendingGirsClient extends SendingHardware<GirsClient<?>> implements ISendingHardware<GirsClient<?>> {
-    private GirsClientBean girsClientBean;
+    private final GirsClientBean girsClientBean;
 
     public SendingGirsClient(JPanel panel, GirsClientBean girsClientBean, Props props, GuiUtils guiUtils_) {
         super(panel, props, guiUtils_);

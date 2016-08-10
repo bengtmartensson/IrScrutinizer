@@ -25,10 +25,10 @@ import java.util.HashMap;
  */
 public class CIdentifierFactory {
 
-    private HashMap<Integer, String> table;
+    private final HashMap<Integer, String> table;
 
     public CIdentifierFactory() {
-        table = new HashMap<>();
+        table = new HashMap<>(8);
     }
 
     public String mkCIdentifier(String s, int position) {

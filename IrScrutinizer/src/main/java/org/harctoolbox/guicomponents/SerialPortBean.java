@@ -229,22 +229,22 @@ public class SerialPortBean extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        portComboBox = new javax.swing.JComboBox();
+        portComboBox = new javax.swing.JComboBox<>();
         refreshButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        bitsComboBox = new javax.swing.JComboBox();
-        flowControlComboBox = new javax.swing.JComboBox();
-        parityComboBox = new javax.swing.JComboBox();
-        stopBitsComboBox = new javax.swing.JComboBox();
+        bitsComboBox = new javax.swing.JComboBox<>();
+        flowControlComboBox = new javax.swing.JComboBox<>();
+        parityComboBox = new javax.swing.JComboBox<>();
+        stopBitsComboBox = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        baudComboBox = new javax.swing.JComboBox();
+        baudComboBox = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
         openToggleButton = new javax.swing.JToggleButton();
 
-        portComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "not initialized" }));
+        portComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "not initialized" }));
         portComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 portComboBoxActionPerformed(evt);
@@ -261,7 +261,7 @@ public class SerialPortBean extends javax.swing.JPanel {
 
         jLabel1.setText("Serial Port");
 
-        bitsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "5", "6", "7", "8" }));
+        bitsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "5", "6", "7", "8" }));
         bitsComboBox.setSelectedIndex(3);
         bitsComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -269,21 +269,21 @@ public class SerialPortBean extends javax.swing.JPanel {
             }
         });
 
-        flowControlComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None", "RTS/CTS", "Xon/Xoff" }));
+        flowControlComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None", "RTS/CTS", "Xon/Xoff" }));
         flowControlComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 flowControlComboBoxActionPerformed(evt);
             }
         });
 
-        parityComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "none", "odd", "even", "mark", "space" }));
+        parityComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "none", "odd", "even", "mark", "space" }));
         parityComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 parityComboBoxActionPerformed(evt);
             }
         });
 
-        stopBitsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "1.5" }));
+        stopBitsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "1.5" }));
         stopBitsComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stopBitsComboBoxActionPerformed(evt);
@@ -298,7 +298,7 @@ public class SerialPortBean extends javax.swing.JPanel {
 
         jLabel5.setText("stop bits");
 
-        baudComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "115200", "57600", "38400", "19200", "9600", "4800", "2400", "1200" }));
+        baudComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "115200", "57600", "38400", "19200", "9600", "4800", "2400", "1200" }));
         baudComboBox.setSelectedItem("9600");
         baudComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -428,9 +428,9 @@ public class SerialPortBean extends javax.swing.JPanel {
     }//GEN-LAST:event_openToggleButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox baudComboBox;
-    private javax.swing.JComboBox bitsComboBox;
-    private javax.swing.JComboBox flowControlComboBox;
+    private javax.swing.JComboBox<String> baudComboBox;
+    private javax.swing.JComboBox<String> bitsComboBox;
+    private javax.swing.JComboBox<String> flowControlComboBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -438,9 +438,9 @@ public class SerialPortBean extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JToggleButton openToggleButton;
-    private javax.swing.JComboBox parityComboBox;
-    private javax.swing.JComboBox portComboBox;
+    private javax.swing.JComboBox<String> parityComboBox;
+    private javax.swing.JComboBox<String> portComboBox;
     private javax.swing.JButton refreshButton;
-    private javax.swing.JComboBox stopBitsComboBox;
+    private javax.swing.JComboBox<String> stopBitsComboBox;
     // End of variables declaration//GEN-END:variables
 }

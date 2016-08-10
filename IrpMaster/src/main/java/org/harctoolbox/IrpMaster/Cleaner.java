@@ -109,8 +109,7 @@ public class Cleaner {
         try {
             return new IrSequence(toDurations());
         } catch (IncompatibleArgumentException ex) {
-            assert(false);
-            return null;
+            throw new InternalError();
         }
     }
 

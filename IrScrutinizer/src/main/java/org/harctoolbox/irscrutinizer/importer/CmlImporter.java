@@ -42,12 +42,27 @@ import org.harctoolbox.irscrutinizer.Version;
  *
  */
 public class CmlImporter extends RemoteSetImporter implements IFileImporter, Serializable {
-    // I have no idea of a/the correct character set in the CML files.
-    // Therefore, select the largest of the 8 bit character sets.
-    private final String defaultCharsetName = "WINDOWS-1252";
     private static final int remoteToken = 0xbbbbbbbb;
     private static final int commandToken = 0xcccccccc;
     private static final int EOF = -1;
+
+    public static void main(String[] args) {
+
+        try {
+            CmlImporter cmlImporter = new CmlImporter();
+            cmlImporter.load(args[0]);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(CmlImporter.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CmlImporter.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException | IrpMasterException ex) {
+            Logger.getLogger(CmlImporter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    // I have no idea of a/the correct character set in the CML files.
+    // Therefore, select the largest of the 8 bit character sets.
+    private final String defaultCharsetName = "WINDOWS-1252";
 
     private String charactersetName = null;
 
@@ -86,7 +101,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
     }
 
     private RemoteSet parseRemoteSet(InputStream inputStream, String origin) throws IOException, ParseException {
-        HashMap<String, Remote> remotes = new HashMap<>();
+        HashMap<String, Remote> remotes = new HashMap<>(64);
         while (true) {
             int token = searchToken(inputStream);
             if (token == remoteToken)
@@ -137,7 +152,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
         String kind = getString(inputStream, 21);
         String model = getString(inputStream, 21);
         String remoteName = vendor + "_" + kind + "_" + model;
-        HashMap<String, Command> commands = new LinkedHashMap<>();
+        HashMap<String, Command> commands = new LinkedHashMap<>(32);
         while (true) {
             int token = searchToken(inputStream);
             if (token != commandToken)
@@ -236,19 +251,5 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
     @Override
     public String getFormatName() {
         return "CML";
-    }
-
-    public static void main(String[] args) {
-
-        try {
-            CmlImporter cmlImporter = new CmlImporter();
-            cmlImporter.load(args[0]);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(CmlImporter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(CmlImporter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException | IrpMasterException ex) {
-            Logger.getLogger(CmlImporter.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 }

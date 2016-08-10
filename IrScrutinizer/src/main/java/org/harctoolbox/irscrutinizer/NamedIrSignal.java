@@ -91,7 +91,7 @@ public abstract class NamedIrSignal {
     }
 
     public String csvString(String separator) {
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(128);
         str.append(numeral).append(separator);
         str.append(name).append(separator);
         str.append(validated ? "true" : "false");
@@ -157,8 +157,7 @@ public abstract class NamedIrSignal {
 
         public Object[] headers() {
             Object[] result = new Object[columnNames.length];
-            for (int i = 0; i < columnNames.length; i++)
-                result[i] = (Object) columnNames[i];
+            System.arraycopy(columnNames, 0, result, 0, columnNames.length);
             return result;
         }
     }
@@ -217,6 +216,13 @@ public abstract class NamedIrSignal {
         private boolean scrollRequest = false;
         protected boolean unsavedChanges;
 
+        protected LearnedIrSignalTableModel(AbstractColumnFunction columnFunc) {
+            //super(columnFunc.dummyArray(), columnFunc.headers());
+            super(columnFunc.headers(), 0);
+            this.unsavedChanges = false;
+            this.columnsFunc = columnFunc;
+        }
+
         public abstract String getType();
 
         public abstract Command toCommand(int row) throws IrpMasterException;
@@ -252,7 +258,7 @@ public abstract class NamedIrSignal {
         }
 
         public ArrayList<String> getNonUniqueNames() {
-            ArrayList<String> duplicates = new ArrayList<>();
+            ArrayList<String> duplicates = new ArrayList<>(32);
             ArrayList<String> allNames = new ArrayList<>(getRowCount() + 10);
             for (int row = 0; row < getRowCount(); row++) {
                 String name = (String) getValueAt(row, columnsFunc.getPosName());
@@ -266,7 +272,7 @@ public abstract class NamedIrSignal {
         }
 
         public ArrayList<Integer> getUnusedColumns() {
-            ArrayList<Integer> list = new ArrayList<>();
+            ArrayList<Integer> list = new ArrayList<>(16);
             if (getRowCount() > 0) { // If the table is empty, do not consider any columns unused.
                 for (int column = 0; column < getColumnCount(); column++) {
                     if (!isUsedColumn(column))
@@ -301,7 +307,7 @@ public abstract class NamedIrSignal {
         }
 
         public ArrayList<Integer> getUninterestingColumns() {
-            ArrayList<Integer> list = new ArrayList<>();
+            ArrayList<Integer> list = new ArrayList<>(16);
             if (getRowCount() > 0) { // If the table is empty, do not consider any columns unused.
                 for (int column = 0; column < getColumnCount(); column++) {
                     if (!isInterestingColumn(column))
@@ -358,13 +364,6 @@ public abstract class NamedIrSignal {
             return columnsFunc.isEditable(columnIndex);
         }
 
-        protected LearnedIrSignalTableModel(AbstractColumnFunction columnFunc) {
-            //super(columnFunc.dummyArray(), columnFunc.headers());
-            super(columnFunc.headers(), 0);
-            this.unsavedChanges = false;
-            this.columnsFunc = columnFunc;
-        }
-
         /**
          * For debugging purposes only.
          * @param modelRow
@@ -373,7 +372,7 @@ public abstract class NamedIrSignal {
         public String toPrintString(int modelRow) {
             if (modelRow < 0)
                 return null;
-            StringBuilder str = new StringBuilder();
+            StringBuilder str = new StringBuilder(64);
             for (int i = 0; i < this.columnsFunc.noFields(); i++) {
                 Object thing = getValueAt(modelRow, i);
                 str.append(" ").append(thing != null ? thing.toString() : "null");

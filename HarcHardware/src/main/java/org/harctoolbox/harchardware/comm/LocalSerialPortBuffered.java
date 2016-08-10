@@ -31,6 +31,23 @@ import org.harctoolbox.harchardware.ICommandLineDevice;
 
 public final class LocalSerialPortBuffered extends LocalSerialPort implements ICommandLineDevice {
 
+    public static void main(String[] args) {
+        ArrayList<String> names;
+        try (LocalSerialPortBuffered port = new LocalSerialPortBuffered("/dev/ttyS0", 9600, 8, 1, Parity.NONE, FlowControl.NONE, 10000, true)) {
+            names = getSerialPortNames(false);
+            for (String name : names)
+                System.out.println(name);
+
+            String cmd = "#POW\r";
+            port.open();
+            port.sendString(cmd);
+            System.out.println(port.readString());
+
+        } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException | HarcHardwareException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
     private BufferedReader bufferedInStream;
 
     public LocalSerialPortBuffered(String portName, int baud, int length, int stopBits, Parity parity, FlowControl flowControl, int timeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
@@ -109,23 +126,6 @@ public final class LocalSerialPortBuffered extends LocalSerialPort implements IC
     @Override
     public boolean ready() throws IOException {
         return bufferedInStream.ready();
-    }
-
-    public static void main(String[] args) {
-        ArrayList<String> names;
-        try (LocalSerialPortBuffered port = new LocalSerialPortBuffered("/dev/ttyS0", 9600, 8, 1, Parity.NONE, FlowControl.NONE, 10000, true)) {
-            names = getSerialPortNames(false);
-            for (String name : names)
-                System.out.println(name);
-
-            String cmd = "#POW\r";
-            port.open();
-            port.sendString(cmd);
-            System.out.println(port.readString());
-
-        } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException | HarcHardwareException ex) {
-            System.err.println(ex.getMessage());
-        }
     }
 
     @Override

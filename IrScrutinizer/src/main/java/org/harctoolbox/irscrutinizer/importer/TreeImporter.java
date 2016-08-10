@@ -194,7 +194,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
             guiMain.selectImportPane(type);
     }
 
-    static class MyRenderer extends DefaultTreeCellRenderer /*implements TreeCellRenderer*/ {
+    private static class MyRenderer extends DefaultTreeCellRenderer /*implements TreeCellRenderer*/ {
 
         @Override
         public Component getTreeCellRendererComponent(

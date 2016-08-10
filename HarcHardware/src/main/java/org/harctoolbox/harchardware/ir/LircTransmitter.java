@@ -25,6 +25,24 @@ import java.util.List;
 public class LircTransmitter extends Transmitter {
 
     public static final int NOMASK = -1;
+    private static List<Integer> parseBoolean(boolean[] ports) {
+        List<Integer> prts = new ArrayList<>(8);
+        for (int i = 0; i < ports.length; i++)
+            if (ports[i])
+                prts.add(i + 1);
+        return prts;
+    }
+
+    private static List<Integer> parseString(String str) {
+        if (str.equals("default"))
+            return null;
+        String[] pieces = str.split("\\D+");
+        List<Integer> result = new ArrayList<>(8);
+        for (String s : pieces)
+            result.add(Integer.parseInt(s));
+        return result;
+    }
+
     private int[] transmitters;
 
     public LircTransmitter() {
@@ -46,27 +64,11 @@ public class LircTransmitter extends Transmitter {
         this(parseBoolean(ports));
     }
 
-    private static List<Integer> parseBoolean(boolean[] ports) {
-        List<Integer> prts = new ArrayList<>();
-        for (int i = 0; i < ports.length; i++)
-            if (ports[i])
-                prts.add(i + 1);
-        return prts;
-    }
 
     public LircTransmitter(String str) {
         this(parseString(str));
     }
 
-    private static List<Integer> parseString(String str) {
-        if (str.equals("default"))
-            return null;
-        String[] pieces = str.split("\\D+");
-        List<Integer> result = new ArrayList<>();
-        for (String s : pieces)
-            result.add(Integer.parseInt(s));
-        return result;
-    }
 
     public LircTransmitter(List<Integer> ports) {
         if (ports == null || ports.isEmpty())
@@ -83,7 +85,7 @@ public class LircTransmitter extends Transmitter {
         if (isTrivial())
             return "";
 
-        StringBuilder s = new StringBuilder();
+        StringBuilder s = new StringBuilder(16);
         for (int i = 0; i < transmitters.length; i++) {
             if (i > 0)
                 s.append(" ");

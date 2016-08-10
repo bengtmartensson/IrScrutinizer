@@ -57,6 +57,24 @@ public class RemoteSet implements Serializable {
         dateFormatString = aDateFormatString;
     }
 
+    /**
+     * For testing only, not deployment.
+     * @param args
+     */
+    public static void main(String[] args) {
+        try {
+            Document doc = XmlUtils.openXmlFile(new File(args[0]), new File(args[1]), true, false);
+            RemoteSet remoteList = new RemoteSet(doc);
+
+            Document newdoc = remoteList.xmlExportDocument("This is a silly title",
+                    "xsl", "simplehtml.xsl", true, false, true, true, true);
+            XmlExporter exporter = new XmlExporter(newdoc);
+            exporter.printDOM(new File("junk.xml"));
+        } catch (IOException | ParseException | SAXException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
     private String creatingUser;
     private String source;
     private String creationDate;
@@ -73,7 +91,7 @@ public class RemoteSet implements Serializable {
      * @throws ParseException
      */
     public RemoteSet(Document doc) throws ParseException {
-        remotes = new LinkedHashMap<>();
+        remotes = new LinkedHashMap<>(4);
 
         Element root = doc.getDocumentElement();
         NodeList nl = root.getElementsByTagName("adminData");
@@ -81,7 +99,7 @@ public class RemoteSet implements Serializable {
             Element adminData = (Element) nl.item(0);
             NodeList nodeList = adminData.getElementsByTagName("notes");
             if (nodeList.getLength() > 0)
-                notes = ((Element) nodeList.item(0)).getTextContent();
+                notes = nodeList.item(0).getTextContent();
 
             nodeList = adminData.getElementsByTagName("creationData");
             if (nodeList.getLength() > 0) {
@@ -330,7 +348,7 @@ public class RemoteSet implements Serializable {
      * @return ArrayList of the commands.
      */
     public ArrayList<Command> getAllCommands() {
-        ArrayList<Command> allCommands = new ArrayList<>();
+        ArrayList<Command> allCommands = new ArrayList<>(32);
         for (Remote remote : remotes.values())
             allCommands.addAll(remote.getCommands().values());
         return allCommands;
@@ -406,23 +424,5 @@ public class RemoteSet implements Serializable {
      */
     public Remote getRemote(String name) {
         return remotes.get(name);
-    }
-
-    /**
-     * For testing only, not deployment.
-     * @param args
-     */
-    public static void main(String[] args) {
-        try {
-            Document doc = XmlUtils.openXmlFile(new File(args[0]), new File(args[1]), true, false);
-            RemoteSet remoteList = new RemoteSet(doc);
-
-            Document newdoc = remoteList.xmlExportDocument("This is a silly title",
-                    "xsl", "simplehtml.xsl", true, false, true, true, true);
-            XmlExporter exporter = new XmlExporter(newdoc);
-            exporter.printDOM(new File("junk.xml"));
-        } catch (IOException | ParseException | SAXException ex) {
-            System.err.println(ex.getMessage());
-        }
     }
 }

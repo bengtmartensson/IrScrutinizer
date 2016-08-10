@@ -30,9 +30,6 @@ import org.harctoolbox.girr.Command;
  *
  */
 public class RawIrSignal extends NamedIrSignal {
-    private IrSignal irSignal;
-    private String analyzerString;
-    private DecodeIR.DecodedSignal[] decodes;
 
     private static boolean generateCcf = true;
     private static boolean decode = true;
@@ -50,6 +47,10 @@ public class RawIrSignal extends NamedIrSignal {
     public static void setDecode(boolean aDecode) {
         decode = aDecode;
     }
+    
+    private IrSignal irSignal;
+    private String analyzerString;
+    private DecodeIR.DecodedSignal[] decodes;
 
     public RawIrSignal(IrSignal irSignal, String name, String comment, boolean invokeAnalyzer) {
         super(name, comment);
@@ -256,8 +257,9 @@ public class RawIrSignal extends NamedIrSignal {
                         break;
                     case CapturedIrSignalColumns.posFrequency:
                         rawIrSignal.setFrequency((Integer)getValueAt(row, column), invokeAnalyzer);
-                    default:
                         break;
+                    default:
+                        throw new InternalError();
                 }
             } catch (IncompatibleArgumentException | NumberFormatException ex) {
                 System.err.println(ex.getMessage()); // FIXME; (good for now)

@@ -100,7 +100,7 @@ public class IrpUtils {
         if (s == null || s.length <= beg)
             return "";
 
-        StringBuilder res = new StringBuilder();
+        StringBuilder res = new StringBuilder(10 * s.length);
         res.append(s[beg]);
         for (int i = beg+1; i < s.length; i++)
             res.append(separator).append(s[i]);
@@ -110,7 +110,7 @@ public class IrpUtils {
 
     // For Java >= 1.8, this can/should be replaced by String.join.
     public static String join(Iterable<String> payload, String separator) {
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(128);
         for (String s : payload) {
             if (str.length() > 0)
                 str.append(separator);
@@ -133,7 +133,7 @@ public class IrpUtils {
         if (array.length == 0)
             return "[]";
 
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(10 * array.length);
         result.append("[").append(array[0]);
         for (int i = 1; i < array.length; i++)
             result.append(", ").append(array[i]);
@@ -238,7 +238,7 @@ public class IrpUtils {
         int absDiff = Math.abs(x - y);
         boolean absoluteOk = absDiff <= absoluteTolerance;
         int max = Math.max(Math.abs(x), Math.abs(y));
-        boolean relativeOk = max > 0 && (double)absDiff/(double)max <= relativeTolerance;
+        boolean relativeOk = max > 0 && absDiff/(double)max <= relativeTolerance;
         return absoluteOk || relativeOk;
     }
 

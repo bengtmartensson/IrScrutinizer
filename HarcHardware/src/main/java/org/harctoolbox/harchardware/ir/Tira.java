@@ -37,8 +37,6 @@ import org.harctoolbox.harchardware.IHarcHardware;
  */
 /*public*/ class Tira implements IHarcHardware, IRawIrSender {
 
-    private CommPort commPort;
-
     public static final String defaultPortName = "/dev/ttyUSB0";
     private static final int baudRate = 9600;//115200;//9600;
     private static final int flowControl = SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT;// SerialPort.FLOWCONTROL_NONE;
@@ -47,8 +45,6 @@ import org.harctoolbox.harchardware.IHarcHardware;
     private static final double oscillatorFrequency = 48000000;
     private static final double period = 21.3333; // microseconds
     private static final byte dutyCycle = 0; // semantically: don't care
-
-    private String portName;
 
     private final static boolean transmitNotifyEnabled = true;
     private final static boolean transmitByteCountReportEnabled = true;
@@ -81,9 +77,45 @@ import org.harctoolbox.harchardware.IHarcHardware;
     private final static byte cmdVersion = (byte) 'v';
     private final static byte cmdBootloaderMode = (byte) '$';
     private final static byte endOfData = (byte) 0xff;
-    private final static int transmitByteCountToken = (int) 't';
-    private final static int transmitCompleteSuccess = (int) 'C';
-    private final static int transmitCompleteFailure = (int) 'F';
+    private final static int transmitByteCountToken = 't';
+    private final static int transmitCompleteSuccess = 'C';
+    private final static int transmitCompleteFailure = 'F';
+    /**
+     * Not supported due to hardware restrictions.
+     * @param transmitter
+     * @return
+     */
+    //@Override
+    //public boolean stopIr(Transmitter transmitter) {
+    //    throw new UnsupportedOperationException("Not supported due to hardware restrictions.");
+    //}
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        try (Tira tira = new Tira()) {
+            System.out.println(tira.getVersion());
+            //String result = toy.selftest();
+            //System.out.println(result);
+            //toy.setLed(true);
+            //toy.setLedMute(false);
+            //boolean success = toy.transmit(36000, data);
+            //IrSignal signal = new IrSignal("../IrpMaster/data/IrpProtocols.ini", "nec1", "D=122 F=26");
+            //boolean success = toy.sendIr(signal, 10, null);
+            //System.out.println(success);
+            //w.listen();
+        } catch (NoSuchPortException ex) {
+            System.err.println("Port for IRToy " + defaultPortName + " was not found");
+        } catch (PortInUseException ex) {
+            System.err.println("Port for IRToy in use");
+        } catch (UnsupportedCommOperationException | IOException | InterruptedException ex) {
+            System.err.println("xxx" + ex.getMessage());
+            //ex.printStackTrace();
+        }
+    }
+    private CommPort commPort;
+    private String portName;
 
     private OutputStream out;
     private InputStream in;
@@ -147,7 +179,7 @@ import org.harctoolbox.harchardware.IHarcHardware;
     private byte[] toByteArray(int[] data) {
         byte[] buf = new byte[2*data.length + 2];
         for (int i = 0; i < data.length; i++) {
-            int periods = (int)Math.round(((double)data[i])/period);
+            int periods = (int)Math.round(data[i]/period);
             buf[2*i] = (byte)(periods / 256);
             buf[2*i+1] = (byte) (periods % 256);
         }
@@ -331,40 +363,6 @@ import org.harctoolbox.harchardware.IHarcHardware;
         throw new UnsupportedOperationException("Not supported due to hardware restrictions.");
     }
 
-    /**
-     * Not supported due to hardware restrictions.
-     * @param transmitter
-     * @return
-     */
-    //@Override
-    //public boolean stopIr(Transmitter transmitter) {
-    //    throw new UnsupportedOperationException("Not supported due to hardware restrictions.");
-    //}
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        try (Tira tira = new Tira()) {
-            System.out.println(tira.getVersion());
-            //String result = toy.selftest();
-            //System.out.println(result);
-            //toy.setLed(true);
-            //toy.setLedMute(false);
-            //boolean success = toy.transmit(36000, data);
-            //IrSignal signal = new IrSignal("../IrpMaster/data/IrpProtocols.ini", "nec1", "D=122 F=26");
-            //boolean success = toy.sendIr(signal, 10, null);
-            //System.out.println(success);
-            //w.listen();
-        } catch (NoSuchPortException ex) {
-            System.err.println("Port for IRToy " + defaultPortName + " was not found");
-        } catch (PortInUseException ex) {
-            System.err.println("Port for IRToy in use");
-        } catch (UnsupportedCommOperationException | IOException | InterruptedException ex) {
-            System.err.println("xxx" + ex.getMessage());
-            //ex.printStackTrace();
-        }
-    }
 
     @Override
     public Transmitter getTransmitter() {

@@ -26,8 +26,8 @@ import java.util.logging.Logger;
 import javax.swing.JPanel;
 import org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector;
 import org.harctoolbox.guicomponents.GuiUtils;
-import org.harctoolbox.harchardware.ir.GlobalCache;
 import org.harctoolbox.harchardware.HarcHardwareException;
+import org.harctoolbox.harchardware.ir.GlobalCache;
 import org.harctoolbox.irscrutinizer.Props;
 
 /**
@@ -36,7 +36,7 @@ import org.harctoolbox.irscrutinizer.Props;
 public class CapturingGlobalCache extends CapturingHardware<GlobalCache> implements ICapturingHardware<GlobalCache> {
 
     private String initialIp;
-    GlobalCacheIrSenderSelector globalCacheIrSenderSelector;
+    private final GlobalCacheIrSenderSelector globalCacheIrSenderSelector;
     private GlobalCache hardware;
 
     public CapturingGlobalCache(String hostname, final GlobalCacheIrSenderSelector globalCacheIrSenderSelector,

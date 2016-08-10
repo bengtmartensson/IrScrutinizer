@@ -33,9 +33,6 @@ class HelpTexts {
     // classes be inlined into that classfile. See JDK bug 6447475 for a description
     // of an occurrence of this bug in the JDK and how resolving it reduced the size of the JDK by 1 megabyte.
 
-    private HelpTexts() {
-    }
-
     private static final String treeHelpReaderImporterIntro
             = "When pressing one of the \"Load\", \"Load File/URL\", or \"Load from clipboard\" buttons, ";
 
@@ -438,4 +435,7 @@ class HelpTexts {
 
     public static String sendingDevLircHelp = "Using this pane, the Lirc /dev/lirc device can be used to send IR signals. "
             + "This requires a so-called mode2 device connected, capable of sending.";
+
+    private HelpTexts() {
+    }
 }

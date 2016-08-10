@@ -42,6 +42,15 @@ import org.harctoolbox.irscrutinizer.Version;
 public class CommandFusionImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
     public static final String homeUrl = "http://www.commandfusion.com/index.php";
 
+    public static void main(String[] args) {
+        CommandFusionImporter importer = new CommandFusionImporter();
+        try {
+            importer.load(args[0]);
+        } catch (IOException | ParseException | IrpMasterException ex) {
+            Logger.getLogger(CommandFusionImporter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     @Override
     public void load(Reader reader, String origin) throws IOException {
         prepareLoad(origin);
@@ -64,7 +73,7 @@ public class CommandFusionImporter extends RemoteSetImporter implements IReaderI
         JsonObject remoteInfo = (JsonObject) jsonObject.get("RemoteInfo");
         JsonArray remoteFunctions = (JsonArray) jsonObject.get("RemoteFunctions");
 
-        HashMap<String, Command> commands = new LinkedHashMap<>();
+        HashMap<String, Command> commands = new LinkedHashMap<>(8);
         for (JsonValue c : remoteFunctions) {
             Command command = parseCommand((JsonObject) c);
             if (command != null)
@@ -109,14 +118,5 @@ public class CommandFusionImporter extends RemoteSetImporter implements IReaderI
     @Override
     public String getFormatName() {
         return "CommandFusion";
-    }
-
-    public static void main(String[] args) {
-        CommandFusionImporter importer = new CommandFusionImporter();
-        try {
-            importer.load(args[0]);
-        } catch (IOException | ParseException | IrpMasterException ex) {
-            Logger.getLogger(CommandFusionImporter.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 }

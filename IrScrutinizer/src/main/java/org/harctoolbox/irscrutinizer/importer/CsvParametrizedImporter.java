@@ -133,7 +133,7 @@ public class CsvParametrizedImporter extends CsvImporter {
             return null;
         int offset = nameArray.length - 1;
         String name = join(nameArray);
-        HashMap<String, Long> parameters = new HashMap<>();
+        HashMap<String, Long> parameters = new HashMap<>(3);
         long F = gobbleLong(chunks, fColumn, "F", nameColumn < fColumn ? offset : 0);
         if (F == invalid)
             return null;
@@ -167,7 +167,7 @@ public class CsvParametrizedImporter extends CsvImporter {
                 }
             }
         }
-        return (long) invalid;
+        return invalid;
     }
 
     public static Collection<Command> process(Reader reader,

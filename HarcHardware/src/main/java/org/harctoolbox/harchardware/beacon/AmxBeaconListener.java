@@ -35,6 +35,77 @@ public class AmxBeaconListener {
     private final static int reapInterval = 60*1000; // 60 seconds
     private final static int reapAge = 2*60*1000; // 2 minutes
 
+    /**
+     * Searches for a node with the prescribed value of the key.
+     *
+     * @param key Key to search for, e.g. "-Make".
+     * @param value Value of the key to search for.
+     * @param timeout Timeout in microseconds.
+     * @return
+     */
+    public static Node listenFor(String key, String value, int timeout) {
+        AmxBeaconListener ab = new AmxBeaconListener(null, key, value, false);
+        ab.listenForKey(timeout);
+        return ab.getFirstKey(key, value);
+    }
+
+    /**
+     * Listen for the amount of time given in the argument, then return then nodes found.
+     *
+     * @param time Time to listen, in microseconds.
+     * @param debug
+     * @return
+     */
+    public static Collection<Node> listen(int time, boolean debug) {
+        AmxBeaconListener abl = new AmxBeaconListener(null, null, null, debug);
+        long endTime = (new Date()).getTime() + time;
+        while ((new Date()).getTime() < endTime)
+            abl.listenWait((int)(endTime - (new Date()).getTime()));
+
+        return abl.getNodes();
+    }
+
+    /**
+     * mainly for testing.
+     * @param args
+     */
+    public static void main(String args[]) {
+        switch (args.length) {
+            case 0:
+                AmxBeaconListener listener = new AmxBeaconListener(new PrintCallback());
+                listener.setDebug(true);
+                listener.start();
+                break;
+            case 3:
+                AmxBeaconListener ab = new AmxBeaconListener();
+                ab.setDebug(true);
+                ab.start();
+                int n = 0;
+                while (true) {
+                    System.out.println(new Date());
+                    ab.printNodes();
+                    try {
+                        Thread.sleep(Integer.parseInt(args[0]));
+                    } catch (InterruptedException ex) {
+                        System.err.println(ex.getMessage());
+                    }
+                }
+                //break;
+            case 1:
+                Collection<Node> result = listen(Integer.parseInt(args[0]), true);
+                for (Node r : result) {
+                    System.out.println(r);
+                }
+                break;
+            case 2:
+                Node r = listenFor("-Make", args[0], Integer.parseInt(args[1]));
+                System.err.println(r);
+                break;
+            default:
+                break;
+        }
+    }
+
     private ListenThread listenThread;
     private GrimReaperThread grimReaperThread;
     private Date startTime = null;
@@ -42,21 +113,7 @@ public class AmxBeaconListener {
     private String key = null;
     private String value = null;
     private boolean debug = false;
-    private HashMap<InetAddress, Node>nodes = new HashMap<>();
-
-    /**
-     * This is called when a new node appears, or a node is removed.
-     */
-    public interface Callback {
-        public void func(HashMap<InetAddress, Node> nodes);
-    }
-
-    /**
-     * @param dbg the debug to set
-     */
-    public void setDebug(boolean dbg) {
-        this.debug = dbg;
-    }
+    private HashMap<InetAddress, Node>nodes = new HashMap<>(8);
 
     public AmxBeaconListener(Callback callback, String key, String value, boolean debug) {
         this.callback = callback;
@@ -64,7 +121,7 @@ public class AmxBeaconListener {
         this.value = value;
         this.callback = callback;
         this.debug = debug;
-        nodes = new HashMap<>();
+        nodes = new HashMap<>(8);
         listenThread = new ListenThread(this);
         grimReaperThread = new GrimReaperThread(this);
     }
@@ -79,6 +136,13 @@ public class AmxBeaconListener {
 
     public AmxBeaconListener(Callback callback) {
         this(callback, null, null, false);
+    }
+
+    /**
+     * @param dbg the debug to set
+     */
+    public void setDebug(boolean dbg) {
+        this.debug = dbg;
     }
 
     public void start() {
@@ -127,94 +191,6 @@ public class AmxBeaconListener {
         return (new Date()).getTime() - startTime.getTime();
     }
 
-    /**
-     * This class contains one node discovered by its AMX beacon.
-     */
-    public static class Node {
-        private final InetAddress addr;
-        private final int port;
-        private final HashMap<String,String> table;
-        private Date lastAliveDate;
-        private Node(InetAddress addr, int port, HashMap<String, String>table) {
-            this.addr = addr;
-            this.port = port;
-            this.table = table;
-            lastAliveDate = new Date();
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder res = new StringBuilder();
-            for (String s : table.keySet()) {
-                res.append("\n").append("table[").append(s).append("] = ").append(table.get(s));
-            }
-            return "IP = " + addr.getHostName() + "\n"
-                    + "port = " + port
-                    + res.toString()
-                    + "\nLast alive: " + lastAliveDate;
-        }
-
-        public void refresh() {
-            lastAliveDate = new Date();
-        }
-
-        public String get(String key) {
-            return table.get(key);
-        }
-
-        public InetAddress getInetAddress() {
-            return addr;
-        }
-
-        public HashMap<String,String> getTable() {
-            return table;
-        }
-    }
-
-    private static class ListenThread extends Thread {
-        final AmxBeaconListener beaconListener;
-
-        ListenThread(AmxBeaconListener beaconListener) {
-            this.beaconListener = beaconListener;
-        }
-
-        @Override
-        @SuppressWarnings("empty-statement")
-        public void run() {
-            while (beaconListener.listenWait(0))
-                ;
-            //synchronized (this) {
-            //    notifyAll();
-            //}
-            if (beaconListener.debug)
-                System.err.println("ListenThread exited.");
-        }
-    }
-
-    private static class GrimReaperThread extends Thread {
-        AmxBeaconListener beacon;
-
-        GrimReaperThread(AmxBeaconListener beacon) {
-            this.beacon = beacon;
-        }
-
-        @Override
-        public void run() {
-            boolean status = true;
-            while (status) {
-                beacon.reap();
-                try {
-                    Thread.sleep(reapInterval);
-                } catch (InterruptedException ex) {
-                    status = false;
-                }
-            }
-            if (beacon.debug)
-                System.err.println("GrimReaperThread reaped.");
-        }
-    }
-
-    @SuppressWarnings("unchecked")
     private synchronized void reap() {
         boolean reaped = false;
         for (Entry<InetAddress, Node> kvp : ((HashMap<InetAddress, Node>)nodes.clone()).entrySet()) {
@@ -324,33 +300,90 @@ public class AmxBeaconListener {
     }
 
     /**
-     * Searches for a node with the prescribed value of the key.
-     *
-     * @param key Key to search for, e.g. "-Make".
-     * @param value Value of the key to search for.
-     * @param timeout Timeout in microseconds.
-     * @return
+     * This class contains one node discovered by its AMX beacon.
      */
-    public static Node listenFor(String key, String value, int timeout) {
-        AmxBeaconListener ab = new AmxBeaconListener(null, key, value, false);
-        ab.listenForKey(timeout);
-        return ab.getFirstKey(key, value);
+    public static class Node {
+        private final InetAddress addr;
+        private final int port;
+        private final HashMap<String,String> table;
+        private Date lastAliveDate;
+        private Node(InetAddress addr, int port, HashMap<String, String>table) {
+            this.addr = addr;
+            this.port = port;
+            this.table = table;
+            lastAliveDate = new Date();
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder res = new StringBuilder(128);
+            for (String s : table.keySet()) {
+                res.append("\n").append("table[").append(s).append("] = ").append(table.get(s));
+            }
+            return "IP = " + addr.getHostName() + "\n"
+                    + "port = " + port
+                    + res.toString()
+                    + "\nLast alive: " + lastAliveDate;
+        }
+
+        public void refresh() {
+            lastAliveDate = new Date();
+        }
+
+        public String get(String key) {
+            return table.get(key);
+        }
+
+        public InetAddress getInetAddress() {
+            return addr;
+        }
+
+        public HashMap<String,String> getTable() {
+            return table;
+        }
     }
 
-    /**
-     * Listen for the amount of time given in the argument, then return then nodes found.
-     *
-     * @param time Time to listen, in microseconds.
-     * @param debug
-     * @return
-     */
-    public static Collection<Node> listen(int time, boolean debug) {
-        AmxBeaconListener abl = new AmxBeaconListener(null, null, null, debug);
-        long endTime = (new Date()).getTime() + (long) time;
-        while ((new Date()).getTime() < endTime)
-            abl.listenWait((int)(endTime - (new Date()).getTime()));
+    private static class ListenThread extends Thread {
+        final AmxBeaconListener beaconListener;
 
-        return abl.getNodes();
+        ListenThread(AmxBeaconListener beaconListener) {
+            this.beaconListener = beaconListener;
+        }
+
+        @Override
+        @SuppressWarnings("empty-statement")
+        public void run() {
+            while (beaconListener.listenWait(0))
+                ;
+            //synchronized (this) {
+            //    notifyAll();
+            //}
+            if (beaconListener.debug)
+                System.err.println("ListenThread exited.");
+        }
+    }
+
+    private static class GrimReaperThread extends Thread {
+        AmxBeaconListener beacon;
+
+        GrimReaperThread(AmxBeaconListener beacon) {
+            this.beacon = beacon;
+        }
+
+        @Override
+        public void run() {
+            boolean status = true;
+            while (status) {
+                beacon.reap();
+                try {
+                    Thread.sleep(reapInterval);
+                } catch (InterruptedException ex) {
+                    status = false;
+                }
+            }
+            if (beacon.debug)
+                System.err.println("GrimReaperThread reaped.");
+        }
     }
 
     // Just for testing
@@ -365,43 +398,9 @@ public class AmxBeaconListener {
     }
 
     /**
-     * mainly for testing.
-     * @param args
+     * This is called when a new node appears, or a node is removed.
      */
-    public static void main(String args[]) {
-        switch (args.length) {
-            case 0:
-                AmxBeaconListener listener = new AmxBeaconListener(new PrintCallback());
-                listener.setDebug(true);
-                listener.start();
-                break;
-            case 3:
-                AmxBeaconListener ab = new AmxBeaconListener();
-                ab.setDebug(true);
-                ab.start();
-                int n = 0;
-                while (true) {
-                    System.out.println(new Date());
-                    ab.printNodes();
-                    try {
-                        Thread.sleep(Integer.parseInt(args[0]));
-                    } catch (InterruptedException ex) {
-                        System.err.println(ex.getMessage());
-                    }
-                }
-                //break;
-            case 1:
-                Collection<Node> result = listen(Integer.parseInt(args[0]), true);
-                for (Node r : result) {
-                    System.out.println(r);
-                }
-                break;
-            case 2:
-                Node r = listenFor("-Make", args[0], Integer.parseInt(args[1]));
-                System.err.println(r);
-                break;
-            default:
-                break;
-        }
+    public interface Callback {
+        public void func(HashMap<InetAddress, Node> nodes);
     }
 }

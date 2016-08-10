@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.Reader;
 import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.ParseException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.harchardware.ir.InterpretStringHardware;
 
@@ -31,50 +30,6 @@ import org.harctoolbox.harchardware.ir.InterpretStringHardware;
  * This class does something interesting and useful. Or not...
  */
 public class RawLineImporter extends RemoteSetImporter implements IReaderImporter {
-
-    @Override
-    public String[][] getFileExtensions() {
-        return new String[][] { new String[]{ "Text files (*.txt *.text)", "txt", "text" }};
-    }
-
-    @Override
-    public void load(Reader reader, String origin) throws IOException {
-        prepareLoad(origin);
-        BufferedReader bufferedReader = new BufferedReader(reader);
-        IrSignal irSignal = null;
-        String name = null;
-        while (true) {
-            String line = bufferedReader.readLine();
-            if (line == null)
-                break;
-
-            if (line.trim().isEmpty())
-                continue;
-
-            try {
-                irSignal = InterpretStringHardware.interpretString(line, getFallbackFrequency(), isInvokeRepeatFinder(), isInvokeAnalyzer());
-            } catch (ParseException ex) {
-                name = line;
-                irSignal = null;
-            } catch (IrpMasterException ex) {
-                name = line;
-                irSignal = null;
-            }
-
-            if (name != null && irSignal != null) {
-                Command command = new Command(uniqueName(name), null /*comment*/, irSignal);
-                addCommand(command);
-                name = null;
-                irSignal = null;
-            }
-        }
-        setupRemoteSet();
-    }
-
-    @Override
-    public String getFormatName() {
-        return "Text file";
-    }
 
     public static void main(String[] args) {
         RawLineImporter rli = new RawLineImporter();
@@ -85,5 +40,44 @@ public class RawLineImporter extends RemoteSetImporter implements IReaderImporte
         } catch (IOException | IrpMasterException | java.text.ParseException ex) {
             System.err.println(ex.getMessage());
         }
+    }
+
+    @Override
+    public String[][] getFileExtensions() {
+        return new String[][] { new String[]{ "Text files (*.txt *.text)", "txt", "text" }};
+    }
+
+    @Override
+    public void load(Reader reader, String origin) throws IOException {
+        prepareLoad(origin);
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        String name = null;
+        while (true) {
+            String line = bufferedReader.readLine();
+            if (line == null)
+                break;
+
+            if (line.trim().isEmpty())
+                continue;
+
+            IrSignal irSignal = null;
+            try {
+                irSignal = InterpretStringHardware.interpretString(line, getFallbackFrequency(), isInvokeRepeatFinder(), isInvokeAnalyzer());
+            } catch (IrpMasterException ex) {
+                name = line;
+            }
+
+            if (name != null && irSignal != null) {
+                Command command = new Command(uniqueName(name), null /*comment*/, irSignal);
+                addCommand(command);
+                name = null;
+            }
+        }
+        setupRemoteSet();
+    }
+
+    @Override
+    public String getFormatName() {
+        return "Text file";
     }
 }

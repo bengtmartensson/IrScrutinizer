@@ -32,11 +32,11 @@ import org.harctoolbox.girr.RemoteSet;
  */
 public class TextExporter extends RemoteSetExporter implements IRemoteSetExporter {
 
-    boolean generateRaw;
-    boolean generateCcf;
-    boolean generateParameters;
-    Command.CommandTextFormat[] extraFormatters;
-    PrintStream printStream;
+    private boolean generateRaw;
+    private boolean generateCcf;
+    private boolean generateParameters;
+    private Command.CommandTextFormat[] extraFormatters;
+    private PrintStream printStream;
 
     public TextExporter(boolean generateRaw, boolean generateCcf,
             boolean generateParameters, Command.CommandTextFormat... extraFormatters) {
@@ -103,7 +103,7 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
     }
 
     private String formatCommand(Command command, int count) throws IrpMasterException {
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(128);
         String linefeed = System.getProperty("line.separator", "\n");
         str.append(generateParameters ? command.nameProtocolParameterString() : command.getName()).append(linefeed);
         if (generateCcf) {

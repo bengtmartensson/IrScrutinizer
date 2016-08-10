@@ -89,22 +89,8 @@ public class XmlExporter {
 
     private static final String defaultCharsetName = "UTF-8";
 
-    private final Document document;
-
     public static void setDebug(boolean dbg) {
         debug = dbg;
-    }
-
-    /**
-     *
-     * @param doc
-     */
-    public XmlExporter(Document doc) {
-        this.document = doc;
-    }
-
-    public XmlExporter(Element root, String stylesheetType, String stylesheetUrl, boolean createSchemaLocation) {
-        this(createDocument(root, stylesheetType, stylesheetUrl, createSchemaLocation));
     }
 
     public static Document createDocument(Element root, String stylesheetType, String stylesheetUrl, boolean createSchemaLocation) {
@@ -144,6 +130,17 @@ public class XmlExporter {
         } catch (ParserConfigurationException e) {
         }
         return doc;
+    }
+    private final Document document;
+    /**
+     *
+     * @param doc
+     */
+    public XmlExporter(Document doc) {
+        this.document = doc;
+    }
+    public XmlExporter(Element root, String stylesheetType, String stylesheetUrl, boolean createSchemaLocation) {
+        this(createDocument(root, stylesheetType, stylesheetUrl, createSchemaLocation));
     }
 
     public void printDOM(OutputStream ostr, Document stylesheet, HashMap<String, String>parameters,
@@ -188,7 +185,7 @@ public class XmlExporter {
                     XmlUtils.printDOM(new File("girr-binary.xml"), newDoc);
                 NodeList byteElements = newDoc.getDocumentElement().getElementsByTagName("byte");
                 for (int i = 0; i < byteElements.getLength(); i++) {
-                    int val = Integer.parseInt(((Element) byteElements.item(i)).getTextContent());
+                    int val = Integer.parseInt(byteElements.item(i).getTextContent());
                     ostr.write(val);
                 }
             } else

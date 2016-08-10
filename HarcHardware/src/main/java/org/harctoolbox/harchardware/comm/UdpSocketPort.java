@@ -20,12 +20,23 @@ package org.harctoolbox.harchardware.comm;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ICommandLineDevice;
+import org.harctoolbox.harchardware.IHarcHardware;
 
 public class UdpSocketPort implements ICommandLineDevice, IHarcHardware {
 
-    UdpSocketChannel udpSocketChannel;
+    public static void main(String[] args) {
+        try {
+            UdpSocketPort port = new UdpSocketPort("irtrans", 21000, 2000, true);
+            port.sendString("snd philips_37pfl9603,power_toggle");
+            String result = port.readString();
+            System.out.println(result);
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    private UdpSocketChannel udpSocketChannel;
 
     public UdpSocketPort(String hostIp, int portNumber, int timeout, boolean verbose) throws UnknownHostException, SocketException {
         udpSocketChannel = new UdpSocketChannel(hostIp, portNumber, timeout, verbose);
@@ -81,17 +92,6 @@ public class UdpSocketPort implements ICommandLineDevice, IHarcHardware {
     @Override
     public void setDebug(int debug) {
         udpSocketChannel.setDebug(debug);
-    }
-
-    public static void main(String[] args) {
-        try {
-            UdpSocketPort port = new UdpSocketPort("irtrans", 21000, 2000, true);
-            port.sendString("snd philips_37pfl9603,power_toggle");
-            String result = port.readString();
-            System.out.println(result);
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
     }
 
     @Override

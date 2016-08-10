@@ -2,6 +2,7 @@ package org.harctoolbox.IrpMaster;
 
 import com.hifiremote.exchangeir.UeiLearned;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -48,7 +49,7 @@ public class UeiLearnedSignalNGTest {
             IrSignal result = UeiLearnedSignal.parseUeiLearned(ueiString);
             assertEquals(result.isEqual(ref), true);
         } catch (IrpMasterException ex) {
-            assert(false);
+            fail();
         }
     }
 
@@ -63,7 +64,7 @@ public class UeiLearnedSignalNGTest {
             IrSignal ref = new IrSignal(necCcf);
             assertEquals(result.isEqual(ref), true);
         } catch (IrpMasterException ex) {
-            assert(false);
+            fail();
         }
     }
 

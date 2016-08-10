@@ -35,8 +35,8 @@ import org.harctoolbox.irscrutinizer.Props;
  */
 public class SendingLircClient extends SendingHardware<LircCcfClient> implements ISendingHardware<LircCcfClient> {
 
-    InternetHostPanel internetHostPanel;
-    NamedCommandLauncher namedCommandLauncher;
+    private final InternetHostPanel internetHostPanel;
+    private final NamedCommandLauncher namedCommandLauncher;
     private LircCcfClient rawIrSender;
 
     public SendingLircClient(JPanel panel, Props properties, GuiUtils gui,

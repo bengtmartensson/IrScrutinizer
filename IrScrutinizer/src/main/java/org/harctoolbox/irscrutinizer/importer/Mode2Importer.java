@@ -35,7 +35,7 @@ public class Mode2Importer extends ReaderImporter implements IModulatedIrSequenc
     @Override
     public void load(Reader reader, String origin) throws IOException, ParseException {
         BufferedReader bufferedReader = new BufferedReader(reader);
-        ArrayList<Integer> data = new ArrayList<>();
+        ArrayList<Integer> data = new ArrayList<>(256);
         boolean lastWasPulse = false;
         int lineNo = 0;
         while (true) {

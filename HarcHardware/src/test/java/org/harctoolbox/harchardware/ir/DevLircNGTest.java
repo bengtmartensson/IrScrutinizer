@@ -15,7 +15,14 @@ import org.testng.annotations.BeforeMethod;
  * @author bengt
  */
 public class DevLircNGTest {
-    private DevLirc instance;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
     public DevLircNGTest() {
 //        try {
@@ -26,14 +33,6 @@ public class DevLircNGTest {
 //        } catch (HarcHardwareException ex) {
 //            fail();
 //        }
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
     }
 
     @BeforeMethod

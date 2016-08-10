@@ -38,17 +38,17 @@ public class LircImporter extends RemoteSetImporter implements IReaderImporter, 
     /** Jirc/Lirc debug, pretty useless */
     private static final int debug = 0;
 
+    private static final boolean alternatingSigns = true;
+
     /** We ignore LircCode remotes. */
     private boolean rejectLircCode = false;
 
-    private static final boolean alternatingSigns = true;
+    public LircImporter() {
+        super();
+    }
 
     public void setRejectLircCode(boolean newRejectLircCode) {
         rejectLircCode = newRejectLircCode;
-    }
-
-    public LircImporter() {
-        super();
     }
 
     private void load(Collection<IrRemote> lircRemotes, String origin) {
