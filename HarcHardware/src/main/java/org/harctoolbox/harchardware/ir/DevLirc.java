@@ -45,9 +45,9 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
         if (!new File(DEV).isDirectory())
             return new File[0];
 
-        return new File("DEVSLASHLIRC").isDirectory()
-                ? new File("DEVSLASHLIRC").listFiles()
-                : new File("DEV").listFiles(new FilenameFilter() {
+        return new File(DEVSLASHLIRC).isDirectory()
+                ? new File(DEVSLASHLIRC).listFiles()
+                : new File(DEV).listFiles(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {
                         return name.startsWith(LIRC);
