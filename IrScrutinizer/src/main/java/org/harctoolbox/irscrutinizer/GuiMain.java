@@ -656,7 +656,6 @@ public class GuiMain extends javax.swing.JFrame {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                System.err.println("shutdownhook");
                 cleanupForShutdown();
             }
         });
@@ -664,7 +663,6 @@ public class GuiMain extends javax.swing.JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
-                System.err.println("windowClosing");
                 boolean leave = checkUnsavedStuff();
                 if (leave)
                     System.exit(IrpUtils.exitSuccess);
