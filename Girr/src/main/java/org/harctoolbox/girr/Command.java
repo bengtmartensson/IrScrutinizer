@@ -696,6 +696,8 @@ public class Command implements Serializable {
     }
 
     private void generateRawCcf(HashMap<String, Long> parameter, boolean generateRaw, boolean generateCcf) throws IrpMasterException {
+        if (protocol == null)
+            throw new IrpMasterException("Protocol " + protocolName + " unknown or unusable");
         IrSignal irSignal = protocol.renderIrSignal(parameters);
         if (generateRaw)
             generateRaw(irSignal);
@@ -793,8 +795,7 @@ public class Command implements Serializable {
                     && protocol.hasParameterMemory(toggleParameterName)) ? ((int)protocol.getParameterMax(toggleParameterName)) + 1 : 1;
         } catch (UnassignedException ex) {
             // cannot happen
-            assert (false);
-            return 1;
+            throw new InternalError();
         }
     }
 
