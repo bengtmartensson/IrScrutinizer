@@ -56,6 +56,4 @@ public interface ICapturingHardware <T extends ICapture & IHarcHardware> {
     public boolean isValid();
 
     public String getVersion() throws IOException;
-
-    public void setTimeout(int timeout) throws IOException;
 }

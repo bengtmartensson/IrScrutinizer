@@ -31,7 +31,7 @@ import org.harctoolbox.irscrutinizer.Props;
  *
  * @param <T>
  */
-public abstract class CapturingHardware <T extends ICapture & IHarcHardware> {
+public abstract class CapturingHardware <T extends ICapture & IHarcHardware> implements ICapture {
     private final JPanel panel;
     protected Props properties;
     protected GuiUtils guiUtils;
@@ -63,6 +63,7 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> {
         this.verbose = verbose;
     }
 
+    @Override
     public void close() {
         try {
             if (getCapturer() != null && getCapturer().isValid())// && captureDevice != lircMode2command)
@@ -86,26 +87,51 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> {
         capturingHardwareManager.select(getName());
     }
 
+    @Override
     public ModulatedIrSequence capture() throws HarcHardwareException, IOException, IrpMasterException {
         return getCapturer().capture();
     }
 
+    @Override
     public boolean stopCapture() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public String getVersion() throws IOException {
         return getCapturer().getVersion();
     }
 
+    @Override
     public void setVerbosity(boolean verbosity) {
         getCapturer().setVerbosity(verbosity);
     }
 
+    @Override
     public void setTimeout(int i) throws IOException {
         getCapturer().setTimeout(i);
     }
 
+    @Override
+    public void setDebug(int debug) {
+    }
+
+    @Override
+    public void setBeginTimeout(int beginTimeout) throws IOException {
+        getCapturer().setBeginTimeout(beginTimeout);
+    }
+
+    @Override
+    public void setCaptureMaxSize(int captureMaxSize) {
+        getCapturer().setCaptureMaxSize(captureMaxSize);
+    }
+
+    @Override
+    public void setEndTimeout(int endTimeout) {
+        getCapturer().setEndTimeout(endTimeout);
+    }
+
+    @Override
     public boolean isValid() {
         return getCapturer() != null && getCapturer().isValid();
     }

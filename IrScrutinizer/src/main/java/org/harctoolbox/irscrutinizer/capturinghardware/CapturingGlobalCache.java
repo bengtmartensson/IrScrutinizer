@@ -44,12 +44,12 @@ public class CapturingGlobalCache extends CapturingHardware<GlobalCache> impleme
         super(panel, properties_, guiUtils, capturingHardwareManager);
         this.initialIp = hostname.isEmpty() ? null : hostname;
         this.globalCacheIrSenderSelector = globalCacheIrSenderSelector;
-        globalCacheIrSenderSelector.setTimeout(properties.getCaptureStartTimeout());
-        properties.addCaptureStartTimeoutChangeListener(new Props.IPropertyChangeListener() {
+        globalCacheIrSenderSelector.setTimeout(properties.getCaptureBeginTimeout());
+        properties.addCaptureBeginTimeoutChangeListener(new Props.IPropertyChangeListener() {
 
             @Override
             public void propertyChange(String name, Object oldValue, Object newValue) {
-                globalCacheIrSenderSelector.setTimeout(properties.getCaptureStartTimeout());
+                globalCacheIrSenderSelector.setTimeout(properties.getCaptureBeginTimeout());
             }
         });
         //setupHardwareCommonStart();
@@ -98,5 +98,9 @@ public class CapturingGlobalCache extends CapturingHardware<GlobalCache> impleme
     @Override
     public GlobalCache getCapturer() {
         return hardware;
+    }
+
+    @Override
+    public void open() throws HarcHardwareException, IOException {
     }
 }

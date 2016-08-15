@@ -19,7 +19,9 @@ package org.harctoolbox.irscrutinizer.sendinghardware;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import javax.swing.JPanel;
+import org.harctoolbox.devslashlirc.LircDeviceException;
 import org.harctoolbox.guicomponents.DevLircBean;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.ir.DevLirc;
@@ -68,7 +70,12 @@ public class SendingDevLirc extends SendingHardware<DevLirc> implements ISending
         if (rawIrSender != null)
             rawIrSender.close();
         rawIrSender = null;
-        rawIrSender = new DevLirc(newPort, properties.getVerbose());
+        try {
+            rawIrSender = new DevLirc(newPort, properties.getVerbose());
+            rawIrSender.setBeginTimeout(properties.getSendingTimeout());
+        } catch (LircDeviceException | IOException ex) {
+            guiUtils.error(ex);
+        }
         portName = newPort;
         properties.setDevLircName(newPort);
         devLircBean.setHardware(rawIrSender);

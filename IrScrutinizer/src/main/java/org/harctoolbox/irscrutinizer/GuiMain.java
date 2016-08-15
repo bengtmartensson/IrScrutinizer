@@ -598,6 +598,31 @@ public class GuiMain extends javax.swing.JFrame {
             guiUtils.error(ex);
         }
 
+        properties.addCaptureBeginTimeoutChangeListener(new Props.IPropertyChangeListener() {
+            @Override
+            public void propertyChange(String name, Object oldValue, Object newValue) {
+                try {
+                    capturingHardwareManager.getCapturer().setBeginTimeout((Integer) newValue);
+                } catch (IOException ex) {
+                    guiUtils.error(ex);
+                }
+            }
+        });
+
+        properties.addCaptureMaxSizeChangeListener(new Props.IPropertyChangeListener() {
+            @Override
+            public void propertyChange(String name, Object oldValue, Object newValue) {
+                capturingHardwareManager.getCapturer().setCaptureMaxSize((Integer) newValue);
+            }
+        });
+        
+        properties.addCaptureEndTimeoutChangeListener(new Props.IPropertyChangeListener() {
+            @Override
+            public void propertyChange(String name, Object oldValue, Object newValue) {
+                capturingHardwareManager.getCapturer().setEndTimeout((Integer) newValue);
+            }
+        });
+
         properties.addVerboseChangeListener(new Props.IPropertyChangeListener() {
             @Override
             public void propertyChange(String name, Object oldValue, Object newValue) {
@@ -5345,7 +5370,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        capturingHardwareTabbedPane.addTab("/dev/lirc", captureDevLircPanel);
+        capturingHardwareTabbedPane.addTab("/dev/lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), captureDevLircPanel); // NOI18N
 
         capturingIrToyHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         capturingIrToyHardwareHelpButton.setText("Help");
@@ -5641,7 +5666,7 @@ public class GuiMain extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        sendingHardwareTabbedPane.addTab("/dev/lirc", devLircPanel);
+        sendingHardwareTabbedPane.addTab("/dev/lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), devLircPanel); // NOI18N
 
         irTransInternetHostPanel.setIpName(null);
         irTransInternetHostPanel.setPortNumber(IrTrans.portNumber);
@@ -7119,9 +7144,9 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void startTimeoutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startTimeoutMenuItemActionPerformed
         try {
-            Integer t = guiUtils.getIntegerInput("Starting timeout in milliseconds", properties.getCaptureStartTimeout());
+            Integer t = guiUtils.getIntegerInput("Starting timeout in milliseconds", properties.getCaptureBeginTimeout());
             if (t != null)
-                properties.setCaptureStartTimeout(t);
+                properties.setCaptureBeginTimeout(t);
         } catch (NumberFormatException ex) {
             guiUtils.error("Invalid number: " + ex.getMessage());
         }
@@ -7129,9 +7154,9 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void lengthMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lengthMenuItemActionPerformed
         try {
-            Integer t = guiUtils.getIntegerInput("Maximal recording length in milliseconds", properties.getCaptureRunTimeout());
+            Integer t = guiUtils.getIntegerInput("Maximal recording length in milliseconds", properties.getCaptureMaxSize());
             if (t != null)
-                properties.setCaptureRunTimeout(t);
+                properties.setCaptureMaxSize(t);
         } catch (NumberFormatException ex) {
             guiUtils.error("Invalid number: " + ex.getMessage());
         }
@@ -7139,9 +7164,9 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void endingTimeoutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endingTimeoutMenuItemActionPerformed
         try {
-            Integer t = guiUtils.getIntegerInput("Require ending silence in milliseconds", properties.getCaptureEndingTimeout());
+            Integer t = guiUtils.getIntegerInput("Require ending silence in milliseconds", properties.getCaptureEndTimeout());
             if (t != null)
-                properties.setCaptureEndingTimeout(t);
+                properties.setCaptureEndTimeout(t);
         } catch (NumberFormatException ex) {
             guiUtils.error("Invalid number: " + ex.getMessage());
         }

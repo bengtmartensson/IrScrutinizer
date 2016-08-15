@@ -66,6 +66,7 @@ public class IrpUtils {
     public final static double seconds2microseconds = 1E6;
     public final static double milliseconds2seconds = 1E-3;
     public final static double seconds2milliseconds = 1E3;
+    public final static double milliseconds2microseconds = 1E3;
 
     /**
      * Default absolute tolerance in micro seconds.

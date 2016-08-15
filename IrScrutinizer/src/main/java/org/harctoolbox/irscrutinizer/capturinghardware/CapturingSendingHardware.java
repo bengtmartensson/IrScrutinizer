@@ -88,10 +88,6 @@ public class CapturingSendingHardware <T extends ICapture & IHarcHardware> exten
     }
 
     @Override
-    public void setDebug(int debug) {
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public T getCapturer() {
         return (T) sendingHardware.getRawIrSender();

@@ -33,6 +33,7 @@ import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
+import org.harctoolbox.harchardware.ir.ICapture;
 import org.harctoolbox.irscrutinizer.Props;
 
 /**
@@ -64,6 +65,10 @@ public class CapturingHardwareManager {
 
     public ICapturingHardware<?> getSelectedHardware() {
         return selected;
+    }
+
+    public ICapture getCapturer() {
+        return selected.getCapturer();
     }
 
     public ICapturingHardware<?> getHardware(JPanel panel) {
