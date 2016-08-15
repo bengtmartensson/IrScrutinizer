@@ -41,9 +41,6 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
     //private int beginTimeout;
     //private int middleTimeout;
     //private int endingTimeout;
-    private final static int defaultBeginTimeout = 5000;
-    private final static int defaultMiddleTimeout = 1000;
-    private final static int defaultEndingTimeout = 500;
     //private LocalSerialPortBuffered localSerialPort = null;
     private static final String sendCommand = "send";
     private static final String captureCommand = "analyze";
@@ -104,30 +101,30 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
 
 
     public Arduino() throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(defaultPortName, defaultBaudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, false);
+        this(defaultPortName, defaultBaudRate, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndTimeout, false);
     }
 
     public Arduino(String portName) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, defaultBaudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, false);
+        this(portName, defaultBaudRate, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndTimeout, false);
     }
 
     public Arduino(String portName, int baudRate) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, baudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, false);
+        this(portName, baudRate, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndTimeout, false);
     }
 
     public Arduino(String portName, int baudRate, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, baudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, verbose);
+        this(portName, baudRate, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndTimeout, verbose);
     }
 
     public Arduino(String portName, int baudRate, int beginTimeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, baudRate, beginTimeout, defaultMiddleTimeout, defaultEndingTimeout, verbose);
+        this(portName, baudRate, beginTimeout, defaultCaptureMaxSize, defaultEndTimeout, verbose);
     }
 
-    public Arduino(String portName, int beginTimeout, int middleTimeout, int endingTimeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, defaultBaudRate, beginTimeout, defaultMiddleTimeout, defaultEndingTimeout, verbose);
+    public Arduino(String portName, int beginTimeout, int captureMaxSize, int endingTimeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this(portName, defaultBaudRate, beginTimeout, captureMaxSize, defaultEndTimeout, verbose);
     }
 
-    public Arduino(String portName, int baudRate, int beginTimeout, int middleTimeout, int endingTimeout, boolean verbose)
+    public Arduino(String portName, int baudRate, int beginTimeout, int captureMaxSize, int endingTimeout, boolean verbose)
             throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         super(LocalSerialPortBuffered.class, portName, baudRate, dataSize, stopBits, parity, defaultFlowControl, serialTimeout, verbose);
     }
@@ -241,6 +238,18 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
     }
 
     @Override
+    public void setBeginTimeout(int beginTimeout) throws IOException {
+    }
+
+    @Override
+    public void setCaptureMaxSize(int captureMaxSize) {
+    }
+
+    @Override
+    public void setEndTimeout(int endTimeout) {
+    }
+
+    @Override
     public ModulatedIrSequence capture() throws IOException, HarcHardwareException {
         if (stopRequested) // ???
             return null;
@@ -326,13 +335,6 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
     @Override
     public boolean stopReceive() {
         throw new UnsupportedOperationException("Not supported yet.");// TODO
-    }
-
-    @Override
-    public void setTimeout(int beginTimeout, int middleTimeout, int endingTimeout) throws IOException {
-        setTimeout(beginTimeout);
-        //this.middleTimeout = middleTimeout;
-        //this.endingTimeout = endingTimeout;
     }
 
     public void reset() {

@@ -21,13 +21,12 @@ import java.io.IOException;
 import org.harctoolbox.IrpMaster.IrSequence;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.IHarcHardware;
 
 /**
  * This hardware can receive an IR signal for deployment.
  * It does not return a modulation frequency, and normally uses demodulating hardware.
  */
-public interface IReceive extends IHarcHardware {
+public interface IReceive extends IIrReader {
 
     /**
      * Listens to the device and returns a sequence.
@@ -46,12 +45,4 @@ public interface IReceive extends IHarcHardware {
      * @return status
      */
     public boolean stopReceive();
-
-   /**
-    *
-    * @param timeout
-    * @throws IOException
-    */
-    @Override
-    public void setTimeout(int timeout) throws IOException;
 }

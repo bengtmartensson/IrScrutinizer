@@ -39,7 +39,7 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
 
     public static final String DEV = "/dev";
     public static final String DEVSLASHLIRC = "/dev/lirc";
-    public static final String LIRC = "lirc";
+    public static final String LIRCDEVPATTERN = "lirc\\d+";
 
     public static File[] getCandidates() {
         if (!new File(DEV).isDirectory())
@@ -50,7 +50,7 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
                 : new File(DEV).listFiles(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {
-                        return name.startsWith(LIRC);
+                        return name.matches(LIRCDEVPATTERN);
                     }
                 });
     }
@@ -73,7 +73,7 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
             IrSequence irSequence = instance.receive();
             System.out.println(irSequence);
             instance.sendIr(yama_volume_down, 10, new LircTransmitter(1));
-        } catch (HarcHardwareException | IncompatibleArgumentException ex) {
+        } catch (HarcHardwareException | IncompatibleArgumentException | LircDeviceException ex) {
             Logger.getLogger(DevLirc.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -87,16 +87,16 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
     private boolean canSetTransmitter = false;
     private boolean stopRequested;
 
-    public DevLirc(String deviceName, boolean verbose) {
+    public DevLirc(String deviceName, boolean verbose) throws LircDeviceException {
         device = new Mode2LircDevice(deviceName);
         this.verbose = verbose;
     }
 
-    public DevLirc(String deviceName) {
+    public DevLirc(String deviceName) throws LircDeviceException {
         this(deviceName, false);
     }
 
-    public DevLirc() {
+    public DevLirc() throws LircDeviceException {
         this(Mode2LircDevice.defaultDeviceName, false);
     }
 
@@ -206,10 +206,6 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
     }
 
     @Override
-    public void setTimeout(int timeout) throws IOException {
-    }
-
-    @Override
     public String getVersion() throws IOException {
         return device.getVersion();
     }
@@ -226,6 +222,27 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
     @Override
     public boolean isValid() {
         return device != null && device.isValid();
+    }
+
+    @Deprecated
+    @Override
+    public void setTimeout(int timeout) throws IOException {
+        device.setBeginTimeout(timeout);
+    }
+
+    @Override
+    public void setBeginTimeout(int timeout) throws IOException {
+        device.setBeginTimeout(timeout);
+    }
+
+    @Override
+    public void setCaptureMaxSize(int integer) {
+        device.setMaxCaptureLength(integer);
+    }
+
+    @Override
+    public void setEndTimeout(int integer) {
+        device.setEndTimeout(integer);
     }
 
     @Override
@@ -268,7 +285,7 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
     public String[] getTransmitterNames() {
         String[] result = new String[numberTransmitters];
         for (int i = 1; i <= numberTransmitters; i++)
-            result[i] = Integer.toString(i);
+            result[i-1] = Integer.toString(i);
 
         return result;
     }
@@ -288,10 +305,5 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
     @Override
     public boolean stopCapture() {
         return false; //throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setTimeout(int beginTimeout, int maxLearnLength, int endTimeout) {
-        throw new UnsupportedOperationException("/dev/lirc does not support user timeouts.");
     }
 }

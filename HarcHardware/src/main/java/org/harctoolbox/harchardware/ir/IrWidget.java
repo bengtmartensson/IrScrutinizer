@@ -29,6 +29,7 @@ import java.io.InputStream;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
 import org.harctoolbox.IrpMaster.IrSequence;
+import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
@@ -48,15 +49,9 @@ public class IrWidget implements IHarcHardware, ICapture {
     /** Number of micro seconds in a count msPerTick. */
     public static final int msPerTick = 100;
     public static final String defaultPortName = "/dev/ttyUSB0";
-    public static final int defaultStartTimeout = 2000;
-    public static final int defaultRunTimeout = 1000;
-    public static final int defaultEndTimeout = 500;
 
     private static final int baudRate = 115200;
     private static final int mask = 0x3F;
-    private static final double microseconds2seconds = 1E-6;
-    private static final double seconds2microseconds = 1E6;
-    private static final double milliseconds2microseconds = 1E3;
     private static final Modes defaultMode = Modes.irwidgetPulse;
     private static final int shortDelay = 20;
     private static final int longDelay = 200;
@@ -73,7 +68,6 @@ public class IrWidget implements IHarcHardware, ICapture {
      */
     public static void main(String[] args) {
         try (IrWidget w = new IrWidget()) {
-            w.setTimeout(2000, 10000, 500);
             w.open();
             ModulatedIrSequence seq = w.capture();
             System.out.println(seq);
@@ -100,8 +94,8 @@ public class IrWidget implements IHarcHardware, ICapture {
     private double frequency;
     private boolean stopRequested;
     private boolean verbose;
-    private int startTimeout;
-    private int runTimeout;
+    private int beginTimeout;
+    private int captureMaxSize;
     private int endTimeout;
 
      /**
@@ -120,7 +114,7 @@ public class IrWidget implements IHarcHardware, ICapture {
      * @param debug debug code
      */
     public IrWidget(String portName, boolean verbose, int debug) {
-        this(portName, defaultMode, defaultStartTimeout, defaultRunTimeout, defaultEndTimeout, verbose, debug);
+        this(portName, defaultMode, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndTimeout, verbose, debug);
     }
 
     /**
@@ -145,13 +139,13 @@ public class IrWidget implements IHarcHardware, ICapture {
      * @param runTimeout
      * @param endTimeout
      */
-    private IrWidget(String portName, Modes mode, int startTimeout, int runTimeout, int endTimeout, boolean verbose, int debug) {
+    private IrWidget(String portName, Modes mode, int beginTimeout, int captureMaxSize, int endTimeout, boolean verbose, int debug) {
         this.mode = mode;
         this.portName = portName;
         this.debug = debug;
         this.verbose = verbose;
-        this.startTimeout = startTimeout;
-        this.runTimeout = runTimeout;
+        this.beginTimeout = beginTimeout;
+        this.captureMaxSize = captureMaxSize;
         this.endTimeout = endTimeout;
     }
     @Override
@@ -200,21 +194,28 @@ public class IrWidget implements IHarcHardware, ICapture {
         commPort = null;
     }
 
-    @Override
-    public void setTimeout(int startTimeout, int runTimeout, int endTimeout) {
-        this.startTimeout = startTimeout;
-        this.runTimeout = runTimeout;
-        this.endTimeout = endTimeout;
-    }
-
     /**
      *
      * @param timeout
-     * @deprecated Use three argument version instead.
      */
     @Override
     public void setTimeout(int timeout) {
-        setTimeout(timeout, defaultRunTimeout, defaultEndTimeout);
+        setBeginTimeout(timeout);
+    }
+
+    @Override
+    public void setBeginTimeout(int timeout) {
+        this.beginTimeout = timeout;
+    }
+
+    @Override
+    public void setCaptureMaxSize(int maxCaptureMaxSize) {
+        this.captureMaxSize = maxCaptureMaxSize;
+    }
+
+    @Override
+    public void setEndTimeout(int endTimeout) {
+        this.endTimeout = endTimeout;
     }
 
     /**
@@ -237,7 +238,7 @@ public class IrWidget implements IHarcHardware, ICapture {
             throw new RuntimeException(ex);
         }
         InputStream inputStream = serialPort.getInputStream();
-        int toRead = (int) Math.round(runTimeout * milliseconds2microseconds / msPerTick);
+        int toRead = (int) Math.round(captureMaxSize * IrpUtils.milliseconds2microseconds / msPerTick);
         data = new byte[toRead];
 
         byte last = -1;
@@ -251,7 +252,7 @@ public class IrWidget implements IHarcHardware, ICapture {
             }
             if (inputStream.available() == 0) {
                 if (bytesRead == 0) {
-                    if (startTimeout > 0 && System.currentTimeMillis() - startTime >= startTimeout)
+                    if (beginTimeout > 0 && System.currentTimeMillis() - startTime >= beginTimeout)
                         break;
                 } else {
                     if (endTimeout > 0 && System.currentTimeMillis() - lastEvent >= endTimeout)
@@ -379,7 +380,7 @@ public class IrWidget implements IHarcHardware, ICapture {
 
         if (debug > 0)
             System.out.println("IrWidget read pulses = " + pulses + ", gaps = " + gaps);
-        frequency = periods/(bins * msPerTick * microseconds2seconds);
+        frequency = periods/(bins * msPerTick * IrpUtils.microseconds2seconds);
 
         times = new int[pulses + gaps];
         int index = 0;
@@ -418,7 +419,7 @@ public class IrWidget implements IHarcHardware, ICapture {
     }
 
     private int pulseDuration(int pulses) {
-        int x = (int) Math.round(pulses/frequency * seconds2microseconds);
+        int x = (int) Math.round(pulses/frequency * IrpUtils.seconds2microseconds);
         return x;
     }
 

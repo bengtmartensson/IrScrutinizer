@@ -43,10 +43,9 @@ import org.harctoolbox.harchardware.comm.LocalSerialPortRaw;
  */
 public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawIrSender, ICapture {
 
-    private final static int defaultBeginTimeout = 20000;
-    private final static int defaultMiddleTimeout = 2000;
-    private final static int defaultEndingTimeout = -1;
+    private final static int defaultEndTimeout = -1; // overrides!
     private final static int defaultSerialTimeout = 30000;
+    private final static int middleTimeout = 2000;
     private static final int portId = 1;
     private static final byte[] introBytes = { (byte) 0xF2, (byte) portId, (byte) 0xF3 };
     private static final byte middleToken = (byte) 0xF4;
@@ -121,35 +120,27 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         }
         System.exit(0);
     }
-    private int beginTimeout;
-    private int middleTimeout;
-    private int endingTimeout;
     private boolean stopRequested = false;
-    private int serialTimeout = 30000;//12345;
+    private int serialTimeout = 30000;
     private String versionString = "n/a";
 
     public CommandFusion() throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(defaultPortName, defaultBaudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, false);
+        this(defaultPortName, defaultBaudRate, defaultBeginTimeout, false);
     }
 
     public CommandFusion(String portName) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, defaultBaudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, false);
+        this(portName, defaultBaudRate, defaultBeginTimeout, false);
     }
 
     public CommandFusion(String portName, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, defaultBaudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, verbose);
+        this(portName, defaultBaudRate, defaultBeginTimeout, verbose);
     }
 
     public CommandFusion(String portName, int baudRate , int beginTimeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, baudRate, beginTimeout, defaultMiddleTimeout, defaultEndingTimeout, verbose);
-    }
-
-    public CommandFusion(String portName, int baudRate, int beginTimeout, int middleTimeout, int endingTimeout, boolean verbose)
-            throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         super(LocalSerialPortRaw.class, portName, baudRate, dataSize, stopBits, parity, defaultFlowControl, beginTimeout, verbose);
         this.serialTimeout = beginTimeout;
-        this.middleTimeout = middleTimeout;
     }
+
     @Override
     public void setDebug(int debug) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -400,16 +391,20 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     }
 
     @Override
-    public void setTimeout(int beginTimeout, int middleTimeout, int endingTimeout) throws IOException {
-        //setTimeout(beginTimeout);
-        this.serialTimeout = beginTimeout;
-        this.middleTimeout = middleTimeout;
-        //this.endingTimeout = endingTimeout;
+    public String getVersion() {
+        return versionString;
     }
 
     @Override
-    public String getVersion() {
-        return versionString;
+    public void setBeginTimeout(int integer) {
+    }
+
+    @Override
+    public void setCaptureMaxSize(int integer) {
+    }
+
+    @Override
+    public void setEndTimeout(int integer) {
     }
 
     /*

@@ -205,7 +205,7 @@ public class Main {
                 transmitter = lircClient.getTransmitter(commandLineArgs.transmitter);
             } else if (commandLineArgs.irwidget) {
                 String device = commandLineArgs.device == null ? IrWidget.defaultPortName : commandLineArgs.device;
-                irWidget = new IrWidget(device, commandLineArgs.timeout, IrWidget.defaultRunTimeout, IrWidget.defaultEndTimeout, false);
+                irWidget = new IrWidget(device, commandLineArgs.timeout, ICapture.defaultCaptureMaxSize, IrWidget.defaultEndTimeout, false);
                 captureDevice = irWidget;
                 harcHardware = irWidget;
             } else if (commandLineArgs.arduino) {
@@ -222,7 +222,7 @@ public class Main {
                     doExit(IrpUtils.exitUsageError);
                 } else {
                     captureDevice.open();
-                    captureDevice.setTimeout(commandLineArgs.timeout, commandLineArgs.timeout, 300);
+                    captureDevice.setBeginTimeout(commandLineArgs.timeout);
                     ModulatedIrSequence seq = captureDevice.capture();
                     if (seq != null) {
                         System.out.println(seq);

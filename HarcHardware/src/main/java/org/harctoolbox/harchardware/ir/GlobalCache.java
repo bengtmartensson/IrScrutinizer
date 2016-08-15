@@ -898,11 +898,6 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
     }
 
     @Override
-    public synchronized void setTimeout(int beginTimeout, int maxLength, int endTimeout) {
-        setTimeout(beginTimeout);
-    }
-
-    @Override
     public boolean stopCapture() {
         String response;
         try {
@@ -950,6 +945,19 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
 
     private JsonArray getJsonFiles() throws IOException {
         return getJsonArray("files");
+    }
+
+    @Override
+    public void setBeginTimeout(int integer) throws IOException {
+        tcpSocketChannel.setTimeout(timeout);
+    }
+
+    @Override
+    public void setCaptureMaxSize(int integer) {
+    }
+
+    @Override
+    public void setEndTimeout(int integer) {
     }
 
     public static class GlobalCacheIrTransmitter extends Transmitter {

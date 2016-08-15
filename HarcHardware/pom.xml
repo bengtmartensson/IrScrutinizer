@@ -207,6 +207,7 @@
         <dependency>
             <groupId>org.harctoolbox</groupId>
             <artifactId>DevSlashLirc</artifactId>
+            <version>0.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>

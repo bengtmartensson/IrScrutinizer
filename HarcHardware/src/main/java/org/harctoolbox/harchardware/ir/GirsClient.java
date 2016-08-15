@@ -44,10 +44,6 @@ import org.harctoolbox.harchardware.comm.TcpSocketPort;
  */
 public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implements IHarcHardware, IReceive, IRawIrSender, IRawIrSenderRepeat, IRemoteCommandIrSender, IIrSenderStop, ITransmitter, ICapture, ICommandLineDevice {
 
-    private final static int defaultBeginTimeout = 5000;
-    private final static int defaultMiddleTimeout = 1000;
-    private final static int defaultEndingTimeout = 500;
-    private final static int defaultSerialTimeout = 10000;
     private final static String defaultLineEnding = "\r";
     private final static String sendCommand = "send";
     private final static String captureCommand = "analyze";
@@ -189,13 +185,6 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
         setBeginTimeout(timeout);
     }
 
-    @Override
-    public void setTimeout(int beginTimeout, int maxCaptureLength, int endingTimeout) throws IOException {
-        setBeginTimeout(beginTimeout);
-        setMaxCaptureLength(maxCaptureLength);
-        setEndingTimeout(endingTimeout);
-    }
-
     /**
      * @return the beginTimeout
      */
@@ -206,6 +195,7 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
     /**
      * @param beginTimeout the beginTimeout to set
      */
+    @Override
     public void setBeginTimeout(int beginTimeout) {
         this.beginTimeout = beginTimeout;
     }
@@ -220,21 +210,23 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
     /**
      * @param maxCaptureLength the maxCaptureLength to set
      */
-    public void setMaxCaptureLength(int maxCaptureLength) {
+    @Override
+    public void setCaptureMaxSize(int maxCaptureLength) {
         this.maxCaptureLength = maxCaptureLength;
     }
 
     /**
      * @return the endingTimeout
      */
-    public int getEndingTimeout() {
+    public int getEndTimeout() {
         return endingTimeout;
     }
 
     /**
      * @param endingTimeout the endingTimeout to set
      */
-    public void setEndingTimeout(int endingTimeout) {
+    @Override
+    public void setEndTimeout(int endingTimeout) {
         this.endingTimeout = endingTimeout;
     }
 
