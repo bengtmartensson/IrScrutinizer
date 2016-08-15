@@ -131,7 +131,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="propsLabel">
       <Properties>
-        <Property name="horizontalAlignment" type="int" value="4"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
         <Property name="text" type="java.lang.String" value="--"/>
         <Property name="toolTipText" type="java.lang.String" value="Properties of the device, as reported from it."/>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">

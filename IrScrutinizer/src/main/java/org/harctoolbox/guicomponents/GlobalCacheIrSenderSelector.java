@@ -102,7 +102,7 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
     }
 
     private void setGlobalCache(int index) throws UnknownHostException, IOException {
-            setGlobalCache(GlobalCacheManager.getInstance().getInetAddress(index));
+        setGlobalCache(GlobalCacheManager.getInstance().getInetAddress(index));
     }
 
     private void closeGlobalCache() throws IOException {

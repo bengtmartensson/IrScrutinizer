@@ -273,7 +273,7 @@ public class DevLircBean extends javax.swing.JPanel implements ISendingReceiving
         versionLiteralLabel.setToolTipText("Version of the firmware on the device, if supported by the device. Verifies that the connection is working.");
         versionLiteralLabel.setEnabled(false);
 
-        propsLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        propsLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         propsLabel.setText("--");
         propsLabel.setToolTipText("Properties of the device, as reported from it.");
         propsLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
