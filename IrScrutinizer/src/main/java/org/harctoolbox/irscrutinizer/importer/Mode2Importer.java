@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
+import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 
 /**
@@ -70,7 +71,7 @@ public class Mode2Importer extends ReaderImporter implements IModulatedIrSequenc
             lastWasPulse = isPulse;
         }
         if (data.size() % 2 != 0)
-            data.add(1000 * (int)getEndingTimeout()); // convert milliseconds to micro seconds
+            data.add((int)(IrpUtils.milliseconds2microseconds * getEndTimeout()));
         int[] array = new int[data.size()];
         int i = 0;
         for (Integer duration : data)
