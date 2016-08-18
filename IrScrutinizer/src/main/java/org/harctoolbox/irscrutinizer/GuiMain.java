@@ -120,6 +120,7 @@ public class GuiMain extends javax.swing.JFrame {
     private final String[] prontoModelNames;
     private transient ExportFormatManager exportFormatManager;
     private transient SendingHardwareManager sendingHardwareManager = null;
+    private transient SendingLircClient sendingLircClient;
     private transient CapturingHardwareManager capturingHardwareManager;
 
     private Remote.MetaData metaData = new Remote.MetaData("unnamed");
@@ -508,7 +509,7 @@ public class GuiMain extends javax.swing.JFrame {
                 guiUtils, globalCacheIrSenderSelector);
         sendingHardwareManager.add(sendingGlobalCache);
 
-        SendingLircClient sendingLircClient = new SendingLircClient(lircPanel, properties,
+        sendingLircClient = new SendingLircClient(lircPanel, properties,
                 guiUtils, lircInternetHostPanel, lircNamedCommandLauncher);
         sendingHardwareManager.add(sendingLircClient);
 
@@ -615,7 +616,7 @@ public class GuiMain extends javax.swing.JFrame {
                 capturingHardwareManager.getCapturer().setCaptureMaxSize((Integer) newValue);
             }
         });
-        
+
         properties.addCaptureEndTimeoutChangeListener(new Props.IPropertyChangeListener() {
             @Override
             public void propertyChange(String name, Object oldValue, Object newValue) {
@@ -2297,6 +2298,7 @@ public class GuiMain extends javax.swing.JFrame {
         sendingTimeoutMenuItem = new javax.swing.JMenuItem();
         jSeparator26 = new javax.swing.JPopupMenu.Separator();
         globalCacheTimeoutMenuItem = new javax.swing.JMenuItem();
+        lircTimeoutMenuItem = new javax.swing.JMenuItem();
         fallbackFrequencyMenuItem = new javax.swing.JMenuItem();
         verboseCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ignoreEndingSilenceCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -6605,6 +6607,14 @@ public class GuiMain extends javax.swing.JFrame {
         });
         timeoutMenu.add(globalCacheTimeoutMenuItem);
 
+        lircTimeoutMenuItem.setText("Lirc timeout");
+        lircTimeoutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lircTimeoutMenuItemActionPerformed(evt);
+            }
+        });
+        timeoutMenu.add(lircTimeoutMenuItem);
+
         optionsMenu.add(timeoutMenu);
 
         fallbackFrequencyMenuItem.setText("Fallback Frequency...");
@@ -9017,6 +9027,18 @@ public class GuiMain extends javax.swing.JFrame {
             properties.setSelectedRemoteIndex(rawCookedTabbedPane.getSelectedIndex());
     }//GEN-LAST:event_rawCookedTabbedPaneStateChanged
 
+    private void lircTimeoutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lircTimeoutMenuItemActionPerformed
+        try {
+            Integer t = guiUtils.getIntegerInput("Lirc socket time-out in milliseconds", properties.getLircTimeout());
+            if (t != null) {
+                properties.setLircTimeout(t);
+                sendingLircClient.setTimeout(t);
+            }
+        } catch (NumberFormatException ex) {
+            guiUtils.error("Invalid number: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_lircTimeoutMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9370,6 +9392,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JTextField lircMode2CommandTextField;
     private org.harctoolbox.guicomponents.NamedCommandLauncher lircNamedCommandLauncher;
     private javax.swing.JPanel lircPanel;
+    private javax.swing.JMenuItem lircTimeoutMenuItem;
     private javax.swing.JMenu loadMenu;
     private javax.swing.JMenuItem mainDocuMenuItem;
     private javax.swing.JMenuBar menuBar;

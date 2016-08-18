@@ -83,6 +83,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="transmitHardware" type="string" default='"Audio Port"' doc="Name of selected transmit hardware."/>
     <property name="lircIpName" type="string" default='LircClient.defaultLircIP' doc='IP name or address of LIRC server.'/>
     <property name="lircPort" type="int" default='Integer.toString(LircClient.lircDefaultPort)' doc='TCP port number of LIRC server, typically 8765.'/>
+    <property name="lircTimeout" type="int" default='"5000"' doc="Timeout for connecting to TCP Lirc server" />
     <property name="lookAndFeel" type="int" default='"0"' doc='Look and feel, as integer index in table. Semantics is system dependent.'/>
     <property name="globalCacheApiKey" type="string" default='""' />
     <property name="usePopupsForErrors" type="boolean" default='"true"' doc='If true, use popups for help. Otherwise the console will be used.'/>

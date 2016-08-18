@@ -58,6 +58,10 @@ public class SendingLircClient extends SendingHardware<LircCcfClient> implements
         });
     }
 
+    public void setTimeout(int timeout) {
+        rawIrSender.setTimeout(timeout);
+    }
+
     @Override
     public String getName() {
         return "Lirc";
@@ -72,7 +76,7 @@ public class SendingLircClient extends SendingHardware<LircCcfClient> implements
     public void setup() throws IOException, HarcHardwareException {
         String lircIp = internetHostPanel.getIpName();
         int lircPort = internetHostPanel.getPortNumber();
-        rawIrSender = new LircCcfClient(lircIp, lircPort, properties.getVerbose(), properties.getSendingTimeout());
+        rawIrSender = new LircCcfClient(lircIp, lircPort, properties.getVerbose(), properties.getLircTimeout());
         try {
             internetHostPanel.setHardware(rawIrSender);
         } catch (IOException ex) {
