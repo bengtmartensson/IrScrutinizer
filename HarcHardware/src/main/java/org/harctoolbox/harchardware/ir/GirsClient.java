@@ -429,7 +429,7 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
         try {
             //open();
             String str = hardware.readString(true);
-            //pendingCapture = false;
+            pendingCapture = false;
             if (str == null || str.length() == 0 || str.startsWith("null") || str.startsWith(timeoutString))
                 return null;
 
