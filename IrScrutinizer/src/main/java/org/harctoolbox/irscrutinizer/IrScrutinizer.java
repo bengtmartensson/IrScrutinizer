@@ -20,6 +20,7 @@ package org.harctoolbox.irscrutinizer;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
+import java.awt.HeadlessException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -164,6 +165,8 @@ public class IrScrutinizer {
             public void run() {
                 try {
                     new GuiMain(applicationHome, propsfilename, verbose, debug, userlevel, arguments).setVisible(true);
+                } catch (HeadlessException ex) {
+                    System.err.println("This program does not run in headless mode.");
                 } catch (ParseException | IOException | IncompatibleArgumentException | URISyntaxException
                         | RuntimeException ex) {
                     GuiUtils.fatal(ex, IrpUtils.exitConfigReadError, new GuiUtils.EmergencyFixer () {

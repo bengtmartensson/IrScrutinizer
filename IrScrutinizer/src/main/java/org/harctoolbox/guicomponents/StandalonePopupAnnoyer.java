@@ -17,12 +17,13 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.guicomponents;
 
+import java.awt.HeadlessException;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import org.harctoolbox.IrpMaster.IrpUtils;
 
 /**
- * This class does something interesting and useful. Or not...
+ * This class is intended for a final error message.
  */
 public class StandalonePopupAnnoyer {
 
@@ -38,7 +39,14 @@ public class StandalonePopupAnnoyer {
     }
 
     public static void main(String[] args) {
-        boolean result = errorContinue(args[0]);
-        System.exit(result ? IrpUtils.exitSuccess : IrpUtils.exitUsageError);
+        try {
+            boolean result = errorContinue(args[0]);
+            System.exit(result ? IrpUtils.exitSuccess : IrpUtils.exitUsageError);
+        } catch (HeadlessException ex) {
+            System.err.println(args[0]);
+            System.err.println();
+            System.err.println("This program does not run in headless mode.");
+            System.exit(IrpUtils.exitUsageError);
+        }
     }
 }
