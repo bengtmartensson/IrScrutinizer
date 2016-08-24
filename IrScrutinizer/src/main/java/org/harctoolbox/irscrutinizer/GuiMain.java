@@ -8228,7 +8228,7 @@ public class GuiMain extends javax.swing.JFrame {
                 guiUtils.error("No signal received.");
         } catch (TimeoutException ex) {
             guiUtils.error("Timeout capturing signal");
-        } catch (IOException | HarcHardwareException | IrpMasterException ex) {
+        } catch (IOException | HarcHardwareException | IrpMasterException | NumberFormatException ex) {
             guiUtils.error(ex);
         } finally {
             resetCursor(oldCursor);

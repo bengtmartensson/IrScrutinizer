@@ -167,8 +167,9 @@ public class IrSequence implements Cloneable, Serializable {
      * @param str String of durations, possibly using signed numbers.
      * @param fixOddSequences it true, odd sequences (ending with space) are silently fixed by adding a dummy gap.
      * @throws IncompatibleArgumentException If last duration is not a gap, and fixOddSequences false.
+     * @throws NumberFormatException
      */
-    public IrSequence(String str, boolean fixOddSequences) throws IncompatibleArgumentException {
+    public IrSequence(String str, boolean fixOddSequences) throws IncompatibleArgumentException, NumberFormatException {
         if (str == null || str.trim().isEmpty()) {
             data = new double[0];
         } else {
@@ -215,8 +216,9 @@ public class IrSequence implements Cloneable, Serializable {
      * This version does not require flashes and gaps to be interleaved (signs alternating).
      * @param str String of durations, possibly using signed numbers.
      * @throws IncompatibleArgumentException If last duration is not a gap.
+     * @throws NumberFormatException
      */
-    public IrSequence(String str) throws IncompatibleArgumentException {
+    public IrSequence(String str) throws IncompatibleArgumentException, NumberFormatException {
         this(str, false);
     }
 
