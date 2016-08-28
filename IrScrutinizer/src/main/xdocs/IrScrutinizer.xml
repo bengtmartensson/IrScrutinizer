@@ -56,6 +56,10 @@ not to hold the author responsible.</warning>
 	  <td>2016-04-29</td>
 	  <td>Version for release 1.2. Misc. minor improvements.</td>
 	</tr>
+        <tr>
+	  <td>2016-08-26</td>
+	  <td>Version for release 1.3. New sections: TODO. Misc. minor improvements.</td>
+	</tr>
       </table>
 
 <section>
@@ -71,17 +75,17 @@ number of different file formats (among others: LIRC, Wave, CML, Pronto Classic 
 professional, RMDU (partially), and different text based formats; not only from
 files, but also from the clipboard, from URLs, and from file hierarchies), as
 well as the Internet IR Databases by Global Caché and by IRDB. Imported signals
-can be decoded, analyzed, edited, and plotted. A collection of
+can be decoded, analyzed, edited, and visualized. A collection of
 IR signal can thus be assembled and edited, and finally exported in one of the
 many supported formats.  In addition, the program contains the powerful
 IrpMaster IR-renderer, which means that almost all IR protocols known to the
 Internet community can be generated.</p>
 
-<p>Written in Java (with the exception of two native libraries), most of the
+<p>Written in Java (with the exception of three native libraries), most of the
 functionality of the program is available on every Java platform. The native
 libraries (DecodeIR and RXTX) are presently available for 32- and 64-bit
-versions of Windows, Linux (x86 and amd-64), and MacOsX, and can with moderate effort be compiled for other
-platforms.</p>
+versions of Windows, Linux (x86, amd-64, arm version 7), and MacOsX, and can with moderate effort be compiled for other
+platforms. (The library DevSlashLirc is available for Linux only.)</p>
 <p>
 For someone with knowledge in the problem domain of IR signals and
 their parameterization, this program is believed to be simple to
@@ -185,9 +189,11 @@ available <a href="Jirc.html">here</a>.</p>
 <p>The contained Arduino firmware contains code copyrighted by Michael Dreher
 (<a
 href="http://www.mikrocontroller.net/articles/High-Speed_capture_mit_ATmega_Timer">IrWidget</a>,
-GPL2 or later) and Chris Young (<a href="http://tech.cyborg5.com/irlib/">IRLib</a> LGPL).</p>
+GPL2 or later). Some code within that firmware is derived from <a href="https://github.com/z3t0/Arduino-IRremote">IRremote</a>,
+which was originally written by Ken Shirriff,
+and is licensed under the <a href="http://www.gnu.org/licenses/lgpl.html">LGPL license</a>.</p>
 
-<p>The program contains icons from Global Caché, Dangerous Prototypes, Arduino,
+<p>The program contains icons from Dangerous Prototypes
 and IrTrans. These are used exclusively in the context of these firms, and only
 used to illustrate their products. The icons for JP1 and LIRC are also
 exclusively used to illustrate themselves.</p>
@@ -196,7 +202,9 @@ exclusively used to illustrate themselves.</p>
 The program and its documentation are licensed under the <a
  href="http://www.gnu.org/licenses/gpl.html">GNU General Public License version
 3</a>, making everyone free to use, study, improve, etc., under certain
-conditions. File formats, their description in human- or
+conditions.</p>
+
+<p>File formats, their description in human- or
 machine-readable form (DTDs, XML Schemas), are placed in the public domain.</p>
       </section>
 
@@ -247,19 +255,20 @@ parameters.</dd>
 <title>General</title>
 <p>IrScrutinizer, and all but two of its third-party additions, are written in Java,
 which means that it should run on every computer with a modern Java installed;
-Windows, Linux, Macintosh, etc. Java 1.7 or later is required. The two
+Windows, Linux (including Raspberry Pi), Macintosh, etc. Java 1.7 or later is required. The
 exception are DecodeIR and the native part of RXTX, which are written in C++
 and C respectively, and invoked as shared library
-    (<code>.dll</code> in Windows, <code>.so</code> in Linux, <code>.jnilib</code> or <code>.dylib</code> in Mac OS X). If DecodeIR or
-RXTX are
+    (<code>.dll</code> in Windows, <code>.so</code> in Linux, <code>.jnilib</code> or <code>.dylib</code> in Mac OS X).
+For Linux, there is also the DevSlashLirc library.
+    If DecodeIR, RXTX, or DevSlashLirc are
 not available on for a particular platform it is not a major problem, as most parts of IrScrutinizer will
-work fine without it; just the DecodeIR-related functions or the serial
-hardware access will be unavailable.</p>
+work fine without it; just the DecodeIR-related functions, the serial
+hardware access, or the access to certain hardware will be unavailable.</p>
 
 <p>In all versions, IrScrutinizer behave civilized, in that the installation
 directory can be read only after the installation.
 </p>
-<p>As of version 1.2, there are six different way of installing the program, described next.</p>
+<p>As of version 1.3, there are six different way of installing the program, described next.</p>
 </section>
 <section><title>Windows</title>
 <p>Download the <a
@@ -268,11 +277,12 @@ file</a> and double click it. Select any installation
 directory you like; suggested is <code>C:\Program Files\IrScrutinizer</code>,
 unless you can not install with administrator rights. Unless
 reason to do so, create the start menu folder, and the desktop
-icon. Administrator rights are needed only it installing in a directory like <code>Program Files</code> is desired.
+icon. If administrator rights are present, the recommended installation location is in a subdirectory of <code>Program Files</code>.
+If not, installing is still possibly, using any installation directory writeable by the current user.
 IrScrutinizer can now be started from <code>Start -> IrScrutinizer ->
 IrScrutinizer</code>, or from the desktop icon.</p>
 
-<p>This will also install the command line program <a href="IrpMaster.html">IrpMaster</a>,
+<p>The installer will also install the command line program <a href="IrpMaster.html">IrpMaster</a>,
 which can be called as <code>irpmaster</code> from a so-called DOS box.</p>
 
 <p>To uninstall, select the uninstall option from the Start menu. Very pedantic
@@ -321,10 +331,10 @@ to run on all modern, 64-bit x86 Linux distrubutions. Just download
 <section><title>Generic Binary</title>
 <p>The generic binary version consists of all the java classes packed in one executable jar file,
 together with supporting files, like all the compiled shared libraries for the different
-operating systems Linux, Windows, and Mac. It can be used on all those systems. (In other environments, the
+operating systems Linux (x64-32, x86-64, armv7), Windows (x86, 32 and 64 bits), and Mac. It can be used on all those systems. (In other environments, the
 shared libraries may be compiled with moderate effort.)</p>
 
-<p>The generic binary distribution be used whenever using the
+<p>The generic binary distribution can be used whenever using the
 rpm/setup.exe/app installation is not possible, not up-to-date, or not desired.</p>
 
 <p>To install, unpack in an empty directory of your choice, suggested is
@@ -337,7 +347,7 @@ wrapper script, e.g.</p>
 ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irscrutinizer
 ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irpmaster
 </source>
-<p>If your system supports the RXTX, you should preferably use that. See
+<p>If your system natively supports the RXTX, you should preferably use that. See
     the comments in the wrapper <code>irscrutinizer.sh</code>.</p>
 
     <p>The JNI libraries <code>libDecodeIR.so</code>/<code>DecodeIR.dll</code>/<code>libDecodeIR.jnilib</code> are contained in the
@@ -358,8 +368,7 @@ ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irpmaster
         <a href="#Serial+device+access">access to the serial devices</a>. The previously mentioned
         wrapper does this.</p>
 
-<p>To uninstall, just delete the files. Very pedantic
-    people may like to delete the <a href="#Properties">properties file</a> too.</p>
+<p>To uninstall, just delete the files. Some may like to delete the <a href="#Properties">properties file</a> too.</p>
 </section>
 
 <section>
@@ -371,7 +380,7 @@ ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irpmaster
         commands <code>irscrutinizer</code> and <code>irpmaster</code>.
         To uninstall, use the command  <code>sudo dnf erase harctoolbox harctoolbox-doc</code>.</p>
         <p>Unfortunatelly, the packaging contains a few semi-serious problems. These are reported,
-            but stay unfixed (since a year).
+            but stay unfixed (since over a year).
             Fedora users are recommended instead to use AppImage or the generic binary package.</p>
 </section>
 
@@ -643,6 +652,8 @@ selected/raw" transfer to the sub-pane "Raw remote".</p>
 <p>The key "Transmit selected" transmits the (single) selected signal to the
 	selected sending hardware.</p>
 
+        <p>The file based import formats allow a file to be "dropped" with the mouse on the main window.</p>
+
 <section><title>Global Caché Database</title>
 <p>Global Caché maintains a <a href="http://irdatabase.globalcache.com/">data base
 of IR signals</a>, made available free of charge. "Contains over 100,000
@@ -654,7 +665,21 @@ program's properties. To use, select, in order, a manufacturer, a <a
 								    href="Glossary.html#DeviceType">device
 type</a>, and a <a href="Glossary.html#setupCode">setup code</a>, the latter possibly by
 trial-and-error.</p>
+<p>This data base is no longer maintained; replaced by the "Control Tower data base", described next.</p>
 	</section>
+
+        <section>
+            <title>Global Caché's Control Tower data base</title>
+            <p>This is the new data base from Global Caché. Unfortunately,
+                non-premium users are not allowed to download codes using the API.
+                For this reason, the program really only "browses" the data base.</p>
+
+            <p>To use its codes, log in with the browser (the "Web site" button goes to the home page),
+                and have the code set mailed in CSV format (press "Send Code Set").
+                The mail received can be imported by the import text pane, raw subpane, Name col. = 1, Raw signal col = 2 (or 3),
+                Field separator: comma.
+            </p>
+        </section>
 
 <section><title>The IRDB Database</title>
 <p><a href="http://irdb.tk">IRDB</a> is "one of the largest crowd-sourced,
@@ -670,7 +695,7 @@ combinations to the tree.</p>
 	</section>
 <section><title>Girr (the native format of IrScrutinizer)</title>
 <p>The <a href="Glossary.html#Girr">Girr format</a> is the native format of
-IrScrutinizer.</p>
+IrScrutinizer. The importer is capable of importing directory hierarchies.</p>
 	</section>
 
 <section><title>LIRC</title>
@@ -719,9 +744,9 @@ href="http://files.remotecentral.com/pronto/index.html">Remote
 Central</a>. IrScrutinizer can read in these files to its import tree, even
 preserving the Pronto "devices" as nodes in the tree.</p>
 
-<p>Unfortunately, the <a href="Glossary.html#Tonto">Tonto library</a> used
+<!--p>Unfortunately, the <a href="Glossary.html#Tonto">Tonto library</a> used
 produces the warning message <code>Error loading JComm JNI library</code>. This message
-should be ignored.</p>
+should be ignored.</p-->
 	</section>
 
 <section><title>Pronto Prof. (XCF format)</title>
@@ -774,6 +799,12 @@ of channels, and in the case of two channels, the number of sample times the
 left and right channels are in phase or anti-phase) is printed to the
 console.</p>
 	</section>
+
+        <section>
+            <title>IrTrans</title>
+            <p>
+                <a href="http://www.irtrans.com">IrTrans</a>' configuration files (<code>.rem</code>) can be imported here.</p>
+        </section>
 </section>
 
 <section>
@@ -1315,16 +1346,6 @@ wish list.
         having the property, that
         "... if you stick one in your ear, you can instantly understand anything said to you in any form of language".
         This symbolizes the program's ability to "understand" a large number of different IR formats.
-    </p>
-</section>
-
-<section>
-    <title>Why supporting the old Global Caché data base but not the new ("<a href="http://irdb.globalcache.com/">Control Tower</a>")?</title>
-    <p>Sad, really, it is a really nice data base. The reason is that API retrieval of codes is not allowed for the free accounts.
-        The data base can still be used with IrScrutinizer however: Log in with the web interface,
-        and have the codes mailed in CSV format (press "Send Code Set").
-        The mail received can be imported by the import text pane, raw subpane, Name col. = 1, Raw signal col = 2 (or 3),
-        Field separator: comma.
     </p>
 </section>
 
