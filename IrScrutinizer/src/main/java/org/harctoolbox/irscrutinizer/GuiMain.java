@@ -2138,37 +2138,6 @@ public class GuiMain extends javax.swing.JFrame {
         exportHelpButton = new javax.swing.JButton();
         exportRawRemoteButton1 = new javax.swing.JButton();
         exportGenerateShortCcfCheckBox = new javax.swing.JCheckBox();
-        capturingPanel = new javax.swing.JPanel();
-        capturingHardwareTabbedPane = new javax.swing.JTabbedPane();
-        captureIrWidgetPanel = new javax.swing.JPanel();
-        irWidgetSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrWidgetCapturePortName(), 115200, false);
-        capturingIrWidgetHardwareHelpButton = new javax.swing.JButton();
-        captureGlobalCachePanel = new javax.swing.JPanel();
-        globalCacheCaptureSelector = new org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector(guiUtils, properties.getVerbose(), properties.getSendingTimeout(), false);
-        capturingGlobalCacheHardwareHelpButton = new javax.swing.JButton();
-        captureLircMode2Panel = new javax.swing.JPanel();
-        lircMode2CommandTextField = new javax.swing.JTextField();
-        jLabel24 = new javax.swing.JLabel();
-        startMode2Button = new javax.swing.JButton();
-        stopMode2Button = new javax.swing.JButton();
-        capturingMode2HardwareHelpButton = new javax.swing.JButton();
-        captureDevLircPanel = new javax.swing.JPanel();
-        capturingDevLircHardwareHelpButton = new javax.swing.JButton();
-        devLircCapturingSendingBean = new CapturingSendingBean(this);
-        captureIrToyPanel = new javax.swing.JPanel();
-        capturingIrToyHardwareHelpButton = new javax.swing.JButton();
-        irtoyCapturingSendingBean = new CapturingSendingBean(this);
-        captureArduinoPanel = new javax.swing.JPanel();
-        capturingArduinoHardwareHelpButton = new javax.swing.JButton();
-        arduinoCapturingSendingBean = new CapturingSendingBean(this);
-        captureGirsPanel = new javax.swing.JPanel();
-        capturingGirsHardwareHelpButton = new javax.swing.JButton();
-        girsClientCapturingSendingBean = new CapturingSendingBean(this);
-        captureCommandFusionPanel = new javax.swing.JPanel();
-        capturingCommandFusionHardwareHelpButton = new javax.swing.JButton();
-        commandFusionCapturingSendingBean = new CapturingSendingBean(this);
-        captureTestButton = new javax.swing.JButton();
-        capturingHardwareHelpButton = new javax.swing.JButton();
         sendingPanel = new javax.swing.JPanel();
         sendingHardwareTabbedPane = new javax.swing.JTabbedPane();
         globalCachePanel = new javax.swing.JPanel();
@@ -2208,6 +2177,37 @@ public class GuiMain extends javax.swing.JFrame {
         transmitScrutinizedButton = new javax.swing.JButton();
         transmitGenerateButton2 = new javax.swing.JButton();
         sendingHardwareHelpButton = new javax.swing.JButton();
+        capturingPanel = new javax.swing.JPanel();
+        capturingHardwareTabbedPane = new javax.swing.JTabbedPane();
+        captureIrWidgetPanel = new javax.swing.JPanel();
+        irWidgetSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrWidgetCapturePortName(), 115200, false);
+        capturingIrWidgetHardwareHelpButton = new javax.swing.JButton();
+        captureGlobalCachePanel = new javax.swing.JPanel();
+        globalCacheCaptureSelector = new org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector(guiUtils, properties.getVerbose(), properties.getSendingTimeout(), false);
+        capturingGlobalCacheHardwareHelpButton = new javax.swing.JButton();
+        captureLircMode2Panel = new javax.swing.JPanel();
+        lircMode2CommandTextField = new javax.swing.JTextField();
+        jLabel24 = new javax.swing.JLabel();
+        startMode2Button = new javax.swing.JButton();
+        stopMode2Button = new javax.swing.JButton();
+        capturingMode2HardwareHelpButton = new javax.swing.JButton();
+        captureDevLircPanel = new javax.swing.JPanel();
+        capturingDevLircHardwareHelpButton = new javax.swing.JButton();
+        devLircCapturingSendingBean = new CapturingSendingBean(this);
+        captureIrToyPanel = new javax.swing.JPanel();
+        capturingIrToyHardwareHelpButton = new javax.swing.JButton();
+        irtoyCapturingSendingBean = new CapturingSendingBean(this);
+        captureArduinoPanel = new javax.swing.JPanel();
+        capturingArduinoHardwareHelpButton = new javax.swing.JButton();
+        arduinoCapturingSendingBean = new CapturingSendingBean(this);
+        captureGirsPanel = new javax.swing.JPanel();
+        capturingGirsHardwareHelpButton = new javax.swing.JButton();
+        girsClientCapturingSendingBean = new CapturingSendingBean(this);
+        captureCommandFusionPanel = new javax.swing.JPanel();
+        capturingCommandFusionHardwareHelpButton = new javax.swing.JButton();
+        commandFusionCapturingSendingBean = new CapturingSendingBean(this);
+        captureTestButton = new javax.swing.JButton();
+        capturingHardwareHelpButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         saveMenu = new javax.swing.JMenu();
@@ -5198,363 +5198,6 @@ public class GuiMain extends javax.swing.JFrame {
 
         topLevelTabbedPane.addTab("Export", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/fileexport.png")), exportPanel); // NOI18N
 
-        capturingHardwareTabbedPane.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        capturingHardwareTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                capturingHardwareTabbedPaneStateChanged(evt);
-            }
-        });
-
-        capturingIrWidgetHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingIrWidgetHardwareHelpButton.setText("Help");
-        capturingIrWidgetHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingIrWidgetHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureIrWidgetPanelLayout = new javax.swing.GroupLayout(captureIrWidgetPanel);
-        captureIrWidgetPanel.setLayout(captureIrWidgetPanelLayout);
-        captureIrWidgetPanelLayout.setHorizontalGroup(
-            captureIrWidgetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureIrWidgetPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irWidgetSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(261, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureIrWidgetPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingIrWidgetHardwareHelpButton)
-                .addContainerGap())
-        );
-        captureIrWidgetPanelLayout.setVerticalGroup(
-            captureIrWidgetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureIrWidgetPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irWidgetSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
-                .addComponent(capturingIrWidgetHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("IrWidget", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/usb.png")), captureIrWidgetPanel); // NOI18N
-
-        capturingGlobalCacheHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingGlobalCacheHardwareHelpButton.setText("Help");
-        capturingGlobalCacheHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingGlobalCacheHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureGlobalCachePanelLayout = new javax.swing.GroupLayout(captureGlobalCachePanel);
-        captureGlobalCachePanel.setLayout(captureGlobalCachePanelLayout);
-        captureGlobalCachePanelLayout.setHorizontalGroup(
-            captureGlobalCachePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureGlobalCachePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(globalCacheCaptureSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(225, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureGlobalCachePanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingGlobalCacheHardwareHelpButton)
-                .addContainerGap())
-        );
-        captureGlobalCachePanelLayout.setVerticalGroup(
-            captureGlobalCachePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureGlobalCachePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(globalCacheCaptureSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                .addComponent(capturingGlobalCacheHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("Global Caché", captureGlobalCachePanel);
-
-        lircMode2CommandTextField.setText(properties.getLircMode2Command());
-
-        jLabel24.setText("LIRC Mode 2 command");
-
-        startMode2Button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/connect_creating.png"))); // NOI18N
-        startMode2Button.setMnemonic('S');
-        startMode2Button.setText("Start");
-        startMode2Button.setToolTipText("Start command above in an internal process.");
-        startMode2Button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                startMode2ButtonActionPerformed(evt);
-            }
-        });
-
-        stopMode2Button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/stop.png"))); // NOI18N
-        stopMode2Button.setMnemonic('O');
-        stopMode2Button.setText("Stop");
-        stopMode2Button.setToolTipText("Terminate the internal process.");
-        stopMode2Button.setEnabled(false);
-        stopMode2Button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stopMode2ButtonActionPerformed(evt);
-            }
-        });
-
-        capturingMode2HardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingMode2HardwareHelpButton.setText("Help");
-        capturingMode2HardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingMode2HardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureLircMode2PanelLayout = new javax.swing.GroupLayout(captureLircMode2Panel);
-        captureLircMode2Panel.setLayout(captureLircMode2PanelLayout);
-        captureLircMode2PanelLayout.setHorizontalGroup(
-            captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureLircMode2PanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel24)
-                    .addComponent(lircMode2CommandTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(captureLircMode2PanelLayout.createSequentialGroup()
-                        .addComponent(startMode2Button)
-                        .addGap(18, 18, 18)
-                        .addComponent(stopMode2Button)))
-                .addContainerGap(240, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureLircMode2PanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingMode2HardwareHelpButton)
-                .addContainerGap())
-        );
-        captureLircMode2PanelLayout.setVerticalGroup(
-            captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureLircMode2PanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel24)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lircMode2CommandTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(startMode2Button)
-                    .addComponent(stopMode2Button))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
-                .addComponent(capturingMode2HardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("LIRC Mode 2", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), captureLircMode2Panel); // NOI18N
-
-        capturingDevLircHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingDevLircHardwareHelpButton.setText("Help");
-        capturingDevLircHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingDevLircHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureDevLircPanelLayout = new javax.swing.GroupLayout(captureDevLircPanel);
-        captureDevLircPanel.setLayout(captureDevLircPanelLayout);
-        captureDevLircPanelLayout.setHorizontalGroup(
-            captureDevLircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureDevLircPanelLayout.createSequentialGroup()
-                .addContainerGap(763, Short.MAX_VALUE)
-                .addComponent(capturingDevLircHardwareHelpButton)
-                .addContainerGap())
-            .addGroup(captureDevLircPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(devLircCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        captureDevLircPanelLayout.setVerticalGroup(
-            captureDevLircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureDevLircPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(devLircCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(capturingDevLircHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("/dev/lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), captureDevLircPanel); // NOI18N
-
-        capturingIrToyHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingIrToyHardwareHelpButton.setText("Help");
-        capturingIrToyHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingIrToyHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureIrToyPanelLayout = new javax.swing.GroupLayout(captureIrToyPanel);
-        captureIrToyPanel.setLayout(captureIrToyPanelLayout);
-        captureIrToyPanelLayout.setHorizontalGroup(
-            captureIrToyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureIrToyPanelLayout.createSequentialGroup()
-                .addContainerGap(763, Short.MAX_VALUE)
-                .addComponent(capturingIrToyHardwareHelpButton)
-                .addContainerGap())
-            .addGroup(captureIrToyPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irtoyCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        captureIrToyPanelLayout.setVerticalGroup(
-            captureIrToyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureIrToyPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irtoyCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(capturingIrToyHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("IrToy", new javax.swing.ImageIcon(getClass().getResource("/icons/dangerousprototypes/favicon.png")), captureIrToyPanel); // NOI18N
-
-        capturingArduinoHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingArduinoHardwareHelpButton.setText("Help");
-        capturingArduinoHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingArduinoHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureArduinoPanelLayout = new javax.swing.GroupLayout(captureArduinoPanel);
-        captureArduinoPanel.setLayout(captureArduinoPanelLayout);
-        captureArduinoPanelLayout.setHorizontalGroup(
-            captureArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureArduinoPanelLayout.createSequentialGroup()
-                .addContainerGap(763, Short.MAX_VALUE)
-                .addComponent(capturingArduinoHardwareHelpButton)
-                .addContainerGap())
-            .addGroup(captureArduinoPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(arduinoCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        captureArduinoPanelLayout.setVerticalGroup(
-            captureArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureArduinoPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(arduinoCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(capturingArduinoHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("Arduino", captureArduinoPanel);
-
-        capturingGirsHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingGirsHardwareHelpButton.setText("Help");
-        capturingGirsHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingGirsHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureGirsPanelLayout = new javax.swing.GroupLayout(captureGirsPanel);
-        captureGirsPanel.setLayout(captureGirsPanelLayout);
-        captureGirsPanelLayout.setHorizontalGroup(
-            captureGirsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureGirsPanelLayout.createSequentialGroup()
-                .addContainerGap(763, Short.MAX_VALUE)
-                .addComponent(capturingGirsHardwareHelpButton)
-                .addContainerGap())
-            .addGroup(captureGirsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(girsClientCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        captureGirsPanelLayout.setVerticalGroup(
-            captureGirsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureGirsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(girsClientCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(capturingGirsHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("Girs Client", captureGirsPanel);
-
-        capturingCommandFusionHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingCommandFusionHardwareHelpButton.setText("Help");
-        capturingCommandFusionHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingCommandFusionHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureCommandFusionPanelLayout = new javax.swing.GroupLayout(captureCommandFusionPanel);
-        captureCommandFusionPanel.setLayout(captureCommandFusionPanelLayout);
-        captureCommandFusionPanelLayout.setHorizontalGroup(
-            captureCommandFusionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureCommandFusionPanelLayout.createSequentialGroup()
-                .addContainerGap(763, Short.MAX_VALUE)
-                .addComponent(capturingCommandFusionHardwareHelpButton)
-                .addContainerGap())
-            .addGroup(captureCommandFusionPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(commandFusionCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        captureCommandFusionPanelLayout.setVerticalGroup(
-            captureCommandFusionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureCommandFusionPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(commandFusionCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(capturingCommandFusionHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("CommandFusion", captureCommandFusionPanel);
-
-        captureTestButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_record.png"))); // NOI18N
-        captureTestButton.setText("Test");
-        captureTestButton.setToolTipText("For testing the setup only.  Use \"Scrutinize signal\" or \"Scrutinize remote\" for deployment.");
-        captureTestButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                captureTestButtonActionPerformed(evt);
-            }
-        });
-
-        capturingHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingHardwareHelpButton.setText("Help");
-        capturingHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout capturingPanelLayout = new javax.swing.GroupLayout(capturingPanel);
-        capturingPanel.setLayout(capturingPanelLayout);
-        capturingPanelLayout.setHorizontalGroup(
-            capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(capturingPanelLayout.createSequentialGroup()
-                .addGroup(capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, capturingPanelLayout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(capturingHardwareHelpButton))
-                    .addGroup(capturingPanelLayout.createSequentialGroup()
-                        .addGroup(capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(capturingHardwareTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 853, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(capturingPanelLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(captureTestButton, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 127, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        capturingPanelLayout.setVerticalGroup(
-            capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(capturingPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(capturingHardwareTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(captureTestButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
-                .addComponent(capturingHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        topLevelTabbedPane.addTab("Capturing hw", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_microphone.png")), capturingPanel); // NOI18N
-
         sendingHardwareTabbedPane.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         sendingHardwareTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -5997,6 +5640,363 @@ public class GuiMain extends javax.swing.JFrame {
         );
 
         topLevelTabbedPane.addTab("Sending hw", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/hardware.png")), sendingPanel); // NOI18N
+
+        capturingHardwareTabbedPane.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        capturingHardwareTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                capturingHardwareTabbedPaneStateChanged(evt);
+            }
+        });
+
+        capturingIrWidgetHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        capturingIrWidgetHardwareHelpButton.setText("Help");
+        capturingIrWidgetHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capturingIrWidgetHardwareHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout captureIrWidgetPanelLayout = new javax.swing.GroupLayout(captureIrWidgetPanel);
+        captureIrWidgetPanel.setLayout(captureIrWidgetPanelLayout);
+        captureIrWidgetPanelLayout.setHorizontalGroup(
+            captureIrWidgetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureIrWidgetPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(irWidgetSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(261, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureIrWidgetPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(capturingIrWidgetHardwareHelpButton)
+                .addContainerGap())
+        );
+        captureIrWidgetPanelLayout.setVerticalGroup(
+            captureIrWidgetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureIrWidgetPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(irWidgetSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
+                .addComponent(capturingIrWidgetHardwareHelpButton)
+                .addContainerGap())
+        );
+
+        capturingHardwareTabbedPane.addTab("IrWidget", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/usb.png")), captureIrWidgetPanel); // NOI18N
+
+        capturingGlobalCacheHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        capturingGlobalCacheHardwareHelpButton.setText("Help");
+        capturingGlobalCacheHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capturingGlobalCacheHardwareHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout captureGlobalCachePanelLayout = new javax.swing.GroupLayout(captureGlobalCachePanel);
+        captureGlobalCachePanel.setLayout(captureGlobalCachePanelLayout);
+        captureGlobalCachePanelLayout.setHorizontalGroup(
+            captureGlobalCachePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureGlobalCachePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(globalCacheCaptureSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(225, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureGlobalCachePanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(capturingGlobalCacheHardwareHelpButton)
+                .addContainerGap())
+        );
+        captureGlobalCachePanelLayout.setVerticalGroup(
+            captureGlobalCachePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureGlobalCachePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(globalCacheCaptureSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                .addComponent(capturingGlobalCacheHardwareHelpButton)
+                .addContainerGap())
+        );
+
+        capturingHardwareTabbedPane.addTab("Global Caché", captureGlobalCachePanel);
+
+        lircMode2CommandTextField.setText(properties.getLircMode2Command());
+
+        jLabel24.setText("LIRC Mode 2 command");
+
+        startMode2Button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/connect_creating.png"))); // NOI18N
+        startMode2Button.setMnemonic('S');
+        startMode2Button.setText("Start");
+        startMode2Button.setToolTipText("Start command above in an internal process.");
+        startMode2Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startMode2ButtonActionPerformed(evt);
+            }
+        });
+
+        stopMode2Button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/stop.png"))); // NOI18N
+        stopMode2Button.setMnemonic('O');
+        stopMode2Button.setText("Stop");
+        stopMode2Button.setToolTipText("Terminate the internal process.");
+        stopMode2Button.setEnabled(false);
+        stopMode2Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stopMode2ButtonActionPerformed(evt);
+            }
+        });
+
+        capturingMode2HardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        capturingMode2HardwareHelpButton.setText("Help");
+        capturingMode2HardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capturingMode2HardwareHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout captureLircMode2PanelLayout = new javax.swing.GroupLayout(captureLircMode2Panel);
+        captureLircMode2Panel.setLayout(captureLircMode2PanelLayout);
+        captureLircMode2PanelLayout.setHorizontalGroup(
+            captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureLircMode2PanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel24)
+                    .addComponent(lircMode2CommandTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(captureLircMode2PanelLayout.createSequentialGroup()
+                        .addComponent(startMode2Button)
+                        .addGap(18, 18, 18)
+                        .addComponent(stopMode2Button)))
+                .addContainerGap(240, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureLircMode2PanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(capturingMode2HardwareHelpButton)
+                .addContainerGap())
+        );
+        captureLircMode2PanelLayout.setVerticalGroup(
+            captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureLircMode2PanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel24)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lircMode2CommandTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(startMode2Button)
+                    .addComponent(stopMode2Button))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
+                .addComponent(capturingMode2HardwareHelpButton)
+                .addContainerGap())
+        );
+
+        capturingHardwareTabbedPane.addTab("LIRC Mode 2", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), captureLircMode2Panel); // NOI18N
+
+        capturingDevLircHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        capturingDevLircHardwareHelpButton.setText("Help");
+        capturingDevLircHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capturingDevLircHardwareHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout captureDevLircPanelLayout = new javax.swing.GroupLayout(captureDevLircPanel);
+        captureDevLircPanel.setLayout(captureDevLircPanelLayout);
+        captureDevLircPanelLayout.setHorizontalGroup(
+            captureDevLircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureDevLircPanelLayout.createSequentialGroup()
+                .addContainerGap(763, Short.MAX_VALUE)
+                .addComponent(capturingDevLircHardwareHelpButton)
+                .addContainerGap())
+            .addGroup(captureDevLircPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(devLircCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        captureDevLircPanelLayout.setVerticalGroup(
+            captureDevLircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureDevLircPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(devLircCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addComponent(capturingDevLircHardwareHelpButton)
+                .addContainerGap())
+        );
+
+        capturingHardwareTabbedPane.addTab("/dev/lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), captureDevLircPanel); // NOI18N
+
+        capturingIrToyHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        capturingIrToyHardwareHelpButton.setText("Help");
+        capturingIrToyHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capturingIrToyHardwareHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout captureIrToyPanelLayout = new javax.swing.GroupLayout(captureIrToyPanel);
+        captureIrToyPanel.setLayout(captureIrToyPanelLayout);
+        captureIrToyPanelLayout.setHorizontalGroup(
+            captureIrToyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureIrToyPanelLayout.createSequentialGroup()
+                .addContainerGap(763, Short.MAX_VALUE)
+                .addComponent(capturingIrToyHardwareHelpButton)
+                .addContainerGap())
+            .addGroup(captureIrToyPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(irtoyCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        captureIrToyPanelLayout.setVerticalGroup(
+            captureIrToyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureIrToyPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(irtoyCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addComponent(capturingIrToyHardwareHelpButton)
+                .addContainerGap())
+        );
+
+        capturingHardwareTabbedPane.addTab("IrToy", new javax.swing.ImageIcon(getClass().getResource("/icons/dangerousprototypes/favicon.png")), captureIrToyPanel); // NOI18N
+
+        capturingArduinoHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        capturingArduinoHardwareHelpButton.setText("Help");
+        capturingArduinoHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capturingArduinoHardwareHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout captureArduinoPanelLayout = new javax.swing.GroupLayout(captureArduinoPanel);
+        captureArduinoPanel.setLayout(captureArduinoPanelLayout);
+        captureArduinoPanelLayout.setHorizontalGroup(
+            captureArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureArduinoPanelLayout.createSequentialGroup()
+                .addContainerGap(763, Short.MAX_VALUE)
+                .addComponent(capturingArduinoHardwareHelpButton)
+                .addContainerGap())
+            .addGroup(captureArduinoPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(arduinoCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        captureArduinoPanelLayout.setVerticalGroup(
+            captureArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureArduinoPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(arduinoCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addComponent(capturingArduinoHardwareHelpButton)
+                .addContainerGap())
+        );
+
+        capturingHardwareTabbedPane.addTab("Arduino", captureArduinoPanel);
+
+        capturingGirsHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        capturingGirsHardwareHelpButton.setText("Help");
+        capturingGirsHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capturingGirsHardwareHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout captureGirsPanelLayout = new javax.swing.GroupLayout(captureGirsPanel);
+        captureGirsPanel.setLayout(captureGirsPanelLayout);
+        captureGirsPanelLayout.setHorizontalGroup(
+            captureGirsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureGirsPanelLayout.createSequentialGroup()
+                .addContainerGap(763, Short.MAX_VALUE)
+                .addComponent(capturingGirsHardwareHelpButton)
+                .addContainerGap())
+            .addGroup(captureGirsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(girsClientCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        captureGirsPanelLayout.setVerticalGroup(
+            captureGirsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureGirsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(girsClientCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addComponent(capturingGirsHardwareHelpButton)
+                .addContainerGap())
+        );
+
+        capturingHardwareTabbedPane.addTab("Girs Client", captureGirsPanel);
+
+        capturingCommandFusionHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        capturingCommandFusionHardwareHelpButton.setText("Help");
+        capturingCommandFusionHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capturingCommandFusionHardwareHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout captureCommandFusionPanelLayout = new javax.swing.GroupLayout(captureCommandFusionPanel);
+        captureCommandFusionPanel.setLayout(captureCommandFusionPanelLayout);
+        captureCommandFusionPanelLayout.setHorizontalGroup(
+            captureCommandFusionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureCommandFusionPanelLayout.createSequentialGroup()
+                .addContainerGap(763, Short.MAX_VALUE)
+                .addComponent(capturingCommandFusionHardwareHelpButton)
+                .addContainerGap())
+            .addGroup(captureCommandFusionPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(commandFusionCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        captureCommandFusionPanelLayout.setVerticalGroup(
+            captureCommandFusionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureCommandFusionPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(commandFusionCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addComponent(capturingCommandFusionHardwareHelpButton)
+                .addContainerGap())
+        );
+
+        capturingHardwareTabbedPane.addTab("CommandFusion", captureCommandFusionPanel);
+
+        captureTestButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_record.png"))); // NOI18N
+        captureTestButton.setText("Test");
+        captureTestButton.setToolTipText("For testing the setup only.  Use \"Scrutinize signal\" or \"Scrutinize remote\" for deployment.");
+        captureTestButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                captureTestButtonActionPerformed(evt);
+            }
+        });
+
+        capturingHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        capturingHardwareHelpButton.setText("Help");
+        capturingHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capturingHardwareHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout capturingPanelLayout = new javax.swing.GroupLayout(capturingPanel);
+        capturingPanel.setLayout(capturingPanelLayout);
+        capturingPanelLayout.setHorizontalGroup(
+            capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(capturingPanelLayout.createSequentialGroup()
+                .addGroup(capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, capturingPanelLayout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(capturingHardwareHelpButton))
+                    .addGroup(capturingPanelLayout.createSequentialGroup()
+                        .addGroup(capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(capturingHardwareTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 853, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(capturingPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(captureTestButton, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 127, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        capturingPanelLayout.setVerticalGroup(
+            capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(capturingPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(capturingHardwareTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(captureTestButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
+                .addComponent(capturingHardwareHelpButton)
+                .addContainerGap())
+        );
+
+        topLevelTabbedPane.addTab("Capturing hw", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_microphone.png")), capturingPanel); // NOI18N
 
         topLevelTabbedPane.setSelectedIndex(properties.getSelectedMainPaneIndex());
 
