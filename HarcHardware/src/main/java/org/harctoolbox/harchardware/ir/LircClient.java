@@ -30,8 +30,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import org.harctoolbox.IrpMaster.IrpUtils;
-import org.harctoolbox.IrpMaster.Version;
 import org.harctoolbox.harchardware.IHarcHardware;
+import org.harctoolbox.harchardware.Version;
 import org.harctoolbox.harchardware.comm.TcpSocketChannel;
 import org.harctoolbox.harchardware.comm.TcpSocketPort;
 
@@ -147,7 +147,7 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender, IIrSen
                     success = lircClient.stopIr(cmdSendStop.args.get(0), cmdSendStop.args.get(1), null);
                     break;
                 case "list":
-                    String[] result = cmdList.remote == null ? lircClient.getRemotes()
+                    String[] result = cmdList.remote.isEmpty() ? lircClient.getRemotes()
                             : lircClient.getCommands(cmdList.remote.get(0));
                     for (String s : result)
                         System.out.println(s);
