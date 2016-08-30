@@ -282,6 +282,9 @@ If not, installing is still possibly, using any installation directory writeable
 IrScrutinizer can now be started from <code>Start -> IrScrutinizer ->
 IrScrutinizer</code>, or from the desktop icon.</p>
 
+<p>If desired, the installer will associate <code>.girr</code> files with the program, allowing them to
+be opened by double clicking them.</p>
+
 <p>The installer will also install the command line program <a href="IrpMaster.html">IrpMaster</a>,
 which can be called as <code>irpmaster</code> from a so-called DOS box.</p>
 
@@ -529,10 +532,12 @@ Printing and exported as graph is presently not implemented.</p>
 <p>The menu entry Actions -> Enter test signal (or its accelerator, the F9
 key) enters a test signal.</p>
 <p>
-In rare cases, transforming the signal between different formats may introduce
-some rounding errors causing decoding
+Transforming the signal between different formats may introduce
+rounding errors. In rare cases, this may causing decoding
 to fail.
 </p>
+<p>A Girr file can be dropped on the text- or plot windows. This will display
+    the concatenation of the signals in the file.</p>
 </section>
 <section>
 <title>The "Scrutinize remote" pane</title>
@@ -560,7 +565,7 @@ present columns. </p>
 <p>Clicking a row with the middle mouse button selects that row, and transmits
 it using the currently selected sending hardware.</p>
 
-<p>To capture a number of IR signals, first configure the hardware using the <a
+<p>To capture IR signals, first configure the hardware using the <a
 href='#The+"Capturing+HW"+pane'>capturing hardware</a> pane. Next press the
 Capture button. The program will now run the  capturing in a separate thread, so
 the user just have to press the buttons of the remote. The signals will be
@@ -573,6 +578,9 @@ table.</p>
 
 <p>The export button exports the content of the currently selected table (raw
 or parameterized) according to the currently selected export format.</p>
+
+<p>A Girr file can be dropped on the parameter as well as the raw table, which will
+import the contained signals.</p>
 
 <p>The menu entry Actions -> Enter test signal (or its accelerator, the F9
 key) enters a test signal, either as parametric signal, or as a raw signal.</p>
@@ -619,7 +627,7 @@ will be described next.</p>
 
 <p>For file/URL based imports, there is a text field, named File or
 File/URL. For the latter case, an URL (like
-<code>http://lirc.sourceforge.net/remotes/yamaha/RX-V995</code> can be
+<code>http://lirc.sourceforge.net/remotes/yamaha/RX-V995</code>) can be
 entered, for subsequent import without downloading to a local disc. By pressing
 the "..."-Button, a file selector allows the selection of a local file. For
 files and URLs, the "Edit/Browse" button allows to examine the selected
@@ -630,6 +638,9 @@ file/URL with the operating system's standard command.</p>
 user to select the character set to be used for the import to be selected.
     This option is found as <code>Options -> Import options -> Character Set...</code>
 </p>
+
+<p>Most of the file based importers support dropping a compatible file
+    from the GUI on the import window.</p>
 
 <p>If the option "<code>Open ZIP files</code>" (accessible from <code>Options
 -> Import</code>) is
@@ -700,7 +711,7 @@ IrScrutinizer. The importer is capable of importing directory hierarchies.</p>
 
 <section><title>LIRC</title>
 <p>The <a href="Glossary.html#LIRC">LIRC</a> import feature is based upon <a
-href="Jirc.html">Jirc</a>, which is basically LIRC translated into Java.
+href="Jirc.html">Jirc</a>, which is basically a subset of LIRC translated into Java.
 The LIRC importer can even import a file
 system hierarchy by selecting the top directory as File/URL. (Importing the
 entire lirc.org database with over 100000 commands takes around 1 minute and 1GB
@@ -968,7 +979,9 @@ can be selected.</p>
 
     <section><title>Spreadsheet</title>
     <p>Simple <a href="Glossary.html">tab separated value</a> export format for
-        importing in a spreadsheet program.</p></section>
+        importing in a spreadsheet program. This format is mainly meant to
+    demonstrate a simple format in XSLT, more than a practically useful format.</p>
+    </section>
 
     <section><title>Text</title>
     <p>The text format is essentially the Girr format stripped of the XML markup information.
@@ -997,101 +1010,14 @@ can be selected.</p>
 
       </section>
 
-      <section>
-<title>The "Capturing HW" pane</title>
-<p>The sub-panes of this pane allow for the configuration of capturing
-hardware. Selecting a sub-pane also selects the associated hardware,
-if possible. The hardware can also be selected from the tool bar, Options -&gt;
-Capturing hardware.</p>
-
-<p>Unfortunately, by e.g. selecting non-existing hardware or such, there is a
-possibility to "hang" the program.</p>
-
-<p>After configuring and opening the capturing hardware, the "Test" button can be
-used for testing the configuration without switching pane.</p>
+    <section>
+<title>The "Sending HW" pane</title>
+<p>The sub-panes of this pane allows for the selection and configuration
+of the deployed IR sending/capturing hardware.</p>
 
 <p>Selected ports are stored in the properties, thereby
 remembered between sessions. So, for future sessions, only opening the
 preferred device is necessary. </p>
-
-<section><title>IrWidget</title>
-<p>Plug the IrWidget it into the computer. Check that the operating system
-has assigned a port to it, and note which one it is. On Windows: open the
-device manager, and check that there is one "USB Serial Port" under Ports. Note
-the port number (e.g. <code>COM8</code>). On a Linux system, it likely shows up as a device
-like <code>/dev/ttyUSB0</code>. If the port does not show up, a suitable driver needs to be
-installed. If the correct port is already visible in the combo box, just
-press "Open". Otherwise, press "Refresh", which makes the program determine
-the currently available serial ports. Select the correct one. Press "Open". which should
-now remain "pressed". The port can be closed again by another press, but
-there is not much reason to do so, unless another capturing hardware should be
-used, or the IrWidget should be used from another program.</p>
-	</section>
-
-<section><title>Global Caché capture</title>
-<p>IrScrutinizer automatically detects alive Global Caché units in the local area
-network, using the <a href="Glossary.html#AMXBeacon">AMX Beacon</a>. However, this may take
-up to 60 seconds, and is not implemented in very old firmware. Using the "Add"
-button, the IP address/name of older units can be entered
-manually.</p>
-
-<p>For this to work, port 9131/udp must be open in a used firewall</p>
-
-<p>The "Browse" button points the browser to the selected unit.</p>
-
-<p>The reported type and firmware version serves to verify that the
-communication is working.</p>
-	</section>
-
-<section><title>LIRC Mode2</title>
-<p><code>mode2</code> is a program from the LIRC distribution, that prints timing
-information in a simple text format to its standard-out. In theory, any program
-that prints information in that format can be used. The command line for the
-program with possible parameters is to be entered as command. With the Start
-button, a sub-process is started, running the given command line. The "Stop" button
-stops the sub-process &mdash; although sometimes this may not stop the started
-program.</p>
-
-<p>Has been tested only on Linux, should however work on all systems.</p>
-	</section>
-
-<section><title>Arduino</title>
-<p>To use the Arduino with a non-demodulating receiver for IR capture, the
-sketch <code>GirsLite</code> needs to be loaded.</p>
-
-<p>After connecting the Arduino to a real or virtual serial port, select the port in
-the combo box, pressing "Refresh" if necessary. "Open" the port
-thereafter.</p>
-
-<p>At least on Linux, the ACMX port may be finicky. Sometimes disconnecting and
-reconnecting the device may help.</p>
-	</section>
-
-<section><title>IrToy</title>
-<p>After connecting the IrToy to a USB  port, select the the actual (virtual) serial port in
-the combo box, pressing "Refresh" if necessary. "Open" the port
-thereafter.</p>
-
-<p>The ending timeout is 1.4 seconds, and <a
-href="http://dangerousprototypes.com/docs/USB_IR_Toy:_Sampling_mode#Potential_issues">cannot
-be changed</a>.  This is not
-optimal for most IR signal capture use cases.</p>
-
-<p>At least on Linux, the ACMX port may be finicky. Sometimes disconnecting and
-reconnecting the device may help.</p>
-	</section>
-
-        <section>
-            <title>Command Fusion Learner</title>
-<p>After connecting the Command Fusion learner to a USB  port, select the the actual (virtual) serial port in
-the combo box, pressing "Refresh" if necessary. "Open" the port
-thereafter.</p>
-	</section>
-      </section>
-      <section>
-<title>The "Sending HW" pane</title>
-<p>The sub-panes of this pane allows for the selection and configuration
-of the deployed IR sending hardware.</p>
 
 <section>
 <title>The "Global Caché" pane.</title>
@@ -1100,7 +1026,7 @@ network, using the <a href="Glossary.html#AMXBeacon">AMX Beacon</a>. However, th
 up to 60 seconds, and is not implemented in very old firmware. Using the "Add"
 button, the IP address/name of older units can be entered manually.</p>
 
-<p>The "Browse" button points the browser to the selected unit.</p>
+<p>The "Browse" button points the user's web browser to the selected unit.</p>
 
 <p>The reported type and firmware version serves to verify that the
 communication is working.</p>
@@ -1120,7 +1046,8 @@ terms).</p>
 able to cope with CCF signal not residing in the local data base, but sent from
 a client like IrScrutinizer, thus mimicking the function of e.g. a
 Global Caché. The needed modification ("patch") is in detail described <a
-href="http://www.harctoolbox.org/lirc_ccf.xml">here</a>. However, even without
+    href="http://www.harctoolbox.org/lirc_ccf.xml">here</a>, sources <a href="https://sourceforge.net/u/bengtmartensson/lirc/ci/ccf/tree/">here</a>.
+    However, even without
 this patch, the configuration page can be used to send the predefined commands
 (i.e. residing it its data base <code>lirc.conf</code>). It can be considered
 as a GUI version of
@@ -1138,11 +1065,21 @@ of its command, it can be sent to the LIRC server by pressing the "Send"
 button. If (and only if) the LIRC server has the above described patch applied,
 transmitting signals to  "LIRC" now works. </p>
 
-<p>Due to LIRC's peculiar form of API stop command, the "Stop IR" command
+<!--p>Due to LIRC's peculiar form of API stop command, the "Stop IR" command
 presently does not work. See <a
 href="http://sourceforge.net/mailarchive/forum.php?thread_name=461617A4.4000404%40bengt-martensson.de&amp;forum_name=lirc-list">this
-thread</a> in the LIRC mailing list for a background.</p>
+thread</a> in the LIRC mailing list for a background.</p-->
 	  </section>
+          <section>
+            <title>/dev/lirc (Linux only)</title>
+            <p>On Linux, so-called mode-2 capable IR hardware, capable of sending and/or receiving, can be accessed directly.
+                When connected, and in some cases, after loading suitable drivers, a device file <code>/dev/lirc</code><em>n</em>
+                (for <em>n</em> = 0, 1, 2,...) will occur. Of course, this must be read- and writeable by the current user;
+                in e.g. Fedora this is the case for member of the group <code>lirc</code>.
+
+                <p>After opening the device, its properties will be listed. See the man page <a href="http://lirc.org/html/lirc.html">lirc(4)</a> for an explanation.</p>
+            </p>
+        </section>
 	  <section>
 	    <title>The "IRTrans" pane</title>
 <p>
@@ -1165,17 +1102,37 @@ module is then accessed using the UDP text mode.</p>
 <title>The "IrToy" Pane</title>
 <p>Using this pane, the IrToy (version 2) can be used to transmit IR signals.
     To my knowledge, only the firmware version 2.2.2 works.</p>
+
+    <p>The ending timeout for receive is 1.4 seconds, and cannot be changed. This is not optimal for most IR signal capture use cases.</p>
 </section>
 <section>
 <title>The "CommandFusion" Pane</title>
-<p>Using this pane, the CommandFusion learner can be used to transmit IR signals.</p>
+<p>Using this pane, the CommandFusion learner can be used to transmit and capture IR signals.</p>
+<p>After connecting the Command Fusion learner to a USB  port, select the the actual (virtual) serial port in
+the combo box, pressing "Refresh" if necessary. "Open" the port
+thereafter.</p>
 </section>
 <section>
-<title>The "Arduino" Pane</title>
-<p>Using this pane, an Arduino equipped with a suitable IR Led can be used to
-transmit IR signals. First however, the sketch
-<code>GirsLite</code> from the arduino subdirectory has to be
-downloaded to the Arduino.</p></section>
+<title>The "Girs Client" (previously "Arduino") Pane</title>
+<p>Using this pane, a <a href="http://www.harctoolbox.org/Girs.html">Girs server</a>
+(e.g. running on an Arduino equipped with a suitable hardware) can be used to
+transmit and capture IR signals. The server can be connected to a serial port,
+or through Ethernet to the local area network, connected by a TCP socket. For the Arduino, the <a href="https://github.com/bengtmartensson/AGirs">
+sketch <code>GirsLite</code> (or <code>Girs</code>)</a>  can be
+used.</p>
+
+<p>The serial port may sometimes be finicky. Sometimes disconnecting and
+reconnecting the device may help.</p>
+
+<p>To use the device connected to a real or virtual serial port, select the port in
+the combo box, pressing "Refresh" if necessary. "Open" the port
+thereafter. The opening of LAN connected device is simliar.</p>
+
+<p>Normally, the Girs server uses the "analyze" command to capture IR signals,
+which is normally deploying a non-demodulating sensor, providing a frequency measurement.
+If selecting the "Use receive for capture", instead the "receive" command will be used,
+which normally uses a demodulating sensor, and thus no frequency measurement will be produced.</p>
+</section>
 <section>
 <title>The "Audio" Pane</title>
 <p>
@@ -1240,6 +1197,87 @@ automatically anyhow. It will possibly be removed in future versions.</p-->
 one of the serial ports available on the system.</p>
     </section-->
     </section>
+
+      <section>
+<title>The "Capturing HW" pane</title>
+<p>The sub-panes of this pane allow for the configuration of capturing
+hardware. Selecting a sub-pane also selects the associated hardware,
+if possible. The hardware can also be selected from the tool bar, Options -&gt;
+Capturing hardware. In many cases, one piece of hardware can be used both for sending and
+capturing. In these cases, it is in generaly opened and closed under the "Sending hw" pane,
+but still needs to be selected for capturing.</p>
+
+<p>It is unfortunately not possible to have e.g. one IrToy for sending and <em>another one</em>
+for capturing.</p>
+
+<p>Unfortunately, by e.g. selecting non-existing hardware or such, there is a
+possibility to "hang" the program.</p>
+
+<p>After configuring and opening the capturing hardware, the "Test" button can be
+used for testing the configuration without switching pane.</p>
+
+<section><title>IrWidget</title>
+<p>Plug the IrWidget it into the computer. Check that the operating system
+has assigned a port to it, and note which one it is. On Windows: open the
+device manager, and check that there is one "USB Serial Port" under Ports. Note
+the port number (e.g. <code>COM8</code>). On a Linux system, it likely shows up as a device
+like <code>/dev/ttyUSB0</code>. If the port does not show up, a suitable driver needs to be
+installed. If the correct port is already visible in the combo box, just
+press "Open". Otherwise, press "Refresh", which makes the program determine
+the currently available serial ports. Select the correct one. Press "Open". which should
+now remain "pressed". The port can be closed again by another press, but
+there is not much reason to do so, unless another capturing hardware should be
+used, or the IrWidget should be used from another program.</p>
+	</section>
+
+<section><title>Global Caché capture</title>
+<p>IrScrutinizer automatically detects alive Global Caché units in the local area
+network, using the <a href="Glossary.html#AMXBeacon">AMX Beacon</a>. However, this may take
+up to 60 seconds, and is not implemented in very old firmware. Using the "Add"
+button, the IP address/name of older units can be entered
+manually.</p>
+
+<p>For this to work, port 9131/udp must be open in a used firewall</p>
+
+<p>The "Browse" button points the browser to the selected unit.</p>
+
+<p>The reported type and firmware version serves to verify that the
+communication is working.</p>
+	</section>
+
+<section><title>LIRC Mode2</title>
+<p><code>mode2</code> is a program from the LIRC distribution, that prints timing
+information in a simple text format to its standard-out. In theory, any program
+that prints information in that format can be used. The command line for the
+program with possible parameters is to be entered as command. With the Start
+button, a sub-process is started, running the given command line. The "Stop" button
+stops the sub-process &mdash; although sometimes this may not stop the started
+program.</p>
+
+<p>Since the <code>/dev/lirc</code> functionallity functionally surpasses the "mode2" function, this is now deprecated,
+and will likely be removed in a future version.</p>
+
+<p>Has been tested only on Linux, should however work on all systems.</p>
+	</section>
+
+        <section>
+            <title>/dev/lirc (Linux only)</title>
+            <p>The device should be opened on the "Sending hw" pane, and if desired, selected here for capturing.</p>
+        </section>
+
+<section><title>Girs client (previously Arduino)</title>
+<p>The device should be opened on the "Sending hw" pane, and if desired, selected here for capturing.</p>
+	</section>
+
+<section><title>IrToy</title>
+<p>The device should be opened on the "Sending hw" pane, and if desired, selected here for capturing.</p>
+	</section>
+
+        <section>
+            <title>Command Fusion Learner</title>
+            <p>The device should be opened on the "Sending hw" pane, and if desired, selected here for capturing.</p>
+	</section>
+      </section>
 </section>
 <section>
 <title>Command line arguments</title>
@@ -1248,6 +1286,11 @@ some wrapper invoking that jar file. However, there are some command
 line arguments that can be useful either if invoking from the command
 line, or in writing wrappers, or when configuring custom commands in
 Windows. </p>
+
+<p>Girr files given as command line argument will be imported to the "parametric remote" table.
+    Accordingly, if the system is configured to associate <code>*.girr</code> with IrScrutinizer,
+    these files can be opened by double clicking them.
+</p>
 
 <p>
 The options <code>--version</code> and <code>--help</code> work as they are
@@ -1278,11 +1321,6 @@ However, the <code>--config</code> is not needed, it is generated automatically.
 
 <p>The program delivers well defined and sensible exit codes.</p>
     </section>
-
-
-
-
-
 
 <section>
 <title>Questions and Answers</title>
@@ -1329,14 +1367,6 @@ signal") simultaneously. Replacing the top level panes with something
 (sub-windows that can be rearranged, resized, moved, iconized) is on my
 wish list.
 </p></section>
-
-<section>
-    <title>Why can't I have a device opened <em>both</em> for capturing and sending?</title>
-    <p>This is unfortunately a fundamental design flaw, one that sits deep in the design.
-        A quick fix is therefore not likely. Sorry.
-        (However, it is possible to use two different instances of the hardware,
-        e.g. two IrToys; one for capturing and one for transmission.)</p>
-</section>
 
 <section>
     <title>What about the "fishy" icon?</title>
@@ -1453,7 +1483,15 @@ The dependent packages need to be installed also in
     maven in order for the build to work. With the dependencies available, the script <code>tools/install-deps.sh</code>
 can be used to install  them in the local maven repository before building.</p>
 
-<p>Presently, Fedora RPMs are available for all dependencies.</p>
+<!--p>Presently, Fedora RPMs are available for all dependencies.</p-->
+
+    <section>
+        <title>DevSlashLirc</title>
+        <p>This library is used to access <code>/dev/lirc</code>-hardware. It is used by the Linux version only.
+        It is a Java JNI library, written in Java and C++. It is written by myself,
+        and available <a href="https://github.com/bengtmartensson/DevSlashLirc">here</a>.
+        </p>
+    </section>
 
     <section>
         <title>The Crystal icons</title>
