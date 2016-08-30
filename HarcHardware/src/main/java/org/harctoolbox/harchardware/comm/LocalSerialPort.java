@@ -83,6 +83,13 @@ public abstract class LocalSerialPort implements IHarcHardware {
         return names;
     }
 
+    // On systems with /dev device names, expand symbolic links
+    // (like the one udev creates, /dev/arduino -> /dev/ttyACM0)
+    // Otherwise, just return the argument.
+    private static String canonicalizePortName(String portName) throws IOException {
+        return portName.startsWith("/dev") ? new File(portName).getCanonicalPath() : portName;
+    }
+
     protected InputStream inStream;
     protected OutputStream outStream;
     private CommPort commPort;
@@ -122,7 +129,7 @@ public abstract class LocalSerialPort implements IHarcHardware {
         this.verbose = false;
     }
     private void lowLevelOpen() throws NoSuchPortException, PortInUseException, IOException {
-        String realPath = new File(portName).getCanonicalPath();
+        String realPath = canonicalizePortName(portName);
         CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(realPath);
         commPort = portIdentifier.open(this.getClass().getName(), msToWaitForPort);
     }
@@ -143,6 +150,7 @@ public abstract class LocalSerialPort implements IHarcHardware {
             lowLevelOpen();
             success = true;
         } catch (NoSuchPortException | PortInUseException ex) {
+            commPort = null;
             throw new HarcHardwareException(ex);
         }
 

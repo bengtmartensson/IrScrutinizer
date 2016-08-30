@@ -65,8 +65,15 @@ public class GirsClientBean extends javax.swing.JPanel implements ISendingReceiv
 
 
     public void initHardware() throws HarcHardwareException, IOException {
-        if (hardware != null)
-            hardware.close();
+        if (hardware != null) {
+            if (hardware.isValid())
+                return;
+            else {
+                hardware.close();
+                enableStuff(false);
+                setVersion();
+            }
+        }
 
         boolean verbose = properties.getVerbose();
         switch (getType()) {
@@ -329,10 +336,11 @@ public class GirsClientBean extends javax.swing.JPanel implements ISendingReceiv
         ipLabel.setEnabled(!isOpen);
         portNumberTextField.setEnabled(!isOpen);
         portNumberLabel.setEnabled(!isOpen);
-        typeComboBox.setEnabled(!isOpen);
+        //typeComboBox.setEnabled(!isOpen);
         typeLabel.setEnabled(!isOpen);
         modulesTextField.setEnabled(isOpen);
         modulesLabel.setEnabled(isOpen);
+        openToggleButton.setSelected(isOpen);
     }
 
     private Cursor setBusyCursor() {
@@ -494,6 +502,7 @@ public class GirsClientBean extends javax.swing.JPanel implements ISendingReceiv
 
         typeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "tcp", "udp", "http" }));
         typeComboBox.setToolTipText("Socket type");
+        typeComboBox.setEnabled(false);
         typeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 typeComboBoxActionPerformed(evt);
@@ -510,18 +519,18 @@ public class GirsClientBean extends javax.swing.JPanel implements ISendingReceiv
                 .addContainerGap()
                 .addGroup(ethernetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(ipLabel)
-                    .addComponent(ipNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ipNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ethernetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(portNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(portNumberLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ethernetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ethernetPanelLayout.createSequentialGroup()
                         .addComponent(typeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(browseButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pingButton))
                     .addComponent(typeLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -581,7 +590,7 @@ public class GirsClientBean extends javax.swing.JPanel implements ISendingReceiv
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(serialTcpTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 535, Short.MAX_VALUE)
+                        .addComponent(serialTcpTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 535, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
