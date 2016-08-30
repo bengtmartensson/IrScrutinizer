@@ -414,6 +414,7 @@ void loop() {
 static void sendNec1(unsigned D, unsigned S, unsigned F, unsigned times) {
     const IrSignal *irSignal = Nec1Renderer::newIrSignal(D, S, F);
     irsend->sendIrSignal(*irSignal, times);
+    delete irSignal;
 }
 </xsl:text>
     </xsl:template>
@@ -423,6 +424,7 @@ static void sendNec1(unsigned D, unsigned S, unsigned F, unsigned times) {
 static void sendRc5(unsigned D, unsigned F, unsigned times) {
     const IrSignal *irSignal = Rc5Renderer::newIrSignal(D, F);
     irsend->sendIrSignal(*irSignal, times);
+    delete irSignal;
 }
 </xsl:text>
     </xsl:template>
@@ -1455,13 +1457,15 @@ carrier_frequency </xsl:text>
 
         <xsl:template match="girr:flash|girr:gap">
             <xsl:value-of select="round(number(.) * number(../../@frequency) div 1000000)"/>
-            <xsl:text>,</xsl:text>
+            <xsl:if test="position()!=last()">
+                <xsl:text>,</xsl:text>
+            </xsl:if>
         </xsl:template>
 
     </xsl:stylesheet>
 </exportformats:exportformat>
 
-<exportformats:exportformat name="irplus" extension="irplus" multiSignal="true" simpleSequence="false">
+<exportformats:exportformat name="irplus" extension="irplus" multiSignal="true" simpleSequence="false" metadata="true">
 <xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr" exclude-result-prefixes="girr"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
@@ -1508,6 +1512,192 @@ carrier_frequency </xsl:text>
     </xsl:template>
 </xsl:stylesheet>
 
+</exportformats:exportformat>
+
+<exportformats:exportformat name="Lirc" extension="lircd.conf" multiSignal="true" simpleSequence="false" metadata="true">
+<xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:java="http://xml.apache.org/xalan/java"
+                xmlns:cidentifierfactory="http://xml.apache.org/xalan/java/org.harctoolbox.irscrutinizer.exporter.CIdentifierFactory"
+                xmlns:exporterutils="http://xml.apache.org/xalan/java/org.harctoolbox.irscrutinizer.exporter.ExporterUtils"
+                version="1.0">
+    <xsl:output method="text" />
+
+    <xsl:template match="/girr:remotes">
+        <xsl:text># </xsl:text><xsl:value-of select="@title"/>
+<xsl:text>
+#
+# Creating tool: </xsl:text><xsl:value-of select="$creatingTool"/>
+<xsl:text>
+# Creating user: </xsl:text><xsl:value-of select="$creatingUser"/>
+<xsl:text>
+# Creating date: </xsl:text><xsl:value-of select="$creatingDate"/>
+<xsl:text>
+# Encoding: </xsl:text><xsl:value-of select="$encoding"/>
+<xsl:text>
+#
+</xsl:text>
+        <xsl:apply-templates select="girr:remote"/>
+    </xsl:template>
+
+    <xsl:template match="girr:remote">
+        <xsl:text># Manufacturer: </xsl:text>
+            <xsl:value-of select="@manufacturer"/>
+<xsl:text>
+# Model: </xsl:text>
+         <xsl:value-of select="@model"/>
+<xsl:text>
+# Displayname: </xsl:text><xsl:value-of select="@displayName"/>
+<xsl:text>
+# Remotename: </xsl:text><xsl:value-of select="@remoteName"/>
+<xsl:text>
+#
+</xsl:text>
+    <xsl:apply-templates select="girr:commandSet"/>
+    </xsl:template>
+
+<!-- General case, raw codes -->
+    <xsl:template match="girr:commandSet">
+        <xsl:text>begin remote
+&#9;name&#9;</xsl:text><xsl:value-of select="../@name"/>
+<xsl:text>
+&#9;flags&#9;RAW_CODES
+&#9;eps&#9;30
+&#9;aeps&#9;100
+&#9;frequency&#9;</xsl:text><xsl:value-of select="//girr:command[1]/girr:raw/@frequency"/>
+<xsl:text>
+&#9;gap&#9;</xsl:text>
+<xsl:value-of select="//girr:command[1]/girr:raw/girr:repeat/girr:gap[position()=last()]"/>
+<xsl:text>
+&#9;begin raw_codes
+</xsl:text>
+<xsl:apply-templates select="//girr:command"/>
+<xsl:text>&#9;end raw_codes
+end remote
+</xsl:text>
+</xsl:template>
+
+    <xsl:template match="girr:command">
+        <xsl:text>&#9;&#9;name </xsl:text>
+        <xsl:value-of select="@name"/>
+        <xsl:text>
+</xsl:text>
+        <xsl:apply-templates select="girr:raw[1]"/>
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:raw">
+        <xsl:apply-templates select="girr:intro"/>
+        <xsl:if test="not(girr:intro)">
+            <xsl:apply-templates select="girr:repeat"/>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="girr:intro|girr:repeat">
+        <xsl:text>&#9;&#9;&#9;</xsl:text>
+       <xsl:apply-templates select="*"/>
+    </xsl:template>
+
+    <xsl:template match="girr:flash">
+        <xsl:value-of select="."/>
+        <xsl:text> </xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:gap">
+        <xsl:value-of select="."/>
+        <xsl:text> </xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:gap[position() mod 4 = 0]">
+        <xsl:value-of select="."/>
+        <xsl:text>
+&#9;&#9;&#9;</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:gap[position()=last()]"/>
+
+    <!-- NEC1 -->
+    <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nec1']">
+        <xsl:text>begin remote
+&#9;name&#9;</xsl:text><xsl:value-of select="../@name"/>
+<xsl:text>
+&#9;bits&#9;32
+&#9;flags&#9;SPACE_ENC
+&#9;eps&#9;30
+&#9;aeps&#9;100
+&#9;zero&#9;573&#9;573
+&#9;one&#9;573&#9;1694
+&#9;header&#9;9041&#9;4507
+&#9;ptrail&#9;573
+&#9;repeat&#9;9041&#9;2267
+&#9;gap&#9;36000
+&#9;repeat_bit&#9;0
+&#9;frequency&#9;38400
+&#9;begin codes
+</xsl:text>
+<xsl:apply-templates select="//girr:command"/>
+<xsl:text>&#9;end codes
+end remote
+</xsl:text>
+</xsl:template>
+
+<xsl:template match="girr:command[girr:parameters/@protocol='nec1']">
+    <xsl:text>&#9;&#9;</xsl:text>
+    <xsl:value-of select="@name"/>
+    <xsl:text>&#9;0x</xsl:text>
+    <xsl:value-of select="exporterutils:twoDigitReverseHex(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
+    <xsl:value-of select="exporterutils:twoDigitReverseHex(255 - number(girr:parameters/girr:parameter[@name='D']/@value))"/>
+    <xsl:value-of select="exporterutils:twoDigitReverseHex(number(girr:parameters/girr:parameter[@name='F']/@value))"/>
+    <xsl:value-of select="exporterutils:twoDigitReverseHex(255 - number(girr:parameters/girr:parameter[@name='F']/@value))"/>
+    <xsl:text>
+</xsl:text>
+</xsl:template>
+
+<xsl:template match="girr:command[girr:parameters[@protocol='nec1'  and ./girr:parameter/@name='S']]">
+    <xsl:text>&#9;&#9;</xsl:text>
+    <xsl:value-of select="@name"/>
+    <xsl:text>&#9;0x</xsl:text>
+    <xsl:value-of select="exporterutils:twoDigitReverseHex(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
+    <xsl:value-of select="exporterutils:twoDigitReverseHex(number(girr:parameters/girr:parameter[@name='S']/@value))"/>
+    <xsl:value-of select="exporterutils:twoDigitReverseHex(number(girr:parameters/girr:parameter[@name='F']/@value))"/>
+    <xsl:value-of select="exporterutils:twoDigitReverseHex(255 - number(girr:parameters/girr:parameter[@name='F']/@value))"/>
+    <xsl:text>
+</xsl:text>
+</xsl:template>
+
+    <!-- RC5 -->
+    <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'rc5']">
+        <xsl:text>begin remote
+&#9;name&#9;</xsl:text><xsl:value-of select="../@name"/>
+<xsl:text>
+&#9;bits&#9;13
+&#9;flags&#9;RC5|CONST_LENGTH
+&#9;eps&#9;30
+&#9;aeps&#9;100
+&#9;zero&#9;889&#9;889
+&#9;one&#9;889&#9;889
+&#9;plead&#9;889
+&#9;gap&#9;90886
+&#9;toggle_bit&#9;2
+&#9;frequency&#9;36000
+&#9;begin codes
+</xsl:text>
+<xsl:apply-templates select="//girr:command"/>
+<xsl:text>&#9;end codes
+end remote
+</xsl:text>
+</xsl:template>
+
+<xsl:template match="girr:command[girr:parameters/@protocol='rc5']">
+    <xsl:text>&#9;&#9;</xsl:text>
+    <xsl:value-of select="@name"/>
+    <xsl:text>&#9;0x</xsl:text>
+    <xsl:value-of select="exporterutils:rc5Data(number(girr:parameters/girr:parameter[@name='D']/@value),number(girr:parameters/girr:parameter[@name='F']/@value),0)"/>
+    <xsl:text>
+</xsl:text>
+</xsl:template>
+
+</xsl:stylesheet>
 </exportformats:exportformat>
 
 <!-- Here, additional export formats can be added if the user so desires.

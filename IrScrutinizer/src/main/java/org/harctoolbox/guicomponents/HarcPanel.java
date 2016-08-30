@@ -23,7 +23,4 @@ import javax.swing.JPanel;
  *
  */
 public abstract class HarcPanel extends JPanel implements IHarcPanel {
-    @Override
-    public void close() {
-    }
 }

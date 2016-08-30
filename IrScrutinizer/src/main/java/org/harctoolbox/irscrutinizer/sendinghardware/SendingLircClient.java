@@ -35,8 +35,9 @@ import org.harctoolbox.irscrutinizer.Props;
  */
 public class SendingLircClient extends SendingHardware<LircCcfClient> implements ISendingHardware<LircCcfClient> {
 
-    InternetHostPanel internetHostPanel;
-    NamedCommandLauncher namedCommandLauncher;
+    private final InternetHostPanel internetHostPanel;
+    private final NamedCommandLauncher namedCommandLauncher;
+    private LircCcfClient rawIrSender;
 
     public SendingLircClient(JPanel panel, Props properties, GuiUtils gui,
             InternetHostPanel internetHostPanel, NamedCommandLauncher namedCommandLauncher) {
@@ -57,6 +58,10 @@ public class SendingLircClient extends SendingHardware<LircCcfClient> implements
         });
     }
 
+    public void setTimeout(int timeout) {
+        rawIrSender.setTimeout(timeout);
+    }
+
     @Override
     public String getName() {
         return "Lirc";
@@ -71,7 +76,7 @@ public class SendingLircClient extends SendingHardware<LircCcfClient> implements
     public void setup() throws IOException, HarcHardwareException {
         String lircIp = internetHostPanel.getIpName();
         int lircPort = internetHostPanel.getPortNumber();
-        rawIrSender = new LircCcfClient(lircIp, lircPort, properties.getVerbose(), properties.getSendingTimeout());
+        rawIrSender = new LircCcfClient(lircIp, lircPort, properties.getVerbose(), properties.getLircTimeout());
         try {
             internetHostPanel.setHardware(rawIrSender);
         } catch (IOException ex) {
@@ -81,5 +86,10 @@ public class SendingLircClient extends SendingHardware<LircCcfClient> implements
         namedCommandLauncher.setHardware(rawIrSender);
         properties.setLircIpName(lircIp);
         properties.setLircPort(lircPort);
+    }
+
+    @Override
+    public LircCcfClient getRawIrSender() {
+        return rawIrSender;
     }
 }

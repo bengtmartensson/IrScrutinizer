@@ -37,69 +37,10 @@ import org.w3c.dom.NodeList;
  */
 public class Remote implements Serializable {
 
-    public static class MetaData implements Serializable {
-        private String name;
-        private String manufacturer;
-        private String model;
-        private String deviceClass;
-        private String remoteName;
-
-        public MetaData() {
-            this.name = null;
-            this.manufacturer = null;
-            this.model = null;
-            this.deviceClass = null;
-            this.remoteName = null;
-        }
-
-        public MetaData(String name) {
-            this();
-            this.name = name;
-        }
-
-        public MetaData(String name, String manufacturer, String model,
-                String deviceClass, String remoteName) {
-            this.name = name;
-            this.manufacturer = manufacturer;
-            this.model = model;
-            this.deviceClass = deviceClass;
-            this.remoteName = remoteName;
-        }
-
-        /**
-         * @return the name
-         */
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * @return the manufacturer
-         */
-        public String getManufacturer() {
-            return manufacturer;
-        }
-
-        /**
-         * @return the model
-         */
-        public String getModel() {
-            return model;
-        }
-
-        /**
-         * @return the deviceClass
-         */
-        public String getDeviceClass() {
-            return deviceClass;
-        }
-
-        /**
-         * @return the remoteName
-         */
-        public String getRemoteName() {
-            return remoteName;
-        }
+    private static HashMap<String,Command> commandToHashMap(Command command) {
+        HashMap<String,Command> result = new HashMap<>(1);
+        result.put(command.getName(), command);
+        return result;
     }
 
     private MetaData metaData;
@@ -118,18 +59,19 @@ public class Remote implements Serializable {
      */
     public Remote(Element element) throws ParseException {
         metaData = new MetaData(element.getAttribute("name"),
+                element.getAttribute("displayName"),
                 element.getAttribute("manufacturer"),
                 element.getAttribute("model"),
                 element.getAttribute("deviceClass"),
                 element.getAttribute("remoteName"));
-        commands = new LinkedHashMap<>();
-        applicationParameters = new LinkedHashMap<>();
+        commands = new LinkedHashMap<>(32);
+        applicationParameters = new LinkedHashMap<>(4);
         comment = element.getAttribute("comment");
         NodeList nl = element.getElementsByTagName("applicationData");
         for (int i = 0; i < nl.getLength(); i++) {
             Element el = (Element) nl.item(i);
             NodeList nodeList = el.getElementsByTagName("appParameter");
-            HashMap<String, String> map = new HashMap<>();
+            HashMap<String, String> map = new HashMap<>(32);
             for (int index = 0; index < nodeList.getLength(); index++) {
                 Element par = (Element) nodeList.item(index);
                 map.put(par.getAttribute("name"), par.getAttribute("value"));
@@ -202,11 +144,6 @@ public class Remote implements Serializable {
                 null);
     }
 
-    private static HashMap<String,Command> commandToHashMap(Command command) {
-        HashMap<String,Command> result = new HashMap<>(1);
-        result.put(command.getName(), command);
-        return result;
-    }
 
     /**
      * XML export function.
@@ -222,6 +159,8 @@ public class Remote implements Serializable {
             boolean generateRaw, boolean generateCcf, boolean generateParameters) {
         Element element = doc.createElementNS(XmlExporter.girrNamespace, "remote");
         element.setAttribute("name", metaData.name);
+        if (metaData.displayName != null)
+            element.setAttribute("displayName", metaData.displayName);
         if (metaData.manufacturer != null)
             element.setAttribute("manufacturer", metaData.manufacturer);
         if (metaData.model != null)
@@ -280,26 +219,13 @@ public class Remote implements Serializable {
      */
     public boolean hasThisProtocol(String protocolName) throws IrpMasterException {
         for (Command command : commands.values()) {
-            String prtcl = command.getProtocol();
+            String prtcl = command.getProtocolName();
             if (prtcl == null || !prtcl.equalsIgnoreCase(protocolName))
                 return false;
         }
         return true;
     }
 
-    public static class CompareNameCaseSensitive implements Comparator<Remote>, Serializable {
-        @Override
-        public int compare(Remote o1, Remote o2) {
-            return o1.metaData.name.compareTo(o2.metaData.name);
-        }
-    }
-
-    public static class CompareNameCaseInsensitive implements Comparator<Remote>, Serializable {
-        @Override
-        public int compare(Remote o1, Remote o2) {
-            return o1.metaData.name.compareToIgnoreCase(o2.metaData.name);
-        }
-    }
 
     public Command getCommand(String commandName) {
         return commands.get(commandName);
@@ -319,6 +245,14 @@ public class Remote implements Serializable {
      */
     public String getName() {
         return metaData.name;
+    }
+
+    /**
+     *
+     * @return displayName of the Remote.
+     */
+    public String getDisplayName() {
+        return metaData.displayName;
     }
 
     /**
@@ -375,5 +309,92 @@ public class Remote implements Serializable {
      */
     public String getNotes() {
         return notes;
+    }
+
+    public static class MetaData implements Serializable {
+        private String name;
+        private String displayName;
+        private String manufacturer;
+        private String model;
+        private String deviceClass;
+        private String remoteName;
+
+        public MetaData() {
+            this.name = null;
+            this.displayName = null;
+            this.manufacturer = null;
+            this.model = null;
+            this.deviceClass = null;
+            this.remoteName = null;
+        }
+
+        public MetaData(String name) {
+            this();
+            this.name = name;
+        }
+
+        public MetaData(String name, String displayName, String manufacturer, String model,
+                String deviceClass, String remoteName) {
+            this.name = name;
+            this.displayName = displayName;
+            this.manufacturer = manufacturer;
+            this.model = model;
+            this.deviceClass = deviceClass;
+            this.remoteName = remoteName;
+        }
+
+        /**
+         * @return the name
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * @return the displayName
+         */
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        /**
+         * @return the manufacturer
+         */
+        public String getManufacturer() {
+            return manufacturer;
+        }
+
+        /**
+         * @return the model
+         */
+        public String getModel() {
+            return model;
+        }
+
+        /**
+         * @return the deviceClass
+         */
+        public String getDeviceClass() {
+            return deviceClass;
+        }
+
+        /**
+         * @return the remoteName
+         */
+        public String getRemoteName() {
+            return remoteName;
+        }
+    }
+    public static class CompareNameCaseSensitive implements Comparator<Remote>, Serializable {
+        @Override
+        public int compare(Remote o1, Remote o2) {
+            return o1.metaData.name.compareTo(o2.metaData.name);
+        }
+    }
+    public static class CompareNameCaseInsensitive implements Comparator<Remote>, Serializable {
+        @Override
+        public int compare(Remote o1, Remote o2) {
+            return o1.metaData.name.compareToIgnoreCase(o2.metaData.name);
+        }
     }
 }

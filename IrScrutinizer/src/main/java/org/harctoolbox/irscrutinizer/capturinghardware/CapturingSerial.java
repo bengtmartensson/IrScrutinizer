@@ -43,6 +43,7 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
     private String portName = null;
     private int baudRate = -1;
     private Class<T> clazz;
+    private T hardware;
 
     public CapturingSerial(final Class<T> clazz, JPanel panel, SerialPortSimpleBean serialPortSimpleBean,
             Props properties_, GuiUtils guiUtils_,
@@ -62,14 +63,14 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
                 try {
                     switch (propertyName) {
                         case SerialPortSimpleBean.PROP_BAUD:
-                            setupSerial();
+                            setup();
                             break;
-                        case SerialPortSimpleBean.PROP_PORT:
+                        case SerialPortSimpleBean.PROP_PORTNAME:
                             if (evt.getNewValue() == null)
                                 return;
-                            setupSerial();
+                            setup();
                             break;
-                        case SerialPortSimpleBean.PROP_VERSION:
+                        //case SerialPortSimpleBean.PROP_VERSION:
                         case SerialPortSimpleBean.PROP_ISOPEN:
                             break;
                         default:
@@ -82,7 +83,8 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
         });
     }
 
-    private void setupSerial() throws IOException {
+    @Override
+    public void setup() throws IOException {
         String newPort = serialPortSimpleBean.getPortName();
         int newBaud = serialPortSimpleBean.getBaudRate();
         if (hardware != null && (newPort == null || newPort.equals(portName)) && (baudRate == newBaud))
@@ -96,13 +98,13 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
             if (IrSerial.class.isAssignableFrom(clazz)) {
                 hardware = clazz.getConstructor(String.class, int.class, int.class, int.class, int.class, boolean.class).newInstance(
                         newPort, newBaud,
-                        properties.getCaptureStartTimeout(), properties.getCaptureRunTimeout(), properties.getCaptureEndingTimeout(), properties.getVerbose());
+                        properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndTimeout(), properties.getVerbose());
                 baudRate = newBaud;
                 Props.class.getMethod("set" + clazz.getSimpleName() + "CapturePortBaudRate", int.class).invoke(properties, newBaud);
             } else {
                 hardware = clazz.getConstructor(String.class, int.class, int.class, int.class, boolean.class).newInstance(
                         newPort,
-                        properties.getCaptureStartTimeout(), properties.getCaptureRunTimeout(), properties.getCaptureEndingTimeout(), properties.getVerbose());
+                        properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndTimeout(), properties.getVerbose());
 
             }
             Props.class.getMethod("set" + clazz.getSimpleName() + "CapturePortName", String.class).invoke(properties, portName);
@@ -121,11 +123,6 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
     }
 
     @Override
-    public void setup() throws IOException {
-        setupSerial();
-    }
-
-    @Override
     public String getName() {
         return clazz.getSimpleName();
     }
@@ -137,5 +134,10 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
 
     @Override
     public void setDebug(int debug) {
+    }
+
+    @Override
+    public T getCapturer() {
+        return hardware;
     }
 }

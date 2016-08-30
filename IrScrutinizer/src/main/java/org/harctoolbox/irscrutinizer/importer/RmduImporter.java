@@ -37,7 +37,6 @@ import org.harctoolbox.IrpMaster.XmlUtils;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
-import org.harctoolbox.irscrutinizer.Utils;
 import org.harctoolbox.irscrutinizer.Version;
 import org.w3c.dom.Document;
 
@@ -45,6 +44,70 @@ import org.w3c.dom.Document;
  * This class is a simple-minded importer of RMDU files.
  */
 public class RmduImporter extends RemoteSetImporter implements Serializable, IReaderImporter {
+
+    public static final String homeUrl = "http://www.hifi-remote.com/wiki/index.php?title=Remote_Master_Manual";
+    public static final String defaultCharsetName = "WINDOWS-1252";
+
+    private final static String separator = "=";
+    private static JCommander argumentParser;
+    private static CommandLineArgs commandLineArgs = new CommandLineArgs();
+    private static void usage(int exitcode) {
+        StringBuilder str = new StringBuilder(256);
+        argumentParser.usage(str);
+
+        (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
+        doExit(exitcode);
+    }
+    private static void doExit(int exitcode) {
+        System.exit(exitcode);
+    }
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        argumentParser = new JCommander(commandLineArgs);
+        argumentParser.setProgramName("Lirc2Xml");
+
+        try {
+            argumentParser.parse(args);
+        } catch (ParameterException ex) {
+            System.err.println(ex.getMessage());
+            System.exit(IrpUtils.exitUsageError);
+        }
+
+        if (commandLineArgs.helpRequested)
+            usage(IrpUtils.exitSuccess);
+
+        if (commandLineArgs.versionRequested) {
+            //System.out.println("Lirc2Xml version " + TOOL_VERSION);
+            System.out.println("JVM: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version") + " " + System.getProperty("os.name") + "-" + System.getProperty("os.arch"));
+            System.exit(IrpUtils.exitSuccess);
+        }
+
+        String configFilename = commandLineArgs.configfile.isEmpty() ? "STDIN" : commandLineArgs.configfile.get(0);
+        if (commandLineArgs.debug > 0) {
+            System.err.println("debug = " + commandLineArgs.debug);
+            System.err.println("outputfilename = " + commandLineArgs.outputfile);
+            System.err.println("configfile = " + configFilename);
+        }
+
+        try {
+            ProtocolsIni protocolsIni = commandLineArgs.inifile != null ? new ProtocolsIni(new File(commandLineArgs.inifile)) : null;
+
+            RmduImporter rmdu = new RmduImporter(protocolsIni);
+            if (commandLineArgs.configfile.isEmpty())
+                rmdu.load();
+            else
+                rmdu.load(new File(commandLineArgs.configfile.get(0)));
+            RemoteSet remoteSet = new RemoteSet(null,
+                    configFilename, //String source,
+                    rmdu.getRemote());
+            Document doc = remoteSet.xmlExportDocument("Rmdu import of " + IrpUtils.basename(configFilename), "xsl", commandLineArgs.stylesheetUrl, true, true, true, true, true);
+            XmlUtils.printDOM(new File(commandLineArgs.outputfile), doc);
+        } catch (IOException | ParseException | IrpMasterException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
     //public static final String[][] fileExtensions = new String[][]{ new String[]{"rmdu", "RemoteMaster device updates"}};
 
     private HashMap<String,String>parameters;
@@ -52,16 +115,6 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
     private Remote remote;
     //private String protocolsIniPath;
     private ProtocolsIni protocolsIni;
-
-    public static final String homeUrl = "http://www.hifi-remote.com/wiki/index.php?title=Remote_Master_Manual";
-
-    public static final String defaultCharsetName = "WINDOWS-1252";
-    /**
-     * @param protocolsIni the protocolsIni to set
-     */
-    public void setProtocolsIni(ProtocolsIni protocolsIni) {
-        this.protocolsIni = protocolsIni;
-    }
 
     public RmduImporter() {
         super();
@@ -76,11 +129,12 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
         this.protocolsIni = protocolsIni;
     }
 
-    //public RmduImporter(File protocolsIniPath) throws IOException {
-    //    this(protocolsIniPath != null ? new ProtocolsIni(protocolsIniPath) : null);
-    //}
-
-    private final static String separator = "=";
+    /**
+     * @param protocolsIni the protocolsIni to set
+     */
+    public void setProtocolsIni(ProtocolsIni protocolsIni) {
+        this.protocolsIni = protocolsIni;
+    }
 
     /**
      * @return the parameters
@@ -98,34 +152,9 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
         };
     }
 
-    /*@Override
-    public HashMap<String, Remote> getRemotes() {
-        HashMap<String, Remote> result = new HashMap<String, Remote>(1);
-        result.put(remote.getName(), remote);
-        return result;
-    }
-
-    @Override
-    public Remote getFirstRemote() {
-        return remote;
-    }*/
-
     public Remote getRemote() {
         return remote;
     }
-
-    /*public RmduImporter(String rmduFile, ProtocolsIni protocolsIni) throws FileNotFoundException, IOException {
-        this(new FileReader(rmduFile), rmduFile, protocolsIni);
-    }
-
-    public RmduImporter(ProtocolsIni protocolsIni) throws IOException {
-        this(new InputStreamReader(System.in), "<STDIN>", protocolsIni);
-    }
-
-    public RmduImporter(Reader reader, String origin, ProtocolsIni protocolsIni) throws IOException {
-        this();
-                }
-                * */
 
     public void load() throws IOException, ParseException, IrpMasterException {
         load(defaultCharsetName);
@@ -138,12 +167,12 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
     @Override
     public void load(Reader reader, String origin) throws IOException, ParseException {
         prepareLoad(origin);
-        parameters = new LinkedHashMap<>();
+        parameters = new LinkedHashMap<>(8);
         //commands = new LinkedHashMap<String,Command>();
         BufferedReader bufferedReader = new BufferedReader(reader);
-        HashMap<Integer,Long> functionHex = new HashMap<>();
-        HashMap<Integer,String> functionName = new HashMap<>();
-        HashMap<Integer,String> functionNotes = new HashMap<>();
+        HashMap<Integer,Long> functionHex = new HashMap<>(8);
+        HashMap<Integer,String> functionName = new HashMap<>(8);
+        HashMap<Integer,String> functionNotes = new HashMap<>(8);
         int lineNo = 0;
         while (true) {
             String line = bufferedReader.readLine();
@@ -191,7 +220,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
                 : null;
         if ((devParams == null || devParams.length == 0) && protocolsIni != null)
             devParams = protocolsIni.getDeviceParameters(Integer.parseInt(parameters.get("Protocol").replaceAll(" ", ""), 16));
-        HashMap<String,Long> protocolParams = new HashMap<>();
+        HashMap<String,Long> protocolParams = new HashMap<>(8);
         String protocolParamsString = parameters.get("ProtocolParms");
         String[] params = protocolParamsString != null ? protocolParamsString.split(" ") : new String[0];
         for (int i = 0; i < params.length; i++) {
@@ -205,7 +234,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
 
         for (Entry<Integer, String> kvp : functionName.entrySet()) {
             Integer functionNo = kvp.getKey();
-            HashMap<String, Long> commandParameters = new HashMap<>();
+            HashMap<String, Long> commandParameters = new HashMap<>(8);
             commandParameters.putAll(protocolParams);
             Long hexObject = functionHex.get(functionNo);
             long hex = hexObject != null ? hexObject : IrpUtils.invalid;
@@ -228,9 +257,10 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
             }
         }
 
-        HashMap<String,HashMap<String,String>> appParams = new HashMap<>();
+        HashMap<String,HashMap<String,String>> appParams = new HashMap<>(8);
         appParams.put("rmdu", parameters);
-        Remote.MetaData metaData = new Remote.MetaData(Utils.basename(origin),
+        Remote.MetaData metaData = new Remote.MetaData(IrpUtils.basename(origin),
+                null, // displayName
                 null, // manufacturer,
                 null, // model,
                 parameters.get("DeviceType"), // deviceClass,
@@ -255,18 +285,6 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
                 remote);
     }
 
-    private static void usage(int exitcode) {
-        StringBuilder str = new StringBuilder();
-        argumentParser.usage(str);
-
-        (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
-        doExit(exitcode);
-    }
-
-    private static void doExit(int exitcode) {
-        System.exit(exitcode);
-    }
-
     @Override
     public String getFormatName() {
         return "RemoteMaster";
@@ -289,56 +307,6 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
         @Parameter(names = {"-x", "--xslt"}, description = "Link to XSLT stylesheet")
         String stylesheetUrl = null;
         @Parameter(description = "[configfile]")
-        ArrayList<String> configfile = new ArrayList<>();
-    }
-    private static JCommander argumentParser;
-    private static CommandLineArgs commandLineArgs = new CommandLineArgs();
-
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        argumentParser = new JCommander(commandLineArgs);
-        argumentParser.setProgramName("Lirc2Xml");
-
-        try {
-            argumentParser.parse(args);
-        } catch (ParameterException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitUsageError);
-        }
-
-        if (commandLineArgs.helpRequested)
-            usage(IrpUtils.exitSuccess);
-
-        if (commandLineArgs.versionRequested) {
-            //System.out.println("Lirc2Xml version " + TOOL_VERSION);
-            System.out.println("JVM: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version") + " " + System.getProperty("os.name") + "-" + System.getProperty("os.arch"));
-            System.exit(IrpUtils.exitSuccess);
-        }
-
-        String configFilename = commandLineArgs.configfile.isEmpty() ? "STDIN" : commandLineArgs.configfile.get(0);
-        if (commandLineArgs.debug > 0) {
-            System.err.println("debug = " + commandLineArgs.debug);
-            System.err.println("outputfilename = " + commandLineArgs.outputfile);
-            System.err.println("configfile = " + configFilename);
-        }
-
-        try {
-            ProtocolsIni protocolsIni = commandLineArgs.inifile != null ? new ProtocolsIni(new File(commandLineArgs.inifile)) : null;
-
-            RmduImporter rmdu = new RmduImporter(protocolsIni);
-            if (commandLineArgs.configfile.isEmpty())
-                rmdu.load();
-            else
-                rmdu.load(new File(commandLineArgs.configfile.get(0)));
-            RemoteSet remoteSet = new RemoteSet(null,
-                    configFilename, //String source,
-                    rmdu.getRemote());
-            Document doc = remoteSet.xmlExportDocument("Rmdu import of " + Utils.basename(configFilename), "xsl", commandLineArgs.stylesheetUrl, true, true, true, true, true);
-            XmlUtils.printDOM(new File(commandLineArgs.outputfile), doc);
-        } catch (IOException | ParseException | IrpMasterException ex) {
-            System.err.println(ex.getMessage());
-        }
+        ArrayList<String> configfile = new ArrayList<>(2);
     }
 }

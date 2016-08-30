@@ -17,7 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.harchardware.ir;
 
-import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
@@ -26,6 +25,7 @@ import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
 import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
+import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.comm.LocalSerialPortBuffered;
 
 /**
@@ -38,6 +38,12 @@ public class IrGenericSerial extends IrSerial<LocalSerialPortBuffered> implement
     private String separator;
     private String lineEnding;
     private boolean raw;
+
+    public IrGenericSerial(String portName, int baudRate, int dataSize, int stopBits, LocalSerialPort.Parity parity,
+            LocalSerialPort.FlowControl flowControl, int timeout, boolean verbose)
+            throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        super(LocalSerialPortBuffered.class, portName, baudRate, dataSize, stopBits, parity, flowControl, timeout, verbose);
+    }
 
     /**
      * @param command the command to set
@@ -83,11 +89,6 @@ public class IrGenericSerial extends IrSerial<LocalSerialPortBuffered> implement
         return true;
     }
 
-    public IrGenericSerial(String portName, int baudRate, int dataSize, int stopBits, LocalSerialPort.Parity parity,
-            LocalSerialPort.FlowControl flowControl, int timeout, boolean verbose)
-            throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        super(LocalSerialPortBuffered.class, portName, baudRate, dataSize, stopBits, parity, flowControl, timeout, verbose);
-    }
 
     private String formatString(IrSignal irSignal, int count) {
         if (irSignal == null)

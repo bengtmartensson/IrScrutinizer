@@ -325,12 +325,12 @@ public class GenericSerialSenderBean extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         formatLabel = new javax.swing.JLabel();
         serialCommandTextField = new javax.swing.JTextField();
-        serialFormatComboBox = new javax.swing.JComboBox();
+        serialFormatComboBox = new javax.swing.JComboBox<>();
         separatorLabel = new javax.swing.JLabel();
-        serialRawSeparatorComboBox = new javax.swing.JComboBox();
+        serialRawSeparatorComboBox = new javax.swing.JComboBox<>();
         jLabel23 = new javax.swing.JLabel();
-        serialLineEndingsComboBox = new javax.swing.JComboBox();
-        serialSignedComboBox = new javax.swing.JComboBox();
+        serialLineEndingsComboBox = new javax.swing.JComboBox<>();
+        serialSignedComboBox = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
 
         jLabel5.setText("Command");
@@ -344,7 +344,7 @@ public class GenericSerialSenderBean extends javax.swing.JPanel {
             }
         });
 
-        serialFormatComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "CCF", "RAW" }));
+        serialFormatComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "CCF", "RAW" }));
         serialFormatComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 serialFormatComboBoxActionPerformed(evt);
@@ -354,7 +354,7 @@ public class GenericSerialSenderBean extends javax.swing.JPanel {
         separatorLabel.setText("Separator");
         separatorLabel.setEnabled(false);
 
-        serialRawSeparatorComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { " ", ",", ";" }));
+        serialRawSeparatorComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " ", ",", ";" }));
         serialRawSeparatorComboBox.setEnabled(false);
         serialRawSeparatorComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -364,14 +364,14 @@ public class GenericSerialSenderBean extends javax.swing.JPanel {
 
         jLabel23.setText("Line endings");
 
-        serialLineEndingsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "LF", "CR/LF", "CR" }));
+        serialLineEndingsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "LF", "CR/LF", "CR" }));
         serialLineEndingsComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 serialLineEndingsComboBoxActionPerformed(evt);
             }
         });
 
-        serialSignedComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Unsigned", "Signed" }));
+        serialSignedComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Unsigned", "Signed" }));
         serialSignedComboBox.setEnabled(false);
         serialSignedComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -446,7 +446,7 @@ public class GenericSerialSenderBean extends javax.swing.JPanel {
     }//GEN-LAST:event_serialSignedComboBoxActionPerformed
 
     private void serialFormatComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serialFormatComboBoxActionPerformed
-        setRaw(((String)serialFormatComboBox.getSelectedItem()).equals("RAW"));
+        setRaw(serialFormatComboBox.getSelectedItem().equals("RAW"));
     }//GEN-LAST:event_serialFormatComboBoxActionPerformed
 
     private void serialRawSeparatorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serialRawSeparatorComboBoxActionPerformed
@@ -468,10 +468,10 @@ public class GenericSerialSenderBean extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel separatorLabel;
     private javax.swing.JTextField serialCommandTextField;
-    private javax.swing.JComboBox serialFormatComboBox;
-    private javax.swing.JComboBox serialLineEndingsComboBox;
+    private javax.swing.JComboBox<String> serialFormatComboBox;
+    private javax.swing.JComboBox<String> serialLineEndingsComboBox;
     private org.harctoolbox.guicomponents.SerialPortBean serialPortBean;
-    private javax.swing.JComboBox serialRawSeparatorComboBox;
-    private javax.swing.JComboBox serialSignedComboBox;
+    private javax.swing.JComboBox<String> serialRawSeparatorComboBox;
+    private javax.swing.JComboBox<String> serialSignedComboBox;
     // End of variables declaration//GEN-END:variables
 }

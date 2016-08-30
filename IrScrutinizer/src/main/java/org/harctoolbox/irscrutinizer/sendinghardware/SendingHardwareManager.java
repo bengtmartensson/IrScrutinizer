@@ -52,7 +52,7 @@ public class SendingHardwareManager {
         this.guiUtils = guiUtils;
         this.properties = properties;
         this.tabbedPane = tabbedPane;
-        table = new LinkedHashMap<>();
+        table = new LinkedHashMap<>(16);
     }
 
     public Collection<ISendingHardware<?>> getSendingHardware() {
@@ -124,7 +124,6 @@ public class SendingHardwareManager {
      *
      * @param name
      * @throws HarcHardwareException
-     * @throws IllegalArgumentException
      */
     public void select(String name) throws HarcHardwareException {
         ISendingHardware<?> hardware = table.get(name);
@@ -135,14 +134,33 @@ public class SendingHardwareManager {
         select(hardware);
     }
 
+    private void select(ISendingHardware<?> hardware) throws HarcHardwareException {
+        // invokes selectHardware through capturingHardwareTabbedPaneStateChanged
+        tabbedPane.setSelectedComponent(hardware.getPanel()); // throws IllegalArgumentException
+        if (selected == null) // if capturingHardwareTabbedPaneStateChanged did not invoke selectDoWork
+            selectDoWork(hardware);
+    }
+
+    /**
+     *
+     * @param name
+     * @throws HarcHardwareException
+     */
+    public void selectDoWork(String name) throws HarcHardwareException {
+        ISendingHardware<?> hardware = table.get(name);
+        if (hardware == null)
+            //throw new IllegalArgumentException(name + " does not exist in map.");
+            return;
+
+        selectDoWork(hardware);
+    }
+
     /**
      *
      * @param hardware
      * @throws HarcHardwareException
-     * @throws IllegalArgumentException
      */
-    private void select(ISendingHardware<?> hardware) throws HarcHardwareException {
-        tabbedPane.setSelectedComponent(hardware.getPanel()); // throws IllegalArgumentException
+    private void selectDoWork(ISendingHardware<?> hardware) throws HarcHardwareException {
         selected = null;
         try {
             hardware.setup();

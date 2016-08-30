@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
@@ -46,35 +47,18 @@ import org.xml.sax.SAXException;
 public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements IRemoteSetExporter {
 
     public final static String exportFormatNamespace = "http://www.harctoolbox.org/exportformats";
-
-    private final String formatName;
-    private final String extension;
-    private final boolean simpleSequence;
-    private final boolean binary;
-    private final Document xslt;
-
-    private DynamicRemoteSetExportFormat(Element el) {
-        super();
-        this.formatName = el.getAttribute("name");
-        this.extension = el.getAttribute("extension");
-        this.simpleSequence = Boolean.parseBoolean(el.getAttribute("simpleSequence"));
-        this.binary = Boolean.parseBoolean(el.getAttribute("binary"));
-
-        xslt = XmlUtils.newDocument(true);
-        Node stylesheet = el.getElementsByTagNameNS("http://www.w3.org/1999/XSL/Transform", "stylesheet").item(0);
-        xslt.appendChild(xslt.importNode(stylesheet, true));
-    }
+    private static JCommander argumentParser;
+    private static final CommandLineArgs commandLineArgs = new CommandLineArgs();
 
     static HashMap<String, IExporterFactory> parseExportFormats(File file) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setNamespaceAware(true);
         factory.setXIncludeAware(true);
-        Document doc = null;
         DocumentBuilder builder = factory.newDocumentBuilder();
-        doc = builder.parse(file);
+        Document doc = builder.parse(file);
 
-        HashMap<String, IExporterFactory> result = new HashMap<>();
+        HashMap<String, IExporterFactory> result = new HashMap<>(32);
         NodeList nl = doc.getElementsByTagNameNS(exportFormatNamespace, "exportformat");
         for (int i = 0; i < nl.getLength(); i++) {
             final Element el = (Element) nl.item(i);
@@ -91,6 +75,91 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
             });
         }
         return result;
+    }
+
+    private static boolean isFat(Document doc) {
+        NodeList nodeList = doc.getElementsByTagName("flash");
+        return (nodeList.getLength() > 0);
+    }
+
+    private static void usage(int exitcode) {
+        StringBuilder str = new StringBuilder(128);
+        argumentParser.usage(str);
+
+        (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
+        doExit(exitcode); // placifying FindBugs...
+    }
+
+    private static void doExit(int exitcode) {
+        System.exit(exitcode);
+    }
+
+    public static void main(String[] args) {
+        argumentParser = new JCommander(commandLineArgs);
+        argumentParser.setProgramName("DynamicRemoteSetExportFormatVersion");
+
+        try {
+            argumentParser.parse(args);
+        } catch (ParameterException ex) {
+            System.err.println(ex.getMessage());
+            usage(IrpUtils.exitUsageError);
+        }
+
+        if (commandLineArgs.helpRequested)
+            usage(IrpUtils.exitSuccess);
+
+        File configFile = new File(commandLineArgs.exportFormatsPathname);
+        String formatName = commandLineArgs.formatName;
+        File girrFile = new File(commandLineArgs.parameters.get(0));
+
+        XmlExporter.setDebug(true);
+
+        try {
+            HashMap<String, IExporterFactory> exportFormats = parseExportFormats(configFile);
+            //Schema schema = (SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)).newSchema(new URL("http://www.harctoolbox.org/schemas/exportformats.xsd"));
+
+            IExporterFactory format = exportFormats.get(formatName);
+            if (format == null) {
+                System.err.println("No such export format ``" + formatName + "''");
+                System.exit(IrpUtils.exitSemanticUsageError);
+            }
+
+            ICommandExporter exporter = format.newExporter();
+
+            String outFileName = commandLineArgs.outputFile != null
+                    ? commandLineArgs.outputFile
+                    : girrFile.getCanonicalPath().replaceAll("\\.girr$", "." + exporter.getPreferredFileExtension());
+            Document doc = XmlUtils.openXmlFile(girrFile);
+            if (!isFat(doc))
+                throw new IrpMasterException("Not a fat Girr file");
+            if (DynamicRemoteSetExportFormat.class.isInstance(exporter))
+                ((DynamicRemoteSetExportFormat) exporter).export(doc, outFileName, commandLineArgs.encoding);
+            else
+                ((DynamicCommandExportFormat) exporter).export(doc, outFileName, commandLineArgs.encoding, commandLineArgs.noTimes);
+            System.err.println("Created " + outFileName);
+        } catch (ParserConfigurationException | SAXException | IOException | IrpMasterException ex) {
+            System.err.println(ex + ": " + ex.getMessage());
+        }
+    }
+
+    private final String formatName;
+    private final String extension;
+    private final boolean simpleSequence;
+    private final boolean binary;
+    private final boolean metadata;
+    private final Document xslt;
+
+    private DynamicRemoteSetExportFormat(Element el) {
+        super();
+        this.formatName = el.getAttribute("name");
+        this.extension = el.getAttribute("extension");
+        this.simpleSequence = Boolean.parseBoolean(el.getAttribute("simpleSequence"));
+        this.binary = Boolean.parseBoolean(el.getAttribute("binary"));
+        this.metadata = Boolean.parseBoolean(el.getAttribute("metadata"));
+
+        xslt = XmlUtils.newDocument(true);
+        Node stylesheet = el.getElementsByTagNameNS("http://www.w3.org/1999/XSL/Transform", "stylesheet").item(0);
+        xslt.appendChild(xslt.importNode(stylesheet, true));
     }
 
     @Override
@@ -114,6 +183,11 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     }
 
     @Override
+    public boolean supportsMetaData() {
+        return metadata;
+    }
+
+    @Override
     public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName) throws IOException, IrpMasterException {
         export(remoteSet, title, count, saveFile.getCanonicalPath(), charsetName);
     }
@@ -134,25 +208,18 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     private void export(Document document, String fileName, String charsetName) throws IOException, IrpMasterException {
         XmlExporter xmlExporter = new XmlExporter(document);
         try (OutputStream out = IrpUtils.getPrintSteam(fileName)) {
-            HashMap<String, String> parameters = new HashMap<>(1);
-            xmlExporter.printDOM(out, xslt, parameters, binary, charsetName);
+            xmlExporter.printDOM(out, xslt, standardParameter(charsetName), binary, charsetName);
         }
     }
 
-    private static void usage(int exitcode) {
-        StringBuilder str = new StringBuilder();
-        argumentParser.usage(str);
-
-        (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
-        doExit(exitcode); // placifying FindBugs...
+    private HashMap<String, String> standardParameter(String charsetName) {
+        HashMap<String, String> parameters = new HashMap<>(8);
+        parameters.put("encoding", "'" + charsetName + "'");
+        parameters.put("creatingUser", "'" + creatingUser + "'");
+        parameters.put("creatingTool", "'" + org.harctoolbox.irscrutinizer.Version.versionString + "'");
+        parameters.put("creatingDate", "'" + (new Date()).toString() + "'");
+        return parameters;
     }
-
-    private static void doExit(int exitcode) {
-        System.exit(exitcode);
-    }
-
-    private static JCommander argumentParser;
-    private static CommandLineArgs commandLineArgs = new CommandLineArgs();
 
     private final static class CommandLineArgs {
 
@@ -174,54 +241,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         @Parameter(names = {"-o", "--outputfile"}, description = "Name of output file")
         private String outputFile = null;
 
-        //@Parameter(names = {"-v", "--verbose"}, description = "Have some commands executed verbosely")
-        //private boolean verbose;
-
         @Parameter(arity = 1, description = "Girr file to be transformed")
-        private List<String> parameters = new ArrayList<>();
-    }
-
-    public static void main(String[] args) {
-        argumentParser = new JCommander(commandLineArgs);
-        argumentParser.setProgramName("DynamicRemoteSetExportFormatVersion");
-
-        try {
-            argumentParser.parse(args);
-        } catch (ParameterException ex) {
-            System.err.println(ex.getMessage());
-            usage(IrpUtils.exitUsageError);
-        }
-
-        if (commandLineArgs.helpRequested)
-            usage(IrpUtils.exitSuccess);
-
-        File configFile = new File(commandLineArgs.exportFormatsPathname);
-        String formatName = commandLineArgs.formatName;
-        File girrFile = new File(commandLineArgs.parameters.get(0));
-
-        try {
-            HashMap<String, IExporterFactory> exportFormats = parseExportFormats(configFile);
-            //Schema schema = (SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)).newSchema(new URL("http://www.harctoolbox.org/schemas/exportformats.xsd"));
-
-            IExporterFactory format = exportFormats.get(formatName);
-            if (format == null) {
-                System.err.println("No such export format ``" + formatName + "''");
-                System.exit(IrpUtils.exitSemanticUsageError);
-            }
-
-            ICommandExporter exporter = format.newExporter();
-
-            String outFileName = commandLineArgs.outputFile != null
-                ? commandLineArgs.outputFile
-                : girrFile.getCanonicalPath().replaceAll("\\.girr$", "." + exporter.getPreferredFileExtension());
-            Document doc = XmlUtils.openXmlFile(girrFile);
-            if (DynamicRemoteSetExportFormat.class.isInstance(exporter))
-                ((DynamicRemoteSetExportFormat) exporter).export(doc, outFileName, commandLineArgs.encoding);
-            else
-                ((DynamicCommandExportFormat) exporter).export(doc, outFileName, commandLineArgs.encoding, commandLineArgs.noTimes);
-            System.err.println("Created " + outFileName);
-        } catch (ParserConfigurationException | SAXException | IOException | IrpMasterException ex) {
-            System.err.println(ex + ": " + ex.getMessage());
-        }
+        private List<String> parameters = new ArrayList<>(4);
     }
 }

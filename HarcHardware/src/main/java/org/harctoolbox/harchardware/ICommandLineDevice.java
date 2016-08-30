@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2012, 2014 Bengt Martensson.
+Copyright (C) 2015 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -56,4 +56,6 @@ public interface ICommandLineDevice extends IHarcHardware {
      * @throws IOException  If an I/O error occurs
      */
     boolean ready() throws IOException;
+
+    void flushInput() throws IOException;
 }

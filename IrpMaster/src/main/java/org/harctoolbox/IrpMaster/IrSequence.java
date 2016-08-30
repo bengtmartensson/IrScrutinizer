@@ -53,7 +53,7 @@ public class IrSequence implements Cloneable, Serializable {
      * @param i index
      * @return duration in microseconds, possibly with sign,
      */
-    public double get(int i) {
+    public final double get(int i) {
         return data[i];
     }
 
@@ -62,7 +62,7 @@ public class IrSequence implements Cloneable, Serializable {
      * @param i index
      * @return duration in microseconds, possibly with sign.
      */
-    public int iget(int i) {
+    public final int iget(int i) {
         return (int) Math.round(Math.abs(data[i]));
     }
 
@@ -71,7 +71,7 @@ public class IrSequence implements Cloneable, Serializable {
      * This is a copy of the original data, so it might be manipulated without affecting the original instance.
      * @return integer array of durations in micro seconds, all positive.
      */
-    public int[] toInts() {
+    public final int[] toInts() {
         return toInts(false);
     }
 
@@ -81,7 +81,7 @@ public class IrSequence implements Cloneable, Serializable {
      * @param alternatingSigns if true, all the durations with odd index are negative, otherwise, all are positive.
      * @return integer array of durations in micro seconds.
      */
-    public int[] toInts(boolean alternatingSigns) {
+    public final int[] toInts(boolean alternatingSigns) {
         int[] array = new int[data.length];
         for (int i = 0; i < data.length; i++) {
             int duration = (int) Math.round(Math.abs(data[i]));
@@ -96,7 +96,7 @@ public class IrSequence implements Cloneable, Serializable {
      * This is a copy of the original data, so it might be manipulated without affecting the original instance.
      * @return double array of durations in micro seconds.
      */
-    public double[] toDoubles() {
+    public final double[] toDoubles() {
         return data.clone();
     }
 
@@ -105,7 +105,7 @@ public class IrSequence implements Cloneable, Serializable {
      * @param frequency Frequency in Hz.
      * @return integer array of durations in periods of frequency.
      */
-    public int[] toPulses(double frequency) {
+    public final int[] toPulses(double frequency) {
         int[] array = new int[data.length];
         for (int i = 0; i < data.length; i++)
             array[i] = (int) Math.round(Math.abs(frequency*data[i]/1000000.0));
@@ -167,8 +167,9 @@ public class IrSequence implements Cloneable, Serializable {
      * @param str String of durations, possibly using signed numbers.
      * @param fixOddSequences it true, odd sequences (ending with space) are silently fixed by adding a dummy gap.
      * @throws IncompatibleArgumentException If last duration is not a gap, and fixOddSequences false.
+     * @throws NumberFormatException
      */
-    public IrSequence(String str, boolean fixOddSequences) throws IncompatibleArgumentException {
+    public IrSequence(String str, boolean fixOddSequences) throws IncompatibleArgumentException, NumberFormatException {
         if (str == null || str.trim().isEmpty()) {
             data = new double[0];
         } else {
@@ -215,8 +216,9 @@ public class IrSequence implements Cloneable, Serializable {
      * This version does not require flashes and gaps to be interleaved (signs alternating).
      * @param str String of durations, possibly using signed numbers.
      * @throws IncompatibleArgumentException If last duration is not a gap.
+     * @throws NumberFormatException
      */
-    public IrSequence(String str) throws IncompatibleArgumentException {
+    public IrSequence(String str) throws IncompatibleArgumentException, NumberFormatException {
         this(str, false);
     }
 
@@ -345,6 +347,32 @@ public class IrSequence implements Cloneable, Serializable {
     }
 
     /**
+     * Returns a new IrSequence consisting of the length durations.
+     * @param start Index of first duration
+     * @param length Length of new sequence
+     * @return IrSequence
+     * @throws IncompatibleArgumentException if length or start are not even.
+     */
+    public IrSequence subSequence(int start, int length) throws IncompatibleArgumentException {
+        if (start % 2 != 0)
+            throw new IncompatibleArgumentException("Starting index has to be even, was " + start);
+        double[] newData = new double[length];
+        System.arraycopy(this.data, start, newData, 0, length);
+        return new IrSequence(newData);
+    }
+
+    /**
+     * Returns a new IrSequence consisting of the first length durations.
+     * Equivalent to subSequence with first argument 0.
+     * @param length Length of new sequence
+     * @return IrSequence
+     * @throws IncompatibleArgumentException if length not even.
+     */
+    public IrSequence truncate(int length) throws IncompatibleArgumentException {
+        return subSequence(0, length);
+    }
+
+    /**
      * Chops a IrSequence in parts. Every gap of length &ge; threshold cause a cut.
      * @param threshold minimal gap in microseconds to cause a cut.
      * @return Array of IrSequences
@@ -359,7 +387,7 @@ public class IrSequence implements Cloneable, Serializable {
                 try {
                     arrayList.add(new IrSequence(arr));
                 } catch (IncompatibleArgumentException ex) {
-                    assert(false);
+                    throw new InternalError();
                 }
                 beg = i + 1;
             }
@@ -445,32 +473,67 @@ public class IrSequence implements Cloneable, Serializable {
      * @return equality
      */
     public boolean isEqual(IrSequence irSequence) {
+        return isEqual(irSequence, IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance);
+    }
+
+    /**
+     * Compares two IrSequences for (approximate) equality.
+     *
+     * @param irSequence to be compared against this.
+     * @param absoluteTolerance tolerance threshold in microseconds.
+     * @param relativeTolerance relative threshold, between 0 and 1.
+     * @return equality within tolerance.
+     */
+    public boolean isEqual(IrSequence irSequence, double absoluteTolerance, double relativeTolerance) {
         if (irSequence == null || (data.length != irSequence.data.length))
             return false;
 
         for (int i = 0; i < data.length; i++)
-            if (Math.abs(data[i] - irSequence.data[i]) > epsilon)
+            if (!IrpUtils.isEqual(data[i], irSequence.data[i], absoluteTolerance, relativeTolerance))
                 return false;
 
         return true;
     }
 
     /**
-     * Compares two IrSequences for equality.
+     * Compares two segments of the current IrSequences for (approximate) equality.
      *
-     * @param irSequence to be compared against this.
-     * @param tolerance tolerance threshold in microseconds.
-     * @return equality within tolerance.
+     * @param beginning start of first subsequence
+     * @param compareStart start of second subsequence
+     * @param length length to be compared
+     * @param absoluteTolerance tolerance threshold in microseconds.
+     * @param relativeTolerance relative threshold, between 0 and 1.
+     * @param lastLimit
+     * @return if the subsequences are approximately equal.
      */
-    public boolean isEqual(IrSequence irSequence, double tolerance) {
-        if (irSequence == null || (data.length != irSequence.data.length))
-            return false;
-
-        for (int i = 0; i < data.length; i++)
-            if (Math.abs(data[i] - irSequence.data[i]) > tolerance)
+    public boolean isEqual(int beginning, int compareStart, int length, double absoluteTolerance, double relativeTolerance, double lastLimit) {
+        boolean specialTreatment = compareStart + length == data.length && lastLimit > 0;
+        for (int i = 0; i < (specialTreatment ? length - 1 : length); i++) {
+            if (!IrpUtils.isEqual(Math.abs(data[beginning+i]), Math.abs(data[compareStart+i]), absoluteTolerance, relativeTolerance))
                 return false;
+        }
 
+        if (specialTreatment) {
+            if (!(
+                    IrpUtils.isEqual(Math.abs(data[beginning+length-1]), Math.abs(data[compareStart+length-1]), absoluteTolerance, relativeTolerance)
+                    || (Math.abs(data[beginning+length-1]) >= lastLimit && Math.abs(data[compareStart+length-1]) >= lastLimit)))
+                return false;
+        }
         return true;
+    }
+
+    /**
+     * Compares two segments of the current IrSequences for (approximate) equality.
+     *
+     * @param beginning start of first subsequence
+     * @param compareStart start of second subsequence
+     * @param length length to be compared
+     * @param absoluteTolerance tolerance threshold in microseconds.
+     * @param relativeTolerance relative threshold, between 0 and 1.
+     * @return if the subsequences are approximately equal.
+     */
+    public boolean isEqual(int beginning, int compareStart, int length, double absoluteTolerance, double relativeTolerance) {
+        return isEqual(beginning, compareStart, length, absoluteTolerance, relativeTolerance, 0f);
     }
 
     private static ArrayList<Double> normalize(ArrayList<Double> list, boolean nukeLeadingZeros) {
@@ -501,7 +564,7 @@ public class IrSequence implements Cloneable, Serializable {
      * Divide by 2 to get number of bursts.
      * @return number of gaps/flashes.
      */
-    public int getLength() {
+    public final int getLength() {
         return data.length;
     }
 
@@ -517,7 +580,7 @@ public class IrSequence implements Cloneable, Serializable {
      *
      * @return emptyness of the sequence.
      */
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
         return data.length == 0;
     }
 
@@ -525,7 +588,7 @@ public class IrSequence implements Cloneable, Serializable {
      * Returns true if and only if the sequence contains durations of zero length.
      * @return existence of zero durations.
      */
-    public boolean containsZeros() {
+    public final boolean containsZeros() {
         for (double t : data)
             if (Math.abs(t) < epsilon)
                 return true;
@@ -537,7 +600,7 @@ public class IrSequence implements Cloneable, Serializable {
      * @param replacement Duration in micro seconds to replace zero durations with.
      * @return if the signal was changed.
      */
-    public boolean replaceZeros(double replacement) {
+    public final boolean replaceZeros(double replacement) {
         boolean wasChanged = false;
         for (int i = 0; i < data.length; i++)
             if (Math.abs(data[i]) < epsilon) {
@@ -551,7 +614,7 @@ public class IrSequence implements Cloneable, Serializable {
      * Returns the number of bursts, half of the length.
      * @return number bursts.
      */
-    public int getNumberBursts() {
+    public final int getNumberBursts() {
         return data.length/2;
     }
 
@@ -561,7 +624,18 @@ public class IrSequence implements Cloneable, Serializable {
      * @return Length of the IR sequence in microseconds.
      */
     public double getDuration() {
-        return IrpUtils.l1Norm(data);
+        return getDuration(0, data.length);
+    }
+
+    /**
+     * Computes the total duration of a subsequence of the IR sequence modeled.
+     *
+     * @param begin start of subsequence.
+     * @param length length of subsequence.
+     * @return Length of the IR sequence in microseconds.
+     */
+    public double getDuration(int begin, int length) {
+        return IrpUtils.l1Norm(data, begin, length);
     }
 
     /**

@@ -37,10 +37,6 @@ public class ParametrizedIrSignal extends NamedIrSignal {
     private static boolean generateCcf = true;
     private static IrpMaster irpMaster = null;
 
-
-    private HashMap<String, Long>parameters;
-    private String protocolName;
-
     /**
      * @param aGenerateRaw the generateRaw to set
      */
@@ -63,9 +59,27 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         irpMaster = aIrpMaster;
     }
 
+    private static String formatMiscParams(HashMap<String, Long> params) {
+        if (params == null)
+            return "";
+        StringBuilder str = new StringBuilder(16);
+        for (Entry<String, Long> kvp : params.entrySet()) {
+            String key = kvp.getKey();
+            if (!(key.equals("D") || key.equals("S") || key.equals("F") || key.equals("T"))) {
+                if (str.length() > 0)
+                    str.append(" ");
+                str.append(key).append("=").append(kvp.getValue());
+            }
+        }
+        return str.toString();
+    }
+
+    private HashMap<String, Long>parameters;
+    private String protocolName;
+
     public ParametrizedIrSignal(Command command) throws IrpMasterException {
         super(command.getName(), command.getComment());
-        this.protocolName = command.getProtocol();
+        this.protocolName = command.getProtocolName();
         this.parameters = command.getParameters();
     }
 
@@ -77,7 +91,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
 
     public ParametrizedIrSignal(String protocolName, long device, long subdevice, long function, String name, String comment) {
         super(name, comment);
-        parameters = new HashMap<>();
+        parameters = new HashMap<>(3);
         setParameter("F", function);
         setParameter("D", device);
         setParameter("S", subdevice);
@@ -144,7 +158,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
     }
 
     private void setParameter(String name, Object object) {
-        setParameter(name, object != null ? (long) (Integer) object : IrpUtils.invalid);
+        setParameter(name, object != null ? (Integer) object : IrpUtils.invalid);
     }
 
     public final void setParameter(String name, long value) {
@@ -165,20 +179,6 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         return csvString(", ") + ", " + protocolName + ", " + parameters.toString();
     }
 
-    private static String formatMiscParams(HashMap<String, Long> params) {
-        if (params == null)
-            return "";
-        StringBuilder str = new StringBuilder();
-        for (Entry<String, Long> kvp : params.entrySet()) {
-            String key = kvp.getKey();
-            if (!(key.equals("D") || key.equals("S") || key.equals("F") || key.equals("T"))) {
-                if (str.length() > 0)
-                    str.append(" ");
-                str.append(key).append("=").append(kvp.getValue());
-            }
-        }
-        return str.toString();
-    }
 
     public Command toCommand() throws IrpMasterException {
         if (protocolName == null || protocolName.isEmpty())
@@ -233,6 +233,10 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         public final static int posComment = 10;
         public final static int posParameterIrSignal = columnNames.length - 1;
 
+        ParameterIrSignalColumns() {
+            super(columnNames, widths, classes, /*dummyArray,*/ toIgnore);
+        }
+
         @Override
         public int getPosName() {
             return posName;
@@ -258,9 +262,6 @@ public class ParametrizedIrSignal extends NamedIrSignal {
             return posParameterIrSignal;
         }
 
-        ParameterIrSignalColumns() {
-            super(columnNames, widths, classes, /*dummyArray,*/ toIgnore);
-        }
 
         @Override
         public boolean isEditable(int i) {
@@ -314,7 +315,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         }
 
         public void addSignal(ParametrizedIrSignal signal) {
-            super.addSignal((NamedIrSignal) signal);
+            super.addSignal(signal);
         }
 
         public void setFToHex() {
@@ -327,13 +328,13 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         }
 
         public ArrayList<Long> listF(Command reference) throws IrpMasterException {
-            ArrayList<Long> list = new ArrayList<>();
+            ArrayList<Long> list = new ArrayList<>(16);
             @SuppressWarnings("unchecked")
             HashMap<String, Long> params = (HashMap<String, Long>) reference.getParameters().clone();
             params.remove("F");
             for (int row =  0; row < getRowCount(); row++) {
                 Command cmd = toCommand(row);
-                if (!reference.getProtocol().equalsIgnoreCase(cmd.getProtocol()))
+                if (!reference.getProtocolName().equalsIgnoreCase(cmd.getProtocolName()))
                     continue;
 
                 boolean eq = true;
@@ -428,6 +429,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         public void fireTableCellUpdated(int row, int column) {
             //System.err.println("************" + row + "-" + column);
             ParametrizedIrSignal pir = getParameterIrSignal(row);
+            this.unsavedChanges = true;
             switch (column) {
                 case ParameterIrSignalColumns.posProtocol:
                     pir.protocolName = (String) getValueAt(row, column);

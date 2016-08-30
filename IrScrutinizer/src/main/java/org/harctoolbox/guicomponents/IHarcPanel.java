@@ -17,10 +17,12 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.guicomponents;
 
+import java.io.Closeable;
+
 /**
  *
  */
-public interface IHarcPanel {
+public interface IHarcPanel extends Closeable {
     public String getHelpMessage();
 
     public String getAboutMessage();
@@ -28,6 +30,4 @@ public interface IHarcPanel {
     public String getProgName();
 
     public String getIconPath();
-
-    public void close();
 }

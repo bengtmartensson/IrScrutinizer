@@ -7,12 +7,12 @@
     <groupId>org.harctoolbox</groupId>
     <artifactId>HarcHardware</artifactId>
     <packaging>jar</packaging>
-    <version>1.2</version>
+    <version>1.3</version>
     <name>HarcHardware</name>
     <parent>
         <groupId>org.harctoolbox</groupId>
         <artifactId>HarctoolboxBundle</artifactId>
-        <version>1.2</version>
+        <version>1.3</version>
         <relativePath>..</relativePath>
     </parent>
     <licenses>
@@ -115,6 +115,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -178,6 +179,15 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <skipTests>false</skipTests>
+                    <argLine>-Djava.library.path=${basedir}/../native/Linux-amd64</argLine>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -194,9 +204,16 @@
             <groupId>gnu.io</groupId>
             <artifactId>RXTX</artifactId>
         </dependency>
-        <!--dependency>
-            <groupId>org.gnu</groupId>
-            <artifactId>Readline</artifactId>
-        </dependency-->
+        <dependency>
+            <groupId>org.harctoolbox</groupId>
+            <artifactId>DevSlashLirc</artifactId>
+            <version>0.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.8.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

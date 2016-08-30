@@ -35,40 +35,6 @@ public class AmxBeacon implements Serializable {
     public  final static String beaconPreamble = "AMXB";
     private final static int beaconPeriod = 30 * 1000;
 
-    private final String payload;
-
-    public AmxBeacon(String payload) {
-        this.payload = payload;
-    }
-
-    private void sendCommandUdp() throws UnknownHostException, IOException {
-        //boolean success = false;
-
-        DatagramSocket sock = null;
-        try {
-            sock = new DatagramSocket();
-        } catch (SocketException ex) {
-            System.err.println(ex);
-            return;
-        }
-        try {
-            //sock.setSoTimeout(timeout);
-            InetAddress addr = InetAddress.getByName(broadcastIp);
-            byte[] buf = null;
-            try {
-                buf = payload.getBytes(IrpUtils.dumbCharsetName);
-
-                DatagramPacket dp = new DatagramPacket(buf, buf.length, addr, broadcastPort);
-                sock.send(dp);
-            } catch (UnsupportedEncodingException ex) {
-                assert false;
-            }
-            //success = true;
-        } finally {
-            sock.close();
-        }
-    }
-
     private static String pack(String key, String value) {
         return "<" + key + "=" + value + ">";
     }
@@ -83,6 +49,52 @@ public class AmxBeacon implements Serializable {
                 + pack("-Revision", revision)
                 + pack("Config-Name", configName)
                 + pack("Config-URL", configUrl);
+    }
+
+    public static void main(String[] args) {
+        try {
+            String hostname = Utils.getHostname();
+            String macAddress = Utils.getMacAddress(InetAddress.getByName(hostname));
+
+            AmxBeacon amx = new AmxBeacon(createPayload(hostname + "@" + macAddress, "HarcToolbox", "zzz", "0000", "0.0.0", "xyz", "http://localhost"));
+            BeaconThread thread = new BeaconThread(amx);
+            thread.start();
+        } catch (UnknownHostException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    private final String payload;
+
+    public AmxBeacon(String payload) {
+        this.payload = payload;
+    }
+
+    private void sendCommandUdp() throws UnknownHostException, IOException {
+        //boolean success = false;
+
+        DatagramSocket sock;
+        try {
+            sock = new DatagramSocket();
+        } catch (SocketException ex) {
+            System.err.println(ex);
+            return;
+        }
+        try {
+            //sock.setSoTimeout(timeout);
+            InetAddress addr = InetAddress.getByName(broadcastIp);
+            try {
+                byte[] buf = payload.getBytes(IrpUtils.dumbCharsetName);
+
+                DatagramPacket dp = new DatagramPacket(buf, buf.length, addr, broadcastPort);
+                sock.send(dp);
+            } catch (UnsupportedEncodingException ex) {
+                assert false;
+            }
+            //success = true;
+        } finally {
+            sock.close();
+        }
     }
 
     private static class BeaconThread extends Thread {
@@ -103,19 +115,6 @@ public class AmxBeacon implements Serializable {
                     System.err.println(ex.getMessage());
                 }
             }
-        }
-    }
-
-    public static void main(String[] args) {
-        try {
-            String hostname = Utils.getHostname();
-            String macAddress = Utils.getMacAddress(InetAddress.getByName(hostname));
-
-            AmxBeacon amx = new AmxBeacon(createPayload(hostname + "@" + macAddress, "HarcToolbox", "zzz", "0000", "0.0.0", "xyz", "http://localhost"));
-            BeaconThread thread = new BeaconThread(amx);
-            thread.start();
-        } catch (UnknownHostException ex) {
-            System.err.println(ex.getMessage());
         }
     }
 }

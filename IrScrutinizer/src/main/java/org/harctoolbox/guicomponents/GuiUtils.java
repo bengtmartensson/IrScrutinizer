@@ -41,7 +41,7 @@ public class GuiUtils implements Serializable {
     private boolean offerStackTrace = false;
     private final String programName;
     private final JFrame frame;
-    boolean verbose = false;
+    private boolean verbose = false;
 
     public interface EmergencyFixer {
         public void fix();
@@ -98,11 +98,12 @@ public class GuiUtils implements Serializable {
         fatal(ex, errorcode, null);
     }
 
-    public static void fatal(Exception ex, int errorcode, EmergencyFixer fixer) {
-        fatal(ex.getClass().getSimpleName() + ": " + ex.getMessage(), errorcode, fixer);
-    }
+//    public static void fatal(Exception ex, int errorcode, EmergencyFixer fixer) {
+//        fatal(ex.getClass().getSimpleName() + ": " + ex.getMessage(), errorcode, fixer);
+//    }
 
-    public static void fatal(String message, int errorcode, EmergencyFixer fixer) {
+    public static void fatal(Exception ex, int errorcode, EmergencyFixer fixer) {
+        String message = ex.getClass().getSimpleName() + ": " + ex.getMessage();
         if (System.console() != null)
             System.err.println(message);
 
@@ -119,6 +120,7 @@ public class GuiUtils implements Serializable {
                         JOptionPane.INFORMATION_MESSAGE,
                         new ImageIcon(GuiUtils.class.getResource("/icons/Crystal-Clear/48x48/actions/info.png")));
         }
+        ex.printStackTrace();
         System.exit(errorcode);
     }
 
@@ -179,7 +181,7 @@ public class GuiUtils implements Serializable {
                 : ex.getClass().getSimpleName() + ": " + message;
         boolean result = error(errorMessage, offerStackTrace);
         if (result)
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
     }
 
     public String getInput(String message, String title, String defaultAnswer) {
@@ -196,6 +198,11 @@ public class GuiUtils implements Serializable {
         return s == null ? null
                 : s.trim().isEmpty() ? IrpUtils.invalid
                 : IrpUtils.parseLong(s, false);
+    }
+
+    public Double getDoubleInput(String message, double oldValue) {
+        String s = getInput(message, "Parameter input", Double.toString(oldValue));
+        return s != null ? Double.parseDouble(s) : null;
     }
 
     public boolean confirm(String message) {
@@ -230,10 +237,10 @@ public class GuiUtils implements Serializable {
         }
         try {
             if (verbose)
-                trace("Browsing URI `" + uri.toString() + "'");
+                trace("Browsing URI \"" + uri.toString() + "\"");
             Desktop.getDesktop().browse(uri);
         } catch (IOException ex) {
-            boolean stacktrace = error("Could not start browser using uri `" + uri.toString() + "'.", offerStackTrace);
+            boolean stacktrace = error("Could not start browser using uri \"" + uri.toString() + "\".", offerStackTrace);
             if (stacktrace)
                 ex.printStackTrace(System.err);
         }
@@ -252,12 +259,12 @@ public class GuiUtils implements Serializable {
         try {
             Desktop.getDesktop().open(file);
             if (verbose)
-                trace("open file `" + file.toString() + "'");
+                trace("open file \"" + file.toString() + "\"");
        } catch (IllegalArgumentException ex) {
             error(ex);
        } catch (IOException ex) {
            // According to javadoc for Desktop.getDesktop().open
-            error("File `" + file.toString() + "' has no associated application or the associated application failed.");
+            error("File \"" + file.toString() + "\" has no associated application or the associated application failed.");
         }
     }
 
@@ -271,10 +278,10 @@ public class GuiUtils implements Serializable {
             try {
                 Desktop.getDesktop().edit(file);
                 if (verbose)
-                    trace("edit file `" + file.toString() + "'");
+                    trace("edit file \"" + file.toString() + "\"");
             } catch (IOException ex) {
                 if (verbose)
-                    trace("edit file `" + file.toString() + "' failed, trying open...'");
+                    trace("edit file \"" + file.toString() + "\" failed, trying open...");
                 open(file);
             } catch (UnsupportedOperationException ex) {
                 error("Edit not supported.");

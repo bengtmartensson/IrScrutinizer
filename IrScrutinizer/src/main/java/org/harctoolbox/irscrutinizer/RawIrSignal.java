@@ -30,9 +30,6 @@ import org.harctoolbox.girr.Command;
  *
  */
 public class RawIrSignal extends NamedIrSignal {
-    private IrSignal irSignal;
-    private String analyzerString;
-    private DecodeIR.DecodedSignal[] decodes;
 
     private static boolean generateCcf = true;
     private static boolean decode = true;
@@ -50,6 +47,10 @@ public class RawIrSignal extends NamedIrSignal {
     public static void setDecode(boolean aDecode) {
         decode = aDecode;
     }
+    
+    private IrSignal irSignal;
+    private String analyzerString;
+    private DecodeIR.DecodedSignal[] decodes;
 
     public RawIrSignal(IrSignal irSignal, String name, String comment, boolean invokeAnalyzer) {
         super(name, comment);
@@ -232,26 +233,36 @@ public class RawIrSignal extends NamedIrSignal {
 
         @Override
         public void fireTableCellUpdated(int row, int column) {
-            //System.err.println("************" + row + "-" + column);
-            RawIrSignal pir = getCapturedIrSignal(row);
-            switch (column) {
-                case CapturedIrSignalColumns.posIntro:
-                case CapturedIrSignalColumns.posRepetition:
-                case CapturedIrSignalColumns.posEnding:
-                    throw new UnsupportedOperationException();
-                    // Not implemented (yet?)
-                    //break;
-                case CapturedIrSignalColumns.posVerified:
-                    pir.setValidated((Boolean)getValueAt(row, column));
-                    break;
-                case CapturedIrSignalColumns.posName:
-                    pir.setName((String)getValueAt(row, column));
-                    break;
-                case CapturedIrSignalColumns.posComment:
-                    pir.setComment((String)getValueAt(row, column));
-                    break;
-                default:
-                    break;
+            boolean invokeAnalyzer = true; // ???
+            try {
+                RawIrSignal rawIrSignal = getCapturedIrSignal(row);
+                switch (column) {
+                    case CapturedIrSignalColumns.posIntro:
+                        rawIrSignal.setIntroSequence((String) getValueAt(row, column), invokeAnalyzer);
+                        break;
+                    case CapturedIrSignalColumns.posRepetition:
+                        rawIrSignal.setRepeatSequence((String) getValueAt(row, column), invokeAnalyzer);
+                        break;
+                    case CapturedIrSignalColumns.posEnding:
+                        rawIrSignal.setEndingSequence((String) getValueAt(row, column), invokeAnalyzer);
+                        break;
+                    case CapturedIrSignalColumns.posVerified:
+                        rawIrSignal.setValidated((Boolean) getValueAt(row, column));
+                        break;
+                    case CapturedIrSignalColumns.posName:
+                        rawIrSignal.setName((String) getValueAt(row, column));
+                        break;
+                    case CapturedIrSignalColumns.posComment:
+                        rawIrSignal.setComment((String) getValueAt(row, column));
+                        break;
+                    case CapturedIrSignalColumns.posFrequency:
+                        rawIrSignal.setFrequency((Integer)getValueAt(row, column), invokeAnalyzer);
+                        break;
+                    default:
+                        throw new InternalError();
+                }
+            } catch (IncompatibleArgumentException | NumberFormatException ex) {
+                System.err.println(ex.getMessage()); // FIXME; (good for now)
             }
         }
 

@@ -12,8 +12,6 @@ import org.testng.annotations.Test;
  */
 public class ExporterUtilsNGTest {
 
-    public ExporterUtilsNGTest() {
-    }
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -21,6 +19,9 @@ public class ExporterUtilsNGTest {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
+    }
+
+    public ExporterUtilsNGTest() {
     }
 
     @BeforeMethod

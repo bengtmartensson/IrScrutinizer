@@ -29,12 +29,14 @@ OutputDir=.
 ChangesEnvironment=true
 PrivilegesRequired=none
 SetupIconFile={#MyAppName}.ico
+ChangesAssociations="yes"
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
+Name: associateGirr; Description: "Associate *.girr files with the program";
 Name: modifypath; Description: &Add installation directory to path
 
 [Files]
@@ -65,6 +67,13 @@ Type: files; Name: "{app}\irpmaster.bat"
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, "&", "&&")}}"; Parameters: ; Flags: shellexec postinstall skipifsilent
+
+[Registry]
+Root: HKCR; Subkey: ".girr";                       ValueType: string; ValueName: ""; ValueData: "girrfile"; Flags: uninsdeletekey;  Tasks: associateGirr
+Root: HKCR; Subkey: "girrfile";                    ValueType: string; ValueName: ""; ValueData: "Girr IR commands"; Flags: uninsdeletekey; Tasks: associateGirr
+Root: HKCR; Subkey: "girrfile\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\IrScrutinizer.ico";            Tasks: associateGirr
+;;; Opens a pesky window :-(, but I do not know of a better solution. For example, writing the absolute pathname of javaw is not acceptable.
+Root: HKCR; Subkey: "girrfile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\irscrutinizer.bat"" ""%1"""; Tasks: associateGirr
 
 [Code]
 function DllLibraryPath(): String;

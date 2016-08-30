@@ -45,12 +45,140 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  */
 
 public class Wave {
-    private int noFrames = -1;
-    private AudioFormat audioFormat;
-    private byte[] buf;
     private static int debug = 0; // presently not used
     private static int epsilon8Bit = 2;
     private static int epsilon16Bit = 257;
+    private static JCommander argumentParser;
+    private static CommandLineArgs commandLineArgs = new CommandLineArgs();
+
+    /**
+     * Returns a line to the audio mixer on the local machine, suitable for sound with
+     * the parameter values given. When not needed, the user should close the line with its close()-function.
+     *
+     * @param audioFormat
+     * @return open audio line
+     * @throws LineUnavailableException
+     */
+    public static SourceDataLine getLine(AudioFormat audioFormat) throws LineUnavailableException {
+        SourceDataLine line = AudioSystem.getSourceDataLine(audioFormat);
+        line.open(audioFormat);
+        return line;
+    }
+
+    private static void usage(int exitcode) {
+        StringBuilder str = new StringBuilder(256);
+        argumentParser.usage(str);
+
+        str.append("\n"
+                + "parameters: <protocol> <deviceno> [<subdevice_no>] commandno [<toggle>]\n"
+                + "   or       <Pronto code>\n"
+                + "   or       <importfile>");
+
+        (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
+
+        System.exit(exitcode);
+    }
+
+    /**
+     * Provides a command line interface to the export/import functions.
+     *
+     * <pre>
+     * Usage: Wave [options] [parameters]
+     * Options:
+     * -c, --config            Path to IrpProtocols.ini
+     * Default: data/IrpProtocols.ini
+     * -h, --help, -?          Display help message
+     * Default: false
+     * -m, --macrofile         Macro filename
+     * -1, --nodivide          Do not divide modulation frequency
+     * Default: false
+     * -t, --omittail          Skip silence at end
+     * Default: false
+     * -o, --outfile           Output filename
+     * Default: irpmaster.wav
+     * -p, --play              Send the generated wave to the audio device of the
+     * local machine
+     * Default: false
+     * -r, --repeats           Number of times to include the repeat sequence
+     * Default: 0
+     * -f, --samplefrequency   Sample frequency in Hz
+     * Default: 44100
+     * -q, --square            Modulate with square wave instead of sine
+     * Default: false
+     * -S, --stereo            Generate two channels in anti-phase
+     * Default: false
+     * -v, --version           Display version information
+     * Default: false
+     * -s, samplesize          Sample size in bits
+     * Default: 8
+     *
+     * parameters: <em>protocol</em> <em>deviceno</em> [<em>subdevice_no</em>] <em>commandno</em> [<em>toggle</em>]
+     * or       <em>ProntoCode</em>
+     * or       <em>importfile</em>
+     * </pre>
+     * @param args
+     */
+    public static void main(String[] args) {
+        argumentParser = new JCommander(commandLineArgs);
+        argumentParser.setProgramName("Wave");
+
+        try {
+            argumentParser.parse(args);
+        } catch (ParameterException ex) {
+            System.err.println(ex.getMessage());
+            usage(IrpUtils.exitUsageError);
+        }
+
+        if (commandLineArgs.helpRequensted)
+            usage(IrpUtils.exitSuccess);
+
+        if (commandLineArgs.versionRequested) {
+            System.out.println(Version.versionString);
+            System.out.println("JVM: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version") + " " + System.getProperty("os.name") + "-" + System.getProperty("os.arch"));
+            System.out.println();
+            System.out.println(Version.licenseString);
+            System.exit(IrpUtils.exitSuccess);
+        }
+
+        if (commandLineArgs.macrofile == null && commandLineArgs.parameters.isEmpty()) {
+            System.err.println("Parameters missing");
+            usage(IrpUtils.exitUsageError);
+        }
+
+        try {
+            if (commandLineArgs.parameters.size() == 1) {
+                // Exactly one argument left -> input wave file
+                String inputfile = commandLineArgs.parameters.get(0);
+                Wave wave = new Wave(new File(inputfile));
+                ModulatedIrSequence seq = wave.analyze(!commandLineArgs.dontDivide);
+                //IrSignal irSignal = new
+                DecodeIR.invoke(seq);
+                wave.dump(new File(inputfile + ".tsv"));
+                if (commandLineArgs.play)
+                    wave.play();
+            } else {
+                //if (commandLineArgs.macrofile != null) {
+                //IrSequence irSequence = IrSequence.parseMacro(commandLineArgs.irprotocolsIniFilename, commandLineArgs.macrofile);
+                //Wave wave = new Wave()
+                //}
+                IrSignal irSignal = new IrSignal(commandLineArgs.irprotocolsIniFilename, 0, commandLineArgs.parameters.toArray(new String[commandLineArgs.parameters.size()]));
+                File file = new File(commandLineArgs.outputfile);
+                Wave wave = new Wave(irSignal.toModulatedIrSequence(true, commandLineArgs.noRepeats, true), commandLineArgs.sampleFrequency, commandLineArgs.sampleSize,
+                        commandLineArgs.stereo ? 2 : 1, false /* bigEndian */,
+                        commandLineArgs.omitTail, commandLineArgs.square, !commandLineArgs.dontDivide);
+                wave.export(file);
+                if (commandLineArgs.play)
+                    wave.play();
+            }
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException | IrpMasterException ex) {
+            System.err.println(ex.getMessage());
+            System.exit(IrpUtils.exitFatalProgramFailure);
+        }
+    }
+
+    private int noFrames = -1;
+    private AudioFormat audioFormat;
+    private byte[] buf;
 
     private Wave() {
     }
@@ -92,7 +220,7 @@ public class Wave {
             throws IncompatibleArgumentException {
         if (data == null || data.length == 0)
             throw new IncompatibleArgumentException("Cannot create wave file from zero array.");
-        double sf = ((double)sampleFrequency)/1000000.0;
+        double sf = sampleFrequency/1000000.0;
 
         int[] durationsInSamplePeriods = new int[omitTail ? data.length-1 : data.length];
         int length = 0;
@@ -101,13 +229,13 @@ public class Wave {
             length += durationsInSamplePeriods[i];
         }
 
-        double c = ((double)sampleFrequency)/((double)freq);
+        double c = sampleFrequency/freq;
         buf = new byte[length*sampleSize/8*channels];
         int index = 0;
         for (int i = 0; i < data.length-1; i += 2) {
             // Handle pulse, even index
             for (int j = 0; j < durationsInSamplePeriods[i]; j++) {
-                double t = ((double)j)/(divide ? 2*c : c);
+                double t = j/(divide ? 2*c : c);
                 double fraq = t - (int)t;
                 double s = square
                         ? (fraq < 0.5 ? -1.0 : 1.0)
@@ -264,7 +392,7 @@ public class Wave {
         }
 
         // Search the largest block of oscillations
-        ArrayList<Integer> durations = new ArrayList<>();
+        ArrayList<Integer> durations = new ArrayList<>(noFrames);
         int bestLength = -1; // length of longest block this far
         int bestStart = -1;
         boolean isInInterestingBlock = true;
@@ -290,20 +418,20 @@ public class Wave {
                     bestLength = currentLength;
                     bestStart = beg;
                 }
-                durations.add((int)Math.round(((double)currentLength)/sampleFrequency*1000000.0));
+                durations.add((int)Math.round(currentLength/sampleFrequency*1000000.0));
                 beg = i;
             } else if (Math.abs(value) > epsilon && !isInInterestingBlock) {
                 // Interesting  block starts
                 isInInterestingBlock = true;
                 int currentLength = i - 1 - beg;
-                durations.add((int) Math.round(((double)currentLength)/sampleFrequency*1000000.0));
+                durations.add((int) Math.round(currentLength/sampleFrequency*1000000.0));
                 beg = i;
             }
 
             last = value;
         }
         if (!isInInterestingBlock && noFrames - beg > 1)
-            durations.add((int)Math.round(((double)(noFrames - beg))/sampleFrequency*1000000.0));
+            durations.add((int)Math.round((noFrames - beg)/sampleFrequency*1000000.0));
         if (durations.size() % 2 == 1)
             durations.add(0);
 
@@ -319,7 +447,7 @@ public class Wave {
                 last = value;
             }
         }
-        double carrierFrequency = (divide ? 2 : 1)*((double)(sampleFrequency *  signchanges))/((double) (2*bestLength));
+        double carrierFrequency = (divide ? 2 : 1)*sampleFrequency *  signchanges/(2*bestLength);
         System.err.println("Carrier frequency estimated to " + Math.round(carrierFrequency) + " Hz.");
 
         int arr[] = new int[durations.size()];
@@ -347,24 +475,20 @@ public class Wave {
      *
      * @param dumpfile Output file.
      * @throws FileNotFoundException
-     * @throws UnsupportedEncodingException
      */
-    public void dump(File dumpfile) throws FileNotFoundException, UnsupportedEncodingException {
+    public void dump(File dumpfile) throws FileNotFoundException {
         int data[][] = computeData();
         double sampleRate = audioFormat.getSampleRate();
         int channels = audioFormat.getChannels();
-        PrintStream stream = null;
-        try {
-            stream = new PrintStream(dumpfile, IrpUtils.dumbCharsetName);
+        try (PrintStream stream = new PrintStream(dumpfile, IrpUtils.dumbCharsetName)) {
+            for (int i = 0; i < noFrames; i++) {
+                stream.print(String.format("%d\t%8.6f\t", i, i / sampleRate));
+                for (int ch = 0; ch < channels; ch++)
+                    stream.print(data[i][ch] + (ch < channels - 1 ? "\t" : "\n"));
+            }
         } catch (UnsupportedEncodingException ex) {
-            return;
+            throw new InternalError();
         }
-        for (int i = 0; i < noFrames; i++) {
-            stream.print(String.format("%d\t%8.6f\t", i, ((double)i)/sampleRate));
-            for (int ch = 0; ch < channels; ch++)
-                stream.print(data[i][ch] + (ch < channels - 1 ? "\t" : "\n"));
-        }
-        stream.close();
     }
 
     /**
@@ -383,20 +507,6 @@ public class Wave {
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
-    }
-
-    /**
-     * Returns a line to the audio mixer on the local machine, suitable for sound with
-     * the parameter values given. When not needed, the user should close the line with its close()-function.
-     *
-     * @param audioFormat
-     * @return open audio line
-     * @throws LineUnavailableException
-     */
-    public static SourceDataLine getLine(AudioFormat audioFormat) throws LineUnavailableException {
-        SourceDataLine line = AudioSystem.getSourceDataLine(audioFormat);
-        line.open(audioFormat);
-        return line;
     }
 
    /**
@@ -423,20 +533,6 @@ public class Wave {
             line.open(audioFormat);
             play(line);
         }
-    }
-
-    private static void usage(int exitcode) {
-        StringBuilder str = new StringBuilder();
-        argumentParser.usage(str);
-
-        str.append("\n"
-                + "parameters: <protocol> <deviceno> [<subdevice_no>] commandno [<toggle>]\n"
-                + "   or       <Pronto code>\n"
-                + "   or       <importfile>");
-
-        (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
-
-        System.exit(exitcode);
     }
 
     private final static class CommandLineArgs {
@@ -480,106 +576,6 @@ public class Wave {
         boolean versionRequested;
 
         @Parameter(description = "[parameters]")
-        private ArrayList<String> parameters = new ArrayList<>();
-    }
-
-    private static JCommander argumentParser;
-    private static CommandLineArgs commandLineArgs = new CommandLineArgs();
-
-   /**
-     * Provides a command line interface to the export/import functions.
-     *
-<pre>
-  Usage: Wave [options] [parameters]
-  Options:
-    -c, --config            Path to IrpProtocols.ini
-                            Default: data/IrpProtocols.ini
-    -h, --help, -?          Display help message
-                            Default: false
-    -m, --macrofile         Macro filename
-    -1, --nodivide          Do not divide modulation frequency
-                            Default: false
-    -t, --omittail          Skip silence at end
-                            Default: false
-    -o, --outfile           Output filename
-                            Default: irpmaster.wav
-    -p, --play              Send the generated wave to the audio device of the
-                            local machine
-                            Default: false
-    -r, --repeats           Number of times to include the repeat sequence
-                            Default: 0
-    -f, --samplefrequency   Sample frequency in Hz
-                            Default: 44100
-    -q, --square            Modulate with square wave instead of sine
-                            Default: false
-    -S, --stereo            Generate two channels in anti-phase
-                            Default: false
-    -v, --version           Display version information
-                            Default: false
-    -s, samplesize          Sample size in bits
-                            Default: 8
-
-parameters: <em>protocol</em> <em>deviceno</em> [<em>subdevice_no</em>] <em>commandno</em> [<em>toggle</em>]
-   or       <em>ProntoCode</em>
-   or       <em>importfile</em>
-  </pre>
-  * @param args
-  */
-    public static void main(String[] args) {
-        argumentParser = new JCommander(commandLineArgs);
-        argumentParser.setProgramName("Wave");
-
-        try {
-            argumentParser.parse(args);
-        } catch (ParameterException ex) {
-            System.err.println(ex.getMessage());
-            usage(IrpUtils.exitUsageError);
-        }
-
-        if (commandLineArgs.helpRequensted)
-            usage(IrpUtils.exitSuccess);
-
-        if (commandLineArgs.versionRequested) {
-            System.out.println(Version.versionString);
-            System.out.println("JVM: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version") + " " + System.getProperty("os.name") + "-" + System.getProperty("os.arch"));
-            System.out.println();
-            System.out.println(Version.licenseString);
-            System.exit(IrpUtils.exitSuccess);
-        }
-
-        if (commandLineArgs.macrofile == null && commandLineArgs.parameters.isEmpty()) {
-            System.err.println("Parameters missing");
-            usage(IrpUtils.exitUsageError);
-        }
-
-         try {
-             if (commandLineArgs.parameters.size() == 1) {
-                 // Exactly one argument left -> input wave file
-                 String inputfile = commandLineArgs.parameters.get(0);
-                 Wave wave = new Wave(new File(inputfile));
-                 ModulatedIrSequence seq = wave.analyze(!commandLineArgs.dontDivide);
-                 //IrSignal irSignal = new
-                 DecodeIR.invoke(seq);
-                 wave.dump(new File(inputfile + ".tsv"));
-                 if (commandLineArgs.play)
-                     wave.play();
-             } else {
-                 //if (commandLineArgs.macrofile != null) {
-                     //IrSequence irSequence = IrSequence.parseMacro(commandLineArgs.irprotocolsIniFilename, commandLineArgs.macrofile);
-                     //Wave wave = new Wave()
-                 //}
-                 IrSignal irSignal = new IrSignal(commandLineArgs.irprotocolsIniFilename, 0, commandLineArgs.parameters.toArray(new String[commandLineArgs.parameters.size()]));
-                 File file = new File(commandLineArgs.outputfile);
-                 Wave wave = new Wave(irSignal.toModulatedIrSequence(true, commandLineArgs.noRepeats, true), commandLineArgs.sampleFrequency, commandLineArgs.sampleSize,
-                         commandLineArgs.stereo ? 2 : 1, false /* bigEndian */,
-                         commandLineArgs.omitTail, commandLineArgs.square, !commandLineArgs.dontDivide);
-                 wave.export(file);
-                 if (commandLineArgs.play)
-                     wave.play();
-             }
-        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException | IrpMasterException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitFatalProgramFailure);
-        }
+        private ArrayList<String> parameters = new ArrayList<>(64);
     }
 }

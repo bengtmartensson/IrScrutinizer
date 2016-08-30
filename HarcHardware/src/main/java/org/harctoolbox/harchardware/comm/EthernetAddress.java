@@ -23,18 +23,6 @@ package org.harctoolbox.harchardware.comm;
 public class EthernetAddress {
     public final static int noBytes = 6;
     public final static String separator = ":";
-    private byte[] data;
-
-    public EthernetAddress(byte[] data) throws InvalidEthernetAddressException {
-        if (data.length != noBytes)
-            throw new InvalidEthernetAddressException();
-        this.data = new byte[noBytes];
-        System.arraycopy(data, 0, this.data, 0, noBytes);
-    }
-
-    public EthernetAddress(String str) throws InvalidEthernetAddressException {
-        this(parse(str));
-    }
 
     private static byte[] parse(String str) throws InvalidEthernetAddressException {
         try {
@@ -57,6 +45,19 @@ public class EthernetAddress {
         }
     }
 
+    private byte[] data;
+
+    public EthernetAddress(byte[] data) throws InvalidEthernetAddressException {
+        if (data.length != noBytes)
+            throw new InvalidEthernetAddressException();
+        this.data = new byte[noBytes];
+        System.arraycopy(data, 0, this.data, 0, noBytes);
+    }
+
+    public EthernetAddress(String str) throws InvalidEthernetAddressException {
+        this(parse(str));
+    }
+
     public byte[] toBytes() {
         byte[] answer = new byte[noBytes];
         System.arraycopy(data, 0, answer, 0, noBytes);
@@ -65,12 +66,12 @@ public class EthernetAddress {
 
     // I hate this...
     private int byte2uint(byte b) {
-        return b >= 0 ? (int) b : b + 256;
+        return b >= 0 ? b : b + 256;
     }
 
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(32);
         for (int i = 0; i < noBytes; i++) {
             str.append(Integer.toHexString(byte2uint(data[i])));
             if (i < noBytes - 1)

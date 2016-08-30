@@ -41,6 +41,26 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
     public final static String globalCacheIrDatabaseHost = "irdatabase.globalcache.com";
     private final static String path = "/api/v1/";
     private final static String globalCacheDbOrigin = globalCacheIrDatabaseHost;
+
+    private static String httpEncode(String s) throws UnsupportedEncodingException {
+        return URLEncoder.encode(s, "utf-8").replaceAll("\\+", "%20");
+    }
+
+    public static void main(String[] args) {
+        Props props = new Props(null);
+        Importer.setProperties(props);
+        try {
+            GlobalCacheIrDatabase gcdb = new GlobalCacheIrDatabase(props.getGlobalCacheApiKey(), true);
+            System.out.println(gcdb.getManufacturers());
+            System.out.println(gcdb.getDeviceTypes("philips"));
+            //System.out.println(gcdb.getDeviceTypes("bell & howell"));
+            System.out.println(gcdb.getCodeset("sony", "laser disc"));
+            System.out.println(gcdb.getCommands("sony", "laser disc", "201"));
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
     private boolean verbose = false;
 
     //private transient Proxy proxy = Proxy.NO_PROXY;
@@ -51,6 +71,11 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
     private String deviceType;
     //private String codeSet;
     private RemoteSet remoteSet;
+    public GlobalCacheIrDatabase(String apiKey, boolean verbose) {
+        super(globalCacheDbOrigin);
+        this.apiKey = apiKey;
+        this.verbose = verbose;
+    }
 
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
@@ -66,7 +91,7 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
 
     private HashMap<String, String> getMap(String urlFragment, String keyName, String valueName) throws IOException {
         JsonArray array = getJsonArray(urlFragment);
-        HashMap<String,String> map = new HashMap<>();
+        HashMap<String,String> map = new HashMap<>(64);
         for (JsonValue val : array) {
             JsonObject obj = val.asObject();
             map.put(obj.get(keyName).asString(), obj.get(valueName).asString());
@@ -123,11 +148,12 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
                     "GCDB: " + manufacturer + "/" + deviceType + "/" + codeSet, irSignal);
             addCommand(cmd);
         }
-        Remote.MetaData metaData = new Remote.MetaData(manufacturer + "_" + deviceType + "_" + codeSet, //java.lang.String name,
+        Remote.MetaData metaData = new Remote.MetaData(manufacturer + "_" + deviceType + "_" + codeSet, // name,
+                null, // displayName
                 manufacturer,
-                null, //java.lang.String model,
-                deviceType, //java.lang.String deviceClass,
-                null //java.lang.String remoteName,
+                null, // model,
+                deviceType, // deviceClass,
+                null // remoteName,
         );
         Remote remote = new Remote(metaData,
                 null, //java.lang.String comment,
@@ -139,34 +165,9 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
         remoteSet = new RemoteSet(getCreatingUser(), origin, remote);
     }
 
-    private static String httpEncode(String s) throws UnsupportedEncodingException {
-        return URLEncoder.encode(s, "utf-8").replaceAll("\\+", "%20");
-    }
-
-    public GlobalCacheIrDatabase(String apiKey, boolean verbose) {
-        super(globalCacheDbOrigin);
-        this.apiKey = apiKey;
-        this.verbose = verbose;
-    }
-
     @Override
     public RemoteSet getRemoteSet() {
         return remoteSet;
-    }
-
-    public static void main(String[] args) {
-        Props props = new Props(null);
-        Importer.setProperties(props);
-        try {
-            GlobalCacheIrDatabase gcdb = new GlobalCacheIrDatabase(props.getGlobalCacheApiKey(), true);
-            System.out.println(gcdb.getManufacturers());
-            System.out.println(gcdb.getDeviceTypes("philips"));
-            //System.out.println(gcdb.getDeviceTypes("bell & howell"));
-            System.out.println(gcdb.getCodeset("sony", "laser disc"));
-            System.out.println(gcdb.getCommands("sony", "laser disc", "201"));
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
     }
 
     @Override

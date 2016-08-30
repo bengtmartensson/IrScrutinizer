@@ -21,7 +21,7 @@ import java.awt.Cursor;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import org.harctoolbox.harchardware.HarcHardwareException;
@@ -31,11 +31,8 @@ import org.harctoolbox.harchardware.comm.LocalSerialPort;
 /**
  *
  */
-public class SerialPortSimpleBean extends javax.swing.JPanel {
+public class SerialPortSimpleBean extends javax.swing.JPanel implements ISendingReceivingBean {
     private static final int defaultBaudRate = 9600;
-    public static final String PROP_VERSION = "PROP_VERSION";
-    public static final String PROP_BAUD = "PROP_BAUD";
-    public static final String PROP_ISOPEN = "PROP_ISOPEN";
     private static final String notInitialized = "not initialized";
 
     private String portName;
@@ -64,7 +61,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
         listenable = false;
         DefaultComboBoxModel<String> model;
         try {
-            ArrayList<String> portList = LocalSerialPort.getSerialPortNames(true);
+            List<String> portList = LocalSerialPort.getSerialPortNames(true);
             model = new DefaultComboBoxModel<>(portList.toArray(new String[portList.size()]));
         } catch (IOException | LinkageError ex) {
             model =  new DefaultComboBoxModel<>(new String[]{ initialPort != null ? initialPort : notInitialized });
@@ -81,15 +78,15 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
                 }
             }
         }
+        String actualPort = initialPort;
         if (!hit) {
             // Got a problem here, want to select a port that is not there, at least not now
             if (model.getSize() > 0) {
                 portComboBox.setSelectedIndex(0);
-                initialPort = (String) portComboBox.getItemAt(0);
+                actualPort = portComboBox.getItemAt(0);
             }
-
         }
-        setPortName(initialPort);
+        setPortName(actualPort);
         setBaudRateUnconditionally(initialBaud);
         this.settableBaudRate = settableBaudRate;
         baudComboBox.setEnabled(settableBaudRate);
@@ -114,7 +111,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
         String oldPort = this.portName;
         this.portName = portName;
         // this propery changer should set up the hardware and call setHardware()
-        propertyChangeSupport.firePropertyChange(PROP_PORT, oldPort, portName);
+        propertyChangeSupport.firePropertyChange(PROP_PORTNAME, oldPort, portName);
     }
 
     /**
@@ -154,12 +151,12 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
     }
 
     private void setVersion(String version) {
-        java.lang.String oldVersion = this.version;
+        //java.lang.String oldVersion = this.version;
         this.version = version;
         versionLabel.setEnabled(hardware.isValid());
         versionLiteralLabel.setEnabled(hardware.isValid());
         versionLabel.setText(version);
-        propertyChangeSupport.firePropertyChange(PROP_VERSION, oldVersion, version);
+        //propertyChangeSupport.firePropertyChange(PROP_VERSION, oldVersion, version);
     }
 
     private void setVersion() {
@@ -184,10 +181,9 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
     }
 
     private final transient PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
-    public static final String PROP_PORT = "PROP_PORT";
 
     public void setup(String desiredPort) throws IOException {
-        ComboBoxModel model = portComboBox.getModel();
+        ComboBoxModel<String> model = portComboBox.getModel();
         if (model == null || model.getSize() == 0 || ((model.getSize() == 1) && ((String)portComboBox.getSelectedItem()).equals(notInitialized)))
             setupPortComboBox(true);
 
@@ -198,7 +194,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
         if (hardware != null)
             hardware.close();
 
-        ArrayList<String> portNames = LocalSerialPort.getSerialPortNames(useCached);
+        List<String> portNames = LocalSerialPort.getSerialPortNames(useCached);
         portNames.add(0, "");
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(portNames.toArray(new String[portNames.size()]));
         portComboBox.setModel(model);
@@ -259,7 +255,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
         openToggleButton = new javax.swing.JToggleButton();
         versionLiteralLabel = new javax.swing.JLabel();
         versionLabel = new javax.swing.JLabel();
-        baudComboBox = new javax.swing.JComboBox();
+        baudComboBox = new javax.swing.JComboBox<>();
         baudRateLabel = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(800, 80));
@@ -303,7 +299,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
         versionLabel.setEnabled(false);
         versionLabel.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 
-        baudComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "115200", "57600", "38400", "19200", "9600", "4800", "2400", "1200" }));
+        baudComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "115200", "57600", "38400", "19200", "9600", "4800", "2400", "1200" }));
         baudComboBox.setSelectedItem("9600");
         baudComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -390,11 +386,11 @@ public class SerialPortSimpleBean extends javax.swing.JPanel {
     }//GEN-LAST:event_baudComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox baudComboBox;
+    private javax.swing.JComboBox<String> baudComboBox;
     private javax.swing.JLabel baudRateLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JToggleButton openToggleButton;
-    private javax.swing.JComboBox portComboBox;
+    private javax.swing.JComboBox<String> portComboBox;
     private javax.swing.JButton refreshButton;
     private javax.swing.JLabel versionLabel;
     private javax.swing.JLabel versionLiteralLabel;

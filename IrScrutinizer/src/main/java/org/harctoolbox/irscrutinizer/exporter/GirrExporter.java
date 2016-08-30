@@ -37,7 +37,7 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     private boolean generateRaw;
     private boolean generateCcf;
     private boolean generateParameters;
-    Command.CommandTextFormat[] extraFormats;
+    private Command.CommandTextFormat[] extraFormats;
 
     private GirrExporter() {
         super();
@@ -84,6 +84,11 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
 
     @Override
     public boolean supportsEmbeddedFormats() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsMetaData() {
         return true;
     }
 }

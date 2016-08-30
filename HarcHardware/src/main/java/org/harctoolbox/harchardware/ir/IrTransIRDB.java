@@ -28,6 +28,72 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 public class IrTransIRDB extends IrTrans implements IRemoteCommandIrSender {
     private final static String sendFlashedCommandAck = "**00018 RESULT OK";
 
+    public static String makeUrl(String hostname, String remote, String command, Led led) {
+        return "http://" + (hostname != null ? hostname : defaultIrTransIP)
+                + "/send.htm?remote=" + remote + "&command=" + command + "&led=" + Led.ledChar(led);
+    }
+
+    //@Override
+    //public boolean stopIr(String remote, String command, Transmitter transmitter) {
+    //    return stopIr(transmitter);
+    //}
+
+    private static void usage(int exitstatus) {
+        System.err.println("Usage:");
+        System.err.println("\tIrTrans [-v][-h <hostname>] -r [<remotename>]");
+        //System.err.println("\tIrTrans [-v][-h <hostname>] listenfile");
+        doExit(exitstatus);
+    }
+
+    private static void doExit(int exitcode) {
+        System.exit(exitcode);
+    }
+
+    public static void main(String args[]) {
+        boolean verbose = false;
+        String IrTransHost = defaultIrTransIP;
+        String configfilename = "listen.xml";
+
+        int optarg = 0;
+        if (args.length > optarg && args[optarg].equals("-v")) {
+            optarg++;
+            verbose = true;
+        }
+        if (args.length > optarg + 1 && args[optarg].equals("-h")) {
+            IrTransHost = args[optarg + 1];
+            optarg += 2;
+        }
+
+        try {
+            IrTransIRDB irt = new IrTransIRDB(IrTransHost, verbose, defaultTimeout, IrTrans.Interface.tcpAscii);
+            if (verbose)
+                System.out.println(irt.getVersion());
+
+            if (args.length > optarg && args[optarg].equals("-r")) {
+                if (args.length == optarg + 1) {
+                    String[] remotes = irt.getRemotes();
+                    for (String remote : remotes) {
+                        System.err.println(remote);
+                    }
+                } else {
+                    String remote = args[optarg + 1];
+                    String[] commands = irt.getCommands(remote);
+                    for (String command : commands) {
+                        System.err.println(command);
+                    }
+                }
+            } else if (args.length > optarg && args[optarg].equals("-c")) {
+                StringBuilder ccf = new StringBuilder(128);
+                for (int i = optarg+1; i < args.length; i++)
+                    ccf.append(' ').append(args[i]);
+                irt.sendCcf(ccf.toString(), 1, Led.intern);
+            }
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            usage(IrpUtils.exitUsageError);
+        }
+    }
+
     public IrTransIRDB(String hostname, boolean verbose, int timeout, Interface interfaze) throws UnknownHostException {
         super(hostname, verbose, timeout, interfaze);
     }
@@ -54,7 +120,7 @@ public class IrTransIRDB extends IrTrans implements IRemoteCommandIrSender {
         PrintStream outToServer = new PrintStream(sock.getOutputStream(), false, IrpUtils.dumbCharsetName);
         BufferedReader inFromServer = new BufferedReader(new InputStreamReader(sock.getInputStream(), IrpUtils.dumbCharset));
 
-        ArrayList<String> items = new ArrayList<>();
+        ArrayList<String> items = new ArrayList<>(64);
         try {
             outToServer.print("ASCI");
             try {
@@ -107,10 +173,6 @@ public class IrTransIRDB extends IrTrans implements IRemoteCommandIrSender {
         return getTable("Agetcommands " + remote + ",");
     }
 
-    public static String makeUrl(String hostname, String remote, String command, Led led) {
-        return "http://" + (hostname != null ? hostname : defaultIrTransIP)
-                + "/send.htm?remote=" + remote + "&command=" + command + "&led=" + Led.ledChar(led);
-    }
 
     public String makeUrl(String remote, String command, Led led) {
         return makeUrl(this.irTransIP, remote, command, led);
@@ -174,66 +236,5 @@ public class IrTransIRDB extends IrTrans implements IRemoteCommandIrSender {
      private boolean sendFlashedCommandUdp(String remote, String command,
             Led led, boolean repeat) throws IOException {
         return sendCommandUdp("snd" + (repeat ? "r" : "") + " " + remote + "," + command + "," + Led.ledChar(led));
-    }
-
-    //@Override
-    //public boolean stopIr(String remote, String command, Transmitter transmitter) {
-    //    return stopIr(transmitter);
-    //}
-
-    private static void usage(int exitstatus) {
-        System.err.println("Usage:");
-        System.err.println("\tIrTrans [-v][-h <hostname>] -r [<remotename>]");
-        //System.err.println("\tIrTrans [-v][-h <hostname>] listenfile");
-        doExit(exitstatus);
-    }
-
-    private static void doExit(int exitcode) {
-        System.exit(exitcode);
-    }
-
-    public static void main(String args[]) {
-        boolean verbose = false;
-        String IrTransHost = defaultIrTransIP;
-        String configfilename = "listen.xml";
-
-        int optarg = 0;
-        if (args.length > optarg && args[optarg].equals("-v")) {
-            optarg++;
-            verbose = true;
-        }
-        if (args.length > optarg + 1 && args[optarg].equals("-h")) {
-            IrTransHost = args[optarg + 1];
-            optarg += 2;
-        }
-
-        try {
-            IrTransIRDB irt = new IrTransIRDB(IrTransHost, verbose, defaultTimeout, IrTrans.Interface.tcpAscii);
-            if (verbose)
-                System.out.println(irt.getVersion());
-
-            if (args.length > optarg && args[optarg].equals("-r")) {
-                if (args.length == optarg + 1) {
-                    String[] remotes = irt.getRemotes();
-                    for (String remote : remotes) {
-                        System.err.println(remote);
-                    }
-                } else {
-                    String remote = args[optarg + 1];
-                    String[] commands = irt.getCommands(remote);
-                    for (String command : commands) {
-                        System.err.println(command);
-                    }
-                }
-            } else if (args.length > optarg && args[optarg].equals("-c")) {
-                StringBuilder ccf = new StringBuilder();
-                for (int i = optarg+1; i < args.length; i++)
-                    ccf.append(' ').append(args[i]);
-                irt.sendCcf(ccf.toString(), 1, Led.intern);
-            }
-        } catch (IOException e) {
-             System.err.println(e.getMessage());
-            usage(IrpUtils.exitUsageError);
-        }
     }
 }

@@ -38,6 +38,7 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
     private String portName;
     private int baudRate;
     private Class<T> clazz;
+    private T rawIrSender;
 
     public SendingSerial(final Class<T> clazz, JPanel panel, SerialPortSimpleBean serialPortSimpleBean, Props props, GuiUtils guiUtils_) {
         super(panel, props, guiUtils_);
@@ -51,15 +52,15 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
                 String propertyName = evt.getPropertyName();
                 try {
                     switch (propertyName) {
-                        case SerialPortSimpleBean.PROP_VERSION:
-                            break;
-                        case SerialPortSimpleBean.PROP_PORT:
+                        //case SerialPortSimpleBean.PROP_VERSION:
+                        //    break;
+                        case SerialPortSimpleBean.PROP_PORTNAME:
                             if (evt.getNewValue() == null)
                                 return;
-                            setupSerial();
+                            setup();
                             break;
                         case SerialPortSimpleBean.PROP_BAUD:
-                            setupSerial();
+                            setup();
                             break;
                         case SerialPortSimpleBean.PROP_ISOPEN:
                             break;
@@ -74,7 +75,8 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
         });
     }
 
-    private void setupSerial() throws IOException {
+    @Override
+    public void setup() throws IOException {
         int newBaud = serialPortSimpleBean.getBaudRate();
         String newPort = serialPortSimpleBean.getPortName();
         if (newPort == null || (rawIrSender != null && newPort.equals(portName) && (baudRate == newBaud)))
@@ -103,12 +105,12 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
     }
 
     @Override
-    public void setup() throws IOException {
-        setupSerial();
+    public String getName() {
+        return clazz.getSimpleName();
     }
 
     @Override
-    public String getName() {
-        return clazz.getSimpleName();
+    public T getRawIrSender() {
+        return rawIrSender;
     }
 }

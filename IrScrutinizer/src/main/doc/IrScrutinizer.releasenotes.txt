@@ -1,6 +1,73 @@
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/harctoolboxbundle/issues
 
+Version 1.3
+
+Open issues in this release:
+  * "Open last file" may invoke new instance of IrScrutinizer, #149.
+  * MacOS 10.11.4: Crash in RXTX when closing serial USB device, #64.
+
+User visible changes:
+Porting:
+- Raspberry Pi (armv7 hard FP) is now supported.
+
+GUI:
+- The panes "Sending hw" and "Capturing hw" have been interchanged (also in the manual) #150.
+- There is now a confirmation dialog if exiting with non-empty remote tables, #86
+- Improvements on metadata inquiry for remote exports. #89
+- Files to be imported can now be given as command line arguments. #112
+  This allows .girr files to be associated with IrScrutinizer.
+- Many files can can be plotted by dropping on "Scrutinize signal"; #127
+- "Paste selection" in data window on Scrutinize signal fixed #136
+- Editing of timing data in Raw Remote table now implemented #144
+- Alt-R(Alt-P) now accelerators for selecting raw(Pronto) output.
+- Save current pane to properties. Get "Jump to last panel" fully working.
+- Generate-pane: T and "Additional parameters" now saved in properties.
+- (Somewhat) better error handling and error messages.
+
+Generate:
+- Selecting non-toggling protocol now resets T in Generate pane #135.
+- Option "Disregard repat mins" now takes effect without program restart #138
+
+Protocols:
+- "new" protocols: NEC1-msb, NEC1-32-msb.
+- Fixed protocols:-Nokia32 (now really toggles, #140)
+                   NECx1: wrong default for S
+                   Sony8: Crazy trailing gap
+                   Thompson: fixed handling of F
+                   Roku-Official: fix parameterspec (upper bound) for F.
+                   PCTV: removed silly 0 durations.
+                   Revox: Set frequency to 0.
+                   G.I.4DTV: removed C from parameter spec.
+
+Import:
+- Many file types can now be imported by "dropped" on the GUI; #111
+- Signals can now be imported to the parametric table even if the protocol
+  is empty or nonsensical, #120
+- mode2-import (Lirc) now has its own subpane under Import #121
+- GlobalCache Control Tower data base (http://irdb.globalcache.com/)
+  can now be "browsed", however not directly imported. #129
+- LircClient now has its own timeout (Options -> Timeouts -> Lirc timeout)
+- GirrImport is now capable to import directory hierarchies.
+- IRDB import: at the initial load, load the first device too.
+
+Export:
+- Fixed problem exporting multiple irplus files #139
+- Fixed unwanted case sensitivity on protocol names for Lirc export; #142.
+- Replace the Java implementation of LircExporter by an XSLT-implementation in exportformats.xml.
+
+Core:
+- The repeat finder of ExchangeIR has been implemented by a own implementation,
+  believed to be more reliable and maintainable. #21
+- Robustness improvements in parsing strings on "scrutinize signal/scrutinize; #123
+
+Hardware support:
+- "Arduino support" has been replaced by "general Girs support"; #24
+- Suitable hardware may now be opened both for capturing and sending, #54
+- (Linux only) Devices on /dev/lirc now supported for sending and receiving; #122
+- Better timeout handling for some hardware.
+
+=================================================================================
 Version 1.2
 Open Issues:
   * MacOS 10.11.4: Crash in RXTX when closing serial USB device, #64.
@@ -36,7 +103,7 @@ GUI:
 - Store last used import format persistently in properties. #108
 - Handle attempts to hide non-existing columns more gracefully.
 - Middle mouse in the scrutinze-remote tables now transmits the signal
-  under the mouse. 
+  under the mouse.
 - Barf on no and multiple selections in some table functions.
 - Update the GUI menus after reloading export format data base (#83).
 - Issue confirmation if Girr-exporting with "everything" deselected.
@@ -79,7 +146,7 @@ Export:
 - LircExport: do not bail out for single silly signals; set explicitly
   frequency for NEC1 and RC5 Lirc export.
 - NPE in IrScrutinizer when exporting an exotic Pronto code #77.
-- Girr: do not give up completely on non-renderable signals #69 
+- Girr: do not give up completely on non-renderable signals #69
 
 Import:
 - Improved error message for parse errors.

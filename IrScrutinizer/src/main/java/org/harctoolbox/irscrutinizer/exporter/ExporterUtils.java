@@ -21,7 +21,7 @@ package org.harctoolbox.irscrutinizer.exporter;
  * Static support functions intended to be called from XSLT transformations.
  */
 public class ExporterUtils {
-    private static String formattingCode = "%02X";
+    private static final String formattingCode = "%02X";
 
     public static int reverse(int n, int bits) {
         int mask = (1 << bits) - 1;

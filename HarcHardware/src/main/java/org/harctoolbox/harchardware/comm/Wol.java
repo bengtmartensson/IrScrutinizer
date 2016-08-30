@@ -34,17 +34,44 @@ import org.harctoolbox.harchardware.misc.Ethers;
 public class Wol {
 
     private static Ethers ethers = null;
-    private EthernetAddress ethernetAddress;
-    private boolean verbose = false;
     public final static String defaultIP = "255.255.255.255";
     public final static int defaultPort = 9;
+
+    public static void wol(String str) throws IOException, FileNotFoundException, FileNotFoundException, HarcHardwareException {
+        (new Wol(str)).wol();
+    }
+
+    public static void wol(String str, boolean verbose) throws IOException, FileNotFoundException, FileNotFoundException, HarcHardwareException {
+        (new Wol(str, verbose)).wol();
+    }
+
+    public static void wol(String str, boolean verbose, InetAddress ip) throws IOException, FileNotFoundException, FileNotFoundException, HarcHardwareException {
+        (new Wol(str, verbose, ip)).wol();
+    }
+
+    public static void wol(String str, boolean verbose, InetAddress ip, int port) throws IOException, FileNotFoundException, FileNotFoundException, HarcHardwareException {
+        (new Wol(str, verbose, ip, port)).wol();
+    }
+
+    public static void main(String[] args) {
+        try {
+            int arg_i = 0;
+            if (args[arg_i].equals("-f")) {
+                arg_i++;
+                String ethersPath = args[arg_i++];
+                Ethers.setPathname(ethersPath);
+            }
+            String thing = args[arg_i];
+            wol(thing, true);
+        } catch (IOException | HarcHardwareException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    private EthernetAddress ethernetAddress;
+    private boolean verbose = false;
     private InetAddress ip;
     private final int port;
-
-    private synchronized void setupEthers() throws FileNotFoundException {
-        if (ethers == null)
-            ethers = new Ethers();
-    }
 
     public Wol(String str) throws FileNotFoundException, HarcHardwareException {
         this(str, false, null, defaultPort);
@@ -94,20 +121,9 @@ public class Wol {
         }
     }
 
-    public static void wol(String str) throws IOException, FileNotFoundException, FileNotFoundException, HarcHardwareException {
-        (new Wol(str)).wol();
-    }
-
-    public static void wol(String str, boolean verbose) throws IOException, FileNotFoundException, FileNotFoundException, HarcHardwareException {
-        (new Wol(str, verbose)).wol();
-    }
-
-    public static void wol(String str, boolean verbose, InetAddress ip) throws IOException, FileNotFoundException, FileNotFoundException, HarcHardwareException {
-        (new Wol(str, verbose, ip)).wol();
-    }
-
-    public static void wol(String str, boolean verbose, InetAddress ip, int port) throws IOException, FileNotFoundException, FileNotFoundException, HarcHardwareException {
-        (new Wol(str, verbose, ip, port)).wol();
+    private synchronized void setupEthers() throws FileNotFoundException {
+        if (ethers == null)
+            ethers = new Ethers();
     }
 
     @Override
@@ -139,21 +155,6 @@ public class Wol {
             byte[] wakeupFrame = createWakeupFrame();
             DatagramPacket packet = new DatagramPacket(wakeupFrame, wakeupFrame.length, ip, port);
             socket.send(packet);
-        }
-    }
-
-    public static void main(String[] args) {
-        try {
-            int arg_i = 0;
-            if (args[arg_i].equals("-f")) {
-                arg_i++;
-                String ethersPath = args[arg_i++];
-                Ethers.setPathname(ethersPath);
-            }
-            String thing = args[arg_i];
-            wol(thing, true);
-        } catch (IOException | HarcHardwareException ex) {
-            System.err.println(ex.getMessage());
         }
     }
 }

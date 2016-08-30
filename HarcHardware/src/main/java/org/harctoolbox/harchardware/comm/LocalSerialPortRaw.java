@@ -17,15 +17,48 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.harchardware.comm;
 
-import org.harctoolbox.harchardware.misc.SonySerialCommand;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import org.harctoolbox.harchardware.Utils;
+import org.harctoolbox.harchardware.misc.SonySerialCommand;
 
 public final class LocalSerialPortRaw extends LocalSerialPort implements IBytesCommand {
+
+    public static void main(String[] args) {
+        ArrayList<String> names;
+        try {
+            names = getSerialPortNames(false);
+            for (String name : names) {
+                System.out.println(name);
+            }
+
+            LocalSerialPortRaw port = new LocalSerialPortRaw(defaultPort, 38400, 8, 1, Parity.EVEN, FlowControl.NONE, 10000, true);
+
+            if (args.length == 0) {
+                int upper = 0x1;
+                int lower = 0x13;
+                SonySerialCommand.Type type = SonySerialCommand.Type.get;
+                //byte[] cmd = SonySerialCommand.bytes(0x17, 0x15); // power toggle
+                //byte[] cmd = SonySerialCommand.bytes(0x17, 0x2f); // power off
+                byte[] cmd = SonySerialCommand.bytes(upper, lower, type); // get lamp time
+                port.sendBytes(cmd);
+                if (upper <= 1) {
+                    byte[] answer = port.readBytes(SonySerialCommand.size);
+                    for (int i = 0; i < SonySerialCommand.size; i++) {
+                        System.out.println(i + "\t" + answer[i]);
+                    }
+                    SonySerialCommand.Command response = SonySerialCommand.interpret(answer);
+                    System.out.println(response);
+                }
+                port.close();
+            }
+        } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
 
     public LocalSerialPortRaw(String portName, int baud, int length, int stopBits, Parity parity, FlowControl flowControl, int timeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         super(portName, baud, length, stopBits, parity, flowControl, timeout);
@@ -57,40 +90,6 @@ public final class LocalSerialPortRaw extends LocalSerialPort implements IBytesC
         outStream.write(b);
     }
 
-    public static void main(String[] args) {
-        ArrayList<String> names;
-        try {
-            names = getSerialPortNames(false);
-            for (String name : names) {
-                System.out.println(name);
-            }
-
-            LocalSerialPortRaw port = null;
-
-            port = new LocalSerialPortRaw(defaultPort, 38400, 8, 1, Parity.EVEN, FlowControl.NONE, 10000, true);
-
-            if (args.length == 0) {
-                int upper = 0x1;
-                int lower = 0x13;
-                SonySerialCommand.Type type = SonySerialCommand.Type.get;
-                //byte[] cmd = SonySerialCommand.bytes(0x17, 0x15); // power toggle
-                //byte[] cmd = SonySerialCommand.bytes(0x17, 0x2f); // power off
-                byte[] cmd = SonySerialCommand.bytes(upper, lower, type); // get lamp time
-                port.sendBytes(cmd);
-                if (upper <= 1) {
-                    byte[] answer = port.readBytes(SonySerialCommand.size);
-                    for (int i = 0; i < SonySerialCommand.size; i++) {
-                        System.out.println(i + "\t" + answer[i]);
-                    }
-                    SonySerialCommand.Command response = SonySerialCommand.interpret(answer);
-                    System.out.println(response);
-                }
-                port.close();
-            }
-        } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException ex) {
-            System.err.println(ex.getMessage());
-        }
-    }
 
     @Override
     public void setDebug(int debug) {

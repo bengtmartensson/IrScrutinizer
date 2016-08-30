@@ -31,24 +31,6 @@ public class OpenremoteClient {
     public static final int listenPort = 2346;
     public static final String token = "openremote";
 
-    private final String baseUrl;
-
-    public OpenremoteClient(String baseUrl) {
-        this.baseUrl = baseUrl.endsWith("/") ? baseUrl : (baseUrl + "/");
-    }
-
-    public OpenremoteClient() {
-        this(discover());
-    }
-
-    public OpenremoteClient(String host, int portnumber) {
-        this("http://" + host + ":" + portnumber + "/controller");
-    }
-
-    public String getBaseurl() {
-        return baseUrl;
-    }
-
     /** Returns the base url
      *
      * @return url base as String.
@@ -87,6 +69,35 @@ public class OpenremoteClient {
         return result;
     }
 
+    public static void main(String[] args) {
+        OpenremoteClient client = new OpenremoteClient();
+        System.out.println("Discovered " + client.getBaseurl());
+        /*if (args.length == 0)
+        System.exit(harcutils.exit_success);
+        int but = Integer.parseInt(args[0]);
+        String cmd = args.length >= 2 ? args[1] : "click";
+        client.control_command(but, cmd);*/
+        //client.get_panels();
+    }
+
+    private final String baseUrl;
+
+    public OpenremoteClient(String baseUrl) {
+        this.baseUrl = baseUrl.endsWith("/") ? baseUrl : (baseUrl + "/");
+    }
+
+    public OpenremoteClient() {
+        this(discover());
+    }
+
+    public OpenremoteClient(String host, int portnumber) {
+        this("http://" + host + ":" + portnumber + "/controller");
+    }
+
+    public String getBaseurl() {
+        return baseUrl;
+    }
+
     private int httpRequest(String shortUrl, String method) {
         int result = 0;
         try {
@@ -115,16 +126,5 @@ public class OpenremoteClient {
 
     public boolean getPanels() {
         return httpRequest("rest/panels", "GET") == HttpURLConnection.HTTP_OK;
-    }
-
-    public static void main(String[] args) {
-        OpenremoteClient client = new OpenremoteClient();
-        System.out.println("Discovered " + client.getBaseurl());
-        /*if (args.length == 0)
-            System.exit(harcutils.exit_success);
-        int but = Integer.parseInt(args[0]);
-        String cmd = args.length >= 2 ? args[1] : "click";
-        client.control_command(but, cmd);*/
-        //client.get_panels();
     }
 }

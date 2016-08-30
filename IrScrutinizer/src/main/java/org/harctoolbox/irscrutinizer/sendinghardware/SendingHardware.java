@@ -31,7 +31,6 @@ import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 import org.harctoolbox.irscrutinizer.Props;
 
 /**
- * This class does something interesting and useful. Or not...
  * @param <T>
  */
 public abstract class SendingHardware <T extends IRawIrSender & IHarcHardware> {
@@ -39,7 +38,7 @@ public abstract class SendingHardware <T extends IRawIrSender & IHarcHardware> {
     public static final String PROP_RAWIRSENDER = "PROP_RAWIRSENDER";
     public static final String PROP_VERBOSE = "PROP_VERBOSE";
     private final JPanel panel;
-    protected T rawIrSender;
+    //protected T rawIrSender;
     protected Props properties;
     protected GuiUtils guiUtils;
     //private boolean verbose;
@@ -47,7 +46,7 @@ public abstract class SendingHardware <T extends IRawIrSender & IHarcHardware> {
     //private final transient PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
 
     protected SendingHardware(JPanel panel, Props properties, GuiUtils guiUtils) {
-        this.rawIrSender = null;
+        //this.rawIrSender = null;
         this.panel = panel;
         this.properties = properties;
         this.guiUtils = guiUtils;
@@ -63,19 +62,14 @@ public abstract class SendingHardware <T extends IRawIrSender & IHarcHardware> {
     /**
      * @return the rawIrSender
      */
-    public T getRawIrSender() {
-        return rawIrSender;
-    }
+    public abstract T getRawIrSender();
 
     /**
      * @param verbose the verbose to set
      */
     public void setVerbosity(boolean verbose) {
-        //boolean oldVerbose = this.verbose;
-        //this.verbose = verbose;
-        //propertyChangeSupport.firePropertyChange(PROP_VERBOSE, oldVerbose, verbose);
-        if (rawIrSender != null)
-            rawIrSender.setVerbosity(verbose);
+        if (getRawIrSender() != null)
+            getRawIrSender().setVerbosity(verbose);
     }
 
     /**
@@ -91,24 +85,26 @@ public abstract class SendingHardware <T extends IRawIrSender & IHarcHardware> {
 
     public boolean sendIr(IrSignal irSignal, int count) throws NoSuchTransmitterException, IrpMasterException, IOException, HardwareUnavailableException, HarcHardwareException {
 
-        if (rawIrSender == null)
+        if (getRawIrSender() == null)
             throw new HardwareUnavailableException("Internal error: rawIrSender == null");
-        if (!rawIrSender.isValid())
+        if (!getRawIrSender().isValid())
             throw new HardwareUnavailableException();
-        return rawIrSender.sendIr(irSignal, count, getTransmitter());
+        return getRawIrSender().sendIr(irSignal, count, getTransmitter());
     }
 
     public void close() {
-        try {
-            if (rawIrSender != null) {
-                rawIrSender.close();
-                rawIrSender = null;
+        if (getRawIrSender() != null)
+            try {
+                getRawIrSender().close();
+            } catch (IOException ex) {
             }
-        } catch (IOException ex) {
-        }
     }
 
     public boolean isValid() {
-        return rawIrSender.isValid();
+        return getRawIrSender() != null && getRawIrSender().isValid();
     }
+
+    public abstract void setup() throws IOException, HarcHardwareException;
+
+    public abstract String getName();
 }

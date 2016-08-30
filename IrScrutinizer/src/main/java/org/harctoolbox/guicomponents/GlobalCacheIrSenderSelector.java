@@ -102,7 +102,7 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
     }
 
     private void setGlobalCache(int index) throws UnknownHostException, IOException {
-            setGlobalCache(GlobalCacheManager.getInstance().getInetAddress(index));
+        setGlobalCache(GlobalCacheManager.getInstance().getInetAddress(index));
     }
 
     private void closeGlobalCache() throws IOException {
@@ -280,9 +280,9 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        globalCacheIpComboBox = new javax.swing.JComboBox();
-        moduleComboBox = new javax.swing.JComboBox();
-        portComboBox = new javax.swing.JComboBox();
+        globalCacheIpComboBox = new javax.swing.JComboBox<>();
+        moduleComboBox = new javax.swing.JComboBox<>();
+        portComboBox = new javax.swing.JComboBox<>();
         stopButton = new javax.swing.JButton();
         globalCacheBrowseButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -301,7 +301,7 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
             }
         });
 
-        moduleComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5" }));
+        moduleComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5" }));
         moduleComboBox.setMinimumSize(new java.awt.Dimension(60, 24));
         moduleComboBox.setPreferredSize(new java.awt.Dimension(60, 24));
         moduleComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -310,7 +310,7 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
             }
         });
 
-        portComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3" }));
+        portComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3" }));
         portComboBox.setMinimumSize(new java.awt.Dimension(60, 24));
         portComboBox.setPreferredSize(new java.awt.Dimension(60, 24));
         portComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -460,14 +460,14 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JButton globalCacheBrowseButton;
-    private javax.swing.JComboBox globalCacheIpComboBox;
+    private javax.swing.JComboBox<String> globalCacheIpComboBox;
     private javax.swing.JLabel globalCacheVersionLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JComboBox moduleComboBox;
+    private javax.swing.JComboBox<String> moduleComboBox;
     private javax.swing.JLabel moduleLabel;
-    private javax.swing.JComboBox portComboBox;
+    private javax.swing.JComboBox<String> portComboBox;
     private javax.swing.JLabel portLabel;
     private javax.swing.JButton stopButton;
     private javax.swing.JLabel typeLabel;

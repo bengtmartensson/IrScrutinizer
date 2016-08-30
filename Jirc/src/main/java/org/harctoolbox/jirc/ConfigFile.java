@@ -61,17 +61,17 @@ public final class ConfigFile {
     private String line;
     private String[] words;
 
-    private ConfigFile(File configFileName, String source, String charsetName, boolean acceptLircCode) throws UnsupportedEncodingException, FileNotFoundException, IOException {
-        this(new InputStreamReader(new FileInputStream(configFileName), charsetName), source, acceptLircCode);
+    private ConfigFile(File configFileName, String source, String charsetName, boolean rejectLircCode) throws UnsupportedEncodingException, FileNotFoundException, IOException {
+        this(new InputStreamReader(new FileInputStream(configFileName), charsetName), source, rejectLircCode);
     }
 
-    private ConfigFile(Reader reader, String source, boolean accepLircCode) throws IOException {
+    private ConfigFile(Reader reader, String source, boolean rejectLircCode) throws IOException {
         this.remotes = new ArrayList<>();
         this.reader = new LineNumberReader(reader);
         line = null;
         words = new String[0];
 
-        remotes = remotes(source, accepLircCode);
+        remotes = remotes(source, rejectLircCode);
         IrRemote last = null;
         for (IrRemote rem : remotes) {
             //rem.setSource(source);
@@ -87,15 +87,15 @@ public final class ConfigFile {
      *
      * @param filename lirc.conf file
      * @param charsetName Name of the Charset used for reading.
-     * @param acceptLircCode if true, so-called LircCode remotes (without timing information, depending on special drivers),
+     * @param rejectLircCode if true, so-called LircCode remotes (without timing information, depending on special drivers),
      * will be accepted.
      * @return Collection of IrRemote's.
      * @throws IOException Misc IO problem
      */
-    public static Collection<IrRemote> readConfig(File filename, String charsetName, boolean acceptLircCode) throws IOException {
+    public static Collection<IrRemote> readConfig(File filename, String charsetName, boolean rejectLircCode) throws IOException {
         //System.err.println("Parsing " + filename.getCanonicalPath());
         if (filename.isFile()) {
-            ConfigFile config = new ConfigFile(filename, filename.getCanonicalPath(), charsetName, acceptLircCode);
+            ConfigFile config = new ConfigFile(filename, filename.getCanonicalPath(), charsetName, rejectLircCode);
             return config.remotes;
         } else if (filename.isDirectory()) {
             File[] files = filename.listFiles();
@@ -108,7 +108,7 @@ public final class ConfigFile {
                     System.err.println("Rejecting file " + file.getCanonicalPath());
                     continue;
                 }
-                Collection<IrRemote> map = readConfig(file, charsetName, acceptLircCode);
+                Collection<IrRemote> map = readConfig(file, charsetName, rejectLircCode);
 
                 for (IrRemote irRemote : map) {
                     String remoteName = irRemote.getName();
@@ -130,8 +130,8 @@ public final class ConfigFile {
             return null;
     }
 
-    public static Collection<IrRemote> readConfig(Reader reader, String source, boolean acceptLircCode) throws IOException {
-        ConfigFile config = new ConfigFile(reader, source, acceptLircCode);
+    public static Collection<IrRemote> readConfig(Reader reader, String source, boolean rejectLircCode) throws IOException {
+        ConfigFile config = new ConfigFile(reader, source, rejectLircCode);
         return config.remotes;
     }
 
@@ -140,15 +140,15 @@ public final class ConfigFile {
      *
      * @param filename Lirc configuration file
      * @param charsetName Name of the {@link java.nio.charset.Charset character set} for reading, e.g. URF-8, ISO-8859-1, WINDOWS-1252.
-     * @param acceptLircCode If true, so-called Lirccode files are processed (but will be of limited use anyhow).
+     * @param rejectLircCode If true, so-called Lirccode files are processed (but will be of limited use anyhow).
      * @param creatingUser Name of the creating user; for documentation purposes.
      * @param alternatingSigns If true, the generated signals will precede gaps with a minus sign.
      * @return RemoteSet as per <a href="http://www.harctoolbox.org/Girr.html">Girr specification</a>.
      * @throws IOException Misc IO errors.
      */
-    public static RemoteSet parseConfig(File filename, String charsetName, boolean acceptLircCode,
+    public static RemoteSet parseConfig(File filename, String charsetName, boolean rejectLircCode,
             String creatingUser, boolean alternatingSigns) throws IOException {
-        Collection<IrRemote> lircRemotes = readConfig(filename, charsetName, acceptLircCode);
+        Collection<IrRemote> lircRemotes = readConfig(filename, charsetName, rejectLircCode);
         return IrRemote.newRemoteSet(lircRemotes, filename.getCanonicalPath(),
                 creatingUser, alternatingSigns, 0 /* debug */);
     }
@@ -159,15 +159,15 @@ public final class ConfigFile {
      *
      * @param reader Reader delivering a Lirc configuration file.
      * @param source String containing the source of the informatsion, for documentation purposes.
-     * @param acceptLircCode If true, so-called Lirccode files are rejected, otherwise they are processed (but will be of limited use anyhow)
+     * @param rejectLircCode If true, so-called Lirccode files are rejected, otherwise they are processed (but will be of limited use anyhow)
      * @param creatingUser Name of the creating user; for documentation purposes.
      * @param alternatingSigns If true, the generated signals will precede gaps with a minus sign.
      * @return RemoteSet as per <a href="http://www.harctoolbox.org/Girr.html">Girr specification</a>.
      * @throws IOException Misc IO errors.
      */
-    public static RemoteSet parseConfig(Reader reader, String source, boolean acceptLircCode,
+    public static RemoteSet parseConfig(Reader reader, String source, boolean rejectLircCode,
             String creatingUser, boolean alternatingSigns) throws IOException {
-        Collection<IrRemote> lircRemotes = readConfig(reader, source, acceptLircCode);
+        Collection<IrRemote> lircRemotes = readConfig(reader, source, rejectLircCode);
         return IrRemote.newRemoteSet(lircRemotes, source,
                 creatingUser, alternatingSigns, 0 /* debug */);
     }
@@ -189,16 +189,17 @@ public final class ConfigFile {
         }
     }
 
-    private List<IrRemote> remotes(String source, boolean acceptLircCode) throws IOException {
+    private List<IrRemote> remotes(String source, boolean rejectLircCode) throws IOException {
         List<IrRemote> rems = new ArrayList<>();
         while (true) {
             try {
                 IrRemote remote = remote();
                 remote.setSource(source);
-                if (remote.isTimingInfo() || acceptLircCode)
+                if (remote.isTimingInfo() || ! rejectLircCode)
                     rems.add(remote);
                 else
-                    System.err.println("Ignoring timingless remote " + remote.getName() + " in " + remote.getSource());
+                    System.err.println("Ignoring timingless remote " + remote.getName() + " in " + remote.getSource()
+                    + ". Unset \"Reject Lirc imports without timing\" if this is not desired.");
             } catch (ParseException ex) {
                 try {
                     lookFor("end", "remote");
@@ -231,11 +232,13 @@ public final class ConfigFile {
             if (line == null)
                 throw new EofException();
 
+            line = line.trim();
+
             int idx = line.indexOf('#');
             if (idx != -1)
                 line = line.substring(0, idx).trim();
             if (!line.isEmpty())
-                words = line.trim().split("\\s+");
+                words = line.split("\\s+");
         }
     }
 

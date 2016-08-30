@@ -24,15 +24,32 @@ import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.ICommandLineDevice;
 
 public class UrlPort implements ICommandLineDevice {
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
 
-    String answer = null;
+        UrlPort port = new UrlPort("http", "t10", -1, "/preset?switch=", "&value=ON", 2000, true);
+        try {
+            port.sendString("4");
+            String str = port.readString();
+            System.out.println("-->" + str + "<--");
+            str = port.readString();
+            System.out.println("-->" + str + "<--");
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+            //ex.printStackTrace();
+        }
+    }
+
+    private String answer = null;
     private int timeout;
     private boolean verbose;
-    private String hostIp;
-    private int portNumber;
-    private String prefix;
-    private String suffix;
-    private String protocol;
+    private final String hostIp;
+    private final int portNumber;
+    private final String prefix;
+    private final String suffix;
+    private final String protocol;
 
     public UrlPort(String protocol, String hostIp, int portNumber, String prefix, String suffix,
             int timeout, boolean verbose) {
@@ -78,23 +95,6 @@ public class UrlPort implements ICommandLineDevice {
         return readString();
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-
-        UrlPort port = new UrlPort("http", "t10", -1, "/preset?switch=", "&value=ON", 2000, true);
-        try {
-             port.sendString("4");
-            String str = port.readString();
-            System.out.println("-->" + str + "<--");
-            str = port.readString();
-            System.out.println("-->" + str + "<--");
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-            //ex.printStackTrace();
-        }
-    }
 
     @Override
     public String getVersion() throws IOException {
@@ -127,5 +127,10 @@ public class UrlPort implements ICommandLineDevice {
     @Override
     public boolean ready() throws IOException {
         return answer != null;
+    }
+
+    @Override
+    public void flushInput() throws IOException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

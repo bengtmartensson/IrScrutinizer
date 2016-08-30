@@ -19,6 +19,7 @@ package org.harctoolbox.girr;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map.Entry;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
@@ -38,10 +39,6 @@ public class CommandSet {
     private final HashMap<String, Long> parameters;
     private final HashMap<String, Command> commands;
 
-    public HashMap<String, Command> getCommands() {
-        return commands;
-    }
-
     /**
      * Imports a CommandSet from an Element.
      *
@@ -51,11 +48,11 @@ public class CommandSet {
     CommandSet(Element element) throws ParseException {
         name = element.getAttribute("name");
         protocol = null;
-        commands = new LinkedHashMap<>();
-        parameters = new LinkedHashMap<>();
+        commands = new LinkedHashMap<>(4);
+        parameters = new LinkedHashMap<>(4);
         NodeList nl = element.getElementsByTagName("notes");
         if (nl.getLength() > 0)
-            notes = ((Element) nl.item(0)).getTextContent();
+            notes = nl.item(0).getTextContent();
         // Cannot use getElementsByTagName("parameters") because it will find
         // the parameters of the child commands, which is not what we want.
         nl = element.getChildNodes();
@@ -109,6 +106,9 @@ public class CommandSet {
         this.protocol = protocol;
         this.parameters = parameters;
     }
+    public HashMap<String, Command> getCommands() {
+        return commands;
+    }
 
     /**
      * Exports the CommandSet to a Document.
@@ -131,7 +131,7 @@ public class CommandSet {
         }
         if (parameters != null && generateParameters) {
             Element parametersEl = doc.createElementNS(XmlExporter.girrNamespace, "parameters");
-            parametersEl.setAttribute("protocol", protocol);
+            parametersEl.setAttribute("protocol", protocol.toLowerCase(Locale.US));
             element.appendChild(parametersEl);
             for (Entry<String, Long> parameter : parameters.entrySet()) {
                 Element parameterEl = doc.createElementNS(XmlExporter.girrNamespace, "parameter");

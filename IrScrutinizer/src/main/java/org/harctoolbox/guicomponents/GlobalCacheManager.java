@@ -36,48 +36,31 @@ import org.harctoolbox.harchardware.ir.GlobalCache;
  * If later an automatic entry for the same IP appears, the manual entry will be automatically removed.
  */
 public final class GlobalCacheManager {
-    private boolean debug = false;
     private static final GlobalCacheManager instance = new GlobalCacheManager();
-    private AmxBeaconListener beaconListener = null;
-    private ArrayList<InetAddress> automaticGlobalCaches = new ArrayList<>();
-    private ArrayList<String> automaticGlobalCacheTypes = new ArrayList<>();
-    private final ArrayList<InetAddress> manualGlobalCaches = new ArrayList<>();
-
-    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-
     public final static String PROP_GCMANAGER_NAME = "globalcacheManager";
-
-    private int sillyHashCode() {
-        return automaticGlobalCaches.hashCode() + 1000*manualGlobalCaches.hashCode();
-    }
-
-    private class Callbacker implements AmxBeaconListener.Callback {
-
-        Callbacker() {
-        }
-
-        @Override
-        public void func(HashMap<InetAddress, AmxBeaconListener.Node> nodes) {
-            int oldValue = sillyHashCode();
-            automaticGlobalCaches = new ArrayList<>();
-            automaticGlobalCacheTypes = new ArrayList<>();
-            //ipAddressMap = new LinkedHashMap<InetAddress, Integer>();
-            for (Entry<InetAddress, AmxBeaconListener.Node> node : nodes.entrySet()) {
-                automaticGlobalCaches.add(node.getKey());
-                automaticGlobalCacheTypes.add(node.getValue().get("-Model"));
-                //ipAddressMap.put(node.getKey(), oldValue)
-                removeManualGlobalCache(node.getKey());
-            }
-            int newValue = sillyHashCode();
-            propertyChangeSupport.firePropertyChange(PROP_GCMANAGER_NAME, oldValue, newValue);
-        }
-    }
 
     /**
      * @return the instance
      */
     public static GlobalCacheManager getInstance() {
         return instance;
+    }
+
+    private boolean debug = false;
+    private AmxBeaconListener beaconListener = null;
+    private ArrayList<InetAddress> automaticGlobalCaches = new ArrayList<>(4);
+    private ArrayList<String> automaticGlobalCacheTypes = new ArrayList<>(4);
+    private final ArrayList<InetAddress> manualGlobalCaches = new ArrayList<>(4);
+
+    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
+    private GlobalCacheManager() {
+        Callbacker callback = new Callbacker();
+        beaconListener = GlobalCache.newListener(callback, debug);
+    }
+
+    private int sillyHashCode() {
+        return automaticGlobalCaches.hashCode() + 1000*manualGlobalCaches.hashCode();
     }
 
     /**
@@ -170,8 +153,25 @@ public final class GlobalCacheManager {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
-    private GlobalCacheManager() {
-        Callbacker callback = new Callbacker();
-        beaconListener = GlobalCache.newListener(callback, debug);
+    private class Callbacker implements AmxBeaconListener.Callback {
+
+        Callbacker() {
+        }
+
+        @Override
+        public void func(HashMap<InetAddress, AmxBeaconListener.Node> nodes) {
+            int oldValue = sillyHashCode();
+            automaticGlobalCaches = new ArrayList<>(4);
+            automaticGlobalCacheTypes = new ArrayList<>(4);
+            //ipAddressMap = new LinkedHashMap<InetAddress, Integer>();
+            for (Entry<InetAddress, AmxBeaconListener.Node> node : nodes.entrySet()) {
+                automaticGlobalCaches.add(node.getKey());
+                automaticGlobalCacheTypes.add(node.getValue().get("-Model"));
+                //ipAddressMap.put(node.getKey(), oldValue)
+                removeManualGlobalCache(node.getKey());
+            }
+            int newValue = sillyHashCode();
+            propertyChangeSupport.firePropertyChange(PROP_GCMANAGER_NAME, oldValue, newValue);
+        }
     }
 }

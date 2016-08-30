@@ -39,6 +39,10 @@ public abstract class Importer {
     // causing considerable effort to keep consistent with the global version.
     private static Props properties = null;
 
+    public static void setProperties(Props newProperties) {
+        properties = newProperties;
+    }
+
     // This can contain multiple commands with the same name
     private final ArrayList<Command> commands;
 
@@ -49,13 +53,10 @@ public abstract class Importer {
     protected String origin = null;
 
     protected Importer() {
-        commands = new ArrayList<>();
-        commandIndex = new LinkedHashMap<>();
+        commands = new ArrayList<>(32);
+        commandIndex = new LinkedHashMap<>(32);
     }
 
-    public static void setProperties(Props newProperties) {
-        properties = newProperties;
-    }
 
     /**
      * @return the creatingUser
@@ -110,8 +111,8 @@ public abstract class Importer {
         return properties.getFallbackFrequency();
     }
 
-    protected double getEndingTimeout() {
-        return properties.getCaptureEndingTimeout();
+    protected double getEndTimeout() {
+        return properties.getCaptureEndTimeout();
     }
 
     protected void prepareLoad(String origin) {

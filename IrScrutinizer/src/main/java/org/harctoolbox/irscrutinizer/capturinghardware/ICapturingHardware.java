@@ -22,8 +22,8 @@ import javax.swing.JPanel;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.ir.ICapture;
 import org.harctoolbox.harchardware.IHarcHardware;
+import org.harctoolbox.harchardware.ir.ICapture;
 
 /**
  *
@@ -56,6 +56,4 @@ public interface ICapturingHardware <T extends ICapture & IHarcHardware> {
     public boolean isValid();
 
     public String getVersion() throws IOException;
-
-    public void setTimeout(int timeout) throws IOException;
 }

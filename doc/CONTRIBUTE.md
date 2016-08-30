@@ -13,9 +13,9 @@ integration in a particular platform. But they are not prohibited either.
 
 ## Code layout
 
-The code uses "normal Java formatting". Indentation 4 spaces, no
-tabs. Braces in _simple_ if-statements (etc) discouraged. No linefeed before opening brace. Observe the
-"principle of locality": Distance between declaration and usage
+The code uses "normal Java formatting": Indentation 4 spaces, no
+tabs. Braces in _simple_ if-statements (etc) discouraged. No linefeed before opening brace. The
+"principle of locality" is to be observed: Distance between declaration and usage
 should be minimal; C style declaration of local variables in the beginning
 of a block discouraged.
 

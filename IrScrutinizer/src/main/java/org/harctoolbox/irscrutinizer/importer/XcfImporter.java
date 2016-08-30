@@ -47,6 +47,54 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
     private static final String xcfXmlFileName = "ConfigEdit.xml";
     private static final String defaultCharsetName = "WINDOWS-1252";
+
+    private static Document openConfig(File filename) throws SAXException, IOException {
+        ZipFile zipFile = null;
+        Document doc = null;
+        try {
+            zipFile = new ZipFile(filename);
+            ZipEntry entry = zipFile.getEntry(xcfXmlFileName);
+            if (entry == null)
+                entry = zipFile.getEntry("/" + xcfXmlFileName);
+            InputStream stream = zipFile.getInputStream(entry);
+            doc = XmlUtils.openXmlStream(stream, null, false, false);
+        } finally {
+            if (zipFile != null)
+                zipFile.close();
+        }
+        return doc;
+    }
+
+    private static HashMap<String, Element> mkIndex(Element element, String tagId) {
+        HashMap<String, Element> index = new LinkedHashMap<>(16);
+        NodeList things = element.getElementsByTagName(tagId);
+        int length = things.getLength();
+        for (int i = 0; i < length; i++) {
+            Element thing = (Element) things.item(i);
+            index.put(thing.getAttribute("id"), thing);
+        }
+        return index;
+    }
+
+    public static RemoteSet importXcf(String filename) throws IOException, SAXException, ParseException, IrpMasterException {
+        XcfImporter importer = new XcfImporter();
+        importer.load(new File(filename), defaultCharsetName);
+        return importer.getRemoteSet();
+    }
+
+    public static void main(String args[]) {
+        try {
+            RemoteSet buttons = importXcf(args[0]);
+            for (Remote button : buttons.getRemotes()) {
+                System.out.println(button.toString());
+            }
+        } catch (SAXException ex) {
+            System.err.println(ex.getMessage());
+        } catch (IOException | IrpMasterException | ParseException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
     private boolean translateProntoFont = true;
 
     private HashMap<String, String> nameIndex;
@@ -58,33 +106,15 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
     private int learnedIrCodeIndex;
 
+
+    public XcfImporter() {
+        super();
+    }
     /**
      * @param translateProntoFont the translateProntoFont to set
      */
     public void setTranslateProntoFont(boolean translateProntoFont) {
         this.translateProntoFont = translateProntoFont;
-    }
-
-    private static Document openConfig(File filename) throws SAXException, IOException {
-        ZipFile zipFile = null;
-        InputStream stream = null;
-        Document doc = null;
-        try {
-            zipFile = new ZipFile(filename);
-            ZipEntry entry = zipFile.getEntry(xcfXmlFileName);
-            if (entry == null)
-                entry = zipFile.getEntry("/" + xcfXmlFileName);
-            stream = zipFile.getInputStream(entry);
-            doc = XmlUtils.openXmlStream(stream, null, false, false);
-        } finally {
-            if (zipFile != null)
-                zipFile.close();
-        }
-        return doc;
-    }
-
-    public XcfImporter() {
-        super();
     }
 
     @Override
@@ -154,7 +184,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
             throw new ParseException("No Modules element present.", -1);
 
 
-        HashMap<String,Remote> remotes = new HashMap<>();
+        HashMap<String,Remote> remotes = new HashMap<>(16);
 
         for (Element module : moduleIndex.values()) {
             Remote remote = loadModule(module);
@@ -177,7 +207,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         String nameId = ((Element) names.item(0)).getAttribute("id");
         String name = nameIndex.get(nameId);
         //System.out.println(id + "\t" + nameId + "\t" + name);
-        HashMap<String,Command> cmds = new HashMap<>();
+        HashMap<String,Command> cmds = new HashMap<>(32);
         NodeList firstPages = module.getElementsByTagName("FirstPage");
         Element page = firstPages.getLength() > 0 ? pageIndex.get(((Element) firstPages.item(0)).getAttribute("id")) : null;
         while (page != null) {
@@ -196,7 +226,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
     }
 
     private HashMap<String,Command> loadPage(Element page) {
-        HashMap<String,Command> cmds = new HashMap<>();
+        HashMap<String,Command> cmds = new HashMap<>(16);
         NodeList items = page.getElementsByTagName("Item");
         for (int i = 0; i < items.getLength(); i++) {
             Element item = (Element) items.item(i);
@@ -236,7 +266,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         if (nl.getLength() == 0)
             return null;
 
-        String ccf = ((Element)nl.item(0)).getTextContent();
+        String ccf = nl.item(0).getTextContent();
         return ccf;
     }
 
@@ -252,19 +282,9 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         return nameIndex.get(((Element)nl.item(0)).getAttribute("id"));
     }
 
-    private static HashMap<String, Element> mkIndex(Element element, String tagId) {
-        HashMap<String, Element> index = new LinkedHashMap<>();
-        NodeList things = element.getElementsByTagName(tagId);
-        int length = things.getLength();
-        for (int i = 0; i < length; i++) {
-            Element thing = (Element) things.item(i);
-            index.put(thing.getAttribute("id"), thing);
-        }
-        return index;
-    }
 
     private void setupNamesIndex(Element element) {
-        nameIndex = new HashMap<>();
+        nameIndex = new HashMap<>(32);
         NodeList nl = element.getElementsByTagName("STRING");
         for (int i = 0; i < nl.getLength(); i++) {
             Element e = (Element) nl.item(i);
@@ -304,12 +324,6 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         }
     }
 
-    public static RemoteSet importXcf(String filename) throws IOException, SAXException, ParseException, IrpMasterException {
-        XcfImporter importer = new XcfImporter();
-        importer.load(new File(filename), defaultCharsetName);
-        return importer.getRemoteSet();
-    }
-
     @Override
     public boolean canImportDirectories() {
         return false;
@@ -328,18 +342,5 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
     @Override
     public String getFormatName() {
         return "Pronto Professional";
-    }
-
-    public static void main(String args[]) {
-        try {
-            RemoteSet buttons = importXcf(args[0]);
-            for (Remote button : buttons.getRemotes()) {
-                System.out.println(button.toString());
-            }
-        } catch (SAXException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IOException | IrpMasterException | ParseException ex) {
-            System.err.println(ex.getMessage());
-        }
     }
 }

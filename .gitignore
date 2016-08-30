@@ -10,3 +10,4 @@ nbactions.xml
 repos
 nbactions-*.xml
 appimagekit
+hs_err*.log

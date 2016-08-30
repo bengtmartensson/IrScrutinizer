@@ -26,8 +26,8 @@ import java.util.logging.Logger;
 import javax.swing.JPanel;
 import org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector;
 import org.harctoolbox.guicomponents.GuiUtils;
-import org.harctoolbox.harchardware.ir.GlobalCache;
 import org.harctoolbox.harchardware.HarcHardwareException;
+import org.harctoolbox.harchardware.ir.GlobalCache;
 import org.harctoolbox.irscrutinizer.Props;
 
 /**
@@ -36,19 +36,20 @@ import org.harctoolbox.irscrutinizer.Props;
 public class CapturingGlobalCache extends CapturingHardware<GlobalCache> implements ICapturingHardware<GlobalCache> {
 
     private String initialIp;
-    GlobalCacheIrSenderSelector globalCacheIrSenderSelector;
+    private final GlobalCacheIrSenderSelector globalCacheIrSenderSelector;
+    private GlobalCache hardware;
 
     public CapturingGlobalCache(String hostname, final GlobalCacheIrSenderSelector globalCacheIrSenderSelector,
             JPanel panel, Props properties_, GuiUtils guiUtils, CapturingHardwareManager capturingHardwareManager) {
         super(panel, properties_, guiUtils, capturingHardwareManager);
         this.initialIp = hostname.isEmpty() ? null : hostname;
         this.globalCacheIrSenderSelector = globalCacheIrSenderSelector;
-        globalCacheIrSenderSelector.setTimeout(properties.getCaptureStartTimeout());
-        properties.addCaptureStartTimeoutChangeListener(new Props.IPropertyChangeListener() {
+        globalCacheIrSenderSelector.setTimeout(properties.getCaptureBeginTimeout());
+        properties.addCaptureBeginTimeoutChangeListener(new Props.IPropertyChangeListener() {
 
             @Override
             public void propertyChange(String name, Object oldValue, Object newValue) {
-                globalCacheIrSenderSelector.setTimeout(properties.getCaptureStartTimeout());
+                globalCacheIrSenderSelector.setTimeout(properties.getCaptureBeginTimeout());
             }
         });
         //setupHardwareCommonStart();
@@ -92,5 +93,14 @@ public class CapturingGlobalCache extends CapturingHardware<GlobalCache> impleme
     @Override
     public String getName() {
         return "Global Caché";
+    }
+
+    @Override
+    public GlobalCache getCapturer() {
+        return hardware;
+    }
+
+    @Override
+    public void open() throws HarcHardwareException, IOException {
     }
 }

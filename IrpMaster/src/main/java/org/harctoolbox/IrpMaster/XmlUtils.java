@@ -46,12 +46,10 @@ import org.xml.sax.SAXParseException;
  */
 public class XmlUtils {
 
-    private XmlUtils() {}
-
     public static Document openXmlFile(File file, Schema schema, boolean isNamespaceAware, boolean isXIncludeAware) throws IOException, SAXParseException, SAXException {
         final String fname = file.getCanonicalPath();
         DocumentBuilder builder = newDocumentBuilder(schema, isNamespaceAware, isXIncludeAware);
-        Document docu = null;
+        Document docu;
 
         builder.setErrorHandler(new org.xml.sax.ErrorHandler() {
             @Override
@@ -92,7 +90,7 @@ public class XmlUtils {
 
     public static Document openXmlStream(InputStream stream, Schema schema, boolean isNamespaceAware, boolean isXIncludeAware) throws IOException, SAXParseException, SAXException {
         DocumentBuilder builder = newDocumentBuilder(schema, isNamespaceAware, isXIncludeAware);
-        Document docu = null;
+        Document docu;
 
         builder.setErrorHandler(new org.xml.sax.ErrorHandler() {
             @Override
@@ -149,8 +147,8 @@ public class XmlUtils {
     }
 
     public static HashMap<String, Element> createIndex(Element root, String tagName, String idName) {
-        HashMap<String, Element> index = new HashMap<>();
         NodeList nodes = root.getElementsByTagName(tagName);
+        HashMap<String, Element> index = new HashMap<>(nodes.getLength());
         for (int i = 0; i < nodes.getLength(); i++) {
             Element el = (Element) nodes.item(i);
             String key = el.getAttribute(idName);
@@ -195,8 +193,8 @@ public class XmlUtils {
     }
 
     public static HashMap<String, Element> buildIndex(Element element, String tagName, String idName) {
-        HashMap<String, Element> index = new HashMap<>();
         NodeList nl = element.getElementsByTagName(tagName);
+        HashMap<String, Element> index = new HashMap<>(nl.getLength());
         for (int i = 0; i < nl.getLength(); i++) {
             Element el = (Element) nl.item(i);
             String id = el.getAttribute(idName);
@@ -218,5 +216,8 @@ public class XmlUtils {
         } catch (SAXException ex) {
             System.err.println(ex.getMessage());
         }
+    }
+
+    private XmlUtils() {
     }
 }

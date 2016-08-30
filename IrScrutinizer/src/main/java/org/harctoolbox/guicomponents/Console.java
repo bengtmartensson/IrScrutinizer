@@ -84,14 +84,10 @@ public class Console extends javax.swing.JScrollPane {
      * @throws FileNotFoundException
      */
     public void save(File file) throws FileNotFoundException {
-        PrintStream ps = null;
-        try {
-            ps = new PrintStream(new FileOutputStream(file), true, IrpUtils.dumbCharsetName);
-            //if (consoleTextArea != null)
+        try (PrintStream ps = new PrintStream(new FileOutputStream(file), true, IrpUtils.dumbCharsetName)) {
             ps.println(consoleTextArea.getText());
-            ps.close();
         } catch (UnsupportedEncodingException ex) {
-            assert false; // cannot happen
+            throw new InternalError();
         }
     }
 
@@ -235,31 +231,26 @@ public class Console extends javax.swing.JScrollPane {
     }
 
     private void consoletextPrintMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        PrintStream pos = null;
-        File file = null;
+        File file;
         try {
             file = File.createTempFile("console", ".txt");
-            //fos = new FileOutputStream(file);
-            pos = new PrintStream(new FileOutputStream(file), true, "US-ASCII");
+        } catch (IOException ex) {
+            errorFunction.err(ex, "");
+            return;
+        }
+        try (PrintStream pos = new PrintStream(new FileOutputStream(file), true, "US-ASCII")) {
             pos.println(getText());
         } catch (IOException ex) {
             errorFunction.err(ex, "");
             return;
-        } finally {
-            if (pos != null) {
-                pos.close();
-            }
         }
 
         try {
             Desktop.getDesktop().print(file);
-            if (file != null) {
-                file.deleteOnExit();
-            }
+            file.deleteOnExit();
         } catch (UnsupportedOperationException ex) {
-            errorFunction.err(file != null
-                     ? "Desktop does not support printing. Print the file " + file.getAbsolutePath() + " manually."
-                     : "Desktop does not support printing.");
+            errorFunction.err("Desktop does not support printing. Print the file "
+                    + file.getAbsolutePath() + " manually.");
         } catch (IOException ex) {
             errorFunction.err(ex, "");
         }
@@ -355,7 +346,7 @@ public class Console extends javax.swing.JScrollPane {
                 consoleTextAreaMouseReleased(evt);
             }
         });
-        this.setViewportView(consoleTextArea);
+        super.setViewportView(consoleTextArea);
 
         try {
             consolePrintStream = new PrintStream(new FilteredStream(new ByteArrayOutputStream()),

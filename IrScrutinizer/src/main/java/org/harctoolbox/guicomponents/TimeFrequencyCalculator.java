@@ -17,6 +17,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.guicomponents;
 
+import java.io.IOException;
 import org.harctoolbox.IrpMaster.Pronto;
 
 /**
@@ -351,7 +352,7 @@ public class TimeFrequencyCalculator extends HarcPanel {
         try {
             int time = Integer.parseInt(timeTextField.getText());
             int freq = Integer.parseInt(frequencyTextField.getText());
-            double periods = (((double) time) * ((double) freq)) / 1000000;
+            double periods = (time * ((double) freq)) / 1000000;
             noPeriodsTextField.setText(String.format("%.1f", periods));
             noPeriodsHexTextField.setText(String.format("%04X", Math.round(periods)));
         } catch (NumberFormatException ex) {
@@ -382,7 +383,7 @@ public class TimeFrequencyCalculator extends HarcPanel {
             int noPeriods = Integer.parseInt(noPeriodsHexTextField.getText(), 16);
             noPeriodsTextField.setText(String.format("%d", noPeriods));
             int freq = Integer.parseInt(frequencyTextField.getText());
-            timeTextField.setText(Integer.toString((int) (1000000 * ((double) noPeriods) / (double) freq)));
+            timeTextField.setText(Integer.toString((int) (1000000 * ((double) noPeriods) / freq)));
         } catch (NumberFormatException ex) {
             statusLine.setStatus("Cannot parse `" + noPeriodsHexTextField.getText() + "'");
         }
@@ -411,7 +412,7 @@ public class TimeFrequencyCalculator extends HarcPanel {
             double noPeriods = Double.parseDouble(noPeriodsTextField.getText());
             noPeriodsHexTextField.setText(String.format("%04X", Math.round(noPeriods)));
             int freq = Integer.parseInt(frequencyTextField.getText());
-            timeTextField.setText(Integer.toString((int) (seconds2microseconds * noPeriods / (double) freq)));
+            timeTextField.setText(Integer.toString((int) (seconds2microseconds * noPeriods / freq)));
         } catch (NumberFormatException ex) {
             statusLine.setStatus("Cannot parse `" + noPeriodsTextField.getText() + "'");
         }
@@ -454,5 +455,9 @@ public class TimeFrequencyCalculator extends HarcPanel {
     @Override
     public String getIconPath() {
         return "/icons/Crystal-Clear/22x22/apps/xclock.png";
+    }
+
+    @Override
+    public void close() throws IOException {
     }
 }

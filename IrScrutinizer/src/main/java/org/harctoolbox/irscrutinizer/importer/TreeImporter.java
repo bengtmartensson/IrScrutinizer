@@ -18,6 +18,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.importer;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,6 +51,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
     private GuiMain guiMain = null;
     private DefaultMutableTreeNode root;
     private RemoteSet remoteSet;
+    private boolean restrictedMode = false;
 
     private static final int maxRemotesForImportAll = 10;
 
@@ -73,19 +75,28 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
      * Creates new form TreeImporter
      */
     public TreeImporter() {
-        initComponents();
-        tree.setCellRenderer(new MyRenderer());
-        tree.addTreeExpansionListener(this);
+        this(null, false);
+    }
+
+    public TreeImporter(GuiUtils guiUtils) {
+        this(guiUtils, false);
     }
 
     /**
      * Creates new form TreeImporter
      * @param guiUtils
+     * @param restrictedMode
      */
-    public TreeImporter(GuiUtils guiUtils/*, IRemoteSetImporter importer*/) {
-        this();
+    public TreeImporter(GuiUtils guiUtils, boolean restrictedMode) {
         this.guiUtils = guiUtils;
-        //this.importer = importer;
+        this.restrictedMode = restrictedMode;
+        initComponents();
+        tree.setCellRenderer(new MyRenderer());
+        tree.addTreeExpansionListener(this);
+        if (restrictedMode) {
+            tree.setComponentPopupMenu(null);
+            tree.setToolTipText(null);
+        }
     }
 
     public void setRemoteSet(RemoteSet remoteSet) {
@@ -108,7 +119,8 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         enableStuff(false);
     }
 
-    private void enableStuff(boolean val) {
+    private void enableStuff(boolean value) {
+        boolean val = value && !restrictedMode;
         importAllButton.setEnabled(val && enableImportAll());
         importSelectionButton.setEnabled(val);
         transmitSelectedButton.setEnabled(val);
@@ -182,7 +194,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
             guiMain.selectImportPane(type);
     }
 
-    static class MyRenderer extends DefaultTreeCellRenderer /*implements TreeCellRenderer*/ {
+    private static class MyRenderer extends DefaultTreeCellRenderer /*implements TreeCellRenderer*/ {
 
         @Override
         public Component getTreeCellRendererComponent(
@@ -230,30 +242,11 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
     }
 
     private void checkGuiMain() {
-        if (guiMain == null)
-            guiMain = (GuiMain) getRootPane().getParent();
-    }
-
-    private int importCommands(Collection<Command> commands, boolean raw) {
-        boolean observeErrors = true;
-        int count = 0;
-        for (Command command : commands) {
-            try {
-                guiMain.importCommand(command, raw);
-                count++;
-            } catch (IrpMasterException ex) {
-                if (observeErrors) {
-                    guiUtils.error("Erroneous signal: " + ex.getMessage());
-                    boolean ans = guiUtils.confirm("Continue import (and just ignore further erroneous signals)?");
-                    if (ans) {
-                        observeErrors = false;
-                    } else {
-                        return -count;
-                    }
-                }
-            }
+        if (guiMain == null) {
+            Container component = getRootPane().getParent();
+            assert(component instanceof GuiMain);
+            guiMain = (GuiMain) component;
         }
-        return count;
     }
 
     /**
@@ -484,7 +477,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
     private void importAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importAllButtonActionPerformed
         checkGuiMain();
-        int result = importCommands(remoteSet.getAllCommands(), false);
+        int result = guiMain.importCommands(remoteSet.getAllCommands(), false);
         if (result > 0)
             importJump(result, ImportType.parametricRemote);
         else
@@ -530,7 +523,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
     private void importAllRawButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importAllRawButtonActionPerformed
         checkGuiMain();
-        int result = importCommands(remoteSet.getAllCommands(), true);
+        int result = guiMain.importCommands(remoteSet.getAllCommands(), true);
         if (result > 0)
             importJump(result, ImportType.rawRemote);
         else

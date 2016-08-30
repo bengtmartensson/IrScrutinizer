@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import javax.xml.XMLConstants;
@@ -45,6 +44,13 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
     private transient URL url;
     private boolean validate;
 
+    public GirrImporter(boolean validate, URL url) {
+        super();
+        schema = null;
+        this.url = url;
+        this.validate = validate;
+    }
+
     /**
      * @return the schema
      */
@@ -64,26 +70,28 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
         this.validate = validate;
     }
 
-    public GirrImporter(boolean validate, URL url) {
-        super();
-        schema = null;
-        this.url = url;
-        this.validate = validate;
-    }
 
     private void loadSchema() throws SAXException {
         if (validate && schema == null && url != null)
             schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(url);
     }
 
-    private void load(Document doc, String origin) throws ParseException, MalformedURLException, SAXException {
-        if (!doc.getDocumentElement().getTagName().equals("remotes")) {
-            throw new UnsupportedOperationException("Import of Girr files with other root elements as remotes not yet implemented.");
-        }
-        //this.lircRemotes = lircRemotes;
+    private void load(Document doc, String origin) throws ParseException, NotGirrRemoteSetException {
         prepareLoad(origin);
-        remoteSet = new RemoteSet(doc);
+        remoteSet = null;
+        loadIncremental(doc, origin);
         setupCommands();
+    }
+
+    private void loadIncremental(Document doc, String origin) throws ParseException, NotGirrRemoteSetException {
+        if (!doc.getDocumentElement().getTagName().equals("remotes")) {
+            throw new NotGirrRemoteSetException();
+        }
+        RemoteSet rs = new RemoteSet(doc);
+        if (remoteSet == null)
+            remoteSet = rs;
+        else
+            remoteSet.append(rs);
     }
 
     /**
@@ -103,6 +111,8 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
             throw new ParseException(ex.getMessage(), ex.getLineNumber());
         } catch (SAXException ex) {
             throw new IOException(ex.getMessage());
+        } catch (NotGirrRemoteSetException ex) {
+            throw new IOException(ex.getMessage());
         }
     }
 
@@ -118,7 +128,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
             load(XmlUtils.openXmlReader(reader, validate ? schema : null, false, false), origin);
         } catch (SAXParseException ex) {
             throw new ParseException(ex.getMessage(), ex.getLineNumber());
-        } catch (SAXException ex) {
+        } catch (SAXException | NotGirrRemoteSetException ex) {
             throw new IOException(ex.getMessage());
         }
     }
@@ -129,23 +139,44 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
      * @param origin
      * @param charsetName ignored, instead taken from file encoding field.
      * @throws IOException
-     * @throws ParseException
      */
     @Override
-    public void load(File file, String origin, String charsetName /* ignored */) throws IOException, ParseException {
+    public void load(File file, String origin, String charsetName /* ignored */) throws IOException {
         try {
             loadSchema();
-            load(XmlUtils.openXmlFile(file, validate ? schema : null, true, true), origin);
-        } catch (SAXParseException ex) {
-            throw new ParseException(ex.getMessage(), ex.getLineNumber());
         } catch (SAXException ex) {
             throw new IOException(ex.getMessage());
+        }
+        prepareLoad(origin);
+        remoteSet = null;
+        loadRecursive(file, origin);
+        setupCommands();
+    }
+
+    private void loadRecursive(File fileOrDirectory, String origin) throws IOException {
+        if (fileOrDirectory.isDirectory()) {
+            File[] files = fileOrDirectory.listFiles();
+            for (File file : files) {
+                if (file.getName().endsWith(".jpg") || file.getName().endsWith(".png")
+                        || file.getName().endsWith(".gif") || file.getName().endsWith(".html")) {
+                    continue;
+                }
+                loadRecursive(file, file.getCanonicalPath());
+            }
+        } else {
+            try {
+                loadIncremental(XmlUtils.openXmlFile(fileOrDirectory, validate ? schema : null, true, true), origin);
+            } catch (SAXParseException | ParseException ex) {
+
+            } catch (SAXException | NotGirrRemoteSetException ex) {
+                throw new IOException(ex.getMessage());
+            }
         }
     }
 
     @Override
     public boolean canImportDirectories() {
-        return false;
+        return true;
     }
 
     @Override
@@ -156,5 +187,10 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter, 
     @Override
     public String getFormatName() {
         return "Girr";
+    }
+    private static class NotGirrRemoteSetException extends Exception {
+        NotGirrRemoteSetException() {
+            super("Not a Girr file with root element \"remotes\".");
+        }
     }
 }

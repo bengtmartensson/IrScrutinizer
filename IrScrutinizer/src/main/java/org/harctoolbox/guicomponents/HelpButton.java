@@ -31,12 +31,12 @@ public class HelpButton extends JButton {
     public HelpButton() {
         super();
 
-        setIcon(new javax.swing.ImageIcon(HelpButton.class.getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        setMnemonic('H');
-        setText("Help");
-        setToolTipText("Display help.");
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        addActionListener(new java.awt.event.ActionListener() {
+        super.setIcon(new javax.swing.ImageIcon(HelpButton.class.getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        super.setMnemonic('H');
+        super.setText("Help");
+        super.setToolTipText("Display help.");
+        super.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        super.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiUtils.help(helpText);

@@ -23,19 +23,20 @@ import java.io.Reader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
+import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 
 /**
  * This class imports Lirc's mode2 files.
  */
-public class Mode2Importer extends ReaderImporter implements IModulatedIrSequenceImporter,IFileImporter {
+public class Mode2Importer extends ReaderImporter implements IModulatedIrSequenceImporter,IReaderImporter {
 
     private ModulatedIrSequence sequence;
 
     @Override
     public void load(Reader reader, String origin) throws IOException, ParseException {
         BufferedReader bufferedReader = new BufferedReader(reader);
-        ArrayList<Integer> data = new ArrayList<>();
+        ArrayList<Integer> data = new ArrayList<>(256);
         boolean lastWasPulse = false;
         int lineNo = 0;
         while (true) {
@@ -70,7 +71,7 @@ public class Mode2Importer extends ReaderImporter implements IModulatedIrSequenc
             lastWasPulse = isPulse;
         }
         if (data.size() % 2 != 0)
-            data.add(1000 * (int)getEndingTimeout()); // convert milliseconds to micro seconds
+            data.add((int)(IrpUtils.milliseconds2microseconds * getEndTimeout()));
         int[] array = new int[data.size()];
         int i = 0;
         for (Integer duration : data)

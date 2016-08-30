@@ -26,18 +26,17 @@ import java.io.UnsupportedEncodingException;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.RemoteSet;
-import org.harctoolbox.irscrutinizer.Utils;
 
 /**
  * This class does something interesting and useful. Or not...
  */
 public class TextExporter extends RemoteSetExporter implements IRemoteSetExporter {
 
-    boolean generateRaw;
-    boolean generateCcf;
-    boolean generateParameters;
-    Command.CommandTextFormat[] extraFormatters;
-    PrintStream printStream;
+    private boolean generateRaw;
+    private boolean generateCcf;
+    private boolean generateParameters;
+    private Command.CommandTextFormat[] extraFormatters;
+    private PrintStream printStream;
 
     public TextExporter(boolean generateRaw, boolean generateCcf,
             boolean generateParameters, Command.CommandTextFormat... extraFormatters) {
@@ -104,20 +103,21 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
     }
 
     private String formatCommand(Command command, int count) throws IrpMasterException {
-        StringBuilder str = new StringBuilder();
-        str.append(generateParameters ? command.nameProtocolParameterString() : command.getName()).append(Utils.linefeed);
+        StringBuilder str = new StringBuilder(128);
+        String linefeed = System.getProperty("line.separator", "\n");
+        str.append(generateParameters ? command.nameProtocolParameterString() : command.getName()).append(linefeed);
         if (generateCcf) {
-            str.append(command.getCcf()).append(Utils.linefeed);
+            str.append(command.getCcf()).append(linefeed);
         }
         if (generateRaw) {
-            str.append(command.getIntro()).append(Utils.linefeed);
-            str.append(command.getRepeat()).append(Utils.linefeed);
+            str.append(command.getIntro()).append(linefeed);
+            str.append(command.getRepeat()).append(linefeed);
             if (command.getEnding() != null && !command.getEnding().isEmpty())
-                str.append(command.getEnding()).append(Utils.linefeed);
+                str.append(command.getEnding()).append(linefeed);
         }
         for (Command.CommandTextFormat formatter : extraFormatters) {
             command.addFormat(formatter, count);
-            str.append(command.getFormat(formatter.getName())).append(Utils.linefeed);
+            str.append(command.getFormat(formatter.getName())).append(linefeed);
         }
         return str.toString();
     }

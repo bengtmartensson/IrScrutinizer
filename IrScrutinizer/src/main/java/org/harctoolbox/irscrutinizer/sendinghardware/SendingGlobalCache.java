@@ -25,8 +25,8 @@ import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector;
 import org.harctoolbox.guicomponents.GuiUtils;
-import org.harctoolbox.harchardware.ir.GlobalCache;
 import org.harctoolbox.harchardware.HarcHardwareException;
+import org.harctoolbox.harchardware.ir.GlobalCache;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 import org.harctoolbox.harchardware.ir.Transmitter;
 import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
@@ -39,6 +39,7 @@ public class SendingGlobalCache extends SendingHardware<GlobalCache> implements 
 
     private GlobalCacheIrSenderSelector globalCacheIrSenderSelector;
     private String initialIp;
+    private GlobalCache rawIrSender;
 
     public SendingGlobalCache(JPanel panel, final Props properties, GuiUtils gui,
             GlobalCacheIrSenderSelector newGlobalCacheIrSenderSelector) {
@@ -113,5 +114,10 @@ public class SendingGlobalCache extends SendingHardware<GlobalCache> implements 
         if (globalCacheIp != null)
             properties.setGlobalCacheIpName(globalCacheIp);
         rawIrSender = globalCacheIrSenderSelector.getGlobalCache();
+    }
+
+    @Override
+    public GlobalCache getRawIrSender() {
+        return rawIrSender;
     }
 }

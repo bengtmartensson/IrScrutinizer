@@ -24,6 +24,7 @@ import gnu.io.PortInUseException;
 import gnu.io.RXTXPort;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,119 +38,12 @@ public abstract class LocalSerialPort implements IHarcHardware {
     public final static String defaultPort = "/dev/ttyS0";
     private final static int msToWaitForPort = 100;
 
-    public enum Parity {
-        NONE,  // 0
-        ODD,   // 1
-        EVEN,  // 2
-        MARK,  // 3
-        SPACE; // 4
-    }
-
-    public enum FlowControl {
-        NONE,        // 0
-        RTSCTS_IN,   // 1
-        RTSCTS_OUT,  // 2
-        RTSCTS,      // 3
-        XONXOFF_IN,  // 4
-        dummy2,
-        dummy3,
-        dummy4,
-        XONXOFF_OUT, // 8
-        dummy5,
-        dummy6,
-        dummy7,
-        XONXOFF;     // 12
-    }
-
-    protected InputStream inStream;
-    protected OutputStream outStream;
-    private CommPort commPort;
-    private final String portName;
-    private final int baud;
-    private final int length;
-    private final int stopBits;
-    private final Parity parity;
-    private final FlowControl flowControl;
-    private int timeout;
     private static ArrayList<String> cachedPortNames = null;
     private final static int maxtries = 3;
-    protected boolean verbose;
-
-    public LocalSerialPort(String portName, int baud, int length, int stopBits, Parity parity, FlowControl flowControl, int timeout) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this.verbose = false;
-        this.portName = portName;
-        this.baud = baud;
-        this.length = length;
-        this.stopBits = stopBits;
-        this.parity = parity;
-        this.flowControl = flowControl;
-        this.timeout = timeout;
-    }
-
-    private void lowLevelOpen() throws NoSuchPortException, PortInUseException {
-        CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
-        commPort = portIdentifier.open(this.getClass().getName(), msToWaitForPort);
-    }
-
-    @Override
-    public void setVerbosity(boolean verbosity) {
-        this.verbose = verbosity;
-    }
-
-    /**
-     * Opens the device.
-     *
-     * @throws HarcHardwareException Bundles RXTX exceptions together.
-     * @throws IOException
-     */
-    @Override
-    public void open() throws HarcHardwareException, IOException {
-        boolean success = false;
-        try {
-            lowLevelOpen();
-            success = true;
-        } catch (NoSuchPortException | PortInUseException ex) {
-            throw new HarcHardwareException(ex);
-        }
-
-        if (!success)
-            throw new HarcHardwareException("Could not open LocalSerialPort " + portName);
-
-        if (commPort instanceof gnu.io.SerialPort) {
-            SerialPort serialPort = (SerialPort) commPort;
-            try {
-                serialPort.setSerialPortParams(baud, length, stopBits, parity.ordinal());
-            } catch (UnsupportedCommOperationException ex) {
-                throw new HarcHardwareException(ex);
-            }
-
-            inStream = serialPort.getInputStream();
-            outStream = serialPort.getOutputStream();
-        }
-        if (commPort instanceof gnu.io.RXTXPort) {
-            ((RXTXPort) commPort).setFlowControlMode(flowControl.ordinal());
-        }
-        setTimeout();
-    }
-
-    public LocalSerialPort(String portName, int baud) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, baud, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0);
-        this.verbose = false;
-    }
-
-    public LocalSerialPort(String portName) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, 9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0);
-        this.verbose = false;
-    }
-
-    public LocalSerialPort(int portNumber) throws IOException, NoSuchPortException, PortInUseException, UnsupportedCommOperationException {
-        this(getSerialPortName(portNumber), 9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0);
-        this.verbose = false;
-    }
 
     public static String getSerialPortName(int portNumber) throws IOException, NoSuchPortException {
         @SuppressWarnings("unchecked")
-        Enumeration<CommPortIdentifier> portEnum = CommPortIdentifier.getPortIdentifiers();
+                Enumeration<CommPortIdentifier> portEnum = CommPortIdentifier.getPortIdentifiers();
         int nr = 0;
         while (portEnum.hasMoreElements()) {
             CommPortIdentifier portIdentifier = portEnum.nextElement();
@@ -179,7 +73,7 @@ public abstract class LocalSerialPort implements IHarcHardware {
         } catch (UnsatisfiedLinkError ex) {
             throw new IOException(ex.getMessage());
         }
-        ArrayList<String> names = new ArrayList<>();
+        ArrayList<String> names = new ArrayList<>(8);
         while (portEnum.hasMoreElements()) {
             CommPortIdentifier portIdentifier = portEnum.nextElement();
             if (portIdentifier.getPortType() == CommPortIdentifier.PORT_SERIAL)
@@ -187,6 +81,97 @@ public abstract class LocalSerialPort implements IHarcHardware {
         }
         cachedPortNames = names;
         return names;
+    }
+
+    // On systems with /dev device names, expand symbolic links
+    // (like the one udev creates, /dev/arduino -> /dev/ttyACM0)
+    // Otherwise, just return the argument.
+    private static String canonicalizePortName(String portName) throws IOException {
+        return portName.startsWith("/dev") ? new File(portName).getCanonicalPath() : portName;
+    }
+
+    protected InputStream inStream;
+    protected OutputStream outStream;
+    private CommPort commPort;
+    private final String portName;
+    private final int baud;
+    private final int length;
+    private final int stopBits;
+    private final Parity parity;
+    private final FlowControl flowControl;
+    private int timeout;
+    protected boolean verbose;
+
+    public LocalSerialPort(String portName, int baud, int length, int stopBits, Parity parity, FlowControl flowControl, int timeout) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this.verbose = false;
+        this.portName = portName;
+        this.baud = baud;
+        this.length = length;
+        this.stopBits = stopBits;
+        this.parity = parity;
+        this.flowControl = flowControl;
+        this.timeout = timeout;
+    }
+
+
+    public LocalSerialPort(String portName, int baud) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this(portName, baud, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0);
+        this.verbose = false;
+    }
+
+    public LocalSerialPort(String portName) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this(portName, 9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0);
+        this.verbose = false;
+    }
+
+    public LocalSerialPort(int portNumber) throws IOException, NoSuchPortException, PortInUseException, UnsupportedCommOperationException {
+        this(getSerialPortName(portNumber), 9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0);
+        this.verbose = false;
+    }
+    private void lowLevelOpen() throws NoSuchPortException, PortInUseException, IOException {
+        String realPath = canonicalizePortName(portName);
+        CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(realPath);
+        commPort = portIdentifier.open(this.getClass().getName(), msToWaitForPort);
+    }
+    @Override
+    public void setVerbosity(boolean verbosity) {
+        this.verbose = verbosity;
+    }
+    /**
+     * Opens the device.
+     *
+     * @throws HarcHardwareException Bundles RXTX exceptions together.
+     * @throws IOException
+     */
+    @Override
+    public void open() throws HarcHardwareException, IOException {
+        boolean success = false;
+        try {
+            lowLevelOpen();
+            success = true;
+        } catch (NoSuchPortException | PortInUseException ex) {
+            commPort = null;
+            throw new HarcHardwareException(ex);
+        }
+
+        if (!success)
+            throw new HarcHardwareException("Could not open LocalSerialPort " + portName);
+
+        if (commPort instanceof gnu.io.SerialPort) {
+            SerialPort serialPort = (SerialPort) commPort;
+            try {
+                serialPort.setSerialPortParams(baud, length, stopBits, parity.ordinal());
+            } catch (UnsupportedCommOperationException ex) {
+                throw new HarcHardwareException(ex);
+            }
+
+            inStream = serialPort.getInputStream();
+            outStream = serialPort.getOutputStream();
+        }
+        if (commPort instanceof gnu.io.RXTXPort) {
+            ((RXTXPort) commPort).setFlowControlMode(flowControl.ordinal());
+        }
+        setTimeout();
     }
 
     public void flushInput() throws IOException {
@@ -252,7 +237,7 @@ public abstract class LocalSerialPort implements IHarcHardware {
 
     public void setDTR(boolean state) {
         if (commPort instanceof gnu.io.RXTXPort) {
-            ((RXTXPort) commPort).setDTR(state);
+            ((SerialPort) commPort).setDTR(state);
         }
     }
 
@@ -263,5 +248,29 @@ public abstract class LocalSerialPort implements IHarcHardware {
         } catch (InterruptedException ex) {
         }
         setDTR(true);
+    }
+
+    public enum Parity {
+        NONE,  // 0
+        ODD,   // 1
+        EVEN,  // 2
+        MARK,  // 3
+        SPACE; // 4
+    }
+
+    public enum FlowControl {
+        NONE,        // 0
+        RTSCTS_IN,   // 1
+        RTSCTS_OUT,  // 2
+        RTSCTS,      // 3
+        XONXOFF_IN,  // 4
+        dummy2,
+        dummy3,
+        dummy4,
+        XONXOFF_OUT, // 8
+        dummy5,
+        dummy6,
+        dummy7,
+        XONXOFF;     // 12
     }
 }

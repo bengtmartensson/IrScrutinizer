@@ -32,6 +32,7 @@ import javax.swing.MenuElement;
 import org.harctoolbox.harchardware.ir.GlobalCache;
 
 public class GlobalCacheManagerMenu implements Serializable /*extends GlobalCacheManagerAbstractMenu*/ {
+    public static final String PROP_GC_ADDR = "PROP_GC_ADDR";
     private final JMenu globalCacheMenu;
     private JRadioButton[] globalCacheRadioButtons = new JRadioButton[0];
     private ButtonGroup buttonGroup = null;
@@ -39,8 +40,23 @@ public class GlobalCacheManagerMenu implements Serializable /*extends GlobalCach
     private InetAddress globalCacheInetAddress;
     private final boolean verbose;
 
-    public static final String PROP_GC_ADDR = "PROP_GC_ADDR";
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+    public GlobalCacheManagerMenu(JMenu globalCacheMenu, GuiUtils guiUtils, ButtonGroup buttonGroup, String initialSelection, boolean verbose) {
+        //super(guiUtils, verbose);
+        this.guiUtils = guiUtils;
+        this.globalCacheInetAddress = null;
+        this.verbose = verbose;
+        this.globalCacheMenu = globalCacheMenu;
+        this.buttonGroup = buttonGroup;
+        setup();
+
+        GlobalCacheManager.getInstance().addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                setup();
+            }
+        });
+    }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
@@ -122,28 +138,4 @@ public class GlobalCacheManagerMenu implements Serializable /*extends GlobalCach
         globalCacheMenu.getParent().repaint();
     }
 
-    public GlobalCacheManagerMenu(JMenu globalCacheMenu, GuiUtils guiUtils, ButtonGroup buttonGroup, String initialSelection, boolean verbose) {
-        //super(guiUtils, verbose);
-        this.guiUtils = guiUtils;
-        this.globalCacheInetAddress = null;
-        this.verbose = verbose;
-        this.globalCacheMenu = globalCacheMenu;
-        this.buttonGroup = buttonGroup;
-        setup();
-
-        GlobalCacheManager.getInstance().addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                setup();
-            }
-        });
-    }
-
-    /*@Override
-    public String getGlobalCacheIpName() {
-        for (int i = 0; i < globalCacheMenu.getItemCount(); i++)
-            if (globalCacheMenu.getItem(i).isSelected())
-                return GlobalCacheManager.getIpName(i);
-        return null;
-    }*/
 }

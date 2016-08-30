@@ -41,9 +41,6 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
     //private int beginTimeout;
     //private int middleTimeout;
     //private int endingTimeout;
-    private final static int defaultBeginTimeout = 5000;
-    private final static int defaultMiddleTimeout = 1000;
-    private final static int defaultEndingTimeout = 500;
     //private LocalSerialPortBuffered localSerialPort = null;
     private static final String sendCommand = "send";
     private static final String captureCommand = "analyze";
@@ -51,34 +48,98 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
     public static final String defaultPortName = "/dev/ttyACM0";
     public static final String okString = "OK";
     public static final String timeoutString = ".";
-    private String lineEnding = "\r";
     private static final String separator = " ";
     //private String portName;
     public static final int defaultBaudRate = 115200;
     private static final int dataSize = 8;
     private static final int stopBits = 1;
-    private double fallbackFrequency = 38000;
     private static final LocalSerialPort.Parity parity = LocalSerialPort.Parity.NONE;
     private static final LocalSerialPort.FlowControl defaultFlowControl = LocalSerialPort.FlowControl.NONE;
+    private final static int serialTimeout = 12345;
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        String portName = defaultPortName;
+        Arduino w = null;
+        boolean verbose = true;
+        try {
+            w = new Arduino(portName, 10000, verbose);
+            w.open();
+            System.out.println(w.getVersion());
+            ModulatedIrSequence seq = w.capture();
+            if (seq == null) {
+                System.err.println("No input");
+                w.close();
+                System.exit(1);
+            }
+            System.out.println(seq);
+            DecodeIR.invoke(seq);
+        } catch (IOException ex) {
+            System.err.println("exception: " + ex.toString() + ex.getMessage());
+            //ex.printStackTrace();
+        } catch (NoSuchPortException ex) {
+            System.err.println("No such port: " + portName);
+        } catch (HarcHardwareException | UnsupportedCommOperationException ex) {
+            System.err.println(ex.getMessage());
+        } catch (PortInUseException ex) {
+            System.err.println("Port " + portName + " in use.");
+        } finally {
+            if (w != null)
+                try {
+                    w.close();
+                } catch (IOException ex) {
+                }
+        }
+        System.exit(0);
+    }
+    private String lineEnding = "\r";
+    private double fallbackFrequency = 38000;
     private boolean stopRequested = false;
     private String versionString = "n/a";
-    private final static int serialTimeout = 12345;
     private boolean pendingCapture = false;
 
+
+    public Arduino() throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this(defaultPortName, defaultBaudRate, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndTimeout, false);
+    }
+
+    public Arduino(String portName) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this(portName, defaultBaudRate, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndTimeout, false);
+    }
+
+    public Arduino(String portName, int baudRate) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this(portName, baudRate, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndTimeout, false);
+    }
+
+    public Arduino(String portName, int baudRate, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this(portName, baudRate, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndTimeout, verbose);
+    }
+
+    public Arduino(String portName, int baudRate, int beginTimeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this(portName, baudRate, beginTimeout, defaultCaptureMaxSize, defaultEndTimeout, verbose);
+    }
+
+    public Arduino(String portName, int beginTimeout, int captureMaxSize, int endingTimeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this(portName, defaultBaudRate, beginTimeout, captureMaxSize, defaultEndTimeout, verbose);
+    }
+
+    public Arduino(String portName, int baudRate, int beginTimeout, int captureMaxSize, int endingTimeout, boolean verbose)
+            throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        super(LocalSerialPortBuffered.class, portName, baudRate, dataSize, stopBits, parity, defaultFlowControl, serialTimeout, verbose);
+    }
     /**
      * @param lineEnding the lineEnding to set
      */
     public void setLineEnding(String lineEnding) {
         this.lineEnding = lineEnding;
     }
-
     /**
      * @param fallbackFrequency the fallbackFrequency to set
      */
     public void setFallbackFrequency(double fallbackFrequency) {
         this.fallbackFrequency = fallbackFrequency;
     }
-
     @Override
     public synchronized boolean sendIr(IrSignal irSignal, int count, Transmitter transmitter) throws NoSuchTransmitterException, IrpMasterException, IOException {
         String payload = formatString(irSignal, count);
@@ -89,50 +150,66 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
         return response != null && response.trim().equals(okString);
     }
 
-    public Arduino() throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(defaultPortName, defaultBaudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, false);
-    }
-
-    public Arduino(String portName) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, defaultBaudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, false);
-    }
-
-    public Arduino(String portName, int baudRate) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, baudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, false);
-    }
-
-    public Arduino(String portName, int baudRate, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, baudRate, defaultBeginTimeout, defaultMiddleTimeout, defaultEndingTimeout, verbose);
-    }
-
-    public Arduino(String portName, int baudRate, int beginTimeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, baudRate, beginTimeout, defaultMiddleTimeout, defaultEndingTimeout, verbose);
-    }
-
-    public Arduino(String portName, int beginTimeout, int middleTimeout, int endingTimeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, defaultBaudRate, beginTimeout, defaultMiddleTimeout, defaultEndingTimeout, verbose);
-    }
-
-    public Arduino(String portName, int baudRate, int beginTimeout, int middleTimeout, int endingTimeout, boolean verbose)
-            throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        super(LocalSerialPortBuffered.class, portName, baudRate, dataSize, stopBits, parity, defaultFlowControl, serialTimeout, verbose);
-    }
-
     @Override
     public void open() throws IOException, HarcHardwareException {
         super.open();
-        serialPort.waitFor(okString, lineEnding, /*delay*/ 100, /* tries = */ 10);
+        waitFor(okString, lineEnding, /*delay*/ 100, /* tries = */ 10);
         serialPort.sendString(versionCommand + lineEnding);
         versionString = serialPort.readString(true).trim();
         if (verbose)
             System.err.println(versionCommand + " returned '" + versionString + "'.");
     }
 
+    public void waitFor(String goal, String areUThere, int delay, int tries) throws IOException, HarcHardwareException {
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException ex) {
+            // nothing
+        }
+        flushIn();
+        for (int i = 0; i < tries; i++) {
+            sendString(areUThere);
+            String answer = readString(true);
+            if (answer == null)
+                continue;
+            answer = answer.trim();
+            if (answer.startsWith(goal)) {// success!
+                flushIn();
+                return;
+            }
+            if (delay > 0)
+                try {
+                    Thread.sleep(delay);
+                } catch (InterruptedException ex) {
+                    break;
+                }
+        }
+        // Failure if we get here.
+        throw new HarcHardwareException("Hardware not responding");
+    }
+
+    private void flushIn() /*throws IOException*/ {
+        try {
+            while (true) {
+                String junk = readString();
+                if (junk == null)
+                    break;
+                if (verbose)
+                    System.err.println("LocalSerialPortBuffered.flushIn: junked '" + junk + "'.");
+            }
+        } catch (IOException ex) {
+            // This bizarre code actually both seems to work, and be needed (at least using my Mega2560),
+            // the culprit is probably rxtx.
+             if (verbose)
+                    System.err.println("IOException in LocalSerialPortBuffered.flushIn ignored: " + ex.getMessage());
+        }
+    }
+
     private StringBuilder join(IrSequence irSequence, String separator) {
         if (irSequence == null || irSequence.isEmpty())
-            return new StringBuilder();
+            return new StringBuilder(0);
 
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(128);
         for (int i = 0; i < irSequence.getLength(); i++)
             str.append(separator).append(Integer.toString(irSequence.iget(i)));
         return str;
@@ -158,6 +235,18 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
     @Override
     public String getVersion() /*throws IOException*/ {
         return versionString;
+    }
+
+    @Override
+    public void setBeginTimeout(int beginTimeout) throws IOException {
+    }
+
+    @Override
+    public void setCaptureMaxSize(int captureMaxSize) {
+    }
+
+    @Override
+    public void setEndTimeout(int endTimeout) {
     }
 
     @Override
@@ -248,54 +337,10 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
         throw new UnsupportedOperationException("Not supported yet.");// TODO
     }
 
-    @Override
-    public void setTimeout(int beginTimeout, int middleTimeout, int endingTimeout) throws IOException {
-        setTimeout(beginTimeout);
-        //this.middleTimeout = middleTimeout;
-        //this.endingTimeout = endingTimeout;
-    }
-
     public void reset() {
         serialPort.dropDTR(100);
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        String portName = defaultPortName;
-        Arduino w = null;
-        boolean verbose = true;
-        try {
-            w = new Arduino(portName, 10000, verbose);
-            w.open();
-            System.out.println(w.getVersion());
-            ModulatedIrSequence seq = w.capture();
-            if (seq == null) {
-                System.err.println("No input");
-                w.close();
-                System.exit(1);
-            }
-            System.out.println(seq);
-            DecodeIR.invoke(seq);
-        } catch (IOException ex) {
-            System.err.println("exception: " + ex.toString() + ex.getMessage());
-            //ex.printStackTrace();
-        } catch (NoSuchPortException ex) {
-            System.err.println("No such port: " + portName);
-        } catch (HarcHardwareException | UnsupportedCommOperationException ex) {
-            System.err.println(ex.getMessage());
-        } catch (PortInUseException ex) {
-            System.err.println("Port " + portName + " in use.");
-        } finally {
-            if (w != null)
-                try {
-                    w.close();
-                } catch (IOException ex) {
-                }
-        }
-        System.exit(0);
-    }
 
     @Override
     public void sendString(String cmd) throws IOException {
@@ -320,5 +365,10 @@ public class Arduino extends IrSerial<LocalSerialPortBuffered> implements IRawIr
     @Override
     public void setDebug(int debug) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void flushInput() throws IOException {
+        serialPort.flushInput();
     }
 }

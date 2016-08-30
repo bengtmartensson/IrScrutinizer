@@ -21,6 +21,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 <properties package="org.harctoolbox.irscrutinizer" useXml = "true" appName="Version.appName" home-environment-var="IRSCRUTINIZERHOME">
     <import class="org.harctoolbox.harchardware.ir.IrTrans"/>
     <import class="org.harctoolbox.harchardware.ir.LircClient"/>
+    <import class="org.harctoolbox.IrpMaster.IrpUtils"/>
     <property name="bounds" type="rectangle" default='null' doc='Bounds of IrScrutinizer window.'/>
     <property name="outputFormatIndex" type="int" default='"1"' />
     <property name="irWidgetCapturePortName" type="string" default='ifWindows("COM8","/dev/ttyUSB0")' doc='Name of device to use, e.g. COM8 or /dev/ttyUSB0.' />
@@ -34,21 +35,27 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="commandFusionPortBaudRate" type="int" default='"9600"' doc='Baudrate for CommandFusion serial (sending).' />
     <property name="commandFusionCapturePortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for capturing with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
     <property name="commandFusionCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (capturing).' />
-    <property name="girsClientPortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for sending IR with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
-    <property name="girsClientPortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (sending).' />
-    <property name="girsClientCapturePortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for capturing with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
-    <property name="girsClientCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (capturing).' />
+    <property name="girsClientSerialPortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for sending IR with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
+    <property name="girsClientSerialPortBaudRate" type="int" default='"115200"' doc='Baudrate for Arduino serial (sending).' />
+    <property name="girsClientIPName" type="string" default='"arduino"' doc='IP-Name (or address) of Girs client.' />
+    <property name="girsClientPortNumber" type="int" default='"33333"' doc='Portnumber of Girs client.' />
+    <property name="girsClientType" type="string" default='"tcp"' doc='Type of Girs client (serial, tcp,...).' />
     <property name="irToyPortName" type="string" default='ifWindows("COM13", "/dev/ttyACM0")' doc="Port name for IrToy"/>
     <property name="irToyPortBaudRate" type="int" default='"9600"' doc="Baudrate for IrToy (sending)"/>
     <property name="irToyCapturePortName" type="string" default='ifWindows("COM13", "/dev/ttyACM0")' doc='Name of device to use, e.g. COM1 or /dev/ttyUSB0.' />
     <property name="irToyCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for IrToy (capturing).' />
+    <property name="devLircName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc."/>
+    <property name="devLircCaptureName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc captures."/>
     <property name="captureDevice" type="string" default='"LIRC Mode 2"' />
     <property name="sorterOnParametrizedTable" type="boolean" default='"false"' />
     <property name="sorterOnRawTable" type="boolean" default='"false"' />
 
-    <property name="captureStartTimeout" type="int" default='"3000"' doc='Timeout when capturing, in milliseconds. Exact semantics may depend on the hardware selected.' />
-    <property name="captureRunTimeout" type="int" default='"1000"' doc='Maximal length of recorded signal, in milliseconds' />
-    <property name="captureEndingTimeout" type="int" default='"300"' doc='Timeout when signal ends, in milliseconds' />
+    <property name="selectedMainPaneIndex" type="int" default='"0"' doc='Index of selected pane.'/>
+    <property name="selectedRemoteIndex" type="int" default='"0"' doc='Index of selected remote subpane.'/>
+
+    <property name="captureBeginTimeout" type="int" default='"3000"' doc='Timeout when capturing, in milliseconds. Exact semantics may depend on the hardware selected.' />
+    <property name="captureMaxSize" type="int" default='"1000"' doc='Maximal length of recorded signal, in samples' />
+    <property name="captureEndTimeout" type="int" default='"300"' doc='Timeout when signal ends, in milliseconds' />
     <property name="sendingTimeout" type="int" default='"2000"' doc='Timeout when sending signals, in milliseconds' />
     <property name="transmitGeneratedCount" type="int" default='"1"' doc="Number of times to send signal by transmit generated." />
 
@@ -57,6 +64,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="ignoreEndingSilence" type="boolean" default='"false"' doc='If true, the last silence in the recorded signal will not be shown in plots'/>
     <property name="verbose" type="boolean" default='"false"' doc='If true, execute some commands more verbosely' />
     <property name="invokeRepeatFinder" type="boolean" default='"true"' doc="Determines if the repeatfinder is invoked on captures and clipboard."/>
+    <property name="invokeCleaner" type="boolean" default='"true"' doc="Determines if the signal cleaner is invoked on captures and clipboard."/>
     <property name="disregardRepeatMins" type="boolean" default='"false"' doc='Value of the "disregard repeat mins" parameter. See IrpMaster documentation for the semantic.'/>
     <property name="exportDir" type="string" default='System.getProperty("java.io.tmpdir") + File.separator + "exports"' doc='Directory to which to write exports.'/>
     <property name="defaultImportDir" type="string" default='"testfiles"' doc='Just the starting directory for file selectors.'/>
@@ -75,6 +83,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="transmitHardware" type="string" default='"Audio Port"' doc="Name of selected transmit hardware."/>
     <property name="lircIpName" type="string" default='LircClient.defaultLircIP' doc='IP name or address of LIRC server.'/>
     <property name="lircPort" type="int" default='Integer.toString(LircClient.lircDefaultPort)' doc='TCP port number of LIRC server, typically 8765.'/>
+    <property name="lircTimeout" type="int" default='"5000"' doc="Timeout for connecting to TCP Lirc server" />
     <property name="lookAndFeel" type="int" default='"0"' doc='Look and feel, as integer index in table. Semantics is system dependent.'/>
     <property name="globalCacheApiKey" type="string" default='""' />
     <property name="usePopupsForErrors" type="boolean" default='"true"' doc='If true, use popups for help. Otherwise the console will be used.'/>
@@ -125,9 +134,10 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="irpMasterCurrentD" type="string" default='"0"' doc='Selected D for generator.'/>
     <property name="irpMasterCurrentS" type="string" default='"-1"' doc='Selected S for generator.'/>
     <property name="irpMasterCurrentF" type="string" default='"0"' doc='Selected F for generator.'/>
+    <property name="irpMasterCurrentT" type="string" default='"-"' doc='Selected T for generator.'/>
+    <property name="irpMasterCurrentAdditionalParameters" type="string" default='""' doc='Selected \"Additional parameters\" for generator.'/>
     <property name="exportAutomaticFilenames" type="boolean" default='"true"' doc='Generate automatic file names for exports'/>
     <property name="invokeAnalyzer" type="boolean" default='"false"' doc='If true, the analyzer is invoked on scrutineering and on imports.' />
-    <property name="useCleansed" type="boolean" default='"false"' doc='If true, show captured signals with repeats eliminated, as per repeatfinder.' />
 
     <property name="girrFatRaw" type="boolean" default='"false"' />
     <property name="girrCreateSchemaLocation" type="boolean" default='"true"' />
@@ -136,9 +146,15 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="importWaveDivideCarrier" type="boolean" default='"true"' doc="If true (which is the normal case), it is assumed the actual frequency in the imported wave file is half of the actual modulation frequency"/>
     <property name="importOpensZipFiles" type="boolean" default='"false"' doc="If selected, the import facitilty will also open zip files."/>
     <property name="importPaneSelectedIndex" type="int" default='"2"' doc="Index of the selected pane in the importer"/>
+    <property name="rejectLircCodeImports" type="boolean" default='"true"' doc="If true, Lirc files without timing information are rejected."/>
     <property name="prontoModelIndex" type="int" default='"4"' doc="Index of selected Pronto Classic model."/>
     <property name="prontoScreenSizeX" type="int" default='"240"' doc="Pronto screen width" />
     <property name="prontoScreenSizeY" type="int" default='"220"' doc="Pronto screen height" />
     <property name="prontoButtonSizeX" type="int" default='"80"' doc="Pronto screen width" />
     <property name="prontoButtonSizeY" type="int" default='"30"' doc="Pronto screen height" />
+
+    <property name="absoluteTolerance" type="double" default='Double.toString(IrpUtils.defaultAbsoluteTolerance)' doc="Absolute tolerance for duration comparisons" />
+    <property name="relativeTolerance" type="double" default='Double.toString(IrpUtils.defaultRelativeTolerance)' doc="Relative tolerance for duration comparisons" />
+    <property name="dontInquire4UnsavedParametricRemotes" type="boolean" default='"false"' doc="Skip acknowledge when exiting with unsaved changes in parameteric remotes."/>
+    <property name="dontInquire4UnsavedRawRemotes" type="boolean" default='"false"' doc="Skip acknowledge when exiting with unsaved changes in raw remotes."/>
 </properties>

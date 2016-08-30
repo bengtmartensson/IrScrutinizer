@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.harctoolbox.IrpMaster.ExchangeIR;
+import org.harctoolbox.IrpMaster.InterpretString;
 import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
@@ -36,8 +36,21 @@ import org.harctoolbox.girr.Command;
  */
 public class IctImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
 
-    private static int invalid = -1;
+    private static final int invalid = -1;
     private static final int lengthInsertedGap = 100000;
+
+    public static Collection<Command> importer(File file, String charsetName) throws IOException, ParseException, IrpMasterException {
+        IctImporter imp = new IctImporter();
+        imp.load(file, file.getCanonicalPath(), charsetName);
+        return imp.getCommands();
+    }
+
+    public static Collection<Command> importer(BufferedReader reader) throws IOException {
+        IctImporter imp = new IctImporter();
+        imp.load(reader, null);
+        return imp.getCommands();
+    }
+
     private int lineNumber;
     private int frequency = invalid;
     private int sampleCount = invalid;
@@ -62,7 +75,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
         lineNumber = 0;
         noSamples = 0;
         String name = "unnamed";
-        ArrayList<Integer> data = new ArrayList<>();
+        ArrayList<Integer> data = new ArrayList<>(64);
         while (true) {
             String line = bufferedReader.readLine();
             if (line == null)
@@ -124,21 +137,9 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
             frequency = (int) IrpUtils.defaultFrequency;
             System.err.println("Warning: carrier_frequency missing, assuming " + (int) IrpUtils.defaultFrequency);
         }
-        IrSignal irSignal = ExchangeIR.interpretIrSequence(dataArray, (double) frequency, isInvokeRepeatFinder(), isInvokeAnalyzer());
+        IrSignal irSignal = InterpretString.interpretIrSequence(dataArray, frequency, isInvokeRepeatFinder(), isInvokeAnalyzer());
         Command command = new Command(uniqueName(name), origin == null ? "ICT import" : ("ICT import from " + origin), irSignal);
         addCommand(command);
-    }
-
-    public static Collection<Command> importer(File file, String charsetName) throws IOException, ParseException, IrpMasterException {
-        IctImporter imp = new IctImporter();
-        imp.load(file, file.getCanonicalPath(), charsetName);
-        return imp.getCommands();
-    }
-
-    public static Collection<Command> importer(BufferedReader reader) throws IOException {
-        IctImporter imp = new IctImporter();
-        imp.load(reader, null);
-        return imp.getCommands();
     }
 
     @Override

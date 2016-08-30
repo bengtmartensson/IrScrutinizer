@@ -247,8 +247,7 @@ final public class IrRemote {
             return new Command(code.getName(), null, "lircdriver:" + driver, parameters);
         } catch (IrpMasterException ex) {
             // this cannot happen
-            assert(false);
-            return null;
+            throw new InternalError();
         }
     }
 
@@ -285,7 +284,7 @@ final public class IrRemote {
 
     public static RemoteSet newRemoteSet(Collection<IrRemote> remotes, String configFilename,
             String creatingUser, boolean alternatingSigns, int debug) {
-        if (remotes == null || remotes.isEmpty())
+        if (remotes == null)
             return null;
         String decodeir_version = DecodeIR.getVersion();
 

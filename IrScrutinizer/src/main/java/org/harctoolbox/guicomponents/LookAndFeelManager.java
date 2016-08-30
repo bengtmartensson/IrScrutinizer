@@ -38,24 +38,6 @@ public class LookAndFeelManager {
     private final ILookAndFeelManagerCaller caller;
 
     /**
-     * Allows for error reporting function and a set-property function of the caller.
-     */
-    public interface ILookAndFeelManagerCaller {
-        /**
-         * Used for error reporting through the caller.
-         * @param ex Exception.
-         * @param str Error message.
-         */
-        void err(Exception ex, String str);
-
-        /**
-         * Sets a property of the caller, or something similar.
-         * @param index System dependent index of the LAF class.
-         */
-        void setLAFProperty(int index);
-    }
-
-    /**
      * Allows for setting Look and feel.
      *
      * @param topLevel Window to be manipulated.
@@ -139,5 +121,22 @@ public class LookAndFeelManager {
      */
     public String getCurrentLAFClassName() {
         return lafInfo[currentIndex].getClassName();
+    }
+    /**
+     * Allows for error reporting function and a set-property function of the caller.
+     */
+    public interface ILookAndFeelManagerCaller {
+        /**
+         * Used for error reporting through the caller.
+         * @param ex Exception.
+         * @param str Error message.
+         */
+        void err(Exception ex, String str);
+
+        /**
+         * Sets a property of the caller, or something similar.
+         * @param index System dependent index of the LAF class.
+         */
+        void setLAFProperty(int index);
     }
 }

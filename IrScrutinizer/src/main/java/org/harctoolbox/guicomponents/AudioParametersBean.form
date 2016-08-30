@@ -78,6 +78,9 @@
         <Property name="selectedIndex" type="int" value="1"/>
         <Property name="toolTipText" type="java.lang.String" value="Sample frequency of the generated signal."/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JComboBox" name="channelsComboBox">
       <Properties>
@@ -89,6 +92,9 @@
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="Number of channnels in generated signal. Normal is one channel. If two, the second channel is just exactly the opposite of the first."/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JCheckBox" name="omitTrailingGapCheckBox">
       <Properties>
@@ -119,6 +125,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sampleSizeComboBoxActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>

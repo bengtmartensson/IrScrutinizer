@@ -22,7 +22,6 @@ import java.net.ConnectException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
 import org.harctoolbox.harchardware.ir.IRemoteCommandIrSender;
-//import org.harctoolbox.harchardware.ir.IRemoteCommandIrSenderStop;
 import org.harctoolbox.harchardware.ir.ITransmitter;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 import org.harctoolbox.harchardware.ir.Transmitter;
@@ -33,9 +32,9 @@ import org.harctoolbox.harchardware.ir.Transmitter;
 public class NamedCommandLauncher extends JPanel {
     private GuiUtils guiUtils;
     private transient IRemoteCommandIrSender hardware;
-    private DefaultComboBoxModel transmitterComboBoxModel;
-    private DefaultComboBoxModel remoteComboBoxModel;
-    private DefaultComboBoxModel commandComboBoxModel;
+    private DefaultComboBoxModel<String> transmitterComboBoxModel;
+    private DefaultComboBoxModel<String> remoteComboBoxModel;
+    private DefaultComboBoxModel<String> commandComboBoxModel;
     // TODO private boolean supportsStopIr;
 
     public NamedCommandLauncher() {
@@ -69,10 +68,10 @@ public class NamedCommandLauncher extends JPanel {
         this.hardware = hardware;
         //supportsStopIr = (hardware != null) && IRemoteCommandIrSenderStop.class.isInstance(hardware);
         if (hardware == null) {
-            transmitterComboBoxModel = new javax.swing.DefaultComboBoxModel();//new String[]{"Tr. 1", "Tr. 2", "Tr. 3", "Tr. 4"});
+            transmitterComboBoxModel = new javax.swing.DefaultComboBoxModel<>();//new String[]{"Tr. 1", "Tr. 2", "Tr. 3", "Tr. 4"});
             //transmitterComboBox.setEnabled(false;);
-            remoteComboBoxModel = new javax.swing.DefaultComboBoxModel();
-            commandComboBoxModel = new javax.swing.DefaultComboBoxModel();
+            remoteComboBoxModel = new javax.swing.DefaultComboBoxModel<>();
+            commandComboBoxModel = new javax.swing.DefaultComboBoxModel<>();
             if (remoteComboBox != null)
                 remoteComboBox.setModel(remoteComboBoxModel);
             if (commandComboBox != null)
@@ -97,7 +96,7 @@ public class NamedCommandLauncher extends JPanel {
 
     private void load() throws IOException {
         if (ITransmitter.class.isInstance(hardware))
-            transmitterComboBoxModel = new DefaultComboBoxModel(((ITransmitter) hardware).getTransmitterNames());
+            transmitterComboBoxModel = new DefaultComboBoxModel<>(((ITransmitter) hardware).getTransmitterNames());
         else
             transmitterComboBox.setEditable(false);
         transmitterComboBox.setModel(transmitterComboBoxModel);
@@ -108,18 +107,18 @@ public class NamedCommandLauncher extends JPanel {
             String[] remotes = hardware.getRemotes();
             if (remotes == null || remotes.length == 0) {
                 guiUtils.warning("No remotes present");
-                remoteComboBox.setModel(new DefaultComboBoxModel());
-                commandComboBox.setModel(new DefaultComboBoxModel());
+                remoteComboBox.setModel(new DefaultComboBoxModel<String>());
+                commandComboBox.setModel(new DefaultComboBoxModel<String>());
                 return;
             }
             java.util.Arrays.sort(remotes, String.CASE_INSENSITIVE_ORDER);
-            remoteComboBoxModel = new DefaultComboBoxModel(remotes);
+            remoteComboBoxModel = new DefaultComboBoxModel<>(remotes);
             remoteComboBox.setModel(remoteComboBoxModel);
-            loadCommands((String) remoteComboBoxModel.getElementAt(0));
+            loadCommands(remoteComboBoxModel.getElementAt(0));
         } catch (IOException ex) {
             hardware = null;
-            remoteComboBox.setModel(new DefaultComboBoxModel());
-            commandComboBox.setModel(new DefaultComboBoxModel());
+            remoteComboBox.setModel(new DefaultComboBoxModel<String>());
+            commandComboBox.setModel(new DefaultComboBoxModel<String>());
             throw ex;
         }
     }
@@ -130,7 +129,7 @@ public class NamedCommandLauncher extends JPanel {
             if (commands == null)
                 commands = new String[0];
             java.util.Arrays.sort(commands, String.CASE_INSENSITIVE_ORDER);
-            commandComboBoxModel = new DefaultComboBoxModel(commands);
+            commandComboBoxModel = new DefaultComboBoxModel<>(commands);
             commandComboBox.setModel(commandComboBoxModel);
         } catch (IOException ex) {
             guiUtils.error(ex);
@@ -167,10 +166,10 @@ public class NamedCommandLauncher extends JPanel {
     private void initComponents() {
 
         copyPopupMenu = new org.harctoolbox.guicomponents.CopyPastePopupMenu();
-        noSendsComboBox = new javax.swing.JComboBox();
-        transmitterComboBox = new javax.swing.JComboBox();
-        remoteComboBox = new javax.swing.JComboBox();
-        commandComboBox = new javax.swing.JComboBox();
+        noSendsComboBox = new javax.swing.JComboBox<>();
+        transmitterComboBox = new javax.swing.JComboBox<>();
+        remoteComboBox = new javax.swing.JComboBox<>();
+        commandComboBox = new javax.swing.JComboBox<>();
         sendButton = new javax.swing.JButton();
         stopButton = new javax.swing.JButton();
         reloadButton = new javax.swing.JButton();
@@ -179,7 +178,7 @@ public class NamedCommandLauncher extends JPanel {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
 
-        noSendsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "7", "10", "15", "20", "30", "40", "50", "70", "100", "200", "500", "1000" }));
+        noSendsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "7", "10", "15", "20", "30", "40", "50", "70", "100", "200", "500", "1000" }));
         noSendsComboBox.setToolTipText("Number of times to send command");
 
         transmitterComboBox.setModel(transmitterComboBoxModel);
@@ -333,17 +332,17 @@ public class NamedCommandLauncher extends JPanel {
     }//GEN-LAST:event_reloadButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox commandComboBox;
+    private javax.swing.JComboBox<String> commandComboBox;
     private org.harctoolbox.guicomponents.CopyPastePopupMenu copyPopupMenu;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JComboBox noSendsComboBox;
+    private javax.swing.JComboBox<String> noSendsComboBox;
     private javax.swing.JButton reloadButton;
-    private javax.swing.JComboBox remoteComboBox;
+    private javax.swing.JComboBox<String> remoteComboBox;
     private javax.swing.JButton sendButton;
     private javax.swing.JButton stopButton;
-    private javax.swing.JComboBox transmitterComboBox;
+    private javax.swing.JComboBox<String> transmitterComboBox;
     // End of variables declaration//GEN-END:variables
 }

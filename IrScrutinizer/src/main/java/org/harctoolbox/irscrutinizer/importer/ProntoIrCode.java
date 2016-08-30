@@ -56,9 +56,24 @@ public class ProntoIrCode {
         "mute", "display", "\u00f2", "\u00f3", "\u00f4", "add_info", "\u00f6", "tape_direction", // 0xf0-0xf7
         "???", "\u00f9", "\u00fa", "\u00fb", "\u00fc", "???", "angle", "???", // 0xf8-0xff
     };
+
+    // Not perfect, but better than nothing.
+    public static String translateProntoFont(String name) {
+        return name.length() == 1 ? prontoCharNames[name.charAt(0)] : name;
+    }
     private String ccf;
     private String name;
     private String comment;
+
+    private ProntoIrCode(String ccf, String name, String comment, boolean translateProntoFont) {
+        this.ccf = ccf;
+        this.name = translateProntoFont && name != null ? translateProntoFont(name) : name;
+        this.comment = comment;
+    }
+
+    private ProntoIrCode(String ccf, String name) {
+        this(ccf, name, null, true);
+    }
 
     public String getCcf() {
         return ccf;
@@ -74,21 +89,6 @@ public class ProntoIrCode {
 
     public Command toCommand(boolean generateRaw, boolean decode) throws IrpMasterException {
         return new Command(name, comment, ccf);
-    }
-
-    // Not perfect, but better than nothing.
-    public static String translateProntoFont(String name) {
-        return name.length() == 1 ? prontoCharNames[(int) name.charAt(0)] : name;
-    }
-
-    private ProntoIrCode(String ccf, String name, String comment, boolean translateProntoFont) {
-        this.ccf = ccf;
-        this.name = translateProntoFont && name != null ? translateProntoFont(name) : name;
-        this.comment = comment;
-    }
-
-    private ProntoIrCode(String ccf, String name) {
-        this(ccf, name, null, true);
     }
 
     @Override

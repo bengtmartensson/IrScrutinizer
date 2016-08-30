@@ -20,6 +20,7 @@ package org.harctoolbox.irscrutinizer;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
+import java.awt.HeadlessException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -27,6 +28,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
 import org.harctoolbox.IrpMaster.IrpUtils;
@@ -48,71 +51,41 @@ public class IrScrutinizer {
     public final static long invalid = -1;
     private final static String backupsuffix = "back";
 
-    private IrScrutinizer() {
-    }
 
+    private static JCommander argumentParser;
+    private static final CommandLineArgs commandLineArgs = new CommandLineArgs();
     private static void usage(int exitcode) {
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(256);
         argumentParser.usage(str);
 
         (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
         doExit(exitcode); // placifying FindBugs...
     }
-
     private static void doExit(int exitcode) {
         System.exit(exitcode);
     }
-
-    private final static class CommandLineArgs {
-
-        @Parameter(names = {"-D", "--debug"}, description = "Debug code")
-        private int debug = 0;
-
-        @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
-        private boolean helpRequested = false;
-
-        @Parameter(names = {"-H", "--home", "--applicationhome", "--apphome"}, description = "Set application home (where files are located)")
-        private String applicationHome = null;
-
-        @Parameter(names = {"--nuke-properties"}, description = "Get rid of present properties file")
-        private boolean nukeProperties = false;
-
-        // This option is sort of a dummy.
-        @Parameter(names = {"--irpmaster"}, description = "Invoke IrpMaster on the rest of the parameters; must be first option.")
-        private boolean irpmaster = false;
-
-        @Parameter(names = {"-p", "--properties"}, description = "Pathname of properties file")
-        private String propertiesFilename = null;
-
-
-        @Parameter(names = {"-V", "--version"}, description = "Display version information")
-        private boolean versionRequested;
-
-        @Parameter(names = {"-v", "--verbose"}, description = "Have some commands executed verbosely")
-        private boolean verbose;
-
-        @Parameter(names = {"-x", "--experimental"}, description = "Enable experimental features")
-        private boolean experimental;
-    }
-
-    private static JCommander argumentParser;
-    private static CommandLineArgs commandLineArgs = new CommandLineArgs();
 
     /**
      * @param args the command line arguments.
      */
     public static void main(String[] args) {
         if (args.length > 0 && args[0].equalsIgnoreCase("--irpmaster")) {
-            String appHome = findApplicationHome(null);
-            Props properties = new Props(appHome);
-            String[] newargs = new String[args.length + 1];
-            newargs[0] = "--config";
-            newargs[1] = properties.mkPathAbsolute(properties.getIrpProtocolsIniPath());
-            System.arraycopy(args, 1, newargs, 2, newargs.length-2);
-            org.harctoolbox.IrpMaster.IrpMaster.main(newargs);
-            System.exit(IrpUtils.exitSuccess); // just to be safe
+            String appHome;
+            try {
+                appHome = findApplicationHome(null);
+                Props properties = new Props(appHome);
+                String[] newargs = new String[args.length + 1];
+                newargs[0] = "--config";
+                newargs[1] = properties.mkPathAbsolute(properties.getIrpProtocolsIniPath());
+                System.arraycopy(args, 1, newargs, 2, newargs.length - 2);
+                org.harctoolbox.IrpMaster.IrpMaster.main(newargs);
+                System.exit(IrpUtils.exitSuccess); // just to be safe
+            } catch (URISyntaxException ex) {
+                System.err.println(ex.getMessage());
+                System.exit(IrpUtils.exitUsageError);
+            }
         }
-        int userLevel = 0; // presently not used
+
         argumentParser = new JCommander(commandLineArgs);
         argumentParser.setProgramName(Version.appName);
 
@@ -142,32 +115,25 @@ public class IrScrutinizer {
             System.exit(IrpUtils.exitSuccess);
         }
 
-        String applicationHome = findApplicationHome(commandLineArgs.applicationHome);
+        try {
+            String applicationHome = findApplicationHome(commandLineArgs.applicationHome);
+            if (commandLineArgs.debug > 0)
+                System.err.println("applicationHome = " + applicationHome);
 
-        if (commandLineArgs.debug > 0)
-            System.err.println("applicationHome = " + applicationHome);
-
-        userLevel = commandLineArgs.experimental ? 1 : 0;
-
-        guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.debug, userLevel);
+            guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.debug,
+                    commandLineArgs.experimental ? 1 : 0, commandLineArgs.arguments);
+        } catch (URISyntaxException ex) {
+            System.err.println(ex.getMessage());
+            System.exit(IrpUtils.exitFatalProgramFailure);
+        }
     }
 
-    private static String findApplicationHome(String appHome) {
-        String applicationHome =  appHome != null ? appHome : System.getenv("IRSCRUTINIZERHOME");
+    private static String findApplicationHome(String appHome) throws URISyntaxException {
+        String applicationHome = appHome != null ? appHome : System.getenv("IRSCRUTINIZERHOME");
         if (applicationHome == null) {
             URL url = IrScrutinizer.class.getProtectionDomain().getCodeSource().getLocation();
-            File dir = null;
-            try {
-                dir = new File(url.toURI()).getParentFile();
-            } catch (URISyntaxException ex) {
-                System.err.println(ex.getMessage());
-                System.exit(IrpUtils.exitFatalProgramFailure);
-            }
-            if (dir == null) {
-                System.err.println("Error getting applicationHome");
-                System.exit(IrpUtils.exitFatalProgramFailure);
-            } else
-                applicationHome = (dir.getName().equals("build") || dir.getName().equals("dist"))
+            File dir = new File(url.toURI()).getParentFile();
+            applicationHome = (dir.getName().equals("build") || dir.getName().equals("dist"))
                     ? dir.getParent() : dir.getPath();
         }
         if (applicationHome != null && !applicationHome.endsWith(File.separator))
@@ -191,13 +157,16 @@ public class IrScrutinizer {
         }
     }
 
-    private static void guiExecute(final String applicationHome, final String propsfilename, final boolean verbose, final int debug, final int userlevel) {
+    private static void guiExecute(final String applicationHome, final String propsfilename,
+            final boolean verbose, final int debug, final int userlevel, final List<String> arguments) {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    new GuiMain(applicationHome, propsfilename, verbose, debug, userlevel).setVisible(true);
+                    new GuiMain(applicationHome, propsfilename, verbose, debug, userlevel, arguments).setVisible(true);
+                } catch (HeadlessException ex) {
+                    System.err.println("This program does not run in headless mode.");
                 } catch (ParseException | IOException | IncompatibleArgumentException | URISyntaxException
                         | RuntimeException ex) {
                     GuiUtils.fatal(ex, IrpUtils.exitConfigReadError, new GuiUtils.EmergencyFixer () {
@@ -230,5 +199,41 @@ public class IrScrutinizer {
                 }
             }
         });
+    }
+    private IrScrutinizer() {
+    }
+
+    private final static class CommandLineArgs {
+
+        @Parameter(names = {"-D", "--debug"}, description = "Debug code")
+        private int debug = 0;
+
+        @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
+        private boolean helpRequested = false;
+
+        @Parameter(names = {"-H", "--home", "--applicationhome", "--apphome"}, description = "Set application home (where files are located)")
+        private String applicationHome = null;
+
+        @Parameter(names = {"--nuke-properties"}, description = "Get rid of present properties file")
+        private boolean nukeProperties = false;
+
+        // This option is sort of a dummy.
+        @Parameter(names = {"--irpmaster"}, description = "Invoke IrpMaster on the rest of the parameters; must be first option.")
+        private boolean irpmaster = false;
+
+        @Parameter(names = {"-p", "--properties"}, description = "Pathname of properties file")
+        private String propertiesFilename = null;
+
+        @Parameter(names = {"-V", "--version"}, description = "Display version information")
+        private boolean versionRequested;
+
+        @Parameter(names = {"-v", "--verbose"}, description = "Have some commands executed verbosely")
+        private boolean verbose;
+
+        @Parameter(names = {"-x", "--experimental"}, description = "Enable experimental features")
+        private boolean experimental;
+
+        @Parameter(description = "Arguments to the program")
+        private List<String> arguments = new ArrayList<>(4);
     }
 }

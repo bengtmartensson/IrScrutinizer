@@ -103,7 +103,7 @@ public abstract class RemoteSetExporter extends Exporter {
 
     public void export(Collection<Command> commands, String source, String title, int repeatCount,
             File saveFile, String charsetName) throws IOException, IrpMasterException {
-        HashMap<String, Command> cmds = new HashMap<>();
+        HashMap<String, Command> cmds = new HashMap<>(32);
         for (Command command : commands)
             cmds.put(command.getName(), command);
 
@@ -132,6 +132,10 @@ public abstract class RemoteSetExporter extends Exporter {
     }
 
     public boolean considersRepetitions() {
+        return false;
+    }
+
+    public boolean supportsMetaData() {
         return false;
     }
 }

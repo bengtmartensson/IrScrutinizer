@@ -21,13 +21,32 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import org.harctoolbox.IrpMaster.IrpUtils;
-import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ICommandLineDevice;
+import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.Utils;
 
 public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHardware {
 
     public final static int defaultTimeout = 2000;
+    public static void main(String[] args) {
+        try {
+            try (TcpSocketPort port = new TcpSocketPort("denon", 23, defaultTimeout, true, ConnectionMode.keepAlive)) {
+                port.sendString("MVDOWN\r");
+                String result = port.readString();
+                System.out.println(result);
+            }
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    private TcpSocketChannel tcpSocketChannel;
+    public TcpSocketPort(String hostIp, int portNumber, int timeout, boolean verbose, ConnectionMode connectionMode) throws UnknownHostException {
+        tcpSocketChannel = new TcpSocketChannel(hostIp, portNumber, timeout, verbose, connectionMode);
+    }
+    public TcpSocketPort(String hostIp, int portNumber, boolean verbose, ConnectionMode connectionMode) throws UnknownHostException {
+        tcpSocketChannel = new TcpSocketChannel(hostIp, portNumber, defaultTimeout, verbose, connectionMode);
+    }
 
     @Override
     public void open() throws IOException {
@@ -39,10 +58,11 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
         return tcpSocketChannel.ready();
     }
 
-    public enum ConnectionMode {
-        keepAlive,
-        justInTime;
-    };
+    @Override
+    public void flushInput() throws IOException {
+        tcpSocketChannel.flushInput();
+    }
+
 
     @Override
     public void sendBytes(byte[] cmd) throws IOException {
@@ -59,20 +79,11 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
         return result;
     }
 
-    TcpSocketChannel tcpSocketChannel;
-
-    public TcpSocketPort(String hostIp, int portNumber, int timeout, boolean verbose, ConnectionMode connectionMode) throws UnknownHostException {
-        tcpSocketChannel = new TcpSocketChannel(hostIp, portNumber, timeout, verbose, connectionMode);
-    }
-
-    public TcpSocketPort(String hostIp, int portNumber, boolean verbose, ConnectionMode connectionMode) throws UnknownHostException {
-        tcpSocketChannel = new TcpSocketChannel(hostIp, portNumber, defaultTimeout, verbose, connectionMode);
-    }
-
     @Override
     public void close() {
         try {
-            tcpSocketChannel.close(true);
+            if (tcpSocketChannel != null)
+                tcpSocketChannel.close(true);
         } catch (IOException ex) {
         } finally {
             tcpSocketChannel = null;
@@ -81,12 +92,17 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
 
     @Override
     public void sendString(String str) throws IOException {
+        if (tcpSocketChannel.getVerbose())
+            System.err.println(">" + str);
         sendBytes(str.getBytes(IrpUtils.dumbCharset));
     }
 
     @Override
     public String readString() throws IOException {
-        return readString(true);
+        String str = readString(true);
+        if (tcpSocketChannel.getVerbose())
+            System.err.println("<" + str);
+        return str;
     }
 
     @Override
@@ -125,15 +141,8 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
         tcpSocketChannel.setDebug(debug);
     }
 
-    public static void main(String[] args) {
-        try {
-            try (TcpSocketPort port = new TcpSocketPort("denon", 23, defaultTimeout, true, ConnectionMode.keepAlive)) {
-                port.sendString("MVDOWN\r");
-                String result = port.readString();
-                System.out.println(result);
-            }
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
+    public enum ConnectionMode {
+        keepAlive,
+        justInTime;
     }
 }

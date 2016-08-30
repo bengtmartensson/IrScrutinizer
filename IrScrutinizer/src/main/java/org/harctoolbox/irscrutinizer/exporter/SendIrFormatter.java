@@ -27,10 +27,11 @@ import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
  */
 public class SendIrFormatter implements Command.CommandTextFormat {
 
+    private final static int sendIndex = 1;
+
     private int module;
     private int connector;
     private boolean compressed;
-    private final static int sendIndex = 1;
 
     public SendIrFormatter(int module, int connector, boolean compressed) {
         this.module = module;

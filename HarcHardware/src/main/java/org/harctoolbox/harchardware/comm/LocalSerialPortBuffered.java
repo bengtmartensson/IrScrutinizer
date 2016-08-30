@@ -31,6 +31,23 @@ import org.harctoolbox.harchardware.ICommandLineDevice;
 
 public final class LocalSerialPortBuffered extends LocalSerialPort implements ICommandLineDevice {
 
+    public static void main(String[] args) {
+        ArrayList<String> names;
+        try (LocalSerialPortBuffered port = new LocalSerialPortBuffered("/dev/ttyS0", 9600, 8, 1, Parity.NONE, FlowControl.NONE, 10000, true)) {
+            names = getSerialPortNames(false);
+            for (String name : names)
+                System.out.println(name);
+
+            String cmd = "#POW\r";
+            port.open();
+            port.sendString(cmd);
+            System.out.println(port.readString());
+
+        } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException | HarcHardwareException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
     private BufferedReader bufferedInStream;
 
     public LocalSerialPortBuffered(String portName, int baud, int length, int stopBits, Parity parity, FlowControl flowControl, int timeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
@@ -106,71 +123,9 @@ public final class LocalSerialPortBuffered extends LocalSerialPort implements IC
         }
     }
 
-    public void waitFor(String goal, String areUThere, int delay, int tries) throws IOException, HarcHardwareException {
-        try {
-            Thread.sleep(delay);
-        } catch (InterruptedException ex) {
-            // nothing
-        }
-        flushIn();
-        for (int i = 0; i < tries; i++) {
-            sendString(areUThere);
-            String answer = readString(true);
-            if (answer == null)
-                continue;
-            answer = answer.trim();
-            if (answer.startsWith(goal)) {// success!
-                flushIn();
-                return;
-            }
-            if (delay > 0)
-                try {
-                    Thread.sleep(delay);
-                } catch (InterruptedException ex) {
-                    break;
-                }
-        }
-        // Failure if we get here.
-        throw new HarcHardwareException("Hardware not responding");
-    }
-
-    private void flushIn() /*throws IOException*/ {
-        try {
-            while (true) {
-                String junk = readString();
-                if (junk == null)
-                    break;
-                if (verbose)
-                    System.err.println("LocalSerialPortBuffered.flushIn: junked '" + junk + "'.");
-            }
-        } catch (IOException ex) {
-            // This bizarre code actually both seems to work, and be needed (at least using my Mega2560),
-            // the culprit is probably rxtx.
-             if (verbose)
-                    System.err.println("IOException in LocalSerialPortBuffered.flushIn ignored: " + ex.getMessage());
-        }
-    }
-
     @Override
     public boolean ready() throws IOException {
         return bufferedInStream.ready();
-    }
-
-    public static void main(String[] args) {
-        ArrayList<String> names;
-        try (LocalSerialPortBuffered port = new LocalSerialPortBuffered("/dev/ttyS0", 9600, 8, 1, Parity.NONE, FlowControl.NONE, 10000, true)) {
-            names = getSerialPortNames(false);
-            for (String name : names)
-                System.out.println(name);
-
-            String cmd = "#POW\r";
-            port.open();
-            port.sendString(cmd);
-            System.out.println(port.readString());
-
-        } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException | HarcHardwareException ex) {
-            System.err.println(ex.getMessage());
-        }
     }
 
     @Override

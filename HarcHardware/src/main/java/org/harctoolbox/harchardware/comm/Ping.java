@@ -27,8 +27,23 @@ import java.net.UnknownHostException;
 public class Ping {
 
     public static final int defaultTimeout = 2000;
+    public static boolean ping(String hostname) throws UnknownHostException, IOException {
+        return (new Ping(hostname)).ping();
+    }
+    public static boolean ping(String hostname, int timeout) throws UnknownHostException, IOException {
+        return (new Ping(hostname, timeout)).ping();
+    }
+    public static void main(String[] args) {
+        try {
+            boolean result = ping(args[0]);
+            System.out.println(args[0] + " is " + (result ? "alive" : "not alive"));
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
     private int timeout;
-    InetAddress inetAddress;
+    private InetAddress inetAddress;
 
     public Ping(String hostname, int timeout) throws UnknownHostException {
         this.timeout = timeout;
@@ -41,22 +56,5 @@ public class Ping {
 
     public boolean ping() throws IOException {
         return inetAddress.isReachable(timeout);
-    }
-
-    public static boolean ping(String hostname) throws UnknownHostException, IOException {
-        return (new Ping(hostname)).ping();
-    }
-
-    public static boolean ping(String hostname, int timeout) throws UnknownHostException, IOException {
-        return (new Ping(hostname, timeout)).ping();
-    }
-
-    public static void main(String[] args) {
-        try {
-            boolean result = ping(args[0]);
-            System.out.println(args[0] + " is " + (result ? "alive" : "not alive"));
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
     }
 }

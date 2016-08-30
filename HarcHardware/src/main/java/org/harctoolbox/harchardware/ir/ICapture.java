@@ -21,14 +21,13 @@ import java.io.IOException;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.IHarcHardware;
 
 /**
  * This hardware captures IR signals, for analyzing rather than for deployment use.
  * It delivers a modulation frequency, and normally uses a non-demodulating sensor.
  *
  */
-public interface ICapture extends IHarcHardware {
+public interface ICapture extends IIrReader {
 
     /**
      * Listens to the device and returns a sequence.
@@ -47,13 +46,4 @@ public interface ICapture extends IHarcHardware {
      * @return status
      */
     public boolean stopCapture();
-
-    /**
-     *
-     * @param beginTimeout
-     * @param maxLearnLength
-     * @param endTimeout
-     * @throws IOException
-     */
-    public void setTimeout(int beginTimeout, int maxLearnLength, int endTimeout) throws IOException;
 }

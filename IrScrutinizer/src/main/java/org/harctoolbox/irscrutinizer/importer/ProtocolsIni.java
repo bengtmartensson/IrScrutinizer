@@ -33,6 +33,27 @@ import org.harctoolbox.IrpMaster.IrpUtils;
  * This class contains a simple importer for the RemoteMaster's protocols.ini.
  */
 public class ProtocolsIni implements Serializable {
+    private static long reverse(long x, int width) {
+        long y = Long.reverse(x);
+        if (width > 0)
+            y >>>= Long.SIZE - width;
+        return y;
+    }
+
+    private static long complement(long x, int width) {
+        long y = -1L ^ x;
+        return ((1 << width) - 1) & y;
+    }
+
+    public static void main(String[] args) {
+        try {
+            ProtocolsIni protocolsIni = new ProtocolsIni(new File(args[0]));
+            System.out.println(protocolsIni);
+        } catch (IOException | ParseException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
     private HashMap<Integer, HashMap<String,String>> pidMap;
     private HashMap<String, HashMap<String,String>> nameMap;
 
@@ -41,14 +62,14 @@ public class ProtocolsIni implements Serializable {
     }
 
     public ProtocolsIni(Reader reader) throws IOException, ParseException {
-        pidMap = new LinkedHashMap<>();
-        nameMap = new LinkedHashMap<>();
+        pidMap = new LinkedHashMap<>(256);
+        nameMap = new LinkedHashMap<>(32);
 
         BufferedReader in = new BufferedReader(reader);
         HashMap<String, String> currentProtocol = null;//new HashMap<String, String>();
-        int pid = -1;
         int lineNo = 0;
         for (String lineRead = in.readLine(); lineRead != null; lineRead = in.readLine()) {
+            int pid;
             lineNo++;
             String line = lineRead.trim();
             String[] kw = line.split("=", 2);
@@ -63,10 +84,9 @@ public class ProtocolsIni implements Serializable {
             } else if (line.startsWith("["))  {
                 // new protocol
                 String name = line.substring(1, line.length()-1);
-                currentProtocol = new LinkedHashMap<>();
+                currentProtocol = new LinkedHashMap<>(16);
                 currentProtocol.put("name", name);
                 nameMap.put(name, currentProtocol);
-                pid = -1;
             } else {
                 // keyword=value
                 if (currentProtocol == null)
@@ -155,9 +175,6 @@ public class ProtocolsIni implements Serializable {
                 : null;
     }
 
-    public interface ICmdTranslator {
-        public long translate(long x);
-    }
 
     public static class LsbComp implements ICmdTranslator {
 
@@ -179,25 +196,7 @@ public class ProtocolsIni implements Serializable {
 
     }
 
-    private static long reverse(long x, int width) {
-        long y = Long.reverse(x);
-        if (width > 0)
-            y >>>= Long.SIZE - width;
-        return y;
+    public interface ICmdTranslator {
+        public long translate(long x);
     }
-
-    private static long complement(long x, int width) {
-        long y = -1L ^ x;
-        return ((1 << width) - 1) & y;
-    }
-
-    public static void main(String[] args) {
-        try {
-            ProtocolsIni protocolsIni = new ProtocolsIni(new File(args[0]));
-            System.out.println(protocolsIni);
-        } catch (IOException | ParseException ex) {
-            System.err.println(ex.getMessage());
-        }
-    }
-
 }

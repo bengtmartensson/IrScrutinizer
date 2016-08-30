@@ -17,8 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.harchardware.ir;
 
-import org.harctoolbox.harchardware.beacon.AmxBeaconListener;
-import org.harctoolbox.harchardware.comm.TcpSocketPort;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import java.io.IOException;
@@ -40,185 +38,17 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.IrpMaster.Pronto;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.comm.IBytesCommand;
-import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ICommandLineDevice;
+import org.harctoolbox.harchardware.IHarcHardware;
+import org.harctoolbox.harchardware.Utils;
+import org.harctoolbox.harchardware.beacon.AmxBeaconListener;
+import org.harctoolbox.harchardware.comm.IBytesCommand;
 import org.harctoolbox.harchardware.comm.IWeb;
 import org.harctoolbox.harchardware.comm.TcpSocketChannel;
-import org.harctoolbox.harchardware.Utils;
+import org.harctoolbox.harchardware.comm.TcpSocketPort;
 
 public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, ITransmitter, ICapture, IWeb/*, Serializable*/ {
 
-    private static String camelCase2uppercase(String cc) {
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < cc.length(); i++) {
-            char ch = cc.charAt(i);
-            if (Character.isUpperCase(ch))
-                result.append('_');
-            result.append(Character.toUpperCase(ch));
-        }
-        return result.toString();
-    }
-
-    @Override
-    public URI getUri(String user, String password) {
-        try {
-            return new URI("http", hostIp, null, null);
-        } catch (URISyntaxException ex) {
-            return null;
-        }
-    }
-
-    /**
-     * Possible arguments to the set_IR command.
-     */
-    public enum IrConfiguration {
-        ir, // all
-        sensor, // GC-100, iTach
-        sensorNotify, // GC-100, iTach
-        irNocarrier, // GC-100
-        serial, // iTachFlex
-        irBlaster, // iTach, iTachFlex
-        irtriport, // iTachFlex
-        irtriportBlaster, // iTachFlex
-        ledLighting;   //iTach
-
-        @Override
-        public String toString() {
-            return camelCase2uppercase(this.name());
-        }
-    }
-
-
-    public enum ModuleType {
-        unknown,
-	ir,         // all
-        //three_ir,   // iTach
-        //irBlaster, // only iTachFlex
-        //irtriport,  // only iTachFlex
-        //irtriportBlaster, // only iTachFlex
-        serial,     // all
-        //one_serial, // iTach
-        relay,      // GC-100
-        //three_relay,// iTach
-        wifi,       // iTach, iTachFlex
-        ethernet,   // iTach, ITachFlex
-        net;
-
-        @Override
-        public String toString() {
-            return camelCase2uppercase(this.name());
-        }
-    };
-
-    public class SerialPort implements ICommandLineDevice, IBytesCommand {
-        private int portIndex; // 0 or 1, i.e. zero based.
-        private TcpSocketChannel tcpSocketChannel;
-
-        /** Do not use, use getSerialPort instead. */
-        private SerialPort(int portNumber) throws NoSuchTransmitterException {
-            portIndex = portNumber - 1;
-            if (portIndex < 0 || portIndex > serialPorts.length - 1)
-                throw new NoSuchTransmitterException(Integer.toString(portNumber));
-
-            tcpSocketChannel = new TcpSocketChannel(inetAddress, gcFirstSerialPort + portIndex,
-                    timeout, verbose, TcpSocketPort.ConnectionMode.keepAlive);
-        }
-
-        @Override
-        public void sendString(String cmd) throws IOException {
-            sendBytes(cmd.getBytes(IrpUtils.dumbCharset));
-        }
-
-        @Override
-        public synchronized String readString(boolean wait) throws IOException {
-            tcpSocketChannel.connect();
-            String result = tcpSocketChannel.readString(wait);
-            tcpSocketChannel.close(false);
-            return result;
-        }
-
-        @Override
-        public synchronized String readString() throws IOException {
-            return readString(false);
-        }
-
-        @Override
-        public synchronized void close() throws IOException {
-            tcpSocketChannel.close(true);
-            serialPorts[portIndex] = null;
-        }
-
-        @Override
-        public synchronized void sendBytes(byte[] cmd) throws IOException {
-            tcpSocketChannel.connect();
-            tcpSocketChannel.getOut().write(cmd);
-            tcpSocketChannel.close(false);
-        }
-
-        @Override
-        public synchronized byte[] readBytes(int length) throws IOException {
-            tcpSocketChannel.connect();
-            byte[] result = Utils.readBytes(tcpSocketChannel.getIn(), length);
-            tcpSocketChannel.close(false);
-            return result;
-        }
-
-        @Override
-        public String getVersion() {
-            return tcpSocketChannel.getVersion();
-        }
-
-        @Override
-        public void setVerbosity(boolean verbosity) {
-            tcpSocketChannel.setVerbosity(verbose);
-        }
-
-        @Override
-        public void setDebug(int debug) {
-            tcpSocketChannel.setDebug(debug);
-        }
-
-        @Override
-        public void setTimeout(int timeout) throws SocketException {
-            tcpSocketChannel.setTimeout(timeout);
-        }
-
-        @Override
-        public boolean isValid() {
-            return tcpSocketChannel.isValid();
-        }
-
-        @Override
-        public void open() {
-            tcpSocketChannel.open();
-        }
-
-        @Override
-        public boolean ready() throws IOException {
-            return tcpSocketChannel.ready();
-        }
-    }
-
-    /**
-     * Returns a serial port from the GlobalCache.
-     * @param portNumber 1-based port  number, i.e. use 1 for first, not 0.
-     * @return serial port implementing ICommandLineDevice
-     * @throws NoSuchTransmitterException
-     */
-    public synchronized SerialPort getSerialPort(int portNumber) throws NoSuchTransmitterException {
-        int portIndex = portNumber - 1;
-        if (portIndex < 0 || portIndex > serialPorts.length - 1)
-            throw new NoSuchTransmitterException(Integer.toString(portNumber));
-
-        if (serialPorts[portIndex] == null) {
-            serialPorts[portIndex] = new SerialPort(portNumber);
-        } else {
-            throw new NoSuchTransmitterException("Requested port " + portNumber
-                    + " in GlobalCache " + hostIp + " is already in use.");
-        }
-        return serialPorts[portIndex];
-    }
 
     private final static int smallDelay = 10; // ms
     private final static int gcPort = 4998;
@@ -234,141 +64,28 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
     public  final static int maxCompressedLetters = 15;
 
     private final static String apiAddressFragment = "/api/v1/";
-
-
-    private String hostIp;
-    private InetAddress inetAddress;
-    private int timeout = defaultSocketTimeout;
-    private boolean verbose = true;
-    private String[] getdevicesResult = null;
-
-    //private GlobalCacheModel globalCacheModel;
-
-    private TcpSocketChannel tcpSocketChannel;
-    private SerialPort[] serialPorts;
-
-    private ArrayList<Integer> irModules;
-    private ArrayList<Integer> serialModules;
-    private ArrayList<Integer> relayModules;
-
-    private boolean compressed = false;
-
-   /**
-     * Global Cache default module for ir communication
-     */
-    private int firstIrModule = 2; // right for gc_100_06, wrong for others
-
-    /**
-     * GlobalCache default relay module
-     */
-    private int defaultRelayModule = 3; // right for gc_100_12, wrong for others
-
-    /**
-     * GlobalCache default serial module
-     */
-    private int defaultSerialModule = 1; // mostly right
-
     /**
      * GlobalCache default connector
      */
     private final static int defaultConnector = 1;
 
-    /**
-     * The Global Cache IR index.
-     * Should turn around at 65536, see GC API docs.
-     */
-    private int sendIndex;
-
-    public static class GlobalCacheIrTransmitter extends Transmitter {
-        private int module; // 1,2,4,5 (on present models)
-        private int port; // 1,2,3
-
-        private GlobalCacheIrTransmitter(int module, int port) throws NoSuchTransmitterException {
-            if (!GlobalCache.validConnector(port))
-                throw new NoSuchTransmitterException(Integer.toString(port));
-
-            this.module = module;
-            this.port = port;
+    private static String camelCase2uppercase(String cc) {
+        StringBuilder result = new StringBuilder(32);
+        for (int i = 0; i < cc.length(); i++) {
+            char ch = cc.charAt(i);
+            if (Character.isUpperCase(ch))
+                result.append('_');
+            result.append(Character.toUpperCase(ch));
         }
-
-        private GlobalCacheIrTransmitter(int port) throws NoSuchTransmitterException {
-            this(invalidDevice, port);
-        }
-
-        private GlobalCacheIrTransmitter() {
-            this.module = invalidDevice;
-            this.port = defaultConnector;
-        }
-
-        private void normalize(int defaultIrModule) {
-            if (module == invalidDevice) {
-                module = (port - connectorMin)/connectorsPerModule + defaultIrModule;
-                port = (port - connectorMin) % connectorsPerModule + connectorMin;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return Integer.toString(module) + ":" + Integer.toString(port);
-        }
-    }
-
-    @Override
-    public GlobalCacheIrTransmitter getTransmitter(String str) throws NoSuchTransmitterException {
-        if (str == null || str.isEmpty())
-            return new GlobalCacheIrTransmitter();
-
-        String[] s = str.trim().split(":");
-        return s.length == 1
-                ? new GlobalCacheIrTransmitter(Integer.parseInt(s[0]))
-                : new GlobalCacheIrTransmitter(Integer.parseInt(s[0]), Integer.parseInt(s[1]));
-    }
-
-    @Override
-    public GlobalCacheIrTransmitter getTransmitter() {
-        return new GlobalCacheIrTransmitter();
-    }
-
-    public GlobalCacheIrTransmitter newTransmitter(int module, int port) throws NoSuchTransmitterException {
-        return new GlobalCacheIrTransmitter(module, port);
-    }
-
-    @Override
-    public String[] getTransmitterNames() {
-        String[] result = new String[irModules.size() * connectorsPerModule];
-        int index = 0;
-        for (Integer module : irModules) {
-            for (int trans = 0; trans < connectorsPerModule; trans++) {
-                result[index++] = module.toString() + ":" + (trans + connectorMin);
-            }
-        }
-        return result;
-    }
-
-    private GlobalCacheIrTransmitter newGlobalCacheIrTransmitter(Transmitter trans) {
-         GlobalCacheIrTransmitter tr = trans == null
-                 ? new GlobalCacheIrTransmitter()
-                 : (GlobalCacheIrTransmitter) trans;
-         tr.normalize(firstIrModule);
-         return tr;
+        return result.toString();
     }
 
     private static boolean validConnector(int c) {
         return (c >= connectorMin) && (c <= connectorsPerModule + connectorMin - 1);
     }
 
-    @Override
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
-        if (tcpSocketChannel != null && tcpSocketChannel.isValid())
-            try {
-                tcpSocketChannel.setTimeout(timeout);
-            } catch (SocketException ex) {
-            }
-    }
-
     private static String gcJoiner(int[] array) {
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(32);
         for (int i = 0; i < array.length; i++) {
             result.append(",").append(array[i]);
         }
@@ -376,12 +93,12 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
     }
 
     private static String gcCompressedJoiner(int[]intro, int[]repeat) {
-        LinkedHashMap<String, Character> index = new LinkedHashMap<>();
+        LinkedHashMap<String, Character> index = new LinkedHashMap<>(32);
         return gcCompressedJoiner(intro, index) + gcCompressedJoiner(repeat, index);
     }
 
     private static String gcCompressedJoiner(int seq[], HashMap<String, Character> index) {
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(32);
         for (int i = 0; i < seq.length / 2; i++) {
             String key = "," + seq[2 * i] + "," + seq[2 * i + 1];
             if (index.containsKey(key))
@@ -404,71 +121,6 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
                 + (compressed ? gcCompressedJoiner(intro, repeat) : (gcJoiner(intro) + gcJoiner(repeat)));
     }
 
-    public GlobalCache(String hostIp, boolean verbose, int timeout, boolean compressed) throws UnknownHostException, IOException {
-        //globalCacheModel = GlobalCacheModel.newGlobalCacheModel(model);
-        this.timeout = timeout;
-        this.hostIp = (hostIp != null) ? hostIp : defaultGlobalCacheIP;
-        inetAddress = InetAddress.getByName(hostIp);
-        this.verbose = verbose;
-        this.compressed = compressed;
-        open();
-    }
-
-    @Override
-    public final void open() throws UnknownHostException, IOException {
-        tcpSocketChannel = new TcpSocketChannel(this.hostIp, gcPort, timeout,
-                verbose, TcpSocketPort.ConnectionMode.keepAlive);
-        getdevicesResult = sendCommand("getdevices", -1);
-
-        irModules = getIrModules();
-        firstIrModule = irModules.isEmpty() ? invalidDevice : irModules.get(0);
-        serialModules = getSerialModules();
-        defaultSerialModule = serialModules.isEmpty() ? invalidDevice : serialModules.get(0);
-        serialPorts = new SerialPort[serialModules.size()];
-        relayModules = getRelayModules();
-        defaultRelayModule = relayModules.isEmpty() ? invalidDevice : relayModules.get(0);
-    }
-
-    public GlobalCache(String hostIp, boolean verbose, int timeout) throws UnknownHostException, IOException {
-        this(hostIp, verbose, timeout, false);
-    }
-
-    public GlobalCache(String hostname) throws UnknownHostException, IOException {
-        this(hostname, false, defaultSocketTimeout, false);
-    }
-
-    public GlobalCache(String hostname, boolean verbose, boolean compressed) throws UnknownHostException, IOException {
-        this(hostname, verbose, defaultSocketTimeout, compressed);
-    }
-
-    public GlobalCache(String hostname, boolean verbose) throws UnknownHostException, IOException {
-        this(hostname, verbose, defaultSocketTimeout, false);
-    }
-
-    public String getIp() {
-        return hostIp;
-    }
-
-    @Override
-    public synchronized void close() throws IOException {
-        if (tcpSocketChannel != null)
-            tcpSocketChannel.close(true);
-        getdevicesResult = null;
-    }
-
-    @Override
-    public void setVerbosity(boolean verbosity) {
-        this.verbose = verbosity;
-    }
-
-    @Override
-    public void setDebug(int debug) {
-    }
-
-    public void setCompressed(boolean compressed) {
-        this.compressed = compressed;
-    }
-
     private static String transmitterAddress(int module, int connector) throws NoSuchTransmitterException {
         if (connector < connectorMin || connector > connectorsPerModule + connectorMin - 1)
             throw new NoSuchTransmitterException("" + module + ":" + connector);
@@ -477,82 +129,6 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
 
     private static String transmitterAddress(int module) {
         return "" + module + ":1";
-    }
-
-    private synchronized String[] sendCommand(String cmd, int noLines, int delay, String expectedFirstLine) throws IOException {
-        if (verbose)
-            System.err.println("Sending command " + cmd + " to GlobalCache (" + hostIp + ")");
-
-        tcpSocketChannel.connect();
-        if (noLines != 0)
-            while (tcpSocketChannel.getBufferedIn().ready()) {
-                tcpSocketChannel.readString();
-            }
-
-        tcpSocketChannel.sendString(cmd + '\r');
-
-        if (delay > 0) {
-            try {
-                Thread.sleep(delay);
-            } catch (InterruptedException ex) {
-            }
-        }
-        String[] result;
-        if (noLines >= 0) {
-            result = new String[noLines];
-            for (int i = 0; i < noLines; i++) {
-                result[i] = tcpSocketChannel.readString();// may hang
-               if (verbose)
-                    System.err.println(result[i]);
-               if (i == 0 && expectedFirstLine != null)
-                    if (!result[0].startsWith(expectedFirstLine)) {
-                        System.err.println("Expected \"" + expectedFirstLine + "\", returning immediately.");
-                        break;
-                    }
-
-                //while (tcpSocketChannel.getIn().ready()) {
-                //    String resp = tcpSocketChannel.getIn().readLine();
-                //    result.append('\n').append(resp);
-                //}
-            }
-        } else {
-            ArrayList<String> array = new ArrayList<>();
-            String lineRead = tcpSocketChannel.readString(); // may hang
-            if (lineRead != null) {
-                array.add(lineRead);
-                while (tcpSocketChannel.getBufferedIn().ready()) {
-                    String resp = tcpSocketChannel.readString();
-                    array.add(resp);
-                }
-            }
-            result = array.toArray(new String[array.size()]);
-        }
-        tcpSocketChannel.close(false);
-        return result;
-    }
-
-    private String sendCommand(String cmd) throws IOException {
-        return sendCommand(cmd, 1, smallDelay, null)[0];
-    }
-
-    private String[] sendCommand(String cmd, int noLines) throws IOException {
-        return sendCommand(cmd, noLines, smallDelay, null);
-    }
-
-    public boolean stopIr(int module, int connector) throws IOException, NoSuchTransmitterException {
-        sendCommand("stopir," + transmitterAddress(module, connector), 1);
-        return true;
-    }
-
-    @Override
-    public boolean stopIr(Transmitter transmitter) throws IOException, NoSuchTransmitterException {
-        GlobalCacheIrTransmitter gctransmitter = newGlobalCacheIrTransmitter(transmitter);
-        return stopIr(gctransmitter.module, gctransmitter.port);
-    }
-
-    public boolean sendIr(String cmd) throws IOException {
-        String result = sendCommand(cmd);
-        return result.startsWith("completeir");
     }
 
     /**
@@ -572,229 +148,6 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
                 + "," + (sendIndex % 65536) + "," + globalCacheString(code, count, compressed);
     }
 
-    public String sendIrString(IrSignal code, int count, int module, int connector) throws NoSuchTransmitterException {
-        String cmd = sendIrString(code, count, module, connector, sendIndex, compressed);
-        sendIndex = (sendIndex + 1) % 65536;
-        return cmd;
-    }
-
-    public boolean sendIr(IrSignal code, int count, int module, int connector) throws NoSuchTransmitterException, IOException {
-        if (!validConnector(connector))
-            throw new NoSuchTransmitterException(Integer.toString(connector));
-        String cmd = sendIrString(code, count, module, connector);
-        return sendIr(cmd);
-    }
-
-    public boolean sendIr(IrSignal code, int count, int connector) throws IOException, NoSuchTransmitterException {
-        return sendIr(code, count, new GlobalCacheIrTransmitter(connector));
-    }
-
-    public boolean sendIr(IrSignal code, int connector) throws IOException, NoSuchTransmitterException {
-        return sendIr(code, 1, new GlobalCacheIrTransmitter(connector));
-    }
-
-    public boolean sendIr(IrSignal code) throws IOException, NoSuchTransmitterException {
-        return sendIr(code, 1, null);
-    }
-
-    @Override
-    public boolean sendIr(IrSignal code, int count, Transmitter transmitter) throws NoSuchTransmitterException, IOException {
-        GlobalCacheIrTransmitter gct = newGlobalCacheIrTransmitter(transmitter);
-        return sendIr(code, count, gct.module, gct.port);
-    }
-
-    public boolean sendIr(String ccf, int count, int module, int connector) throws IrpMasterException, NoSuchTransmitterException, IOException {
-        return sendIr(Pronto.ccfSignal(ccf), count, module, connector);
-    }
-
-    public boolean sendCcf(String ccfString, int count, Transmitter transmitter) throws IOException, IrpMasterException, NoSuchTransmitterException {
-        GlobalCacheIrTransmitter gctransmitter = newGlobalCacheIrTransmitter(transmitter);
-        return sendIr(ccfString, count, gctransmitter.module, gctransmitter.port);
-    }
-
-    public boolean sendCcfRepeat(String ccfString, Transmitter transmitter) throws IOException, IrpMasterException, NoSuchTransmitterException {
-        GlobalCacheIrTransmitter gctransmitter = newGlobalCacheIrTransmitter(transmitter);
-        return sendIr(ccfString, repeatMax, gctransmitter.module, gctransmitter.port);
-    }
-
-    public String[] getDevices() {
-        return getdevicesResult.clone();
-    }
-
-    public String getVersion(int module) throws IOException {
-        return sendCommand("getversion," + module);
-    }
-
-    @Override
-    public String getVersion() throws IOException {
-        return sendCommand("getversion");
-    }
-
-    public String getNet() throws IOException {
-        return sendCommand("get_NET,0:1");
-    }
-
-    public String setNet(String arg) throws IOException {
-        return sendCommand("set_NET,0:1," + arg);
-    }
-
-    public String getIr(int module, int connector) throws IOException, NoSuchTransmitterException {
-        return sendCommand("get_IR," + transmitterAddress(module, connector));
-    }
-
-    private ArrayList<Integer> getModules(String moduleType) {
-        //String[] dvs = getdevicesResult.split("\n");
-        ArrayList<Integer> modules = new ArrayList<>();
-        for (String devicesResult : getdevicesResult) {
-            String[] s = devicesResult.split(" ");
-            if (s.length > 1 && s[1].startsWith(moduleType))
-                modules.add(Integer.parseInt(devicesResult.substring(7, 8)));
-        }
-        return modules;
-    }
-
-    public final ArrayList<Integer> getIrModules() {
-        return getModules("IR");
-    }
-
-    public final ArrayList<Integer> getSerialModules() {
-        return getModules("SERIAL");
-    }
-
-    public final ArrayList<Integer> getRelayModules() {
-        return getModules("RELAY");
-    }
-
-    // Appears not to be working on my iTachFlex, just returns ERR 005.
-    public String setIr(int module, int connector, String modestr) throws IOException, NoSuchTransmitterException {
-        return sendCommand("set_IR," + transmitterAddress(module, connector) + "," + modestr.toUpperCase(IrpUtils.dumbLocale));
-    }
-
-    public String setIr(int module, int connector, IrConfiguration mode) throws IOException, NoSuchTransmitterException {
-        return setIr(module, connector, mode.toString());
-    }
-
-    public String getSerial(int module) throws IOException {
-        return sendCommand("get_SERIAL," + transmitterAddress(module));
-    }
-
-    public String getSerial() throws IOException {
-        return getSerial(defaultSerialModule);
-    }
-
-    public String setSerial(int module, String arg) throws IOException {
-        return sendCommand("set_SERIAL," + transmitterAddress(module) + "," + arg);
-    }
-
-    public String setSerial(String arg) throws IOException {
-        return setSerial(defaultSerialModule, arg);
-    }
-
-    public String setSerial(int module, int baudrate) throws IOException {
-        return sendCommand("set_SERIAL," + transmitterAddress(module) + "," + baudrate);
-    }
-
-    public String setSerial(int baudrate) throws IOException {
-        return setSerial(defaultSerialModule, baudrate);
-    }
-
-    public int getState(int module, int connector) throws IOException, NoSuchTransmitterException {
-        return Integer.parseInt(sendCommand("getstate," + transmitterAddress(module,
-                    connector)).substring(10, 11));
-    }
-
-    public int getState(int connector) throws IOException, NoSuchTransmitterException {
-        return getState(firstIrModule + ((connector - connectorMin) / connectorsPerModule), (connector - connectorMin) % connectorsPerModule + connectorMin);
-    }
-
-    // Seems quite inefficient
-    public boolean toggleState(int module, int connector) throws IOException, NoSuchTransmitterException {
-        return setState(module, connector, 1 - getState(module, connector));
-    }
-
-    public boolean toggleState(int connector) throws IOException, NoSuchTransmitterException {
-        return toggleState(defaultRelayModule, connector);
-    }
-
-    public boolean setState(int module, int connector, int state) throws IOException, NoSuchTransmitterException {
-        String result = sendCommand("setstate," + transmitterAddress(module, connector) + "," + (state == 0 ? 0 : 1));
-        if (verbose) {
-            System.err.println(result.substring(0, 5));
-        }
-        return result.substring(0, 5).equals("state");
-    }
-
-    public boolean setState(int connector, int state) throws IOException, NoSuchTransmitterException {
-        return setState(defaultRelayModule, connector, state);
-    }
-
-    public boolean setState(int connector, boolean onOff) throws IOException, NoSuchTransmitterException {
-        return setState(connector, onOff ? 1 : 0);
-    }
-
-    /**
-     *
-     * @param module
-     * @param connector
-     * @return
-     * @throws IOException
-     * @throws NoSuchTransmitterException
-     */
-    public boolean pulseState(int module, int connector) throws NoSuchTransmitterException, IOException {
-        sendCommand("setstate," + transmitterAddress(module, connector) + ",1", 0, 300, null);
-        sendCommand("setstate," + transmitterAddress(module, connector) + ",0", 0, 0, null);
-        return true;
-    }
-
-    /**
-     *
-     * @param connector
-     * @return
-     * @throws IOException
-     * @throws NoSuchTransmitterException
-     */
-    public boolean pulseState(int connector) throws NoSuchTransmitterException, IOException {
-        return pulseState(defaultRelayModule, connector);
-    }
-
-    public void setBlink(int arg) throws IOException {
-        sendCommand("blink," + arg, 0);
-    }
-
-    @Override
-    public boolean isValid() {
-        return this.getdevicesResult != null;
-    }
-
-    @Override
-    public synchronized ModulatedIrSequence capture() throws HarcHardwareException {
-        try {
-            String[] result = sendCommand("get_IRL", 2, smallDelay, "IR Learner Enabled");
-            if (!result[0].equals("IR Learner Enabled"))
-                throw new HarcHardwareException("Hardware does not appear to support capturing");
-            IrSignal signal = parse(result[1]);
-            return signal != null ? signal.toModulatedIrSequence(1) : null;
-        } catch (IOException ex) {
-            return null;
-        }
-    }
-
-    @Override
-    public synchronized void setTimeout(int beginTimeout, int maxLength, int endTimeout) {
-        setTimeout(beginTimeout);
-    }
-
-    @Override
-    public boolean stopCapture() {
-        String response;
-        try {
-            response = sendCommand("stop_IRL");
-        } catch (IOException ex) {
-            return false;
-        }
-        return response.startsWith("IR Learner Disabled");
-    }
-
     public static AmxBeaconListener.Node listenBeacon(int timeout) {
         return AmxBeaconListener.listenFor("-Make", "GlobalCache", timeout);
     }
@@ -809,45 +162,6 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
         return abl;
     }
 
-    private InputStreamReader getJsonReader(String thing) throws IOException {
-        URL url = new URL("http", hostIp, apiAddressFragment + thing);
-        URLConnection urlConnection = url.openConnection();
-        return new InputStreamReader(urlConnection.getInputStream(), IrpUtils.dumbCharset);
-    }
-
-    private JsonObject getJsonObject(String thing) throws IOException {
-        return JsonObject.readFrom(getJsonReader(thing));
-    }
-
-    private JsonArray getJsonArray(String thing) throws IOException {
-        return JsonArray.readFrom(getJsonReader(thing));
-    }
-
-    private JsonObject getJsonVersion() throws IOException {
-        return getJsonObject("version");
-    }
-
-    private JsonObject getJsonNetwork() throws IOException {
-        return getJsonObject("network");
-    }
-
-    private JsonArray getJsonSsid() throws IOException {
-        try {
-            return getJsonArray("network/ssid");
-        } catch (java.lang.UnsupportedOperationException ex) {
-            // Workaround for bug: on non-wlan units, does not return an array, but the result of network.
-            return null;
-        }
-    }
-
-    private JsonArray getJsonConnectors() throws IOException {
-        return getJsonArray("connectors");
-    }
-
-    private JsonArray getJsonFiles() throws IOException {
-        return getJsonArray("files");
-    }
-
     /**
      * Parses a string intended as command to a GlobalCache and return it as a IrSignal.
      * Presently only the uncompressed form is parsed.
@@ -856,7 +170,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
      * @return IrSignal representing the signal, with begin and repeat part.
      */
     public static IrSignal parse(String gcString) {
-        String[] chunks = gcString.split(",");
+        String[] chunks = gcString.trim().split(",");
         if (chunks.length < 6)
             return null;
         int index = 0;
@@ -897,9 +211,9 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
         boolean verbose = false;
         boolean beacon = false;
         int baudrate = 0; // invalid value
-        GlobalCache gc = null;
-        String cmd = null;
-        String arg = null;
+        GlobalCache gc;
+        String cmd;
+        String arg;
         int arg_i = 0;
         int timeout = defaultSocketTimeout;
         String parserFood = null;
@@ -1048,7 +362,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
                         output = gc.setSerial(module, baudrate);
                     } else {
                         output = gc.setSerial(module, arg);
-                }   break;
+                    }   break;
                 case "get_state":
                     output = gc.getState(module, connector) == 1 ? "on" : "off";
                     break;
@@ -1064,7 +378,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
                     if (arg_i + 2 == args.length) {
                         output = gc.sendIr(args[arg_i + 1]) ? "ok" : "error";
                     } else {
-                        StringBuilder ccf = new StringBuilder();
+                        StringBuilder ccf = new StringBuilder(6 * args.length);
                         for (int i = arg_i + 1; i < args.length; i++) {
                             ccf.append(' ').append(args[i]);
                         }
@@ -1072,10 +386,10 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
                         output = gc.sendIr(ccf.toString(), count, module, connector) ? "ok" : "error";
                     }   break;
                 case "send_serial":
-                    StringBuilder transmit = new StringBuilder();
+                    StringBuilder transmit = new StringBuilder(2 * args.length);
                     for (int i = arg_i + 1; i < args.length; i++) {
                         transmit.append(' ').append(args[i]);
-                }
+                    }
 
                     //output = gc.sendStringCommand(module, transmit, 0);
                     break;
@@ -1096,7 +410,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
                     //    String s = "";
                     //    for (int i = arg_i + 1; i < args.length; i++)
                     //        s = s + args[i];
-                //    System.out.println(gc2Ccf(s));
+                    //    System.out.println(gc2Ccf(s));
                     break;
                 default:
                     usage();
@@ -1116,5 +430,702 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
             System.exit(1);
         }
         System.err.println(output);
+    }
+
+    private String hostIp;
+    private InetAddress inetAddress;
+    private int timeout = defaultSocketTimeout;
+    private boolean verbose = true;
+    private String[] getdevicesResult = null;
+
+    //private GlobalCacheModel globalCacheModel;
+
+    private TcpSocketChannel tcpSocketChannel;
+    private SerialPort[] serialPorts;
+
+    private ArrayList<Integer> irModules;
+    private ArrayList<Integer> serialModules;
+    private ArrayList<Integer> relayModules;
+
+    private boolean compressed = false;
+
+   /**
+     * Global Cache default module for ir communication
+     */
+    private int firstIrModule = 2; // right for gc_100_06, wrong for others
+
+    /**
+     * GlobalCache default relay module
+     */
+    private int defaultRelayModule = 3; // right for gc_100_12, wrong for others
+
+    /**
+     * GlobalCache default serial module
+     */
+    private int defaultSerialModule = 1; // mostly right
+
+    /**
+     * The Global Cache IR index.
+     * Should turn around at 65536, see GC API docs.
+     */
+    private int sendIndex;
+
+    public GlobalCache(String hostIp, boolean verbose, int timeout, boolean compressed) throws UnknownHostException, IOException {
+        //globalCacheModel = GlobalCacheModel.newGlobalCacheModel(model);
+        this.timeout = timeout;
+        this.hostIp = (hostIp != null) ? hostIp : defaultGlobalCacheIP;
+        inetAddress = InetAddress.getByName(hostIp);
+        this.verbose = verbose;
+        this.compressed = compressed;
+        open();
+    }
+
+    public GlobalCache(String hostIp, boolean verbose, int timeout) throws UnknownHostException, IOException {
+        this(hostIp, verbose, timeout, false);
+    }
+
+    public GlobalCache(String hostname) throws UnknownHostException, IOException {
+        this(hostname, false, defaultSocketTimeout, false);
+    }
+
+    public GlobalCache(String hostname, boolean verbose, boolean compressed) throws UnknownHostException, IOException {
+        this(hostname, verbose, defaultSocketTimeout, compressed);
+    }
+
+    public GlobalCache(String hostname, boolean verbose) throws UnknownHostException, IOException {
+        this(hostname, verbose, defaultSocketTimeout, false);
+    }
+
+    @Override
+    public URI getUri(String user, String password) {
+        try {
+            return new URI("http", hostIp, null, null);
+        } catch (URISyntaxException ex) {
+            return null;
+        }
+    }
+
+    /**
+     * Returns a serial port from the GlobalCache.
+     * @param portNumber 1-based port  number, i.e. use 1 for first, not 0.
+     * @return serial port implementing ICommandLineDevice
+     * @throws NoSuchTransmitterException
+     */
+    public synchronized SerialPort getSerialPort(int portNumber) throws NoSuchTransmitterException {
+        int portIndex = portNumber - 1;
+        if (portIndex < 0 || portIndex > serialPorts.length - 1)
+            throw new NoSuchTransmitterException(Integer.toString(portNumber));
+
+        if (serialPorts[portIndex] == null) {
+            serialPorts[portIndex] = new SerialPort(portNumber);
+        } else {
+            throw new NoSuchTransmitterException("Requested port " + portNumber
+                    + " in GlobalCache " + hostIp + " is already in use.");
+        }
+        return serialPorts[portIndex];
+    }
+
+    @Override
+    public GlobalCacheIrTransmitter getTransmitter(String str) throws NoSuchTransmitterException {
+        if (str == null || str.isEmpty())
+            return new GlobalCacheIrTransmitter();
+
+        String[] s = str.trim().split(":");
+        return s.length == 1
+                ? new GlobalCacheIrTransmitter(Integer.parseInt(s[0]))
+                : new GlobalCacheIrTransmitter(Integer.parseInt(s[0]), Integer.parseInt(s[1]));
+    }
+
+    @Override
+    public GlobalCacheIrTransmitter getTransmitter() {
+        return new GlobalCacheIrTransmitter();
+    }
+
+    public GlobalCacheIrTransmitter newTransmitter(int module, int port) throws NoSuchTransmitterException {
+        return new GlobalCacheIrTransmitter(module, port);
+    }
+
+    @Override
+    public String[] getTransmitterNames() {
+        String[] result = new String[irModules.size() * connectorsPerModule];
+        int index = 0;
+        for (Integer module : irModules) {
+            for (int trans = 0; trans < connectorsPerModule; trans++) {
+                result[index++] = module.toString() + ":" + (trans + connectorMin);
+            }
+        }
+        return result;
+    }
+
+    private GlobalCacheIrTransmitter newGlobalCacheIrTransmitter(Transmitter trans) {
+         GlobalCacheIrTransmitter tr = trans == null
+                 ? new GlobalCacheIrTransmitter()
+                 : (GlobalCacheIrTransmitter) trans;
+         tr.normalize(firstIrModule);
+         return tr;
+    }
+
+    @Override
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+        if (tcpSocketChannel != null && tcpSocketChannel.isValid())
+            try {
+                tcpSocketChannel.setTimeout(timeout);
+            } catch (SocketException ex) {
+            }
+    }
+
+    @Override
+    public final void open() throws UnknownHostException, IOException {
+        tcpSocketChannel = new TcpSocketChannel(this.hostIp, gcPort, timeout,
+                verbose, TcpSocketPort.ConnectionMode.keepAlive);
+        getdevicesResult = sendCommand("getdevices", -1);
+
+        irModules = getIrModules();
+        firstIrModule = irModules.isEmpty() ? invalidDevice : irModules.get(0);
+        serialModules = getSerialModules();
+        defaultSerialModule = serialModules.isEmpty() ? invalidDevice : serialModules.get(0);
+        serialPorts = new SerialPort[serialModules.size()];
+        relayModules = getRelayModules();
+        defaultRelayModule = relayModules.isEmpty() ? invalidDevice : relayModules.get(0);
+    }
+
+    public String getIp() {
+        return hostIp;
+    }
+
+    @Override
+    public synchronized void close() throws IOException {
+        if (tcpSocketChannel != null)
+            tcpSocketChannel.close(true);
+        getdevicesResult = null;
+    }
+
+    @Override
+    public void setVerbosity(boolean verbosity) {
+        this.verbose = verbosity;
+    }
+
+    @Override
+    public void setDebug(int debug) {
+    }
+
+    public void setCompressed(boolean compressed) {
+        this.compressed = compressed;
+    }
+
+    private synchronized String[] sendCommand(String cmd, int noLines, int delay, String expectedFirstLine) throws IOException {
+        if (verbose)
+            System.err.println("Sending command " + cmd + " to GlobalCache (" + hostIp + ")");
+
+        tcpSocketChannel.connect();
+        if (noLines != 0)
+            while (tcpSocketChannel.getBufferedIn().ready()) {
+                tcpSocketChannel.readString();
+            }
+
+        tcpSocketChannel.sendString(cmd + '\r');
+
+        if (delay > 0) {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException ex) {
+            }
+        }
+        String[] result;
+        if (noLines >= 0) {
+            result = new String[noLines];
+            for (int i = 0; i < noLines; i++) {
+                result[i] = tcpSocketChannel.readString();// may hang
+               if (verbose)
+                    System.err.println(result[i]);
+               if (i == 0 && expectedFirstLine != null)
+                    if (!result[0].startsWith(expectedFirstLine)) {
+                        System.err.println("Expected \"" + expectedFirstLine + "\", returning immediately.");
+                        break;
+                    }
+
+                //while (tcpSocketChannel.getIn().ready()) {
+                //    String resp = tcpSocketChannel.getIn().readLine();
+                //    result.append('\n').append(resp);
+                //}
+            }
+        } else {
+            ArrayList<String> array = new ArrayList<>(8);
+            String lineRead = tcpSocketChannel.readString(); // may hang
+            if (lineRead != null) {
+                array.add(lineRead);
+                while (tcpSocketChannel.getBufferedIn().ready()) {
+                    String resp = tcpSocketChannel.readString();
+                    array.add(resp);
+                }
+            }
+            result = array.toArray(new String[array.size()]);
+        }
+        tcpSocketChannel.close(false);
+        return result;
+    }
+
+    private String sendCommand(String cmd) throws IOException {
+        return sendCommand(cmd, 1, smallDelay, null)[0];
+    }
+
+    private String[] sendCommand(String cmd, int noLines) throws IOException {
+        return sendCommand(cmd, noLines, smallDelay, null);
+    }
+
+    public boolean stopIr(int module, int connector) throws IOException, NoSuchTransmitterException {
+        sendCommand("stopir," + transmitterAddress(module, connector), 1);
+        return true;
+    }
+
+    @Override
+    public boolean stopIr(Transmitter transmitter) throws IOException, NoSuchTransmitterException {
+        GlobalCacheIrTransmitter gctransmitter = newGlobalCacheIrTransmitter(transmitter);
+        return stopIr(gctransmitter.module, gctransmitter.port);
+    }
+
+    public boolean sendIr(String cmd) throws IOException {
+        String result = sendCommand(cmd);
+        return result.startsWith("completeir");
+    }
+
+    public String sendIrString(IrSignal code, int count, int module, int connector) throws NoSuchTransmitterException {
+        String cmd = sendIrString(code, count, module, connector, sendIndex, compressed);
+        sendIndex = (sendIndex + 1) % 65536;
+        return cmd;
+    }
+
+    public boolean sendIr(IrSignal code, int count, int module, int connector) throws NoSuchTransmitterException, IOException {
+        if (!validConnector(connector))
+            throw new NoSuchTransmitterException(Integer.toString(connector));
+        String cmd = sendIrString(code, count, module, connector);
+        return sendIr(cmd);
+    }
+
+    public boolean sendIr(IrSignal code, int count, int connector) throws IOException, NoSuchTransmitterException {
+        return sendIr(code, count, new GlobalCacheIrTransmitter(connector));
+    }
+
+    public boolean sendIr(IrSignal code, int connector) throws IOException, NoSuchTransmitterException {
+        return sendIr(code, 1, new GlobalCacheIrTransmitter(connector));
+    }
+
+    public boolean sendIr(IrSignal code) throws IOException, NoSuchTransmitterException {
+        return sendIr(code, 1, null);
+    }
+
+    @Override
+    public boolean sendIr(IrSignal code, int count, Transmitter transmitter) throws NoSuchTransmitterException, IOException {
+        GlobalCacheIrTransmitter gct = newGlobalCacheIrTransmitter(transmitter);
+        return sendIr(code, count, gct.module, gct.port);
+    }
+
+    public boolean sendIr(String ccf, int count, int module, int connector) throws IrpMasterException, NoSuchTransmitterException, IOException {
+        return sendIr(Pronto.ccfSignal(ccf), count, module, connector);
+    }
+
+    public boolean sendCcf(String ccfString, int count, Transmitter transmitter) throws IOException, IrpMasterException, NoSuchTransmitterException {
+        GlobalCacheIrTransmitter gctransmitter = newGlobalCacheIrTransmitter(transmitter);
+        return sendIr(ccfString, count, gctransmitter.module, gctransmitter.port);
+    }
+
+    public boolean sendCcfRepeat(String ccfString, Transmitter transmitter) throws IOException, IrpMasterException, NoSuchTransmitterException {
+        GlobalCacheIrTransmitter gctransmitter = newGlobalCacheIrTransmitter(transmitter);
+        return sendIr(ccfString, repeatMax, gctransmitter.module, gctransmitter.port);
+    }
+
+    public String[] getDevices() {
+        return getdevicesResult.clone();
+    }
+
+    public String getVersion(int module) throws IOException {
+        return sendCommand("getversion," + module);
+    }
+
+    @Override
+    public String getVersion() throws IOException {
+        return sendCommand("getversion");
+    }
+
+    public String getNet() throws IOException {
+        return sendCommand("get_NET,0:1");
+    }
+
+    public String setNet(String arg) throws IOException {
+        return sendCommand("set_NET,0:1," + arg);
+    }
+
+    public String getIr(int module, int connector) throws IOException, NoSuchTransmitterException {
+        return sendCommand("get_IR," + transmitterAddress(module, connector));
+    }
+
+    private ArrayList<Integer> getModules(String moduleType) {
+        //String[] dvs = getdevicesResult.split("\n");
+        ArrayList<Integer> modules = new ArrayList<>(5);
+        for (String devicesResult : getdevicesResult) {
+            String[] s = devicesResult.split(" ");
+            if (s.length > 1 && s[1].startsWith(moduleType))
+                modules.add(Integer.parseInt(devicesResult.substring(7, 8)));
+        }
+        return modules;
+    }
+
+    public final ArrayList<Integer> getIrModules() {
+        return getModules("IR");
+    }
+
+    public final ArrayList<Integer> getSerialModules() {
+        return getModules("SERIAL");
+    }
+
+    public final ArrayList<Integer> getRelayModules() {
+        return getModules("RELAY");
+    }
+
+    // Appears not to be working on my iTachFlex, just returns ERR 005.
+    public String setIr(int module, int connector, String modestr) throws IOException, NoSuchTransmitterException {
+        return sendCommand("set_IR," + transmitterAddress(module, connector) + "," + modestr.toUpperCase(IrpUtils.dumbLocale));
+    }
+
+    public String setIr(int module, int connector, IrConfiguration mode) throws IOException, NoSuchTransmitterException {
+        return setIr(module, connector, mode.toString());
+    }
+
+    public String getSerial(int module) throws IOException {
+        return sendCommand("get_SERIAL," + transmitterAddress(module));
+    }
+
+    public String getSerial() throws IOException {
+        return getSerial(defaultSerialModule);
+    }
+
+    public String setSerial(int module, String arg) throws IOException {
+        return sendCommand("set_SERIAL," + transmitterAddress(module) + "," + arg);
+    }
+
+    public String setSerial(String arg) throws IOException {
+        return setSerial(defaultSerialModule, arg);
+    }
+
+    public String setSerial(int module, int baudrate) throws IOException {
+        return sendCommand("set_SERIAL," + transmitterAddress(module) + "," + baudrate);
+    }
+
+    public String setSerial(int baudrate) throws IOException {
+        return setSerial(defaultSerialModule, baudrate);
+    }
+
+    public int getState(int module, int connector) throws IOException, NoSuchTransmitterException {
+        return Integer.parseInt(sendCommand("getstate," + transmitterAddress(module,
+                    connector)).substring(10, 11));
+    }
+
+    public int getState(int connector) throws IOException, NoSuchTransmitterException {
+        return getState(firstIrModule + ((connector - connectorMin) / connectorsPerModule), (connector - connectorMin) % connectorsPerModule + connectorMin);
+    }
+
+    // Seems quite inefficient
+    public boolean toggleState(int module, int connector) throws IOException, NoSuchTransmitterException {
+        return setState(module, connector, 1 - getState(module, connector));
+    }
+
+    public boolean toggleState(int connector) throws IOException, NoSuchTransmitterException {
+        return toggleState(defaultRelayModule, connector);
+    }
+
+    public boolean setState(int module, int connector, int state) throws IOException, NoSuchTransmitterException {
+        String result = sendCommand("setstate," + transmitterAddress(module, connector) + "," + (state == 0 ? 0 : 1));
+        if (verbose) {
+            System.err.println(result.substring(0, 5));
+        }
+        return result.substring(0, 5).equals("state");
+    }
+
+    public boolean setState(int connector, int state) throws IOException, NoSuchTransmitterException {
+        return setState(defaultRelayModule, connector, state);
+    }
+
+    public boolean setState(int connector, boolean onOff) throws IOException, NoSuchTransmitterException {
+        return setState(connector, onOff ? 1 : 0);
+    }
+
+    /**
+     *
+     * @param module
+     * @param connector
+     * @return
+     * @throws IOException
+     * @throws NoSuchTransmitterException
+     */
+    public boolean pulseState(int module, int connector) throws NoSuchTransmitterException, IOException {
+        sendCommand("setstate," + transmitterAddress(module, connector) + ",1", 0, 300, null);
+        sendCommand("setstate," + transmitterAddress(module, connector) + ",0", 0, 0, null);
+        return true;
+    }
+
+    /**
+     *
+     * @param connector
+     * @return
+     * @throws IOException
+     * @throws NoSuchTransmitterException
+     */
+    public boolean pulseState(int connector) throws NoSuchTransmitterException, IOException {
+        return pulseState(defaultRelayModule, connector);
+    }
+
+    public void setBlink(int arg) throws IOException {
+        sendCommand("blink," + arg, 0);
+    }
+
+    @Override
+    public boolean isValid() {
+        return this.getdevicesResult != null;
+    }
+
+    @Override
+    public synchronized ModulatedIrSequence capture() throws HarcHardwareException {
+        try {
+            String[] result = sendCommand("get_IRL", 2, smallDelay, "IR Learner Enabled");
+            if (!result[0].equals("IR Learner Enabled"))
+                throw new HarcHardwareException("Hardware does not appear to support capturing");
+            IrSignal signal = parse(result[1]);
+            return signal != null ? signal.toModulatedIrSequence(1) : null;
+        } catch (IOException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean stopCapture() {
+        String response;
+        try {
+            response = sendCommand("stop_IRL");
+        } catch (IOException ex) {
+            return false;
+        }
+        return response.startsWith("IR Learner Disabled");
+    }
+
+    private InputStreamReader getJsonReader(String thing) throws IOException {
+        URL url = new URL("http", hostIp, apiAddressFragment + thing);
+        URLConnection urlConnection = url.openConnection();
+        return new InputStreamReader(urlConnection.getInputStream(), IrpUtils.dumbCharset);
+    }
+
+    private JsonObject getJsonObject(String thing) throws IOException {
+        return JsonObject.readFrom(getJsonReader(thing));
+    }
+
+    private JsonArray getJsonArray(String thing) throws IOException {
+        return JsonArray.readFrom(getJsonReader(thing));
+    }
+
+    private JsonObject getJsonVersion() throws IOException {
+        return getJsonObject("version");
+    }
+
+    private JsonObject getJsonNetwork() throws IOException {
+        return getJsonObject("network");
+    }
+
+    private JsonArray getJsonSsid() throws IOException {
+        try {
+            return getJsonArray("network/ssid");
+        } catch (java.lang.UnsupportedOperationException ex) {
+            // Workaround for bug: on non-wlan units, does not return an array, but the result of network.
+            return null;
+        }
+    }
+
+    private JsonArray getJsonConnectors() throws IOException {
+        return getJsonArray("connectors");
+    }
+
+    private JsonArray getJsonFiles() throws IOException {
+        return getJsonArray("files");
+    }
+
+    @Override
+    public void setBeginTimeout(int integer) throws IOException {
+        tcpSocketChannel.setTimeout(timeout);
+    }
+
+    @Override
+    public void setCaptureMaxSize(int integer) {
+    }
+
+    @Override
+    public void setEndTimeout(int integer) {
+    }
+
+    public static class GlobalCacheIrTransmitter extends Transmitter {
+        private int module; // 1,2,4,5 (on present models)
+        private int port; // 1,2,3
+
+        private GlobalCacheIrTransmitter(int module, int port) throws NoSuchTransmitterException {
+            if (!GlobalCache.validConnector(port))
+                throw new NoSuchTransmitterException(Integer.toString(port));
+
+            this.module = module;
+            this.port = port;
+        }
+
+        private GlobalCacheIrTransmitter(int port) throws NoSuchTransmitterException {
+            this(invalidDevice, port);
+        }
+
+        private GlobalCacheIrTransmitter() {
+            this.module = invalidDevice;
+            this.port = defaultConnector;
+        }
+
+        private void normalize(int defaultIrModule) {
+            if (module == invalidDevice) {
+                module = (port - connectorMin)/connectorsPerModule + defaultIrModule;
+                port = (port - connectorMin) % connectorsPerModule + connectorMin;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return Integer.toString(module) + ":" + Integer.toString(port);
+        }
+    }
+
+    /**
+     * Possible arguments to the set_IR command.
+     */
+    public enum IrConfiguration {
+        ir, // all
+        sensor, // GC-100, iTach
+        sensorNotify, // GC-100, iTach
+        irNocarrier, // GC-100
+        serial, // iTachFlex
+        irBlaster, // iTach, iTachFlex
+        irtriport, // iTachFlex
+        irtriportBlaster, // iTachFlex
+        ledLighting;   //iTach
+
+        @Override
+        public String toString() {
+            return camelCase2uppercase(this.name());
+        }
+    }
+
+    public enum ModuleType {
+        unknown,
+        ir,         // all
+        //three_ir,   // iTach
+        //irBlaster, // only iTachFlex
+        //irtriport,  // only iTachFlex
+        //irtriportBlaster, // only iTachFlex
+        serial,     // all
+        //one_serial, // iTach
+        relay,      // GC-100
+        //three_relay,// iTach
+        wifi,       // iTach, iTachFlex
+        ethernet,   // iTach, ITachFlex
+        net;
+
+        @Override
+        public String toString() {
+            return camelCase2uppercase(this.name());
+        }
+    }
+
+    public class SerialPort implements ICommandLineDevice, IBytesCommand {
+        private final int portIndex; // 0 or 1, i.e. zero based.
+        private TcpSocketChannel tcpSocketChannel;
+
+        /** Do not use, use getSerialPort instead. */
+        private SerialPort(int portNumber) throws NoSuchTransmitterException {
+            portIndex = portNumber - 1;
+            if (portIndex < 0 || portIndex > serialPorts.length - 1)
+                throw new NoSuchTransmitterException(Integer.toString(portNumber));
+
+            tcpSocketChannel = new TcpSocketChannel(inetAddress, gcFirstSerialPort + portIndex,
+                    timeout, verbose, TcpSocketPort.ConnectionMode.keepAlive);
+        }
+
+        @Override
+        public void sendString(String cmd) throws IOException {
+            sendBytes(cmd.getBytes(IrpUtils.dumbCharset));
+        }
+
+        @Override
+        public synchronized String readString(boolean wait) throws IOException {
+            tcpSocketChannel.connect();
+            String result = tcpSocketChannel.readString(wait);
+            tcpSocketChannel.close(false);
+            return result;
+        }
+
+        @Override
+        public synchronized String readString() throws IOException {
+            return readString(false);
+        }
+
+        @Override
+        public synchronized void close() throws IOException {
+            tcpSocketChannel.close(true);
+            serialPorts[portIndex] = null;
+        }
+
+        @Override
+        public synchronized void sendBytes(byte[] cmd) throws IOException {
+            tcpSocketChannel.connect();
+            tcpSocketChannel.getOut().write(cmd);
+            tcpSocketChannel.close(false);
+        }
+
+        @Override
+        public synchronized byte[] readBytes(int length) throws IOException {
+            tcpSocketChannel.connect();
+            byte[] result = Utils.readBytes(tcpSocketChannel.getIn(), length);
+            tcpSocketChannel.close(false);
+            return result;
+        }
+
+        @Override
+        public String getVersion() {
+            return tcpSocketChannel.getVersion();
+        }
+
+        @Override
+        public void setVerbosity(boolean verbosity) {
+            tcpSocketChannel.setVerbosity(verbose);
+        }
+
+        @Override
+        public void setDebug(int debug) {
+            tcpSocketChannel.setDebug(debug);
+        }
+
+        @Override
+        public void setTimeout(int timeout) throws SocketException {
+            tcpSocketChannel.setTimeout(timeout);
+        }
+
+        @Override
+        public boolean isValid() {
+            return tcpSocketChannel.isValid();
+        }
+
+        @Override
+        public void open() {
+            tcpSocketChannel.open();
+        }
+
+        @Override
+        public boolean ready() throws IOException {
+            return tcpSocketChannel.ready();
+        }
+
+        @Override
+        public void flushInput() throws IOException {
+            tcpSocketChannel.flushInput();
+        }
     }
 }

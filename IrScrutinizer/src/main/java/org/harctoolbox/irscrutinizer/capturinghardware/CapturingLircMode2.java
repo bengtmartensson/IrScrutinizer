@@ -31,6 +31,7 @@ import org.harctoolbox.irscrutinizer.Props;
 public class CapturingLircMode2 extends CapturingHardware<LircMode2> implements ICapturingHardware<LircMode2>,IHarcHardware {
 
     private String commandName;
+    private LircMode2 hardware;
 
     // Since the LIRC process is finicky, start it only once, and then leave it running until the program terminates.
     public CapturingLircMode2(String commandName, JPanel panel, Props properties, GuiUtils guiUtils,
@@ -66,7 +67,7 @@ public class CapturingLircMode2 extends CapturingHardware<LircMode2> implements 
         //setupHardwareCommonStart();
         try {
             hardware = new LircMode2(commandName, properties.getVerbose(),
-                    properties.getCaptureStartTimeout(), properties.getCaptureRunTimeout(), properties.getCaptureEndingTimeout()/*, properties.getFallbackFrequency()*/);
+                    properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndTimeout());
             selectMe();
         } catch (IOException | HarcHardwareException ex) {
             guiUtils.error(ex);
@@ -85,5 +86,10 @@ public class CapturingLircMode2 extends CapturingHardware<LircMode2> implements 
 
     @Override
     public void setDebug(int debug) {
+    }
+
+    @Override
+    public LircMode2 getCapturer() {
+        return hardware;
     }
 }

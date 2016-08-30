@@ -35,10 +35,11 @@ import org.harctoolbox.irscrutinizer.Props;
  */
 public class SendingIrTrans extends SendingHardware<IrTransIRDB> implements ISendingHardware<IrTransIRDB> {
 
-    InternetHostPanel internetHostPanel;
-    NamedCommandLauncher namedCommandLauncher;
-    String desiredIp;
-    String currentIp = null;
+    private final InternetHostPanel internetHostPanel;
+    private final NamedCommandLauncher namedCommandLauncher;
+    private String desiredIp;
+    private String currentIp = null;
+    private IrTransIRDB rawIrSender;
 
     public SendingIrTrans(JPanel panel, Props properties, GuiUtils gui,
             InternetHostPanel internetHostPanel, NamedCommandLauncher namedCommandLauncher) {
@@ -82,5 +83,10 @@ public class SendingIrTrans extends SendingHardware<IrTransIRDB> implements ISen
             currentIp = internetHostPanel.getIpName();
             properties.setIrTransIpName(internetHostPanel.getIpName());
         }
+    }
+
+    @Override
+    public IrTransIRDB getRawIrSender() {
+        return rawIrSender;
     }
 }

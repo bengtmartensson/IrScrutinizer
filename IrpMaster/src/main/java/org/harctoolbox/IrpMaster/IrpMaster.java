@@ -83,8 +83,8 @@ public class IrpMaster implements Serializable {
             + "\tIrpMaster [OPTIONS] [-i|--irp] <IRP-Protocol> [PARAMETERASSIGNMENT]\n"
             + "\n"
             + "where OPTIONS=--stringtree <filename>,--dot <dotfilename>,--xmlprotocol <xmlprotocolfilename>,-c|--config <configfile>,-d|--debug <debugcode>|?,-s|--seed <seed>,"
-            + "-q|--quiet,-P|--pass <intro|repeat|ending|all>,--interactive,--decodeir,--analyze,--lirc <lircfilename>,"
-            + "-o|--outfile <outputfilename>, -x|--xml, -I|--ict, -r|--raw, -p|--pronto, -u|--uei, --disregard-repeat-mins, -#|--repetitions <number_repetitions>.\n\n"
+            + "-q|--quiet,-P|--pass <intro|repeat|ending|all>,--interactive,--decodeir,--analyze,"
+            + "-o|--outfile <outputfilename>, -x|--xml, -r|--raw, -p|--pronto, -u|--uei, --disregard-repeat-mins, -#|--repetitions <number_repetitions>.\n\n"
             + "Any filename can be given as `-', meaning stdin or stdout.\n"
             + "PARAMETERASSIGNMENT is one or more expressions like `name=value' (without spaces!). "
             + "One value without name defaults to `F`, two values defaults to `D` and `F`, three values defaults to `D`, `S`, and `F`, four values to `D`, `S`, `F', and `T`, in the order given.\n\n"
@@ -160,12 +160,15 @@ public class IrpMaster implements Serializable {
      * @throws ParseException
      * @throws org.harctoolbox.IrpMaster.UnknownProtocolException
      */
-
     public Protocol newProtocol(String name) throws UnassignedException, ParseException, UnknownProtocolException {
         UnparsedProtocol protocol = protocols.get(name.toLowerCase(IrpUtils.dumbLocale));
         if (protocol == null)
             throw new UnknownProtocolException(name);
         return new Protocol(protocol.name.toLowerCase(IrpUtils.dumbLocale), protocol.irp, protocol.documentation);
+    }
+
+    public Protocol newProtocolOrNull(String name) throws UnassignedException, ParseException, UnknownProtocolException {
+        return isKnown(name) ? newProtocol(name) : null;
     }
 
     private void expand() throws IncompatibleArgumentException {
@@ -347,9 +350,7 @@ public class IrpMaster implements Serializable {
         String protocolName = null;
         String outFileName = "-";
         String logFileName = null;
-        String lircFileName = null;
         boolean quiet = false;
-        boolean doICT = false;
         boolean doRaw = false;
         boolean doPronto = false;
         boolean doXML = false;
@@ -436,9 +437,6 @@ public class IrpMaster implements Serializable {
                 } else if (args[arg_i].equals("--dump")) {
                     arg_i++;
                     dumpFilename = args[arg_i++];
-                } else if (args[arg_i].equals("-I") || args[arg_i].equals("--ict")) {
-                    arg_i++;
-                    doICT = true;
                 } else if (args[arg_i].equals("-i") || args[arg_i].startsWith("--irp")) {
                     arg_i++;
                     irp = args[arg_i++];
@@ -448,9 +446,6 @@ public class IrpMaster implements Serializable {
                 } else if (args[arg_i].equals("-l") || args[arg_i].startsWith("--log")) {
                     arg_i++;
                     logFileName = args[arg_i++];
-                } else if (args[arg_i].startsWith("--lirc")) {
-                    arg_i++;
-                    lircFileName = args[arg_i++];
                 } else if (args[arg_i].equals("-n") || args[arg_i].startsWith("--name")) {
                     arg_i++;
                     protocolName = args[arg_i++].toLowerCase(IrpUtils.dumbLocale);
@@ -536,15 +531,19 @@ public class IrpMaster implements Serializable {
                             System.exit(IrpUtils.exitSemanticUsageError);
                         }
                         irSignal = prontoPlausible ? Pronto.ccfSignal(ccf)
-                                : rawPlausible ? ExchangeIR.interpretIrSequence(ccf, true)
-                                : ExchangeIR.parseUeiLearned(ccf);
+                                : rawPlausible ? InterpretString.interpretIrSequence(ccf, IrpUtils.defaultFrequency, true, true)
+                                : UeiLearnedSignal.parseUeiLearned(ccf);
+                    }
+                    if (irSignal == null) {
+                        System.err.println("Failure"); // not a very good error message...
+                        System.exit(IrpUtils.exitFatalProgramFailure);
                     }
                     if (doRaw)
                         System.out.println(irSignal);
                     if (doPronto)
                         System.out.println(irSignal.ccfString());
                     if (doUei)
-                        System.out.println(ExchangeIR.newUeiLearned(irSignal));
+                        System.out.println(UeiLearnedSignal.newUeiLearned(irSignal));
                     if (invokeDecodeIR)
                         DecodeIR.invoke(irSignal);
                     if (invokeAnalyzeIR)
@@ -552,6 +551,7 @@ public class IrpMaster implements Serializable {
 
                 } catch (NumberFormatException | IrpMasterException ex) {
                     System.err.println(ex);
+                    System.exit(IrpUtils.exitFatalProgramFailure);
                 }
                 System.exit(IrpUtils.exitSuccess);
             }
@@ -711,10 +711,6 @@ public class IrpMaster implements Serializable {
             PrintStream logFile = IrpUtils.getPrintSteam(logFileName);
             UserComm.setLogging(logFile);
 
-            LircExport lircExport = lircFileName != null
-                    ? new LircExport(protocolName, "Generated by IrpMaster", protocol.getFrequency())
-                    : null;
-
             if (interactive) {
                 LinkedHashMap actualParameters = inputVariableSetValues != null ? inputVariableSetValues.iterator().next() : null;
                 //UserComm.print(actualParameters.toString());
@@ -739,9 +735,6 @@ public class IrpMaster implements Serializable {
 
                     if (doXML)
                         protocol.addSignal(actualParameters);
-
-                    if (lircExport != null)
-                        lircExport.addSignal(actualParameters, irSignal);
 
                     if (irSignal != null) {
                         Debug.debugMain(irSignal.toString());
@@ -770,16 +763,14 @@ public class IrpMaster implements Serializable {
                     }
                     if (doUei && irSignal != null) {
                         if (doXML) {
-                            protocol.addXmlNode("uei-learned", ExchangeIR.newUeiLearned(irSignal).toString());
+                            protocol.addXmlNode("uei-learned", UeiLearnedSignal.newUeiLearned(irSignal).toString());
                         } else {
                             if (!writtenHeader)
                                 printStream.println(IrpUtils.variableHeader(actualParameters));
                             writtenHeader = true;
-                            printStream.println(ExchangeIR.newUeiLearned(irSignal).toString());
+                            printStream.println(UeiLearnedSignal.newUeiLearned(irSignal).toString());
                         }
                     }
-                    if (doICT && !doXML && irSignal != null)
-                        printStream.println(ICT.ictString(irSignal.toModulatedIrSequence(true, 1, true)));
 
                     if (invokeDecodeIR) {
                         // If there is a log file, don't babble.
@@ -799,8 +790,6 @@ public class IrpMaster implements Serializable {
             } // for (LinkedHashMap actualParameters ...)
             if (doXML)
                 protocol.printDOM(printStream);
-            if (lircExport != null)
-                lircExport.write(new File(lircFileName));
             printStream.close();
             if (logFile != null)
                 logFile.close();

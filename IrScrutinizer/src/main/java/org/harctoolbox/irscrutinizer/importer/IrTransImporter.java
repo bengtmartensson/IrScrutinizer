@@ -59,17 +59,17 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
 
     private static class Timing {
 
-        public int[][] durations = null;
-        public int repetitions = -1;
-        public int pause = -1;
-        public int framelength = -1;
-        public int frequency = -1;
-        public boolean freqMeas = false;
-        public boolean startBit = false;
-        public boolean repeatStart = false;
-        public TimingType type = TimingType.normal;
-        public boolean noToggle = false;
-        public boolean rcmmToggle = false;
+        int[][] durations = null;
+        int repetitions = -1;
+        int pause = -1;
+        int framelength = -1;
+        int frequency = -1;
+        boolean freqMeas = false;
+        boolean startBit = false;
+        boolean repeatStart = false;
+        TimingType type = TimingType.normal;
+        boolean noToggle = false;
+        boolean rcmmToggle = false;
     }
 
     private static enum CommandType {
@@ -91,8 +91,8 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
     }
 
     private static class IrTransCommandIndexed extends IrTransCommand {
-        private String data;
-        private Timing timing;
+        private final String data;
+        private final Timing timing;
 
         IrTransCommandIndexed(String name, String data, Timing timing) {
             super(name);
@@ -103,46 +103,46 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         @Override
         Command toCommand() throws IrpMasterException {
             if (timing.type == TimingType.rc5) {
-                // {36k,msb,889}<1,-1|-1,1>((1:1,~F:1:6,T:1,D:5,F:6,^114m)+,T=1-T)[T@:0..1=0,D:0..31,F:0..127]
-                long payload = Long.parseLong(data, 2);
-                long F6 = (~(payload >> 12)) & 1;
-                long F = (F6 << 6) | (payload & 0x3f);
-                long D = (payload >> 6) & 0x1f;
-                long T = (payload >> 11) & 1;
-                HashMap<String, Long> parameters = new HashMap<>();
-                parameters.put("F", F);
-                parameters.put("D", D);
-                parameters.put("T", T);
-                return new Command(name, null, "RC5", parameters);
+                    // {36k,msb,889}<1,-1|-1,1>((1:1,~F:1:6,T:1,D:5,F:6,^114m)+,T=1-T)[T@:0..1=0,D:0..31,F:0..127]
+                    long payload = Long.parseLong(data, 2);
+                    long F6 = (~(payload >> 12)) & 1;
+                    long F = (F6 << 6) | (payload & 0x3f);
+                    long D = (payload >> 6) & 0x1f;
+                    long T = (payload >> 11) & 1;
+                    HashMap<String, Long> parameters = new HashMap<>(4);
+                    parameters.put("F", F);
+                    parameters.put("D", D);
+                    parameters.put("T", T);
+                    return new Command(name, null, "RC5", parameters);
             } else if (timing.type == TimingType.rc6) {
-                // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
-                // http://www.irtrans.de/forum/viewtopic.php?f=18&t=99
-                long payload = Long.parseLong(data.substring(2), 2);
-                long F = payload & 0xff;
-                long D = (payload >> 8) & 0xff;
-                HashMap<String, Long> parameters = new HashMap<>();
-                parameters.put("F", F);
-                parameters.put("D", D);
-                return new Command(name, null, "RC6", parameters);
+                    // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
+                    // http://www.irtrans.de/forum/viewtopic.php?f=18&t=99
+                    long payload = Long.parseLong(data.substring(2), 2);
+                    long F = payload & 0xff;
+                    long D = (payload >> 8) & 0xff;
+                    HashMap<String, Long> parameters = new HashMap<>(4);
+                    parameters.put("F", F);
+                    parameters.put("D", D);
+                    return new Command(name, null, "RC6", parameters);
             } else {
-                int[] times = new int[2 * data.length()];
-                for (int i = 0; i < data.length(); i++) {
-                    char ch = data.charAt(i);
-                    int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
-                    if (index >= timing.durations.length)
-                        throw new IrpMasterException("Undefined timing :" + ch);
-                    times[2 * i] = timing.durations[index][0];
-                    times[2 * i + 1] = timing.durations[index][1];
-                }
-                IrSignal irSignal = new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
-                return new Command(name, null, irSignal);
+                    int[] times = new int[2 * data.length()];
+                    for (int i = 0; i < data.length(); i++) {
+                        char ch = data.charAt(i);
+                        int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
+                        if (index >= timing.durations.length)
+                            throw new IrpMasterException("Undefined timing :" + ch);
+                        times[2 * i] = timing.durations[index][0];
+                        times[2 * i + 1] = timing.durations[index][1];
+                    }
+                    IrSignal irSignal = new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
+                    return new Command(name, null, irSignal);
             }
         }
     }
 
     private static class IrTransCommandRaw extends IrTransCommand {
-        private int[] durations;
-        private int frequency;
+        private final int[] durations;
+        private final int frequency;
 
         IrTransCommandRaw(String name, int frequency, int[] durations, int effectiveLength) {
             super(name);
@@ -178,7 +178,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
             return null; // EOF
         ArrayList<Timing> timings = parseTimings(reader);
         HashMap<String, IrTransCommand> parsedCommands = parseCommands(reader, timings);
-        HashMap<String, Command> commands = new LinkedHashMap<>();
+        HashMap<String, Command> commands = new LinkedHashMap<>(4);
         for (IrTransCommand cmd : parsedCommands.values()) {
             try {
                 Command command = cmd.toCommand();
@@ -205,7 +205,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
 
     private LinkedHashMap<String, IrTransCommand> parseCommands(LineNumberReader reader, ArrayList<Timing> timings) throws IOException, ParseException {
         gobbleTo(reader, "[COMMANDS]", true);
-        LinkedHashMap<String, IrTransCommand> commands = new LinkedHashMap<>();
+        LinkedHashMap<String, IrTransCommand> commands = new LinkedHashMap<>(32);
         while (true) {
             String line = reader.readLine();
             if (line == null || line.trim().isEmpty())
@@ -301,7 +301,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
     }
 
     private ArrayList<Timing> parseTimings(LineNumberReader reader) throws IOException, ParseException {
-        ArrayList<Timing> timings = new ArrayList<>();
+        ArrayList<Timing> timings = new ArrayList<>(16);
         boolean hasTiming = gobbleTo(reader, "[TIMING]", false);
         if (!hasTiming)
             return null;
@@ -390,7 +390,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
     public void load(Reader reader, String origin) throws IOException, ParseException {
         prepareLoad(origin);
         LineNumberReader bufferedReader = new LineNumberReader(reader);
-        HashMap<String, Remote> remotes = new HashMap<>();
+        HashMap<String, Remote> remotes = new HashMap<>(16);
         while (true) {
             Remote remote = parseRemote(bufferedReader);
             if (remote == null)
