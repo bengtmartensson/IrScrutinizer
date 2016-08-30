@@ -72,6 +72,7 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 Root: HKCR; Subkey: ".girr";                       ValueType: string; ValueName: ""; ValueData: "girrfile"; Flags: uninsdeletekey;  Tasks: associateGirr
 Root: HKCR; Subkey: "girrfile";                    ValueType: string; ValueName: ""; ValueData: "Girr IR commands"; Flags: uninsdeletekey; Tasks: associateGirr
 Root: HKCR; Subkey: "girrfile\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\IrScrutinizer.ico";            Tasks: associateGirr
+;;; Opens a pesky window :-(, but I do not know of a better solution. For example, writing the absolute pathname of javaw is not acceptable.
 Root: HKCR; Subkey: "girrfile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\irscrutinizer.bat"" ""%1"""; Tasks: associateGirr
 
 [Code]
