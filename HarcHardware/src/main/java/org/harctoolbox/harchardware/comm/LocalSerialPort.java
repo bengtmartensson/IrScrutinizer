@@ -150,6 +150,7 @@ public abstract class LocalSerialPort implements IHarcHardware {
             lowLevelOpen();
             success = true;
         } catch (NoSuchPortException | PortInUseException ex) {
+            commPort = null;
             throw new HarcHardwareException(ex);
         }
 
