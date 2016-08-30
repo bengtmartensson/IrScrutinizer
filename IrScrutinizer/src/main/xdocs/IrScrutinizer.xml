@@ -57,8 +57,8 @@ not to hold the author responsible.</warning>
 	  <td>Version for release 1.2. Misc. minor improvements.</td>
 	</tr>
         <tr>
-	  <td>2016-08-26</td>
-	  <td>Version for release 1.3. New sections: TODO. Misc. minor improvements.</td>
+	  <td>2016-08-30</td>
+	  <td>Version for release 1.3. Misc. minor improvements.</td>
 	</tr>
       </table>
 
@@ -370,6 +370,11 @@ ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irpmaster
     <p>On Linux, it is general necessary to check, and possibly fix, the
         <a href="#Serial+device+access">access to the serial devices</a>. The previously mentioned
         wrapper does this.</p>
+
+        <p>On Gnome-like desktops, by copying the file <code>girr.xml</code> to the system's data base of
+        known file types, <code>*.girr</code> files can be opened in IrScrutinizer by double click.
+        For this, follow <a href="https://developer.gnome.org/integration-guide/stable/mime.html.en">this
+        description</a>.</p>
 
 <p>To uninstall, just delete the files. Some may like to delete the <a href="#Properties">properties file</a> too.</p>
 </section>
@@ -1015,7 +1020,10 @@ can be selected.</p>
 <p>The sub-panes of this pane allows for the selection and configuration
 of the deployed IR sending/capturing hardware.</p>
 
-<p>Selected ports are stored in the properties, thereby
+<p>Note that there is exactly one <em>selected device</em>, corresponding to the the selected sub-pane of the "Sending HW" pane.
+This device may be opened or not. An opened device may be selected or not. There may be more than opened device.</p>
+
+<p>Selected ports etc. are stored in the properties, thereby
 remembered between sessions. So, for future sessions, only opening the
 preferred device is necessary. </p>
 
@@ -1056,14 +1064,19 @@ command</a>.</p>
 <p>The LIRC server needs to be started in network listening mode with
 the <code>-l</code> or <code>--listen</code> option. Default TCP port is
 8765.</p>
-<p>After entering IP-Address or name, and port (stay with 8765 unless a reason
-to do otherwise), press the "Read" button. This will query the LIRC server for
-its version (to replace the grayed out "&lt;unknown&gt;" of the virgin
-IrScrutinizer), and its known remotes and their commands. Thus, the "Remote" and
+
+<p>When selecting the Lirc sub-pane, the therein selected Lircd is inquired for its version
+    and its remotes. If successful, the "Remote" and
 "Command" combo boxes should now be selectable. After selecting a remote and one
 of its command, it can be sent to the LIRC server by pressing the "Send"
-button. If (and only if) the LIRC server has the above described patch applied,
+button. (It can be said that this is really a
+    graphical version of the Lirc <code>irsend</code> command.) If (and only if) the LIRC server has the above described patch applied,
 transmitting signals to  "LIRC" now works. </p>
+
+<p>After entering another IP-Address or name, and port (stay with 8765 unless a reason
+to do otherwise), pressing the "Reload" button will update the LIRC server with its known remotes and their commands
+    (however, not the version).
+    </p>
 
 <!--p>Due to LIRC's peculiar form of API stop command, the "Stop IR" command
 presently does not work. See <a
@@ -1075,10 +1088,10 @@ thread</a> in the LIRC mailing list for a background.</p-->
             <p>On Linux, so-called mode-2 capable IR hardware, capable of sending and/or receiving, can be accessed directly.
                 When connected, and in some cases, after loading suitable drivers, a device file <code>/dev/lirc</code><em>n</em>
                 (for <em>n</em> = 0, 1, 2,...) will occur. Of course, this must be read- and writeable by the current user;
-                in e.g. Fedora this is the case for member of the group <code>lirc</code>.
+                in e.g. Fedora this is the case for member of the group <code>lirc</code>.</p>
 
                 <p>After opening the device, its properties will be listed. See the man page <a href="http://lirc.org/html/lirc.html">lirc(4)</a> for an explanation.</p>
-            </p>
+                <p>Alhtough not a priori impossible, presenty no <code>/dev/lirc</code> device (to my knowledge) implements frequency measurement.</p>
         </section>
 	  <section>
 	    <title>The "IRTrans" pane</title>
@@ -1210,8 +1223,8 @@ but still needs to be selected for capturing.</p>
 <p>It is unfortunately not possible to have e.g. one IrToy for sending and <em>another one</em>
 for capturing.</p>
 
-<p>Unfortunately, by e.g. selecting non-existing hardware or such, there is a
-possibility to "hang" the program.</p>
+<p>Note that by e.g. selecting non-existing hardware or such, there is a
+possibility encounter long delays, or even to "hang" the program.</p>
 
 <p>After configuring and opening the capturing hardware, the "Test" button can be
 used for testing the configuration without switching pane.</p>

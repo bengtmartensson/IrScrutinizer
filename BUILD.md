@@ -18,7 +18,11 @@ The dependent packages need to be installed also in
     maven in order for the build to work. With the dependencies available, the script `tools/install-deps.sh`
 can be used to install  them in the local maven repository before building.
 
-Presently, Fedora RPMs are available for all dependencies.
+### DevSlashLirc
+This library is used to access `/dev/lirc`-hardware. It is used by the Linux version only.
+        It is a Java JNI library, written in Java and C++. It is written by myself,
+        and available [here](https://github.com/bengtmartensson/DevSlashLirc).
+        
 
 ### The Crystal icons
 A subset of the Crystal icons are included, and will be included in a built jar.
