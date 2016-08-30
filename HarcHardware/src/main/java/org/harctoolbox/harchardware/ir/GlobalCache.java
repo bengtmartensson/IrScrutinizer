@@ -170,7 +170,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
      * @return IrSignal representing the signal, with begin and repeat part.
      */
     public static IrSignal parse(String gcString) {
-        String[] chunks = gcString.split(",");
+        String[] chunks = gcString.trim().split(",");
         if (chunks.length < 6)
             return null;
         int index = 0;
