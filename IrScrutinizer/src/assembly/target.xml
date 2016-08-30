@@ -65,6 +65,10 @@
             <outputDirectory>schemas</outputDirectory>
         </file>
         <file>
+            <source>../Girr/src/main/resources/girr.xml</source>
+            <outputDirectory>.</outputDirectory>
+        </file>
+        <file>
             <source>target/generated-documents/IrScrutinizer.html</source>
             <outputDirectory>doc</outputDirectory>
         </file>
