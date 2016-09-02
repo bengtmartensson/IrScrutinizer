@@ -27,10 +27,6 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="irWidgetCapturePortName" type="string" default='ifWindows("COM8","/dev/ttyUSB0")' doc='Name of device to use, e.g. COM8 or /dev/ttyUSB0.' />
     <property name="globalCacheCaptureIpName" type="string" default='""' doc="IP Name or Address of GlobalCache to use (capturing)."/>
     <property name="lircMode2Command" type="string" default='"mode2 -H serial"' doc='Command line for the LIRC mode2 command' />
-    <property name="arduinoPortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for sending IR with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
-    <property name="arduinoPortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (sending).' />
-    <property name="arduinoCapturePortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for capturing with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
-    <property name="arduinoCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (capturing).' />
     <property name="commandFusionPortName" type="string" default='ifWindows("COM14", "/dev/ttyUSB0")' doc='Name of device to use for sending IR with the CommandFusion, e.g. COM1 or /dev/ttyUSB0.' />
     <property name="commandFusionPortBaudRate" type="int" default='"9600"' doc='Baudrate for CommandFusion serial (sending).' />
     <property name="commandFusionCapturePortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for capturing with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />

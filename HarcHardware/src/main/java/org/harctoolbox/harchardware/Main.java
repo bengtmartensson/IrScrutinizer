@@ -37,7 +37,6 @@ import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.harchardware.beacon.AmxBeaconListener;
-import org.harctoolbox.harchardware.ir.Arduino;
 import org.harctoolbox.harchardware.ir.GlobalCache;
 import org.harctoolbox.harchardware.ir.ICapture;
 import org.harctoolbox.harchardware.ir.IRawIrSender;
@@ -154,7 +153,6 @@ public class Main {
         IrToy irtoy;
         LircCcfClient lircClient;
         IrWidget irWidget;
-        Arduino arduino;
         IRemoteCommandIrSender remoteCommandIrSender = null;
         IRawIrSender rawIrSender = null;
         ICapture captureDevice = null;
@@ -208,12 +206,6 @@ public class Main {
                 irWidget = new IrWidget(device, commandLineArgs.timeout, ICapture.defaultCaptureMaxSize, IrWidget.defaultEndTimeout, false);
                 captureDevice = irWidget;
                 harcHardware = irWidget;
-            } else if (commandLineArgs.arduino) {
-                String device = commandLineArgs.device == null ? Arduino.defaultPortName : commandLineArgs.device;
-                arduino = new Arduino(device, 9600, commandLineArgs.timeout, 0, 0, commandLineArgs.verbose);
-                captureDevice = arduino;
-                harcHardware = arduino;
-                rawIrSender = arduino;
             }
 
             if (commandLineArgs.capture) {

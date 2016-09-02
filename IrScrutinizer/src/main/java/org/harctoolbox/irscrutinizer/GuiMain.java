@@ -525,10 +525,6 @@ public class GuiMain extends javax.swing.JFrame {
                 irToySerialPortBean, properties, guiUtils);
         sendingHardwareManager.add(sendingIrToy);
 
-        SendingSerial<Arduino> sendingArduino = new SendingSerial<>(Arduino.class, arduinoPanel, //arduinoVersionLabel,
-                arduinoSerialPortBean, properties, guiUtils);
-        sendingHardwareManager.add(sendingArduino);
-
         SendingDevLirc sendingDevLirc = null;
         if (LircHardware.isLibraryLoaded()) {
             sendingDevLirc = new SendingDevLirc(devLircPanel, devLircBean, properties, guiUtils);
@@ -571,10 +567,6 @@ public class GuiMain extends javax.swing.JFrame {
 
         capturingHardwareManager.add(new CapturingLircMode2(properties.getLircMode2Command(),
                 captureLircMode2Panel, properties, guiUtils, capturingHardwareManager));
-
-        capturingHardwareManager.add(new CapturingSendingHardware<>(captureArduinoPanel, arduinoPanel,
-                arduinoCapturingSendingBean, arduinoSerialPortBean, sendingArduino,
-                properties, guiUtils, capturingHardwareManager));
 
         capturingHardwareManager.add(new CapturingSendingHardware<GirsClient>(captureGirsPanel, girsClientPanel,
                 girsClientCapturingSendingBean, girsTcpSerialComboBean, sendingGirsClient,
@@ -726,8 +718,6 @@ public class GuiMain extends javax.swing.JFrame {
         guiUtils.setUsePopupsForErrors(properties.getUsePopupsForErrors());
         if (userlevel == 0) { // ! experimental
             sendingHardwareTabbedPane.remove(genericSerialPanel);
-            sendingHardwareTabbedPane.remove(arduinoPanel);
-            capturingHardwareTabbedPane.remove(captureArduinoPanel);
         }
         if (!LircHardware.isLibraryLoaded()) {
             sendingHardwareTabbedPane.remove(devLircPanel);
@@ -2160,9 +2150,6 @@ public class GuiMain extends javax.swing.JFrame {
         irToyPanel = new javax.swing.JPanel();
         irToySerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrToyPortName(), properties.getIrToyPortBaudRate(), true);
         sendingIrToyHelpButton = new javax.swing.JButton();
-        arduinoPanel = new javax.swing.JPanel();
-        arduinoSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getArduinoPortName(), Arduino.defaultBaudRate, true);
-        sendingArduinoHelpButton = new javax.swing.JButton();
         girsClientPanel = new javax.swing.JPanel();
         sendingGirsClientHelpButton = new javax.swing.JButton();
         girsTcpSerialComboBean = new org.harctoolbox.guicomponents.GirsClientBean(guiUtils, properties);
@@ -2197,9 +2184,6 @@ public class GuiMain extends javax.swing.JFrame {
         captureIrToyPanel = new javax.swing.JPanel();
         capturingIrToyHardwareHelpButton = new javax.swing.JButton();
         irtoyCapturingSendingBean = new CapturingSendingBean(this);
-        captureArduinoPanel = new javax.swing.JPanel();
-        capturingArduinoHardwareHelpButton = new javax.swing.JButton();
-        arduinoCapturingSendingBean = new CapturingSendingBean(this);
         captureGirsPanel = new javax.swing.JPanel();
         capturingGirsHardwareHelpButton = new javax.swing.JButton();
         girsClientCapturingSendingBean = new CapturingSendingBean(this);
@@ -5426,39 +5410,6 @@ public class GuiMain extends javax.swing.JFrame {
 
         sendingHardwareTabbedPane.addTab("IrToy", new javax.swing.ImageIcon(getClass().getResource("/icons/dangerousprototypes/favicon.png")), irToyPanel); // NOI18N
 
-        sendingArduinoHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        sendingArduinoHelpButton.setText("Help");
-        sendingArduinoHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendingArduinoHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout arduinoPanelLayout = new javax.swing.GroupLayout(arduinoPanel);
-        arduinoPanel.setLayout(arduinoPanelLayout);
-        arduinoPanelLayout.setHorizontalGroup(
-            arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, arduinoPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(sendingArduinoHelpButton)
-                .addContainerGap())
-            .addGroup(arduinoPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(arduinoSerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
-        );
-        arduinoPanelLayout.setVerticalGroup(
-            arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(arduinoPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(arduinoSerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
-                .addComponent(sendingArduinoHelpButton)
-                .addContainerGap())
-        );
-
-        sendingHardwareTabbedPane.addTab("Arduino", arduinoPanel);
-
         sendingGirsClientHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         sendingGirsClientHelpButton.setText("Help");
         sendingGirsClientHelpButton.addActionListener(new java.awt.event.ActionListener() {
@@ -5849,39 +5800,6 @@ public class GuiMain extends javax.swing.JFrame {
         );
 
         capturingHardwareTabbedPane.addTab("IrToy", new javax.swing.ImageIcon(getClass().getResource("/icons/dangerousprototypes/favicon.png")), captureIrToyPanel); // NOI18N
-
-        capturingArduinoHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingArduinoHardwareHelpButton.setText("Help");
-        capturingArduinoHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingArduinoHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureArduinoPanelLayout = new javax.swing.GroupLayout(captureArduinoPanel);
-        captureArduinoPanel.setLayout(captureArduinoPanelLayout);
-        captureArduinoPanelLayout.setHorizontalGroup(
-            captureArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureArduinoPanelLayout.createSequentialGroup()
-                .addContainerGap(763, Short.MAX_VALUE)
-                .addComponent(capturingArduinoHardwareHelpButton)
-                .addContainerGap())
-            .addGroup(captureArduinoPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(arduinoCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        captureArduinoPanelLayout.setVerticalGroup(
-            captureArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureArduinoPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(arduinoCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(capturingArduinoHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("Arduino", captureArduinoPanel);
 
         capturingGirsHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         capturingGirsHardwareHelpButton.setText("Help");
@@ -8555,10 +8473,6 @@ public class GuiMain extends javax.swing.JFrame {
         HelpPopup.newHelpPopup(this, HelpTexts.capturingMode2HardwareHelp);
     }//GEN-LAST:event_capturingMode2HardwareHelpButtonActionPerformed
 
-    private void capturingArduinoHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingArduinoHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.capturingArduinoHardwareHelp);
-    }//GEN-LAST:event_capturingArduinoHardwareHelpButtonActionPerformed
-
     private void exportGirrHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportGirrHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.exportGirrHelp);
     }//GEN-LAST:event_exportGirrHelpButtonActionPerformed
@@ -8586,10 +8500,6 @@ public class GuiMain extends javax.swing.JFrame {
     private void sendingIrToyHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingIrToyHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.sendingIrToyHelp);
     }//GEN-LAST:event_sendingIrToyHelpButtonActionPerformed
-
-    private void sendingArduinoHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingArduinoHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.sendingArduinoHelp);
-    }//GEN-LAST:event_sendingArduinoHelpButtonActionPerformed
 
     private void sendingGenericSerialPortHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingGenericSerialPortHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.sendingGenericSerialPortHelp);
@@ -9056,13 +8966,9 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu analyzerBasisMenu;
     private javax.swing.JTextField analyzerTextField;
     private javax.swing.JButton apiKeyButton;
-    private org.harctoolbox.guicomponents.CapturingSendingBean arduinoCapturingSendingBean;
-    private javax.swing.JPanel arduinoPanel;
-    private org.harctoolbox.guicomponents.SerialPortSimpleBean arduinoSerialPortBean;
     private javax.swing.JPanel audioPanel;
     private javax.swing.JCheckBox automaticExportFilenamesCheckBox;
     private javax.swing.JMenuItem beaconListenerMenuItem;
-    private javax.swing.JPanel captureArduinoPanel;
     private javax.swing.JPanel captureCommandFusionPanel;
     private javax.swing.JPanel captureDevLircPanel;
     private javax.swing.JPanel captureGirsPanel;
@@ -9073,7 +8979,6 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton captureTestButton;
     private javax.swing.JScrollPane capturedDataScrollPane;
     private javax.swing.JTextArea capturedDataTextArea;
-    private javax.swing.JButton capturingArduinoHardwareHelpButton;
     private javax.swing.JButton capturingCommandFusionHardwareHelpButton;
     private javax.swing.JButton capturingDevLircHardwareHelpButton;
     private javax.swing.JButton capturingGirsHardwareHelpButton;
@@ -9497,7 +9402,6 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton scrutinizeSignalHelpButton;
     private javax.swing.JButton selectProtocolIniButton;
     private javax.swing.JMenuItem sendMenuItem;
-    private javax.swing.JButton sendingArduinoHelpButton;
     private javax.swing.JButton sendingAudioHelpButton;
     private javax.swing.JButton sendingCommandFusionHelpButton;
     private javax.swing.JButton sendingDevLircHardwareHelpButton;
