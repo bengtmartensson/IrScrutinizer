@@ -97,7 +97,8 @@ public abstract class Exporter {
 
     private File automaticFilename(File exportDir) throws IOException {
         checkExportDir(exportDir);
-        String name = getFormatName().toLowerCase(Locale.US).replace(File.separator, "_") + "_" + (new SimpleDateFormat(dateFormatFileString)).format(new Date());
+        String cleanedFormatName = getFormatName().toLowerCase(Locale.US).replace(File.separator, "_").replaceAll("\\s+", "_");
+        String name = cleanedFormatName + "_" + (new SimpleDateFormat(dateFormatFileString)).format(new Date());
         if (getPreferredFileExtension() != null)
             name += "." + getPreferredFileExtension();
         return new File(exportDir, name);
