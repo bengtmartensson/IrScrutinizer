@@ -47,11 +47,11 @@ public final class Version {
     /** URL containing current official version. */
     public final static String currentVersionUrl = homepageUrl + "/downloads/" + appName + ".version";
 
-    private Version() {
-    }
-
     public static void main(String[] args) {
         System.out.println(versionString);
+    }
+
+    private Version() {
     }
 }
     </xsl:template>

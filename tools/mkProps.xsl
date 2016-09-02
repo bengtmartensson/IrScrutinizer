@@ -19,9 +19,10 @@ this program. If not, see http://www.gnu.org/licenses/.
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="text"/>
 
-    <xsl:template match="/properties">/* This file was automatically generated, do not edit. Do not check in in version management. */
+    <xsl:template match="/properties">
+        <xsl:text>/* This file was automatically generated, do not edit. Do not check in in version management. */
 
-package <xsl:value-of select="@package"/>;
+package </xsl:text><xsl:value-of select="@package"/><xsl:text>;
 
 import java.awt.Rectangle;
 import java.io.File;
@@ -32,81 +33,37 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
-<xsl:apply-templates select="import"/>
+</xsl:text>
+        <xsl:apply-templates select="import"/>
+        <xsl:text>
 /**
  * This class handles the properties of the program, saved to a file between program invocations.
  */
 public final class Props {
-    private final static boolean useXml = <xsl:value-of select="@useXml"/>;
+    private final static boolean useXml = </xsl:text><xsl:value-of select="@useXml"/><xsl:text><![CDATA[;
+
+    /**
+     * Main routine for testing and debugging.
+     * @param args filename
+     */
+    public static void main(String[] args) {
+        String filename = args.length > 0 ? args[0] : null;
+        try {
+            Props p = new Props(filename);
+            p.list();
+            p.save();
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
     private Properties props;
     private String filename;
     private String applicationHome;
     private boolean needSave;
     private boolean wasReset = false;
     private final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
-
-    public interface IPropertyChangeListener {
-        public void propertyChange(String name, Object oldValue, Object newValue);
-    }
-
-    private String ifWindows(String windows, String nonWindows) {
-        return isWindows ? windows : nonWindows;
-    }
-
-    private HashMap&lt;String,ArrayList&lt;IPropertyChangeListener>> changeListeners;
-
-    private void update(String key, String value) {
-        if (!props.containsKey(key)) {
-            if (value != null) {
-                props.setProperty(key, value);
-                needSave = true;
-            }
-        }
-        changeListeners.put(key, new ArrayList&lt;IPropertyChangeListener>());
-    }
-
-    public boolean getWasReset() {
-        return wasReset;
-    }
-
-    private void setupDefaults() {
-<xsl:apply-templates select="property" mode="defaults"/>
-<xsl:text><![CDATA[
-    }
-
-    /**
-     * Resets all properties to defaults.
-     * This will probably leave the program in an inconsistent state,
-     * so it should be restarted directly.
-     */
-    public void reset() {
-        props = new Properties();
-        changeListeners = new HashMap<>();
-        setupDefaults();
-        needSave = true;
-        wasReset = true;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    private String mkPathRelative(String path) {
-        return path.replace(applicationHome, "");
-    }
-
-    public String mkPathAbsolute(String path) {
-        return new File(path).isAbsolute() ? path
-               : new File(new File(applicationHome), path).getAbsolutePath();
-    }
-
-    /**
-     * Sets up a Props instance from system default file name.
-     * @param applicationHome
-     */
-    public Props(String applicationHome) {
-        this(null, applicationHome);
-    }
+    private HashMap<String,ArrayList<IPropertyChangeListener>> changeListeners;
 
     /**
      * Sets up a Props instance from a given file name.
@@ -115,7 +72,7 @@ public final class Props {
      */
     public Props(String filename, String applicationHome) {
         this.applicationHome = applicationHome;
-        changeListeners = new HashMap<>();
+        changeListeners = new HashMap<>(16);
         this.filename = filename;
         if (filename == null || filename.isEmpty()) {
             if (isWindows) {
@@ -182,6 +139,64 @@ public final class Props {
             }
         }
         setupDefaults();
+    }
+
+    /**
+     * Sets up a Props instance from system default file name.
+     * @param applicationHome
+     */
+    public Props(String applicationHome) {
+        this(null, applicationHome);
+    }
+
+    private String ifWindows(String windows, String nonWindows) {
+        return isWindows ? windows : nonWindows;
+    }
+
+    private void update(String key, String value) {
+        if (!props.containsKey(key)) {
+            if (value != null) {
+                props.setProperty(key, value);
+                needSave = true;
+            }
+        }
+        changeListeners.put(key, new ArrayList<IPropertyChangeListener>(16));
+    }
+
+    public boolean getWasReset() {
+        return wasReset;
+    }
+
+    private void setupDefaults() {
+            ]]></xsl:text>
+<xsl:apply-templates select="property" mode="defaults"/>
+<xsl:text><![CDATA[
+    }
+
+    /**
+     * Resets all properties to defaults.
+     * This will probably leave the program in an inconsistent state,
+     * so it should be restarted directly.
+     */
+    public void reset() {
+        props = new Properties();
+        changeListeners = new HashMap<>(16);
+        setupDefaults();
+        needSave = true;
+        wasReset = true;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    private String mkPathRelative(String path) {
+        return path.replace(applicationHome, "");
+    }
+
+    public String mkPathAbsolute(String path) {
+        return new File(path).isAbsolute() ? path
+               : new File(new File(applicationHome), path).getAbsolutePath();
     }
 
     /**
@@ -267,23 +282,13 @@ public final class Props {
 ]]>
 </xsl:text>
     <xsl:apply-templates select="property"/>
-    <xsl:text><![CDATA[
-    /**
-     * Main routine for testing and debugging.
-     * @param args filename
-     */
-    public static void main(String[] args) {
-        String filename = args.length > 0 ? args[0] : null;
-        try {
-            Props p = new Props(filename);
-            p.list();
-            p.save();
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
+    <xsl:text>
+
+    public interface IPropertyChangeListener {
+        public void propertyChange(String name, Object oldValue, Object newValue);
     }
 }
-]]></xsl:text>
+</xsl:text>
     </xsl:template>
 
     <xsl:template match="import">
@@ -308,43 +313,42 @@ public final class Props {
     </xsl:template>
 
     <xsl:template match="@doc" mode="getter">
-        <xsl:text>/** @return </xsl:text>
+        <xsl:text>    /** @return </xsl:text>
         <xsl:value-of select="."/>
         <xsl:text> */</xsl:text>
     </xsl:template>
 
     <xsl:template match="@doc" mode="int-setter">
-        <xsl:text>/** @param n </xsl:text>
+        <xsl:text>    /** @param n </xsl:text>
         <xsl:value-of select="."/>
         <xsl:text> */</xsl:text>
     </xsl:template>
 
     <xsl:template match="@doc" mode="boolean-setter">
-        <xsl:text>/** @param val </xsl:text>
+        <xsl:text>    /** @param val </xsl:text>
         <xsl:value-of select="."/>
         <xsl:text> */</xsl:text>
     </xsl:template>
 
     <xsl:template match="@doc" mode="string-setter">
-        <xsl:text>/** @param str </xsl:text>
+        <xsl:text>    /** @param str </xsl:text>
         <xsl:value-of select="."/>
         <xsl:text> */</xsl:text>
     </xsl:template>
 
     <xsl:template match="@doc" mode="rectangle-setter">
-        <xsl:text>/** @param bounds </xsl:text>
+        <xsl:text>    /** @param bounds </xsl:text>
         <xsl:value-of select="."/>
         <xsl:text> */</xsl:text>
     </xsl:template>
 
     <xsl:template match="property[@type='int']">
-
-        <xsl:apply-templates select="@doc" mode="getter"/>
+    <xsl:apply-templates select="@doc" mode="getter"/>
     public int get<xsl:apply-templates select="@name" mode="capitalize"/>() {
         return Integer.parseInt(props.getProperty("<xsl:value-of select="@name"/>"));
     }
 
-    <xsl:apply-templates select="@doc" mode="int-setter"/>
+<xsl:apply-templates select="@doc" mode="int-setter"/>
     public void set<xsl:apply-templates select="@name" mode="capitalize"/>(int n) {
         int oldValue = Integer.parseInt(props.getProperty("<xsl:value-of select="@name"/>"));
         if (oldValue != n) {
@@ -361,19 +365,18 @@ public final class Props {
     public void remove<xsl:apply-templates select="@name" mode="capitalize"/>ChangeListener(IPropertyChangeListener listener) {
         removePropertyChangeListener("<xsl:value-of select="@name"/>", listener);
     }
-    </xsl:template>
+</xsl:template>
 
     <xsl:template match="property[@type='double']">
-
-        <xsl:apply-templates select="@doc" mode="getter"/>
+    <xsl:apply-templates select="@doc" mode="getter"/>
     public double get<xsl:apply-templates select="@name" mode="capitalize"/>() {
         return Double.parseDouble(props.getProperty("<xsl:value-of select="@name"/>"));
     }
 
-    <xsl:apply-templates select="@doc" mode="int-setter"/>
+<xsl:apply-templates select="@doc" mode="int-setter"/>
     public void set<xsl:apply-templates select="@name" mode="capitalize"/>(double n) {
         double oldValue = Double.parseDouble(props.getProperty("<xsl:value-of select="@name"/>"));
-        if (oldValue != n) {
+        if (!IrpUtils.isEqual(n, oldValue, 0, 1E-12)) {
             props.setProperty("<xsl:value-of select="@name"/>", Double.toString(n));
             needSave = true;
             firePropertyChange("<xsl:value-of select="@name"/>", oldValue, n);
@@ -387,16 +390,15 @@ public final class Props {
     public void remove<xsl:apply-templates select="@name" mode="capitalize"/>ChangeListener(IPropertyChangeListener listener) {
         removePropertyChangeListener("<xsl:value-of select="@name"/>", listener);
     }
-    </xsl:template>
+</xsl:template>
 
     <xsl:template match="property[@type='boolean']">
-
-        <xsl:apply-templates select="@doc" mode="getter"/>
+    <xsl:apply-templates select="@doc" mode="getter"/>
     public boolean get<xsl:apply-templates select="@name" mode="capitalize"/>() {
         return Boolean.parseBoolean(props.getProperty("<xsl:value-of select="@name"/>"));
     }
 
-    <xsl:apply-templates select="@doc" mode="boolean-setter"/>
+<xsl:apply-templates select="@doc" mode="boolean-setter"/>
     public void set<xsl:apply-templates select="@name" mode="capitalize"/>(boolean val) {
         boolean oldValue = Boolean.parseBoolean(props.getProperty("<xsl:value-of select="@name"/>"));
         if (oldValue != val) {
@@ -413,16 +415,15 @@ public final class Props {
     public void remove<xsl:apply-templates select="@name" mode="capitalize"/>ChangeListener(IPropertyChangeListener listener) {
         removePropertyChangeListener("<xsl:value-of select="@name"/>", listener);
     }
-    </xsl:template>
+</xsl:template>
 
     <xsl:template match="property[@type='string']">
-
-        <xsl:apply-templates select="@doc" mode="getter"/>
+    <xsl:apply-templates select="@doc" mode="getter"/>
     public String get<xsl:apply-templates select="@name" mode="capitalize"/>() {
         return props.getProperty("<xsl:value-of select="@name"/>");
     }
 
-    <xsl:apply-templates select="@doc" mode="string-setter"/>
+<xsl:apply-templates select="@doc" mode="string-setter"/>
     public void set<xsl:apply-templates select="@name" mode="capitalize"/>(String str) {
         String oldValue = props.getProperty("<xsl:value-of select="@name"/>");
         if (!oldValue.equals(str)) {
@@ -439,11 +440,11 @@ public final class Props {
     public void remove<xsl:apply-templates select="@name" mode="capitalize"/>ChangeListener(IPropertyChangeListener listener) {
         removePropertyChangeListener("<xsl:value-of select="@name"/>", listener);
     }
-    </xsl:template>
+</xsl:template>
 
     <xsl:template match="property[@type='URL']">
 
-        <xsl:apply-templates select="@doc" mode="getter"/>
+    <xsl:apply-templates select="@doc" mode="getter"/>
     public String get<xsl:apply-templates select="@name" mode="capitalize"/>() {
         return props.getProperty("<xsl:value-of select="@name"/>");
     }
@@ -465,10 +466,10 @@ public final class Props {
     public void remove<xsl:apply-templates select="@name" mode="capitalize"/>ChangeListener(IPropertyChangeListener listener) {
         removePropertyChangeListener("<xsl:value-of select="@name"/>", listener);
     }
-    </xsl:template>
+</xsl:template>
 
     <xsl:template match="property[@type='rectangle']">
-        <xsl:apply-templates select="@doc" mode="getter"/>
+    <xsl:apply-templates select="@doc" mode="getter"/>
     public Rectangle get<xsl:apply-templates select="@name" mode="capitalize"/>() {
         String str = props.getProperty("<xsl:value-of select="@name"/>");
         if (str == null || str.isEmpty())
@@ -478,7 +479,7 @@ public final class Props {
                 Integer.parseInt(arr[2]), Integer.parseInt(arr[3]));
     }
 
-    <xsl:apply-templates select="@doc" mode="rectangle-setter"/>
+<xsl:apply-templates select="@doc" mode="rectangle-setter"/>
     public void set<xsl:apply-templates select="@name" mode="capitalize"/>(Rectangle bounds) {
         String oldValue = props.getProperty("<xsl:value-of select="@name"/>");
         if (bounds == null)
@@ -498,5 +499,5 @@ public final class Props {
     public void remove<xsl:apply-templates select="@name" mode="capitalize"/>ChangeListener(IPropertyChangeListener listener) {
         removePropertyChangeListener("<xsl:value-of select="@name"/>", listener);
     }
-    </xsl:template>
+</xsl:template>
 </xsl:stylesheet>

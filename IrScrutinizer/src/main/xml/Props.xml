@@ -19,9 +19,9 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 <!-- All relative file names are relative to IRSCRUTINIZERHOME = applicationHome -->
 <properties package="org.harctoolbox.irscrutinizer" useXml = "true" appName="Version.appName" home-environment-var="IRSCRUTINIZERHOME">
+    <import class="org.harctoolbox.IrpMaster.IrpUtils"/>
     <import class="org.harctoolbox.harchardware.ir.IrTrans"/>
     <import class="org.harctoolbox.harchardware.ir.LircClient"/>
-    <import class="org.harctoolbox.IrpMaster.IrpUtils"/>
     <property name="bounds" type="rectangle" default='null' doc='Bounds of IrScrutinizer window.'/>
     <property name="outputFormatIndex" type="int" default='"1"' />
     <property name="irWidgetCapturePortName" type="string" default='ifWindows("COM8","/dev/ttyUSB0")' doc='Name of device to use, e.g. COM8 or /dev/ttyUSB0.' />
