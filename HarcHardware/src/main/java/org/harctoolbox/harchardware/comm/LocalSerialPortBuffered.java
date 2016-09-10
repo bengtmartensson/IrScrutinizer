@@ -31,6 +31,8 @@ import org.harctoolbox.harchardware.ICommandLineDevice;
 
 public final class LocalSerialPortBuffered extends LocalSerialPort implements ICommandLineDevice {
 
+    public static final int defaultBaudRate = 9600;
+
     public static void main(String[] args) {
         ArrayList<String> names;
         try (LocalSerialPortBuffered port = new LocalSerialPortBuffered("/dev/ttyS0", 9600, 8, 1, Parity.NONE, FlowControl.NONE, 10000, true)) {
@@ -63,12 +65,16 @@ public final class LocalSerialPortBuffered extends LocalSerialPort implements IC
         this(portName, baud, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, timeout, verbose);
     }
 
+    public LocalSerialPortBuffered(String portName, int baudRate) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this(portName, baudRate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0, false);
+    }
+
     public LocalSerialPortBuffered(String portName) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
-        this(portName, 9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0, false);
+        this(portName, defaultBaudRate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0, false);
     }
 
     public LocalSerialPortBuffered(int portNumber) throws IOException, NoSuchPortException, PortInUseException, UnsupportedCommOperationException {
-        this(getSerialPortName(portNumber), 9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0, false);
+        this(getSerialPortName(portNumber), defaultBaudRate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, Parity.NONE, FlowControl.NONE, 0, false);
     }
 
     @Override

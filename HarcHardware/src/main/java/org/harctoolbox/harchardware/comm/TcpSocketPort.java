@@ -41,11 +41,16 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
     }
 
     private TcpSocketChannel tcpSocketChannel;
+
     public TcpSocketPort(String hostIp, int portNumber, int timeout, boolean verbose, ConnectionMode connectionMode) throws UnknownHostException {
         tcpSocketChannel = new TcpSocketChannel(hostIp, portNumber, timeout, verbose, connectionMode);
     }
     public TcpSocketPort(String hostIp, int portNumber, boolean verbose, ConnectionMode connectionMode) throws UnknownHostException {
         tcpSocketChannel = new TcpSocketChannel(hostIp, portNumber, defaultTimeout, verbose, connectionMode);
+    }
+
+    public TcpSocketPort(String ipName, int portNumber) throws UnknownHostException {
+        tcpSocketChannel = new TcpSocketChannel(ipName, portNumber, defaultTimeout, false, ConnectionMode.keepAlive);
     }
 
     @Override
