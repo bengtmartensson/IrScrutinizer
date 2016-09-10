@@ -491,7 +491,7 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
 
     @Override
     public Transmitter getTransmitter() {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO
+        return null; // TODO
     }
 
     @Override
