@@ -313,13 +313,14 @@ public class Pronto {
      * @return Integer array of numbers if successful, null if unsuccessful.
      */
     public final static int[] parseStringArray(String[] array, int begin) {
-        int[] ccf = new int[array.length];
+        int[] ccf = new int[array.length - begin];
 
-        for (int i = begin; i < array.length; i++) {
-            if (array[i].length() != charsInDigit || array[i].charAt(0) == '+' || array[i].charAt(0) == '-')
+        for (int i = 0; i < array.length - begin; i++) {
+            int readindex = i + begin;
+            if (array[readindex].length() != charsInDigit || array[readindex].charAt(0) == '+' || array[readindex].charAt(0) == '-')
                 return null;
             try {
-                ccf[i] = Integer.parseInt(array[i], 16);
+                ccf[i] = Integer.parseInt(array[readindex], 16);
             } catch (NumberFormatException ex) {
                 return null;
             }
