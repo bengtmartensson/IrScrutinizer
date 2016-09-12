@@ -82,6 +82,10 @@ public class Utils {
     //    return in.endsWith("\\r") ? in.substring(0, in.length() - 2) + "\r" : in;
     //}
 
+    public static String escapeCommandLine(String cmd) {
+        return cmd.replace("\r", "\\r").replace("\n", "\\n");
+    }
+
     /**
      * Just for testing.
      * @param args the command line arguments

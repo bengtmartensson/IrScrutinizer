@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.ICommandLineDevice;
+import org.harctoolbox.harchardware.Utils;
 
 public final class LocalSerialPortBuffered extends LocalSerialPort implements ICommandLineDevice {
 
@@ -86,7 +87,7 @@ public final class LocalSerialPortBuffered extends LocalSerialPort implements IC
     @Override
     public void sendString(String cmd) throws IOException {
         if (verbose)
-            System.err.println("LocalSerialPortBuffered.sendString: Sent '" + cmd + "'.");
+            System.err.println("LocalSerialPortBuffered.sendString: Sent '" + Utils.escapeCommandLine(cmd) + "'.");
         sendBytes(cmd.getBytes(IrpUtils.dumbCharset));
     }
 
