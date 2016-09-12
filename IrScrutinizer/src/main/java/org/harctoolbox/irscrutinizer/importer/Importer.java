@@ -111,8 +111,8 @@ public abstract class Importer {
         return properties.getFallbackFrequency();
     }
 
-    protected double getEndTimeout() {
-        return properties.getCaptureEndTimeout();
+    protected double getEndingTimeout() {
+        return properties.getCaptureEndingTimeout();
     }
 
     protected void prepareLoad(String origin) {

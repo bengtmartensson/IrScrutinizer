@@ -67,7 +67,7 @@ public class CapturingLircMode2 extends CapturingHardware<LircMode2> implements 
         //setupHardwareCommonStart();
         try {
             hardware = new LircMode2(commandName, properties.getVerbose(),
-                    properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndTimeout());
+                    properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndingTimeout());
             selectMe();
         } catch (IOException | HarcHardwareException ex) {
             guiUtils.error(ex);

@@ -156,7 +156,7 @@ public class IrDummy implements IHarcHardware, IRawIrSender, IIrSenderStop, ITra
     }
 
     @Override
-    public void setEndTimeout(int integer) {
+    public void setEndingTimeout(int integer) {
         endTimeOut = integer;
     }
 

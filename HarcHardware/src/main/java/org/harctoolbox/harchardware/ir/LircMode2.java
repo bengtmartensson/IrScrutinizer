@@ -81,17 +81,17 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
     private ProgThread progThread;
     private int beginTimeout;
     private int captureMaxSize;
-    private int endTimeout;
+    private int endingTimeout;
     private boolean ignoreSillyLines;
     private String cmd;
     private String[] cmdArray;
 
-    private LircMode2(String cmd, String[] cmdArray, boolean verbose, int beginTimeout, int captureMaxSize, int endTimeout, boolean ignoreSillyLines) {
+    private LircMode2(String cmd, String[] cmdArray, boolean verbose, int beginTimeout, int captureMaxSize, int endingTimeout, boolean ignoreSillyLines) {
         this.data = new ArrayList<>(64);
         this.verbose = verbose;
         this.beginTimeout = beginTimeout;
         this.captureMaxSize = captureMaxSize;
-        this.endTimeout = endTimeout;
+        this.endingTimeout = endingTimeout;
         this.ignoreSillyLines = ignoreSillyLines;
         this.cmd = cmd;
         this.cmdArray = cmdArray;
@@ -115,7 +115,7 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
      * @param verbose
      */
     public LircMode2(String cmd, boolean verbose) {
-        this(cmd, null, verbose, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndTimeout, false);
+        this(cmd, null, verbose, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndingTimeout, false);
     }
 
     /**
@@ -144,7 +144,7 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
      * @param verbose
      */
     public LircMode2(String[] cmdArray, boolean verbose) {
-        this(null, cmdArray, verbose, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndTimeout, false);
+        this(null, cmdArray, verbose, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndingTimeout, false);
     }
 
     @Override
@@ -215,19 +215,19 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
     }
 
     private void waitEndingSilence() {
-        while (timeleft(endTimeout, lastRead) > 0) {
+        while (timeleft(endingTimeout, lastRead) > 0) {
             try {
-                Thread.sleep(timeleft(endTimeout, lastRead));
+                Thread.sleep(timeleft(endingTimeout, lastRead));
             } catch (InterruptedException ex) {
 
             }
         }
     }
 
-    private void waitMaxLengthOrEndTimeout() {
-      while (timeleft(captureMaxSize, currentStart) > 0 && timeleft(endTimeout, lastRead) > 0)
+    private void waitMaxLengthOrEndingTimeout() {
+      while (timeleft(captureMaxSize, currentStart) > 0 && timeleft(endingTimeout, lastRead) > 0)
             try {
-            Thread.sleep(Math.min(timeleft(captureMaxSize, currentStart), timeleft(endTimeout, lastRead)));
+            Thread.sleep(Math.min(timeleft(captureMaxSize, currentStart), timeleft(endingTimeout, lastRead)));
         } catch (InterruptedException ex) {
 
         }
@@ -244,8 +244,8 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
     }
 
     @Override
-    public void setEndTimeout(int endTimeout) {
-        this.endTimeout = endTimeout;
+    public void setEndingTimeout(int endingTimeout) {
+        this.endingTimeout = endingTimeout;
     }
 
     @Override
@@ -267,7 +267,7 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
             currentStart = new Date();
             return null;
         }
-        waitMaxLengthOrEndTimeout();
+        waitMaxLengthOrEndingTimeout();
         waitEndingSilence();
         int[] durations = getDurations();
         try {

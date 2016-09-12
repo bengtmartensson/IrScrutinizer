@@ -127,8 +127,8 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> imp
     }
 
     @Override
-    public void setEndTimeout(int endTimeout) {
-        getCapturer().setEndTimeout(endTimeout);
+    public void setEndingTimeout(int endingTimeout) {
+        getCapturer().setEndingTimeout(endingTimeout);
     }
 
     @Override

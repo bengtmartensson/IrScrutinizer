@@ -503,7 +503,7 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
     }
 
     @Override
-    public void setEndTimeout(int timeout) {
+    public void setEndingTimeout(int timeout) {
     }
 
     @Override

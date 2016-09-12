@@ -609,10 +609,10 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        properties.addCaptureEndTimeoutChangeListener(new Props.IPropertyChangeListener() {
+        properties.addCaptureEndingTimeoutChangeListener(new Props.IPropertyChangeListener() {
             @Override
             public void propertyChange(String name, Object oldValue, Object newValue) {
-                capturingHardwareManager.getCapturer().setEndTimeout((Integer) newValue);
+                capturingHardwareManager.getCapturer().setEndingTimeout((Integer) newValue);
             }
         });
 
@@ -7092,9 +7092,9 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void endingTimeoutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endingTimeoutMenuItemActionPerformed
         try {
-            Integer t = guiUtils.getIntegerInput("Require ending silence in milliseconds", properties.getCaptureEndTimeout());
+            Integer t = guiUtils.getIntegerInput("Require ending silence in milliseconds", properties.getCaptureEndingTimeout());
             if (t != null)
-                properties.setCaptureEndTimeout(t);
+                properties.setCaptureEndingTimeout(t);
         } catch (NumberFormatException ex) {
             guiUtils.error("Invalid number: " + ex.getMessage());
         }

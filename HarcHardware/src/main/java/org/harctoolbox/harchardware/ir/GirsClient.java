@@ -226,7 +226,7 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
      * @param endingTimeout the endingTimeout to set
      */
     @Override
-    public void setEndTimeout(int endingTimeout) {
+    public void setEndingTimeout(int endingTimeout) {
         this.endingTimeout = endingTimeout;
     }
 
