@@ -203,7 +203,7 @@ public class Main {
                 transmitter = lircClient.getTransmitter(commandLineArgs.transmitter);
             } else if (commandLineArgs.irwidget) {
                 String device = commandLineArgs.device == null ? IrWidget.defaultPortName : commandLineArgs.device;
-                irWidget = new IrWidget(device, commandLineArgs.timeout, ICapture.defaultCaptureMaxSize, IrWidget.defaultEndingTimeout, false);
+                irWidget = new IrWidget(device, commandLineArgs.timeout, ICapture.defaultCaptureMaxSize, IrWidget.defaultEndTimeout, false);
                 captureDevice = irWidget;
                 harcHardware = irWidget;
             }

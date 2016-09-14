@@ -404,7 +404,7 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     }
 
     @Override
-    public void setEndingTimeout(int integer) {
+    public void setEndTimeout(int integer) {
     }
 
     /*

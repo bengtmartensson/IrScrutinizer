@@ -114,7 +114,7 @@ public class IrWidget implements IHarcHardware, ICapture {
      * @param debug debug code
      */
     public IrWidget(String portName, boolean verbose, int debug) {
-        this(portName, defaultMode, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndingTimeout, verbose, debug);
+        this(portName, defaultMode, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndTimeout, verbose, debug);
     }
 
     /**
@@ -214,7 +214,7 @@ public class IrWidget implements IHarcHardware, ICapture {
     }
 
     @Override
-    public void setEndingTimeout(int endTimeout) {
+    public void setEndTimeout(int endTimeout) {
         this.endTimeout = endTimeout;
     }
 

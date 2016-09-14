@@ -71,7 +71,7 @@ public class Mode2Importer extends ReaderImporter implements IModulatedIrSequenc
             lastWasPulse = isPulse;
         }
         if (data.size() % 2 != 0)
-            data.add((int)(IrpUtils.milliseconds2microseconds * getEndingTimeout()));
+            data.add((int)(IrpUtils.milliseconds2microseconds * getEndTimeout()));
         int[] array = new int[data.size()];
         int i = 0;
         for (Integer duration : data)

@@ -241,7 +241,7 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
     }
 
     @Override
-    public void setEndingTimeout(int integer) {
+    public void setEndTimeout(int integer) {
         device.setEndTimeout(integer);
     }
 

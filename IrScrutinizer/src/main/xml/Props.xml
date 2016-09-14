@@ -51,7 +51,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 
     <property name="captureBeginTimeout" type="int" default='"3000"' doc='Timeout when capturing, in milliseconds. Exact semantics may depend on the hardware selected.' />
     <property name="captureMaxSize" type="int" default='"1000"' doc='Maximal length of recorded signal, in samples' />
-    <property name="captureEndingTimeout" type="int" default='"300"' doc='Timeout when signal ends, in milliseconds' />
+    <property name="captureEndTimeout" type="int" default='"300"' doc='Timeout when signal ends, in milliseconds' />
     <property name="sendingTimeout" type="int" default='"2000"' doc='Timeout when sending signals, in milliseconds' />
     <property name="transmitGeneratedCount" type="int" default='"1"' doc="Number of times to send signal by transmit generated." />
 

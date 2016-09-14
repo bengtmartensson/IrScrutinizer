@@ -98,13 +98,13 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
             if (IrSerial.class.isAssignableFrom(clazz)) {
                 hardware = clazz.getConstructor(String.class, int.class, int.class, int.class, int.class, boolean.class).newInstance(
                         newPort, newBaud,
-                        properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndingTimeout(), properties.getVerbose());
+                        properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndTimeout(), properties.getVerbose());
                 baudRate = newBaud;
                 Props.class.getMethod("set" + clazz.getSimpleName() + "CapturePortBaudRate", int.class).invoke(properties, newBaud);
             } else {
                 hardware = clazz.getConstructor(String.class, int.class, int.class, int.class, boolean.class).newInstance(
                         newPort,
-                        properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndingTimeout(), properties.getVerbose());
+                        properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndTimeout(), properties.getVerbose());
 
             }
             Props.class.getMethod("set" + clazz.getSimpleName() + "CapturePortName", String.class).invoke(properties, portName);

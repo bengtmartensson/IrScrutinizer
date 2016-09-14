@@ -27,11 +27,11 @@ public interface IIrReader extends IHarcHardware {
 
     public static final int defaultBeginTimeout = 5000;
     public static final int defaultCaptureMaxSize = 500;
-    public static final int defaultEndingTimeout = 100;
+    public static final int defaultEndTimeout = 100;
 
     public void setBeginTimeout(int integer) throws IOException;
 
     public void setCaptureMaxSize(int integer);
 
-    public void setEndingTimeout(int integer);
+    public void setEndTimeout(int integer);
 }

@@ -957,7 +957,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
     }
 
     @Override
-    public void setEndingTimeout(int integer) {
+    public void setEndTimeout(int integer) {
     }
 
     public static class GlobalCacheIrTransmitter extends Transmitter {
