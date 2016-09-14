@@ -25,10 +25,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -170,7 +170,7 @@ public class DecodeIR {
 	//public int[] hex;
 	private String miscMessage;
 	private String errorMessage;
-        private final HashMap<String, Integer>miscNames = new HashMap<>();
+        private final Map<String, Integer>miscNames = new LinkedHashMap<>();
 
 	public DecodedSignal(String protocolName,
 			     int device,
@@ -214,10 +214,10 @@ public class DecodeIR {
 
         /**
          * Return the parameters in the IrpMaster way.
-         * @return HashMap containing the parameters.
+         * @return Map containing the parameters.
          */
-        public HashMap<String, Long> getParameters() {
-            HashMap<String, Long> result = new LinkedHashMap<>();
+        public Map<String, Long> getParameters() {
+            Map<String, Long> result = new LinkedHashMap<>();
             if (device >= 0)
                 result.put("D", (long)device);
             if (subDevice >=0)
@@ -240,7 +240,7 @@ public class DecodeIR {
         }
 
         // There are some idiosyncracises in the output of DecodeIr. I try to take care of them here.
-        public boolean isOk(String protocolName, Protocol protocol, HashMap<String, Long> vars) {
+        public boolean isOk(String protocolName, Protocol protocol, Map<String, Long> vars) {
 
             if (protocolName == null || protocol == null || vars == null)
                 return false;
@@ -614,7 +614,7 @@ public class DecodeIR {
      * @param out
      * @return result of the comparison.
      */
-    public static boolean invoke(IrSignal irSignal, String protocolName, Protocol protocol, HashMap<String, Long> actualParameters, boolean verbose, PrintStream out) {
+    public static boolean invoke(IrSignal irSignal, String protocolName, Protocol protocol, Map<String, Long> actualParameters, boolean verbose, PrintStream out) {
         if (irSignal == null)
             return false;
 

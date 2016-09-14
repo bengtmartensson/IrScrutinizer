@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
@@ -108,12 +109,9 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
             System.err.println(ex.getMessage());
         }
     }
-    //public static final String[][] fileExtensions = new String[][]{ new String[]{"rmdu", "RemoteMaster device updates"}};
 
-    private HashMap<String,String>parameters;
-    //private HashMap<String,Command>commands;
+    private Map<String,String>parameters;
     private Remote remote;
-    //private String protocolsIniPath;
     private ProtocolsIni protocolsIni;
 
     public RmduImporter() {
@@ -139,7 +137,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
     /**
      * @return the parameters
      */
-    public HashMap<String,String> getParameters() {
+    public Map<String,String> getParameters() {
         return parameters;
     }
 
@@ -168,11 +166,10 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
     public void load(Reader reader, String origin) throws IOException, ParseException {
         prepareLoad(origin);
         parameters = new LinkedHashMap<>(8);
-        //commands = new LinkedHashMap<String,Command>();
         BufferedReader bufferedReader = new BufferedReader(reader);
-        HashMap<Integer,Long> functionHex = new HashMap<>(8);
-        HashMap<Integer,String> functionName = new HashMap<>(8);
-        HashMap<Integer,String> functionNotes = new HashMap<>(8);
+        Map<Integer,Long> functionHex = new HashMap<>(8);
+        Map<Integer,String> functionName = new HashMap<>(8);
+        Map<Integer,String> functionNotes = new HashMap<>(8);
         int lineNo = 0;
         while (true) {
             String line = bufferedReader.readLine();
@@ -220,7 +217,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
                 : null;
         if ((devParams == null || devParams.length == 0) && protocolsIni != null)
             devParams = protocolsIni.getDeviceParameters(Integer.parseInt(parameters.get("Protocol").replaceAll(" ", ""), 16));
-        HashMap<String,Long> protocolParams = new HashMap<>(8);
+        Map<String,Long> protocolParams = new HashMap<>(8);
         String protocolParamsString = parameters.get("ProtocolParms");
         String[] params = protocolParamsString != null ? protocolParamsString.split(" ") : new String[0];
         for (int i = 0; i < params.length; i++) {
@@ -234,7 +231,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
 
         for (Entry<Integer, String> kvp : functionName.entrySet()) {
             Integer functionNo = kvp.getKey();
-            HashMap<String, Long> commandParameters = new HashMap<>(8);
+            Map<String, Long> commandParameters = new HashMap<>(8);
             commandParameters.putAll(protocolParams);
             Long hexObject = functionHex.get(functionNo);
             long hex = hexObject != null ? hexObject : IrpUtils.invalid;
@@ -257,7 +254,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
             }
         }
 
-        HashMap<String,HashMap<String,String>> appParams = new HashMap<>(8);
+        Map<String, Map<String,String>> appParams = new HashMap<>(8);
         appParams.put("rmdu", parameters);
         Remote.MetaData metaData = new Remote.MetaData(IrpUtils.basename(origin),
                 null, // displayName

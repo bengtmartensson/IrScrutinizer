@@ -23,7 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
@@ -731,7 +731,7 @@ public class GuiTester extends javax.swing.JFrame {
     }//GEN-LAST:event_globalCacheIrSenderSelector1PropertyChange
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        LinkedHashMap<String, Command> commands = null;
+        Map<String, Command> commands = null;
         RandomValueSet.initRng();
         try {
             commands = irpMasterBean.getCommands();

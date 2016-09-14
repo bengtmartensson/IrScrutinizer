@@ -25,6 +25,7 @@ import java.net.SocketTimeoutException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.harctoolbox.IrpMaster.IrpUtils;
 
@@ -113,7 +114,7 @@ public class AmxBeaconListener {
     private String key = null;
     private String value = null;
     private boolean debug = false;
-    private HashMap<InetAddress, Node>nodes = new HashMap<>(8);
+    private Map<InetAddress, Node>nodes = new HashMap<>(8);
 
     public AmxBeaconListener(Callback callback, String key, String value, boolean debug) {
         this.callback = callback;
@@ -193,7 +194,7 @@ public class AmxBeaconListener {
 
     private synchronized void reap() {
         boolean reaped = false;
-        for (Entry<InetAddress, Node> kvp : ((HashMap<InetAddress, Node>)nodes.clone()).entrySet()) {
+        for (Entry<InetAddress, Node> kvp : new HashMap<InetAddress, Node>(nodes).entrySet()) {
             //InetAddress addr = it.next();
             Node node = kvp.getValue();
             if (node.lastAliveDate.getTime() + reapAge < (new Date()).getTime()) {
@@ -233,13 +234,12 @@ public class AmxBeaconListener {
             int port = pack.getPort();
             if (debug)
                 System.err.print("Got |" + payload + "| from " + a.getHostName() + ":" + port + "...");
-            //HashMap<String, String> t = new HashMap<String, String>();
             if (payload.startsWith(AmxBeacon.beaconPreamble))
                 payload = payload.substring(5, payload.length() - 1);
             if (debug)
                 System.err.println(payload);
             String[] pairs = payload.split("><");
-            HashMap<String, String> table = new HashMap<>(pairs.length);
+            Map<String, String> table = new HashMap<>(pairs.length);
             for (String pair : pairs) {
                 String[] x = pair.split("=");
                 if (x.length >= 2)
@@ -305,9 +305,9 @@ public class AmxBeaconListener {
     public static class Node {
         private final InetAddress addr;
         private final int port;
-        private final HashMap<String,String> table;
+        private final Map<String,String> table;
         private Date lastAliveDate;
-        private Node(InetAddress addr, int port, HashMap<String, String>table) {
+        private Node(InetAddress addr, int port, Map<String, String>table) {
             this.addr = addr;
             this.port = port;
             this.table = table;
@@ -338,7 +338,7 @@ public class AmxBeaconListener {
             return addr;
         }
 
-        public HashMap<String,String> getTable() {
+        public Map<String,String> getTable() {
             return table;
         }
     }
@@ -390,7 +390,7 @@ public class AmxBeaconListener {
     private static class PrintCallback implements Callback {
 
         @Override
-        public void func(HashMap<InetAddress, Node> nodes) {
+        public void func(Map<InetAddress, Node> nodes) {
             for (Node node : nodes.values())
                 System.out.println(node);
         }
@@ -401,6 +401,6 @@ public class AmxBeaconListener {
      * This is called when a new node appears, or a node is removed.
      */
     public interface Callback {
-        public void func(HashMap<InetAddress, Node> nodes);
+        public void func(Map<InetAddress, Node> nodes);
     }
 }

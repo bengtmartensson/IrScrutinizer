@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.harctoolbox.IrpMaster.IrpMasterException;
@@ -65,8 +66,8 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         return doc;
     }
 
-    private static HashMap<String, Element> mkIndex(Element element, String tagId) {
-        HashMap<String, Element> index = new LinkedHashMap<>(16);
+    private static Map<String, Element> mkIndex(Element element, String tagId) {
+        Map<String, Element> index = new LinkedHashMap<>(16);
         NodeList things = element.getElementsByTagName(tagId);
         int length = things.getLength();
         for (int i = 0; i < length; i++) {
@@ -97,12 +98,11 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
     private boolean translateProntoFont = true;
 
-    private HashMap<String, String> nameIndex;
-    //HashMap<String, Element> itemIndex;
-    private HashMap<String, Element> pageIndex;
-    private HashMap<String, Element> actionListIndex;
-    private HashMap<String, Element> moduleIndex;
-    private HashMap<String, Element> actionIndex;
+    private Map<String, String> nameIndex;
+    private Map<String, Element> pageIndex;
+    private Map<String, Element> actionListIndex;
+    private Map<String, Element> moduleIndex;
+    private Map<String, Element> actionIndex;
 
     private int learnedIrCodeIndex;
 
@@ -184,7 +184,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
             throw new ParseException("No Modules element present.", -1);
 
 
-        HashMap<String,Remote> remotes = new HashMap<>(16);
+        Map<String,Remote> remotes = new HashMap<>(16);
 
         for (Element module : moduleIndex.values()) {
             Remote remote = loadModule(module);
@@ -207,7 +207,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         String nameId = ((Element) names.item(0)).getAttribute("id");
         String name = nameIndex.get(nameId);
         //System.out.println(id + "\t" + nameId + "\t" + name);
-        HashMap<String,Command> cmds = new HashMap<>(32);
+        Map<String,Command> cmds = new HashMap<>(32);
         NodeList firstPages = module.getElementsByTagName("FirstPage");
         Element page = firstPages.getLength() > 0 ? pageIndex.get(((Element) firstPages.item(0)).getAttribute("id")) : null;
         while (page != null) {
@@ -225,8 +225,8 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         return remote;
     }
 
-    private HashMap<String,Command> loadPage(Element page) {
-        HashMap<String,Command> cmds = new HashMap<>(16);
+    private Map<String,Command> loadPage(Element page) {
+        Map<String,Command> cmds = new HashMap<>(16);
         NodeList items = page.getElementsByTagName("Item");
         for (int i = 0; i < items.getLength(); i++) {
             Element item = (Element) items.item(i);

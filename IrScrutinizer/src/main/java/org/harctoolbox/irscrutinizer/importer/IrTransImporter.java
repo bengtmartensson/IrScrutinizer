@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
@@ -109,7 +110,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                     long F = (F6 << 6) | (payload & 0x3f);
                     long D = (payload >> 6) & 0x1f;
                     long T = (payload >> 11) & 1;
-                    HashMap<String, Long> parameters = new HashMap<>(4);
+                    Map<String, Long> parameters = new HashMap<>(4);
                     parameters.put("F", F);
                     parameters.put("D", D);
                     parameters.put("T", T);
@@ -120,7 +121,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                     long payload = Long.parseLong(data.substring(2), 2);
                     long F = payload & 0xff;
                     long D = (payload >> 8) & 0xff;
-                    HashMap<String, Long> parameters = new HashMap<>(4);
+                    Map<String, Long> parameters = new HashMap<>(4);
                     parameters.put("F", F);
                     parameters.put("D", D);
                     return new Command(name, null, "RC6", parameters);
@@ -177,8 +178,8 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         if (name == null)
             return null; // EOF
         ArrayList<Timing> timings = parseTimings(reader);
-        HashMap<String, IrTransCommand> parsedCommands = parseCommands(reader, timings);
-        HashMap<String, Command> commands = new LinkedHashMap<>(4);
+        Map<String, IrTransCommand> parsedCommands = parseCommands(reader, timings);
+        Map<String, Command> commands = new LinkedHashMap<>(4);
         for (IrTransCommand cmd : parsedCommands.values()) {
             try {
                 Command command = cmd.toCommand();
@@ -390,7 +391,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
     public void load(Reader reader, String origin) throws IOException, ParseException {
         prepareLoad(origin);
         LineNumberReader bufferedReader = new LineNumberReader(reader);
-        HashMap<String, Remote> remotes = new HashMap<>(16);
+        Map<String, Remote> remotes = new HashMap<>(16);
         while (true) {
             Remote remote = parseRemote(bufferedReader);
             if (remote == null)

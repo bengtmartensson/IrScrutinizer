@@ -35,6 +35,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
@@ -78,7 +79,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
     private Remote loadDevice(CCFDevice dev) {
         boolean totalUniqueNames = true;
         String deviceName = dev.getName();
-        HashMap<java.lang.String,Command> commands = new HashMap<>(64);
+        Map<java.lang.String,Command> commands = new HashMap<>(64);
         for (CCFPanel panel = dev.getFirstPanel(); panel != null; panel = panel.getNextPanel()) {
             String panelName = panel.getName();
             ArrayList<Command> commandList = loadChildren(panel.getChildren(), deviceName, panelName);
@@ -157,7 +158,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
 
     private void load(CCF ccf, String origin) throws IOException {
         prepareLoad(origin);
-        HashMap<String,Remote> remotes = new HashMap<>(16);
+        Map<String,Remote> remotes = new HashMap<>(16);
 
         for (CCFDevice dev = ccf.getFirstDevice(); dev != null; dev = dev.getNextDevice()) {
             Remote remote = loadDevice(dev);

@@ -21,8 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -227,8 +227,8 @@ public abstract class NamedIrSignal {
 
         public abstract Command toCommand(int row) throws IrpMasterException;
 
-        public HashMap<String, Command> getCommands(boolean forgiveSillySignals) throws IrpMasterException {
-            HashMap<String, Command> commands = new LinkedHashMap<>(getRowCount() + 10);
+        public Map<String, Command> getCommands(boolean forgiveSillySignals) throws IrpMasterException {
+            Map<String, Command> commands = new LinkedHashMap<>(getRowCount() + 10);
             for (int row = 0; row < getRowCount(); row++) {
                 try {
                     Command command = toCommand(row);

@@ -29,8 +29,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
@@ -97,7 +97,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
         return gcCompressedJoiner(intro, index) + gcCompressedJoiner(repeat, index);
     }
 
-    private static String gcCompressedJoiner(int seq[], HashMap<String, Character> index) {
+    private static String gcCompressedJoiner(int seq[], Map<String, Character> index) {
         StringBuilder result = new StringBuilder(32);
         for (int i = 0; i < seq.length / 2; i++) {
             String key = "," + seq[2 * i] + "," + seq[2 * i + 1];

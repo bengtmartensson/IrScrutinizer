@@ -27,6 +27,7 @@ import java.io.Reader;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.girr.Command;
@@ -133,7 +134,7 @@ public class CsvParametrizedImporter extends CsvImporter {
             return null;
         int offset = nameArray.length - 1;
         String name = join(nameArray);
-        HashMap<String, Long> parameters = new HashMap<>(3);
+        Map<String, Long> parameters = new HashMap<>(3);
         long F = gobbleLong(chunks, fColumn, "F", nameColumn < fColumn ? offset : 0);
         if (F == invalid)
             return null;

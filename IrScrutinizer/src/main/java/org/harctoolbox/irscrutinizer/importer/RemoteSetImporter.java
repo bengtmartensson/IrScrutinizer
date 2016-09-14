@@ -19,6 +19,7 @@ package org.harctoolbox.irscrutinizer.importer;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.girr.Remote;
@@ -42,7 +43,7 @@ public abstract class RemoteSetImporter extends ReaderImporter implements IRemot
 
     protected Remote setupRemote() {
 
-        HashMap<String, HashMap<String, String>> appParams = new HashMap<>(8);
+        Map<String, Map<String, String>> appParams = new HashMap<>(8);
         appParams.put(getClass().getSimpleName(), null);
         Remote.MetaData metaData =new Remote.MetaData(IrpUtils.basename(origin));
         Remote remote = new Remote(metaData,

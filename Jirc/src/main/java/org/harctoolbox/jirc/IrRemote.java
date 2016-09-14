@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
@@ -142,7 +143,7 @@ final public class IrRemote {
 
     private static final int PULSE_BIT = 0x01000000;
 
-    private static final HashMap<String, Integer> all_flags = new HashMap<String, Integer>() {
+    private static final Map<String, Integer> all_flags = new HashMap<String, Integer>() {
         {
             put("RAW_CODES", IrRemote.RAW_CODES);
             put("RC5", IrRemote.RC5);
@@ -165,8 +166,8 @@ final public class IrRemote {
         }
     };
 
-    public HashMap<String, String> getApplicationData() {
-        HashMap<String, String> applicationData = new LinkedHashMap<>();
+    public Map<String, String> getApplicationData() {
+        Map<String, String> applicationData = new LinkedHashMap<>();
         if (driver != null)
             applicationData.put("driver", driver);
         applicationData.put("type", lircProtocolType());
@@ -214,12 +215,12 @@ final public class IrRemote {
     }
 
     public Remote toRemote(boolean alternatingSigns, int debug) {
-        HashMap<String, HashMap<String, String>> appDataMap = new LinkedHashMap<>();
+        Map<String, Map<String, String>> appDataMap = new LinkedHashMap<>();
         appDataMap.put("jirc", getApplicationData());
 
         //remote.last_code = null;
 
-        HashMap<String, Command> commands = new LinkedHashMap<>();
+        Map<String, Command> commands = new LinkedHashMap<>();
         for (IrNCode c : getCodes()) {
             Command command = toCommand(c, alternatingSigns, debug);
             if (command != null)
@@ -241,7 +242,7 @@ final public class IrRemote {
     }
 
     Command toLircCodeCommand(IrNCode code) {
-        HashMap<String, Long> parameters = new HashMap<>(1);
+        Map<String, Long> parameters = new HashMap<>(1);
         parameters.put("lirc", code.getCode());
         try {
             return new Command(code.getName(), null, "lircdriver:" + driver, parameters);
@@ -288,7 +289,7 @@ final public class IrRemote {
             return null;
         String decodeir_version = DecodeIR.getVersion();
 
-        HashMap<String, Remote>girrRemotes = new LinkedHashMap<>();
+        Map<String, Remote>girrRemotes = new LinkedHashMap<>();
         for (IrRemote irRemote : remotes) {
             Remote remote = irRemote.toRemote(alternatingSigns, debug);
             girrRemotes.put(remote.getName(), remote);
@@ -539,8 +540,8 @@ final public class IrRemote {
     private IrRemote() {
     }
 
-    IrRemote(String name, String driver, List<String> flags, HashMap<String, Long> unaryParameters,
-            HashMap<String, XY> binaryParameters, List<IrNCode> codes) {
+    IrRemote(String name, String driver, List<String> flags, Map<String, Long> unaryParameters,
+            Map<String, XY> binaryParameters, List<IrNCode> codes) {
         this.name = name;
         this.driver = driver;
         for (String flag  : flags)

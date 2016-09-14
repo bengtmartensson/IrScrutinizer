@@ -18,6 +18,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.IrpMaster;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -34,7 +35,7 @@ import org.antlr.runtime.tree.CommonTree;
 
 public class NameEngine {
 
-    private HashMap<String, CommonTree> map;
+    private Map<String, CommonTree> map;
 
     public NameEngine() {
         map = new HashMap<>();
@@ -123,7 +124,7 @@ public class NameEngine {
         }
     }
 
-    public void loadActualParameters(HashMap<String, Long> ivs, ParameterSpecs paramSpecs) throws DomainViolationException {
+    public void loadActualParameters(Map<String, Long> ivs, ParameterSpecs paramSpecs) throws DomainViolationException {
         for (Entry<String, Long> kvp : ivs.entrySet()) {
             String name = kvp.getKey();
             // if no Parameter Specs, do not annoy the user; he has been warned already.

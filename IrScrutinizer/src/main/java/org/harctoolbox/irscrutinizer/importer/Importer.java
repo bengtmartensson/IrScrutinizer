@@ -20,8 +20,8 @@ package org.harctoolbox.irscrutinizer.importer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.girr.Command;
@@ -164,7 +164,7 @@ public abstract class Importer {
         return new ModulatedIrSequence(array);
     }
 
-    public HashMap<String,Command> getCommandIndex() {
+    public Map<String,Command> getCommandIndex() {
         return commandIndex;
     }
 

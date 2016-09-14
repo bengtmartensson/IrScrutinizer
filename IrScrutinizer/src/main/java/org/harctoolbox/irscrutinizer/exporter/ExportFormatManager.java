@@ -22,8 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
@@ -38,7 +38,7 @@ import org.xml.sax.SAXException;
  */
 public class ExportFormatManager {
 
-    private final HashMap<String, IExporterFactory> exportFormats;
+    private final Map<String, IExporterFactory> exportFormats;
     private final IExportFormatSelector exportFormatSelector;
     private JMenu menu;
     private ButtonGroup buttonGroup;

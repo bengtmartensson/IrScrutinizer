@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -72,12 +73,12 @@ public class IrpMasterBean extends javax.swing.JPanel {
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     public interface ISignalNameFormatter {
-        public String format(String protocolName, HashMap<String, Long>parameters);
+        public String format(String protocolName, Map<String, Long>parameters);
     }
 
     // should probably not be here, but somewhere else
     public static class DefaultSignalNameFormatter implements ISignalNameFormatter, Serializable {
-        private StringBuilder doParameter(HashMap<String, Long> parameters, String parameterName) {
+        private StringBuilder doParameter(Map<String, Long> parameters, String parameterName) {
             if (!parameters.containsKey(parameterName))
                 return new StringBuilder(0);
 
@@ -88,9 +89,9 @@ public class IrpMasterBean extends javax.swing.JPanel {
         }
 
         @Override
-        public String format(String protocolName, HashMap<String, Long> parameters) {
+        public String format(String protocolName, Map<String, Long> parameters) {
             @SuppressWarnings("unchecked")
-            HashMap<String, Long> params = (HashMap<String, Long>) parameters.clone();
+            Map<String, Long> params = new HashMap<String, Long>(parameters);
 
             StringBuilder tail = new StringBuilder(64);
             tail.append(doParameter(params, "D"));
@@ -221,17 +222,17 @@ public class IrpMasterBean extends javax.swing.JPanel {
     }
 
     public String getSignalName(/*long fOverride*/) throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException {
-        HashMap<String, Long> parameters = getParameters(/*fOverride*/);
+        Map<String, Long> parameters = getParameters(/*fOverride*/);
         return this.signalNameFormatter.format(protocolName, parameters);
     }
 
-    public HashMap<String, Long> getParameters() throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException {
+    public Map<String, Long> getParameters() throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException {
         InputVariableSetValues parameterSets = getIntervalParameters();
         Iterator<LinkedHashMap<String, Long>> it = parameterSets.iterator();
         return it.hasNext() ? it.next() : null;
     }
 
-    private void processParameter(HashMap<String, String> parameters, Protocol protocol, String name, JTextField textField) {
+    private void processParameter(Map<String, String> parameters, Protocol protocol, String name, JTextField textField) {
         if (protocol.hasParameter(name)
                 && !(protocol.hasParameterDefault(name) && textField.getText().trim().isEmpty()))
             parameters.put(name, textField.getText());
@@ -239,7 +240,7 @@ public class IrpMasterBean extends javax.swing.JPanel {
 
     public InputVariableSetValues getIntervalParameters() throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException {
         Protocol protocol = irpMaster.newProtocol(protocolName);
-        LinkedHashMap<String, String> parameters = new LinkedHashMap<>(4);
+        Map<String, String> parameters = new LinkedHashMap<>(4);
 
         processParameter(parameters, protocol, "D", dTextField);
         processParameter(parameters, protocol, "S", sTextField);
@@ -261,13 +262,13 @@ public class IrpMasterBean extends javax.swing.JPanel {
     }
 
     public IrSignal render() throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException, DomainViolationException, InvalidRepeatException {
-        HashMap<String, Long> parameters = getParameters();
+        Map<String, Long> parameters = getParameters();
         Protocol protocol = irpMaster.newProtocol(protocolName);
         IrSignal irSignal = protocol.renderIrSignal(parameters, !disregardRepeatMins);
         return irSignal;
     }
 
-    public LinkedHashMap<String, Command> getCommands() throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException, IrpMasterException {
+    public Map<String, Command> getCommands() throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException, IrpMasterException {
         InputVariableSetValues intervals = getIntervalParameters();
         LinkedHashMap<String, Command> commands = new LinkedHashMap<>(16);
         for (LinkedHashMap<String, Long> params : intervals) {

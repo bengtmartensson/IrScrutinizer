@@ -17,9 +17,9 @@
 package org.harctoolbox.girr;
 
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
@@ -36,8 +36,8 @@ public class CommandSet {
     private String notes;
     private String protocol;
     private final String name;
-    private final HashMap<String, Long> parameters;
-    private final HashMap<String, Command> commands;
+    private final Map<String, Long> parameters;
+    private final Map<String, Command> commands;
 
     /**
      * Imports a CommandSet from an Element.
@@ -99,14 +99,14 @@ public class CommandSet {
      * @param protocol
      * @param parameters
      */
-    CommandSet(String name, String notes, HashMap<String, Command> commands, String protocol, HashMap<String, Long>parameters) {
+    CommandSet(String name, String notes, Map<String, Command> commands, String protocol, Map<String, Long>parameters) {
         this.name = name != null ? name : "commandSet";
         this.notes = notes;
         this.commands = commands;
         this.protocol = protocol;
         this.parameters = parameters;
     }
-    public HashMap<String, Command> getCommands() {
+    public Map<String, Command> getCommands() {
         return commands;
     }
 

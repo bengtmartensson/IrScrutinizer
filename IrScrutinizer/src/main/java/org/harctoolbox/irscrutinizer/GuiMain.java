@@ -43,8 +43,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.comm.DriverGenUnix;
 import javax.swing.AbstractButton;
@@ -82,7 +82,7 @@ public class GuiMain extends javax.swing.JFrame {
     private GuiUtils guiUtils;
     private GlobalCacheIrDatabase globalCacheIrDatabase = null;
     private ControlTowerIrDatabase controlTowerIrDatabase = null;
-    private HashMap<String, String> controlTowerCodesetTable = null;
+    private Map<String, String> controlTowerCodesetTable = null;
     private IrdbImporter irdbImporter = null;
     private IrpMaster irpMaster = null;
     private ProtocolsIni protocolsIni = null;
@@ -1162,7 +1162,7 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private File saveCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel, String title, RemoteSetExporter exporter) throws IrpMasterException, FileNotFoundException, IOException {
-        HashMap<String, Command> commands = getCommands(tableModel);
+        Map<String, Command> commands = getCommands(tableModel);
         if (commands == null)
             return null;
         File file = saveCommands(commands, "IrScrutinizer " + tableModel.getType() + " table", title, exporter);
@@ -1171,7 +1171,7 @@ public class GuiMain extends javax.swing.JFrame {
         return file;
     }
 
-    private HashMap<String, Command> getCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel) throws IrpMasterException {
+    private Map<String, Command> getCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel) throws IrpMasterException {
         ArrayList<String>duplicateNames = tableModel.getNonUniqueNames();
         if (!duplicateNames.isEmpty()) {
             StringBuilder str = new StringBuilder("The following names are non-unique: ");
@@ -1191,7 +1191,7 @@ public class GuiMain extends javax.swing.JFrame {
         return tableModel.getCommands(true);
     }
 
-    private File saveCommands(HashMap<String, Command> commands, String source, String title, RemoteSetExporter exporter) throws FileNotFoundException, IrpMasterException, IOException {
+    private File saveCommands(Map<String, Command> commands, String source, String title, RemoteSetExporter exporter) throws FileNotFoundException, IrpMasterException, IOException {
         if (properties.getExportInquireDeviceData() && exporter.supportsMetaData()) {
             Remote.MetaData newMetaData = MetaDataDialog.inquireMetaData(metaData, this);
             if (newMetaData == null) // user bailed out
@@ -1230,7 +1230,7 @@ public class GuiMain extends javax.swing.JFrame {
         return f > 0 ? f : IrpUtils.defaultFrequency;
     }
 
-    private void saveSignals(LinkedHashMap<String, Command> commands) throws FileNotFoundException, IOException, IrpMasterException {
+    private void saveSignals(Map<String, Command> commands) throws FileNotFoundException, IOException, IrpMasterException {
         if (commands.isEmpty())
             guiUtils.error("Nothing to export");
         else if (commands.size() == 1) {
@@ -1588,7 +1588,7 @@ public class GuiMain extends javax.swing.JFrame {
         for (Long F = protocol.getParameterMin("F"); F <= protocol.getParameterMax("F"); F++) {
             if (!presentFs.contains(F)) {
                 @SuppressWarnings("unchecked")
-                /*Linked*/HashMap<String, Long> params = (/*Linked*/HashMap<String, Long>) command.getParameters().clone();
+                Map<String, Long> params = new HashMap<>(command.getParameters());
                 params.put("F", F);
                 String cmdname = (new IrpMasterBean.DefaultSignalNameFormatter()).format(command.getProtocolName(), params);
                 Command cmd = new Command(cmdname, null, protocolName, params);

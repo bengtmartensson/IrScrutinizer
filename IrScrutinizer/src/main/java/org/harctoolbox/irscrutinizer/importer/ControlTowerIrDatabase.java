@@ -32,6 +32,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.harctoolbox.IrpMaster.IrpUtils;
@@ -57,8 +58,8 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
     private String name;
     private String company;
 
-    private HashMap<String, String> manufacturerMap;
-    private HashMap<String, String> typesMap;
+    private Map<String, String> manufacturerMap;
+    private Map<String, String> typesMap;
     private String manufacturer;
     private String deviceType;
     private RemoteSet remoteSet;
@@ -188,9 +189,9 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
     }
 
 
-    private HashMap<String, String> getMap(String urlFragment, String keyName, String valueName) throws IOException {
+    private Map<String, String> getMap(String urlFragment, String keyName, String valueName) throws IOException {
         JsonArray array = getJsonArray(urlFragment);
-        HashMap<String,String> map = new HashMap<>(16);
+        Map<String,String> map = new HashMap<>(16);
         for (JsonValue val : array) {
             JsonObject obj = val.asObject();
             map.put(obj.get(keyName).asString(), obj.get(valueName).asString());
@@ -236,7 +237,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         return getMap("types/" + httpEncode(type) + "/brands", "Brand", "$id").keySet();
     }
 
-    public HashMap<String, String> getModels(String manufacturer, String type) throws IOException {
+    public Map<String, String> getModels(String manufacturer, String type) throws IOException {
         return getMap("brands/" + httpEncode(manufacturer) + "/types/" + httpEncode(type) + "/models", "Name", "ID");
     }
 
@@ -245,7 +246,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         return new Model(obj);
     }
 
-    public HashMap<String, String> getCodesetTable(String manufacturerKey, String deviceTypeKey) throws IOException {
+    public Map<String, String> getCodesetTable(String manufacturerKey, String deviceTypeKey) throws IOException {
         return getMap("brands/" + httpEncode(manufacturerKey) + "/types/" + httpEncode(deviceTypeKey) + "/models",
                 "Name", "ID");
     }

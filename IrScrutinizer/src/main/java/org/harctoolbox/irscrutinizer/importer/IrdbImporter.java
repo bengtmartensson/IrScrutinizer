@@ -31,8 +31,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.harctoolbox.IrpMaster.IrpMasterException;
@@ -120,9 +120,8 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
 
     private boolean verbose = false;
     private String manufacturer;
-    //private HashMap<String,Command> commands = null;
     private RemoteSet remoteSet;
-    private HashMap<String, HashMap<ProtocolDeviceSubdevice, HashMap<String, Long>>> deviceTypes;
+    private Map<String, Map<ProtocolDeviceSubdevice, Map<String, Long>>> deviceTypes;
 
     public IrdbImporter(String manufacturer, boolean verbose) throws IOException {
         super(irdbOriginName);
@@ -142,8 +141,8 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
                 JsonObject obj = val.asObject();
                 String deviceType = obj.get("devicetype").asString();
                 if (!deviceTypes.containsKey(deviceType))
-                    deviceTypes.put(deviceType, new LinkedHashMap<ProtocolDeviceSubdevice, HashMap<String, Long>>(8));
-                HashMap<ProtocolDeviceSubdevice, HashMap<String, Long>> devCollection = deviceTypes.get(deviceType);
+                    deviceTypes.put(deviceType, new LinkedHashMap<ProtocolDeviceSubdevice, Map<String, Long>>(8));
+                Map<ProtocolDeviceSubdevice, Map<String, Long>> devCollection = deviceTypes.get(deviceType);
                 ProtocolDeviceSubdevice pds = new ProtocolDeviceSubdevice(obj);
                 if (pds.getProtocol() == null) {
                     System.err.println("Null protocol ignored");
@@ -151,7 +150,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
                 }
                 if (!devCollection.containsKey(pds))
                     devCollection.put(pds, new LinkedHashMap<String, Long>(8));
-                HashMap<String, Long> cmnds = devCollection.get(pds);
+                Map<String, Long> cmnds = devCollection.get(pds);
                 long function = parseLong(obj.get("function").asString()); // barfs for illegal
                 String functionName = obj.get("functionname").asString();
                 if (cmnds.containsKey(functionName))
@@ -177,18 +176,17 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     }
 
     public Set<ProtocolDeviceSubdevice> getProtocolDeviceSubdevice(String deviceType) {
-        HashMap<ProtocolDeviceSubdevice, HashMap<String, Long>> map = deviceTypes.get(deviceType);
+        Map<ProtocolDeviceSubdevice, Map<String, Long>> map = deviceTypes.get(deviceType);
         return map == null ? null : map.keySet();
     }
 
-    //public HashMap<String, Long> getCommands(String deviceType, ProtocolDeviceSubdevice pds) {
     public void load(String deviceType, ProtocolDeviceSubdevice pds) throws IrpMasterException {
         clearCommands();
-        HashMap<ProtocolDeviceSubdevice, HashMap<String, Long>> map = deviceTypes.get(deviceType);
+        Map<ProtocolDeviceSubdevice, Map<String, Long>> map = deviceTypes.get(deviceType);
         if (map == null)
             return;
 
-        HashMap<String, Long> commandMap = map.get(pds);
+        Map<String, Long> commandMap = map.get(pds);
         load(commandMap, pds, deviceType);
         Remote.MetaData metaData = new Remote.MetaData(manufacturer + "_" + deviceType + "_" + pds.toString(), //java.lang.String name,
                 null, // displayName
@@ -208,17 +206,16 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
 
     public void load(String deviceType) throws IrpMasterException {
         clearCommands();
-        HashMap<ProtocolDeviceSubdevice, HashMap<String, Long>> map = deviceTypes.get(deviceType);
+        Map<ProtocolDeviceSubdevice, Map<String, Long>> map = deviceTypes.get(deviceType);
         if (map == null)
             return;
 
-        HashMap<String, Remote> remoteList = new LinkedHashMap<>(16);
+        Map<String, Remote> remoteList = new LinkedHashMap<>(16);
 
-        //HashMap<String,Command> cmds;
-        for (Entry<ProtocolDeviceSubdevice, HashMap<String, Long>> kvp : map.entrySet()) {
-            HashMap<String, Long> commandMap = kvp.getValue();
+        for (Entry<ProtocolDeviceSubdevice, Map<String, Long>> kvp : map.entrySet()) {
+            Map<String, Long> commandMap = kvp.getValue();
             ProtocolDeviceSubdevice pds = kvp.getKey();
-            HashMap<String, Command> cmds = load(commandMap, pds, deviceType);
+            Map<String, Command> cmds = load(commandMap, pds, deviceType);
             Remote.MetaData metaData = new Remote.MetaData(manufacturer + "_" + deviceType + "_" + pds.toString(), //java.lang.String name,
                     null, // displayName
                     null, //java.lang.String manufacturer,
@@ -237,13 +234,13 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         remoteSet = new RemoteSet(getCreatingUser(), irdbOriginName, remoteList);
     }
 
-    private HashMap<String, Command> load(HashMap<String, Long> commandMap, ProtocolDeviceSubdevice pds, String deviceType) throws IrpMasterException {
-        HashMap<String,Command> cmds = new LinkedHashMap<>(16);
+    private Map<String, Command> load(Map<String, Long> commandMap, ProtocolDeviceSubdevice pds, String deviceType) throws IrpMasterException {
+        Map<String,Command> cmds = new LinkedHashMap<>(16);
         for (Entry<String, Long> kvp : commandMap.entrySet()) {
             //ParametrizedIrSignal paramSig = new ParametrizedIrSignal(pds.getProtocol(), pds.getDevice(), pds.subdevice,
             //        kvp.getValue().longValue(), kvp.getKey(),
             //        "IRDB: " + manufacturer + "/" + deviceType + "/" + pds.toString());
-            HashMap<String, Long> parameters = IrpUtils.mkParameters(pds.getDevice(), pds.subdevice, kvp.getValue());
+            Map<String, Long> parameters = IrpUtils.mkParameters(pds.getDevice(), pds.subdevice, kvp.getValue());
             Command command = new Command(kvp.getKey(),
                     "IRDB: " + manufacturer + "/" + deviceType + "/" + pds.toString(),
                     pds.getProtocol(),

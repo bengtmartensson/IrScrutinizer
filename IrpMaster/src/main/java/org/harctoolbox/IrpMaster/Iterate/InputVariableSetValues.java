@@ -16,9 +16,9 @@ this program. If not, see http://www.gnu.org/licenses/.
  */
 package org.harctoolbox.IrpMaster.Iterate;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -110,7 +110,7 @@ public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Lo
         }
     }
 
-    public InputVariableSetValues(HashMap<String, String>input, boolean reverse, Protocol protocol) throws UnassignedException, IncompatibleArgumentException, ParseException {
+    public InputVariableSetValues(Map<String, String>input, boolean reverse, Protocol protocol) throws UnassignedException, IncompatibleArgumentException, ParseException {
         this(protocol);
 
         if (reverse) {

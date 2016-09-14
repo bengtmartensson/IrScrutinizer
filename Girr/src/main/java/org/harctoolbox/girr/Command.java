@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
@@ -91,7 +92,7 @@ public class Command implements Serializable {
         irpMaster = new IrpMaster(irpProtocolsIniPath);
     }
 
-    private static String toPrintString(HashMap<String,Long>map) {
+    private static String toPrintString(Map<String,Long>map) {
         if (map == null || map.isEmpty())
             return "";
         StringBuilder str = new StringBuilder(64);
@@ -192,7 +193,7 @@ public class Command implements Serializable {
     private String notes;
     private String name;
     private String protocolName;
-    private HashMap<String, Long> parameters;
+    private Map<String, Long> parameters;
     private int frequency;
     private double dutyCycle;
     private String[] intro;
@@ -200,7 +201,7 @@ public class Command implements Serializable {
     private String[] ending;
     private String[] ccf;
     private String comment;
-    private HashMap<String, String> otherFormats;
+    private Map<String, String> otherFormats;
 
     /**
      * This constructor is for importing from the Element as first argument.
@@ -210,7 +211,7 @@ public class Command implements Serializable {
      * @throws ParseException
      * @throws IrpMasterException
      */
-    public Command(Element element, String inheritProtocol, HashMap<String, Long> inheritParameters) throws ParseException, IrpMasterException {
+    public Command(Element element, String inheritProtocol, Map<String, Long> inheritParameters) throws ParseException, IrpMasterException {
         this(MasterType.safeValueOf(element.getAttribute("master")), element.getAttribute("name"), element.getAttribute("comment"));
         protocolName = inheritProtocol;
         parameters = new HashMap<>(4);
@@ -318,16 +319,16 @@ public class Command implements Serializable {
      * @throws IrpMasterException
      */
     @SuppressWarnings("unchecked")
-    public Command(String name, String comment, String protocolName, HashMap<String, Long> parameters)
+    public Command(String name, String comment, String protocolName, Map<String, Long> parameters)
             throws IrpMasterException {
         this(name, comment, protocolName, irpMaster.newProtocolOrNull(protocolName), parameters);
     }
 
     @SuppressWarnings("unchecked")
-    private Command(String name, String comment, String protocolName, Protocol protocol, HashMap<String, Long> parameters)
+    private Command(String name, String comment, String protocolName, Protocol protocol, Map<String, Long> parameters)
             throws IrpMasterException {
         this(MasterType.parameters, name, comment);
-        this.parameters = (HashMap<String, Long>) parameters.clone();
+        this.parameters = new HashMap<>(parameters);
         this.protocolName = protocolName;
         this.protocol = protocol;
         sanityCheck();
@@ -416,7 +417,7 @@ public class Command implements Serializable {
      * @return the parameters
      * @throws org.harctoolbox.IrpMaster.IrpMasterException
      */
-    public HashMap<String, Long> getParameters() throws IrpMasterException {
+    public Map<String, Long> getParameters() throws IrpMasterException {
         checkForParameters();
         return parameters;
     }
@@ -680,7 +681,7 @@ public class Command implements Serializable {
     }
 
 
-    private void generateRawCcfAllT(HashMap<String, Long> parameters, boolean generateRaw, boolean generateCcf) throws IrpMasterException {
+    private void generateRawCcfAllT(Map<String, Long> parameters, boolean generateRaw, boolean generateCcf) throws IrpMasterException {
         if (numberOfToggleValues() == 1)
             generateRawCcf(parameters, generateRaw, generateCcf);
         else
@@ -688,14 +689,14 @@ public class Command implements Serializable {
                 generateRawCcfForceT(parameters, T, generateRaw, generateCcf);
     }
 
-    private void generateRawCcfForceT(HashMap<String, Long> parameter, int T, boolean generateRaw, boolean generateCcf) throws IrpMasterException {
+    private void generateRawCcfForceT(Map<String, Long> parameter, int T, boolean generateRaw, boolean generateCcf) throws IrpMasterException {
         @SuppressWarnings("unchecked")
-        HashMap<String, Long> params = (HashMap<String, Long>) parameters.clone();
+        Map<String, Long> params = new HashMap(parameters);
         params.put(toggleParameterName, (long) T);
         generateRawCcf(params, T, generateRaw, generateCcf);
     }
 
-    private void generateRawCcf(HashMap<String, Long> parameter, boolean generateRaw, boolean generateCcf) throws IrpMasterException {
+    private void generateRawCcf(Map<String, Long> parameter, boolean generateRaw, boolean generateCcf) throws IrpMasterException {
         if (protocol == null)
             throw new IrpMasterException("Protocol " + protocolName + " unknown or unusable");
         IrSignal irSignal = protocol.renderIrSignal(parameters);
@@ -705,7 +706,7 @@ public class Command implements Serializable {
             generateCcf(irSignal);
     }
 
-    private void generateRawCcf(HashMap<String, Long> parameters, int T, boolean generateRaw, boolean generateCcf) throws IrpMasterException {
+    private void generateRawCcf(Map<String, Long> parameters, int T, boolean generateRaw, boolean generateCcf) throws IrpMasterException {
         IrSignal irSignal = protocol.renderIrSignal(parameters);
         if (generateRaw)
             generateRaw(irSignal, T);

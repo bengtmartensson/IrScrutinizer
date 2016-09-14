@@ -18,8 +18,8 @@ package org.harctoolbox.IrpMaster;
 
 import java.io.FileNotFoundException;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This class models a rendered IR signals.
@@ -526,7 +526,7 @@ public class IrSignal {
      * @throws FileNotFoundException
      * @throws IrpMasterException
      */
-    public IrSignal(String protocolsIniPath, String protocolName, HashMap<String, Long> parameters) throws FileNotFoundException, IrpMasterException {
+    public IrSignal(String protocolsIniPath, String protocolName, Map<String, Long> parameters) throws FileNotFoundException, IrpMasterException {
         this(new IrpMaster(protocolsIniPath), protocolName, parameters);
     }
 
@@ -537,7 +537,7 @@ public class IrSignal {
      * @param parameters Dictionary of parameter values
      * @throws IrpMasterException
      */
-    public IrSignal(IrpMaster irpMaster, String protocolName, HashMap<String, Long> parameters) throws IrpMasterException {
+    public IrSignal(IrpMaster irpMaster, String protocolName, Map<String, Long> parameters) throws IrpMasterException {
         Protocol protocol = irpMaster.newProtocol(protocolName);
         if (protocol == null)
             throw new IrpMasterException("Protocol \"" + protocolName + "\" is not known.");

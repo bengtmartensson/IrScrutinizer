@@ -18,7 +18,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.guicomponents;
 
 import java.net.InetAddress;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -70,7 +70,7 @@ public class AmxBeaconListenerPanel extends HarcPanel {
         }
 
         @Override
-        public void func(HashMap<InetAddress, Node> hm) {
+        public void func(Map<InetAddress, Node> hm) {
             DefaultMutableTreeNode root = new DefaultMutableTreeNode("Nodes");
             for (Node n : hm.values()) {
                 DefaultMutableTreeNode node = doNode(n);

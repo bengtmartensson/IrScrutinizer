@@ -19,6 +19,7 @@ package org.harctoolbox.irscrutinizer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.DecodeIR.DecodeIrException;
@@ -59,7 +60,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         irpMaster = aIrpMaster;
     }
 
-    private static String formatMiscParams(HashMap<String, Long> params) {
+    private static String formatMiscParams(Map<String, Long> params) {
         if (params == null)
             return "";
         StringBuilder str = new StringBuilder(16);
@@ -74,7 +75,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         return str.toString();
     }
 
-    private HashMap<String, Long>parameters;
+    private Map<String, Long>parameters;
     private String protocolName;
 
     public ParametrizedIrSignal(Command command) throws IrpMasterException {
@@ -83,7 +84,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         this.parameters = command.getParameters();
     }
 
-    public ParametrizedIrSignal(String protocolName, HashMap<String, Long>parameters, String name, String comment) {
+    public ParametrizedIrSignal(String protocolName, Map<String, Long>parameters, String name, String comment) {
         super(name, comment);
         this.parameters = parameters;
         this.protocolName = protocolName;
@@ -189,7 +190,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         // Strip out parameter named "hex" before sending to IrpMaster
         // (not used by any current protocols, just causes noisy warnings).
         @SuppressWarnings("unchecked")
-        HashMap<String,Long> localParameters = (HashMap<String,Long>) parameters.clone();
+        Map<String,Long> localParameters = new HashMap<>(parameters);
         localParameters.remove("hex");
         Command command = new Command(getName(), getComment(), protocolName, localParameters);
         return command;
@@ -291,7 +292,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
                     };
         }
 
-        private Integer safeGet(HashMap<String, Long>map, String key) {
+        private Integer safeGet(Map<String, Long>map, String key) {
             return map == null ? null
                     : map.get(key) == null ? null : map.get(key).intValue();
         }
@@ -330,7 +331,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         public ArrayList<Long> listF(Command reference) throws IrpMasterException {
             ArrayList<Long> list = new ArrayList<>(16);
             @SuppressWarnings("unchecked")
-            HashMap<String, Long> params = (HashMap<String, Long>) reference.getParameters().clone();
+            Map<String, Long> params = new HashMap<>(reference.getParameters());
             params.remove("F");
             for (int row =  0; row < getRowCount(); row++) {
                 Command cmd = toCommand(row);

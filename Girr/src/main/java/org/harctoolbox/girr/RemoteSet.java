@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
@@ -83,7 +84,7 @@ public class RemoteSet implements Serializable {
     private String tool2;
     private String tool2Version;
     private String notes;
-    private HashMap<String, Remote> remotes;
+    private Map<String, Remote> remotes;
 
     /**
      * This constructor is used to import an XML document.
@@ -132,7 +133,7 @@ public class RemoteSet implements Serializable {
     //}
 
     /**
-     * This constructor sets up a RemoteSet from a given HashMap of Remotes, so that it can later be used through
+     * This constructor sets up a RemoteSet from a given Map of Remotes, so that it can later be used through
      * the xmlExport or xmlExportDocument to generate an XML export.
      * @param creatingUser Comment field for the creating user, if wanted.
      * @param source Comment field describing the origin of the data; e.g. name of human author or creating program.
@@ -142,7 +143,7 @@ public class RemoteSet implements Serializable {
      * @param tool2 Name of secondary tppl, if applicable.
      * @param tool2Version Version of secondary tool.
      * @param notes Textual notes.
-     * @param remotes HashMap of remotes.
+     * @param remotes hMap of remotes.
      */
     public RemoteSet(String creatingUser,
             String source,
@@ -152,7 +153,7 @@ public class RemoteSet implements Serializable {
             String tool2,
             String tool2Version,
             String notes,
-            HashMap<String, Remote> remotes) {
+            Map<String, Remote> remotes) {
         this.creatingUser = creatingUser;
         this.source = source;
         this.creationDate = creationDate != null ? creationDate : (new SimpleDateFormat(dateFormatString)).format(new Date()) ;
@@ -222,7 +223,7 @@ public class RemoteSet implements Serializable {
      * @param source
      * @param remotes
      */
-    public RemoteSet(String creatingUser, String source, HashMap<String,Remote> remotes) {
+    public RemoteSet(String creatingUser, String source, Map<String,Remote> remotes) {
         this(creatingUser,
                 source,
                 null,

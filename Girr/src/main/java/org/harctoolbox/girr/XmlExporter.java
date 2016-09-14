@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -143,7 +142,7 @@ public class XmlExporter {
         this(createDocument(root, stylesheetType, stylesheetUrl, createSchemaLocation));
     }
 
-    public void printDOM(OutputStream ostr, Document stylesheet, HashMap<String, String>parameters,
+    public void printDOM(OutputStream ostr, Document stylesheet, Map<String, String>parameters,
             boolean binary, String charsetName) throws IOException {
         if (debug) {
             XmlUtils.printDOM(new File("girr.girr"), this.document);

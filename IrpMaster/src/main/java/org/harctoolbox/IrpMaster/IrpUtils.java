@@ -330,7 +330,7 @@ public class IrpUtils {
      * @param params tests- irpmaster?HashMap&lt;String, Long&gt; of input parameters.
      * @return Nicely formatted header (String)
      */
-    public static String variableHeader(HashMap<String, Long> params) {
+    public static String variableHeader(Map<String, Long> params) {
         TreeMap<String, Long> map = new TreeMap(params);
         map.remove("D");
         map.remove("F");
@@ -349,7 +349,7 @@ public class IrpUtils {
         return result;
     }
 
-    private static String formatVariable(HashMap<String, Long>map, String name, String prefix, String postfix) {
+    private static String formatVariable(Map<String, Long>map, String name, String prefix, String postfix) {
         if (!map.containsKey(name))
             return "";
 
@@ -377,8 +377,8 @@ public class IrpUtils {
         return lastPeriod > lastSeparator;
     }
 
-    public static HashMap<String,Long> mkParameters(long D, long S, long F) {
-        HashMap<String, Long> result = new HashMap<>(3);
+    public static Map<String,Long> mkParameters(long D, long S, long F) {
+        Map<String, Long> result = new HashMap<>(3);
         if (D != IrpUtils.invalid)
             result.put("D", D);
         if (S != IrpUtils.invalid)

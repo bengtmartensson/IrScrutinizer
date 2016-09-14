@@ -25,8 +25,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import org.harctoolbox.IrpMaster.IrpUtils;
 
 /**
@@ -54,8 +54,8 @@ public class ProtocolsIni implements Serializable {
         }
     }
 
-    private HashMap<Integer, HashMap<String,String>> pidMap;
-    private HashMap<String, HashMap<String,String>> nameMap;
+    private Map<Integer, Map<String,String>> pidMap;
+    private Map<String, Map<String,String>> nameMap;
 
     public ProtocolsIni(File file) throws IOException, ParseException {
         this(new InputStreamReader(new FileInputStream(file), IrpUtils.dumbCharset));
@@ -66,7 +66,7 @@ public class ProtocolsIni implements Serializable {
         nameMap = new LinkedHashMap<>(32);
 
         BufferedReader in = new BufferedReader(reader);
-        HashMap<String, String> currentProtocol = null;//new HashMap<String, String>();
+        Map<String, String> currentProtocol = null;//new HashMap<String, String>();
         int lineNo = 0;
         for (String lineRead = in.readLine(); lineRead != null; lineRead = in.readLine()) {
             int pid;
@@ -121,7 +121,7 @@ public class ProtocolsIni implements Serializable {
         return getDeviceParameters(pidMap.get(pid));
     }
 
-    private String[] getDeviceParameters(HashMap<String, String> map) {
+    private String[] getDeviceParameters(Map<String, String> map) {
         if (map == null)
             return new String[0];
         String str = map.get("DevParms");
@@ -153,7 +153,7 @@ public class ProtocolsIni implements Serializable {
         return getCmdTranslators(pidMap.get(pid));
     }
 
-    private ICmdTranslator[] getCmdTranslators(HashMap<String, String> map) {
+    private ICmdTranslator[] getCmdTranslators(Map<String, String> map) {
         if (map == null)
             return new ICmdTranslator[0];
         String str = map.get("CmdTranslator");

@@ -21,7 +21,7 @@ import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.harctoolbox.harchardware.beacon.AmxBeaconListener;
 import org.harctoolbox.harchardware.ir.GlobalCache;
@@ -159,11 +159,10 @@ public final class GlobalCacheManager {
         }
 
         @Override
-        public void func(HashMap<InetAddress, AmxBeaconListener.Node> nodes) {
+        public void func(Map<InetAddress, AmxBeaconListener.Node> nodes) {
             int oldValue = sillyHashCode();
             automaticGlobalCaches = new ArrayList<>(4);
             automaticGlobalCacheTypes = new ArrayList<>(4);
-            //ipAddressMap = new LinkedHashMap<InetAddress, Integer>();
             for (Entry<InetAddress, AmxBeaconListener.Node> node : nodes.entrySet()) {
                 automaticGlobalCaches.add(node.getKey());
                 automaticGlobalCacheTypes.add(node.getValue().get("-Model"));

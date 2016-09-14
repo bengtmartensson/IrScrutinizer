@@ -32,8 +32,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
@@ -108,7 +108,7 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
         ccf.setVersionString("IrScrutinizer CCF");
         for (Remote remote : remoteSet.getRemotes()) {
             String remoteName = remote.getName();
-            HashMap<String, Command> cmds = remote.getCommands();
+            Map<String, Command> cmds = remote.getCommands();
             Iterator<Command> it = cmds.values().iterator();
             //it.hasNext();)
             CCFDevice dev = ccf.createDevice(remoteName);

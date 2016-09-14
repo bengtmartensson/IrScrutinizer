@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
@@ -37,8 +38,8 @@ import org.w3c.dom.NodeList;
  */
 public class Remote implements Serializable {
 
-    private static HashMap<String,Command> commandToHashMap(Command command) {
-        HashMap<String,Command> result = new HashMap<>(1);
+    private static Map<String,Command> commandToMap(Command command) {
+        Map<String,Command> result = new HashMap<>(1);
         result.put(command.getName(), command);
         return result;
     }
@@ -47,9 +48,9 @@ public class Remote implements Serializable {
     private String comment;
     private String notes;
     private String protocol;
-    private HashMap<String, Long>parameters;
-    private HashMap<String, Command>commands;
-    private HashMap<String, HashMap<String, String>> applicationParameters;
+    private Map<String, Long>parameters;
+    private Map<String, Command>commands;
+    private Map<String, Map<String, String>> applicationParameters;
 
     /**
      * XML import function.
@@ -71,7 +72,7 @@ public class Remote implements Serializable {
         for (int i = 0; i < nl.getLength(); i++) {
             Element el = (Element) nl.item(i);
             NodeList nodeList = el.getElementsByTagName("appParameter");
-            HashMap<String, String> map = new HashMap<>(32);
+            Map<String, String> map = new HashMap<>(32);
             for (int index = 0; index < nodeList.getLength(); index++) {
                 Element par = (Element) nodeList.item(index);
                 map.put(par.getAttribute("name"), par.getAttribute("value"));
@@ -98,8 +99,8 @@ public class Remote implements Serializable {
      * @param parameters
      */
     public Remote(MetaData metaData, String comment, String notes,
-            HashMap<String, Command> commands, HashMap<String, HashMap<String, String>> applicationParameters,
-            String protocol, HashMap<String,Long>parameters) {
+            Map<String, Command> commands, Map<String, Map<String, String>> applicationParameters,
+            String protocol, Map<String,Long>parameters) {
         this.metaData = metaData;
         /*this.name = name;
         this.manufacturer = manufacturer;
@@ -124,7 +125,7 @@ public class Remote implements Serializable {
      * @param applicationParameters
      */
     public Remote(MetaData metaData, String comment, String notes,
-            HashMap<String, Command> commands, HashMap<String, HashMap<String, String>> applicationParameters) {
+            Map<String, Command> commands, Map<String, Map<String, String>> applicationParameters) {
         this(metaData, comment, notes, commands, applicationParameters, null, null);
     }
 
@@ -140,7 +141,7 @@ public class Remote implements Serializable {
         this(new MetaData(deviceName),
                 null, // comment,
                 null, // notes,
-                commandToHashMap(new Command(name, comment, irSignal)),
+                commandToMap(new Command(name, comment, irSignal)),
                 null);
     }
 
@@ -177,7 +178,7 @@ public class Remote implements Serializable {
             element.appendChild(notesEl);
         }
         if (applicationParameters != null) {
-            for (Entry<String, HashMap<String, String>> kvp : applicationParameters.entrySet()) {
+            for (Entry<String, Map<String, String>> kvp : applicationParameters.entrySet()) {
                 Element appEl = doc.createElementNS(XmlExporter.girrNamespace, "applicationData");
                 appEl.setAttribute("application", kvp.getKey());
                 element.appendChild(appEl);
@@ -265,14 +266,14 @@ public class Remote implements Serializable {
     /**
      * @return the commands
      */
-    public HashMap<String, Command> getCommands() {
+    public Map<String, Command> getCommands() {
         return commands;
     }
 
     /**
      * @return the applicationParameters
      */
-    public HashMap<String, HashMap<String, String>> getApplicationParameters() {
+    public Map<String, Map<String, String>> getApplicationParameters() {
         return applicationParameters;
     }
 

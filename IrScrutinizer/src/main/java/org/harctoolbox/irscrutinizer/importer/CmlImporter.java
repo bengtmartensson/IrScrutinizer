@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.harctoolbox.IrpMaster.IrSignal;
@@ -101,7 +102,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
     }
 
     private RemoteSet parseRemoteSet(InputStream inputStream, String origin) throws IOException, ParseException {
-        HashMap<String, Remote> remotes = new HashMap<>(64);
+        Map<String, Remote> remotes = new HashMap<>(64);
         while (true) {
             int token = searchToken(inputStream);
             if (token == remoteToken)
@@ -152,7 +153,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
         String kind = getString(inputStream, 21);
         String model = getString(inputStream, 21);
         String remoteName = vendor + "_" + kind + "_" + model;
-        HashMap<String, Command> commands = new LinkedHashMap<>(32);
+        Map<String, Command> commands = new LinkedHashMap<>(32);
         while (true) {
             int token = searchToken(inputStream);
             if (token != commandToken)

@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.harctoolbox.girr.RemoteSet;
 
 /**
@@ -40,48 +41,11 @@ import org.harctoolbox.girr.RemoteSet;
 
 public final class ConfigFile {
 
-    private static class EofException extends Exception {
-
-        EofException(String str) {
-            super(str);
-        }
-
-        private EofException() {
-            super();
-        }
-    }
 
     /**
      * Default character set input files.
      */
     public final static String defaultCharsetName = "WINDOWS-1252";
-
-    private List<IrRemote> remotes;
-    private LineNumberReader reader;
-    private String line;
-    private String[] words;
-
-    private ConfigFile(File configFileName, String source, String charsetName, boolean rejectLircCode) throws UnsupportedEncodingException, FileNotFoundException, IOException {
-        this(new InputStreamReader(new FileInputStream(configFileName), charsetName), source, rejectLircCode);
-    }
-
-    private ConfigFile(Reader reader, String source, boolean rejectLircCode) throws IOException {
-        this.remotes = new ArrayList<>();
-        this.reader = new LineNumberReader(reader);
-        line = null;
-        words = new String[0];
-
-        remotes = remotes(source, rejectLircCode);
-        IrRemote last = null;
-        for (IrRemote rem : remotes) {
-            //rem.setSource(source);
-            rem.next = null;
-            if (last != null)
-                last.next = rem;
-            last = rem;
-        }
-    }
-
     /**
      * Reads the file given as first argument and deliveres a Collection of {@link org.harctoolbox.jirc.IrRemote IrRemote}'s.
      *
@@ -99,7 +63,7 @@ public final class ConfigFile {
             return config.remotes;
         } else if (filename.isDirectory()) {
             File[] files = filename.listFiles();
-            HashMap<String, IrRemote> dictionary = new HashMap<>();
+            Map<String, IrRemote> dictionary = new HashMap<>();
             for (File file : files) {
                 // The program handles nonsensical files fine, however rejecting some
                 // obviously irrelevant files saves time and log entries.
@@ -129,12 +93,10 @@ public final class ConfigFile {
         else
             return null;
     }
-
     public static Collection<IrRemote> readConfig(Reader reader, String source, boolean rejectLircCode) throws IOException {
         ConfigFile config = new ConfigFile(reader, source, rejectLircCode);
         return config.remotes;
     }
-
     /**
      * Parses a Lirc configuration file, and returns a {@link org.harctoolbox.girr.RemoteSet RemoteSet}.
      *
@@ -152,7 +114,6 @@ public final class ConfigFile {
         return IrRemote.newRemoteSet(lircRemotes, filename.getCanonicalPath(),
                 creatingUser, alternatingSigns, 0 /* debug */);
     }
-
     /**
      * Parses a {@link java.io.Reader Reader} for one or many Lirc configuration "file(s)",
      * and returns a {@link org.harctoolbox.girr.RemoteSet RemoteSet}.
@@ -172,22 +133,44 @@ public final class ConfigFile {
                 creatingUser, alternatingSigns, 0 /* debug */);
     }
 
-    private static class ProtocolParameters {
-        private String name = null;
-        private String driver;
+    private static String join(String[] str) {
+        return join(str, 0);
+    }
 
-        List<String> flags = new ArrayList<>();
-        HashMap<String, Long> unaryParameters = new HashMap<>();
-        HashMap<String, IrRemote.XY> binaryParameters = new HashMap<>();
+    private static String join(String[] str, int start) {
+        StringBuilder result = new StringBuilder();
+        for (int i = start; i < str.length; i++)
+            result.append(str[i]).append(" ");
+        result.setLength(result.length() - 1);
+        return result.toString();
+    }
 
-        public void add(String name, long x) {
-            unaryParameters.put(name, x);
-        }
+    private List<IrRemote> remotes;
+    private LineNumberReader reader;
+    private String line;
+    private String[] words;
 
-        public void add(String name, long x, long y) {
-            binaryParameters.put(name, new IrRemote.XY(x, y));
+    private ConfigFile(File configFileName, String source, String charsetName, boolean rejectLircCode) throws UnsupportedEncodingException, FileNotFoundException, IOException {
+        this(new InputStreamReader(new FileInputStream(configFileName), charsetName), source, rejectLircCode);
+    }
+
+    private ConfigFile(Reader reader, String source, boolean rejectLircCode) throws IOException {
+        this.remotes = new ArrayList<>();
+        this.reader = new LineNumberReader(reader);
+        line = null;
+        words = new String[0];
+
+        remotes = remotes(source, rejectLircCode);
+        IrRemote last = null;
+        for (IrRemote rem : remotes) {
+            //rem.setSource(source);
+            rem.next = null;
+            if (last != null)
+                last.next = rem;
+            last = rem;
         }
     }
+
 
     private List<IrRemote> remotes(String source, boolean rejectLircCode) throws IOException {
         List<IrRemote> rems = new ArrayList<>();
@@ -273,17 +256,6 @@ public final class ConfigFile {
         }
     }
 
-    private static String join(String[] str) {
-        return join(str, 0);
-    }
-
-    private static String join(String[] str, int start) {
-        StringBuilder result = new StringBuilder();
-        for (int i = start; i < str.length; i++)
-            result.append(str[i]).append(" ");
-        result.setLength(result.length() - 1);
-        return result.toString();
-    }
 
     private ProtocolParameters parameters() throws IOException, ParseException, EofException {
         ProtocolParameters parameters = new ProtocolParameters();
@@ -407,6 +379,32 @@ public final class ConfigFile {
                 return numbers;
             }
             consumeLine();
+        }
+    }
+    private static class EofException extends Exception {
+
+        EofException(String str) {
+            super(str);
+        }
+
+        private EofException() {
+            super();
+        }
+    }
+    private static class ProtocolParameters {
+        private String name = null;
+        private String driver;
+
+        List<String> flags = new ArrayList<>();
+        Map<String, Long> unaryParameters = new HashMap<>();
+        Map<String, IrRemote.XY> binaryParameters = new HashMap<>();
+
+        public void add(String name, long x) {
+            unaryParameters.put(name, x);
+        }
+
+        public void add(String name, long x, long y) {
+            binaryParameters.put(name, new IrRemote.XY(x, y));
         }
     }
 }

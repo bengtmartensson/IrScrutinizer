@@ -29,6 +29,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.girr.Command;
@@ -66,7 +67,7 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
     //private transient Proxy proxy = Proxy.NO_PROXY;
 
     private final String apiKey;
-    private HashMap<String, String> manufacturerMap = null;
+    private Map<String, String> manufacturerMap = null;
     private String manufacturer;
     private String deviceType;
     //private String codeSet;
@@ -89,9 +90,9 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
         return JsonArray.readFrom(new InputStreamReader(urlConnection.getInputStream(), IrpUtils.dumbCharset));
     }
 
-    private HashMap<String, String> getMap(String urlFragment, String keyName, String valueName) throws IOException {
+    private Map<String, String> getMap(String urlFragment, String keyName, String valueName) throws IOException {
         JsonArray array = getJsonArray(urlFragment);
-        HashMap<String,String> map = new HashMap<>(64);
+        Map<String,String> map = new HashMap<>(64);
         for (JsonValue val : array) {
             JsonObject obj = val.asObject();
             map.put(obj.get(keyName).asString(), obj.get(valueName).asString());

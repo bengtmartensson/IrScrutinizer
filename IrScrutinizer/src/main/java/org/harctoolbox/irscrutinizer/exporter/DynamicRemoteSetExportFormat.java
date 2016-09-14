@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -50,7 +51,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     private static JCommander argumentParser;
     private static final CommandLineArgs commandLineArgs = new CommandLineArgs();
 
-    static HashMap<String, IExporterFactory> parseExportFormats(File file) throws ParserConfigurationException, SAXException, IOException {
+    static Map<String, IExporterFactory> parseExportFormats(File file) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setNamespaceAware(true);
@@ -58,7 +59,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.parse(file);
 
-        HashMap<String, IExporterFactory> result = new HashMap<>(32);
+        Map<String, IExporterFactory> result = new HashMap<>(32);
         NodeList nl = doc.getElementsByTagNameNS(exportFormatNamespace, "exportformat");
         for (int i = 0; i < nl.getLength(); i++) {
             final Element el = (Element) nl.item(i);
@@ -115,7 +116,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         XmlExporter.setDebug(true);
 
         try {
-            HashMap<String, IExporterFactory> exportFormats = parseExportFormats(configFile);
+            Map<String, IExporterFactory> exportFormats = parseExportFormats(configFile);
             //Schema schema = (SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)).newSchema(new URL("http://www.harctoolbox.org/schemas/exportformats.xsd"));
 
             IExporterFactory format = exportFormats.get(formatName);
@@ -212,8 +213,8 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         }
     }
 
-    private HashMap<String, String> standardParameter(String charsetName) {
-        HashMap<String, String> parameters = new HashMap<>(8);
+    private Map<String, String> standardParameter(String charsetName) {
+        Map<String, String> parameters = new HashMap<>(8);
         parameters.put("encoding", "'" + charsetName + "'");
         parameters.put("creatingUser", "'" + creatingUser + "'");
         parameters.put("creatingTool", "'" + org.harctoolbox.irscrutinizer.Version.versionString + "'");

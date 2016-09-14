@@ -17,7 +17,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.exporter;
 
-import java.util.HashMap;
+import java.util.Map;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
 import org.harctoolbox.IrpMaster.IrSignal;
@@ -34,7 +34,7 @@ public class ShortCcfFormatter implements Command.CommandTextFormat {
         return "short-ccf";
     }
 
-    private int getParameter(HashMap<String, Long> parameters, String name) {
+    private int getParameter(Map<String, Long> parameters, String name) {
         return parameters.containsKey(name) ?parameters.get(name).intValue() : -1;
     }
 
@@ -44,7 +44,7 @@ public class ShortCcfFormatter implements Command.CommandTextFormat {
         if (decodes == null || decodes.length == 0)
             return null;
 
-        HashMap<String, Long> parameters = decodes[0].getParameters();
+        Map<String, Long> parameters = decodes[0].getParameters();
         try {
             return Pronto.shortCCFString(decodes[0].getProtocol(),
                     getParameter(parameters, "D"), getParameter(parameters, "S"), getParameter(parameters, "F"));

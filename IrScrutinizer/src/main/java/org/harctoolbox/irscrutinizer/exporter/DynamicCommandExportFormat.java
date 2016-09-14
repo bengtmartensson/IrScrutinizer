@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Map;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.XmlUtils;
@@ -92,7 +93,7 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
     void export(Document document, String fileName, String charsetName, int noRepeats) throws IOException, IrpMasterException {
         XmlExporter xmlExporter = new XmlExporter(document);
         try (OutputStream out = IrpUtils.getPrintSteam(fileName)) {
-            HashMap<String, String> parameters = new HashMap<>(1);
+            Map<String, String> parameters = new HashMap<>(1);
             parameters.put("noRepeats", Integer.toString(noRepeats));
             xmlExporter.printDOM(out, xslt, parameters, binary, charsetName);
         }

@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
@@ -66,7 +67,7 @@ public abstract class RemoteSetExporter extends Exporter {
         export(remoteSet, title, repeatCount, saveFile, charsetName);
     }
 
-    public void export(HashMap<String, Command> commands, String source, String title,
+    public void export(Map<String, Command> commands, String source, String title,
             Remote.MetaData metaData,
             int repeatCount, File saveFile, String charsetName) throws IrpMasterException, IOException {
         Remote remote = new Remote(
@@ -81,7 +82,7 @@ public abstract class RemoteSetExporter extends Exporter {
         export(remote, title, source, repeatCount, saveFile, charsetName);
     }
 
-    public File export(HashMap<String, Command> commands, String source, String title,
+    public File export(Map<String, Command> commands, String source, String title,
             Remote.MetaData metaData,
             int repeatCount, boolean automaticFilenames, Component parent, File exportDir, String charsetName)
             throws IrpMasterException, IOException {
@@ -103,7 +104,7 @@ public abstract class RemoteSetExporter extends Exporter {
 
     public void export(Collection<Command> commands, String source, String title, int repeatCount,
             File saveFile, String charsetName) throws IOException, IrpMasterException {
-        HashMap<String, Command> cmds = new HashMap<>(32);
+        Map<String, Command> cmds = new HashMap<>(32);
         for (Command command : commands)
             cmds.put(command.getName(), command);
 
@@ -122,7 +123,7 @@ public abstract class RemoteSetExporter extends Exporter {
 
     public void export(Command command, String title, String source, int repeatCount, File saveFile, String charsetName)
             throws IrpMasterException, IOException {
-        HashMap<String,Command> commands = new HashMap<>(1);
+        Map<String,Command> commands = new HashMap<>(1);
         commands.put(command.getName(), command);
         export(commands, title, source, new Remote.MetaData(Version.appName + "Export"), repeatCount, saveFile, charsetName);
     }

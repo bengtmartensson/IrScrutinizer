@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
@@ -199,7 +200,7 @@ public class Protocol {
      * @throws UnassignedException
      * @throws DomainViolationException
      */
-    public long getParameterDefault(String name, HashMap<String, Long> actualParameters) throws UnassignedException, DomainViolationException {
+    public long getParameterDefault(String name, Map<String, Long> actualParameters) throws UnassignedException, DomainViolationException {
         ParameterSpec ps = parameterSpecs.getParameterSpec(name);
         if (ps == null)
             throw new UnassignedException("Parameter " + name + " not assigned.");
@@ -341,7 +342,7 @@ public class Protocol {
             root.setAttribute("dutycycle", Double.toString(generalSpec.getDutyCycle()));
     }
 
-    public void addSignal(HashMap<String, Long> actualParameters) {
+    public void addSignal(Map<String, Long> actualParameters) {
         Element el = doc.createElement("signal");
         for (Entry<String, Long> entry : actualParameters.entrySet())
             el.setAttribute(entry.getKey(), Long.toString(entry.getValue()));
@@ -490,7 +491,7 @@ public class Protocol {
         }
     }
 
-    public void interactiveRender(UserComm userComm, LinkedHashMap actualVars) {
+    public void interactiveRender(UserComm userComm, Map actualVars) {
         int passNo = 0;
         boolean initial = true;
         boolean done = false;
@@ -538,15 +539,15 @@ public class Protocol {
         }
     }
 
-    public PrimaryIrStream process(HashMap<String, Long> actualVars, int passNo, boolean considerRepeatMin) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
+    public PrimaryIrStream process(Map<String, Long> actualVars, int passNo, boolean considerRepeatMin) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
         return process(actualVars, passNo, considerRepeatMin, virgin);
     }
 
-    public PrimaryIrStream process(HashMap<String, Long> actualVars, Pass pass, boolean considerRepeatMin) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
+    public PrimaryIrStream process(Map<String, Long> actualVars, Pass pass, boolean considerRepeatMin) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
         return process(actualVars, pass.toInt(), considerRepeatMin, virgin);
     }
 
-    public PrimaryIrStream process(HashMap<String, Long> actualVars, int passNo, boolean considerRepeatMin, boolean initial) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
+    public PrimaryIrStream process(Map<String, Long> actualVars, int passNo, boolean considerRepeatMin, boolean initial) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
         // Load Definitions
         for (int i = 0; i < AST.getChildCount(); i++) {
             CommonTree ch = (CommonTree) AST.getChild(i);
@@ -591,17 +592,17 @@ public class Protocol {
         return irStream;
     }
 
-    public IrSequence render(HashMap<String, Long>actualVars, int pass, boolean considerRepeatMins, boolean initialize) throws IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException {
+    public IrSequence render(Map<String, Long>actualVars, int pass, boolean considerRepeatMins, boolean initialize) throws IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException {
         PrimaryIrStream irStream = process(actualVars, pass, considerRepeatMins, initialize);
         return new IrSequence(irStream);
     }
 
-    public IrSequence render(HashMap<String, Long>actualVars, Pass pass, boolean considerRepeatMins, boolean initialize) throws IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException {
+    public IrSequence render(Map<String, Long>actualVars, Pass pass, boolean considerRepeatMins, boolean initialize) throws IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException {
         PrimaryIrStream irStream = process(actualVars, pass.toInt(), considerRepeatMins, initialize);
         return new IrSequence(irStream);
     }
 
-    public IrSignal renderIrSignal(HashMap<String, Long>actualVars, int pass, boolean considerRepeatMins) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
+    public IrSignal renderIrSignal(Map<String, Long>actualVars, int pass, boolean considerRepeatMins) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
         virgin = true;
         IrSequence intro  = (pass == Pass.intro.toInt()  || pass == IrpUtils.all) ? render(actualVars, Pass.intro,  considerRepeatMins,  true) : null; //TODO: what is correct?
         IrSequence repeat = (pass == Pass.repeat.toInt() || pass == IrpUtils.all) ? render(actualVars, Pass.repeat, false, false) : null;
@@ -609,19 +610,19 @@ public class Protocol {
         return new IrSignal(getFrequency(), getDutyCycle(), intro, repeat, ending);
     }
 
-    public IrSignal renderIrSignal(HashMap<String, Long>actualVars, int pass) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
+    public IrSignal renderIrSignal(Map<String, Long>actualVars, int pass) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
         return renderIrSignal(actualVars, pass, true);
     }
 
-    public IrSignal renderIrSignal(HashMap<String, Long>actualVars) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
+    public IrSignal renderIrSignal(Map<String, Long>actualVars) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
         return renderIrSignal(actualVars, (int) IrpUtils.all);
     }
 
-    public IrSignal renderIrSignal(HashMap<String, Long>actualVars, boolean considerRepeatMins) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
+    public IrSignal renderIrSignal(Map<String, Long>actualVars, boolean considerRepeatMins) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
         return renderIrSignal(actualVars, (int) IrpUtils.all, considerRepeatMins);
     }
 
-    private static void assignIfValid(HashMap<String, Long> actualVars, String name, long value) {
+    private static void assignIfValid(Map<String, Long> actualVars, String name, long value) {
         if (value != IrpUtils.invalid)
             actualVars.put(name, value);
     }
@@ -630,7 +631,7 @@ public class Protocol {
     }
 
     public IrSignal renderIrSignal(long device, long subdevice, long function, long toggle) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
-        HashMap<String, Long> actualVars = new HashMap<>(3);
+        Map<String, Long> actualVars = new HashMap<>(3);
         assignIfValid(actualVars, "D", device);
         assignIfValid(actualVars, "S", subdevice);
         assignIfValid(actualVars, "F", function);
@@ -642,7 +643,7 @@ public class Protocol {
         return renderIrSignal((long) device, (long) subdevice, (long) function);
     }
 
-    public IrSequence tryRender(HashMap<String, Long> ivs, int pass, boolean considerRepeatMins, boolean initialize) {
+    public IrSequence tryRender(Map<String, Long> ivs, int pass, boolean considerRepeatMins, boolean initialize) {
         boolean success = false;
         IrSequence irSequence = null;
 
@@ -654,17 +655,17 @@ public class Protocol {
         return irSequence;
     }
 
-    public IrSequence tryRender(HashMap<String, Long> ivs, int pass, boolean considerRepeatMins) {
+    public IrSequence tryRender(Map<String, Long> ivs, int pass, boolean considerRepeatMins) {
         return tryRender(ivs, pass, considerRepeatMins, this.virgin);
     }
 
      /**
-     * Returns a parameter HashMap&lt;String, Long&gt; suitable for using as argument to renderIRSignal by evaluating the arguments.
+     * Returns a parameter Map&lt;String, Long&gt; suitable for using as argument to renderIRSignal by evaluating the arguments.
      * @param additionalParams String of assignments like a=12 b=34 c=56
-     * @return tests- irpmaster?HashMap&lt;String, Long&gt; for using as argument to renderIrSignal
+     * @return tests- irpmaster?Map&lt;String, Long&gt; for using as argument to renderIrSignal
      */
-    public static HashMap<String, Long> parseParams(String additionalParams) {
-        HashMap<String, Long> params = new HashMap<>();
+    public static Map<String, Long> parseParams(String additionalParams) {
+        Map<String, Long> params = new HashMap<>();
         String[] arr = additionalParams.split("[,=\\s;]+");
         //for (int i = 0; i < arr.length; i++)
         //    System.out.println(arr[i]);
@@ -675,17 +676,17 @@ public class Protocol {
     }
 
     /**
-     * Returns a parameter tests- irpmaster?HashMap&lt;String, Long&gt; suitable for using as argument to renderIrSignal by evaluating the arguments.
+     * Returns a parameter tests- irpmaster?Map&lt;String, Long&gt; suitable for using as argument to renderIrSignal by evaluating the arguments.
      * The four first parameters overwrite the parameters in the additional parameters, if in conflict.
      * @param D device number. Use -1 for not assigned.
      * @param S subdevice number. Use -1 for not assigned.
      * @param F function number (obc, command number). Use -1 for not assigned.
      * @param T toggle. Use -1 for not assigned.
      * @param additionalParams String of assignments like a=12 b=34 c=56
-     * @return HashMap&lt;String, Long&gt; for using as argument to renderIrSignal
+     * @return Map&lt;String, Long&gt; for using as argument to renderIrSignal
      */
-    public static HashMap<String, Long> parseParams(int D, int S, int F, int T, String additionalParams) {
-        HashMap<String, Long> params = parseParams(additionalParams);
+    public static Map<String, Long> parseParams(int D, int S, int F, int T, String additionalParams) {
+        Map<String, Long> params = parseParams(additionalParams);
         assignIfValid(params, "D", (long) D);
         assignIfValid(params, "S", (long) S);
         assignIfValid(params, "F", (long) F);
@@ -706,17 +707,17 @@ public class Protocol {
      *
      * @param args String array of parameters
      * @param skip Number of elements in the args to skip
-     * @return parameter HashMap&lt;String, Long&gt; suitable for rendering signals
+     * @return parameter Map&lt;String, Long&gt; suitable for rendering signals
      * @throws IncompatibleArgumentException
      */
-    public static HashMap<String, Long> parseParams(String[] args, int skip) throws IncompatibleArgumentException {
+    public static Map<String, Long> parseParams(String[] args, int skip) throws IncompatibleArgumentException {
         return args[skip].contains("=")
                 ? parseNamedProtocolArgs(args, skip)
                 : parsePositionalProtocolArgs(args, skip);
     }
 
-    private static HashMap<String, Long> parseNamedProtocolArgs(String[] args, int skip) throws IncompatibleArgumentException {
-        HashMap<String, Long> params = new HashMap<>();
+    private static Map<String, Long> parseNamedProtocolArgs(String[] args, int skip) throws IncompatibleArgumentException {
+        Map<String, Long> params = new HashMap<>();
             for (int i = skip; i < args.length; i++) {
                 String[] str = args[i].split("=");
                 if (str.length != 2)
@@ -728,8 +729,8 @@ public class Protocol {
             return params;
     }
 
-    private static HashMap<String, Long> parsePositionalProtocolArgs(String[] args, int skip) throws IncompatibleArgumentException {
-        HashMap<String, Long> params = new LinkedHashMap<>();
+    private static Map<String, Long> parsePositionalProtocolArgs(String[] args, int skip) throws IncompatibleArgumentException {
+        Map<String, Long> params = new LinkedHashMap<>();
         int index = skip;
         switch (args.length - skip) {
             case 4:

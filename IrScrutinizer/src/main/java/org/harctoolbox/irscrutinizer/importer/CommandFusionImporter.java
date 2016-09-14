@@ -25,8 +25,8 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.harctoolbox.IrpMaster.IrpMasterException;
@@ -73,7 +73,7 @@ public class CommandFusionImporter extends RemoteSetImporter implements IReaderI
         JsonObject remoteInfo = (JsonObject) jsonObject.get("RemoteInfo");
         JsonArray remoteFunctions = (JsonArray) jsonObject.get("RemoteFunctions");
 
-        HashMap<String, Command> commands = new LinkedHashMap<>(8);
+        Map<String, Command> commands = new LinkedHashMap<>(8);
         for (JsonValue c : remoteFunctions) {
             Command command = parseCommand((JsonObject) c);
             if (command != null)

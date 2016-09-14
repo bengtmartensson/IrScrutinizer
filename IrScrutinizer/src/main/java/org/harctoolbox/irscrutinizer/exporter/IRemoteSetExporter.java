@@ -21,7 +21,7 @@ import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Map;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
@@ -39,11 +39,11 @@ public interface IRemoteSetExporter extends ICommandExporter {
 
     public void export(Remote remote, String title, String source, int count, File saveFile, String charsetName) throws IrpMasterException, IOException;
 
-    public void export(HashMap<String, Command> commands, String source, String title,
+    public void export(Map<String, Command> commands, String source, String title,
             Remote.MetaData metaData,
             int count, File saveFile, String charsetName) throws IrpMasterException, IOException;
 
-    public File export(HashMap<String, Command> commands, String source, String title,
+    public File export(Map<String, Command> commands, String source, String title,
             Remote.MetaData metaData, int count, boolean automaticFilenames, Component parent, File exportDir, String charsetName)
             throws IrpMasterException, IOException;
 
