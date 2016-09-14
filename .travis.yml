@@ -3,7 +3,7 @@ notifications:
 email: false
 language: java
 jdk:
-- openjdk7
+- oraclejdk8
 before_install:
 - sudo add-apt-repository ppa:dns/gnu -y
 - sudo apt-get update -qq
