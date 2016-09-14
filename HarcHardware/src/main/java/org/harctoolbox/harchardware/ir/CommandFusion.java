@@ -43,7 +43,7 @@ import org.harctoolbox.harchardware.comm.LocalSerialPortRaw;
  */
 public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawIrSender, ICapture {
 
-    private final static int defaultEndTimeout = -1; // overrides!
+    private final static int defaultEndingTimeout = -1; // overrides!
     private final static int defaultSerialTimeout = 30000;
     private final static int middleTimeout = 2000;
     private static final int portId = 1;
@@ -404,7 +404,7 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     }
 
     @Override
-    public void setEndTimeout(int integer) {
+    public void setEndingTimeout(int integer) {
     }
 
     /*

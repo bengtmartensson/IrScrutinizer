@@ -171,7 +171,7 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
         this(portName, defaultBaudRate, defaultFlowControl, beginTimeout, captureMaxSize, verbose);
     }
 
-    public IrToy(String portName, int baud, int beginTimeout, int captureSize, int endTimeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+    public IrToy(String portName, int baud, int beginTimeout, int captureSize, int endingTimeout, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         this(portName, baud, defaultFlowControl, beginTimeout, captureSize, verbose);
     }
 
@@ -503,7 +503,7 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
     }
 
     @Override
-    public void setEndTimeout(int timeout) {
+    public void setEndingTimeout(int timeout) {
     }
 
     @Override

@@ -96,7 +96,7 @@ public class IrWidget implements IHarcHardware, ICapture {
     private boolean verbose;
     private int beginTimeout;
     private int captureMaxSize;
-    private int endTimeout;
+    private int endingTimeout;
 
      /**
      * Constructs new IrWidget with default port name and timeouts.
@@ -114,7 +114,7 @@ public class IrWidget implements IHarcHardware, ICapture {
      * @param debug debug code
      */
     public IrWidget(String portName, boolean verbose, int debug) {
-        this(portName, defaultMode, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndTimeout, verbose, debug);
+        this(portName, defaultMode, defaultBeginTimeout, defaultCaptureMaxSize, defaultEndingTimeout, verbose, debug);
     }
 
     /**
@@ -123,10 +123,10 @@ public class IrWidget implements IHarcHardware, ICapture {
      * @param verbose
      * @param startTimeout
      * @param runTimeout
-     * @param endTimeout
+     * @param endingTimeout
      */
-    public IrWidget(String portName, int startTimeout, int runTimeout, int endTimeout, boolean verbose) {
-        this(portName, defaultMode, startTimeout, runTimeout, endTimeout, verbose, 0);
+    public IrWidget(String portName, int startTimeout, int runTimeout, int endingTimeout, boolean verbose) {
+        this(portName, defaultMode, startTimeout, runTimeout, endingTimeout, verbose, 0);
     }
 
     /**
@@ -137,16 +137,16 @@ public class IrWidget implements IHarcHardware, ICapture {
      * @param debug debug code
      * @param startTimeout
      * @param runTimeout
-     * @param endTimeout
+     * @param endingTimeout
      */
-    private IrWidget(String portName, Modes mode, int beginTimeout, int captureMaxSize, int endTimeout, boolean verbose, int debug) {
+    private IrWidget(String portName, Modes mode, int beginTimeout, int captureMaxSize, int endingTimeout, boolean verbose, int debug) {
         this.mode = mode;
         this.portName = portName;
         this.debug = debug;
         this.verbose = verbose;
         this.beginTimeout = beginTimeout;
         this.captureMaxSize = captureMaxSize;
-        this.endTimeout = endTimeout;
+        this.endingTimeout = endingTimeout;
     }
     @Override
     public void setDebug(int debug) {
@@ -214,8 +214,8 @@ public class IrWidget implements IHarcHardware, ICapture {
     }
 
     @Override
-    public void setEndTimeout(int endTimeout) {
-        this.endTimeout = endTimeout;
+    public void setEndingTimeout(int endingTimeout) {
+        this.endingTimeout = endingTimeout;
     }
 
     /**
@@ -255,7 +255,7 @@ public class IrWidget implements IHarcHardware, ICapture {
                     if (beginTimeout > 0 && System.currentTimeMillis() - startTime >= beginTimeout)
                         break;
                 } else {
-                    if (endTimeout > 0 && System.currentTimeMillis() - lastEvent >= endTimeout)
+                    if (endingTimeout > 0 && System.currentTimeMillis() - lastEvent >= endingTimeout)
                         break;
                 }
             } else {
@@ -268,7 +268,7 @@ public class IrWidget implements IHarcHardware, ICapture {
 
                 if (i == x) {
                     // nothing interesting happened
-                    if (System.currentTimeMillis() - lastEvent >= endTimeout)
+                    if (System.currentTimeMillis() - lastEvent >= endingTimeout)
                         break;
                 } else {
                     // something happened

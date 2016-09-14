@@ -56,7 +56,7 @@ public class IrDummy implements IHarcHardware, IRawIrSender, IIrSenderStop, ITra
     private boolean valid;
     private boolean dummySuccess;
     private int[] transmitterNumber;
-    private int endTimeOut;
+    private int endingTimeOut;
     private int captureMaxSize;
     private int beginTimeout;
     private String version;
@@ -156,8 +156,8 @@ public class IrDummy implements IHarcHardware, IRawIrSender, IIrSenderStop, ITra
     }
 
     @Override
-    public void setEndTimeout(int integer) {
-        endTimeOut = integer;
+    public void setEndingTimeout(int integer) {
+        endingTimeOut = integer;
     }
 
     @Override
