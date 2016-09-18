@@ -54,8 +54,8 @@ if (release != None):
     print release["url"]
     headers = {'Authorization': 'token ' + token}
     response = requests.delete(release["url"], headers=headers)
-    assert(response.status_code==204)
     print response
+    assert(response.status_code==204)
     # Nuke the corresponding tag
     #resp = requests.delete('https://api.github.com/repos/' + username + '/' + repo + '/git/refs/tags/' + release_name, headers=headers)
     #print resp
