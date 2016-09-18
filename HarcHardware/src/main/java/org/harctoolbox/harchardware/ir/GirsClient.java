@@ -258,7 +258,7 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
     }
 
     @Override
-    public synchronized boolean sendIr(IrSignal irSignal, int count, Transmitter transmitter) throws NoSuchTransmitterException, IrpMasterException, IOException {
+    public synchronized boolean sendIr(IrSignal irSignal, int count, Transmitter transmitter) throws NoSuchTransmitterException, IrpMasterException, IOException, HarcHardwareException {
         String payload = formatSendString(irSignal, count);
         hardware.sendString(payload + lineEnding);
         if (verbose)
@@ -457,7 +457,7 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
         throw new UnsupportedOperationException("Not supported yet.");// TODO
     }
 
-    public void reset() throws IOException {
+    public void reset() throws IOException, HarcHardwareException {
         hardware.sendString(resetCommand);
         // ???
         if (hardware instanceof LocalSerialPortBuffered)
@@ -465,7 +465,7 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
     }
 
     @Override
-    public void sendString(String cmd) throws IOException {
+    public void sendString(String cmd) throws IOException, HarcHardwareException {
         hardware.sendString(cmd);
     }
 

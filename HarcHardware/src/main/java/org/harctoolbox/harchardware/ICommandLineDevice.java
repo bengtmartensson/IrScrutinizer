@@ -29,9 +29,10 @@ public interface ICommandLineDevice extends IHarcHardware {
      * Sends a command (a String) to the instance.
      * @param cmd Command string to be sent.
      * @throws IOException
+     * @throws org.harctoolbox.harchardware.HarcHardwareException
      */
 
-    void sendString(String cmd) throws IOException;
+    void sendString(String cmd) throws IOException, HarcHardwareException;
 
     /**
      * Reads a line of text. A line is considered to be terminated by any one of a line feed ('\n'), a carriage return ('\r'), or a carriage return followed immediately by a linefeed.

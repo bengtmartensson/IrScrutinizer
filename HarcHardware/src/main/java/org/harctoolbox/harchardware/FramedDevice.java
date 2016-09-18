@@ -47,7 +47,7 @@ public class FramedDevice {
             FramedDevice commandLineDevice = new FramedDevice(denon, "{0}\r", true);
             String[] result = commandLineDevice.sendString("mvdown", 1, 0);
             System.out.println(result[0]);
-        } catch (IOException ex) {
+        } catch (IOException | HarcHardwareException ex) {
             System.err.println(ex.getMessage());
         }
     }
@@ -72,7 +72,7 @@ public class FramedDevice {
         this(hardware, new Framer());
     }
 
-    public String[] sendString(String[] cmds, int count, int returnLines, int delay, int waitForAnswer) throws IOException {
+    public String[] sendString(String[] cmds, int count, int returnLines, int delay, int waitForAnswer) throws IOException, HarcHardwareException {
         if (count < 1)
             throw new IllegalArgumentException("Count = " + count + " < 1; this is meaningless.");
 
@@ -109,11 +109,11 @@ public class FramedDevice {
         return null;
     }
 
-    public String[] sendString(String cmd, int returnLines, int waitForAnswer) throws IOException {
+    public String[] sendString(String cmd, int returnLines, int waitForAnswer) throws IOException, HarcHardwareException {
         return sendString(new String[]{ cmd }, 1, returnLines, 0, waitForAnswer);
     }
 
-    public void sendString(String cmd) throws IOException {
+    public void sendString(String cmd) throws IOException, HarcHardwareException {
         sendString(cmd, 0, 0);
     }
 
