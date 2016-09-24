@@ -61,7 +61,7 @@ public class GeneralSpec {
         if (unit_pulses != IrpUtils.invalid) {
             if (frequency == 0)
                 throw new ArithmeticException("Units in p and frequency == 0 do not go together.");
-            unit = (int) (((double)unit_pulses)*(1000000.0/frequency));
+            unit = unit_pulses*(1000000.0/frequency);
         }
     }
     
