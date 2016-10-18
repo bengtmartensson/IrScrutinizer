@@ -96,9 +96,8 @@ public class HexCalculator extends HarcPanel {
 
     @Override
     public void close() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
