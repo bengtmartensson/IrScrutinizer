@@ -58,6 +58,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import org.harctoolbox.IrpMaster.*;
 import org.harctoolbox.IrpMaster.DecodeIR.DecodeIrException;
 import org.harctoolbox.devslashlirc.LircHardware;
@@ -1146,7 +1147,7 @@ public class GuiMain extends javax.swing.JFrame {
             File file = saveCommands(parameterTableModel, Version.appName + " parametric export", exporter);
             if (file != null)
                 guiUtils.message("File " + file + " was successfully written.");
-        } catch (IrpMasterException | IOException ex) {
+        } catch (IrpMasterException | IOException | TransformerException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1156,12 +1157,12 @@ public class GuiMain extends javax.swing.JFrame {
             File file = saveCommands(rawTableModel, Version.appName + " raw export", exporter);
             if (file != null)
                 guiUtils.message("File " + file + " was successfully written.");
-        } catch (IrpMasterException | IllegalArgumentException | IOException ex) {
+        } catch (IrpMasterException | IllegalArgumentException | IOException | TransformerException ex) {
             guiUtils.error(ex);
         }
     }
 
-    private File saveCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel, String title, RemoteSetExporter exporter) throws IrpMasterException, FileNotFoundException, IOException {
+    private File saveCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel, String title, RemoteSetExporter exporter) throws IrpMasterException, IOException, TransformerException {
         Map<String, Command> commands = getCommands(tableModel);
         if (commands == null)
             return null;
@@ -1191,7 +1192,7 @@ public class GuiMain extends javax.swing.JFrame {
         return tableModel.getCommands(true);
     }
 
-    private File saveCommands(Map<String, Command> commands, String source, String title, RemoteSetExporter exporter) throws FileNotFoundException, IrpMasterException, IOException {
+    private File saveCommands(Map<String, Command> commands, String source, String title, RemoteSetExporter exporter) throws IrpMasterException, IOException, TransformerException {
         if (properties.getExportInquireDeviceData() && exporter.supportsMetaData()) {
             Remote.MetaData newMetaData = MetaDataDialog.inquireMetaData(metaData, this);
             if (newMetaData == null) // user bailed out
@@ -1206,7 +1207,7 @@ public class GuiMain extends javax.swing.JFrame {
         return file;
     }
 
-    private File saveSignal(Command command, String title, ICommandExporter exporter) throws FileNotFoundException, IOException, IrpMasterException {
+    private File saveSignal(Command command, String title, ICommandExporter exporter) throws IOException, IrpMasterException, TransformerException {
         return exporter.export(command, "IrScrutinizer captured signal", title,
                 properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
                 new File(properties.getExportDir()), properties.getExportCharsetName());
@@ -1216,7 +1217,7 @@ public class GuiMain extends javax.swing.JFrame {
         try {
             File savedFile = saveSignal(commandTableSelectedRow(table), title, newExporter());
             guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
-        } catch (IrpMasterException | IOException | ErroneousSelectionException ex) {
+        } catch (IrpMasterException | IOException | ErroneousSelectionException | TransformerException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1230,7 +1231,7 @@ public class GuiMain extends javax.swing.JFrame {
         return f > 0 ? f : IrpUtils.defaultFrequency;
     }
 
-    private void saveSignals(Map<String, Command> commands) throws FileNotFoundException, IOException, IrpMasterException {
+    private void saveSignals(Map<String, Command> commands) throws IOException, IrpMasterException, TransformerException {
         if (commands.isEmpty())
             guiUtils.error("Nothing to export");
         else if (commands.size() == 1) {
@@ -1262,7 +1263,7 @@ public class GuiMain extends javax.swing.JFrame {
             File savedFile = saveSignal(command, "IrScrutinizer scrutinized signal", exporter);
             if (savedFile != null)
                 guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
-        } catch (ParseException | IncompatibleArgumentException | UnassignedException | DomainViolationException | InvalidRepeatException | IOException ex) {
+        } catch (ParseException | IncompatibleArgumentException | UnassignedException | DomainViolationException | InvalidRepeatException | IOException | TransformerException ex) {
             guiUtils.error(ex);
         }
     }
@@ -7996,7 +7997,7 @@ public class GuiMain extends javax.swing.JFrame {
     private void generateExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateExportButtonActionPerformed
         try {
             saveSignals(irpMasterBean.getCommands());
-        } catch (IrpMasterException | IOException ex) {
+        } catch (IrpMasterException | IOException | TransformerException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_generateExportButtonActionPerformed

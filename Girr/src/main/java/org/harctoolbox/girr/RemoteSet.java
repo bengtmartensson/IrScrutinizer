@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.xml.transform.TransformerException;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
@@ -71,7 +72,7 @@ public class RemoteSet implements Serializable {
                     "xsl", "simplehtml.xsl", true, false, true, true, true);
             XmlExporter exporter = new XmlExporter(newdoc);
             exporter.printDOM(new File("junk.xml"));
-        } catch (IOException | ParseException | SAXException ex) {
+        } catch (IOException | ParseException | SAXException | TransformerException ex) {
             System.err.println(ex.getMessage());
         }
     }

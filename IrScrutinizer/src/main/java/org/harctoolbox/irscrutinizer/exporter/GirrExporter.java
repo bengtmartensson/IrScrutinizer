@@ -19,6 +19,7 @@ package org.harctoolbox.irscrutinizer.exporter;
 
 import java.io.File;
 import java.io.IOException;
+import javax.xml.transform.TransformerException;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.RemoteSet;
@@ -59,7 +60,7 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws IOException, IrpMasterException {
+    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws IOException, IrpMasterException, TransformerException {
         for (Command.CommandTextFormat formatter : extraFormats)
             remoteSet.addFormat(formatter, count);
         Document document = remoteSet.xmlExportDocument(title, girrStyleSheetType, girrStyleSheetUrl, fatRaw, createSchemaLocation,

@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.XmlUtils;
@@ -138,7 +139,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
             else
                 ((DynamicCommandExportFormat) exporter).export(doc, outFileName, commandLineArgs.encoding, commandLineArgs.noTimes);
             System.err.println("Created " + outFileName);
-        } catch (ParserConfigurationException | SAXException | IOException | IrpMasterException ex) {
+        } catch (ParserConfigurationException | SAXException | IOException | IrpMasterException | TransformerException ex) {
             System.err.println(ex + ": " + ex.getMessage());
         }
     }
@@ -189,11 +190,11 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName) throws IOException, IrpMasterException {
+    public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName) throws IOException, IrpMasterException, TransformerException {
         export(remoteSet, title, count, saveFile.getCanonicalPath(), charsetName);
     }
 
-    private void export(RemoteSet remoteSet, String title, int count, String fileName, String charsetName) throws IOException, IrpMasterException {
+    private void export(RemoteSet remoteSet, String title, int count, String fileName, String charsetName) throws IOException, IrpMasterException, TransformerException {
         Document document = remoteSet.xmlExportDocument(title,
                 null,
                 null,
@@ -206,7 +207,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         export(document, fileName, charsetName);
     }
 
-    private void export(Document document, String fileName, String charsetName) throws IOException, IrpMasterException {
+    private void export(Document document, String fileName, String charsetName) throws IOException, IrpMasterException, TransformerException {
         XmlExporter xmlExporter = new XmlExporter(document);
         try (OutputStream out = IrpUtils.getPrintSteam(fileName)) {
             xmlExporter.printDOM(out, xslt, standardParameter(charsetName), binary, charsetName);

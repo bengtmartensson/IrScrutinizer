@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import javax.xml.transform.TransformerException;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
@@ -48,13 +49,13 @@ public abstract class RemoteSetExporter extends Exporter {
 
     public void export(RemoteSet remoteSet, String title, int repeatCount, boolean automaticFilenames,
             Component parent, File exportDir, String charsetName)
-            throws IOException, IrpMasterException {
+            throws IOException, IrpMasterException, TransformerException {
         export(remoteSet, title, repeatCount, exportFilename(automaticFilenames, parent, exportDir), charsetName);
     }
 
-    public abstract void export(RemoteSet remoteSet, String title, int repeatCount, File saveFile, String charsetName) throws IOException, IrpMasterException;
+    public abstract void export(RemoteSet remoteSet, String title, int repeatCount, File saveFile, String charsetName) throws IOException, IrpMasterException, TransformerException;
 
-    public void export(Remote remote, String title, String source, int repeatCount, File saveFile, String charsetName) throws IrpMasterException, IOException {
+    public void export(Remote remote, String title, String source, int repeatCount, File saveFile, String charsetName) throws IrpMasterException, IOException, TransformerException {
         RemoteSet remoteSet = new RemoteSet(creatingUser,
                 source,
                 Exporter.getDateString(), //java.lang.String creationDate,
@@ -69,7 +70,7 @@ public abstract class RemoteSetExporter extends Exporter {
 
     public void export(Map<String, Command> commands, String source, String title,
             Remote.MetaData metaData,
-            int repeatCount, File saveFile, String charsetName) throws IrpMasterException, IOException {
+            int repeatCount, File saveFile, String charsetName) throws IrpMasterException, IOException, TransformerException {
         Remote remote = new Remote(
                 metaData,
                 "Export from " + Version.appName, //                String comment,
@@ -85,7 +86,7 @@ public abstract class RemoteSetExporter extends Exporter {
     public File export(Map<String, Command> commands, String source, String title,
             Remote.MetaData metaData,
             int repeatCount, boolean automaticFilenames, Component parent, File exportDir, String charsetName)
-            throws IrpMasterException, IOException {
+            throws IrpMasterException, IOException, TransformerException {
         File file = exportFilename(automaticFilenames, parent, exportDir);
         if (file == null)
             return null;
@@ -103,7 +104,7 @@ public abstract class RemoteSetExporter extends Exporter {
     }
 
     public void export(Collection<Command> commands, String source, String title, int repeatCount,
-            File saveFile, String charsetName) throws IOException, IrpMasterException {
+            File saveFile, String charsetName) throws IOException, IrpMasterException, TransformerException {
         Map<String, Command> cmds = new HashMap<>(32);
         for (Command command : commands)
             cmds.put(command.getName(), command);
@@ -113,7 +114,7 @@ public abstract class RemoteSetExporter extends Exporter {
 
     public File export(Command command, String title, String source, int repeatCount,
             boolean automaticFilenames, Component parent, File exportDir, String charsetName)
-            throws IOException, IrpMasterException {
+            throws IOException, IrpMasterException, TransformerException {
         File file = exportFilename(automaticFilenames, parent, exportDir);
         if (file == null)
             return null;
@@ -122,7 +123,7 @@ public abstract class RemoteSetExporter extends Exporter {
     }
 
     public void export(Command command, String title, String source, int repeatCount, File saveFile, String charsetName)
-            throws IrpMasterException, IOException {
+            throws IrpMasterException, IOException, TransformerException {
         Map<String,Command> commands = new HashMap<>(1);
         commands.put(command.getName(), command);
         export(commands, title, source, new Remote.MetaData(Version.appName + "Export"), repeatCount, saveFile, charsetName);
