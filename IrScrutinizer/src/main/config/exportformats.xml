@@ -1619,10 +1619,11 @@ end remote
     <!-- NEC1 -->
     <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nec1']">
         <xsl:text>begin remote
-&#9;name&#9;</xsl:text><xsl:value-of select="../@name"/>
-<xsl:text>
+&#9;name&#9;</xsl:text>
+        <xsl:value-of select="../@name"/>
+        <xsl:text>
 &#9;bits&#9;32
-&#9;flags&#9;SPACE_ENC
+&#9;flags&#9;SPACE_ENC|CONST_LENGTH
 &#9;eps&#9;30
 &#9;aeps&#9;100
 &#9;zero&#9;573&#9;573
@@ -1630,40 +1631,42 @@ end remote
 &#9;header&#9;9041&#9;4507
 &#9;ptrail&#9;573
 &#9;repeat&#9;9041&#9;2267
-&#9;gap&#9;36000
+&#9;gap&#9;108000
 &#9;repeat_bit&#9;0
 &#9;frequency&#9;38400
 &#9;begin codes
-</xsl:text>
-<xsl:apply-templates select="//girr:command"/>
-<xsl:text>&#9;end codes
-end remote
-</xsl:text>
-</xsl:template>
+        </xsl:text>
+        <xsl:apply-templates select="//girr:command"/>
+        <xsl:text>&#9;end codes
+            end remote
+        </xsl:text>
+    </xsl:template>
 
-<xsl:template match="girr:command[girr:parameters/@protocol='nec1']">
-    <xsl:text>&#9;&#9;</xsl:text>
-    <xsl:value-of select="@name"/>
-    <xsl:text>&#9;0x</xsl:text>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(255 - number(girr:parameters/girr:parameter[@name='D']/@value))"/>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(number(girr:parameters/girr:parameter[@name='F']/@value))"/>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(255 - number(girr:parameters/girr:parameter[@name='F']/@value))"/>
-    <xsl:text>
-</xsl:text>
-</xsl:template>
+    <xsl:template match="girr:command[girr:parameters/@protocol='nec1']">
+        <xsl:text>&#9;&#9;</xsl:text>
+        <xsl:value-of select="@name"/>
+        <xsl:text>&#9;0x</xsl:text>
+        <xsl:value-of select="exporterutils:processBitFields(
+                                    false(), true(), number(girr:parameters/girr:parameter[@name='D']/@value), 8, 0,
+                                    true(),  true(), number(girr:parameters/girr:parameter[@name='D']/@value), 8, 0,
+                                    false(), true(), number(girr:parameters/girr:parameter[@name='F']/@value), 8, 0,
+                                    true(),  true(), number(girr:parameters/girr:parameter[@name='F']/@value), 8, 0)"/>
+        <xsl:text>
+        </xsl:text>
+    </xsl:template>
 
-<xsl:template match="girr:command[girr:parameters[@protocol='nec1'  and ./girr:parameter/@name='S']]">
-    <xsl:text>&#9;&#9;</xsl:text>
-    <xsl:value-of select="@name"/>
-    <xsl:text>&#9;0x</xsl:text>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(number(girr:parameters/girr:parameter[@name='S']/@value))"/>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(number(girr:parameters/girr:parameter[@name='F']/@value))"/>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(255 - number(girr:parameters/girr:parameter[@name='F']/@value))"/>
-    <xsl:text>
-</xsl:text>
-</xsl:template>
+    <xsl:template match="girr:command[girr:parameters[@protocol='nec1'  and ./girr:parameter/@name='S']]">
+        <xsl:text>&#9;&#9;</xsl:text>
+        <xsl:value-of select="@name"/>
+        <xsl:text>&#9;0x</xsl:text>
+       <xsl:value-of select="exporterutils:processBitFields(
+                                    false(), true(), number(girr:parameters/girr:parameter[@name='D']/@value), 8, 0,
+                                    false(),  true(), number(girr:parameters/girr:parameter[@name='S']/@value), 8, 0,
+                                    false(), true(), number(girr:parameters/girr:parameter[@name='F']/@value), 8, 0,
+                                    true(),  true(), number(girr:parameters/girr:parameter[@name='F']/@value), 8, 0)"/>
+        <xsl:text>
+        </xsl:text>
+    </xsl:template>
 
     <!-- RC5 -->
     <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'rc5']">
@@ -1692,7 +1695,11 @@ end remote
     <xsl:text>&#9;&#9;</xsl:text>
     <xsl:value-of select="@name"/>
     <xsl:text>&#9;0x</xsl:text>
-    <xsl:value-of select="exporterutils:rc5Data(number(girr:parameters/girr:parameter[@name='D']/@value),number(girr:parameters/girr:parameter[@name='F']/@value),0)"/>
+    <xsl:value-of select="exporterutils:processBitFields(
+                                    true(),  false(), number(girr:parameters/girr:parameter[@name='F']/@value), 1, 6,
+                                    false(), false(), number(girr:parameters/girr:parameter[@name='T']/@value), 1, 0,
+                                    false(), false(), number(girr:parameters/girr:parameter[@name='D']/@value), 5, 0,
+                                    false(), false(), number(girr:parameters/girr:parameter[@name='F']/@value), 6, 0)"/>
     <xsl:text>
 </xsl:text>
 </xsl:template>

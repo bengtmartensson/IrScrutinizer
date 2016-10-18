@@ -22,10 +22,117 @@ package org.harctoolbox.irscrutinizer.exporter;
  */
 public class ExporterUtils {
     private static final String formattingCode = "%02X";
+    public static final String longFormattingCode = "%016X";
+
+    public static String sixteenDigitHex(long n) {
+        return String.format(longFormattingCode, n);
+    }
+
+    private static String processBitFields(long... args) {
+        return sixteenDigitHex(processBitFieldsLong(args));
+    }
+
+    static long processBitFieldsLong(long... args) {
+        if (args.length % 2 != 0)
+            throw new ArithmeticException("Number of argument was " + args.length + "; must be a multiple of 2");
+
+        int numberBitFields = args.length / 2;
+        long result = 0L;
+        for (int i = 0; i < numberBitFields; i++) {
+            long length = args[2*i+1];
+            long bf = args[2*i];
+            result <<= length;
+            result |= bf;
+        }
+        return result;
+    }
+
+    static long processFiniteBitFieldLong(boolean complement, boolean reverse, int data, int length, int chop) {
+        long payload = data;
+        if (complement)
+            payload = ~payload;
+        if (reverse)
+            payload = reverse(payload, length);
+        payload >>>= chop;
+        return payload & mkMask((long)length);
+    }
+
+    public static String processBitFields(boolean complement, boolean reverse, int data, int length, int chop) {
+        long bf = processFiniteBitFieldLong(complement, reverse, data, length, chop);
+        return processBitFields(bf, length);
+    }
+
+    public static String processBitFields(boolean complement0, boolean reverse0, int data0, int length0, int chop0,
+            boolean complement1, boolean reverse1, int data1, int length1, int chop1) {
+        long bf0 = processFiniteBitFieldLong(complement0, reverse0, data0, length0, chop0);
+        long bf1 = processFiniteBitFieldLong(complement1, reverse1, data1, length1, chop1);
+        return processBitFields(bf0, length0, bf1, length1);
+    }
+
+    public static String processBitFields(boolean complement0, boolean reverse0, int data0, int length0, int chop0,
+            boolean complement1, boolean reverse1, int data1, int length1, int chop1,
+            boolean complement2, boolean reverse2, int data2, int length2, int chop2) {
+        long bf0 = processFiniteBitFieldLong(complement0, reverse0, data0, length0, chop0);
+        long bf1 = processFiniteBitFieldLong(complement1, reverse1, data1, length1, chop1);
+        long bf2 = processFiniteBitFieldLong(complement2, reverse2, data2, length2, chop2);
+        return processBitFields(bf0, length0, bf1, length1, bf2, length2);
+    }
+
+    public static String processBitFields(boolean complement0, boolean reverse0, int data0, int length0, int chop0,
+            boolean complement1, boolean reverse1, int data1, int length1, int chop1,
+            boolean complement2, boolean reverse2, int data2, int length2, int chop2,
+            boolean complement3, boolean reverse3, int data3, int length3, int chop3) {
+        long bf0 = processFiniteBitFieldLong(complement0, reverse0, data0, length0, chop0);
+        long bf1 = processFiniteBitFieldLong(complement1, reverse1, data1, length1, chop1);
+        long bf2 = processFiniteBitFieldLong(complement2, reverse2, data2, length2, chop2);
+        long bf3 = processFiniteBitFieldLong(complement3, reverse3, data3, length3, chop3);
+        return processBitFields(bf0, length0, bf1, length1, bf2, length2, bf3, length3);
+    }
+
+    public static String processBitFields(boolean complement0, boolean reverse0, int data0, int length0, int chop0,
+            boolean complement1, boolean reverse1, int data1, int length1, int chop1,
+            boolean complement2, boolean reverse2, int data2, int length2, int chop2,
+            boolean complement3, boolean reverse3, int data3, int length3, int chop3,
+            boolean complement4, boolean reverse4, int data4, int length4, int chop4) {
+        long bf0 = processFiniteBitFieldLong(complement0, reverse0, data0, length0, chop0);
+        long bf1 = processFiniteBitFieldLong(complement1, reverse1, data1, length1, chop1);
+        long bf2 = processFiniteBitFieldLong(complement2, reverse2, data2, length2, chop2);
+        long bf3 = processFiniteBitFieldLong(complement3, reverse3, data3, length3, chop3);
+        long bf4 = processFiniteBitFieldLong(complement4, reverse4, data4, length4, chop4);
+        return processBitFields(bf0, length0, bf1, length1, bf2, length2, bf3, length3, bf4, length4);
+    }
+
+    public static String processBitFields(boolean complement0, boolean reverse0, int data0, int length0, int chop0,
+            boolean complement1, boolean reverse1, int data1, int length1, int chop1,
+            boolean complement2, boolean reverse2, int data2, int length2, int chop2,
+            boolean complement3, boolean reverse3, int data3, int length3, int chop3,
+            boolean complement4, boolean reverse4, int data4, int length4, int chop4,
+            boolean complement5, boolean reverse5, int data5, int length5, int chop5) {
+        long bf0 = processFiniteBitFieldLong(complement0, reverse0, data0, length0, chop0);
+        long bf1 = processFiniteBitFieldLong(complement1, reverse1, data1, length1, chop1);
+        long bf2 = processFiniteBitFieldLong(complement2, reverse2, data2, length2, chop2);
+        long bf3 = processFiniteBitFieldLong(complement3, reverse3, data3, length3, chop3);
+        long bf4 = processFiniteBitFieldLong(complement4, reverse4, data4, length4, chop4);
+        long bf5 = processFiniteBitFieldLong(complement5, reverse5, data5, length5, chop5);
+        return processBitFields(bf0, length0, bf1, length1, bf2, length2, bf3, length3, bf4, length4, bf5, length5);
+    }
 
     public static int reverse(int n, int bits) {
         int mask = (1 << bits) - 1;
         return Integer.reverse(n & mask) >>> (Integer.SIZE - bits);
+    }
+
+    public static long reverse(long n, long bits) {
+        long mask = mkMask(bits);
+        return Long.reverse(n & mask) >>> (Long.SIZE - bits);
+    }
+
+    private static long mkMask(long length) {
+        return (1L << length) - 1L;
+    }
+
+    private static long mkMask(int length) {
+        return (1 << length) - 1;
     }
 
     public static String twoDigitHex(int n) {
@@ -37,32 +144,26 @@ public class ExporterUtils {
     }
 
     public static String rc5Data(int D, int F, int T) {
-        int data =
-                (~F & 0x40) << 6
-                | (T & 1) << 11
-                | (D & 0x1F) << 6
-                | (F & 0x3F);
-        return String.format("%X", data);
+        return processBitFields(true, false, F, 1, 6,
+                false, false, T, 1, 0,
+                false, false, D, 5, 0,
+                false, false, F, 6, 0);
     }
 
     public static String sony12Data(int D, int F) {
-        int data = reverse(F, 7) << 5;
-        data |= reverse(D, 5);
-        return Integer.toHexString(data);
+        return processBitFields(false, true, F, 7, 0,
+                false, true, D, 5, 0);
     }
 
     public static String sony15Data(int D, int F) {
-        int data = reverse(F, 7) << 8;
-        data |= reverse(D, 8);
-        return Integer.toHexString(data);
+        return processBitFields(false, true, F, 7, 0,
+                false, true, D, 8, 0);
     }
 
     public static String sony20Data(int D, int S, int F) {
-        int data =
-                  reverse(F, 7) << 13
-                | reverse(D, 5) << 8
-                | reverse(S, 8);
-        return Integer.toHexString(data);
+        return processBitFields(false, true, F, 7, 0,
+                false, true, D, 5, 0,
+                false, true, S, 8, 0);
     }
 
     private ExporterUtils() {
