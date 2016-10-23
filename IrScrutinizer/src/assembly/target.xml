@@ -26,6 +26,7 @@
                 <include>*jar-with-dependencies.jar</include>
                 <include>*.ini</include>
                 <include>contributed/*</include>
+                <include>exportformats.d/*</include>
                 <include>*.xml</include>
                 <include>*.desktop</include>
                 <include>*.sh</include>

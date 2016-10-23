@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2016 Bengt Martensson
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<exportformats:exportformat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                            xmlns:exportformats="http://www.harctoolbox.org/exportformats"
+                            xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
+                            name="Spreadsheet" extension="csv" multiSignal="true" simpleSequence="false">
+    <xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr"
+                    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+        <xsl:output method="text" />
+
+        <xsl:template match="/">
+            <xsl:apply-templates select="girr:remotes/girr:remote/girr:commandSet/girr:command"/>
+        </xsl:template>
+
+        <xsl:template match="girr:command">
+            <xsl:value-of select="@name"/>
+            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="girr:parameters/@protocol"/>
+            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="girr:parameters/girr:parameter[@name='D']/@value"/>
+            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="girr:parameters/girr:parameter[@name='S']/@value"/>
+            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="girr:parameters/girr:parameter[@name='F']/@value"/>
+            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="girr:parameters/girr:parameter[@name='T']/@value"/>
+            <xsl:text>&#9;</xsl:text>
+            <xsl:apply-templates select="girr:parameters/girr:parameter[not(@name='F' or @name='D' or @name='S' or @name='T')]"/>
+            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="girr:raw/@frequency"/>
+            <xsl:text>&#9;</xsl:text>
+            <xsl:apply-templates select="girr:raw[1]/girr:intro[1]/*"/>
+            <xsl:text>&#9;</xsl:text>
+            <xsl:apply-templates select="girr:raw[1]/girr:repeat[1]/*"/>
+            <xsl:text>&#9;</xsl:text>
+            <xsl:apply-templates select="girr:raw[1]/girr:ending[1]/*"/>
+            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="girr:ccf"/>
+            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="@comment"/>
+            <xsl:text>
+</xsl:text>
+        </xsl:template>
+
+        <xsl:template match="girr:parameter">
+            <xsl:value-of select="@name"/>
+            <xsl:text>=</xsl:text>
+            <xsl:value-of select="@value"/>
+            <xsl:if test="position()!=last()">
+                <xsl:text> </xsl:text>
+            </xsl:if>
+        </xsl:template>
+
+        <xsl:template match="girr:flash">
+            <xsl:text>+</xsl:text>
+            <xsl:value-of select="."/>
+            <xsl:text> </xsl:text>
+        </xsl:template>
+        <xsl:template match="girr:gap">
+            <xsl:text>-</xsl:text>
+            <xsl:value-of select="."/>
+            <xsl:if test="position()!=last()">
+                <xsl:text> </xsl:text>
+            </xsl:if>
+        </xsl:template>
+
+    </xsl:stylesheet>
+</exportformats:exportformat>

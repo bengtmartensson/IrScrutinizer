@@ -59,6 +59,8 @@ install --mode=444 target/${MYPROG}-jar-with-dependencies.jar ${MYPROG_HOME}
 install --mode=444 target/${MYPROG}.png ${MYPROG_HOME}/${MYPROG_LOWER}.png
 install --mode=444 target/*.ini ${MYPROG_HOME}
 install --mode=444 target/exportformats.xml ${MYPROG_HOME}
+install -d ${MYPROG_HOME}/exportformats.d
+install --mode=444 target/exportformats.d/* ${MYPROG_HOME}/exportformats.d
 install -d ${MYPROG_HOME}/contributed
 install --mode=444 target/contributed/*.ini ${MYPROG_HOME}/contributed
 install --mode=444 target/doc/README* target/doc/LICENSE* ${MYPROG_HOME}
