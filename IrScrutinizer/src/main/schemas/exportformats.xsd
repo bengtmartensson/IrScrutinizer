@@ -14,7 +14,7 @@
            targetNamespace="http://www.harctoolbox.org/exportformats">
 
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
-    <xs:import namespace="http://www.w3.org/1999/XSL/Transform" schemaLocation="http://www.w3.org/TR/xmlschema11-1/XMLSchema.xsd"/>
+    <xs:import namespace="http://www.w3.org/1999/XSL/Transform" schemaLocation="https://www.w3.org/2007/schema-for-xslt20.xsd"/>
     <xs:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="https://www.w3.org/2001/XInclude/XInclude.xsd"/>
 
     <xs:element name="exportformats">
@@ -43,6 +43,7 @@
             <xs:sequence>
                 <xs:choice>
                     <xs:element ref="xsl:stylesheet"/>
+                    <xs:element ref="xsl:transform"/>
                     <xs:element ref="xi:include"/>
                 </xs:choice>
             </xs:sequence>
