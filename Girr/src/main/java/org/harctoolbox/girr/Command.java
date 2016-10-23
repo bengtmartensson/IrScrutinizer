@@ -919,7 +919,7 @@ public class Command implements Serializable {
                 }
             } catch (IrpMasterException | NullPointerException ex) {
                 // NullPointerException thrown if irpMaster == null.
-                element.appendChild(doc.createComment("Raw signal requested but could not be generated."));
+                element.appendChild(doc.createComment("Raw signal requested but could not be generated. (" + ex.getMessage() + ")"));
             }
         }
         if (generateCcf) {
@@ -936,7 +936,7 @@ public class Command implements Serializable {
                 }
             } catch (IrpMasterException | NullPointerException ex) {
                 // NullPointerException thrown if irpMaster == null.
-                element.appendChild(doc.createComment("Pronto Hex requested but could not be generated."));
+                element.appendChild(doc.createComment("Pronto Hex requested but could not be generated. (" + ex.getMessage() + ")"));
             }
         }
         if (otherFormats != null) {
