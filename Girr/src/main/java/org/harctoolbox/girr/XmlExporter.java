@@ -147,56 +147,59 @@ public class XmlExporter {
             XmlUtils.printDOM(new File("girr.girr"), this.document);
             XmlUtils.printDOM(new File("stylesheet.xsl"), stylesheet);
         }
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer tr;
-        if (stylesheet == null) {
-            tr = factory.newTransformer();
+        try {
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer tr;
+            if (stylesheet == null) {
+                tr = factory.newTransformer();
 
-            tr.setOutputProperty(OutputKeys.METHOD, "xml");
-            tr.setOutputProperty(OutputKeys.ENCODING, charsetName);
+                tr.setOutputProperty(OutputKeys.METHOD, "xml");
+                tr.setOutputProperty(OutputKeys.ENCODING, charsetName);
 
-        } else {
-            if (parameters != null)
-                for (Map.Entry<String, String> kvp : parameters.entrySet()) {
-                    Element e = stylesheet.createElementNS(xsltNamespace, "xsl:param");
-                    e.setAttribute("name", kvp.getKey());
-                    e.setAttribute("select", kvp.getValue());
-                    stylesheet.getDocumentElement().insertBefore(e, stylesheet.getDocumentElement().getFirstChild());
+            } else {
+                if (parameters != null)
+                    for (Map.Entry<String, String> kvp : parameters.entrySet()) {
+                        Element e = stylesheet.createElementNS(xsltNamespace, "xsl:param");
+                        e.setAttribute("name", kvp.getKey());
+                        e.setAttribute("select", kvp.getValue());
+                        stylesheet.getDocumentElement().insertBefore(e, stylesheet.getDocumentElement().getFirstChild());
+                    }
+                NodeList nodeList = stylesheet.getDocumentElement().getElementsByTagNameNS(xsltNamespace, "output");
+                if (nodeList.getLength() > 0) {
+                    Element e = (Element) nodeList.item(0);
+                    e.setAttribute("encoding", charsetName);
                 }
-            NodeList nodeList = stylesheet.getDocumentElement().getElementsByTagNameNS(xsltNamespace, "output");
-            if (nodeList.getLength() > 0) {
-                Element e = (Element) nodeList.item(0);
-                e.setAttribute("encoding", charsetName);
+                if (debug)
+                    XmlUtils.printDOM(new File("stylesheet-params.xsl"), stylesheet);
+                tr = factory.newTransformer(new DOMSource(stylesheet));
             }
-            if (debug)
-                XmlUtils.printDOM(new File("stylesheet-params.xsl"), stylesheet);
-            tr = factory.newTransformer(new DOMSource(stylesheet));
-        }
-        tr.setOutputProperty(OutputKeys.INDENT, "yes");
-        tr.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-        if (binary) {
-            DOMResult domResult = new DOMResult();
-            tr.transform(new DOMSource(document), domResult);
-            Document newDoc = (Document) domResult.getNode();
-            if (debug)
-                XmlUtils.printDOM(new File("girr-binary.xml"), newDoc);
-            NodeList byteElements = newDoc.getDocumentElement().getElementsByTagName("byte");
-            for (int i = 0; i < byteElements.getLength(); i++) {
-                int val = Integer.parseInt(byteElements.item(i).getTextContent());
-                ostr.write(val);
-            }
-        } else
-            tr.transform(new DOMSource(document), new StreamResult(ostr));
-        if (parameters != null && stylesheet != null) {
-            NodeList nl = stylesheet.getDocumentElement().getChildNodes();
-            // Must remove children in backward order not to invalidate nl, #139.
-            for (int i = nl.getLength() - 1; i >= 0; i--) {
-                Node n = nl.item(i);
-                if (n.getNodeType() != Node.ELEMENT_NODE)
-                    continue;
-                Element e = (Element) n;
-                if (e.getLocalName().equals("param") && parameters.containsKey(e.getAttribute("name")))
-                    stylesheet.getDocumentElement().removeChild(n);
+            tr.setOutputProperty(OutputKeys.INDENT, "yes");
+            tr.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+            if (binary) {
+                DOMResult domResult = new DOMResult();
+                tr.transform(new DOMSource(document), domResult);
+                Document newDoc = (Document) domResult.getNode();
+                if (debug)
+                    XmlUtils.printDOM(new File("girr-binary.xml"), newDoc);
+                NodeList byteElements = newDoc.getDocumentElement().getElementsByTagName("byte");
+                for (int i = 0; i < byteElements.getLength(); i++) {
+                    int val = Integer.parseInt(byteElements.item(i).getTextContent());
+                    ostr.write(val);
+                }
+            } else
+                tr.transform(new DOMSource(document), new StreamResult(ostr));
+        } finally {
+            if (parameters != null && stylesheet != null) {
+                NodeList nl = stylesheet.getDocumentElement().getChildNodes();
+                // Must remove children in backward order not to invalidate nl, #139.
+                for (int i = nl.getLength() - 1; i >= 0; i--) {
+                    Node n = nl.item(i);
+                    if (n.getNodeType() != Node.ELEMENT_NODE)
+                        continue;
+                    Element e = (Element) n;
+                    if (e.getLocalName().equals("param") && parameters.containsKey(e.getAttribute("name")))
+                        stylesheet.getDocumentElement().removeChild(n);
+                }
             }
         }
     }
