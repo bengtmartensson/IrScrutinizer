@@ -1,207 +1,3865 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-Copyright (C) 2016 Bengt Martensson
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-
-<exportformats:exportformat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                            xmlns:exportformats="http://www.harctoolbox.org/exportformats"
-                            xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
-                            name="Lirc" extension="lircd.conf" multiSignal="true" simpleSequence="false" metadata="true">
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:girr="http://www.harctoolbox.org/Girr"
-                xmlns:java="http://xml.apache.org/xalan/java"
-                xmlns:cidentifierfactory="http://xml.apache.org/xalan/java/org.harctoolbox.irscrutinizer.exporter.CIdentifierFactory"
-                xmlns:exporterutils="http://xml.apache.org/xalan/java/org.harctoolbox.irscrutinizer.exporter.ExporterUtils"
-                version="1.0">
-    <xsl:output method="text" />
-
-    <xsl:template match="/girr:remotes">
-        <xsl:text># </xsl:text><xsl:value-of select="@title"/>
-<xsl:text>
+<exportformats:exportformat xmlns:exportformats="http://www.harctoolbox.org/exportformats"
+                            xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                            xmlns:harctoolbox="xxxxxxxxx"
+                            name="Lirc"
+                            extension="lircd.conf"
+                            multiSignal="true"
+                            simpleSequence="false"
+                            metadata="true">
+   <xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr"
+                   xmlns:exporterutils="http://xml.apache.org/xalan/java/org.harctoolbox.irscrutinizer.exporter.ExporterUtils"
+                   version="1.0">
+      <xsl:output method="text"/>
+      <xsl:template match="/girr:remotes">
+         <xsl:text xml:space="preserve"># </xsl:text>
+         <xsl:value-of select="@title"/>
+         <xsl:text>
 #
-# Creating tool: </xsl:text><xsl:value-of select="$creatingTool"/>
-<xsl:text>
-# Creating user: </xsl:text><xsl:value-of select="$creatingUser"/>
-<xsl:text>
-# Creating date: </xsl:text><xsl:value-of select="$creatingDate"/>
-<xsl:text>
-# Encoding: </xsl:text><xsl:value-of select="$encoding"/>
-<xsl:text>
+# Creating tool: </xsl:text>
+         <xsl:value-of select="$creatingTool"/>
+         <xsl:text>
+# Creating user: </xsl:text>
+         <xsl:value-of select="$creatingUser"/>
+         <xsl:text>
+# Creating date: </xsl:text>
+         <xsl:value-of select="$creatingDate"/>
+         <xsl:text>
+# Encoding: </xsl:text>
+         <xsl:value-of select="$encoding"/>
+         <xsl:text>
 #
 </xsl:text>
-        <xsl:apply-templates select="girr:remote"/>
-    </xsl:template>
-
-    <xsl:template match="girr:remote">
-        <xsl:text># Manufacturer: </xsl:text>
-            <xsl:value-of select="@manufacturer"/>
-<xsl:text>
+         <xsl:apply-templates select="girr:remote"/>
+      </xsl:template>
+      <xsl:template match="girr:remote">
+         <xsl:text># Manufacturer: </xsl:text>
+         <xsl:value-of select="@manufacturer"/>
+         <xsl:text>
 # Model: </xsl:text>
          <xsl:value-of select="@model"/>
-<xsl:text>
-# Displayname: </xsl:text><xsl:value-of select="@displayName"/>
-<xsl:text>
-# Remotename: </xsl:text><xsl:value-of select="@remoteName"/>
-<xsl:text>
+         <xsl:text>
+# Displayname: </xsl:text>
+         <xsl:value-of select="@displayName"/>
+         <xsl:text>
+# Remotename: </xsl:text>
+         <xsl:value-of select="@remoteName"/>
+         <xsl:text>
 #
 </xsl:text>
-    <xsl:apply-templates select="girr:commandSet"/>
-    </xsl:template>
+         <xsl:apply-templates select="girr:commandSet"/>
+      </xsl:template>
 
-<!-- General case, raw codes -->
-    <xsl:template match="girr:commandSet">
-        <xsl:text>begin remote
-&#9;name&#9;</xsl:text><xsl:value-of select="../@name"/>
-<xsl:text>
-&#9;flags&#9;RAW_CODES
-&#9;eps&#9;30
-&#9;aeps&#9;100
-&#9;frequency&#9;</xsl:text><xsl:value-of select="//girr:command[1]/girr:raw/@frequency"/>
-<xsl:text>
-&#9;gap&#9;</xsl:text>
-<xsl:value-of select="//girr:command[1]/girr:raw/girr:repeat/girr:gap[position()=last()]"/>
-<xsl:text>
-&#9;begin raw_codes
+      <!-- ################ Default protocol rule, raw codes ############## -->
+      <xsl:template match="girr:commandSet">
+         <xsl:text>begin remote
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	flags		RAW_CODES
+	eps		30
+	aeps		100
+	frequency	</xsl:text>
+         <xsl:value-of select="//girr:command[1]/girr:raw/@frequency"/>
+         <xsl:text>
+	gap		</xsl:text>
+         <xsl:value-of select="//girr:command[1]/girr:raw/girr:repeat/girr:gap[position()=last()]"/>
+         <xsl:text>
+	begin raw_codes
 </xsl:text>
-<xsl:apply-templates select="//girr:command"/>
-<xsl:text>&#9;end raw_codes
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end raw_codes
 end remote
 </xsl:text>
-</xsl:template>
-
-    <xsl:template match="girr:command">
-        <xsl:text>&#9;&#9;name </xsl:text>
-        <xsl:value-of select="@name"/>
-        <xsl:text>
+      </xsl:template>
+      <xsl:template match="girr:command">
+         <xsl:text>		name </xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text xml:space="preserve">
 </xsl:text>
-        <xsl:apply-templates select="girr:raw[1]"/>
-        <xsl:text>
+         <xsl:apply-templates select="girr:raw[1]"/>
+         <xsl:text xml:space="preserve">
 </xsl:text>
-    </xsl:template>
-
-    <xsl:template match="girr:raw">
-        <xsl:apply-templates select="girr:intro"/>
-        <xsl:if test="not(girr:intro)">
+      </xsl:template>
+      <xsl:template match="girr:raw">
+         <xsl:apply-templates select="girr:intro"/>
+         <xsl:if test="not(girr:intro)">
             <xsl:apply-templates select="girr:repeat"/>
-        </xsl:if>
-    </xsl:template>
+         </xsl:if>
+      </xsl:template>
+      <xsl:template match="girr:intro|girr:repeat">
+         <xsl:text xml:space="preserve">			</xsl:text>
+         <xsl:apply-templates select="*"/>
+      </xsl:template>
+      <xsl:template match="girr:flash">
+         <xsl:value-of select="."/>
+         <xsl:text xml:space="preserve"> </xsl:text>
+      </xsl:template>
+      <xsl:template match="girr:gap">
+         <xsl:value-of select="."/>
+         <xsl:text xml:space="preserve"> </xsl:text>
+      </xsl:template>
+      <xsl:template match="girr:gap[position() mod 4 = 0]">
+         <xsl:value-of select="."/>
+         <xsl:text xml:space="preserve">
+			</xsl:text>
+      </xsl:template>
+      <xsl:template match="girr:gap[position()=last()]"/>
 
-    <xsl:template match="girr:intro|girr:repeat">
-        <xsl:text>&#9;&#9;&#9;</xsl:text>
-       <xsl:apply-templates select="*"/>
-    </xsl:template>
-
-    <xsl:template match="girr:flash">
-        <xsl:value-of select="."/>
-        <xsl:text> </xsl:text>
-    </xsl:template>
-
-    <xsl:template match="girr:gap">
-        <xsl:value-of select="."/>
-        <xsl:text> </xsl:text>
-    </xsl:template>
-
-    <xsl:template match="girr:gap[position() mod 4 = 0]">
-        <xsl:value-of select="."/>
-        <xsl:text>
-&#9;&#9;&#9;</xsl:text>
-    </xsl:template>
-
-    <xsl:template match="girr:gap[position()=last()]"/>
-
-    <!-- NEC1 -->
-    <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nec1']">
-        <xsl:text>begin remote
-&#9;name&#9;</xsl:text><xsl:value-of select="../@name"/>
-<xsl:text>
-&#9;bits&#9;32
-&#9;flags&#9;SPACE_ENC
-&#9;eps&#9;30
-&#9;aeps&#9;100
-&#9;zero&#9;573&#9;573
-&#9;one&#9;573&#9;1694
-&#9;header&#9;9041&#9;4507
-&#9;ptrail&#9;573
-&#9;repeat&#9;9041&#9;2267
-&#9;gap&#9;36000
-&#9;repeat_bit&#9;0
-&#9;frequency&#9;38400
-&#9;begin codes
+      <!-- ################## Protocol 48-NEC1 ################ -->
+      <!-- IRP: {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,E:8,~E:8,1,^108m,(16,-4,1,^108m)*)[D:0..255,S:0..255=255-D,F:0..255,E:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = '48-nec1']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: 48-NEC1
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		48
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		564	564
+	one		564	1692
+	header		9024	4512
+	ptrail		564
+	repeat		9024	2256
+	gap		108000 
+	frequency	38400
+	begin codes
 </xsl:text>
-<xsl:apply-templates select="//girr:command"/>
-<xsl:text>&#9;end codes
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
 end remote
 </xsl:text>
-</xsl:template>
-
-<xsl:template match="girr:command[girr:parameters/@protocol='nec1']">
-    <xsl:text>&#9;&#9;</xsl:text>
-    <xsl:value-of select="@name"/>
-    <xsl:text>&#9;0x</xsl:text>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(255 - number(girr:parameters/girr:parameter[@name='D']/@value))"/>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(number(girr:parameters/girr:parameter[@name='F']/@value))"/>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(255 - number(girr:parameters/girr:parameter[@name='F']/@value))"/>
-    <xsl:text>
+      </xsl:template>
+      <xsl:template name="command-48-nec1">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:param name="E"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $F, 8, 0, true(), true(), $F, 8, 0, false(), true(), $E, 8, 0, true(), true(), $E, 8, 0)"/>
+         <xsl:text xml:space="preserve">
 </xsl:text>
-</xsl:template>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='48-nec1']">
+         <xsl:call-template name="command-48-nec1">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="(255)-(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E"
+                            select="number(girr:parameters/girr:parameter[@name='E']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='48-nec1' and girr:parameters/girr:parameter[@name='S']]">
+         <xsl:call-template name="command-48-nec1">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E"
+                            select="number(girr:parameters/girr:parameter[@name='E']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
 
-<xsl:template match="girr:command[girr:parameters[@protocol='nec1'  and ./girr:parameter/@name='S']]">
-    <xsl:text>&#9;&#9;</xsl:text>
-    <xsl:value-of select="@name"/>
-    <xsl:text>&#9;0x</xsl:text>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(number(girr:parameters/girr:parameter[@name='S']/@value))"/>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(number(girr:parameters/girr:parameter[@name='F']/@value))"/>
-    <xsl:value-of select="exporterutils:twoDigitReverseHex(255 - number(girr:parameters/girr:parameter[@name='F']/@value))"/>
-    <xsl:text>
+      <!-- ################## Protocol 48-NEC2 ################ -->
+      <!-- IRP: {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,E:8,~E:8,1,^108m)*[D:0..255,S:0..255=255-D,F:0..255,E:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = '48-nec2']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: 48-NEC2
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		48
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		564	564
+	one		564	1692
+	header		9024	4512
+	ptrail		564
+	gap		108000 
+	frequency	38400
+	begin codes
 </xsl:text>
-</xsl:template>
-
-    <!-- RC5 -->
-    <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'rc5']">
-        <xsl:text>begin remote
-&#9;name&#9;</xsl:text><xsl:value-of select="../@name"/>
-<xsl:text>
-&#9;bits&#9;13
-&#9;flags&#9;RC5|CONST_LENGTH
-&#9;eps&#9;30
-&#9;aeps&#9;100
-&#9;zero&#9;889&#9;889
-&#9;one&#9;889&#9;889
-&#9;plead&#9;889
-&#9;gap&#9;90886
-&#9;toggle_bit&#9;2
-&#9;frequency&#9;36000
-&#9;begin codes
-</xsl:text>
-<xsl:apply-templates select="//girr:command"/>
-<xsl:text>&#9;end codes
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
 end remote
 </xsl:text>
-</xsl:template>
-
-<xsl:template match="girr:command[girr:parameters/@protocol='rc5']">
-    <xsl:text>&#9;&#9;</xsl:text>
-    <xsl:value-of select="@name"/>
-    <xsl:text>&#9;0x</xsl:text>
-    <xsl:value-of select="exporterutils:rc5Data(number(girr:parameters/girr:parameter[@name='D']/@value),number(girr:parameters/girr:parameter[@name='F']/@value),0)"/>
-    <xsl:text>
+      </xsl:template>
+      <xsl:template name="command-48-nec2">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:param name="E"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $F, 8, 0, true(), true(), $F, 8, 0, false(), true(), $E, 8, 0, true(), true(), $E, 8, 0)"/>
+         <xsl:text xml:space="preserve">
 </xsl:text>
-</xsl:template>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='48-nec2']">
+         <xsl:call-template name="command-48-nec2">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="(255)-(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E"
+                            select="number(girr:parameters/girr:parameter[@name='E']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='48-nec2' and girr:parameters/girr:parameter[@name='S']]">
+         <xsl:call-template name="command-48-nec2">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E"
+                            select="number(girr:parameters/girr:parameter[@name='E']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
 
-</xsl:stylesheet>
+      <!-- ################## Protocol AdNotam ################ -->
+      <!-- IRP: {35.7k,895,msb}<1,-1|-1,1>(1,-2,1,D:6,F:6,^114m)*[D:0..63,F:0..63] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'adnotam']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: AdNotam
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		12
+	flags		RC5|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		895	895
+	one		895	895
+	header		895	1790
+	plead		895
+	gap		114000 
+	frequency	35700
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-adnotam">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $D, 6, 0, false(), false(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='adnotam']">
+         <xsl:call-template name="command-adnotam">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Aiwa ################ -->
+      <!-- IRP: {38k,550}<1,-1|1,-3>(16,-8,D:8,S:5,~D:8,~S:5,F:8,~F:8,1,-42,(16,-8,1,-165)*)[D:0..255,S:0..31,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'aiwa']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Aiwa
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		42
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		550	550
+	one		550	1650
+	header		8800	4400
+	ptrail		550
+	repeat		8800	4400
+	gap		23100 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-aiwa">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 5, 0, true(), true(), $D, 8, 0, true(), true(), $S, 5, 0, false(), true(), $F, 8, 0, true(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='aiwa']">
+         <xsl:call-template name="command-aiwa">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Akai ################ -->
+      <!-- IRP: {38k,289}<1,-2.6|1,-6.3>(D:3,F:7,1,^25.3m)*[D:0..7,F:0..127] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'akai']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Akai
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		10
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		289	751
+	one		289	1821
+	ptrail		289
+	gap		25300 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-akai">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 3, 0, false(), true(), $F, 7, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='akai']">
+         <xsl:call-template name="command-akai">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Archer ################ -->
+      <!-- IRP: {0k,12}<1,-3.3m|1,-4.7m>(F:5,1,-9.7m)*[F:0..31] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'archer']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Archer
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		5
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		12	3300
+	one		12	4700
+	ptrail		12
+	gap		9700 
+	frequency	0
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-archer">
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $F, 5, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='archer']">
+         <xsl:call-template name="command-archer">
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Barco ################ -->
+      <!-- IRP: {0k,10}<1,-5|1,-15>(1,-25,D:5,F:6,1,-25,1,-120m)*[D:0..31,F:0..63] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'barco']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Barco
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		11
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		10	50
+	one		10	150
+	header		10	250
+	ptrail		10
+	gap		120000 
+	frequency	0
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-barco">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 5, 0, false(), true(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='barco']">
+         <xsl:call-template name="command-barco">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Blaupunkt ################ -->
+      <!-- IRP: {30.3k,528}<-1,1|1,-1>(1,-5,1023:10,-39,1,-5,1:1,F:6,D:3,-230)[F:0..63,D:0..7] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'blaupunkt']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Blaupunkt
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		20
+	flags		RC5
+	eps		30
+	aeps		100
+	zero		528	528
+	one		528	528
+	header		528	2640
+	ptrail		528
+	gap		121440 
+	frequency	30300
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-blaupunkt">
+         <xsl:param name="F"/>
+         <xsl:param name="D"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), 1023, 10, 0, false(), true(), 1, 1, 0, false(), true(), $F, 6, 0, false(), true(), $D, 3, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='blaupunkt']">
+         <xsl:call-template name="command-blaupunkt">
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Bose ################ -->
+      <!-- IRP: {38.0k,500,msb}<1,-1|1,-3>(2,-3,F:8,~F:8,1,-100m)*[F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'bose']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Bose
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		16
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		500	500
+	one		500	1500
+	header		1000	1500
+	ptrail		500
+	gap		100000 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-bose">
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $F, 8, 0, true(), false(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='bose']">
+         <xsl:call-template name="command-bose">
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Bryston ################ -->
+      <!-- IRP: {38.0k,315}<1,-6|6,-1>(D:10,F:8,-18m)*[D:0..1023,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'bryston']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Bryston
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		18
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		315	1890
+	one		1890	315
+	gap		18000 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-bryston">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 10, 0, false(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='bryston']">
+         <xsl:call-template name="command-bryston">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Denon ################ -->
+      <!-- IRP: {38k,264}<1,-3|1,-7>(D:5,F:8,0:2,1,-165,D:5,~F:8,3:2,1,-165)*[D:0..31,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'denon']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Denon
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		30
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		264	792
+	one		264	1848
+	ptrail		264
+	gap		43560 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-denon">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 5, 0, false(), true(), $F, 8, 0, false(), true(), 0, 2, 0, false(), true(), $D, 5, 0, true(), true(), $F, 8, 0, false(), true(), 3, 2, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='denon']">
+         <xsl:call-template name="command-denon">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Dgtec ################ -->
+      <!-- IRP: {38k,560}<1,-1|1,-3>(16,-8,D:8,F:8,~F:8,1,^108m,(16,-4,1,^108m)+)[D:0..255,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'dgtec']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Dgtec
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		24
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		560	560
+	one		560	1680
+	header		8960	4480
+	ptrail		560
+	repeat		8960	2240
+	gap		108000 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-dgtec">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $F, 8, 0, true(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='dgtec']">
+         <xsl:call-template name="command-dgtec">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Dishplayer ################ -->
+      <!-- IRP: {38.4k,535,msb}<1,-5|1,-3>(1,-11,(F:6,S:5,D:2,1,-11)+)[F:0..63,S:0..31,D:0..3] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'dishplayer']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Dishplayer
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		13
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		535	2675
+	one		535	1605
+	header		535	5885
+	gap		5885 
+	frequency	38400
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-dishplayer">
+         <xsl:param name="F"/>
+         <xsl:param name="S"/>
+         <xsl:param name="D"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $F, 6, 0, false(), false(), $S, 5, 0, false(), false(), $D, 2, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='dishplayer']">
+         <xsl:call-template name="command-dishplayer">
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Dish_Network ################ -->
+      <!-- IRP: {57.6k,406}<1,-7|1,-4>(1,-15,(F:-6,S:5,D:5,1,-15)+)[F:0..63,S:0..31,D:0..31] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'dish_network']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Dish_Network
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		16
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		406	2842
+	one		406	1624
+	header		406	6090
+	gap		6090 
+	frequency	57600
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-dish_network">
+         <xsl:param name="F"/>
+         <xsl:param name="S"/>
+         <xsl:param name="D"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $F, 6, 0, false(), true(), $S, 5, 0, false(), true(), $D, 5, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='dish_network']">
+         <xsl:call-template name="command-dish_network">
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Elan ################ -->
+      <!-- IRP: {40.2k,398,msb}<1,-1|1,-2>(3,-2,D:8,~D:8,2,-2,F:8,~F:8,1,^50m)*[D:0..255,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'elan']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Elan
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		32
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		398	398
+	one		398	796
+	header		1194	796
+	ptrail		398
+	gap		50000 
+	frequency	40200
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-elan">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $D, 8, 0, true(), false(), $D, 8, 0, false(), false(), $F, 8, 0, true(), false(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='elan']">
+         <xsl:call-template name="command-elan">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Emerson ################ -->
+      <!-- IRP: {36.7k,872}<1,-1|1,-3>(4,-4,D:6,F:6,~D:6,~F:6,1,-39)*[D:0..63,F:0..63] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'emerson']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Emerson
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		24
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		872	872
+	one		872	2616
+	header		3488	3488
+	ptrail		872
+	gap		34008 
+	frequency	36700
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-emerson">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 6, 0, false(), true(), $F, 6, 0, true(), true(), $D, 6, 0, true(), true(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='emerson']">
+         <xsl:call-template name="command-emerson">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol F32 ################ -->
+      <!-- IRP: {37.9k,422,msb}<1,-3|3,-1>(D:8,S:8,F:8,E:8,-100m)*[D:0..255,S:0..255,F:0..255,E:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'f32']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: F32
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		32
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		422	1266
+	one		1266	422
+	gap		100000 
+	frequency	37900
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-f32">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:param name="E"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $D, 8, 0, false(), false(), $S, 8, 0, false(), false(), $F, 8, 0, false(), false(), $E, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='f32']">
+         <xsl:call-template name="command-f32">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E"
+                            select="number(girr:parameters/girr:parameter[@name='E']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Fujitsu ################ -->
+      <!-- IRP: {37k,432}<1,-1|1,-3>(8,-4,20:8,99:8,0:4,E:4,D:8,S:8,F:8,1,-110)*[D:0..255,S:0..255=D,F:0..255,E:0..15=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'fujitsu']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Fujitsu
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		48
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		432	432
+	one		432	1296
+	header		3456	1728
+	ptrail		432
+	gap		47520 
+	frequency	37000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-fujitsu">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:param name="E"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), 20, 8, 0, false(), true(), 99, 8, 0, false(), true(), 0, 4, 0, false(), true(), $E, 4, 0, false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='fujitsu']">
+         <xsl:call-template name="command-fujitsu">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='fujitsu' and girr:parameters/girr:parameter[@name='S'] and girr:parameters/girr:parameter[@name='E']]">
+         <xsl:call-template name="command-fujitsu">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E"
+                            select="number(girr:parameters/girr:parameter[@name='E']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Fujitsu-56 ################ -->
+      <!-- IRP: {37k,432}<1,-1|1,-3>(8,-4,20:8,99:8,0:4,E:4,D:8,S:8,X:8,F:8,1,-110)*[D:0..255,S:0..255=D,F:0..255,E:0..15=0,X:0..255=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'fujitsu-56']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Fujitsu-56
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		56
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		432	432
+	one		432	1296
+	header		3456	1728
+	ptrail		432
+	gap		47520 
+	frequency	37000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-fujitsu-56">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:param name="E"/>
+         <xsl:param name="X"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), 20, 8, 0, false(), true(), 99, 8, 0, false(), true(), 0, 4, 0, false(), true(), $E, 4, 0, false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $X, 8, 0, false(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='fujitsu-56']">
+         <xsl:call-template name="command-fujitsu-56">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E" select="0"/>
+            <xsl:with-param name="X" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='fujitsu-56' and girr:parameters/girr:parameter[@name='S'] and girr:parameters/girr:parameter[@name='E'] and girr:parameters/girr:parameter[@name='X']]">
+         <xsl:call-template name="command-fujitsu-56">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E"
+                            select="number(girr:parameters/girr:parameter[@name='E']/@value)"/>
+            <xsl:with-param name="X"
+                            select="number(girr:parameters/girr:parameter[@name='X']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol GI RG ################ -->
+      <!-- IRP: {37.3k,1000,msb}<1,-1|1,-3>(5,-3,F:6,S:2,D:8,1,-60)*[D:0..255,S:0..3,F:0..63] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'gi rg']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: GI RG
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		16
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		1000	1000
+	one		1000	3000
+	header		5000	3000
+	ptrail		1000
+	gap		60000 
+	frequency	37300
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-gi-rg">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $F, 6, 0, false(), false(), $S, 2, 0, false(), false(), $D, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='gi rg']">
+         <xsl:call-template name="command-gi-rg">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol IODATAn ################ -->
+      <!-- IRP: {38k,550}<1,-1|1,-3>(16,-8,x:7,D:7,S:7,y:7,F:8,C:4,1,^108m)*{n=F:4^F:4:4^C:4}[D:0..127,S:0..127,F:0..255,C:0..15=0,x:0..127=0,y:0..127=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'iodatan']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: IODATAn
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		40
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		550	550
+	one		550	1650
+	header		8800	4400
+	ptrail		550
+	gap		108000 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-iodatan">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:param name="C"/>
+         <xsl:param name="x"/>
+         <xsl:param name="y"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $x, 7, 0, false(), true(), $D, 7, 0, false(), true(), $S, 7, 0, false(), true(), $y, 7, 0, false(), true(), $F, 8, 0, false(), true(), $C, 4, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='iodatan']">
+         <xsl:call-template name="command-iodatan">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="C" select="0"/>
+            <xsl:with-param name="x" select="0"/>
+            <xsl:with-param name="y" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='iodatan' and girr:parameters/girr:parameter[@name='C'] and girr:parameters/girr:parameter[@name='x'] and girr:parameters/girr:parameter[@name='y']]">
+         <xsl:call-template name="command-iodatan">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="C"
+                            select="number(girr:parameters/girr:parameter[@name='C']/@value)"/>
+            <xsl:with-param name="x"
+                            select="number(girr:parameters/girr:parameter[@name='x']/@value)"/>
+            <xsl:with-param name="y"
+                            select="number(girr:parameters/girr:parameter[@name='y']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Jerrold ################ -->
+      <!-- IRP: {0k,44}<1,-7.5m|1,-11.5m>(F:5,1,-23.5m)*[F:0..31] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'jerrold']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Jerrold
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		5
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		44	7500
+	one		44	11500
+	ptrail		44
+	gap		23500 
+	frequency	0
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-jerrold">
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $F, 5, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='jerrold']">
+         <xsl:call-template name="command-jerrold">
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol JVC ################ -->
+      <!-- IRP: {38k,525}<1,-1|1,-3>(16,-8,(D:8,F:8,1,-45)+)[D:0..255,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'jvc']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: JVC
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		16
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		525	525
+	one		525	1575
+	header		8400	4200
+	gap		4200 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-jvc">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='jvc']">
+         <xsl:call-template name="command-jvc">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Konka ################ -->
+      <!-- IRP: {38k,500,msb}<1,-3|1,-5>(6,-6,D:8,F:8,1,-8,1,-46)*[D:0..255,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'konka']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Konka
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		16
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		500	1500
+	one		500	2500
+	header		3000	3000
+	ptrail		500
+	gap		23000 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-konka">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $D, 8, 0, false(), false(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='konka']">
+         <xsl:call-template name="command-konka">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Logitech ################ -->
+      <!-- IRP: {38k,127}<3,-4|3,-8>(31,-36,D:4,~D:4,F:8,~F:8,3,-50m)*[D:0..15,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'logitech']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Logitech
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		24
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		381	508
+	one		381	1016
+	header		3937	4572
+	ptrail		381
+	gap		50000 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-logitech">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 4, 0, true(), true(), $D, 4, 0, false(), true(), $F, 8, 0, true(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='logitech']">
+         <xsl:call-template name="command-logitech">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Matsui ################ -->
+      <!-- IRP: {38k,525}<1,-1|1,-3>(D:3,F:7,1,^30.5m)*[D:0..7,F:0..127] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'matsui']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Matsui
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		10
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		525	525
+	one		525	1575
+	ptrail		525
+	gap		30500 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-matsui">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 3, 0, false(), true(), $F, 7, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='matsui']">
+         <xsl:call-template name="command-matsui">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Metz19 ################ -->
+      <!-- IRP: {37.9k,106,msb}<4,-9|4,-16>((8,-22,T:1,D:3,~D:3,F:6,~F:6,4,-125m)*,T=1-T)[D:0..7,F:0..63,T@:0..1=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'metz19']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Metz19
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		19
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		424	954
+	one		424	1696
+	header		848	2332
+	ptrail		424
+	gap		125000
+	toggle_bit	1 
+	frequency	37900
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-metz19">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $T, 1, 0, false(), false(), $D, 3, 0, true(), false(), $D, 3, 0, false(), false(), $F, 6, 0, true(), false(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='metz19']">
+         <xsl:call-template name="command-metz19">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='metz19' and girr:parameters/girr:parameter[@name='T']]">
+         <xsl:call-template name="command-metz19">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Mitsubishi ################ -->
+      <!-- IRP: {32.6k,300}<1,-3|1,-7>(D:8,F:8,1,-80)*[D:0..127,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'mitsubishi']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Mitsubishi
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		16
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		300	900
+	one		300	2100
+	ptrail		300
+	gap		24000 
+	frequency	32600
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-mitsubishi">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='mitsubishi']">
+         <xsl:call-template name="command-mitsubishi">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol NEC1 ################ -->
+      <!-- IRP: {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,1,^108m,(16,-4,1,^108m)*)[D:0..255,S:0..255=255-D,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nec1']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: NEC1
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		32
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		564	564
+	one		564	1692
+	header		9024	4512
+	ptrail		564
+	repeat		9024	2256
+	gap		108000 
+	frequency	38400
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-nec1">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $F, 8, 0, true(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='nec1']">
+         <xsl:call-template name="command-nec1">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="(255)-(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='nec1' and girr:parameters/girr:parameter[@name='S']]">
+         <xsl:call-template name="command-nec1">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol NEC1-rnc ################ -->
+      <!-- IRP: {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:4:4,~F:4,1,^108m,(16,-4,1,^108m)*)[D:0..255,S:0..255=255-D,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nec1-rnc']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: NEC1-rnc
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		32
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		564	564
+	one		564	1692
+	header		9024	4512
+	ptrail		564
+	repeat		9024	2256
+	gap		108000 
+	frequency	38400
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-nec1-rnc">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $F, 8, 0, true(), true(), $F, 4, 4, true(), true(), $F, 4, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='nec1-rnc']">
+         <xsl:call-template name="command-nec1-rnc">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="(255)-(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='nec1-rnc' and girr:parameters/girr:parameter[@name='S']]">
+         <xsl:call-template name="command-nec1-rnc">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol NEC1-f16 ################ -->
+      <!-- IRP: {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:16,1,^108m,(16,-4,1,^108m)*)[D:0..255,S:0..255=255-D,F:0..65535] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nec1-f16']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: NEC1-f16
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		32
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		564	564
+	one		564	1692
+	header		9024	4512
+	ptrail		564
+	repeat		9024	2256
+	gap		108000 
+	frequency	38400
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-nec1-f16">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $F, 16, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='nec1-f16']">
+         <xsl:call-template name="command-nec1-f16">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="(255)-(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='nec1-f16' and girr:parameters/girr:parameter[@name='S']]">
+         <xsl:call-template name="command-nec1-f16">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol NEC2 ################ -->
+      <!-- IRP: {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,1,^108m)*[D:0..255,S:0..255=255-D,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nec2']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: NEC2
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		32
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		564	564
+	one		564	1692
+	header		9024	4512
+	ptrail		564
+	gap		108000 
+	frequency	38400
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-nec2">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $F, 8, 0, true(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='nec2']">
+         <xsl:call-template name="command-nec2">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="(255)-(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='nec2' and girr:parameters/girr:parameter[@name='S']]">
+         <xsl:call-template name="command-nec2">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol NECx2 ################ -->
+      <!-- IRP: {38.4k,564}<1,-1|1,-3>(8,-8,D:8,S:8,F:8,~F:8,1,^108m)*[D:0..255,S:0..255=255-D,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'necx2']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: NECx2
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		32
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		564	564
+	one		564	1692
+	header		4512	4512
+	ptrail		564
+	gap		108000 
+	frequency	38400
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-necx2">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $F, 8, 0, true(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='necx2']">
+         <xsl:call-template name="command-necx2">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="(255)-(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='necx2' and girr:parameters/girr:parameter[@name='S']]">
+         <xsl:call-template name="command-necx2">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol PaceMSS ################ -->
+      <!-- IRP: {38k,630,msb}<1,-7|1,-11>(1,-5,1,-5,T:1,D:1,F:8,1,^120m)*[D:0..1,F:0..255,T:0..1] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'pacemss']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: PaceMSS
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		10
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		630	4410
+	one		630	6930
+	header		630	3150
+	plead		630
+	ptrail		630
+	gap		120000 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-pacemss">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $T, 1, 0, false(), false(), $D, 1, 0, false(), false(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='pacemss']">
+         <xsl:call-template name="command-pacemss">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Panasonic_Old ################ -->
+      <!-- IRP: {57.6k,833}<1,-1|1,-3>(4,-4,D:5,F:6,~D:5,~F:6,1,-44m)*[D:0..31,F:0..63] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'panasonic_old']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Panasonic_Old
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		22
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		833	833
+	one		833	2499
+	header		3332	3332
+	ptrail		833
+	gap		44000 
+	frequency	57600
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-panasonic_old">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 5, 0, false(), true(), $F, 6, 0, true(), true(), $D, 5, 0, true(), true(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='panasonic_old']">
+         <xsl:call-template name="command-panasonic_old">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol pid-0001 ################ -->
+      <!-- IRP: {0k,msb}<24,-9314|24,-13486>(24,-21148,(F:5,1,-28m)+)[F:0..31] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'pid-0001']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: pid-0001
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		5
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		24	9314
+	one		24	13486
+	header		24	21148
+	gap		21148 
+	frequency	0
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-pid-0001">
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $F, 5, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='pid-0001']">
+         <xsl:call-template name="command-pid-0001">
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol pid-0003 ################ -->
+      <!-- IRP: {40.2k,389}<2,-2|3,-1>(F:8,~F:8,^102m)*[F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'pid-0003']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: pid-0003
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		16
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		778	778
+	one		1167	389
+	gap		102000 
+	frequency	40200
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-pid-0003">
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $F, 8, 0, true(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='pid-0003']">
+         <xsl:call-template name="command-pid-0003">
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol pid-0004 ################ -->
+      <!-- IRP: {0k,msb}<12,-130|12,-372>(F:6,12,-27m)*[F:0..63] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'pid-0004']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: pid-0004
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		6
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		12	130
+	one		12	372
+	ptrail		12
+	gap		27000 
+	frequency	0
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-pid-0004">
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='pid-0004']">
+         <xsl:call-template name="command-pid-0004">
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Pioneer ################ -->
+      <!-- IRP: {40k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,1,^108m)*[D:0..255,S:0..255=255-D,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'pioneer']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Pioneer
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		32
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		564	564
+	one		564	1692
+	header		9024	4512
+	ptrail		564
+	gap		108000 
+	frequency	40000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-pioneer">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $F, 8, 0, true(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='pioneer']">
+         <xsl:call-template name="command-pioneer">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="(255)-(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='pioneer' and girr:parameters/girr:parameter[@name='S']]">
+         <xsl:call-template name="command-pioneer">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Proton ################ -->
+      <!-- IRP: {38k,500}<1,-1|1,-3>(16,-8,D:8,1,-8,F:8,1,^63m)*[D:0..255,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'proton']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Proton
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		16
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		500	500
+	one		500	1500
+	header		8000	4000
+	ptrail		500
+	gap		63000 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-proton">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='proton']">
+         <xsl:call-template name="command-proton">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol RC5 ################ -->
+      <!-- IRP: {36k,msb,889}<1,-1|-1,1>((1,~F:1:6,T:1,D:5,F:6,^114m)*,T=1-T)[D:0..31,F:0..127,T@:0..1=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'rc5']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: RC5
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		13
+	flags		RC5|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		889	889
+	one		889	889
+	plead		889
+	gap		114000
+	toggle_bit	2 
+	frequency	36000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-rc5">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(true(), false(), $F, 1, 6, false(), false(), $T, 1, 0, false(), false(), $D, 5, 0, false(), false(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='rc5']">
+         <xsl:call-template name="command-rc5">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='rc5' and girr:parameters/girr:parameter[@name='T']]">
+         <xsl:call-template name="command-rc5">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol RC5-7F ################ -->
+      <!-- IRP: {36k,msb,889}<1,-1|-1,1>((1,~D:1:5,T:1,D:5,F:7,^114m)*,T=1-T)[D:0..63,F:0..127,T@:0..1=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'rc5-7f']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: RC5-7F
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		14
+	flags		RC5|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		889	889
+	one		889	889
+	plead		889
+	gap		114000
+	toggle_bit	2 
+	frequency	36000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-rc5-7f">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(true(), false(), $D, 1, 5, false(), false(), $T, 1, 0, false(), false(), $D, 5, 0, false(), false(), $F, 7, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='rc5-7f']">
+         <xsl:call-template name="command-rc5-7f">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='rc5-7f' and girr:parameters/girr:parameter[@name='T']]">
+         <xsl:call-template name="command-rc5-7f">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol RC5-7F-57 ################ -->
+      <!-- IRP: {57k,msb,889}<1,-1|-1,1>(1,~D:1:5,T:1,D:5,F:7,^114m)*[D:0..63,F:0..127,T@:0..1=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'rc5-7f-57']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: RC5-7F-57
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		14
+	flags		RC5|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		889	889
+	one		889	889
+	plead		889
+	gap		114000
+	toggle_bit	2 
+	frequency	57000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-rc5-7f-57">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(true(), false(), $D, 1, 5, false(), false(), $T, 1, 0, false(), false(), $D, 5, 0, false(), false(), $F, 7, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='rc5-7f-57']">
+         <xsl:call-template name="command-rc5-7f-57">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='rc5-7f-57' and girr:parameters/girr:parameter[@name='T']]">
+         <xsl:call-template name="command-rc5-7f-57">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol RC5x ################ -->
+      <!-- IRP: {36k,msb,889}<1,-1|-1,1>((1,~S:1:6,T:1,D:5,-4,S:6,F:6,^114m)*,T=1-T)[D:0..31,S:0..127,F:0..63,T@:0..1=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'rc5x']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: RC5x
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		19
+	flags		RC5|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		889	889
+	one		889	889
+	plead		889
+	gap		114000
+	toggle_bit	2 
+	frequency	36000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-rc5x">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(true(), false(), $S, 1, 6, false(), false(), $T, 1, 0, false(), false(), $D, 5, 0, false(), false(), $S, 6, 0, false(), false(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='rc5x']">
+         <xsl:call-template name="command-rc5x">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='rc5x' and girr:parameters/girr:parameter[@name='T']]">
+         <xsl:call-template name="command-rc5x">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol RCA ################ -->
+      <!-- IRP: {58k,460,msb}<1,-2|1,-4>(8,-8,D:4,F:8,~D:4,~F:8,1,-16)*[D:0..15,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'rca']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: RCA
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		24
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		460	920
+	one		460	1840
+	header		3680	3680
+	ptrail		460
+	gap		7360 
+	frequency	58000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-rca">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $D, 4, 0, false(), false(), $F, 8, 0, true(), false(), $D, 4, 0, true(), false(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='rca']">
+         <xsl:call-template name="command-rca">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol RCA-38 ################ -->
+      <!-- IRP: {38.7k,460,msb}<1,-2|1,-4>(8,-8,D:4,F:8,~D:4,~F:8,1,-16)*[D:0..15,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'rca-38']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: RCA-38
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		24
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		460	920
+	one		460	1840
+	header		3680	3680
+	ptrail		460
+	gap		7360 
+	frequency	38700
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-rca-38">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $D, 4, 0, false(), false(), $F, 8, 0, true(), false(), $D, 4, 0, true(), false(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='rca-38']">
+         <xsl:call-template name="command-rca-38">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol RECS80 ################ -->
+      <!-- IRP: {38k,158,msb}<1,-31|1,-47>(1:1,T:1,D:3,F:6,1,-45m)*{}[D:0..7,F:0..63,T@:0..1=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'recs80']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: RECS80
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		11
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		158	4898
+	one		158	7426
+	ptrail		158
+	gap		45000
+	toggle_bit	2 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-recs80">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), 1, 1, 0, false(), false(), $T, 1, 0, false(), false(), $D, 3, 0, false(), false(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='recs80']">
+         <xsl:call-template name="command-recs80">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='recs80' and girr:parameters/girr:parameter[@name='T']]">
+         <xsl:call-template name="command-recs80">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol RECS80-0045 ################ -->
+      <!-- IRP: {38k,158,msb}<1,-31|1,-47>(1:1,T:1,D:3,F:6,1,-45m)*[D:0..7,F:0..63,T@:0..1=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'recs80-0045']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: RECS80-0045
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		11
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		158	4898
+	one		158	7426
+	ptrail		158
+	gap		45000
+	toggle_bit	2 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-recs80-0045">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), 1, 1, 0, false(), false(), $T, 1, 0, false(), false(), $D, 3, 0, false(), false(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='recs80-0045']">
+         <xsl:call-template name="command-recs80-0045">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='recs80-0045' and girr:parameters/girr:parameter[@name='T']]">
+         <xsl:call-template name="command-recs80-0045">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol RECS80-0068 ################ -->
+      <!-- IRP: {33.3k,180,msb}<1,-31|1,-47>(1:1,T:1,D:3,F:6,1,^138m)*[D:0..7,F:0..63,T@:0..1=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'recs80-0068']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: RECS80-0068
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		11
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		180	5580
+	one		180	8460
+	ptrail		180
+	gap		138000
+	toggle_bit	2 
+	frequency	33300
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-recs80-0068">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), 1, 1, 0, false(), false(), $T, 1, 0, false(), false(), $D, 3, 0, false(), false(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='recs80-0068']">
+         <xsl:call-template name="command-recs80-0068">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='recs80-0068' and girr:parameters/girr:parameter[@name='T']]">
+         <xsl:call-template name="command-recs80-0068">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol RECS80-0090 ################ -->
+      <!-- IRP: {0k,158,msb}<1,-31|1,-47>(1:1,T:1,D:3,F:6,1,^138m)*[D:0..7,F:0..63,T@:0..1=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'recs80-0090']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: RECS80-0090
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		11
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		158	4898
+	one		158	7426
+	ptrail		158
+	gap		138000
+	toggle_bit	2 
+	frequency	0
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-recs80-0090">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), 1, 1, 0, false(), false(), $T, 1, 0, false(), false(), $D, 3, 0, false(), false(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='recs80-0090']">
+         <xsl:call-template name="command-recs80-0090">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='recs80-0090' and girr:parameters/girr:parameter[@name='T']]">
+         <xsl:call-template name="command-recs80-0090">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Replay ################ -->
+      <!-- IRP: {36k,444,msb}<-1,1|1,-1>(6,-2,1:1,6:3,<-2,2|2,-2>(T:1),D:8,S:8,F:8,-100m/*???*/)*[D:0..255,S:0..255,F:0..255,T@:0..1=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'replay']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Replay
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		29
+	flags		RC5
+	eps		30
+	aeps		100
+	zero		444	444
+	one		444	444
+	header		2664	888
+	gap		100000 
+	frequency	36000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-replay">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), 1, 1, 0, false(), false(), 6, 3, 0, false(), false(), $D, 8, 0, false(), false(), $S, 8, 0, false(), false(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='replay']">
+         <xsl:call-template name="command-replay">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='replay' and girr:parameters/girr:parameter[@name='T']]">
+         <xsl:call-template name="command-replay">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Revox ################ -->
+      <!-- IRP: {0k,15u}<1,-9|1,-19>(1,-29,0:1,D:4,F:6,1,-29,1,-100285u)*[D:0..15,F:0..63] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'revox']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Revox
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		11
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		15	135
+	one		15	285
+	header		15	435
+	ptrail		15
+	gap	 
+	frequency	0
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-revox">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), 0, 1, 0, false(), true(), $D, 4, 0, false(), true(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='revox']">
+         <xsl:call-template name="command-revox">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Samsung20 ################ -->
+      <!-- IRP: {38.4k,564}<1,-1|1,-3>(8,-8,D:6,S:6,F:8,1,^100m)*[D:0..63,S:0..63,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'samsung20']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Samsung20
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		20
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		564	564
+	one		564	1692
+	header		4512	4512
+	ptrail		564
+	gap		100000 
+	frequency	38400
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-samsung20">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 6, 0, false(), true(), $S, 6, 0, false(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='samsung20']">
+         <xsl:call-template name="command-samsung20">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Samsung36 ################ -->
+      <!-- IRP: {37.9k,560,33%}<1,-1|1,-3>(4500u,-4500u,D:8,S:8,1,-9,E:4,F:8,~F:8,1,^108m)*[D:0..255,S:0..255,F:0..255,E:0..15] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'samsung36']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Samsung36
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		36
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		560	560
+	one		560	1680
+	header	
+	ptrail		560
+	gap		108000 
+	frequency	37900
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-samsung36">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:param name="E"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $E, 4, 0, false(), true(), $F, 8, 0, true(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='samsung36']">
+         <xsl:call-template name="command-samsung36">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E"
+                            select="number(girr:parameters/girr:parameter[@name='E']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Sampo ################ -->
+      <!-- IRP: {38.4k,833}<1,-1|1,-3>(4,-4,D:6,F:6,S:6,~F:6,1,-39)*[D:0..63,S:0..63,F:0..63] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'sampo']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Sampo
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		24
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		833	833
+	one		833	2499
+	header		3332	3332
+	ptrail		833
+	gap		32487 
+	frequency	38400
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-sampo">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 6, 0, false(), true(), $F, 6, 0, false(), true(), $S, 6, 0, true(), true(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='sampo']">
+         <xsl:call-template name="command-sampo">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol ScAtl-6 ################ -->
+      <!-- IRP: {57.6k,846}<1,-1|1,-3>(4,-4,D:6,F:6,~D:6,~F:6,1,-40)*[D:0..63,F:0..63] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'scatl-6']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: ScAtl-6
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		24
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		846	846
+	one		846	2538
+	header		3384	3384
+	ptrail		846
+	gap		33840 
+	frequency	57600
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-scatl-6">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 6, 0, false(), true(), $F, 6, 0, true(), true(), $D, 6, 0, true(), true(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='scatl-6']">
+         <xsl:call-template name="command-scatl-6">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Sharp ################ -->
+      <!-- IRP: {38k,264}<1,-3|1,-7>(D:5,F:8,1:2,1,-165,D:5,~F:8,2:2,1,-165)*[D:0..31,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'sharp']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Sharp
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		30
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		264	792
+	one		264	1848
+	ptrail		264
+	gap		43560 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-sharp">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 5, 0, false(), true(), $F, 8, 0, false(), true(), 1, 2, 0, false(), true(), $D, 5, 0, true(), true(), $F, 8, 0, false(), true(), 2, 2, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='sharp']">
+         <xsl:call-template name="command-sharp">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Sharp{1} ################ -->
+      <!-- IRP: {38k,264}<1,-3|1,-7>(D:5,F:8,1:2,1,-165)*[D:0..31,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'sharp{1}']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Sharp{1}
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		15
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		264	792
+	one		264	1848
+	ptrail		264
+	gap		43560 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-sharp-1-">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 5, 0, false(), true(), $F, 8, 0, false(), true(), 1, 2, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='sharp{1}']">
+         <xsl:call-template name="command-sharp-1-">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Sharp{2} ################ -->
+      <!-- IRP: {38k,264}<1,-3|1,-7>(D:5,~F:8,2:2,1,-165)*[D:0..31,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'sharp{2}']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Sharp{2}
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		15
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		264	792
+	one		264	1848
+	ptrail		264
+	gap		43560 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-sharp-2-">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 5, 0, true(), true(), $F, 8, 0, false(), true(), 2, 2, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='sharp{2}']">
+         <xsl:call-template name="command-sharp-2-">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol SIM2 ################ -->
+      <!-- IRP: {38.8k,400}<3,-3|3,-7>(6,-7,D:8,F:8,3,-60m)[D:0..255,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'sim2']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: SIM2
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		16
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		1200	1200
+	one		1200	2800
+	header		2400	2800
+	ptrail		1200
+	gap		60000 
+	frequency	38800
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-sim2">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='sim2']">
+         <xsl:call-template name="command-sim2">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Sony8 ################ -->
+      <!-- IRP: {40k,600}<1,-1|2,-1>(4,-1,F:8,^45m)[F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'sony8']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Sony8
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		8
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		600	600
+	one		1200	600
+	header		2400	600
+	gap		45000 
+	frequency	40000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-sony8">
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='sony8']">
+         <xsl:call-template name="command-sony8">
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Sony12 ################ -->
+      <!-- IRP: {40k,600}<1,-1|2,-1>(4,-1,F:7,D:5,^45m)*[D:0..31,F:0..127] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'sony12']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Sony12
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		12
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		600	600
+	one		1200	600
+	header		2400	600
+	gap		45000 
+	frequency	40000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-sony12">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $F, 7, 0, false(), true(), $D, 5, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='sony12']">
+         <xsl:call-template name="command-sony12">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Sony15 ################ -->
+      <!-- IRP: {40k,600}<1,-1|2,-1>(4,-1,F:7,D:8,^45m)*[D:0..255,F:0..127] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'sony15']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Sony15
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		15
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		600	600
+	one		1200	600
+	header		2400	600
+	gap		45000 
+	frequency	40000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-sony15">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $F, 7, 0, false(), true(), $D, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='sony15']">
+         <xsl:call-template name="command-sony15">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Sony20 ################ -->
+      <!-- IRP: {40k,600}<1,-1|2,-1>(4,-1,F:7,D:5,S:8,^45m)*[D:0..31,S:0..255,F:0..127] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'sony20']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Sony20
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		20
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		600	600
+	one		1200	600
+	header		2400	600
+	gap		45000 
+	frequency	40000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-sony20">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $F, 7, 0, false(), true(), $D, 5, 0, false(), true(), $S, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='sony20']">
+         <xsl:call-template name="command-sony20">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol StreamZap ################ -->
+      <!-- IRP: {36k,msb,889}<1,-1|-1,1>(1,~F:1:6,T:1,D:6,F:6,^114m)*[D:0..63,F:0..63,T:0..1] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'streamzap']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: StreamZap
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		14
+	flags		RC5|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		889	889
+	one		889	889
+	plead		889
+	gap		114000 
+	frequency	36000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-streamzap">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(true(), false(), $F, 1, 6, false(), false(), $T, 1, 0, false(), false(), $D, 6, 0, false(), false(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='streamzap']">
+         <xsl:call-template name="command-streamzap">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol StreamZap-57 ################ -->
+      <!-- IRP: {57k,msb,889}<1,-1|-1,1>(1,~F:1:6,T:1,D:6,F:6,^114m)*[D:0..63,F:0..63,T:0..1] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'streamzap-57']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: StreamZap-57
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		14
+	flags		RC5|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		889	889
+	one		889	889
+	plead		889
+	gap		114000 
+	frequency	57000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-streamzap-57">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(true(), false(), $F, 1, 6, false(), false(), $T, 1, 0, false(), false(), $D, 6, 0, false(), false(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='streamzap-57']">
+         <xsl:call-template name="command-streamzap-57">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Sunfire ################ -->
+      <!-- IRP: {38k,560,msb}<1,-1|3,-1>(16,-8,D:4,F:8,~D:4,~F:8,-32)*[D:0..15,F:0..255] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'sunfire']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Sunfire
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		24
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		560	560
+	one		1680	560
+	header		8960	4480
+	gap		17920 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-sunfire">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $D, 4, 0, false(), false(), $F, 8, 0, true(), false(), $D, 4, 0, true(), false(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='sunfire']">
+         <xsl:call-template name="command-sunfire">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol TDC-38 ################ -->
+      <!-- IRP: {38k,315,msb}<-1,1|1,-1>(1:1,D:5,S:5,F:7,-89m)*[D:0..31,S:0..31,F:0..127] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'tdc-38']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: TDC-38
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		18
+	flags		RC5
+	eps		30
+	aeps		100
+	zero		315	315
+	one		315	315
+	gap		89000 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-tdc-38">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), 1, 1, 0, false(), false(), $D, 5, 0, false(), false(), $S, 5, 0, false(), false(), $F, 7, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='tdc-38']">
+         <xsl:call-template name="command-tdc-38">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol TDC-56 ################ -->
+      <!-- IRP: {56.3k,213,msb}<-1,1|1,-1>(1:1,D:5,S:5,F:7,-89m)*[D:0..31,S:0..31,F:0..127] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'tdc-56']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: TDC-56
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		18
+	flags		RC5
+	eps		30
+	aeps		100
+	zero		213	213
+	one		213	213
+	gap		89000 
+	frequency	56300
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-tdc-56">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), 1, 1, 0, false(), false(), $D, 5, 0, false(), false(), $S, 5, 0, false(), false(), $F, 7, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='tdc-56']">
+         <xsl:call-template name="command-tdc-56">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Thomson ################ -->
+      <!-- IRP: {33k,500}<1,-4|1,-9>((D:4,T:1,D:1:4,F:6,1,^80m)*,T=1-T)[D:0..31,F:0..63,T@:0..1=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'thomson']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Thomson
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		12
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		500	2000
+	one		500	4500
+	ptrail		500
+	gap		80000
+	toggle_bit	5 
+	frequency	33000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-thomson">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 4, 0, false(), true(), $T, 1, 0, false(), true(), $D, 1, 4, false(), true(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='thomson']">
+         <xsl:call-template name="command-thomson">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='thomson' and girr:parameters/girr:parameter[@name='T']]">
+         <xsl:call-template name="command-thomson">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Thomson7 ################ -->
+      <!-- IRP: {33k,500}<1,-4|1,-9>((D:4,T:1,F:7,1,^80m)*,T=1-T)[D:0..15,F:0..127,T@:0..1=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'thomson7']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Thomson7
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		12
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		500	2000
+	one		500	4500
+	ptrail		500
+	gap		80000
+	toggle_bit	5 
+	frequency	33000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-thomson7">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 4, 0, false(), true(), $T, 1, 0, false(), true(), $F, 7, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='thomson7']">
+         <xsl:call-template name="command-thomson7">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='thomson7' and girr:parameters/girr:parameter[@name='T']]">
+         <xsl:call-template name="command-thomson7">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Tivo ################ -->
+      <!-- IRP: {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,U:4,~F:4:4,1,-78,(16,-4,1,-173)*)[D:133..133=133,S:48..48=48,F:0..255,U:0..15] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'tivo']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Tivo
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		32
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		564	564
+	one		564	1692
+	header		9024	4512
+	ptrail		564
+	repeat		9024	2256
+	gap		43992 
+	frequency	38400
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-tivo">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:param name="U"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $F, 8, 0, false(), true(), $U, 4, 0, true(), true(), $F, 4, 4)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='tivo']">
+         <xsl:call-template name="command-tivo">
+            <xsl:with-param name="D" select="133"/>
+            <xsl:with-param name="S" select="48"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="U"
+                            select="number(girr:parameters/girr:parameter[@name='U']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='tivo' and girr:parameters/girr:parameter[@name='D'] and girr:parameters/girr:parameter[@name='S']]">
+         <xsl:call-template name="command-tivo">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="U"
+                            select="number(girr:parameters/girr:parameter[@name='U']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Velleman ################ -->
+      <!-- IRP: {38k,msb}<700,-5060|700,-7590>(1:1,T:1,D:3,F:6,1,-55m)*[D:0..7,F:0..31,T@:0..1=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'velleman']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Velleman
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		11
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		700	5060
+	one		700	7590
+	ptrail		1
+	gap		55000
+	toggle_bit	2 
+	frequency	38000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-velleman">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), 1, 1, 0, false(), false(), $T, 1, 0, false(), false(), $D, 3, 0, false(), false(), $F, 6, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='velleman']">
+         <xsl:call-template name="command-velleman">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='velleman' and girr:parameters/girr:parameter[@name='T']]">
+         <xsl:call-template name="command-velleman">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol Viewstar ################ -->
+      <!-- IRP: {50.5k,337}<1,-8|1,-5>(~F:5,1,-17)*[F:0..31] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'viewstar']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: Viewstar
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		5
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		337	2696
+	one		337	1685
+	ptrail		337
+	gap		5729 
+	frequency	50500
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-viewstar">
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(true(), true(), $F, 5, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='viewstar']">
+         <xsl:call-template name="command-viewstar">
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol X10 ################ -->
+      <!-- IRP: {40.8k,565}<2,-12|7,-7>(7,-7,F:5,~F:5,21,-7)*[F:0..31] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'x10']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: X10
+	name		</xsl:text>
+         <xsl:value-of select="../@name"/>
+         <xsl:text>
+	bits		10
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		1130	6780
+	one		3955	3955
+	header		3955	3955
+	ptrail		11865
+	gap		3955 
+	frequency	40800
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-x10">
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="@name"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $F, 5, 0, true(), true(), $F, 5, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='x10']">
+         <xsl:call-template name="command-x10">
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+   </xsl:stylesheet>
 </exportformats:exportformat>
