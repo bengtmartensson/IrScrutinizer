@@ -104,7 +104,7 @@ public class IrpMasterBean extends javax.swing.JPanel {
                 mid.append(doParameter(params, param));
             }
 
-            StringBuilder str = new StringBuilder(protocolName);
+            StringBuilder str = new StringBuilder(protocolName.replace(" ", "-"));
             str.append("_").append(mid).append(tail);
 
             return str.toString();
