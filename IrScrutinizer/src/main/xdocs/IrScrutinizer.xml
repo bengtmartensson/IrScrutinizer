@@ -301,7 +301,6 @@ people may like to delete the properties file too, see <a href="#Properties">pro
 to run on all modern, 64-bit x86 Linux distrubutions. Just download
     <a href="http://www.harctoolbox.org/downloads/IrScrutinizer-x86_64.AppImage">IrScrutinizer-x86_64.AppImage</a>,
     make executable, and double click (alternativelly, start from the command line). Make sure that the current Java is installed.</p>
-    </p>
 
     <section>
         <title>Serial device access</title>
