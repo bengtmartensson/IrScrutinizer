@@ -135,7 +135,9 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                         times[2 * i] = timing.durations[index][0];
                         times[2 * i + 1] = timing.durations[index][1];
                     }
-                    IrSignal irSignal = new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
+                    IrSignal irSignal = timing.repetitions <= 1
+                            ? new IrSignal(times, times.length / 2, 0, 1000 * timing.frequency)
+                            : new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
                     return new Command(name, null, irSignal);
             }
         }
