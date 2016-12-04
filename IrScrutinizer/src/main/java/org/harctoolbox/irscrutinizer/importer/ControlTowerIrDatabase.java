@@ -191,7 +191,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
 
     private Map<String, String> getMap(String urlFragment, String keyName, String valueName) throws IOException {
         JsonArray array = getJsonArray(urlFragment);
-        Map<String,String> map = new HashMap<>(16);
+        Map<String,String> map = new HashMap<>(array.size());
         for (JsonValue val : array) {
             JsonObject obj = val.asObject();
             map.put(obj.get(keyName).asString(), obj.get(valueName).asString());
@@ -355,7 +355,6 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         Importer.setProperties(props);
         try {
             ControlTowerIrDatabase gcdb = new ControlTowerIrDatabase(args[0], args[1], true);
-            //ControlTowerIrDatabase gcdb = new ControlTowerIrDatabase("6G7pBwnQwUCSg5JNPRtcQ", true);
             //System.out.println(gcdb.getTypes());
             //System.out.println(gcdb.getManufacturers());
             System.out.println(gcdb.getDeviceTypes("Sony"));
