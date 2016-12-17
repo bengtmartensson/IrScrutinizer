@@ -54,9 +54,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
             cmlImporter.load(args[0]);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(CmlImporter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(CmlImporter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException | IrpMasterException ex) {
+        } catch (IOException | ParseException | IrpMasterException ex) {
             Logger.getLogger(CmlImporter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -71,11 +69,6 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
         super();
     }
 
-    //@Override
-    //public void load(Reader reader, String origin) throws IOException, FileNotFoundException, ParseException, IrpMasterException {
-    //    dumbLoad(reader, origin);
-    //}
-
     @Override
     public void load(Reader reader, String origin) throws IOException, ParseException {
         throw new UnsupportedOperationException("Not supported.");
@@ -87,11 +80,6 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
             load(fileInputStream, origin, charsetName);
         }
     }
-
-    //@Override
-    //public void load(File file, String origin) throws IOException, ParseException, IrpMasterException {
-    //    load(new InputStreamReader(new FileInputStream(file), IrpUtils.dumbCharset), origin);
-    //}
 
     @Override
     public void load(InputStream reader, String origin, String charsetName) throws IOException, ParseException {
@@ -179,13 +167,8 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
         int repeatLength = byte2unsigned(x[14]) + 256 * byte2unsigned(x[15]);
 
         String commandName = getString(inputStream, 21);
-        if (noTimings == 0) {
-            //out.println("error");
-            //out.println("[" + freq + "]");
-            //out.println();
-            //throw new ErroneousDataException("In remote " + remoteName + ", command " + commandName + ", noTimings = 0");
+        if (noTimings == 0)
             return null;
-        }
 
         byte[][] timingData = new byte[noTimings][3];
         for (int i = 0; i < noTimings; i++) {
@@ -244,8 +227,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
     @Override
     public String[][] getFileExtensions() {
         return new String[][]{
-            new String[] {"CML files (*.cml)", "cml" },
-            new String[] {"Zipped files (*.zip)", "zip" }
+            new String[] {"CML files (*.cml)", "cml" }
         };
     }
 
