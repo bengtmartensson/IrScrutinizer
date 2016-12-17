@@ -43,7 +43,9 @@ public abstract class ReaderImporter extends FileImporter {
 
     @Override
     public void load(File file, String origin, String charsetName) throws IOException, ParseException {
-        load(new InputStreamReader(new FileInputStream(file), charsetName), origin);
+        try (InputStream inputStream = new FileInputStream(file)) {
+            load(inputStream, origin, charsetName);
+        }
     }
 
     public void load(String charsetName) throws IOException, ParseException, IrpMasterException {
@@ -51,22 +53,29 @@ public abstract class ReaderImporter extends FileImporter {
     }
 
     public void load(InputStream inputStream, String origin, String charsetName) throws IOException, ParseException {
-        load(new InputStreamReader(inputStream, charsetName), origin);
+        try (Reader reader = new InputStreamReader(inputStream, charsetName)) {
+            load(reader, origin);
+        }
+    }
+
+    private void loadURL(String urlOrFilename, String charsetName) throws MalformedURLException, IOException, ParseException {
+        URL url = new URL(urlOrFilename);
+        URLConnection urlConnection = url.openConnection();
+        try (InputStream inputStream = urlConnection.getInputStream()) {
+            load(inputStream, urlOrFilename, charsetName);
+        }
     }
 
     public void load(String payload, String origin, String charsetName) throws IOException, ParseException, IrpMasterException {
-        //load(new StringReader(payload), origin);
         load(new ByteArrayInputStream(payload.getBytes(charsetName)), origin, charsetName);
     }
 
     public void load(String urlOrFilename, boolean zip, String charsetName) throws IOException, ParseException {
         if (urlOrFilename == null || urlOrFilename.isEmpty())
             throw new IOException("Empty file name/URL");
+
         try {
-            URL url = new URL(urlOrFilename);
-            URLConnection urlConnection = url.openConnection();
-            InputStream inputStream = urlConnection.getInputStream();
-            load(inputStream, urlOrFilename, charsetName);
+           loadURL(urlOrFilename, charsetName);
         } catch (MalformedURLException ex) {
             if (zip)
                 possiblyZipLoad(new File(urlOrFilename), charsetName);
@@ -78,41 +87,4 @@ public abstract class ReaderImporter extends FileImporter {
     public void load(String urlOrFilename, String charsetName) throws IOException, ParseException, IrpMasterException {
         load(urlOrFilename, false, charsetName);
     }
-
-    //public final void possiblyZipLoad(String urlOrFilename) throws IOException, ParseException {
-    //    load(urlOrFilename, true);
-    //}
-
-    /*public boolean loadFileSelector(Component component, String title, String defaultDir) throws IOException, ParseException {
-        File file = SelectFile.selectFile(component, title, defaultDir, false, false,
-            canImportDirectories() ? JFileChooser.FILES_AND_DIRECTORIES : JFileChooser.FILES_ONLY, getFileExtensions());
-        if (file == null)
-            return false;
-        load(file);
-        return true;
-    }
-
-    protected void sillyLoad(Reader reader, String origin) throws FileNotFoundException, IOException, ParseException {
-        FileOutputStream out = null;
-        try {
-            File file = File.createTempFile(Version.appName + origin, null);
-            out = new FileOutputStream(file);
-            while (true) {
-                int c = reader.read(); // not written to be efficient...
-                if (c == -1)
-                    break;
-                out.write(c);
-            }
-            load(file);
-        } finally {
-            if (out != null)
-                out.close();
-        }
-    }
-
-    public boolean canImportDirectories() {
-        return false;
-    }
-
-    public abstract String[][] getFileExtensions();*/
 }
