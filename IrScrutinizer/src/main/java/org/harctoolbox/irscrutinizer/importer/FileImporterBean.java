@@ -316,8 +316,15 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
 
     private void loadFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFileButtonActionPerformed
         // If filename/URL is empty, fire up files selector instead of complaining
-        if (filenameTextField.getText().isEmpty())
+        if (filenameTextField.getText().isEmpty()) {
             selectButtonActionPerformed(evt);
+            try {
+                // without this, the cursor change in importUrl
+                // does not take effect. Wish I know why...
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+            }
+        }
 
         importUrl(filenameTextField.getText().trim());
     }//GEN-LAST:event_loadFileButtonActionPerformed
