@@ -147,6 +147,7 @@ public abstract class Importer {
         return totalStatus;
     }
 
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public ArrayList<Command> getCommands() {
         return commands;
     }
@@ -164,6 +165,7 @@ public abstract class Importer {
         return new ModulatedIrSequence(array);
     }
 
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public Map<String,Command> getCommandIndex() {
         return commandIndex;
     }

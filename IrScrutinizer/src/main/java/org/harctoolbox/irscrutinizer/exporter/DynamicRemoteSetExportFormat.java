@@ -244,6 +244,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         private String outputFile = null;
 
         @Parameter(arity = 1, description = "Girr file to be transformed")
+        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
         private List<String> parameters = new ArrayList<>(4);
     }
 }

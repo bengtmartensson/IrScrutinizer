@@ -126,6 +126,7 @@ public class IrPlotter extends HarcPanel {
      * @param noRepeats
      * @param repeatBursts
      */
+    @SuppressWarnings("AssignmentToCollectionOrArrayFieldFromParameter")
     private void plot(int[] irdata, int noIntroBursts, int noRepeatBursts, int noRepeats, double frequency) {
         this.noIntroBursts = noIntroBursts;
         this.noRepeatBursts = noRepeatBursts;

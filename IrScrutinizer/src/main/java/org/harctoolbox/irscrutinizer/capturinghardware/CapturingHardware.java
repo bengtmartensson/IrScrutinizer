@@ -113,6 +113,7 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> imp
     }
 
     @Override
+    @SuppressWarnings("NoopMethodInAbstractClass")
     public void setDebug(int debug) {
     }
 

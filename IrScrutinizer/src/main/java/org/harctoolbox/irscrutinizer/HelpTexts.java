@@ -74,6 +74,7 @@ class HelpTexts {
     private static final String importCharsetHelp
             = "The character set used for the import can be selected as Options -> Import options -> Character set.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String scrutinizeSignalHelp = "This panel is devoted to the analysis of a single IR signal. "
             + "The signal is either read from hardware using the \"Capture\" button (requires that "
             + "the capturing hardware has been set on the \"Capturing Hardware\" pane), imported "
@@ -91,6 +92,7 @@ class HelpTexts {
             + "In rare cases, transforming the signal between different formats may introduce "
             + "some rounding errors causing decoding to fail.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String scrutinizeRemoteHelp
             = "This panel is devoted to the capturing/import/editing of a collection of IR signals, called \"a remote\". The panel contains two sub-panels: for parametric signals and for non-parametric, \"raw\", signals.\n\n"
             + "A \"parametric\" signal is determined by its protocol name, and the values of the protocol's parameters. A \"raw\" signal is determined by its timing pattern, and its modulation frequency. It may have one or many decodes, or none. Nevertheless, by definition, a raw signal is determined by its timing, not the decodes.\n\n"
@@ -100,41 +102,48 @@ class HelpTexts {
             + "The export button exports the content of the currently selected table (raw or parameterized) according to the currently selected export format.\n\n"
             + "The menu entry Actions -> Enter test signal (or its accelerator, the F9 key) enters a test signal, either as parametric signal, or as a raw signal";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String generateHelp
             = "In the upper part of this pane, an IR protocol is selected, identified by name, and the parameters D (\"device\", in almost all protocols), S (\"sub-device\", not in all protocols), F (\"function\", also called command number or OBC, present in almost all protocols), as well as T, \"toggle\" (in general 0 or 1, only in a few protocols). These number can be entered as decimal numbers, or, by prepending \"0x\", as hexadecimal numbers.\n\n"
             + "By pressing \"Generate\", the signal is computed, and the middle window is filled with its textual representation, in the form selected by Options -> Output Text Format.\n\n"
             + "The Export button initiates an export to a file format selected by the Export pane. The three lower buttons transfer the signal(s) to the scrutinize signal panel, the raw remote table, or the parameterized panel.\n\n"
             + "For the export and the transfer to the \"scrutinize remote\" tables, not only a single parameter value can be selected, but whole sets. The complete syntax and semantics is given in the IrpMaster documentation. Here we just mention that e.g. 12:34 means all numbers between 12 and 34, and * denotes all possible values.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importGlobalCacheHelp
             = "To use the Global Caché data base, an API key has be be entered. A such can be obtained by logging in to http://irdatabase.globalcache.com from a Facebook, Google, or Yahoo account.\n\n"
             + "After pressing the \"APIKey\" button, the API key is entered in the pop-up window. It is subsequently saved to the program's properties.\n\n"
             + "To use, select, in order, a manufacturer, a device type, and a setup code, the latter possibly by trial-and-error.\n\n"
             + "When pressing the \"Load\" button, " + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importControlTowerHelp
             = "The support for the Control Tower Data base is limited. It can be used for browsing the data base "
             + "for devices and the contained commands, but it cannot retreive the very codes of the commands. "
             + "For this, access http://irdb.globalcache.com, login there, and have the codes emailed. "
             + "The received email can be parsed by Import -> Raw; use Name col. = 1 and Raw signal col. = 3 (or 2), Field separator \", (comma)\".";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importIrdbHelp
             = "To use the IRDB data base, select, in order, a manufacturer, a device type, and a protocol/parameter combination, the latter possibly by trial-and-error.\n\n"
             + "Pressing the \"Load all\" button transfers all present protocol/parameters combinations to the tree.\n\n"
             + "When pressing the \"Load\" button, " + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importGirrHelp
             = "Girr is the native format of IrScrutinizer.\n\n"
             + fileUrlImportHelp + "\n\n"
             + treeHelpReaderImporterIntro
             + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importIrTransHelp
             = "IrTrans' configuration files can be imported here.\n\n"
             + fileUrlImportHelp + "\n\n"
             + treeHelpReaderImporterIntro
             + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importLircHelp
             = "LIRC files can be imported here, even directory hierarchies of LIRC files.\n\n"
             + importCharsetHelp + "\n\n"
@@ -142,6 +151,7 @@ class HelpTexts {
             + treeHelpReaderImporterIntro
             + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importRemoteMasterHelp
             = "The JP1 community has a large data base of parametric IR "
             + "commands. IrScrutinizer has support for importing RMDU files for "
@@ -158,6 +168,7 @@ class HelpTexts {
             + treeHelpReaderImporterIntro
             + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importProntoClassicHelp
             = "Many Pronto CCF files are available in Internet, in particular by RemoteCentral. "
             + "IrScrutinizer can read in these files to its import tree, even "
@@ -165,6 +176,7 @@ class HelpTexts {
             + fileImportHelp + "\n\n"
             + treeHelpFileImporterIntro + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importCmlHelp
             = "Many CML files are available in Internet, in particular by RemoteCentral. "
             + "Particularly noteworthy is the \"megalist\", http://files.remotecentral.com/collection/66-1/index.html. "
@@ -173,6 +185,7 @@ class HelpTexts {
             + fileImportHelp + "\n\n"
             + treeHelpFileImporterIntro + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importCommandFusionHelp
             = "The native format for CommandFusion equipment (for example, their freely available IR Learner) "
             + "is a Json based text format, having the file extension \".cfir\". "
@@ -181,6 +194,7 @@ class HelpTexts {
             + treeHelpReaderImporterIntro
             + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importIctHelp
             = "The ICT format, introduced by Kevin Timmerman's  IrScope, contains one or many IR signals, "
             + "optionally with names.\n\n"
@@ -188,6 +202,7 @@ class HelpTexts {
             + treeHelpReaderImporterIntro
             + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importMode2Help
             = "The mode2 \"format\" just consists of interleaved mark and space lines. It is output  by the Lirc \"mode2\" program."
             + "\n\n"
@@ -195,6 +210,7 @@ class HelpTexts {
             + treeHelpReaderImporterIntro
             + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importProntoProfessionalHelp
             = "Pronto Professional XCF files are found for example at RemoteCentral. "
             + "IrScrutinizer can read in these files to its import tree, even "
@@ -202,6 +218,7 @@ class HelpTexts {
             + fileImportHelp + "\n\n"
             + treeHelpFileImporterIntro + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importTextRawHelp
             = "The sub-pane allows for the parsing of text files separated by a certain "
             + "characters, like commas, semicolons, or tabs. The separating characters is "
@@ -213,6 +230,7 @@ class HelpTexts {
             + fileImportHelp + "\n\n"
             + treeHelpFileImporterIntro + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importTextRawLineBasedHelp
             = "This pane tries to interpret a line-based file as a number of named IR commands, using heuristics.\n\n"
             + importCharsetHelp + "\n\n"
@@ -220,6 +238,7 @@ class HelpTexts {
             + treeHelpReaderImporterIntro
             + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importTextParametrizedHelp
             = "The sub-pane allows for the parsing of text files separated by a certain "
             + "characters, like commas, semicolons, or tabs. The separating characters is "
@@ -231,6 +250,7 @@ class HelpTexts {
             + fileImportHelp + "\n\n"
             + treeHelpFileImporterIntro + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String importWaveHelp
             = "The pane imports and analyzes wave files, considered to represent IR "
             + "signals. The outcome of the analysis (sample frequency, sample size, the number "
@@ -239,6 +259,7 @@ class HelpTexts {
             + fileImportHelp + "\n\n"
             + treeHelpFileImporterIntro + treeHelp;
 
+    @SuppressWarnings("PackageVisibleField")
     public static String exportHelp
             = "Using this pane, export files can be generated,  allowing "
             + "other programs to use the computed results. Single signals (from the "
@@ -298,6 +319,7 @@ class HelpTexts {
             + "\n\n"
             + "Some export formats have some more parameters, see the help in these sub panes.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String exportGirrHelp
             = "A style sheet can be selected to be linked in into the exported Girr "
             + "file. The type of style file (presently xslt and css) can also be selected.\n\n"
@@ -306,14 +328,17 @@ class HelpTexts {
             + " individual flashes and gaps are enclosed into own XML elements. This can be "
             + " advantageous if generating XML mainly for the purpose of transforming to other formats.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String exportWaveHelp
             = "Parameters for the generated Wave export (except for the number of repeats) can be selected here.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String exportSendirHelp
             = "The Global Caché sendir format requires a module number and a connector "
             + "number. Also, there is a compressed format, that can be enabled by selecting "
             + "the compressed checkbox.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String exportProntoHelp
             = "A Pronto Classic export consists of a CCF file with the exported signals "
             + "associated to dummy buttons. The Pronto (Classic) model for which the export is "
@@ -321,6 +346,7 @@ class HelpTexts {
             + "inferred from the model, but can be changed here. The button size of the "
             + "generated buttons is also entered here.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String capturingHardwareHelp
             = "The sub-panes of this pane allow for the configuration of capturing hardware. Selecting a sub-pane also selects the associated hardware, if possible.\n\n"
             + "Unfortunately, by e.g. selecting non-existing hardware or such, there is a possibility to \"hang\" the program.\n\n"
@@ -328,28 +354,31 @@ class HelpTexts {
             + "Selected ports are stored in the properties, thereby remembered between sessions. So, for future sessions, only opening the preferred device is necessary.\n\n"
             + "Note that selecting a sub-pane selects the associated capturing hardware, to the extent possible.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String capturingIrToyHardwareHelp
             = "After connecting the IrToy to an USB port, select the virtual serial port in the combo box, pressing \"Refresh\" if necessary. \"Open\" the port thereafter.\n\n"
             + "The ending timeout is 1.4 seconds, and cannot be changed. This is not optimal for most IR signal captures.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String capturingIrWidgetHardwareHelp
             = "Plug the IrWidget it into the computer. Check that the operating system has assigned a port to it, and note which one it is. On Windows: open the device manager, and check that there is one \"USB Serial Port\" under Ports. Note the port number (e.g. COM8). On a Linux system, it likely shows up as a device like /dev/ttyUSB0. If the port does not show up, a suitable driver needs to be installed. If the correct port is already visible in the combo box, just press \"Open\". Otherwise, press \"Refresh\", which makes the program determine the available serial ports. Select the correct one. Press \"Open\". which should now remain \"pressed\". The port can be closed again by a repeated press, but there is not much reason to do so, unless another capturing hardware should be used, or the IrWidget should be used from another program.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String capturingGlobalCacheHardwareHelp
             = "IrScrutinizer automatically detects alive Global Caché units in the local area network, using its AMX Beacon. However, this may take up to 60 seconds, and is not implemented in very old firmware. Using the \"Add\" button, the IP address/name of older units can be entered manually.\n\n"
             + "The \"Browse\" button points the browser to the selected unit.\n\n"
             + "The reported type and firmware version verifies that the communication is working.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String capturingMode2HardwareHelp
             = "mode2 is a program from the LIRC distribution, that prints timing information in a simple text format to its standard-out. In theory, any program that prints information in that format can be used. The command line for the program with possible parameters is to be entered as command. With the Start button, a sub-process is started, running the given command line. The \"Stop\" button stops the sub-process — although sometimes this may not stop the started program.\n\n"
             + "Has been tested only on Linux, should however work on all systems.";
 
-    public static String capturingArduinoHardwareHelp
-            = "To use the Arduino with a non-demodulating receiver for IR capture. The sketch GirsLite (download source from https://github.com/bengtmartensson/AGirs) should be running on the Arduino.";
-
+    @SuppressWarnings("PackageVisibleField")
     public static String sendingHardwareHelp
             = "The sub-panes of this pane allows for the selection and configuration of the employed IR sending hardware. Note that selecting a sub-pane selects the associated hardware for sending, to the extent possible";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String sendingGlobalCacheHelp
             = "IrScrutinizer automatically detects alive Global Caché units in the local area "
             + "network, using the AMX Beacon. However, this may take "
@@ -362,6 +391,7 @@ class HelpTexts {
             + "The user can select one of the thus available Global Caché units, together with "
             + "IR-module and IR-port.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String sendingLircHelp
             = "To be fully usable for IrScrutinizer, the LIRC server has to be extended to be "
             + "able to cope with CCF signal not residing in the local data base, but sent from "
@@ -383,6 +413,7 @@ class HelpTexts {
             + "transmitting signals to \"LIRC\" now works.\n\n"
             + "Due to LIRC's peculiar form of API stop command, the \"Stop IR\" command presently does not work.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String sendingAudioHelp
             = "IrScrutinizer can generate IR signals as wave files, which can be"
             + "exported from the export pane, or sent to the local computers sound card. There"
@@ -403,6 +434,7 @@ class HelpTexts {
             + "IR-LEDs is a completely different use case. The recommended settings are:"
             + "48000kHz, 8bit, 1 channel, omit trailing gap.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String sendingIrTransHelp
             = "Enter IP name or -address and select an IR port (default \"intern\"). If the "
             + "Ethernet IRTrans contains an \"IR Database\" (which is a slightly misleading term "
@@ -412,27 +444,31 @@ class HelpTexts {
             + "command can now be sent by the \"Send\" button. (However, this "
             + "functionality is otherwise not used by IrScrutinizer.)";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String sendingIrToyHelp
             = "Using this pane, the IrToy (version 2) can be used to transmit IR signals.";
 
-    public static String sendingArduinoHelp
-            = "Using this pane, an Arduino equipped with a suitable IR Led can be used to "
-            + "transmit IR signals. The sketch GirsLite (download source from https://github.com/bengtmartensson/AGirs) should be running on the Arduino.";
-
+    @SuppressWarnings("PackageVisibleField")
     public static String sendingGenericSerialPortHelp
             = "This pane contains the controls for sending a signal in a general format to one of the serial ports available on the system.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String sendingGirsHelp = "TODO";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String sendingCommandFusionHelp = "With this pane, a CommandFusion Learner can be used for transmitting IR signals.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String capturingGirsHelp = "TODO";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String capturingCommandFusionHelp = "With this pane, a CommandFusion Learner can be used for capturing IR signals.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String capturingDevLircHelp = "Using this pane, the Lirc /dev/lirc device can be used to capture IR signals. "
             + "This requires a so-called mode2 device connected.";
 
+    @SuppressWarnings("PackageVisibleField")
     public static String sendingDevLircHelp = "Using this pane, the Lirc /dev/lirc device can be used to send IR signals. "
             + "This requires a so-called mode2 device connected, capable of sending.";
 

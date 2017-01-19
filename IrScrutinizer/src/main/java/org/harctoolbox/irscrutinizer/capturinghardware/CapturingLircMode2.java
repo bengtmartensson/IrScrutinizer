@@ -21,14 +21,13 @@ import java.io.IOException;
 import javax.swing.JPanel;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ir.LircMode2;
 import org.harctoolbox.irscrutinizer.Props;
 
 /**
  * This class does something interesting and useful. Or not...
  */
-public class CapturingLircMode2 extends CapturingHardware<LircMode2> implements ICapturingHardware<LircMode2>,IHarcHardware {
+public class CapturingLircMode2 extends CapturingHardware<LircMode2> implements ICapturingHardware<LircMode2> {
 
     private String commandName;
     private LircMode2 hardware;

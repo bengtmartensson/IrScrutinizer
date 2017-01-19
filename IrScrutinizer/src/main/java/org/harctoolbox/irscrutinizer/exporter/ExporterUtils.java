@@ -54,7 +54,7 @@ public class ExporterUtils {
         if (reverse)
             payload = reverse(payload, length);
         payload >>>= chop;
-        return payload & mkMask((long)length);
+        return payload & mkMask(length);
     }
 
     public static String processBitFields(boolean complement, boolean reverse, int data, int length, int chop) {
@@ -310,10 +310,6 @@ public class ExporterUtils {
 
     private static long mkMask(long length) {
         return (1L << length) - 1L;
-    }
-
-    private static long mkMask(int length) {
-        return (1 << length) - 1;
     }
 
     public static String twoDigitHex(int n) {

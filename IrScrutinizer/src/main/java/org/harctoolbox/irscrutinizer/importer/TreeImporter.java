@@ -38,7 +38,6 @@ import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 import org.harctoolbox.irscrutinizer.GuiMain;
 import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 
@@ -87,6 +86,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
      * @param guiUtils
      * @param restrictedMode
      */
+    @SuppressWarnings("LeakingThisInConstructor")
     public TreeImporter(GuiUtils guiUtils, boolean restrictedMode) {
         this.guiUtils = guiUtils;
         this.restrictedMode = restrictedMode;
@@ -508,11 +508,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         checkGuiMain();
         try {
             guiMain.transmit(command);
-        } catch (IrpMasterException | IOException | HardwareUnavailableException ex) {
-            guiUtils.error(ex);
-        } catch (NoSuchTransmitterException ex) {
-            guiUtils.error(ex);
-        } catch (HarcHardwareException ex) {
+        } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_transmitSelectedButtonActionPerformed

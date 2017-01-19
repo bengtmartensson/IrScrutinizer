@@ -91,7 +91,7 @@ public class IrpMasterBean extends javax.swing.JPanel {
         @Override
         public String format(String protocolName, Map<String, Long> parameters) {
             @SuppressWarnings("unchecked")
-            Map<String, Long> params = new HashMap<String, Long>(parameters);
+            Map<String, Long> params = new HashMap<>(parameters);
 
             StringBuilder tail = new StringBuilder(64);
             tail.append(doParameter(params, "D"));

@@ -80,6 +80,7 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
         }
     };
 
+    @SuppressWarnings("OverridableMethodCallInConstructor")
     public FileImporterBean(GuiUtils guiUtils, Props properties, T importer) {
         this.guiUtils = guiUtils;
         this.importer = importer;

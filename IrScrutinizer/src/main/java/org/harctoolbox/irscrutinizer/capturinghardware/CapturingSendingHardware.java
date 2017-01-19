@@ -31,7 +31,7 @@ import org.harctoolbox.harchardware.ir.ICapture;
 import org.harctoolbox.irscrutinizer.Props;
 import org.harctoolbox.irscrutinizer.sendinghardware.SendingHardware;
 
-public class CapturingSendingHardware <T extends ICapture & IHarcHardware> extends CapturingHardware<T> implements ICapturingHardware<T>,IHarcHardware {
+public class CapturingSendingHardware <T extends ICapture & IHarcHardware> extends CapturingHardware<T> implements ICapturingHardware<T> {
 
     private final SendingHardware<?> sendingHardware;
     private final CapturingSendingBean capturingSendingBean;

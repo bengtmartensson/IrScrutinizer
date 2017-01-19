@@ -37,7 +37,7 @@ import org.harctoolbox.irscrutinizer.Props;
  */
 
 // This code sucks, but less than before.
-public class CapturingSerial <T extends ICapture & IHarcHardware> extends CapturingHardware<T> implements ICapturingHardware<T>,IHarcHardware {
+public class CapturingSerial <T extends ICapture & IHarcHardware> extends CapturingHardware<T> implements ICapturingHardware<T> {
 
     private SerialPortSimpleBean serialPortSimpleBean;
     private String portName = null;

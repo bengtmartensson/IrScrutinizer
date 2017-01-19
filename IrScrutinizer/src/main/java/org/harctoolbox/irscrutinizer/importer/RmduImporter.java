@@ -137,6 +137,7 @@ public class RmduImporter extends RemoteSetImporter implements Serializable, IRe
     /**
      * @return the parameters
      */
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public Map<String,String> getParameters() {
         return parameters;
     }
