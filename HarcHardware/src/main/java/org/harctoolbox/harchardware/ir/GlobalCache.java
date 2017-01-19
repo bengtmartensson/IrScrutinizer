@@ -614,6 +614,7 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
         this.compressed = compressed;
     }
 
+    @SuppressWarnings("SleepWhileHoldingLock")
     private synchronized String[] sendCommand(String cmd, int noLines, int delay, String expectedFirstLine) throws IOException {
         if (verbose)
             System.err.println("Sending command " + cmd + " to GlobalCache (" + hostIp + ")");

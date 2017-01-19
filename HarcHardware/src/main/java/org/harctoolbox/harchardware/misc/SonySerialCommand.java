@@ -56,6 +56,7 @@ public class SonySerialCommand {
     }
     public static void main(String[] args) {
         boolean useGlobalCache = true;
+        @SuppressWarnings("UnusedAssignment")
         IBytesCommand port = null;
 
         if (useGlobalCache) {

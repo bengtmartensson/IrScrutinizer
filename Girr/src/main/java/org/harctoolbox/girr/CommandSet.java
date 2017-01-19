@@ -106,6 +106,7 @@ public class CommandSet {
         this.protocol = protocol;
         this.parameters = parameters;
     }
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public Map<String, Command> getCommands() {
         return commands;
     }

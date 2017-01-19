@@ -70,6 +70,7 @@ public class AmxBeaconListener {
      * mainly for testing.
      * @param args
      */
+    @SuppressWarnings("SleepWhileInLoop")
     public static void main(String args[]) {
         switch (args.length) {
             case 0:
@@ -194,7 +195,7 @@ public class AmxBeaconListener {
 
     private synchronized void reap() {
         boolean reaped = false;
-        for (Entry<InetAddress, Node> kvp : new HashMap<InetAddress, Node>(nodes).entrySet()) {
+        for (Entry<InetAddress, Node> kvp : new HashMap<>(nodes).entrySet()) {
             //InetAddress addr = it.next();
             Node node = kvp.getValue();
             if (node.lastAliveDate.getTime() + reapAge < (new Date()).getTime()) {
@@ -338,6 +339,7 @@ public class AmxBeaconListener {
             return addr;
         }
 
+        @SuppressWarnings("ReturnOfCollectionOrArrayField")
         public Map<String,String> getTable() {
             return table;
         }
@@ -371,6 +373,7 @@ public class AmxBeaconListener {
         }
 
         @Override
+        @SuppressWarnings("SleepWhileInLoop")
         public void run() {
             boolean status = true;
             while (status) {

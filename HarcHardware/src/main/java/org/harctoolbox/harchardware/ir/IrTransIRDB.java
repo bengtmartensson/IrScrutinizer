@@ -110,6 +110,7 @@ public class IrTransIRDB extends IrTrans implements IRemoteCommandIrSender {
         super(hostname);
     }
 
+    @SuppressWarnings("SleepWhileInLoop")
     private String[] getTable(String str) throws IOException, NumberFormatException {
         if (verbose)
             System.err.println("Sending command `" + str + "0' to IrTrans");

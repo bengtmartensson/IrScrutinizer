@@ -266,6 +266,7 @@ public class Remote implements Serializable {
     /**
      * @return the commands
      */
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public Map<String, Command> getCommands() {
         return commands;
     }
@@ -273,6 +274,7 @@ public class Remote implements Serializable {
     /**
      * @return the applicationParameters
      */
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public Map<String, Map<String, String>> getApplicationParameters() {
         return applicationParameters;
     }

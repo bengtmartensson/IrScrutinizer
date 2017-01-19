@@ -204,6 +204,7 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
     }
 
 
+    @SuppressWarnings("SleepWhileInLoop")
     private void waitInitialSilence() {
         while (data.isEmpty() && timeleft(beginTimeout, currentStart) > 0) {
             try {
@@ -214,6 +215,7 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
         }
     }
 
+    @SuppressWarnings("SleepWhileInLoop")
     private void waitEndingSilence() {
         while (timeleft(endingTimeout, lastRead) > 0) {
             try {
@@ -224,6 +226,7 @@ public final class LircMode2 implements IHarcHardware, ICapture, IReceive  {
         }
     }
 
+    @SuppressWarnings("SleepWhileInLoop")
     private void waitMaxLengthOrEndingTimeout() {
       while (timeleft(captureMaxSize, currentStart) > 0 && timeleft(endingTimeout, lastRead) > 0)
             try {

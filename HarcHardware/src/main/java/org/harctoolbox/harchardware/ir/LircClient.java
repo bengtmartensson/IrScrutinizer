@@ -559,18 +559,21 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender, IIrSen
     @Parameters(commandDescription = "Send one commands many times")
     public final static class CommandSendStart {
         @Parameter(arity = 2, description = "remote command")
+        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
         private List<String> args = new ArrayList<>(2);
     }
 
     @Parameters(commandDescription = "Send one commands many times")
     public final static class CommandSendStop {
         @Parameter(arity = 2, description = "remote command")
+        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
         private List<String> args = new ArrayList<>(2);
     }
 
     @Parameters(commandDescription = "Inquire the known remotes, or the commands in a remote")
     public final static class CommandList {
         @Parameter(arity = 1, description = "[remote]")
+        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
         private List<String> remote = new ArrayList<>(1);
     }
 
@@ -581,10 +584,12 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender, IIrSen
     }
 
     @Parameters(commandDescription = "Simulate sending")
+    @SuppressWarnings("ClassMayBeInterface")
     public final static class CommandSimulate {
     }
 
     @Parameters(commandDescription = "Inquire version of lircd")
+    @SuppressWarnings("ClassMayBeInterface")
     public final static class CommandVersion {
     }
 

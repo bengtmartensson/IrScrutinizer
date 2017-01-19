@@ -188,6 +188,7 @@ public class IrTrans implements IHarcHardware, IRawIrSender, ITransmitter, IWeb 
     }
 
     // TODO: shorten the timeout if host does not respond
+    @SuppressWarnings("SleepWhileInLoop")
     protected String sendCommand(String cmd) throws IOException {
         if (verbose)
             System.err.println("Sending command `" + cmd + "' to IrTrans (tcp ascii)");
@@ -244,7 +245,7 @@ public class IrTrans implements IHarcHardware, IRawIrSender, ITransmitter, IWeb 
     }
 
     protected boolean sendCommandUdp(String cmd) throws IOException {
-        boolean success = false;
+        boolean success;
         if (verbose)
             System.err.println("Sending command `" + cmd + "' to IrTrans over UDP");
 

@@ -417,6 +417,7 @@ public class Command implements Serializable {
      * @return the parameters
      * @throws org.harctoolbox.IrpMaster.IrpMasterException
      */
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public Map<String, Long> getParameters() throws IrpMasterException {
         checkForParameters();
         return parameters;

@@ -106,6 +106,7 @@ public class AmxBeacon implements Serializable {
         }
 
         @Override
+        @SuppressWarnings("SleepWhileInLoop")
         public void run() {
             while (true) {
                 try {

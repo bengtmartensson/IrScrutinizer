@@ -225,6 +225,7 @@ public class IrWidget implements IHarcHardware, ICapture {
      * @throws IOException
      */
     @Override
+    @SuppressWarnings("SleepWhileInLoop")
     public ModulatedIrSequence capture() throws IOException {
         int bytesRead = 0;
         ModulatedIrSequence seq = null;

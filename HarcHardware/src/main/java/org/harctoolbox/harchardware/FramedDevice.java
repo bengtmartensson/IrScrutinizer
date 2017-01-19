@@ -72,6 +72,7 @@ public class FramedDevice {
         this(hardware, new Framer());
     }
 
+    @SuppressWarnings("SleepWhileInLoop")
     public String[] sendString(String[] cmds, int count, int returnLines, int delay, int waitForAnswer) throws IOException, HarcHardwareException {
         if (count < 1)
             throw new IllegalArgumentException("Count = " + count + " < 1; this is meaningless.");

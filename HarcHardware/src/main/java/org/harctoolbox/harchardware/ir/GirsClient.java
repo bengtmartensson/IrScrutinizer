@@ -242,6 +242,7 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
         return hardware.isValid() && version != null && modules != null && modules.contains("base");
     }
 
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public List<String> getModules() {
         return modules;
     }
@@ -283,6 +284,7 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
             modules = Arrays.asList(line.toLowerCase(Locale.US).split("\\s+"));
     }
 
+    @SuppressWarnings("SleepWhileInLoop")
     public void waitFor(String goal, String areUThere, int delay, int tries) throws IOException, HarcHardwareException {
         try {
             Thread.sleep(delay);

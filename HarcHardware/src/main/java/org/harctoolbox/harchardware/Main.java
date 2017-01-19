@@ -108,6 +108,7 @@ public class Main {
     }
 
 
+    @SuppressWarnings("SleepWhileInLoop")
     public static void main(String[] args) {
         argumentParser = new JCommander(commandLineArgs);
         argumentParser.setProgramName("HarcHardware");
@@ -389,6 +390,7 @@ public class Main {
         private boolean irtoy = false;
 
         @Parameter(description = "[parameters]")
+        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
         private ArrayList<String> parameters = new ArrayList<>(8);
     }
 }

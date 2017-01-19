@@ -62,7 +62,7 @@ public abstract class LocalSerialPort implements IHarcHardware {
      * @return ArrayList&lt;String&gt;
      * @throws IOException
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "ReturnOfCollectionOrArrayField"})
     public static ArrayList<String> getSerialPortNames(boolean useCached) throws IOException {
         if (useCached && cachedPortNames != null)
             return cachedPortNames;
