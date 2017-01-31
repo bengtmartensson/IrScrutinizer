@@ -204,7 +204,7 @@ void loop() {
         <xsl:text>L:
         sendRaw(</xsl:text>
         <xsl:apply-templates select="girr:raw[1]" mode="arg"/>
-        <xsl:value-of select="number(girr:raw[1]/@frequency) div 1000"/>
+        <xsl:value-of select="round(number(girr:raw[1]/@frequency) div 1000)"/>
         <xsl:text>U);
         break;
 </xsl:text>
