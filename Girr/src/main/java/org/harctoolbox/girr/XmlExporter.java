@@ -112,7 +112,7 @@ public class XmlExporter {
         if (createSchemaLocation) {
             root.setAttribute("xmlns:xsi", XmlExporter.w3cSchemaNamespace);
             root.setAttribute("xmlns", girrNamespace);
-            root.setAttribute("xsi:schemaLocation", girrSchemaLocationURL);
+            root.setAttribute("xsi:schemaLocation", girrNamespace + " " + girrSchemaLocationURL);
         }
         return document;
     }
