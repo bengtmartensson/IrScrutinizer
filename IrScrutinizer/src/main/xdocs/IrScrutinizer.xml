@@ -680,7 +680,9 @@ Infrared codes for over 2,000 different remotes from over 500 manufacturers".
 To use from IrScrutinizer, an API Key has be be retrieved. This can be done from
 a Facebook, Google, or Yahoo account. After pressing the "APIKey" button, the
 API key is entered in the pop-up window. It is subsequently saved to the
-program's properties. To use, select, in order, a manufacturer, a <a
+program's properties.
+To use, first select <code>Select me to load</code> to load the list of the manufacturers.
+Then select, in order, a manufacturer, a <a
 								    href="Glossary.html#DeviceType">device
 type</a>, and a <a href="Glossary.html#setupCode">setup code</a>, the latter possibly by
 trial-and-error.</p>
@@ -705,7 +707,8 @@ trial-and-error.</p>
 manufacturer-independent databases of infrared remote control codes on the web,
 and aspiring to become the most comprehensive and most accurate one."</p>
 
-<p>To use, select, in order, a manufacturer, a <a href="Glossary.html#DeviceType">device
+<p>To use, first select <code>Select me to load</code> to load the list of the manufacturers. Then select,
+in order, a manufacturer, a <a href="Glossary.html#DeviceType">device
 type</a>, and a <a href="Glossary.html#IrProtocol">protocol</a>/parameter
 combination, the latter possibly by trial-and-error.</p>
 
