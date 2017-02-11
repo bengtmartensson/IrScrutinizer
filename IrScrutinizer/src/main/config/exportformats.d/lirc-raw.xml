@@ -64,7 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- General case, raw codes -->
     <xsl:template match="girr:commandSet">
         <xsl:text>begin remote
-&#9;name&#9;</xsl:text><xsl:value-of select="../@name"/>
+&#9;name&#9;</xsl:text><xsl:value-of select="translate(../@name, ' ', '_')"/>
 <xsl:text>
 &#9;flags&#9;RAW_CODES
 &#9;eps&#9;30
@@ -84,7 +84,7 @@ end remote
 
     <xsl:template match="girr:command">
         <xsl:text>&#9;&#9;name </xsl:text>
-        <xsl:value-of select="@name"/>
+        <xsl:value-of select="translate(@name, ' ', '_')"/>
         <xsl:text>
 </xsl:text>
         <xsl:apply-templates select="girr:raw[1]"/>
