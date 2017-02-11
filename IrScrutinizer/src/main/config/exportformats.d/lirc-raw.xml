@@ -72,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 &#9;frequency&#9;</xsl:text><xsl:value-of select="//girr:command[1]/girr:raw/@frequency"/>
 <xsl:text>
 &#9;gap&#9;</xsl:text>
-<xsl:value-of select="//girr:command[1]/girr:raw/girr:repeat/girr:gap[position()=last()]"/>
+<xsl:value-of select="//girr:command[1]/girr:raw/*[position()=last()]/girr:gap[position()=last()]"/>
 <xsl:text>
 &#9;begin raw_codes
 </xsl:text>
