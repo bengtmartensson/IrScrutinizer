@@ -35,8 +35,9 @@ fi
 #    ARCH=i386
 #fi
 
-# Use a system supplied librxtxSerial.so if present (e.g. Fedora, "dnf install rxtx")
-# On Ubuntu 15, there appears to be nothing to use.
+# Use a system supplied librxtxSerial.so if present.
+# Fedora: dnf install rxtx
+# Ubunto >= 16: apt-get install librxtx-java
 if [ -f /usr/lib64/rxtx/librxtxSerial.so ] ; then
     LOAD_RXTX_PATH=-Djava.library.path=/usr/lib64/rxtx
 fi
