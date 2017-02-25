@@ -65,7 +65,7 @@
          <xsl:value-of select="//girr:command[1]/girr:raw/@frequency"/>
          <xsl:text>
 	gap		</xsl:text>
-         <xsl:value-of select="//girr:command[1]/girr:raw/girr:repeat/girr:gap[position()=last()]"/>
+         <xsl:value-of select="(//girr:command[1]/girr:raw/*/girr:gap[position()=last()])[1]"/>
          <xsl:text>
 	begin raw_codes
 </xsl:text>
