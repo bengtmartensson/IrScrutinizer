@@ -56,7 +56,7 @@ public class ExportFormatManager {
         if (!exportFormatFile.exists())
             throw new FileNotFoundException(exportFormatFile + " does not exist.");
 
-        exportFormats.putAll(DynamicRemoteSetExportFormat.parseExportFormats(exportFormatFile));
+        exportFormats.putAll(DynamicRemoteSetExportFormat.parseExportFormats(guiUtils, exportFormatFile));
     }
 
     public IExporterFactory get(String name) {

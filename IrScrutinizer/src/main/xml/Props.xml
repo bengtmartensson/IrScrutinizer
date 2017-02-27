@@ -64,7 +64,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="disregardRepeatMins" type="boolean" default='"false"' doc='Value of the "disregard repeat mins" parameter. See IrpMaster documentation for the semantic.'/>
     <property name="exportDir" type="string" default='System.getProperty("java.io.tmpdir") + File.separator + "exports"' doc='Directory to which to write exports.'/>
     <property name="defaultImportDir" type="string" default='"testfiles"' doc='Just the starting directory for file selectors.'/>
-    <property name="exportFormatFilePath" type="string" default='"exportformats.xml"' doc='Filename of a file consisting of export format descriptions.'/>
+    <property name="exportFormatFilePath" type="string" default='"exportformats.d"' doc='File or directory containing export format descriptions.'/>
     <property name="exportFormatName" type="string" default='"Girr"' doc='Name of currenty selected export file format' />
     <property name="globalCacheIpName" type="string" default='""' doc="IP Name or Address of GlobalCache to use (transmitting)."/>
     <property name="globalCacheModule" type="int" default='"2"' doc='Module number of Global Cache to use, see its documentation.'/>

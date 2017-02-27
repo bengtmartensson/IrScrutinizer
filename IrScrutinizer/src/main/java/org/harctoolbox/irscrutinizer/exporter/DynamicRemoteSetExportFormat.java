@@ -21,6 +21,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.IrpMaster.XmlUtils;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.girr.XmlExporter;
+import org.harctoolbox.guicomponents.GuiUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -52,7 +54,33 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     private static JCommander argumentParser;
     private static final CommandLineArgs commandLineArgs = new CommandLineArgs();
 
-    static Map<String, IExporterFactory> parseExportFormats(File file) throws ParserConfigurationException, SAXException, IOException {
+    static Map<String, IExporterFactory> parseExportFormats(GuiUtils guiUtils, File file) throws ParserConfigurationException, SAXException, IOException {
+        if (file.isDirectory()) {
+            Map<String, IExporterFactory> result = new HashMap<>(32);
+            File[] files = file.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(".xml");
+                }
+            });
+            for (File f : files) {
+                try {
+                    Map<String, IExporterFactory> map = parseExportFormats(guiUtils, f); // allow hierarchies
+                    result.putAll(map);
+                } catch (ParserConfigurationException | SAXException | IOException ex) {
+                    String message = "Export formats file \"" + f.getPath() + "\" could not be read, ignoring it. " + ex.getLocalizedMessage();
+                    if (guiUtils != null)
+                        guiUtils.warning(message);
+                    else
+                        System.err.println(message);
+                }
+            }
+            return result;
+        } else
+            return parseExportFormatsFile(file);
+    }
+
+    private static Map<String, IExporterFactory> parseExportFormatsFile(File file) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setNamespaceAware(true);
@@ -117,7 +145,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         XmlExporter.setDebug(true);
 
         try {
-            Map<String, IExporterFactory> exportFormats = parseExportFormats(configFile);
+            Map<String, IExporterFactory> exportFormats = parseExportFormats(null, configFile);
             //Schema schema = (SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)).newSchema(new URL("http://www.harctoolbox.org/schemas/exportformats.xsd"));
 
             IExporterFactory format = exportFormats.get(formatName);

@@ -46,6 +46,10 @@ public class SelectFile {
         return selectFile(parent, title, defaultdir, save, showHiddenFiles, JFileChooser.FILES_ONLY, new String[]{fileTypeDesc, extension});
     }
 
+    public static File selectFile(Component parent, String title, String defaultdir, boolean save, boolean showHiddenFiles, int mode, String fileTypeDesc, String extension) {
+        return selectFile(parent, title, defaultdir, save, showHiddenFiles, mode, new String[]{fileTypeDesc, extension});
+    }
+
     /**
      * Encapsulates a file selector. The finally selected direcory will be remembered, and used as initial direcory for subsequent invocations with the same title.
      *

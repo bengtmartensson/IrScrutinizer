@@ -45,7 +45,6 @@ Source: "..\..\native\Windows-x86\*"; DestDir: "{app}\Windows-x86"; Flags: ignor
 Source: "..\..\native\Windows-amd64\*"; DestDir: "{app}\Windows-amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "*.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "irscrutinizer.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: "exportformats.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "exportformats.d\*"; DestDir: "{app}\exportformats.d"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "contributed\*"; DestDir: "{app}\contributed"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "generated-documents\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: isreadme

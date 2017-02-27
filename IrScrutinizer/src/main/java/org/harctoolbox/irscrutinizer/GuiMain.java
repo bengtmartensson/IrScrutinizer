@@ -8189,12 +8189,12 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void exportFormatsEditMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportFormatsEditMenuItemActionPerformed
         guiUtils.open(new File(properties.mkPathAbsolute(properties.getExportFormatFilePath())));
-        guiUtils.warning("If editing the file, changes will not take effect before pressing reload.");
+        guiUtils.warning("If editing, changes will not take effect before reloading.");
     }//GEN-LAST:event_exportFormatsEditMenuItemActionPerformed
 
     private void exportFormatsSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportFormatsSelectMenuItemActionPerformed
         String oldDir = new File(properties.mkPathAbsolute(properties.getExportFormatFilePath())).getParent();
-        File f = SelectFile.selectFile(this, "Select export format file exports.xml", oldDir, false, false, "XML files (*.xml)", "xml");
+        File f = SelectFile.selectFile(this, "Select export format file or directory", oldDir, false, false, JFileChooser.FILES_AND_DIRECTORIES, "XML files (*.xml)", "xml");
         if (f == null || f.getAbsolutePath().equals(properties.mkPathAbsolute(properties.getExportFormatFilePath())))
             return;
 
