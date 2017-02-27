@@ -35,8 +35,8 @@ public class RepeatMarker {
         System.out.println((new RepeatMarker("\t7+   ")));
     }
 
-    int min = 1;
-    int max = 1;
+    private int min = 1;
+    private int max = 1;
 
     public RepeatMarker(String s) {
         String str = s.trim();
@@ -139,6 +139,20 @@ public class RepeatMarker {
                 : (min == max) ? Integer.toString(min)
                 : (max == Integer.MAX_VALUE) ? Integer.toString(min) + "+"
                 : "??";
+    }
+
+    /**
+     * @return the min
+     */
+    public int getMin() {
+        return min;
+    }
+
+    /**
+     * @return the max
+     */
+    public int getMax() {
+        return max;
     }
 
 }

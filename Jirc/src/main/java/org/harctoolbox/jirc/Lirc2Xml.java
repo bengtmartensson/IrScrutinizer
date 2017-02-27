@@ -53,7 +53,7 @@ final public class Lirc2Xml {
     static final String DEFAULT_EXPORTDIR = ".";
 
     private static JCommander argumentParser;
-    private static CommandLineArgs commandLineArgs = new CommandLineArgs();
+    private static final CommandLineArgs commandLineArgs = new CommandLineArgs();
 
     private static String basename(String s) {
         StringBuilder sb = new StringBuilder(s);
@@ -67,7 +67,7 @@ final public class Lirc2Xml {
     }
 
     private static void usage(int exitcode) {
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(1024);
         argumentParser.usage(str);
 
         (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
@@ -80,6 +80,7 @@ final public class Lirc2Xml {
      *
      * @param args Program arguments.
      */
+    @SuppressWarnings("ConvertToStringSwitch")
     public static void main(String[] args) {
         argumentParser = new JCommander(commandLineArgs);
         argumentParser.setProgramName("Lirc2Xml");
@@ -169,7 +170,7 @@ final public class Lirc2Xml {
                     commandLineArgs.generateCcf, commandLineArgs.generateParameters);
 
             OutputStream xmlStream;
-            String outFilename = null;
+            String outFilename;
             if (commandLineArgs.outputfile == null) {
                 String outputDirName = System.getenv("LIRC_XML_EXPORTDIR") != null
                         ? System.getenv("LIRC_XML_EXPORTDIR") : DEFAULT_EXPORTDIR;
@@ -239,6 +240,6 @@ final public class Lirc2Xml {
         @Parameter(names = {"-x", "--xslt"}, description = "Link to XSLT stylesheet")
                 String stylesheetUrl = null;
         @Parameter(description = "[configfile]")
-                ArrayList<String> configfile = new ArrayList<>();
+                ArrayList<String> configfile = new ArrayList<>(4);
     }
 }

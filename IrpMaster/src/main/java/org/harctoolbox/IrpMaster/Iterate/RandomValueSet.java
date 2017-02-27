@@ -27,7 +27,7 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 
 public class RandomValueSet extends ValueSet {
 
-    static Random rng;
+    private static Random rng;
     public static void initRng(int seed) {
         rng = seed > 0 ? new Random(seed) : new Random();
     }
@@ -36,9 +36,17 @@ public class RandomValueSet extends ValueSet {
         initRng((int) IrpUtils.invalid);
     }
 
-    long max;
-    int index; // How many time next() has been called.
-    int noRandoms;
+    /**
+     * @return the rng
+     */
+    public static Random getRng() {
+        return rng;
+    }
+
+    private final long max;
+    private int index; // How many time next() has been called.
+    private final int noRandoms;
+    
     public RandomValueSet(long min, long max, int noRandoms) {
         super(min);
 
@@ -70,11 +78,11 @@ public class RandomValueSet extends ValueSet {
             public Long next() {
                 if (!hasNext())
                     throw new NoSuchElementException();
-                if (rng == null)
+                if (getRng() == null)
                     throw new RuntimeException("Must call RandomValueSet.initRng() before using RandomValueSet");
 
                 index++;
-                current = rng.nextInt((int) max + 1);
+                current = getRng().nextInt((int) getMax() + 1);
 
                 return current;
             }
@@ -86,8 +94,30 @@ public class RandomValueSet extends ValueSet {
 
             @Override
             public boolean hasNext() {
-                return index < noRandoms;
+                return getIndex() < getNoRandoms();
             }
         };
+    }
+
+
+    /**
+     * @return the max
+     */
+    public long getMax() {
+        return max;
+    }
+
+    /**
+     * @return the index
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * @return the noRandoms
+     */
+    public int getNoRandoms() {
+        return noRandoms;
     }
 }

@@ -34,7 +34,7 @@ public class BitField extends PrimaryIrStreamItem {
     /**
      * Max length of a BitField in this implementation.
      */
-    public static final int maxWidth = Long.SIZE - 1; // = 63
+    private static final int maxWidth = Long.SIZE - 1; // = 63
 
     /**
      * Mainly for debugging and testing
@@ -51,7 +51,7 @@ public class BitField extends PrimaryIrStreamItem {
         IrpParser.bitfield_return r;
         try {
             r = parser.bitfield();
-            CommonTree AST = (CommonTree) r.getTree();
+            CommonTree AST = r.getTree();
             if (debug)
                 System.out.println(AST.toStringTree());
             return ASTTraverser.bitfield(env, AST);
@@ -92,18 +92,26 @@ public class BitField extends PrimaryIrStreamItem {
             System.out.println(bf.toString() + "\tint=" + bf.toLong() + "\tstring=" + bf.evaluateAsString());
     }
 
+    /**
+     * @return the maxWidth
+     */
+    public static int getMaxWidth() {
+        return maxWidth;
+    }
+
     private boolean complement;
-    boolean reverse;
-    boolean infinite;
-    long data;
-    int width = maxWidth;
-    int skip = 0;
-    long value;
+    private boolean reverse;
+    private boolean infinite;
+    private long data;
+    private int width = maxWidth;
+    private int skip = 0;
+    private long value;
 
     //private long evaluatePrimaryItem(String s, long deflt) {
     //    return (s == null || s.isEmpty()) ? deflt : Long.parseLong(s);
     //}
 
+    @SuppressWarnings("OverridableMethodCallInConstructor")
     public BitField(Protocol p, boolean complement, boolean reverse, boolean infinite, long data, long width, long skip) throws DomainViolationException {
         super(p);
         if (width > maxWidth)
@@ -124,7 +132,6 @@ public class BitField extends PrimaryIrStreamItem {
         compute();
         Debug.debugBitFields("new Bitfield: " + toString() + " = " + toLong());
     }
-
 
     @Override
     public final String toString() {
@@ -180,5 +187,41 @@ public class BitField extends PrimaryIrStreamItem {
     @Override
     public ArrayList<PrimitiveIrStreamItem> evaluate(BitSpec bitSpec) throws IncompatibleArgumentException, UnassignedException {
         throw new UnsupportedOperationException("This cannot happen.");
+    }
+
+
+    /**
+     * @return the complement
+     */
+    public boolean isComplement() {
+        return complement;
+    }
+
+    /**
+     * @return the reverse
+     */
+    public boolean isReverse() {
+        return reverse;
+    }
+
+    /**
+     * @return the data
+     */
+    public long getData() {
+        return data;
+    }
+
+    /**
+     * @return the skip
+     */
+    public int getSkip() {
+        return skip;
+    }
+
+    /**
+     * @return the value
+     */
+    public long getValue() {
+        return value;
     }
 }

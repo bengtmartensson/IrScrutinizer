@@ -100,7 +100,7 @@ public class IrSignal {
     protected double frequency;
 
     /** Duty cycle of the modulation. Between 0 and 1. Use -1 for not assigned. */
-    protected double dutyCycle = (double) IrpUtils.invalid;
+    protected double dutyCycle = IrpUtils.invalid;
     /**
      * Constructs an IrSignal from its arguments.
      * @param frequency
@@ -237,7 +237,7 @@ public class IrSignal {
         } else {
             int arg_i = offset;
             String protocolName = args[arg_i++];
-            LinkedHashMap<String, Long> parameters = new LinkedHashMap<>();
+            LinkedHashMap<String, Long> parameters = new LinkedHashMap<>(args.length);
 
             // Parse name = value assignments
             while (arg_i < args.length && !args[arg_i].isEmpty() && args[arg_i].contains("=")) {
@@ -567,7 +567,7 @@ public class IrSignal {
      * If frequency == 0, interpret as microseconds instead.
      */
     public void replaceZeros(int replacement) {
-        replaceZeros(frequency > 0 ?  replacement / frequency * IrpUtils.seconds2microseconds : (double) replacement);
+        replaceZeros(frequency > 0 ?  replacement / frequency * IrpUtils.seconds2microseconds : replacement);
     }
 
     /**

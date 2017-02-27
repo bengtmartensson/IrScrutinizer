@@ -25,12 +25,26 @@ import org.antlr.runtime.RecognitionException;
  */
 
 public class IrpParseException extends ParseException {
-    public int charPositionInLine = -1;
-    public int line = -1;
+    private int charPositionInLine = -1;
+    private int line = -1;
 
     public IrpParseException(RecognitionException ex) {
         super(ex);
         charPositionInLine = ex.charPositionInLine;
         line = ex.line;
+    }
+
+    /**
+     * @return the charPositionInLine
+     */
+    public int getCharPositionInLine() {
+        return charPositionInLine;
+    }
+
+    /**
+     * @return the line
+     */
+    public int getLine() {
+        return line;
     }
 }

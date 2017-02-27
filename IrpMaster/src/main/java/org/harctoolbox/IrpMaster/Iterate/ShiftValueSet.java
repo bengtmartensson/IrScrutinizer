@@ -20,13 +20,10 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 
-/**
- * This class ...
- */
 public class ShiftValueSet extends ValueSet {
 
-    long max;
-    int shift;
+    private final long max;
+    private final int shift;
 
     public ShiftValueSet(long min, long max, int shift) {
         super(min);
@@ -55,7 +52,7 @@ public class ShiftValueSet extends ValueSet {
                 if (current == IrpUtils.invalid)
                     current = min;
                 else
-                    current <<= shift;
+                    current <<= getShift();
 
                 return current;
             }
@@ -67,8 +64,22 @@ public class ShiftValueSet extends ValueSet {
 
             @Override
             public boolean hasNext() {
-                return current == IrpUtils.invalid || current << shift <= max;
+                return current == IrpUtils.invalid || current << getShift() <= getMax();
             }
         };
+    }
+
+    /**
+     * @return the max
+     */
+    public long getMax() {
+        return max;
+    }
+
+    /**
+     * @return the shift
+     */
+    public int getShift() {
+        return shift;
     }
 }

@@ -576,6 +576,7 @@ public class Wave {
         boolean versionRequested;
 
         @Parameter(description = "[parameters]")
+        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
         private ArrayList<String> parameters = new ArrayList<>(64);
     }
 }

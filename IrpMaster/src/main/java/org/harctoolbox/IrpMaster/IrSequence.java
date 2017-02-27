@@ -153,7 +153,7 @@ public class IrSequence implements Cloneable {
 
         data = new double[length];
         for (int i = 0; i < length; i++) {
-            data[i] = (double) idata[i];
+            data[i] = idata[i];
         }
     }
 
@@ -203,7 +203,7 @@ public class IrSequence implements Cloneable {
             }
             data = new double[index+1];
             for (int i = 0; i < index+1; i++)
-                data[i] = (double) tmplist[i];
+                data[i] = tmplist[i];
         }
     }
 
@@ -236,7 +236,7 @@ public class IrSequence implements Cloneable {
 
         data = new double[length];
         for (int i = 0; i < length; i++)
-            data[i] = (double) idata[i+offset];
+            data[i] = idata[i+offset];
     }
 
     /**
@@ -421,7 +421,7 @@ public class IrSequence implements Cloneable {
      * @return Array of IrSequences
      */
     public IrSequence[] chop(double threshold) {
-        ArrayList<IrSequence> arrayList = new ArrayList<>();
+        ArrayList<IrSequence> arrayList = new ArrayList<>(8);
         int beg = 0;
         for (int i = 1; i < data.length; i += 2) {
             if (data[i] >= threshold || i == data.length - 1) {
@@ -667,7 +667,7 @@ public class IrSequence implements Cloneable {
      * @return Printable string.
      */
     public String toPrintString(boolean alternatingSigns, boolean noSigns, String separator) {
-        StringBuilder s = new StringBuilder();
+        StringBuilder s = new StringBuilder(5 * data.length);
         if (alternatingSigns) {
             for (int i = 0; i < data.length; i++) {
                 int x = (int) Math.abs(Math.round(data[i]));
@@ -721,7 +721,7 @@ public class IrSequence implements Cloneable {
     public String toString() {
         if (data.length == 0)
             return "[]";
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(5 * data.length);
         result.append("[").append(Math.round(data[0]));
         for (int i = 1; i < data.length; i++)
             result.append(",").append(Math.round(data[i]));
@@ -738,7 +738,7 @@ public class IrSequence implements Cloneable {
     public String toString(boolean alternatingSigns) {
         if (data.length == 0)
             return "[]";
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(5 * data.length);
         result.append("[").append(Math.round(Math.abs(data[0])));
         for (int i = 1; i < data.length; i++)
             result.append(",").append((alternatingSigns && (i % 2 != 0) ? "-" : "")).append(Math.round(Math.abs(data[i])));

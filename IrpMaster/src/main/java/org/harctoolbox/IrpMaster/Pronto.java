@@ -77,7 +77,7 @@ public class Pronto {
     public final static double getFrequency(int code) {
         return code == 0
                 ? IrpUtils.invalid // Invalid value
-                : 1000000.0 / ((double) code * prontoConstant);
+                : 1000000.0 / (code * prontoConstant);
     }
 
 
@@ -217,7 +217,7 @@ public class Pronto {
         }
 
         if (irSignal == null) {
-            HashMap<String, Long> parameters = new HashMap<>();
+            HashMap<String, Long> parameters = new HashMap<>(4);
             parameters.put("D", (long) dev);
             if (subdev != (int) IrpUtils.invalid)
                 parameters.put("S", (long) subdev);
@@ -452,6 +452,7 @@ public class Pronto {
 
     public static void main(String[] args) {
         try {
+            @SuppressWarnings("UnusedAssignment")
             IrSignal irSignal = null;
 
             if (args.length == 1) {
@@ -476,7 +477,8 @@ public class Pronto {
             System.err.println(ex.getMessage());
         }
     }
-    private IrSignal irSignal;
+
+    private final IrSignal irSignal;
     /**
      * Constructor from IrSignal.
      * @param irSignal

@@ -209,11 +209,7 @@ public class XmlUtils {
             Schema schema = args.length > 1 ? readSchemaFromFile(new File(args[1])) : null;
             Document doc = openXmlFile(new File(args[0]), schema, true, true);
             System.out.println(doc);
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        } catch (SAXParseException ex) {
-            System.err.println(ex.getMessage());
-        } catch (SAXException ex) {
+        } catch (IOException | SAXException ex) {
             System.err.println(ex.getMessage());
         }
     }

@@ -26,7 +26,7 @@ public class PrimaryIrStream extends PrimaryIrStreamItem {
 
     public PrimaryIrStream(Protocol env) {
         super(env);
-        irStreamItems = new ArrayList<>();
+        irStreamItems = new ArrayList<>(16);
     }
 
     public PrimaryIrStream(Protocol env, boolean hasAssignmentContent) {
@@ -46,7 +46,7 @@ public class PrimaryIrStream extends PrimaryIrStreamItem {
     }
 
     public PrimaryIrStream(Protocol env, PrimaryIrStream src, BitSpec bitSpec, int noAlternatives) {
-        this(env, (src != null) ? src.irStreamItems : new ArrayList<PrimaryIrStreamItem>(), bitSpec, noAlternatives);
+        this(env, (src != null) ? src.irStreamItems : new ArrayList<PrimaryIrStreamItem>(16), bitSpec, noAlternatives);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class PrimaryIrStream extends PrimaryIrStreamItem {
     public ArrayList<PrimitiveIrStreamItem> evaluate(BitSpec bitSpec) throws IncompatibleArgumentException, UnassignedException {
         BitSpec bs = (bitSpec == null || this.bitSpec != null) ? this.bitSpec : bitSpec;
         debugBegin();
-        ArrayList<PrimitiveIrStreamItem> list = new ArrayList<>();
+        ArrayList<PrimitiveIrStreamItem> list = new ArrayList<>(16);
         BitStream bitStream = new BitStream(environment);
         for (PrimaryIrStreamItem item : irStreamItems)
             if (item.getClass().getSimpleName().equals("BitField"))

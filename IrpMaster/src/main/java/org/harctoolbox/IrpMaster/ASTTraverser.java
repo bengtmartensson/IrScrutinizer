@@ -85,36 +85,40 @@ public class ASTTraverser {
         double unit_pulses = IrpUtils.invalid;
         for (int i = 0; i < tree.getChildCount(); i++) {
             CommonTree child = (CommonTree) tree.getChild(i);
-            if (child.getText().equals("FREQUENCY")) {
-                if (child.getChild(0).getText().equals("FLOAT")) {
-                    CommonTree val = (CommonTree) child.getChild(0);
-                    frequency = 1000*Double.parseDouble(val.getChild(0).getText() + "." + val.getChild(1).getText());
-                } else
-                    frequency = 1000*Integer.parseInt(child.getChild(0).getText());
-            } else if (child.getText().equals("DUTYCYCLE")) {
-                if (child.getChild(0).getText().equals("FLOAT")) {
-                    CommonTree val = (CommonTree) child.getChild(0);
-                    dutyCycle = Double.parseDouble(val.getChild(0).getText() + "." + val.getChild(1).getText());
-                } else
-                    dutyCycle = Integer.parseInt(child.getChild(0).getText());
-            } else if (child.getText().equals("UNIT")) {
-                double number;
-                if (child.getChild(0).getText().equals("FLOAT")) {
-                    CommonTree val = (CommonTree) child.getChild(0);
-                    number = Double.parseDouble(val.getChild(0).getText() + "." + val.getChild(1).getText());
-                } else
-                    number = Integer.parseInt(child.getChild(0).getText());
-
-                if (child.getChildCount() == 1 || child.getChild(1).getText().equals("u"))
-                    unit = number;
-                else if (child.getChild(1).getText().equals("p"))
-                    unit_pulses = number;
-                else
-                     throw new IllegalArgumentException("invalid postfix in unit.");
-            } else if (child.getText().equals("BITDIRECTION")) {
-                bitDirection = BitDirection.valueOf(child.getChild(0).getText());
-            } else {
-                throw new IllegalArgumentException("Parse error in GeneralSpec");
+            switch (child.getText()) {
+                case "FREQUENCY":
+                    if (child.getChild(0).getText().equals("FLOAT")) {
+                        CommonTree val = (CommonTree) child.getChild(0);
+                        frequency = 1000*Double.parseDouble(val.getChild(0).getText() + "." + val.getChild(1).getText());
+                    } else
+                        frequency = 1000*Integer.parseInt(child.getChild(0).getText());
+                    break;
+                case "DUTYCYCLE":
+                    if (child.getChild(0).getText().equals("FLOAT")) {
+                        CommonTree val = (CommonTree) child.getChild(0);
+                        dutyCycle = Double.parseDouble(val.getChild(0).getText() + "." + val.getChild(1).getText());
+                    } else
+                        dutyCycle = Integer.parseInt(child.getChild(0).getText());
+                    break;
+                case "UNIT":
+                    double number;
+                    if (child.getChild(0).getText().equals("FLOAT")) {
+                        CommonTree val = (CommonTree) child.getChild(0);
+                        number = Double.parseDouble(val.getChild(0).getText() + "." + val.getChild(1).getText());
+                    } else
+                        number = Integer.parseInt(child.getChild(0).getText());
+                    if (child.getChildCount() == 1 || child.getChild(1).getText().equals("u"))
+                        unit = number;
+                    else if (child.getChild(1).getText().equals("p"))
+                        unit_pulses = number;
+                    else
+                        throw new IllegalArgumentException("invalid postfix in unit.");
+                    break;
+                case "BITDIRECTION":
+                    bitDirection = BitDirection.valueOf(child.getChild(0).getText());
+                    break;
+                default:
+                    throw new IllegalArgumentException("Parse error in GeneralSpec");
             }
         }
         return new GeneralSpec(bitDirection, unit, unit_pulses, frequency, dutyCycle);
@@ -127,7 +131,7 @@ public class ASTTraverser {
         nodeBegin(tree, level);
         String type = tree.getText();
         double time = name_or_number((CommonTree) tree.getChild(0), level+1);
-        String unit = tree.getChildCount() == 2 ? ((CommonTree) tree.getChild(1)).getText() : "";
+        String unit = tree.getChildCount() == 2 ? tree.getChild(1).getText() : "";
         Duration d = Duration.newDuration(env, time, unit, DurationType.valueOf(type.toLowerCase(IrpUtils.dumbLocale)));
         nodeEnd(tree, level, d);
         return d;
@@ -142,17 +146,17 @@ public class ASTTraverser {
         boolean reverse = false;
         boolean infinite = tree.getText().equals("INFINITE_BITFIELD");
         int offset = 0;
-        if (((CommonTree)tree.getChild(offset)).getText().equals("~")) {
+        if (tree.getChild(offset).getText().equals("~")) {
             complement = true;
             offset++;
         }
-        if (((CommonTree)tree.getChild(offset)).getText().equals("-")
-                && ((CommonTree)tree.getChild(offset)).getChildCount() == 0) {
+        if (tree.getChild(offset).getText().equals("-")
+                && tree.getChild(offset).getChildCount() == 0) {
             reverse = true;
             offset++;
         }
         long data = expression((CommonTree)tree.getChild(offset++), level+1);
-        long width = infinite ? BitField.maxWidth : expression((CommonTree)tree.getChild(offset++), level+1);
+        long width = infinite ? BitField.getMaxWidth() : expression((CommonTree)tree.getChild(offset++), level+1);
         long skip = offset < tree.getChildCount() ? expression((CommonTree)tree.getChild(offset), level+1) : 0;
         BitField bitField = new BitField(env, complement, reverse, infinite, data, width, skip);
         nodeEnd(tree, level, bitField);
@@ -162,9 +166,8 @@ public class ASTTraverser {
     public PrimaryIrStream irstream(CommonTree tree, int level, boolean forceOk, RepeatMarker parentRepeat) throws UnassignedException, InvalidRepeatException, DomainViolationException, IncompatibleArgumentException {
         nodeBegin(tree, level);
 
-        PrimaryIrStream bareIrStream = null;// = BareIrStream.expression((CommonTree) tree.getChild(0), level+1);
-        RepeatMarker repeatMarker = null;
-        repeatMarker = tree.getChildCount() > 1
+        PrimaryIrStream bareIrStream;// = BareIrStream.expression((CommonTree) tree.getChild(0), level+1);
+        RepeatMarker repeatMarker = tree.getChildCount() > 1
                 ? repeatmarker((CommonTree) tree.getChild(1), level+1, null)
                 : new RepeatMarker();
         if (parentRepeat != null && parentRepeat.isInfinite() && repeatMarker.isInfinite())
@@ -172,19 +175,19 @@ public class ASTTraverser {
         int noAlternatives = 0;
         PrimaryIrStream irStream = null;
 
-        if (repeatMarker.min >= 1) {
+        if (repeatMarker.getMin() >= 1) {
             bareIrStream = bare_irstream((CommonTree) tree.getChild(0), level + 1, forceOk, Pass.intro, repeatMarker);
-            irStream = bareIrStream != null ? new PrimaryIrStream(env, bareIrStream, null, 0) : null;
+            irStream = new PrimaryIrStream(env, bareIrStream, null, 0);
             noAlternatives = bareIrStream.getNoAlternatives();
             if (repeatMarker.isInfinite() && ! this.considerRepeatMins)
                 irStream = null; // Does not undo assignments...
-            if (repeatMarker.max < 2 && noAlternatives > 1)
+            if (repeatMarker.getMax() < 2 && noAlternatives > 1)
                 UserComm.warning("Variations inside of IrSequence with repeat max < 2. Second and third alternative are ignored.");
             else if (noAlternatives > 0) {
                 // We have an IrStream with Variation
                 state++;
                 env.assign("$state", state);
-                if (repeatMarker.max < 3 && noAlternatives == 3) {
+                if (repeatMarker.getMax() < 3 && noAlternatives == 3) {
                     UserComm.warning("3-part Variations inside of IrSequence with repeat max < 3. Second alternative is ignored.");
                 } else {
                     bareIrStream = bare_irstream((CommonTree) tree.getChild(0), level + 1, forceOk, Pass.repeat, repeatMarker);
@@ -206,7 +209,7 @@ public class ASTTraverser {
 
             } else if (considerRepeatMins || !repeatMarker.isInfinite()) {
                 // No Variation in this IrStream, traverse to reach repeatMarker.min
-                for (int i = 0; i < repeatMarker.min - 1; i++) {
+                for (int i = 0; i < repeatMarker.getMin() - 1; i++) {
                     bareIrStream = bare_irstream((CommonTree) tree.getChild(0), level + 1, forceOk, Pass.intro, repeatMarker);
                     if (irStream == null)
                         irStream = bareIrStream != null ? new PrimaryIrStream(env, bareIrStream, null, 0) : null;
@@ -226,7 +229,7 @@ public class ASTTraverser {
             if (state == pass && repeatMarker.isInfinite()) {
                 bareIrStream = bare_irstream((CommonTree) tree.getChild(0), level + 1, forceOk, Pass.intro, repeatMarker);
                 if (state == pass)
-                    irStream = bareIrStream != null ? new PrimaryIrStream(env, bareIrStream, null, 0) : null;
+                    irStream = new PrimaryIrStream(env, bareIrStream, null, 0);
                 if (bareIrStream.getNoAlternatives() > 0)
                     throw new InvalidRepeatException("Invalid repeat: Variations enclosed in ( ... )* are not supported.");
             }
@@ -250,36 +253,33 @@ public class ASTTraverser {
         nodeBegin(tree, level);
         // Intro pass
         int noAlternatives = 0;
-        PrimaryIrStream bareIrStream = null;
         //skip = false; // local instead?
-        ArrayList<PrimaryIrStreamItem> list = new ArrayList<>();
+        ArrayList<PrimaryIrStreamItem> list = new ArrayList<>(16);
         for (int i = 0; i < tree.getChildCount(); i++) {
             PrimaryIrStreamItem irStreamItem = irstream_item((CommonTree) tree.getChild(i), level + 1, variationAlternative, repeatMarker, forceOk);
             if (irStreamItem != null && irStreamItem.getNoAlternatives() > 0)
                 noAlternatives = irStreamItem.getNoAlternatives();
             if (irStreamItem != null && !irStreamItem.isEmpty())
                 list.add(irStreamItem);
-            if (noAlternatives > 0 && irStreamItem.isEmpty())
+            if (noAlternatives > 0 && irStreamItem != null && irStreamItem.isEmpty())
                 // Empty alternative
                 //skip = true;
 
                 break;
         }
-        bareIrStream = new PrimaryIrStream(env, list, null, noAlternatives);
+        PrimaryIrStream bareIrStream = new PrimaryIrStream(env, list, null, noAlternatives);
         nodeEnd(tree, level, bareIrStream);
 
         return bareIrStream;
     }
 
     public PrimaryIrStream bitspec_irstream(CommonTree tree, int level, boolean forceOk, RepeatMarker repeatMarker) throws UnassignedException, InvalidRepeatException, DomainViolationException, IncompatibleArgumentException {
-        BitSpec bitSpec = null;
-
         if (level == 1) {
             env.assign("$state", state);
             env.assign("$pass", pass);
         }
         nodeBegin(tree, level);
-        bitSpec = bitspec((CommonTree) tree.getChild(0), level + 1, true, repeatMarker);
+        BitSpec bitSpec = bitspec((CommonTree) tree.getChild(0), level + 1, true, repeatMarker);
 
         PrimaryIrStream irStreamWithoutBitSpec = irstream((CommonTree) tree.getChild(1), level + 1, forceOk, repeatMarker);
         PrimaryIrStream irStream = new PrimaryIrStream(env, irStreamWithoutBitSpec, bitSpec);
@@ -292,25 +292,30 @@ public class ASTTraverser {
     public PrimaryIrStreamItem irstream_item(CommonTree tree, int level, Pass variationAlternative, RepeatMarker repeatMarker, boolean forceOk) throws UnassignedException, InvalidRepeatException, DomainViolationException, IncompatibleArgumentException {
         nodeIntermediate(tree, level, "IrStreamItem");
         String type = tree.getText();
-        if (type.equals("FLASH") || type.equals("GAP") || type.equals("EXTENT"))
-            return duration(tree, level, forceOk);
-        else if (type.equals("BITFIELD") || type.equals("INFINITE_BITFIELD"))
-            return bitfield(tree, level, forceOk);
-        else if (type.equals("IRSTREAM"))
-            return irstream(tree, level, forceOk, repeatMarker);
-        else if (type.equals("BITSPEC_IRSTREAM"))
-            return bitspec_irstream(tree, level, forceOk, repeatMarker);
-        else if (type.equals("ASSIGNMENT"))
-            return assignment(tree, level, forceOk, repeatMarker);
-        else if (type.equals("VARIATION"))
-            return variation(tree, level, forceOk, variationAlternative, repeatMarker);
-        else
-            throw new RuntimeException("Something I did not think about, " + type + ", occured.");
+        switch (type) {
+            case "FLASH":
+            case "GAP":
+            case "EXTENT":
+                return duration(tree, level, forceOk);
+            case "BITFIELD":
+            case "INFINITE_BITFIELD":
+                return bitfield(tree, level, forceOk);
+            case "IRSTREAM":
+                return irstream(tree, level, forceOk, repeatMarker);
+            case "BITSPEC_IRSTREAM":
+                return bitspec_irstream(tree, level, forceOk, repeatMarker);
+            case "ASSIGNMENT":
+                return assignment(tree, level, forceOk, repeatMarker);
+            case "VARIATION":
+                return variation(tree, level, forceOk, variationAlternative, repeatMarker);
+            default:
+                throw new RuntimeException("Something I did not think about, " + type + ", occured.");
+        }
     }
 
     public BitSpec bitspec(CommonTree tree, int level, boolean forceOk, RepeatMarker repeatMarker) throws UnassignedException, InvalidRepeatException, DomainViolationException, IncompatibleArgumentException {
         nodeBegin(tree, level);
-        ArrayList<PrimaryIrStream> list = new ArrayList<>();
+        ArrayList<PrimaryIrStream> list = new ArrayList<>(8);
         for (int i = 0; i < tree.getChildCount(); i++)
             list.add(bare_irstream((CommonTree)tree.getChild(i), level+1, forceOk, Pass.intro, repeatMarker));
         BitSpec b = new BitSpec(env, list);
@@ -321,8 +326,8 @@ public class ASTTraverser {
     public RepeatMarker repeatmarker(CommonTree tree, int level, RepeatMarker dummy) {
         nodeBegin(tree, level);
         RepeatMarker repeatMarker = tree.getChildCount() == 2
-                ? new RepeatMarker(Integer.parseInt(((CommonTree)tree.getChild(0)).getText()), ((CommonTree)tree.getChild(1)).getText().charAt(0))
-                : new RepeatMarker(((CommonTree)tree.getChild(0)).getText());
+                ? new RepeatMarker(Integer.parseInt(tree.getChild(0).getText()), tree.getChild(1).getText().charAt(0))
+                : new RepeatMarker(tree.getChild(0).getText());
         nodeEnd(tree, level, repeatMarker);
         return repeatMarker;
     }
@@ -343,7 +348,7 @@ public class ASTTraverser {
                 : type.equals("^")  ? expression((CommonTree) tree.getChild(0), level+1) ^ expression((CommonTree) tree.getChild(1), level+1)
                 : type.equals("|")  ? expression((CommonTree) tree.getChild(0), level+1) | expression((CommonTree) tree.getChild(1), level+1)
                 : type.equals("UMINUS")   ? -expression((CommonTree) tree.getChild(0), level+1)
-                : type.equals("BITCOUNT") ? (long) Long.bitCount(expression((CommonTree) tree.getChild(0), level+1))
+                : type.equals("BITCOUNT") ? Long.bitCount(expression((CommonTree) tree.getChild(0), level+1))
                 : type.equals("BITFIELD") ? bitfield(tree, level+1, true).toLong()
                 : type.equals("INFINITE_BITFIELD") ? bitfield(tree, level+1, true).toLong()
                 : type.matches("[0-9]+")  ? Long.parseLong(type)
@@ -357,7 +362,7 @@ public class ASTTraverser {
             return null;
 
         nodeBegin(tree, level);
-        String name = ((CommonTree)tree.getChild(0)).getText();
+        String name = tree.getChild(0).getText();
         long num = expression((CommonTree) tree.getChild(1), level+1);
         env.assign(name, num);
         nodeEnd(tree, level, num);
@@ -383,7 +388,7 @@ public class ASTTraverser {
     public double number_with_decimals(CommonTree tree, int level) {
         nodeBegin(tree, level);
         String label = tree.getText();
-        double num = label.matches("[0-9]+") ? (double) Integer.parseInt(label) : float_number(tree, level);
+        double num = label.matches("[0-9]+") ? Integer.parseInt(label) : float_number(tree, level);
         nodeEnd(tree, level, num);
         return num;
     }

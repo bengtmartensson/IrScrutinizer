@@ -365,29 +365,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
 
         @Override
                 Command toCommand() throws IrpMasterException {
-                    if (timing.type == TimingType.rc5) {
-                        // {36k,msb,889}<1,-1|-1,1>((1:1,~F:1:6,T:1,D:5,F:6,^114m)+,T=1-T)[T@:0..1=0,D:0..31,F:0..127]
-                        long payload = Long.parseLong(data, 2);
-                        long F6 = (~(payload >> 12)) & 1;
-                        long F = (F6 << 6) | (payload & 0x3f);
-                        long D = (payload >> 6) & 0x1f;
-                        long T = (payload >> 11) & 1;
-                        Map<String, Long> parameters = new HashMap<>(4);
-                        parameters.put("F", F);
-                        parameters.put("D", D);
-                        parameters.put("T", T);
-                        return new Command(name, null, "RC5", parameters);
-                    } else if (timing.type == TimingType.rc6) {
-                        // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
-                        // http://www.irtrans.de/forum/viewtopic.php?f=18&t=99
-                        long payload = Long.parseLong(data.substring(2), 2);
-                        long F = payload & 0xff;
-                        long D = (payload >> 8) & 0xff;
-                        Map<String, Long> parameters = new HashMap<>(4);
-                        parameters.put("F", F);
-                        parameters.put("D", D);
-                        return new Command(name, null, "RC6", parameters);
-                    } else {
+                    if (null == timing.type) {
                         int[] times = new int[2 * data.length()];
                         for (int i = 0; i < data.length(); i++) {
                             char ch = data.charAt(i);
@@ -401,7 +379,48 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                                 ? new IrSignal(times, times.length / 2, 0, 1000 * timing.frequency)
                                 : new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
                         return new Command(name, null, irSignal);
+                    } else switch (timing.type) {
+                case rc5:
+                {
+                    // {36k,msb,889}<1,-1|-1,1>((1:1,~F:1:6,T:1,D:5,F:6,^114m)+,T=1-T)[T@:0..1=0,D:0..31,F:0..127]
+                    long payload = Long.parseLong(data, 2);
+                    long F6 = (~(payload >> 12)) & 1;
+                    long F = (F6 << 6) | (payload & 0x3f);
+                    long D = (payload >> 6) & 0x1f;
+                    long T = (payload >> 11) & 1;
+                    Map<String, Long> parameters = new HashMap<>(4);
+                    parameters.put("F", F);
+                    parameters.put("D", D);
+                    parameters.put("T", T);
+                    return new Command(name, null, "RC5", parameters);
+                }
+                case rc6:
+                {
+                    // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
+                    // http://www.irtrans.de/forum/viewtopic.php?f=18&t=99
+                    long payload = Long.parseLong(data.substring(2), 2);
+                    long F = payload & 0xff;
+                    long D = (payload >> 8) & 0xff;
+                    Map<String, Long> parameters = new HashMap<>(4);
+                    parameters.put("F", F);
+                    parameters.put("D", D);
+                    return new Command(name, null, "RC6", parameters);
+                }
+                default:
+                    int[] times = new int[2 * data.length()];
+                    for (int i = 0; i < data.length(); i++) {
+                        char ch = data.charAt(i);
+                        int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
+                        if (index >= timing.durations.length)
+                            throw new IrpMasterException("Undefined timing :" + ch);
+                        times[2 * i] = timing.durations[index][0];
+                        times[2 * i + 1] = timing.durations[index][1];
                     }
+                    IrSignal irSignal = timing.repetitions <= 1
+                            ? new IrSignal(times, times.length / 2, 0, 1000 * timing.frequency)
+                            : new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
+                    return new Command(name, null, irSignal);
+            }
                 }
     }
     private static class IrTransCommandRaw extends IrTransCommand {

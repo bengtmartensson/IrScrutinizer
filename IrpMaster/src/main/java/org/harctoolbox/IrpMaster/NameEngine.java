@@ -59,10 +59,10 @@ public class NameEngine {
         System.out.println(prot.nameEngineString());
     }
 
-    private Map<String, CommonTree> map;
+    private final Map<String, CommonTree> map;
 
     public NameEngine() {
-        map = new HashMap<>();
+        map = new HashMap<>(4);
     }
 
     public CommonTree get(String name) {
@@ -107,7 +107,7 @@ public class NameEngine {
         IrpParser.definitions_return r;
         try {
             r = parser.definitions();
-            CommonTree AST = (CommonTree) r.getTree();
+            CommonTree AST = r.getTree();
             //System.out.println(AST.toStringTree());
             readDefinitions(AST);
         } catch (RecognitionException ex) {
@@ -123,7 +123,7 @@ public class NameEngine {
         IrpParser.bare_expression_return r;
         try {
             r = parser.bare_expression();
-            map.put(name.trim(), (CommonTree) r.getTree());
+            map.put(name.trim(), r.getTree());
         } catch (RecognitionException ex) {
             throw new ParseException(ex);
         }
@@ -201,7 +201,7 @@ public class NameEngine {
 
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(64);
         for (String name : map.keySet()) {
             str.append(name).append("=").append(map.get(name).toStringTree()).append(",");
         }
@@ -217,7 +217,7 @@ public class NameEngine {
      * @return String
      */
     public String notationString(String equals, String separator) {
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(64);
         for (String name : map.keySet()) {
             if (!name.startsWith("$") && !map.get(name).toStringTree().startsWith("("))
                 str.append(name).append(equals).append(map.get(name).toStringTree()).append(separator);

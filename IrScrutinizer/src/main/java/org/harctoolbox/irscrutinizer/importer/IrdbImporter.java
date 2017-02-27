@@ -117,7 +117,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         }
     }
 
-    private boolean verbose = false;
+    //private boolean verbose = false;
     private String manufacturer;
     private RemoteSet remoteSet;
     private Map<String, Map<ProtocolDeviceSubdevice, Map<String, Long>>> deviceTypes;
@@ -125,7 +125,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     public IrdbImporter(String manufacturer, boolean verbose) throws IOException {
         super(irdbOriginName);
         this.manufacturer = manufacturer;
-        this.verbose = verbose;
+        //this.verbose = verbose;
         deviceTypes = new LinkedHashMap<>(16);
         String path = String.format(urlFormat, URLEncoder.encode(manufacturer, "utf-8"), 1);
         for (int index = 1; index <= 100 && !path.isEmpty(); index++) {
@@ -162,13 +162,15 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     public RemoteSet getRemoteSet() {
         return remoteSet;
     }
+
     @Override
     public String getFormatName() {
         return "IRDB";
     }
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
-    }
+
+//    public void setVerbose(boolean verbose) {
+//        this.verbose = verbose;
+//    }
 
     public Set<String> getDeviceTypes() {
         return deviceTypes.keySet();

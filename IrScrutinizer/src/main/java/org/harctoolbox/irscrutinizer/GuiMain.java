@@ -1591,8 +1591,8 @@ public class GuiMain extends javax.swing.JFrame {
                 @SuppressWarnings("unchecked")
                 Map<String, Long> params = new HashMap<>(command.getParameters());
                 params.put("F", F);
-                String cmdname = (new IrpMasterBean.DefaultSignalNameFormatter()).format(command.getProtocolName(), params);
-                Command cmd = new Command(cmdname, null, protocolName, params);
+                Command cmd = new Command((new IrpMasterBean.DefaultSignalNameFormatter()).format(command.getProtocolName(), params),
+                        null, protocolName, params);
                 registerParameterCommand(cmd);
             }
         }

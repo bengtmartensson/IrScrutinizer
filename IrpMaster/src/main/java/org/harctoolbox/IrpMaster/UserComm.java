@@ -22,7 +22,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 public class UserComm {
-    private static UserComm instance = new UserComm();
+    private static final UserComm instance = new UserComm();
     public static void setQuiet(boolean quiet) {
         instance.quiet = quiet;
     }

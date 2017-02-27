@@ -54,7 +54,7 @@ public class Protocol {
      * @return tests- irpmaster?Map&lt;String, Long&gt; for using as argument to renderIrSignal
      */
     public static Map<String, Long> parseParams(String additionalParams) {
-        Map<String, Long> params = new HashMap<>();
+        Map<String, Long> params = new HashMap<>(4);
         String[] arr = additionalParams.split("[,=\\s;]+");
         //for (int i = 0; i < arr.length; i++)
         //    System.out.println(arr[i]);
@@ -76,10 +76,10 @@ public class Protocol {
      */
     public static Map<String, Long> parseParams(int D, int S, int F, int T, String additionalParams) {
         Map<String, Long> params = parseParams(additionalParams);
-        assignIfValid(params, "D", (long) D);
-        assignIfValid(params, "S", (long) S);
-        assignIfValid(params, "F", (long) F);
-        assignIfValid(params, "T", (long) T);
+        assignIfValid(params, "D", D);
+        assignIfValid(params, "S", S);
+        assignIfValid(params, "F", F);
+        assignIfValid(params, "T", T);
         return params;
     }
     /**
@@ -104,7 +104,7 @@ public class Protocol {
                 : parsePositionalProtocolArgs(args, skip);
     }
     private static Map<String, Long> parseNamedProtocolArgs(String[] args, int skip) throws IncompatibleArgumentException {
-        Map<String, Long> params = new HashMap<>();
+        Map<String, Long> params = new HashMap<>(args.length);
         for (int i = skip; i < args.length; i++) {
             String[] str = args[i].split("=");
             if (str.length != 2)
@@ -116,7 +116,7 @@ public class Protocol {
         return params;
     }
     private static Map<String, Long> parsePositionalProtocolArgs(String[] args, int skip) throws IncompatibleArgumentException {
-        Map<String, Long> params = new LinkedHashMap<>();
+        Map<String, Long> params = new LinkedHashMap<>(args.length - skip);
         int index = skip;
         switch (args.length - skip) {
             case 4:
@@ -493,27 +493,27 @@ public class Protocol {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setNamespaceAware(false);
-        Document doc = null;
+        Document dcmt;
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
-            doc = builder.newDocument();
+            dcmt = builder.newDocument();
         } catch (ParserConfigurationException ex) {
             System.err.println(ex.getMessage());
             return null;
         }
 
-        Element root = doc.createElement("PROTOCOL");
+        Element root = dcmt.createElement("PROTOCOL");
         root.setAttribute("name", name);
-        doc.appendChild(root);
+        dcmt.appendChild(root);
         if (documentation != null) {
-            Element docu = doc.createElement("DOCUMENTATION");
-            docu.appendChild(doc.createCDATASection(documentation));
+            Element docu = dcmt.createElement("DOCUMENTATION");
+            docu.appendChild(dcmt.createCDATASection(documentation));
             root.appendChild(docu);
         }
         CommonTree t = AST;
         Element parent = root;
-        parseTree(doc, t, parent);
-        return doc;
+        parseTree(dcmt, t, parent);
+        return dcmt;
     }
 
     // Traverse the CommonTree, thus populating the DOM tree as first argument.
@@ -528,8 +528,8 @@ public class Protocol {
             if ("+-*/%?".contains(label) || label.equals("**"))
                 label = "OPERATOR";
             //System.out.println(label);
-            Element e = null;
-            boolean isInteger = false;
+            Element e;
+            boolean isInteger;
             try {
                 Integer.parseInt(label);
                 isInteger = true;
@@ -593,11 +593,11 @@ public class Protocol {
         }
     }
 
-    public void interactiveRender(UserComm userComm, Map actualVars) {
+    public void interactiveRender(UserComm userComm, Map<String, Long> actualVars) {
         int passNo = 0;
         boolean initial = true;
         boolean done = false;
-        boolean finalState = false;
+        boolean finalState;
 
         userComm.printMsg(irpString);
         while (! done) {
@@ -738,7 +738,7 @@ public class Protocol {
     }
 
     public IrSignal renderIrSignal(int device, int subdevice, int function) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
-        return renderIrSignal((long) device, (long) subdevice, (long) function);
+        return renderIrSignal(device, subdevice, (long) function);
     }
 
     public IrSequence tryRender(Map<String, Long> ivs, int pass, boolean considerRepeatMins, boolean initialize) {

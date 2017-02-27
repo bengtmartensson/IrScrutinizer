@@ -30,8 +30,8 @@ import org.harctoolbox.IrpMaster.IrpUtils;
  */
 public class IterationValueSet extends ValueSet {
 
-    private long max;
-    private int increment;
+    private final long max;
+    private final int increment;
 
     /**
      *

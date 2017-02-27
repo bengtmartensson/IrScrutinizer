@@ -154,7 +154,7 @@ final public class IrRemote {
             return null;
         String decodeir_version = DecodeIR.getVersion();
 
-        Map<String, Remote>girrRemotes = new LinkedHashMap<>();
+        Map<String, Remote>girrRemotes = new LinkedHashMap<>(remotes.size());
         for (IrRemote irRemote : remotes) {
             Remote remote = irRemote.toRemote(alternatingSigns, debug);
             girrRemotes.put(remote.getName(), remote);
@@ -291,167 +291,243 @@ final public class IrRemote {
     /**
      * bits (length of code)
      */
+    @SuppressWarnings("PackageVisibleField")
     int bits;
     /**
      * flags
      */
+    @SuppressWarnings("PackageVisibleField")
     int flags;
     /**
      * eps (_relative_ tolerance)
      */
+    @SuppressWarnings("PackageVisibleField")
     int eps;
     /**
      * detecing _very short_ pulses is difficult with relative tolerance for
      * some remotes, this is an _absolute_ tolerance to solve this problem
      * usually you can say 0 here
      */
+    @SuppressWarnings("PackageVisibleField")
     int aeps;
+
     /**
      * pulse and space lengths of: header
      */
-    int phead, shead;
+    @SuppressWarnings("PackageVisibleField")
+    int phead;
+
+    @SuppressWarnings("PackageVisibleField")
+    int shead;
+
     /**
      * 3 (only used for RC-MM)
      */
-    int pthree, sthree;
+    @SuppressWarnings("PackageVisibleField")
+            int pthree;
+    @SuppressWarnings("PackageVisibleField")
+    int sthree;
+
     /**
      * 2 (only used for RC-MM)
      */
-    int ptwo, stwo;
+    @SuppressWarnings("PackageVisibleField")
+    int ptwo;
+    @SuppressWarnings("PackageVisibleField")
+    int stwo;
+
     /**
      * 1
      */
-    int pone, sone;
+    @SuppressWarnings("PackageVisibleField")
+    int pone;
+    @SuppressWarnings("PackageVisibleField")
+    int sone;
+
     /**
      * 0
      */
-    int pzero, szero;
+    @SuppressWarnings("PackageVisibleField")
+            int pzero;
+
+    @SuppressWarnings("PackageVisibleField")
+    int szero;
     /**
      * leading pulse
      */
+    @SuppressWarnings("PackageVisibleField")
     int plead;
     /**
      * trailing pulse
      */
+    @SuppressWarnings("PackageVisibleField")
     int ptrail;
+
     /**
      * foot
      */
-    int pfoot, sfoot;
+    @SuppressWarnings("PackageVisibleField")
+    int pfoot;
+
+    @SuppressWarnings("PackageVisibleField")
+    int sfoot;
+
     /**
      * indicate repeating
      */
-    int prepeat, srepeat;
+    @SuppressWarnings("PackageVisibleField")
+    int prepeat;
+
+    @SuppressWarnings("PackageVisibleField")
+    int srepeat;
     /**
      * length of pre_data
      */
+    @SuppressWarnings("PackageVisibleField")
     int pre_data_bits;
     /**
      * data which the remote sends before actual keycode
      */
+    @SuppressWarnings("PackageVisibleField")
     long pre_data;
     /**
      * length of post_data
      */
+    @SuppressWarnings("PackageVisibleField")
     int post_data_bits;
     /**
      * data which the remote sends after actual keycode
      */
+    @SuppressWarnings("PackageVisibleField")
     long post_data;
+
     /**
      * signal between pre_data and keycode
      */
-    int pre_p, pre_s;
+    @SuppressWarnings("PackageVisibleField")
+    int pre_p;
+
+    @SuppressWarnings("PackageVisibleField")
+    int pre_s;
+
     /**
      * signal between keycode and post_code
      */
-    int post_p, post_s;
+    @SuppressWarnings("PackageVisibleField")
+            int post_p;
+
+    @SuppressWarnings("PackageVisibleField")
+    int post_s;
     /**
      * time between signals in usecs
      */
+    @SuppressWarnings("PackageVisibleField")
     int gap;
     /**
      * time between signals in usecs
      */
+    @SuppressWarnings("PackageVisibleField")
     int gap2;
     /**
      * time between two repeat codes if different from gap
      */
+    @SuppressWarnings("PackageVisibleField")
     int repeat_gap;
     /**
      * obsolete
      */
+    @SuppressWarnings("PackageVisibleField")
     int toggle_bit;
     /**
      * previously only one bit called toggle_bit
      */
+    @SuppressWarnings("PackageVisibleField")
     long toggle_bit_mask;
     /**
      * suppress unwanted repeats
      */
+    @SuppressWarnings("PackageVisibleField")
     int suppress_repeat;
     /**
      * code is repeated at least x times code sent once . min_repeat=0
      */
+    @SuppressWarnings("PackageVisibleField")
     int min_repeat;
     /**
      * meaningful only if remote sends a repeat code: in this case this value
      * indicates how often the real code is repeated before the repeat code is
      * being sent
      */
+    @SuppressWarnings("PackageVisibleField")
     int min_code_repeat;
     /**
      * modulation frequency
      */
+    @SuppressWarnings("PackageVisibleField")
     int freq = DEFAULT_FREQ;
 
     /**
      * 0<duty cycle<=100
      */
+    @SuppressWarnings("PackageVisibleField")
     int duty_cycle;
 
+    @SuppressWarnings("PackageVisibleField")
     int baud;
 
     /**
      * Sharp (?) error detection scheme
      */
+    @SuppressWarnings("PackageVisibleField")
     long toggle_mask;
     /**
      * RC-6 doubles signal length of some bits
      */
+    @SuppressWarnings("PackageVisibleField")
     long rc6_mask;
     /**
      * mask defines which bits can be ignored when matching a code
      */
+    @SuppressWarnings("PackageVisibleField")
     long ignore_mask;
     // end of user editable values
+    @SuppressWarnings("PackageVisibleField")
     long toggle_bit_mask_state;
+    @SuppressWarnings("PackageVisibleField")
     int toggle_mask_state;
+    @SuppressWarnings("PackageVisibleField")
     int repeat_countdown;
     /**
      * code received or sent last
      */
+    @SuppressWarnings("PackageVisibleField")
     IrNCode last_code;
     /**
      * toggle code received or sent last
      */
+    @SuppressWarnings("PackageVisibleField")
     IrNCode toggle_code;
+    @SuppressWarnings("PackageVisibleField")
     int reps;
     /**
      * time last_code was received or sent
      */
+    @SuppressWarnings("PackageVisibleField")
     Date last_send;
     /**
      * remember gap for CONST_LENGTH remotes
      */
+    @SuppressWarnings("PackageVisibleField")
     int min_remaining_gap;
     /**
      * gap range
      */
+    @SuppressWarnings("PackageVisibleField")
     int max_remaining_gap;
     /**
      * how long is the shortest signal including gap
      */
+    @SuppressWarnings("PackageVisibleField")
     int min_total_signal_length;
     /**
      * how long is the longest signal including gap
@@ -460,17 +536,27 @@ final public class IrRemote {
     /**
      * how long is the shortest gap
      */
+    @SuppressWarnings("PackageVisibleField")
     int min_gap_length;
     /**
      * how long is the longest gap
      */
+    @SuppressWarnings("PackageVisibleField")
     int max_gap_length;
-    int min_pulse_length, max_pulse_length;
-    int min_space_length, max_space_length;
+    @SuppressWarnings("PackageVisibleField")
+    int min_pulse_length;
+    @SuppressWarnings("PackageVisibleField")
+    int max_pulse_length;
+    @SuppressWarnings("PackageVisibleField")
+    int min_space_length;
+    @SuppressWarnings("PackageVisibleField")
+    int max_space_length;
     /**
      * set by release generator
      */
+    @SuppressWarnings("PackageVisibleField")
     boolean release_detected;
+    @SuppressWarnings("PackageVisibleField")
     IrRemote next;
 
     private IrRemote() {
@@ -498,7 +584,7 @@ final public class IrRemote {
     }
 
     public Map<String, String> getApplicationData() {
-        Map<String, String> applicationData = new LinkedHashMap<>();
+        Map<String, String> applicationData = new LinkedHashMap<>(32);
         if (driver != null)
             applicationData.put("driver", driver);
         applicationData.put("type", lircProtocolType());
@@ -546,12 +632,12 @@ final public class IrRemote {
     }
 
     public Remote toRemote(boolean alternatingSigns, int debug) {
-        Map<String, Map<String, String>> appDataMap = new LinkedHashMap<>();
+        Map<String, Map<String, String>> appDataMap = new LinkedHashMap<>(8);
         appDataMap.put("jirc", getApplicationData());
 
         //remote.last_code = null;
 
-        Map<String, Command> commands = new LinkedHashMap<>();
+        Map<String, Command> commands = new LinkedHashMap<>(32);
         for (IrNCode c : getCodes()) {
             Command command = toCommand(c, alternatingSigns, debug);
             if (command != null)
@@ -611,7 +697,7 @@ final public class IrRemote {
             intro = null;
         }
 
-        return new IrSignal((double) freq,  /* duty cycle= */IrpUtils.invalid, intro, repeat,  /* ending= */ null);
+        return new IrSignal(freq,  /* duty cycle= */IrpUtils.invalid, intro, repeat,  /* ending= */ null);
     }
 
     private boolean setNamedFlag(String flagName) {
@@ -638,6 +724,7 @@ final public class IrRemote {
         this.source = source;
     }
 
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     List<IrNCode> getCodes() {
         return codes;
     }
@@ -936,7 +1023,7 @@ final public class IrRemote {
     public ModulatedIrSequence toSequence(int[] array, boolean alternatingSigns) throws IncompatibleArgumentException {
         if (array[array.length - 1] == 0)
             array[array.length - 1] = alternatingSigns ? -gap : gap;
-        return new ModulatedIrSequence(array, (double) freq);
+        return new ModulatedIrSequence(array, freq);
     }
 
     public ModulatedIrSequence toSequence(List<Integer> signals, boolean alternatingSigns) throws IncompatibleArgumentException {
@@ -954,7 +1041,7 @@ final public class IrRemote {
         IrSequence seq = null;
 
         try {
-            Transmit transmit = null;
+            Transmit transmit;
             if (code.getSignals() != null && !code.getSignals().isEmpty()) {
                 seq = repeat ? this.toSequence(code.getSignals(), useSignsInRawSequences) : null;
             } else {
@@ -972,10 +1059,13 @@ final public class IrRemote {
         return seq;
     }
 
+    @SuppressWarnings("PackageVisibleInnerClass")
     static class XY {
 
-        public long x;
-        public long y;
+        @SuppressWarnings("PackageVisibleField")
+        long x;
+        @SuppressWarnings("PackageVisibleField")
+        long y;
 
         XY(long x, long y) {
             this.x = x;

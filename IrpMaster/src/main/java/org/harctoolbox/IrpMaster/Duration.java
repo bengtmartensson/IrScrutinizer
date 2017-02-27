@@ -47,7 +47,7 @@ public class Duration extends PrimitiveIrStreamItem {
         IrpParser.duration_return r;
         try {
             r = parser.duration();
-            CommonTree AST = (CommonTree) r.getTree();
+            CommonTree AST = r.getTree();
             return ASTTraverser.duration(env, AST);
         } catch (RecognitionException | UnassignedException | DomainViolationException ex) {
             System.err.println(ex.getMessage());

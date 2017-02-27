@@ -23,6 +23,7 @@ import java.util.Collection;
  * A ModulatedIrSequence is an IrSequence with the additional properties of a modulation frequency and a duty cycle.
  * The name is slightly misleading since the modulation frequency can be 0; it just needs to be present.
  */
+@SuppressWarnings("CloneableImplementsClone")
 public class ModulatedIrSequence extends IrSequence {
     private static final double allowedFrequencyDeviation = 0.05;
     private static final double zeroModulationLimit = 0.000001;
@@ -35,7 +36,7 @@ public class ModulatedIrSequence extends IrSequence {
     protected double frequency = 0;
 
     /** Duty cycle of the modulation, a number between 0 and 1. Use -1 for unassigned.*/
-    protected double dutyCycle = (double) IrpUtils.invalid;
+    protected double dutyCycle = IrpUtils.invalid;
 
 
     private ModulatedIrSequence() {
@@ -106,7 +107,7 @@ public class ModulatedIrSequence extends IrSequence {
             cumulatedLength += seq.getLength();
         }
 
-        dutyCycle = mindc > 0 ? (mindc + maxdc)/2 : (double) IrpUtils.invalid;
+        dutyCycle = mindc > 0 ? (mindc + maxdc)/2 : IrpUtils.invalid;
         frequency = minf > 0 ? (minf + maxf)/2 : 0;
         data = new double[cumulatedLength];
         int beginIndex = 0;
@@ -253,6 +254,7 @@ public class ModulatedIrSequence extends IrSequence {
         if (isZeroModulated() ? (! tail.isZeroModulated())
             : (Math.abs(frequency - tail.getFrequency())/frequency > allowedFrequencyDeviation))
             throw new IncompatibleArgumentException("concationation not possible; modulation frequencies differ");
+        // This cast is NOT redundant, even though findbugs claims so!
         IrSequence irSequence = ((IrSequence) this).append(tail);
         return new ModulatedIrSequence(irSequence, frequency, dutyCycle);
     }

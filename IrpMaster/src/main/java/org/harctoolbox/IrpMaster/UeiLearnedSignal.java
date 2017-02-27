@@ -81,7 +81,7 @@ public class UeiLearnedSignal {
      * @param args UEI learned signal.
      */
     public static void main(String[] args) {
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(3 * args.length);
         for (String arg : args) {
             if (str.length() > 0)
                 str.append(" ");

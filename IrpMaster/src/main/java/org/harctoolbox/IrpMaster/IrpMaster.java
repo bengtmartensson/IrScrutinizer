@@ -76,7 +76,7 @@ public class IrpMaster {
      */
     public static void main(String[] args) {
         InputVariableSetValues inputVariableSetValues = null;
-        LinkedHashMap<String, String> usersParameters = new LinkedHashMap<>();
+        LinkedHashMap<String, String> usersParameters = new LinkedHashMap<>(8);
         String configFilename = null;
         String xmlProtocolFilename = null;
         String dotFilename = null;
@@ -232,9 +232,9 @@ public class IrpMaster {
             if (doCcf) {
                 boolean prontoPlausible = true;
                 boolean ueiPlausible = true;
-                boolean rawPlausible = false;
+                boolean rawPlausible;
                 try {
-                    IrSignal irSignal = null;
+                    IrSignal irSignal;
                     if (args.length == arg_i + 1)
                         // Either one sequence, or a CCF
                         irSignal = args[arg_i].trim().startsWith("+")
@@ -443,101 +443,100 @@ public class IrpMaster {
             }
             Debug.debugMain(inputVariableSetValues != null ? inputVariableSetValues.toString() : "");
 
-            PrintStream printStream = IrpUtils.getPrintSteam(outFileName);
-            PrintStream logFile = IrpUtils.getPrintSteam(logFileName);
-            UserComm.setLogging(logFile);
+            PrintStream logFile;
+            try (PrintStream printStream = IrpUtils.getPrintSteam(outFileName)) {
+                logFile = IrpUtils.getPrintSteam(logFileName);
+                UserComm.setLogging(logFile);
+                if (interactive) {
+                    LinkedHashMap<String, Long> actualParameters = inputVariableSetValues != null ? inputVariableSetValues.iterator().next() : null;
+                    //UserComm.print(actualParameters.toString());
+                    protocol.interactiveRender(irpMaster.userComm, actualParameters);
+                    UserComm.print("Bye!");
+                    System.exit(IrpUtils.exitSuccess);
+                }
+                assert(inputVariableSetValues != null); // If this fails, find out why
+                for (LinkedHashMap<String, Long> actualParameters : inputVariableSetValues) {
+                    // Iterate no_repetitions (for testing toggle updates etc.)
+                    for (int iterate = 0; iterate < no_repetitions; iterate++) {
+                        IrSequence irSequence;
+                        IrSignal irSignal = null;
 
-            if (interactive) {
-                LinkedHashMap actualParameters = inputVariableSetValues != null ? inputVariableSetValues.iterator().next() : null;
-                //UserComm.print(actualParameters.toString());
-                protocol.interactiveRender(irpMaster.userComm, actualParameters);
-                UserComm.print("Bye!");
-                System.exit(IrpUtils.exitSuccess);
+                        if (pass != IrpUtils.all) {
+                            irSequence = protocol.render(actualParameters, pass, considerRepeatMins, true);
+                            System.out.println(irSequence == null ? "null" : irSequence.toString());
+                            System.out.println(irSequence == null ? "null" : irSequence.toPrintString());
+                        } else {
+                            irSignal = protocol.renderIrSignal(actualParameters, pass, considerRepeatMins);
+                        }
+
+                        if (doXML)
+                            protocol.addSignal(actualParameters);
+
+                        if (irSignal != null) {
+                            Debug.debugMain(irSignal.toString());
+                            Debug.debugIrSignals("Total signal duration (us): " + Math.round(irSignal.getDuration()));
+                        }
+
+                        boolean writtenHeader = false;
+                        if (doRaw && irSignal != null) {
+                            if (doXML) {
+                                protocol.addRawSignalRepresentation(irSignal);
+                            } else {
+                                printStream.println(IrpUtils.variableHeader(actualParameters));
+                                writtenHeader = true;
+                                printStream.println(irSignal.toPrintString());
+                            }
+                        }
+                        if (doPronto && irSignal != null) {
+                            if (doXML) {
+                                protocol.addXmlNode("pronto", irSignal.ccfString());
+                            } else {
+                                if (!writtenHeader)
+                                    printStream.println(IrpUtils.variableHeader(actualParameters));
+                                writtenHeader = true;
+                                printStream.println(irSignal.ccfString());
+                            }
+                        }
+                        if (doUei && irSignal != null) {
+                            if (doXML) {
+                                protocol.addXmlNode("uei-learned", UeiLearnedSignal.newUeiLearned(irSignal).toString());
+                            } else {
+                                if (!writtenHeader)
+                                    printStream.println(IrpUtils.variableHeader(actualParameters));
+                                printStream.println(UeiLearnedSignal.newUeiLearned(irSignal).toString());
+                            }
+                        }
+
+                        if (invokeDecodeIR) {
+                            // If there is a log file, don't babble.
+                            if (logFile == null)
+                                System.out.print("DecodeIR result: ");
+
+                            boolean verified = DecodeIR.invoke(irSignal, protocolName, protocol, actualParameters, logFile == null, System.out);
+                            if (logFile != null)
+                                logFile.println(irpMaster.protocols.get(protocolName).name + ": " + IrpUtils.variableHeader(actualParameters)
+                                        + ": " + (verified ? "passed" : "failed"));
+                        }
+                        if (invokeAnalyzeIR) {
+                            Analyzer analyzer = ExchangeIR.newAnalyzer(irSignal);
+                            System.out.println("AnalyzeIR: " + analyzer.getIrpWithAltLeadout());
+                        }
+                    } // for (... repetitions ...)
+                } // for (LinkedHashMap actualParameters ...)
+                if (doXML)
+                    protocol.printDOM(printStream);
             }
-
-            for (LinkedHashMap<String, Long> actualParameters : inputVariableSetValues) {
-                // Iterate no_repetitions (for testing toggle updates etc.)
-                for (int iterate = 0; iterate < no_repetitions; iterate++) {
-                    IrSequence irSequence = null;
-                    IrSignal irSignal = null;
-
-                    if (pass != IrpUtils.all) {
-                        irSequence = protocol.render(actualParameters, pass, considerRepeatMins, true);
-                        System.out.println(irSequence == null ? "null" : irSequence.toString());
-                        System.out.println(irSequence == null ? "null" : irSequence.toPrintString());
-                    } else {
-                        irSignal = protocol.renderIrSignal(actualParameters, pass, considerRepeatMins);
-                    }
-
-                    if (doXML)
-                        protocol.addSignal(actualParameters);
-
-                    if (irSignal != null) {
-                        Debug.debugMain(irSignal.toString());
-                        Debug.debugIrSignals("Total signal duration (us): " + Math.round(irSignal.getDuration()));
-                    }
-
-                    boolean writtenHeader = false;
-                    if (doRaw && irSignal != null) {
-                        if (doXML) {
-                            protocol.addRawSignalRepresentation(irSignal);
-                        } else {
-                            printStream.println(IrpUtils.variableHeader(actualParameters));
-                            writtenHeader = true;
-                            printStream.println(irSignal.toPrintString());
-                        }
-                    }
-                    if (doPronto && irSignal != null) {
-                        if (doXML) {
-                            protocol.addXmlNode("pronto", irSignal.ccfString());
-                        } else {
-                            if (!writtenHeader)
-                                printStream.println(IrpUtils.variableHeader(actualParameters));
-                            writtenHeader = true;
-                            printStream.println(irSignal.ccfString());
-                        }
-                    }
-                    if (doUei && irSignal != null) {
-                        if (doXML) {
-                            protocol.addXmlNode("uei-learned", UeiLearnedSignal.newUeiLearned(irSignal).toString());
-                        } else {
-                            if (!writtenHeader)
-                                printStream.println(IrpUtils.variableHeader(actualParameters));
-                            writtenHeader = true;
-                            printStream.println(UeiLearnedSignal.newUeiLearned(irSignal).toString());
-                        }
-                    }
-
-                    if (invokeDecodeIR) {
-                        // If there is a log file, don't babble.
-                        if (logFile == null)
-                            System.out.print("DecodeIR result: ");
-
-                        boolean verified = DecodeIR.invoke(irSignal, protocolName, protocol, actualParameters, logFile == null, System.out);
-                        if (logFile != null)
-                            logFile.println(irpMaster.protocols.get(protocolName).name + ": " + IrpUtils.variableHeader(actualParameters)
-                                    + ": " + (verified ? "passed" : "failed"));
-                    }
-                    if (invokeAnalyzeIR) {
-                        Analyzer analyzer = ExchangeIR.newAnalyzer(irSignal);
-                        System.out.println("AnalyzeIR: " + analyzer.getIrpWithAltLeadout());
-                    }
-                } // for (... repetitions ...)
-            } // for (LinkedHashMap actualParameters ...)
-            if (doXML)
-                protocol.printDOM(printStream);
-            printStream.close();
             if (logFile != null)
                 logFile.close();
         } catch (IrpParseException ex) {
             if (irpMaster != null) {
                 irpMaster.userComm.errorMsg("IRP parse error: ");
                 irpMaster.userComm.printMsg(irpString);
-                irpMaster.userComm.printMsg(IrpUtils.spaces(ex.charPositionInLine) + "^");
+                irpMaster.userComm.printMsg(IrpUtils.spaces(ex.getCharPositionInLine()) + "^");
             } else {
                 UserComm.error("IRP parse error: ");
                 UserComm.print(irpString);
-                UserComm.print(IrpUtils.spaces(ex.charPositionInLine) + "^");
+                UserComm.print(IrpUtils.spaces(ex.getCharPositionInLine()) + "^");
             }
         } catch (FileNotFoundException | IrpMasterException ex) {
             if (irpMaster != null)
@@ -690,7 +689,7 @@ public class IrpMaster {
     // The key is the protocol name folded to lower case. Case preserved name is in UnparsedProtocol.name.
     private LinkedHashMap<String, UnparsedProtocol> protocols;
     private IrpMaster() {
-        protocols = new LinkedHashMap<>();
+        protocols = new LinkedHashMap<>(200);
         userComm = new UserComm();
     }
     /**
@@ -930,7 +929,7 @@ public class IrpMaster {
             this.name = unnamed;
             documentation = null;
             efcTranslation = null;
-            ueiProtocol = new ArrayList<>();
+            ueiProtocol = new ArrayList<>(1);
         }
 
         UnparsedProtocol() {

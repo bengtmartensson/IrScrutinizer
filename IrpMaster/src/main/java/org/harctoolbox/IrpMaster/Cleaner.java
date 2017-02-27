@@ -56,7 +56,7 @@ public class Cleaner {
     }
 
     private void createHistogram() {
-        histogram = new HashMap<>();
+        histogram = new HashMap<>(16);
         for (int d : rawData) {
             int old = histogram.containsKey(d) ? histogram.get(d) : 0;
             histogram.put(d, old + 1);
@@ -64,7 +64,7 @@ public class Cleaner {
     }
 
     private void createDumbTimingsTable(int absoluteTolerance, double relativeTolerance) {
-        dumbTimingsTable = new ArrayList<>();
+        dumbTimingsTable = new ArrayList<>(16);
         sorted = rawData.clone();
         Arrays.sort(sorted);
         int last = Integer.MIN_VALUE;
@@ -77,8 +77,8 @@ public class Cleaner {
     }
 
     private void improveTimingsTable(int absoluteTolerance, double relativeTolerance) {
-        lookDownTable = new HashMap<>();
-        timingsTable = new ArrayList<>();
+        lookDownTable = new HashMap<>(16);
+        timingsTable = new ArrayList<>(16);
         int indexInSortedTimings = 0;
         for (int timingsIndex = 0; timingsIndex < dumbTimingsTable.size(); timingsIndex++) {
             int dumbTiming = dumbTimingsTable.get(timingsIndex);
@@ -96,7 +96,7 @@ public class Cleaner {
                 terms += noHits;
                 lookDownTable.put(duration, timingsIndex);
             }
-            int average = (int) Math.round((double)sum/(double)terms);
+            int average = (int) Math.round(sum/(double)terms);
             timingsTable.add(average);
         }
     }

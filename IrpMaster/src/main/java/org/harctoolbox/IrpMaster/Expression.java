@@ -38,7 +38,7 @@ public class Expression {
         IrpParser.expression_return r;
         try {
             r = parser.expression();
-            CommonTree AST = (CommonTree) r.getTree();
+            CommonTree AST = r.getTree();
             if (debug)
                 System.out.println(AST.toStringTree());
             return evaluate(env, AST);
@@ -69,21 +69,19 @@ public class Expression {
             debug = true;
             arg_i++;
         }
+
         Protocol prot = new Protocol(new GeneralSpec());
-        String expression = null;
         try {
-            expression = args[arg_i].trim();
+            String expression = args[arg_i].trim();
             prot.assign(args, arg_i+1);
+            if ((expression.charAt(0) != '(') || (expression.charAt(expression.length()-1) != ')'))
+                expression = '(' + expression + ')';
+            System.out.println(evaluate(prot, expression));
         } catch (IncompatibleArgumentException ex) {
             System.err.println(ex.getMessage());
             usage(IrpUtils.exitUsageError);
         } catch (ArrayIndexOutOfBoundsException ex) {
             usage(IrpUtils.exitUsageError);
-        }
-        if (expression != null && ((expression.charAt(0) != '(') || (expression.charAt(expression.length()-1) != ')')))
-            expression = '(' + expression + ')';
-        try {
-            System.out.println(evaluate(prot, expression));
         } catch (UnassignedException | DomainViolationException ex) {
             System.err.println(ex.getMessage());
         }

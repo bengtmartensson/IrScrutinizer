@@ -140,7 +140,7 @@ public class Debug {
         return toString(",");
     }
     public String toString(String separator) {
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(256);
         for (Item it : Item.values())
             if (debugOn(it))
                 result.append(it).append(separator);
@@ -170,7 +170,7 @@ public class Debug {
         }
 
         public static String helpString(String separator) {
-            StringBuilder result = new StringBuilder();
+            StringBuilder result = new StringBuilder(256);
             for (Item it : Item.values())
                 result.append(it).append("=").append(power(it)).append(separator);
             return result.substring(0, result.length()-separator.length());

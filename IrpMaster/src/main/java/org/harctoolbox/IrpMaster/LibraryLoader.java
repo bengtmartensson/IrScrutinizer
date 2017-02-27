@@ -28,11 +28,11 @@ import java.util.Locale;
  */
 public class LibraryLoader {
 
-    private static List<String> loadedLibs = new ArrayList<>();
+    private static final List<String> loadedLibs = new ArrayList<>(2);
 
     // supported values: Linux-{i386,amd64}, Mac OS X-{i386,x86_64}, Windows-{x86,amd64}
     // Mac: it appears that Snow Leopard says "X64_64" while Mountain Lion says "x86_64".
-    private static String subFolderName;
+    private static final String subFolderName;
 
     static {
         subFolderName = (System.getProperty("os.name").startsWith("Windows")

@@ -67,7 +67,7 @@ public class BitSpec extends IrStreamItem {
         if (bitCodes == null || bitCodes.length == 0)
             return "<null>";
 
-        StringBuilder s = new StringBuilder();
+        StringBuilder s = new StringBuilder(64);
         s.append("<").append(bitCodes[0]);
         for (int i = 1; i < bitCodes.length; i++) {
             //s += (i > 0 ? "; " : "") + "bitCodes[" + i + "]=" + bitCodes[i];

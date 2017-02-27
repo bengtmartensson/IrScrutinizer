@@ -515,7 +515,7 @@ public class DecodeIR {
         Debug.debugDecodeIR("DecodeIR was setup with f=" + frequency + ", repeat=" + lengthRepeat
                 + ", ending=" + lengthEnding + ", data=" + IrpUtils.stringArray(us_data));
 
-        ArrayList<DecodedSignal> work = new ArrayList<>();
+        ArrayList<DecodedSignal> work = new ArrayList<>(4);
         while (dirc.decode()) {
             DecodedSignal decodedSignal = new DecodedSignal(dirc.getProtocolName(),
                     dirc.getDevice(),
@@ -566,7 +566,7 @@ public class DecodeIR {
                 return decodes[0].toString() + (decodes.length == 2 ? " (+ one other decode)"
                         : (" (+ " + decodes.length + " other decodes)"));
             } else {
-                StringBuilder result = new StringBuilder();
+                StringBuilder result = new StringBuilder(64);
                 for (DecodedSignal decode : decodes) {
                     if (result.length() > 0)
                         result.append("; ");
@@ -584,7 +584,7 @@ public class DecodeIR {
         public static String toPrintString(DecodedSignal[] decodes) {
             return toPrintString(decodes, false);
         }
-        
+
         private String protocolName;
         private int device;
         private int subDevice;
@@ -592,7 +592,7 @@ public class DecodeIR {
         //public int[] hex;
         private String miscMessage;
         private String errorMessage;
-        private final Map<String, Integer>miscNames = new LinkedHashMap<>();
+        private final Map<String, Integer>miscNames = new LinkedHashMap<>(4);
 
         public DecodedSignal(String protocolName,
                 int device,
@@ -639,7 +639,7 @@ public class DecodeIR {
          * @return Map containing the parameters.
          */
         public Map<String, Long> getParameters() {
-            Map<String, Long> result = new LinkedHashMap<>();
+            Map<String, Long> result = new LinkedHashMap<>(4);
             if (device >= 0)
                 result.put("D", (long)device);
             if (subDevice >=0)
@@ -669,8 +669,8 @@ public class DecodeIR {
 
             // First do the protocol specific stuff here ...
             boolean specialOk = true;
-            boolean protocolOk = true;
-            HashSet<String> exceptionVars = new HashSet();
+            boolean protocolOk;
+            HashSet<String> exceptionVars = new HashSet(4);
             if (protocolName.equalsIgnoreCase("x10.n")) {
                 protocolOk = this.protocolName.toLowerCase(IrpUtils.dumbLocale).startsWith("x10:");
                 specialOk = Integer.parseInt(this.protocolName.substring(4)) == vars.get("N");

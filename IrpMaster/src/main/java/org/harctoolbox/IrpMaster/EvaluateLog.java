@@ -45,10 +45,10 @@ public class EvaluateLog {
         System.out.println(el);
     }
 
-    LinkedHashMap<String, Integer>map = new LinkedHashMap<>();
+    private LinkedHashMap<String, Integer>map = new LinkedHashMap<>(16);
 
     public EvaluateLog(String filename) {
-        BufferedReader in = null;
+        BufferedReader in;
         try {
             in = new BufferedReader(new InputStreamReader(new FileInputStream(filename), IrpUtils.dumbCharset));
         } catch (FileNotFoundException ex) {
@@ -80,12 +80,20 @@ public class EvaluateLog {
     @Override
     public String toString() {
         int total = 0;
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(128);
         for (String protocol : map.keySet()) {
             result.append(protocol).append(": ").append(map.get(protocol)).append("\n");
             total += map.get(protocol);
         }
         return result.toString() + "\nTotal: " + total;
+    }
+
+    /**
+     * @return the map
+     */
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
+    public LinkedHashMap<String, Integer> getMap() {
+        return map;
     }
 
 

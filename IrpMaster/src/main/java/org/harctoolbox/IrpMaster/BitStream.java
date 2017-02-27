@@ -35,9 +35,9 @@ public class BitStream extends PrimitiveIrStreamItem {
         if (data.length == 1)
             return "BitStream, length = " + length + ", data = " + data[0] + " = " + Long.toBinaryString(data[0]);
         else {
-            StringBuilder dataString = new StringBuilder();
+            StringBuilder dataString = new StringBuilder(64);
             dataString.append("[ ");
-            StringBuilder binString = new StringBuilder();
+            StringBuilder binString = new StringBuilder(64);
             for (int i = data.length - 1; i >= 0; i--) {
                 dataString.append(Long.toString(data[i])).append(" ");
                 binString.append(Long.toBinaryString(data[i])).append(" ");
@@ -102,11 +102,11 @@ public class BitStream extends PrimitiveIrStreamItem {
         debugBegin();
         if (bitSpec == null)
             throw new UnassignedException("BitStream " + toString() + " has no associated BitSpec, cannot compute IRStream");
-        ArrayList<PrimitiveIrStreamItem> list = new ArrayList<>();
         if (length % bitSpec.getChunkSize() != 0)
             throw new IncompatibleArgumentException("chunksize (= " + bitSpec.getChunkSize() + ") does not divide bitstream length (= " + length + ").");
 
         int noChunks = length/bitSpec.getChunkSize();
+        ArrayList<PrimitiveIrStreamItem> list = new ArrayList<>(noChunks);
         for (int n = 0; n < noChunks; n++) {
             int chunkNo = noChunks - n - 1;
             PrimaryIrStream irs = bitSpec.getBitIrsteam(getChunkNo(chunkNo, bitSpec.getChunkSize()));

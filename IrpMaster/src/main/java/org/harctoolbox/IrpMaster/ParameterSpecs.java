@@ -42,9 +42,11 @@ public class ParameterSpecs {
     }
 
     private HashMap<String, ParameterSpec>map;
+
     public ParameterSpecs() {
-        map = new HashMap<>();
+        map = new HashMap<>(4);
     }
+
     public ParameterSpecs(String parameter_specs) throws ParseException {
         this();
         IrpLexer lex = new IrpLexer(new ANTLRStringStream(parameter_specs));
@@ -53,7 +55,7 @@ public class ParameterSpecs {
         IrpParser.parameter_specs_return r;
         try {
             r = parser.parameter_specs();
-            CommonTree ct = (CommonTree) r.getTree();
+            CommonTree ct = r.getTree();
             load(ct);
         } catch (RecognitionException ex) {
             throw new ParseException(ex);
@@ -90,7 +92,7 @@ public class ParameterSpecs {
 
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(32);
         for (ParameterSpec ps : map.values())
             str.append(ps.toString()).append(",");
 

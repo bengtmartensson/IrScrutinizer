@@ -56,6 +56,7 @@ public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Lo
         String[] s = new String[args.length - arg_i];
         System.arraycopy(args, arg_i, s, 0, args.length - arg_i);
 
+        @SuppressWarnings("UnusedAssignment") // findbugs bug
         InputVariableSetValues ivsv = null;
         try {
             ivsv = new InputVariableSetValues(s, null);
@@ -94,9 +95,9 @@ public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Lo
 
     private InputVariableSetValues(Protocol protocol) {
         this.protocol = protocol;
-        map = new LinkedHashMap<>();
-        currentAssignment = new LinkedHashMap<>();
-        iterators = new LinkedHashMap<>();
+        map = new LinkedHashMap<>(4);
+        currentAssignment = new LinkedHashMap<>(4);
+        iterators = new LinkedHashMap<>(4);
     }
 
     public InputVariableSetValues(String[] str, Protocol protocol) throws UnassignedException, IncompatibleArgumentException, ParseException {
@@ -124,6 +125,7 @@ public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Lo
                 assign(kvp.getKey(), kvp.getValue());
         }
     }
+
     private boolean isFinished() {
         if (virgin)
             return false;
@@ -135,6 +137,7 @@ public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Lo
             }
         return finished;
     }
+
     private void update() throws NoSuchElementException {
         if (isFinished())
             throw new NoSuchElementException();

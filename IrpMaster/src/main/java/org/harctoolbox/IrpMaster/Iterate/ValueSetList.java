@@ -67,7 +67,7 @@ public class ValueSetList implements Iterable<Long> {
         }
     }
 
-    private ArrayList<ValueSet> valueSets = new ArrayList<>();
+    private final ArrayList<ValueSet> valueSets = new ArrayList<>(4);
     private int currentSetIndex = (int) IrpUtils.invalid;
     private Iterator<Long> setIterator = null;
 

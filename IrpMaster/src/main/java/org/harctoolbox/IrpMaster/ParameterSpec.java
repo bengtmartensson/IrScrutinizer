@@ -31,13 +31,10 @@ public class ParameterSpec {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ParameterSpec dev = null;
-        ParameterSpec toggle = null;
-        ParameterSpec func = null;
         try {
-            dev = new ParameterSpec("d", 0, 255, false, "255-s");
-            toggle = new ParameterSpec("t", 0, 1, true, 0);
-            func = new ParameterSpec("F", 0, 1, false, 0);
+            ParameterSpec dev = new ParameterSpec("d", 0, 255, false, "255-s");
+            ParameterSpec toggle = new ParameterSpec("t", 0, 1, true, 0);
+            ParameterSpec func = new ParameterSpec("F", 0, 1, false, 0);
             System.out.println(new ParameterSpec("Fx", 0, 1, false, 0));
             System.out.println(new ParameterSpec("Fx", 0, 1, false));
             System.out.println(new ParameterSpec("Fx", 0, 1));
@@ -94,7 +91,7 @@ public class ParameterSpec {
         IrpParser.bare_expression_return r;
         try {
             r = parser.bare_expression();
-            CommonTree ct = (CommonTree) r.getTree();
+            CommonTree ct = r.getTree();
             deflt = ct;
         } catch (RecognitionException ex) {
             throw new ParseException(ex);
@@ -112,7 +109,7 @@ public class ParameterSpec {
         IrpParser.parameter_spec_return r;
         try {
             r = parser.parameter_spec();
-            CommonTree ct = (CommonTree) r.getTree();
+            CommonTree ct = r.getTree();
             load(ct);
         } catch (RecognitionException ex) {
             throw new ParseException(ex);

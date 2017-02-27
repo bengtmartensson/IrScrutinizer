@@ -40,7 +40,7 @@ public class GeneralSpec {
         CommonTree AST = null;
         try {
             r = parser.generalspec();
-            AST = (CommonTree) r.getTree();
+            AST = r.getTree();
         } catch (RecognitionException ex) {
             System.err.println(ex.getMessage());
         }

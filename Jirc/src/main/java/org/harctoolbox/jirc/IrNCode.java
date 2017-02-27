@@ -65,6 +65,7 @@ final class IrNCode {
     /**
      * @return the signals
      */
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public List<Integer> getSignals() {
         return signals;
     }

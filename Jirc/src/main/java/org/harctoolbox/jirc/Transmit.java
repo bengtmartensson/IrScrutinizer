@@ -32,7 +32,7 @@ final class Transmit {
     private IrRemote remote; // Could really remove all the remote arguments on the private functions...
     private boolean valid = false;
     private int debug = 0;
-    private Sbuf send_buffer = new Sbuf();
+    private final Sbuf send_buffer = new Sbuf();
 
     private Transmit() {
     }
@@ -215,6 +215,7 @@ final class Transmit {
         }
     }
 
+    @SuppressWarnings("AssignmentToMethodParameter")
     private void send_data(IrRemote remote, long data, int bits, int done) {
         int i;
         int all_bits = remote.bit_count();
@@ -404,6 +405,7 @@ final class Transmit {
             return false;
     }
 
+    @SuppressWarnings("AssignmentToMethodParameter")
     private boolean send_loop(IrRemote remote, IrNCode code, int repeat, boolean sim) {
         while (true) {
             if (repeat > 0 && remote.has_repeat()) {

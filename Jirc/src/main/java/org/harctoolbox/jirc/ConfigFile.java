@@ -56,6 +56,7 @@ public final class ConfigFile {
      * @return Collection of IrRemote's.
      * @throws IOException Misc IO problem
      */
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public static Collection<IrRemote> readConfig(File filename, String charsetName, boolean rejectLircCode) throws IOException {
         //System.err.println("Parsing " + filename.getCanonicalPath());
         if (filename.isFile()) {
@@ -63,7 +64,7 @@ public final class ConfigFile {
             return config.remotes;
         } else if (filename.isDirectory()) {
             File[] files = filename.listFiles();
-            Map<String, IrRemote> dictionary = new HashMap<>();
+            Map<String, IrRemote> dictionary = new HashMap<>(8);
             for (File file : files) {
                 // The program handles nonsensical files fine, however rejecting some
                 // obviously irrelevant files saves time and log entries.
@@ -93,6 +94,8 @@ public final class ConfigFile {
         else
             return null;
     }
+
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public static Collection<IrRemote> readConfig(Reader reader, String source, boolean rejectLircCode) throws IOException {
         ConfigFile config = new ConfigFile(reader, source, rejectLircCode);
         return config.remotes;
@@ -138,7 +141,7 @@ public final class ConfigFile {
     }
 
     private static String join(String[] str, int start) {
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(1024);
         for (int i = start; i < str.length; i++)
             result.append(str[i]).append(" ");
         result.setLength(result.length() - 1);
@@ -155,7 +158,7 @@ public final class ConfigFile {
     }
 
     private ConfigFile(Reader reader, String source, boolean rejectLircCode) throws IOException {
-        this.remotes = new ArrayList<>();
+        this.remotes = new ArrayList<>(8);
         this.reader = new LineNumberReader(reader);
         line = null;
         words = new String[0];
@@ -173,7 +176,7 @@ public final class ConfigFile {
 
 
     private List<IrRemote> remotes(String source, boolean rejectLircCode) throws IOException {
-        List<IrRemote> rems = new ArrayList<>();
+        List<IrRemote> rems = new ArrayList<>(16);
         while (true) {
             try {
                 IrRemote remote = remote();
@@ -310,7 +313,7 @@ public final class ConfigFile {
 
     private List<IrNCode> cookedCodes() throws IOException, EofException, ParseException {
         gobble("begin", "codes");
-        List<IrNCode> codes = new ArrayList<>();
+        List<IrNCode> codes = new ArrayList<>(32);
         while (true) {
             try {
                 IrNCode code = cookedCode();
@@ -329,7 +332,7 @@ public final class ConfigFile {
             throw new ParseException("", reader.getLineNumber());
         if (words[0].equalsIgnoreCase("end") && words[1].equalsIgnoreCase("codes"))
             throw new ParseException("", reader.getLineNumber());
-        List<Long> codes = new ArrayList<>();
+        List<Long> codes = new ArrayList<>(32);
         for (int i = 1; i < words.length; i++)
             codes.add(IrNCode.parseLircNumber(words[i]));
         IrNCode irNCode = new IrNCode(words[0], codes);
@@ -340,7 +343,7 @@ public final class ConfigFile {
 
     private List<IrNCode> rawCodes() throws IOException, EofException, ParseException {
         gobble("begin", "raw_codes");
-        List<IrNCode> codes = new ArrayList<>();
+        List<IrNCode> codes = new ArrayList<>(32);
         while (true) {
             try {
                 IrNCode code = rawCode();
@@ -369,7 +372,7 @@ public final class ConfigFile {
     }
 
     private List<Integer> integerList() throws IOException, EofException {
-        List<Integer> numbers = new ArrayList<>();
+        List<Integer> numbers = new ArrayList<>(128);
         while (true) {
             readLine();
             try {
@@ -395,9 +398,9 @@ public final class ConfigFile {
         private String name = null;
         private String driver;
 
-        List<String> flags = new ArrayList<>();
-        Map<String, Long> unaryParameters = new HashMap<>();
-        Map<String, IrRemote.XY> binaryParameters = new HashMap<>();
+        List<String> flags = new ArrayList<>(16);
+        Map<String, Long> unaryParameters = new HashMap<>(16);
+        Map<String, IrRemote.XY> binaryParameters = new HashMap<>(8);
 
         public void add(String name, long x) {
             unaryParameters.put(name, x);
