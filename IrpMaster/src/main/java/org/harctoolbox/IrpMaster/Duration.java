@@ -30,55 +30,8 @@ import org.antlr.runtime.tree.CommonTree;
 
 public class Duration extends PrimitiveIrStreamItem {
 
-    private DurationType durationType;
-
-    private double us = IrpUtils.invalid;
-    private double time_periods = IrpUtils.invalid;
-    private double time_units = IrpUtils.invalid;
-
     public static Duration newDuration(Protocol env, double time, String unit, DurationType durationType) {
         return durationType == DurationType.extent ? new Extent(env, time, unit) : new Duration(env, time, unit, durationType);
-    }
-
-    public Duration(Protocol env, double time, DurationType dt) {
-        this(env, time, "u", dt);
-    }
-
-    public Duration(Protocol env, double time, String unit, DurationType dt) {
-        super(env);
-        //if (time == 0)
-        //    UserComm.warning("Duration of 0 detected. This is normally not sensible.");
-        durationType = dt;
-        if (unit == null || unit.isEmpty())
-            time_units = time;
-        else if (unit.equals("p"))
-            time_periods = time;
-        else if (unit.equals("m"))
-            us = 1000 * time;
-        else if (unit.equals("u"))
-            us = time;
-    }
-
-    public double evaluate_sign(double elapsed) throws ArithmeticException, IncompatibleArgumentException {
-        return (durationType == DurationType.flash) ? evaluate(elapsed) : -evaluate(elapsed);
-    }
-
-    public double evaluate(double elapsed) throws ArithmeticException, IncompatibleArgumentException {
-        if (time_periods != IrpUtils.invalid) {
-            if (environment.getFrequency() > 0) {
-                return 1000000.0*time_periods/environment.getFrequency();
-            } else {
-                throw new ArithmeticException("Units in p and frequency == 0 do not go together.");
-            }
-        } else if (time_units != IrpUtils.invalid) {
-            if (environment.getUnit() > 0) {
-                return time_units * environment.getUnit();
-            } else {
-                throw new ArithmeticException("Relative units and unit == 0 do not go together.");
-            }
-        } else {
-            return us;
-        }
     }
 
     /** Returns a new Duration instance by invoking the parser on the second argument.
@@ -100,23 +53,6 @@ public class Duration extends PrimitiveIrStreamItem {
             System.err.println(ex.getMessage());
         }
         return null;
-    }
-
-    public DurationType getDurationType() {
-        return durationType;
-    }
-
-    @Override
-    public ArrayList<PrimitiveIrStreamItem> evaluate(BitSpec bitSpec) {
-        debugBegin();
-        ArrayList<PrimitiveIrStreamItem> list = new ArrayList<>(1);
-        list.add(this);
-        return list;
-    }
-
-    @Override
-    public String toString() {
-        return durationType + ":" + (us != IrpUtils.invalid ? (us + "u") : time_periods != IrpUtils.invalid  ? (time_periods + "p") : (this.time_units + "u"));
     }
 
     private static void test(Protocol protocol, String str) throws ArithmeticException, IncompatibleArgumentException {
@@ -163,6 +99,71 @@ public class Duration extends PrimitiveIrStreamItem {
         } catch (ArithmeticException | IncompatibleArgumentException ex) {
             System.err.println(ex.getMessage());
         }
+    }
+
+    private DurationType durationType;
+
+    private double us = IrpUtils.invalid;
+    private double time_periods = IrpUtils.invalid;
+    private double time_units = IrpUtils.invalid;
+
+    public Duration(Protocol env, double time, DurationType dt) {
+        this(env, time, "u", dt);
+    }
+
+    public Duration(Protocol env, double time, String unit, DurationType dt) {
+        super(env);
+        //if (time == 0)
+        //    UserComm.warning("Duration of 0 detected. This is normally not sensible.");
+        durationType = dt;
+        if (unit == null || unit.isEmpty())
+            time_units = time;
+        else if (unit.equals("p"))
+            time_periods = time;
+        else if (unit.equals("m"))
+            us = 1000 * time;
+        else if (unit.equals("u"))
+            us = time;
+    }
+
+    public double evaluate_sign(double elapsed) throws ArithmeticException, IncompatibleArgumentException {
+        return (durationType == DurationType.flash) ? evaluate(elapsed) : -evaluate(elapsed);
+    }
+
+    public double evaluate(double elapsed) throws ArithmeticException, IncompatibleArgumentException {
+        if (time_periods != IrpUtils.invalid) {
+            if (environment.getFrequency() > 0) {
+                return 1000000.0*time_periods/environment.getFrequency();
+            } else {
+                throw new ArithmeticException("Units in p and frequency == 0 do not go together.");
+            }
+        } else if (time_units != IrpUtils.invalid) {
+            if (environment.getUnit() > 0) {
+                return time_units * environment.getUnit();
+            } else {
+                throw new ArithmeticException("Relative units and unit == 0 do not go together.");
+            }
+        } else {
+            return us;
+        }
+    }
+
+
+    public DurationType getDurationType() {
+        return durationType;
+    }
+
+    @Override
+    public ArrayList<PrimitiveIrStreamItem> evaluate(BitSpec bitSpec) {
+        debugBegin();
+        ArrayList<PrimitiveIrStreamItem> list = new ArrayList<>(1);
+        list.add(this);
+        return list;
+    }
+
+    @Override
+    public String toString() {
+        return durationType + ":" + (us != IrpUtils.invalid ? (us + "u") : time_periods != IrpUtils.invalid  ? (time_periods + "p") : (this.time_units + "u"));
     }
 
     @Override

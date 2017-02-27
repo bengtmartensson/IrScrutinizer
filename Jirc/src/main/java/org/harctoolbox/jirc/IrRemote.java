@@ -24,35 +24,9 @@ import org.harctoolbox.girr.RemoteSet;
  */
 final public class IrRemote {
 
-    static class XY {
-
-        public long x;
-        public long y;
-
-        XY(long x, long y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
-
-    private final int debug = 0;
-
     private static final int LOG_ERR = 1;
     private static final int LOG_WARNING = 2;
-
-    private void logprintf(int level, String format, Object... args) {
-        System.err.println(String.format(format, args));
-    }
-
     private static IrRemote repeat_remote = null;
-
-    public static IrRemote getRepeat_remote() {
-        return repeat_remote;
-    }
-
-    public static void setRepeat_remote(IrRemote remote) {
-        repeat_remote = remote;
-    }
 
     /**
      * definitions for flags
@@ -166,121 +140,12 @@ final public class IrRemote {
         }
     };
 
-    public Map<String, String> getApplicationData() {
-        Map<String, String> applicationData = new LinkedHashMap<>();
-        if (driver != null)
-            applicationData.put("driver", driver);
-        applicationData.put("type", lircProtocolType());
-        applicationData.put("bits", Integer.toString(bits)); // bits (length of code)
-        applicationData.put("flags", Integer.toString(flags)); // flags
-        applicationData.put("eps", Integer.toString(eps)); // eps (_relative_ tolerance)
-        applicationData.put("aeps", Integer.toString(aeps)); // aeps (_absolute_ tolerance)
-        applicationData.put("pthree", Integer.toString(pthree)); // 3 (only used for RC-MM)
-        applicationData.put("sthree", Integer.toString(sthree)); // 3 (only used for RC-MM)
-        applicationData.put("ptwo", Integer.toString(ptwo)); // 2 (only used for RC-MM)
-        applicationData.put("stwo", Integer.toString(stwo)); // 2 (only used for RC-MM)
-        applicationData.put("pone", Integer.toString(pone)); // 1
-        applicationData.put("sone", Integer.toString(sone)); // 1
-        applicationData.put("pzero", Integer.toString(pzero)); // 0
-        applicationData.put("szero", Integer.toString(szero)); // 0
-        applicationData.put("plead", Integer.toString(plead)); // leading pulse
-        applicationData.put("ptrail", Integer.toString(ptrail));	// trailing pulse
-        applicationData.put("pfoot", Integer.toString(pfoot)); // foot
-        applicationData.put("sfoot", Integer.toString(sfoot)); // foot
-        applicationData.put("prepeat", Integer.toString(prepeat)); // indicate repeating
-        applicationData.put("srepeat", Integer.toString(srepeat)); // indicate repeating
-        applicationData.put("pre_data_bits", Integer.toString(pre_data_bits)); // length of pre_data
-        applicationData.put("pre_data", Long.toString(pre_data)); // data which the remote sends before actual keycode
-        applicationData.put("post_data_bits", Integer.toString(post_data_bits)); // length of post_data
-        applicationData.put("post_data", Long.toString(post_data)); // data which the remote sends after actual keycode
-        applicationData.put("pre_p", Integer.toString(pre_p)); // signal between pre_data and keycode
-        applicationData.put("pre_s", Integer.toString(pre_s)); // signal between pre_data and keycode
-        applicationData.put("post_p", Integer.toString(post_p)); // signal between keycode and post_code
-        applicationData.put("post_s", Integer.toString(post_s)); // signal between keycode and post_code
-        applicationData.put("gap", Integer.toString(gap)); // time between signals in usecs
-        applicationData.put("gap2", Integer.toString(gap2)); // time between signals in usecs
-        applicationData.put("repeat_gap", Integer.toString(repeat_gap));	// time between two repeat codes if different from gap
-        applicationData.put("toggle_bit", Integer.toString(toggle_bit));	// obsolete
-        applicationData.put("toggle_bit_mask", Long.toString(toggle_bit_mask)); // previously only one bit called toggle_bit
-        applicationData.put("min_repeat", Integer.toString(min_repeat));	// code is repeated at least x times code sent once -> min_repeat=0
-        applicationData.put("min_code_repeat", Integer.toString(min_code_repeat)); //meaningful only if remote sends a repeat code: in this case this value indicates how often the real code is repeated before the repeat code is being sent
-        applicationData.put("freq", Integer.toString(freq != -1 ? freq : IrRemote.DEFAULT_FREQ)); // modulation frequency
-        applicationData.put("duty_cycle", Integer.toString(duty_cycle));	// 0<duty cycle<=100
-        applicationData.put("baud", Integer.toString(baud));	//
-        applicationData.put("toggle_mask", Long.toString(toggle_mask)); // Sharp (?) error detection scheme
-        applicationData.put("rc6_mask", Long.toString(rc6_mask)); // RC-6 doubles signal length of some bits
-        applicationData.put("ignore_mask", Long.toString(ignore_mask)); // mask defines which bits can be ignored when matching a code
-
-        return applicationData;
+    public static IrRemote getRepeat_remote() {
+        return repeat_remote;
     }
 
-    public Remote toRemote(boolean alternatingSigns, int debug) {
-        Map<String, Map<String, String>> appDataMap = new LinkedHashMap<>();
-        appDataMap.put("jirc", getApplicationData());
-
-        //remote.last_code = null;
-
-        Map<String, Command> commands = new LinkedHashMap<>();
-        for (IrNCode c : getCodes()) {
-            Command command = toCommand(c, alternatingSigns, debug);
-            if (command != null)
-                commands.put(command.getName(), command);
-        }
-
-        Remote.MetaData metaData = new Remote.MetaData(getName());
-        return new Remote(metaData,
-                null, // comment,
-                null, // notes,
-                commands,
-                appDataMap);
-    }
-
-    Command toCommand(IrNCode code, boolean alternatingSigns, int debug) {
-        return isTimingInfo()
-                ? toTimedCommand(code, alternatingSigns, debug)
-                : toLircCodeCommand(code);
-    }
-
-    Command toLircCodeCommand(IrNCode code) {
-        Map<String, Long> parameters = new HashMap<>(1);
-        parameters.put("lirc", code.getCode());
-        try {
-            return new Command(code.getName(), null, "lircdriver:" + driver, parameters);
-        } catch (IrpMasterException ex) {
-            // this cannot happen
-            throw new InternalError();
-        }
-    }
-
-    Command toTimedCommand(IrNCode code, boolean alternatingSigns, int debug) {
-        IrSignal irSignal = toIrSignal(code, alternatingSigns, debug);
-        return irSignal != null
-                ? new Command(code.getName(), /*comment=*/null, irSignal)
-                : null;
-    }
-
-    IrSignal toIrSignal(IrNCode code, boolean alternatingSigns, int debug) {
-        IrSequence intro = new IrSequence();
-        do {
-            IrSequence seq = render(code, alternatingSigns, /* repeat= */ false, debug);
-            if (seq != null && !seq.isEmpty())
-                intro = intro.append(seq);
-        } while (code.getTransmit_state() != null);
-        if ((code.getSignals() == null || code.getSignals().isEmpty())
-                && (intro == null || intro.isEmpty()))
-            return null;
-
-        IrSequence repeat;
-        if (code.getNext() == null) {
-            repeat = render(code, alternatingSigns, /* repeat= */ true, debug);
-        } else {
-            // It is quite unclear to me what the multiple codes in IrNCode are to be handled,
-            // this is an educated guess.
-            repeat = intro;
-            intro = null;
-        }
-
-        return new IrSignal((double) freq,  /* duty cycle= */IrpUtils.invalid, intro, repeat,  /* ending= */ null);
+    public static void setRepeat_remote(IrRemote remote) {
+        repeat_remote = remote;
     }
 
     public static RemoteSet newRemoteSet(Collection<IrRemote> remotes, String configFilename,
@@ -303,46 +168,125 @@ final public class IrRemote {
         return girr;
     }
 
-    private boolean setNamedFlag(String flagName) {
-        if (!all_flags.containsKey(flagName))
-            return false;
-
-        flags |= all_flags.get(flagName);
-        return false;
+    static int bit_count(IrRemote remote) {
+        return remote.pre_data_bits + remote.bits + remote.post_data_bits;
     }
+
+    static int bits_set(long data) {
+        return Long.bitCount(data);
+    }
+
+    static long reverse(long data, int bits) {
+        int i;
+        long c;
+
+        c = 0;
+        for (i = 0; i < bits; i++) {
+            c |= (long) (((data & (((long) 1) << i)) != 0 ? 1 : 0))
+                    << (bits - 1 - i);
+        }
+        return (c);
+    }
+    static boolean is_pulse(int data) {
+        return (data & PULSE_BIT) != 0;
+    }
+    static boolean is_space(int data) {
+        return (!is_pulse(data));
+    }
+    static boolean has_repeat(IrRemote remote) {
+        return remote.prepeat > 0 && remote.srepeat > 0;
+    }
+    static void set_protocol(IrRemote remote, int protocol) {
+        remote.flags &= ~(IR_PROTOCOL_MASK);
+        remote.flags |= protocol;
+    }
+    public static boolean is_raw(IrRemote remote) {
+        return remote.is_raw();
+    }
+    static boolean is_space_enc(IrRemote remote) {
+        return remote.is_space_enc();
+    }
+    public static boolean is_space_first(IrRemote remote) {
+        return remote.is_space_first();
+    }
+    public static boolean is_rc5(IrRemote remote) {
+        return remote.is_rc5();
+    }
+    public static boolean is_rc6(IrRemote remote) {
+        return remote.is_rc6();
+    }
+    static boolean is_biphase(IrRemote remote) {
+        return remote.is_biphase();
+    }
+    public static boolean is_rcmm(IrRemote remote) {
+        return remote.is_rcmm();
+    }
+    public static boolean is_goldstar(IrRemote remote) {
+        return remote.is_goldstar();
+    }
+    public static boolean is_grundig(IrRemote remote) {
+        return remote.is_grundig();
+    }
+    public static boolean is_bo(IrRemote remote) {
+        return remote.is_bo();
+    }
+    public static boolean is_xmp(IrRemote remote) {
+        return remote.is_xmp();
+    }
+    static boolean is_const(IrRemote remote) {
+        return (remote.flags & CONST_LENGTH) != 0;
+    }
+    static boolean has_repeat_gap(IrRemote remote) {
+        return remote.repeat_gap > 0;
+    }
+    static boolean has_pre(IrRemote remote) {
+        return remote.pre_data_bits > 0;
+    }
+    static boolean has_post(IrRemote remote) {
+        return remote.post_data_bits > 0;
+    }
+    public static boolean has_header(IrRemote remote) {
+        return remote.has_header();
+    }
+    static boolean has_foot(IrRemote remote) {
+        return remote.has_foot();
+    }
+    static boolean has_toggle_bit_mask(IrRemote remote) {
+        return remote.toggle_bit_mask > 0;
+    }
+    static boolean has_ignore_mask(IrRemote remote) {
+        return remote.ignore_mask > 0;
+    }
+    static boolean has_toggle_mask(IrRemote remote) {
+        return remote.has_toggle_mask();
+    }
+    static int min_gap(IrRemote remote) {
+        return (remote.gap2 != 0 && remote.gap2 < remote.gap) ? remote.gap2 : remote.gap;
+    }
+    static int max_gap(IrRemote remote) {
+        return (remote.gap2 > remote.gap) ? remote.gap2 : remote.gap;
+    }
+    static long gen_mask(int bits) {
+        int i;
+        long mask;
+
+        mask = 0;
+        for (i = 0; i < bits; i++) {
+            mask <<= 1;
+            mask |= 1;
+        }
+        return (mask);
+    }
+    private final int debug = 0;
 
     /**
      * name of remote control
      */
     private String name;
-
-    public String getName() {
-        return name;
-    }
-
     private String driver;
-
     private boolean timingInfo; // ! lircCode
-
-    public boolean isTimingInfo() {
-        return timingInfo;
-    }
-
     private String source;
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
     private List<IrNCode> codes;
-
-    List<IrNCode> getCodes() {
-        return codes;
-    }
 
     /**
      * bits (length of code)
@@ -461,18 +405,10 @@ final public class IrRemote {
      */
     int freq = DEFAULT_FREQ;
 
-    public int getFreq() {
-        return freq;
-    }
-
     /**
      * 0<duty cycle<=100
      */
     int duty_cycle;
-
-    public int getDutyCycle() {
-        return duty_cycle;
-    }
 
     int baud;
 
@@ -557,51 +493,171 @@ final public class IrRemote {
         sanityChecks();
     }
 
+    private void logprintf(int level, String format, Object... args) {
+        System.err.println(String.format(format, args));
+    }
+
+    public Map<String, String> getApplicationData() {
+        Map<String, String> applicationData = new LinkedHashMap<>();
+        if (driver != null)
+            applicationData.put("driver", driver);
+        applicationData.put("type", lircProtocolType());
+        applicationData.put("bits", Integer.toString(bits)); // bits (length of code)
+        applicationData.put("flags", Integer.toString(flags)); // flags
+        applicationData.put("eps", Integer.toString(eps)); // eps (_relative_ tolerance)
+        applicationData.put("aeps", Integer.toString(aeps)); // aeps (_absolute_ tolerance)
+        applicationData.put("pthree", Integer.toString(pthree)); // 3 (only used for RC-MM)
+        applicationData.put("sthree", Integer.toString(sthree)); // 3 (only used for RC-MM)
+        applicationData.put("ptwo", Integer.toString(ptwo)); // 2 (only used for RC-MM)
+        applicationData.put("stwo", Integer.toString(stwo)); // 2 (only used for RC-MM)
+        applicationData.put("pone", Integer.toString(pone)); // 1
+        applicationData.put("sone", Integer.toString(sone)); // 1
+        applicationData.put("pzero", Integer.toString(pzero)); // 0
+        applicationData.put("szero", Integer.toString(szero)); // 0
+        applicationData.put("plead", Integer.toString(plead)); // leading pulse
+        applicationData.put("ptrail", Integer.toString(ptrail));	// trailing pulse
+        applicationData.put("pfoot", Integer.toString(pfoot)); // foot
+        applicationData.put("sfoot", Integer.toString(sfoot)); // foot
+        applicationData.put("prepeat", Integer.toString(prepeat)); // indicate repeating
+        applicationData.put("srepeat", Integer.toString(srepeat)); // indicate repeating
+        applicationData.put("pre_data_bits", Integer.toString(pre_data_bits)); // length of pre_data
+        applicationData.put("pre_data", Long.toString(pre_data)); // data which the remote sends before actual keycode
+        applicationData.put("post_data_bits", Integer.toString(post_data_bits)); // length of post_data
+        applicationData.put("post_data", Long.toString(post_data)); // data which the remote sends after actual keycode
+        applicationData.put("pre_p", Integer.toString(pre_p)); // signal between pre_data and keycode
+        applicationData.put("pre_s", Integer.toString(pre_s)); // signal between pre_data and keycode
+        applicationData.put("post_p", Integer.toString(post_p)); // signal between keycode and post_code
+        applicationData.put("post_s", Integer.toString(post_s)); // signal between keycode and post_code
+        applicationData.put("gap", Integer.toString(gap)); // time between signals in usecs
+        applicationData.put("gap2", Integer.toString(gap2)); // time between signals in usecs
+        applicationData.put("repeat_gap", Integer.toString(repeat_gap));	// time between two repeat codes if different from gap
+        applicationData.put("toggle_bit", Integer.toString(toggle_bit));	// obsolete
+        applicationData.put("toggle_bit_mask", Long.toString(toggle_bit_mask)); // previously only one bit called toggle_bit
+        applicationData.put("min_repeat", Integer.toString(min_repeat));	// code is repeated at least x times code sent once -> min_repeat=0
+        applicationData.put("min_code_repeat", Integer.toString(min_code_repeat)); //meaningful only if remote sends a repeat code: in this case this value indicates how often the real code is repeated before the repeat code is being sent
+        applicationData.put("freq", Integer.toString(freq != -1 ? freq : IrRemote.DEFAULT_FREQ)); // modulation frequency
+        applicationData.put("duty_cycle", Integer.toString(duty_cycle));	// 0<duty cycle<=100
+        applicationData.put("baud", Integer.toString(baud));	//
+        applicationData.put("toggle_mask", Long.toString(toggle_mask)); // Sharp (?) error detection scheme
+        applicationData.put("rc6_mask", Long.toString(rc6_mask)); // RC-6 doubles signal length of some bits
+        applicationData.put("ignore_mask", Long.toString(ignore_mask)); // mask defines which bits can be ignored when matching a code
+
+        return applicationData;
+    }
+
+    public Remote toRemote(boolean alternatingSigns, int debug) {
+        Map<String, Map<String, String>> appDataMap = new LinkedHashMap<>();
+        appDataMap.put("jirc", getApplicationData());
+
+        //remote.last_code = null;
+
+        Map<String, Command> commands = new LinkedHashMap<>();
+        for (IrNCode c : getCodes()) {
+            Command command = toCommand(c, alternatingSigns, debug);
+            if (command != null)
+                commands.put(command.getName(), command);
+        }
+
+        Remote.MetaData metaData = new Remote.MetaData(getName());
+        return new Remote(metaData,
+                null, // comment,
+                null, // notes,
+                commands,
+                appDataMap);
+    }
+
+    Command toCommand(IrNCode code, boolean alternatingSigns, int debug) {
+        return isTimingInfo()
+                ? toTimedCommand(code, alternatingSigns, debug)
+                : toLircCodeCommand(code);
+    }
+
+    Command toLircCodeCommand(IrNCode code) {
+        Map<String, Long> parameters = new HashMap<>(1);
+        parameters.put("lirc", code.getCode());
+        try {
+            return new Command(code.getName(), null, "lircdriver:" + driver, parameters);
+        } catch (IrpMasterException ex) {
+            // this cannot happen
+            throw new InternalError();
+        }
+    }
+
+    Command toTimedCommand(IrNCode code, boolean alternatingSigns, int debug) {
+        IrSignal irSignal = toIrSignal(code, alternatingSigns, debug);
+        return irSignal != null
+                ? new Command(code.getName(), /*comment=*/null, irSignal)
+                : null;
+    }
+
+    IrSignal toIrSignal(IrNCode code, boolean alternatingSigns, int debug) {
+        IrSequence intro = new IrSequence();
+        do {
+            IrSequence seq = render(code, alternatingSigns, /* repeat= */ false, debug);
+            if (seq != null && !seq.isEmpty())
+                intro = intro.append(seq);
+        } while (code.getTransmit_state() != null);
+        if ((code.getSignals() == null || code.getSignals().isEmpty())
+                && (intro == null || intro.isEmpty()))
+            return null;
+
+        IrSequence repeat;
+        if (code.getNext() == null) {
+            repeat = render(code, alternatingSigns, /* repeat= */ true, debug);
+        } else {
+            // It is quite unclear to me what the multiple codes in IrNCode are to be handled,
+            // this is an educated guess.
+            repeat = intro;
+            intro = null;
+        }
+
+        return new IrSignal((double) freq,  /* duty cycle= */IrpUtils.invalid, intro, repeat,  /* ending= */ null);
+    }
+
+    private boolean setNamedFlag(String flagName) {
+        if (!all_flags.containsKey(flagName))
+            return false;
+
+        flags |= all_flags.get(flagName);
+        return false;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isTimingInfo() {
+        return timingInfo;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    List<IrNCode> getCodes() {
+        return codes;
+    }
+
+    public int getFreq() {
+        return freq;
+    }
+
+    public int getDutyCycle() {
+        return duty_cycle;
+    }
+
     /*      $Id: ir_remote.h,v 5.44 2010/04/11 18:50:38 lirc Exp $      */
 
     public int bit_count() {
         return pre_data_bits + bits + post_data_bits;
     }
 
-    static int bit_count(IrRemote remote) {
-        return remote.pre_data_bits + remote.bits + remote.post_data_bits;
-    }
-
-    static int bits_set(long data) {
-        return Long.bitCount(data);
-    }
-
-    static long reverse(long data, int bits) {
-        int i;
-        long c;
-
-        c = 0;
-        for (i = 0; i < bits; i++) {
-            c |= (long) (((data & (((long) 1) << i)) != 0 ? 1 : 0))
-                    << (bits - 1 - i);
-        }
-        return (c);
-    }
-
-    static boolean is_pulse(int data) {
-        return (data & PULSE_BIT) != 0;
-    }
-
-    static boolean is_space(int data) {
-        return (!is_pulse(data));
-    }
-
     public boolean has_repeat() {
         return prepeat > 0 && srepeat > 0;
-    }
-
-    static boolean has_repeat(IrRemote remote) {
-        return remote.prepeat > 0 && remote.srepeat > 0;
-    }
-
-    static void set_protocol(IrRemote remote, int protocol) {
-        remote.flags &= ~(IR_PROTOCOL_MASK);
-        remote.flags |= protocol;
     }
 
     public void set_protocol(int protocol) {
@@ -613,184 +669,86 @@ final public class IrRemote {
         return (flags & IR_PROTOCOL_MASK) == RAW_CODES;
     }
 
-    public static boolean is_raw(IrRemote remote) {
-        return remote.is_raw();
-    }
-
     public boolean is_space_enc() {
         return (flags & IR_PROTOCOL_MASK) == SPACE_ENC;
-    }
-
-    static boolean is_space_enc(IrRemote remote) {
-        return remote.is_space_enc();
     }
 
     public boolean is_space_first() {
         return (flags & IR_PROTOCOL_MASK) == SPACE_FIRST;
     }
 
-    public static boolean is_space_first(IrRemote remote) {
-        return remote.is_space_first();
-    }
-
     public boolean is_rc5() {
         return (flags & IR_PROTOCOL_MASK) == RC5;
-    }
-
-    public static boolean is_rc5(IrRemote remote) {
-        return remote.is_rc5();
     }
 
     public boolean is_rc6() {
         return (flags & IR_PROTOCOL_MASK) == RC6 || rc6_mask != 0;
     }
 
-    public static boolean is_rc6(IrRemote remote) {
-        return remote.is_rc6();
-    }
-
     boolean is_biphase() {
         return is_rc5() || is_rc6();
     }
 
-    static boolean is_biphase(IrRemote remote) {
-        return remote.is_biphase();
-    }
 
     public boolean is_rcmm() {
         return (flags & IR_PROTOCOL_MASK) == RCMM;
-    }
-
-    public static boolean is_rcmm(IrRemote remote) {
-        return remote.is_rcmm();
     }
 
     public boolean is_goldstar() {
         return (flags & IR_PROTOCOL_MASK) == GOLDSTAR;
     }
 
-    public static boolean is_goldstar(IrRemote remote) {
-        return remote.is_goldstar();
-    }
-
     public boolean is_grundig() {
         return (flags & IR_PROTOCOL_MASK) == GRUNDIG;
-    }
-
-    public static boolean is_grundig(IrRemote remote) {
-        return remote.is_grundig();
     }
 
     public boolean is_bo() {
         return (flags & IR_PROTOCOL_MASK) == BO;
     }
 
-    public static boolean is_bo(IrRemote remote) {
-        return remote.is_bo();
-    }
-
     public boolean is_xmp() {
         return (flags & IR_PROTOCOL_MASK) == XMP;
-    }
-
-    public static boolean is_xmp(IrRemote remote) {
-        return remote.is_xmp();
     }
 
     public boolean is_const() {
         return (flags & CONST_LENGTH) != 0;
     }
 
-    static boolean is_const(IrRemote remote) {
-        return (remote.flags & CONST_LENGTH) != 0;
-    }
-
     public boolean has_repeat_gap() {
         return repeat_gap > 0;
-    }
-
-    static boolean has_repeat_gap(IrRemote remote) {
-        return remote.repeat_gap > 0;
     }
 
     public boolean has_pre() {
         return pre_data_bits > 0;
     }
 
-    static boolean has_pre(IrRemote remote) {
-        return remote.pre_data_bits > 0;
-    }
-
     public boolean has_post() {
         return post_data_bits > 0;
-    }
-
-    static boolean has_post(IrRemote remote) {
-        return remote.post_data_bits > 0;
     }
 
     public boolean has_header() {
         return phead > 0 && shead > 0;
     }
 
-    public static boolean has_header(IrRemote remote) {
-        return remote.has_header();
-    }
-
     boolean has_foot() {
         return pfoot > 0 && sfoot > 0;
-    }
-
-    static boolean has_foot(IrRemote remote) {
-        return remote.has_foot();
     }
 
     public boolean has_toggle_bit_mask() {
         return toggle_bit_mask > 0;
     }
 
-    static boolean has_toggle_bit_mask(IrRemote remote) {
-        return remote.toggle_bit_mask > 0;
-    }
-
-    static boolean has_ignore_mask(IrRemote remote) {
-        return remote.ignore_mask > 0;
-    }
 
     boolean has_toggle_mask() {
         return toggle_mask > 0;
-    }
-
-    static boolean has_toggle_mask(IrRemote remote) {
-        return remote.has_toggle_mask();
     }
 
     public int min_gap() {
         return (gap2 != 0 && gap2 < gap) ? gap2 : gap;
     }
 
-    static int min_gap(IrRemote remote) {
-        return (remote.gap2 != 0 && remote.gap2 < remote.gap) ? remote.gap2 : remote.gap;
-    }
-
     public int max_gap() {
         return (gap2 > gap) ? gap2 : gap;
-    }
-
-    static int max_gap(IrRemote remote) {
-        return (remote.gap2 > remote.gap) ? remote.gap2 : remote.gap;
-    }
-
-    static long gen_mask(int bits) {
-        int i;
-        long mask;
-
-        mask = 0;
-        for (i = 0; i < bits; i++) {
-            mask <<= 1;
-            mask |= 1;
-        }
-        return (mask);
     }
 
     private boolean hasSaneTimingInfo() {
@@ -959,7 +917,6 @@ final public class IrRemote {
         return true;
     }
 
-
     // mine
     public String lircProtocolType() {
         return is_raw() ? "RAW_CODES"
@@ -1013,5 +970,16 @@ final public class IrRemote {
             System.err.println(ex.getMessage()); // FIXME
         }
         return seq;
+    }
+
+    static class XY {
+
+        public long x;
+        public long y;
+
+        XY(long x, long y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 }

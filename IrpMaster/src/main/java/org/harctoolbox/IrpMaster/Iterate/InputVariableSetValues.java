@@ -40,6 +40,43 @@ import org.harctoolbox.IrpMaster.UnassignedException;
 // and set virgin = true. The first call to next() will not call any iterators, but just flip virgin = false.
 
 public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Long>>{
+    /**
+     * Just for interactive testing
+     * @param args
+     */
+    public static void main(String[] args) {
+        int seed = (int) IrpUtils.invalid;
+        int arg_i = 0;
+        if (args[arg_i].equals("-s")) {
+            seed = Integer.parseInt(args[++arg_i]);
+            arg_i++;
+        }
+        RandomValueSet.initRng(seed);
+
+        String[] s = new String[args.length - arg_i];
+        System.arraycopy(args, arg_i, s, 0, args.length - arg_i);
+
+        InputVariableSetValues ivsv = null;
+        try {
+            ivsv = new InputVariableSetValues(s, null);
+        } catch (UnassignedException ex) {
+            System.err.println(ex.getMessage());
+            System.exit(23);
+        } catch (ParseException ex) {
+            System.err.println(ex.getMessage());
+            System.exit(24);
+        } catch (IncompatibleArgumentException ex) {
+            System.err.println(ex.getMessage());
+            System.exit(25);
+        }
+
+        System.out.println(ivsv);
+
+        for (LinkedHashMap hm : ivsv) {
+            System.out.println(hm);//ivsv.currentAssignment);
+        }
+    }
+
     // I use LinkedHashMap instead of HashMap because the latter preserves the order of the keys.
     private LinkedHashMap<String, ValueSetList>map;
 
@@ -54,44 +91,6 @@ public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Lo
     private Protocol protocol;
 
 
-    private boolean isFinished() {
-        if (virgin)
-            return false;
-        boolean finished = true;
-        for (String var : iterators.keySet())
-            if (iterators.get(var).hasNext()) {
-                finished = false;
-                break;
-            }
-        return finished;
-    }
-
-    private void update() throws NoSuchElementException {
-        if (isFinished())
-            throw new NoSuchElementException();
-
-        if (virgin) {
-            virgin = false;
-            return;
-        }
-
-        // Think of this a a number of cascaded counters:
-        /// Starting with the "leftmost", increment each one as long as necessary,
-        // i.e. as long as they have reached their max.
-        for (String v : map.keySet()) {
-            if (iterators.get(v).hasNext()) {
-                // This has not reached its max, just increment and we are through.
-                Long value = iterators.get(v).next();
-                currentAssignment.put(v, value);
-                break;
-            } else {
-                // Reset. We have a "carry", i.e. continue with following interators.
-                map.get(v).reset();
-                Long value = iterators.get(v).next();
-                currentAssignment.put(v, value);
-            }
-        }
-    }
 
     private InputVariableSetValues(Protocol protocol) {
         this.protocol = protocol;
@@ -123,6 +122,43 @@ public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Lo
         } else {
             for (Entry<String, String> kvp : input.entrySet())
                 assign(kvp.getKey(), kvp.getValue());
+        }
+    }
+    private boolean isFinished() {
+        if (virgin)
+            return false;
+        boolean finished = true;
+        for (String var : iterators.keySet())
+            if (iterators.get(var).hasNext()) {
+                finished = false;
+                break;
+            }
+        return finished;
+    }
+    private void update() throws NoSuchElementException {
+        if (isFinished())
+            throw new NoSuchElementException();
+
+        if (virgin) {
+            virgin = false;
+            return;
+        }
+
+        // Think of this a a number of cascaded counters:
+        /// Starting with the "leftmost", increment each one as long as necessary,
+        // i.e. as long as they have reached their max.
+        for (String v : map.keySet()) {
+            if (iterators.get(v).hasNext()) {
+                // This has not reached its max, just increment and we are through.
+                Long value = iterators.get(v).next();
+                currentAssignment.put(v, value);
+                break;
+            } else {
+                // Reset. We have a "carry", i.e. continue with following interators.
+                map.get(v).reset();
+                Long value = iterators.get(v).next();
+                currentAssignment.put(v, value);
+            }
         }
     }
 
@@ -201,40 +237,4 @@ public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Lo
        };
     }
 
-    /**
-     * Just for interactive testing
-     * @param args
-     */
-    public static void main(String[] args) {
-        int seed = (int) IrpUtils.invalid;
-        int arg_i = 0;
-        if (args[arg_i].equals("-s")) {
-            seed = Integer.parseInt(args[++arg_i]);
-            arg_i++;
-        }
-        RandomValueSet.initRng(seed);
-
-        String[] s = new String[args.length - arg_i];
-        System.arraycopy(args, arg_i, s, 0, args.length - arg_i);
-
-        InputVariableSetValues ivsv = null;
-        try {
-            ivsv = new InputVariableSetValues(s, null);
-        } catch (UnassignedException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(23);
-        } catch (ParseException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(24);
-        } catch (IncompatibleArgumentException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(25);
-        }
-
-        System.out.println(ivsv);
-
-        for (LinkedHashMap hm : ivsv) {
-            System.out.println(hm);//ivsv.currentAssignment);
-        }
-    }
 }

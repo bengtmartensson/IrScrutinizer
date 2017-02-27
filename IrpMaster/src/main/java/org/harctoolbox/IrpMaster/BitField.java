@@ -36,6 +36,62 @@ public class BitField extends PrimaryIrStreamItem {
      */
     public static final int maxWidth = Long.SIZE - 1; // = 63
 
+    /**
+     * Mainly for debugging and testing
+     *
+     * @param env
+     * @param str
+     * @param debug
+     * @return BitField
+     */
+    public static BitField newBitfield(Protocol env, String str, boolean debug) {
+        IrpLexer lex = new IrpLexer(new ANTLRStringStream(str));
+        CommonTokenStream tokens = new CommonTokenStream(lex);
+        IrpParser parser = new IrpParser(tokens);
+        IrpParser.bitfield_return r;
+        try {
+            r = parser.bitfield();
+            CommonTree AST = (CommonTree) r.getTree();
+            if (debug)
+                System.out.println(AST.toStringTree());
+            return ASTTraverser.bitfield(env, AST);
+        } catch (RecognitionException | UnassignedException | DomainViolationException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return null;
+    }
+
+    private static void usage(int code) {
+        System.out.println("Usage:");
+        System.out.println("\tBitfield [-d]? <bitfield> [<name>=<value>|{<name>=<value>}]*");
+        System.exit(code);
+    }
+
+    public static void main(String[] args) {
+        boolean debug = false;
+        if (args.length == 0)
+            usage(IrpUtils.exitUsageError);
+        int arg_i = 0;
+        if (args[0].equals("-d")) {
+            debug = true;
+            arg_i++;
+        }
+        Protocol prot = new Protocol(new GeneralSpec());
+        String bitfield = null;
+        try {
+            bitfield = args[arg_i].trim();
+            prot.assign(args, arg_i+1);
+        } catch (IncompatibleArgumentException ex) {
+            System.err.println(ex.getMessage());
+            usage(IrpUtils.exitFatalProgramFailure);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            usage(IrpUtils.exitUsageError);
+        }
+        BitField bf = newBitfield(prot, bitfield, debug);
+        if (bf != null)
+            System.out.println(bf.toString() + "\tint=" + bf.toLong() + "\tstring=" + bf.evaluateAsString());
+    }
+
     private boolean complement;
     boolean reverse;
     boolean infinite;
@@ -69,30 +125,6 @@ public class BitField extends PrimaryIrStreamItem {
         Debug.debugBitFields("new Bitfield: " + toString() + " = " + toLong());
     }
 
-    /**
-     * Mainly for debugging and testing
-     *
-     * @param env
-     * @param str
-     * @param debug
-     * @return BitField
-     */
-    public static BitField newBitfield(Protocol env, String str, boolean debug) {
-        IrpLexer lex = new IrpLexer(new ANTLRStringStream(str));
-        CommonTokenStream tokens = new CommonTokenStream(lex);
-        IrpParser parser = new IrpParser(tokens);
-        IrpParser.bitfield_return r;
-        try {
-            r = parser.bitfield();
-            CommonTree AST = (CommonTree) r.getTree();
-            if (debug)
-                System.out.println(AST.toStringTree());
-            return ASTTraverser.bitfield(env, AST);
-        } catch (RecognitionException | UnassignedException | DomainViolationException ex) {
-            System.err.println(ex.getMessage());
-        }
-        return null;
-    }
 
     @Override
     public final String toString() {
@@ -139,36 +171,6 @@ public class BitField extends PrimaryIrStreamItem {
         return infinite;
     }
 
-    private static void usage(int code) {
-        System.out.println("Usage:");
-        System.out.println("\tBitfield [-d]? <bitfield> [<name>=<value>|{<name>=<value>}]*");
-        System.exit(code);
-    }
-
-    public static void main(String[] args) {
-        boolean debug = false;
-        if (args.length == 0)
-            usage(IrpUtils.exitUsageError);
-        int arg_i = 0;
-        if (args[0].equals("-d")) {
-            debug = true;
-            arg_i++;
-        }
-        Protocol prot = new Protocol(new GeneralSpec());
-        String bitfield = null;
-        try {
-            bitfield = args[arg_i].trim();
-            prot.assign(args, arg_i+1);
-        } catch (IncompatibleArgumentException ex) {
-            System.err.println(ex.getMessage());
-            usage(IrpUtils.exitFatalProgramFailure);
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            usage(IrpUtils.exitUsageError);
-        }
-        BitField bf = newBitfield(prot, bitfield, debug);
-        if (bf != null)
-            System.out.println(bf.toString() + "\tint=" + bf.toLong() + "\tstring=" + bf.evaluateAsString());
-    }
 
     @Override
     public boolean isEmpty() {

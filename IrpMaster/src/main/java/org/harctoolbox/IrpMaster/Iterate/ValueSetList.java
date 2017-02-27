@@ -33,25 +33,57 @@ import org.harctoolbox.IrpMaster.UnassignedException;
  */
 
 public class ValueSetList implements Iterable<Long> {
-    //long value = invalid;
+    /** For testing purposes only
+     * @param args
+     */
+    public static void main(String[] args) {
+        int seed = (int) IrpUtils.invalid;
+        int arg_i = 0;
+        if (args[arg_i].equals("-s")) {
+            seed = Integer.parseInt(args[++arg_i]);
+            arg_i++;
+        }
+        RandomValueSet.initRng(seed);
+
+        ValueSetList vsl = null;
+        try {
+            vsl = new ValueSetList(0L, 255L, args[arg_i]);
+        } catch (ParseException | UnassignedException ex) {
+            System.err.println(ex.getMessage());
+        }
+
+        System.out.println(vsl);
+
+        if (vsl == null)
+            return;
+
+        for (Long l : vsl) {
+            System.out.println(l);
+        }
+        System.out.println("----------------");
+        vsl.reset();
+        for (Long l : vsl) {
+            System.out.println(l);
+        }
+    }
 
     private ArrayList<ValueSet> valueSets = new ArrayList<>();
     private int currentSetIndex = (int) IrpUtils.invalid;
     private Iterator<Long> setIterator = null;
 
-    public void reset() {
-        currentSetIndex = (int) IrpUtils.invalid;
-        setIterator = null;
-        for (ValueSet valueSet : valueSets)
-            valueSet.reset();
-
-    }
 
     public ValueSetList(Long min, Long max, String str) throws UnassignedException, ParseException {
         String[] q = str.split(",");
         for (String q1 : q) {
             valueSets.add(ValueSet.newValueSet(min, max, q1));
         }
+    }
+    public void reset() {
+        currentSetIndex = (int) IrpUtils.invalid;
+        setIterator = null;
+        for (ValueSet valueSet : valueSets)
+            valueSet.reset();
+
     }
 
     @Override
@@ -97,37 +129,4 @@ public class ValueSetList implements Iterable<Long> {
         return valueSets.toString();
     }
 
-    /** For testing purposes only
-     * @param args
-     */
-    public static void main(String[] args) {
-        int seed = (int) IrpUtils.invalid;
-        int arg_i = 0;
-        if (args[arg_i].equals("-s")) {
-            seed = Integer.parseInt(args[++arg_i]);
-            arg_i++;
-        }
-        RandomValueSet.initRng(seed);
-
-        ValueSetList vsl = null;
-        try {
-            vsl = new ValueSetList(0L, 255L, args[arg_i]);
-        } catch (ParseException | UnassignedException ex) {
-            System.err.println(ex.getMessage());
-        }
-
-        System.out.println(vsl);
-
-        if (vsl == null)
-            return;
-
-        for (Long l : vsl) {
-            System.out.println(l);
-        }
-        System.out.println("----------------");
-        vsl.reset();
-        for (Long l : vsl) {
-            System.out.println(l);
-        }
-    }
 }

@@ -40,38 +40,8 @@ import org.harctoolbox.IrpMaster.Iterate.RandomValueSet;
 
 public class IrpMaster {
 
-    private static class UnparsedProtocol {
-
-        public static final String unnamed = "unnamed_protocol";
-        public String name;
-        public String documentation;
-        public String irp;
-        public String efcTranslation;
-        public ArrayList<Short> ueiProtocol;
-
-        UnparsedProtocol(String irp) {
-            this.irp = irp;
-            this.name = unnamed;
-            documentation = null;
-            efcTranslation = null;
-            ueiProtocol = new ArrayList<>();
-        }
-
-        UnparsedProtocol() {
-            this(null);
-        }
-
-        @Override
-        public String toString() {
-            return name + "\t" + irp;
-        }
-    }
-
-    private UserComm userComm;
     private final static int max_recursion_depth_expanding = 5;
-    private String configFileVersion = "not found";
     private static boolean testParse = false;
-    //private static String defaultConfigFilename = "IrpProtocols.ini";
     private static String usageMessage = "Usage: one of\n"
             + "\tIrpMaster --help\n"
             + "\tIrpMaster [--decodeir] [--analyze] [-c|--config <configfilename>] --version\n"
@@ -92,242 +62,8 @@ public class IrpMaster {
             + "They must be less or equal to 2^63-1 = 9223372036854775807.\n\n"
             + "All parameter assignment, both with explicit name and without, can be given as intervals, like `0..255' or '0:255', causing the program to generate all signals within the interval. "
             + "Also * can be used for parameter intervals, in which case min and max are taken from the parameterspecs in the (extended) IRP notation. "
-            + "The notation #<number> can also be used for parameter intervals, in which case <number> random values between min and max are generated.";
-
-    // The key is the protocol name folded to lower case. Case preserved name is in UnparsedProtocol.name.
-    private LinkedHashMap<String, UnparsedProtocol> protocols;
-
-    private void dump(PrintStream ps, String name) {
-        ps.println(protocols.get(name));
-    }
-
-    private void dump(PrintStream ps) {
-        for (String s : protocols.keySet())
-            dump(ps, s);
-    }
-
-    private void dump(String filename) throws FileNotFoundException {
-        dump(IrpUtils.getPrintSteam(filename));
-    }
-
-    private void dump(String filename, String name) throws FileNotFoundException {
-        dump(IrpUtils.getPrintSteam(filename), name);
-    }
-
-    //private String get(String name) {
-    //    return protocols.get(name).toString();
-    //}
-
-    public boolean isKnown(String protocol) {
-        return protocols.containsKey(protocol.toLowerCase(Locale.US));
-    }
-
-    public static boolean isKnown(String protocolsPath, String protocol) throws FileNotFoundException, IncompatibleArgumentException {
+            + "The notation #<number> can also be used for parameter intervals, in which case <number> random values between min and max are generated.";    public static boolean isKnown(String protocolsPath, String protocol) throws FileNotFoundException, IncompatibleArgumentException {
         return (new IrpMaster(protocolsPath)).isKnown(protocol);
-    }
-
-    public String getIrp(String name) {
-        UnparsedProtocol prot = protocols.get(name);
-        return prot == null ? null : prot.irp;
-    }
-
-    public Set<String> getNames() {
-        return protocols.keySet();
-    }
-
-    public String getDocumentation(String name) {
-        UnparsedProtocol prot = protocols.get(name);
-        return prot == null ? null : prot.documentation;
-    }
-
-    public String getEfcTranslation(String name) {
-        UnparsedProtocol prot = protocols.get(name);
-        return prot == null ? null : prot.efcTranslation;
-    }
-
-    public ArrayList<Short> getUeiProtocol(String name) {
-        UnparsedProtocol prot = protocols.get(name);
-        return prot == null ? null : prot.ueiProtocol;
-    }
-
-    /**
-     * Constructs a new Protocol with requested name, taken from the configuration
-     * file/data base within the current IrpMaster.
-     *
-     * @param name protocol name in the configuration file/data base
-     * @return newly parsed protocol
-     * @throws UnassignedException
-     * @throws ParseException
-     * @throws org.harctoolbox.IrpMaster.UnknownProtocolException
-     */
-    public Protocol newProtocol(String name) throws UnassignedException, ParseException, UnknownProtocolException {
-        UnparsedProtocol protocol = protocols.get(name.toLowerCase(IrpUtils.dumbLocale));
-        if (protocol == null)
-            throw new UnknownProtocolException(name);
-        return new Protocol(protocol.name.toLowerCase(IrpUtils.dumbLocale), protocol.irp, protocol.documentation);
-    }
-
-    public Protocol newProtocolOrNull(String name) throws UnassignedException, ParseException, UnknownProtocolException {
-        return isKnown(name) ? newProtocol(name) : null;
-    }
-
-    private void expand() throws IncompatibleArgumentException {
-        for (String protocol : protocols.keySet()) {
-            expand(0, protocol);
-        }
-    }
-
-    private void expand(int depth, String name) throws IncompatibleArgumentException {
-        UnparsedProtocol p = protocols.get(name);
-        if (!p.irp.contains("{"))
-            throw new IncompatibleArgumentException("IRP `" + p.irp + "' does not contain `{'.");
-
-        if (!p.irp.startsWith("{")) {
-            String p_name = p.irp.substring(0, p.irp.indexOf('{')).trim();
-            UnparsedProtocol ancestor = protocols.get(p_name.toLowerCase(IrpUtils.dumbLocale));
-            if (ancestor != null) {
-                String replacement = ancestor.irp.lastIndexOf('[') == -1 ? ancestor.irp
-                        : ancestor.irp.substring(0, ancestor.irp.lastIndexOf('['));
-                Debug.debugConfigfile("Protocol " + name + ": `" + p_name + "' replaced by `" + replacement + "'.");
-                p.irp = p.irp.replaceAll(p_name, replacement);
-                protocols.put(name, p);
-                if (depth < max_recursion_depth_expanding)
-                    expand(depth + 1, name);
-                else
-                    System.err.println("Recursion depth in expanding " + name + " exceeded.");
-            }
-        }
-    }
-
-    private void addProtocol(UnparsedProtocol current) {
-        // if no irp or name, ignore
-        if (current == null || current.irp == null || current.name == null)
-            return;
-
-        if (current.documentation != null)
-            current.documentation = current.documentation.trim();
-
-        if (protocols.containsKey(current.name.toLowerCase(IrpUtils.dumbLocale)))
-            userComm.warningMsg("Multiple definitions of protocol `" + current.name.toLowerCase(IrpUtils.dumbLocale) + "'. Keeping the last.");
-        protocols.put(current.name.toLowerCase(IrpUtils.dumbLocale), current);
-
-        if (testParse) {
-            IrpLexer lex = new IrpLexer(new ANTLRStringStream(current.irp));
-            CommonTokenStream tokens = new CommonTokenStream(lex);
-
-            IrpParser parser = new IrpParser(tokens);
-            try {
-                parser.protocol();
-            } catch (RecognitionException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
-    }
-
-    private IrpMaster() {
-        protocols = new LinkedHashMap<>();
-        userComm = new UserComm();
-    }
-
-    /**
-     * Like the other version, but reads from an InputStream instead.
-     *
-     * @param inputStream
-     * @throws IncompatibleArgumentException
-     */
-   public IrpMaster(InputStream inputStream) throws IncompatibleArgumentException {
-        this(new InputStreamReader(inputStream, IrpUtils.dumbCharset));
-    }
-
-    /**
-     * Like the other version, but reads from a Reader instead.
-     *
-     * @param reader
-     * @throws IncompatibleArgumentException
-     */
-    public IrpMaster(Reader reader) throws IncompatibleArgumentException {
-        this();
-        BufferedReader in = new BufferedReader(reader);
-        UnparsedProtocol currentProtocol = null;
-        int lineNo = 0;
-        try {
-            for (String lineRead = in.readLine(); lineRead != null; lineRead = in.readLine()) {
-                lineNo++;
-                String line = lineRead.trim();
-                String[] kw = line.split("=", 2);
-                String keyword = kw[0];
-                String payload = kw.length > 1 ? kw[1].trim() : null;
-                while (payload != null && payload.endsWith("\\")) {
-                    payload = payload.substring(0, payload.length()-1)/* + "\n"*/;
-                    payload += in.readLine();
-                }
-                if (line.startsWith("#")) {
-                    // comment, ignore
-                } else if (line.equals("[version]")) {
-                    configFileVersion = in.readLine();
-                } else if (line.equals("[protocol]")) {
-                    addProtocol(currentProtocol);
-                    currentProtocol = new UnparsedProtocol();
-                } else if (currentProtocol != null && currentProtocol.documentation != null) {
-                    // Everything is added to the documentation
-                    currentProtocol.documentation += currentProtocol.documentation.isEmpty() ? line
-                            : line.isEmpty() ? "\n\n"
-                            : ((currentProtocol.documentation.endsWith("\n") ? "" : " ") + line);
-                } else if (line.equals("[documentation]")) {
-                    if (currentProtocol != null)
-                        currentProtocol.documentation = "";
-                } else if (keyword.equals("name")) {
-                    if (currentProtocol != null)
-                        currentProtocol.name = payload;
-                } else if (keyword.equals("irp")) {
-                    if (currentProtocol != null)
-                        currentProtocol.irp = payload;
-                } else if (keyword.equals("EFC_translation")) {
-                    if (currentProtocol != null)
-                        currentProtocol.efcTranslation = payload;
-                } else if (keyword.equals("usable")) {
-                    if (payload == null || !payload.equals("yes"))
-                        currentProtocol = null;
-                } else if (keyword.equals("UEI_protocol")) {
-                    if (currentProtocol != null) {
-                        String[] str = payload != null ? payload.split("[\\s,;or]+") : new String[0];
-                        boolean hasComplained = false;
-                        for (String s : str) {
-                            try {
-                                currentProtocol.ueiProtocol.add(Short.parseShort(s, 16));
-                            } catch (NumberFormatException ex) {
-                                if (!hasComplained) {
-                                    Debug.debugConfigfile("Unparsable UEI protocol in line " + lineNo + ": " + line);
-                                    hasComplained = true;
-                                }
-                            }
-                        }
-                    }
-                } else if (keyword.length() > 1) {
-                    //if (Debug.debugConfigfile())
-                    //    System.out.println("Unknown keyword:" + keyword + " = " + payload);
-                } else {
-                    if (!line.isEmpty())
-                        Debug.debugConfigfile("Ignored line: " + line);
-                }
-            }
-            addProtocol(currentProtocol);
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
-        expand();
-        Debug.debugConfigfile(protocols.size() + " protocols read.");
-    }
-
-    /**
-     * Sets up a new IrpMaster from its first argument.
-     *
-     * @param datafile Configuration file for IRP protocols.
-     * @throws FileNotFoundException
-     * @throws IncompatibleArgumentException
-     */
-    public IrpMaster(String datafile) throws FileNotFoundException, IncompatibleArgumentException {
-        this(IrpUtils.getInputSteam(datafile));
     }
 
     private static void usage(int returncode) {
@@ -506,10 +242,10 @@ public class IrpMaster {
                                 : Pronto.ccfSignal(args[arg_i]);
                     else if (args.length == arg_i + 2)
                         // intro, repeat
-                       irSignal = new IrSignal(IrpUtils.defaultFrequency, IrpUtils.invalid, new IrSequence(args[arg_i]), new IrSequence(args[arg_i + 1]), null);
+                        irSignal = new IrSignal(IrpUtils.defaultFrequency, IrpUtils.invalid, new IrSequence(args[arg_i]), new IrSequence(args[arg_i + 1]), null);
                     else if (args.length == arg_i + 3)
                         // intro, repeat, ending
-                       irSignal = new IrSignal(IrpUtils.defaultFrequency, IrpUtils.invalid, new IrSequence(args[arg_i]), new IrSequence(args[arg_i + 1]), new IrSequence(args[arg_i + 2]));
+                        irSignal = new IrSignal(IrpUtils.defaultFrequency, IrpUtils.invalid, new IrSequence(args[arg_i]), new IrSequence(args[arg_i + 1]), new IrSequence(args[arg_i + 2]));
                     else {
                         int[] ccf = new int[args.length - arg_i];
                         rawPlausible = args[arg_i].startsWith("+");
@@ -780,7 +516,7 @@ public class IrpMaster {
                         boolean verified = DecodeIR.invoke(irSignal, protocolName, protocol, actualParameters, logFile == null, System.out);
                         if (logFile != null)
                             logFile.println(irpMaster.protocols.get(protocolName).name + ": " + IrpUtils.variableHeader(actualParameters)
-                                + ": " + (verified ? "passed" : "failed"));
+                                    + ": " + (verified ? "passed" : "failed"));
                     }
                     if (invokeAnalyzeIR) {
                         Analyzer analyzer = ExchangeIR.newAnalyzer(irSignal);
@@ -810,7 +546,6 @@ public class IrpMaster {
                 UserComm.exception(ex);
         }
     }
-
     // A number of static access functions, in particular to be called from C or such.
     // Name "Makehex" is misleading -- it has nothing to do with the makehex program,
     // just the API is makehex-like.
@@ -830,7 +565,6 @@ public class IrpMaster {
         }
         return irpMaster == null ? null : irpMaster.getIrp(protocolName);
     }
-
     /**
      * This function closely mimics the API of the MakeHex dll entry function.
      * It returns its payload contained in the file given as first argument.
@@ -851,7 +585,6 @@ public class IrpMaster {
 
         return irp == null ? -1 : makeHexIRP(outFile, append, irp, preamble, protocolName, device, OBC);
     }
-
     /**
      * Returns the Pronto form of the IR signal.
      *
@@ -872,7 +605,6 @@ public class IrpMaster {
 
         return makeHexIRP(irpMaster.getIrp(protocolName), device, subdevice, obc);
     }
-
     /**
      *
      * @param outFile
@@ -895,7 +627,6 @@ public class IrpMaster {
 
         return makeHexIRP(outFile, append, irp, preamble, protocolName, dev, subdev, obc);
     }
-
     /**
      *
      * @param outFile
@@ -923,7 +654,7 @@ public class IrpMaster {
         } catch (IncompatibleArgumentException | InvalidRepeatException | DomainViolationException ex) {
             status = -3;
         } catch (FileNotFoundException ex) {
-           status = 0;
+            status = 0;
         } catch (UnassignedException | ParseException ex) {
             status = -2;
         } finally {
@@ -932,7 +663,6 @@ public class IrpMaster {
         }
         return status;
     }
-
     /**
      *
      * @param irp
@@ -948,11 +678,269 @@ public class IrpMaster {
         }
         return null;
     }
-
     private static String makeHexIRPPriv(String irp, int device, int subdevice, int obc) throws UnassignedException, DomainViolationException, IncompatibleArgumentException, InvalidRepeatException, ParseException {
         Protocol protocol = new Protocol(null, irp, null);
         IrSignal irSignal = protocol.renderIrSignal(device, subdevice, obc);
         return irSignal.ccfString();
+    }
+
+    private UserComm userComm;
+    private String configFileVersion = "not found";
+
+    // The key is the protocol name folded to lower case. Case preserved name is in UnparsedProtocol.name.
+    private LinkedHashMap<String, UnparsedProtocol> protocols;
+    private IrpMaster() {
+        protocols = new LinkedHashMap<>();
+        userComm = new UserComm();
+    }
+    /**
+     * Like the other version, but reads from an InputStream instead.
+     *
+     * @param inputStream
+     * @throws IncompatibleArgumentException
+     */
+    public IrpMaster(InputStream inputStream) throws IncompatibleArgumentException {
+        this(new InputStreamReader(inputStream, IrpUtils.dumbCharset));
+    }
+    /**
+     * Like the other version, but reads from a Reader instead.
+     *
+     * @param reader
+     * @throws IncompatibleArgumentException
+     */
+    public IrpMaster(Reader reader) throws IncompatibleArgumentException {
+        this();
+        BufferedReader in = new BufferedReader(reader);
+        UnparsedProtocol currentProtocol = null;
+        int lineNo = 0;
+        try {
+            for (String lineRead = in.readLine(); lineRead != null; lineRead = in.readLine()) {
+                lineNo++;
+                String line = lineRead.trim();
+                String[] kw = line.split("=", 2);
+                String keyword = kw[0];
+                String payload = kw.length > 1 ? kw[1].trim() : null;
+                while (payload != null && payload.endsWith("\\")) {
+                    payload = payload.substring(0, payload.length()-1)/* + "\n"*/;
+                    payload += in.readLine();
+                }
+                if (line.startsWith("#")) {
+                    // comment, ignore
+                } else if (line.equals("[version]")) {
+                    configFileVersion = in.readLine();
+                } else if (line.equals("[protocol]")) {
+                    addProtocol(currentProtocol);
+                    currentProtocol = new UnparsedProtocol();
+                } else if (currentProtocol != null && currentProtocol.documentation != null) {
+                    // Everything is added to the documentation
+                    currentProtocol.documentation += currentProtocol.documentation.isEmpty() ? line
+                            : line.isEmpty() ? "\n\n"
+                            : ((currentProtocol.documentation.endsWith("\n") ? "" : " ") + line);
+                } else if (line.equals("[documentation]")) {
+                    if (currentProtocol != null)
+                        currentProtocol.documentation = "";
+                } else if (keyword.equals("name")) {
+                    if (currentProtocol != null)
+                        currentProtocol.name = payload;
+                } else if (keyword.equals("irp")) {
+                    if (currentProtocol != null)
+                        currentProtocol.irp = payload;
+                } else if (keyword.equals("EFC_translation")) {
+                    if (currentProtocol != null)
+                        currentProtocol.efcTranslation = payload;
+                } else if (keyword.equals("usable")) {
+                    if (payload == null || !payload.equals("yes"))
+                        currentProtocol = null;
+                } else if (keyword.equals("UEI_protocol")) {
+                    if (currentProtocol != null) {
+                        String[] str = payload != null ? payload.split("[\\s,;or]+") : new String[0];
+                        boolean hasComplained = false;
+                        for (String s : str) {
+                            try {
+                                currentProtocol.ueiProtocol.add(Short.parseShort(s, 16));
+                            } catch (NumberFormatException ex) {
+                                if (!hasComplained) {
+                                    Debug.debugConfigfile("Unparsable UEI protocol in line " + lineNo + ": " + line);
+                                    hasComplained = true;
+                                }
+                            }
+                        }
+                    }
+                } else if (keyword.length() > 1) {
+                    //if (Debug.debugConfigfile())
+                    //    System.out.println("Unknown keyword:" + keyword + " = " + payload);
+                } else {
+                    if (!line.isEmpty())
+                        Debug.debugConfigfile("Ignored line: " + line);
+                }
+            }
+            addProtocol(currentProtocol);
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+        expand();
+        Debug.debugConfigfile(protocols.size() + " protocols read.");
+    }
+    /**
+     * Sets up a new IrpMaster from its first argument.
+     *
+     * @param datafile Configuration file for IRP protocols.
+     * @throws FileNotFoundException
+     * @throws IncompatibleArgumentException
+     */
+    public IrpMaster(String datafile) throws FileNotFoundException, IncompatibleArgumentException {
+        this(IrpUtils.getInputSteam(datafile));
+    }
+
+    private void dump(PrintStream ps, String name) {
+        ps.println(protocols.get(name));
+    }
+
+    private void dump(PrintStream ps) {
+        for (String s : protocols.keySet())
+            dump(ps, s);
+    }
+
+    private void dump(String filename) throws FileNotFoundException {
+        dump(IrpUtils.getPrintSteam(filename));
+    }
+
+    private void dump(String filename, String name) throws FileNotFoundException {
+        dump(IrpUtils.getPrintSteam(filename), name);
+    }
+
+    //private String get(String name) {
+    //    return protocols.get(name).toString();
+    //}
+
+    public boolean isKnown(String protocol) {
+        return protocols.containsKey(protocol.toLowerCase(Locale.US));
+    }
+
+
+    public String getIrp(String name) {
+        UnparsedProtocol prot = protocols.get(name);
+        return prot == null ? null : prot.irp;
+    }
+
+    public Set<String> getNames() {
+        return protocols.keySet();
+    }
+
+    public String getDocumentation(String name) {
+        UnparsedProtocol prot = protocols.get(name);
+        return prot == null ? null : prot.documentation;
+    }
+
+    public String getEfcTranslation(String name) {
+        UnparsedProtocol prot = protocols.get(name);
+        return prot == null ? null : prot.efcTranslation;
+    }
+
+    public ArrayList<Short> getUeiProtocol(String name) {
+        UnparsedProtocol prot = protocols.get(name);
+        return prot == null ? null : prot.ueiProtocol;
+    }
+
+    /**
+     * Constructs a new Protocol with requested name, taken from the configuration
+     * file/data base within the current IrpMaster.
+     *
+     * @param name protocol name in the configuration file/data base
+     * @return newly parsed protocol
+     * @throws UnassignedException
+     * @throws ParseException
+     * @throws org.harctoolbox.IrpMaster.UnknownProtocolException
+     */
+    public Protocol newProtocol(String name) throws UnassignedException, ParseException, UnknownProtocolException {
+        UnparsedProtocol protocol = protocols.get(name.toLowerCase(IrpUtils.dumbLocale));
+        if (protocol == null)
+            throw new UnknownProtocolException(name);
+        return new Protocol(protocol.name.toLowerCase(IrpUtils.dumbLocale), protocol.irp, protocol.documentation);
+    }
+
+    public Protocol newProtocolOrNull(String name) throws UnassignedException, ParseException, UnknownProtocolException {
+        return isKnown(name) ? newProtocol(name) : null;
+    }
+
+    private void expand() throws IncompatibleArgumentException {
+        for (String protocol : protocols.keySet()) {
+            expand(0, protocol);
+        }
+    }
+
+    private void expand(int depth, String name) throws IncompatibleArgumentException {
+        UnparsedProtocol p = protocols.get(name);
+        if (!p.irp.contains("{"))
+            throw new IncompatibleArgumentException("IRP `" + p.irp + "' does not contain `{'.");
+
+        if (!p.irp.startsWith("{")) {
+            String p_name = p.irp.substring(0, p.irp.indexOf('{')).trim();
+            UnparsedProtocol ancestor = protocols.get(p_name.toLowerCase(IrpUtils.dumbLocale));
+            if (ancestor != null) {
+                String replacement = ancestor.irp.lastIndexOf('[') == -1 ? ancestor.irp
+                        : ancestor.irp.substring(0, ancestor.irp.lastIndexOf('['));
+                Debug.debugConfigfile("Protocol " + name + ": `" + p_name + "' replaced by `" + replacement + "'.");
+                p.irp = p.irp.replaceAll(p_name, replacement);
+                protocols.put(name, p);
+                if (depth < max_recursion_depth_expanding)
+                    expand(depth + 1, name);
+                else
+                    System.err.println("Recursion depth in expanding " + name + " exceeded.");
+            }
+        }
+    }
+
+    private void addProtocol(UnparsedProtocol current) {
+        // if no irp or name, ignore
+        if (current == null || current.irp == null || current.name == null)
+            return;
+
+        if (current.documentation != null)
+            current.documentation = current.documentation.trim();
+
+        if (protocols.containsKey(current.name.toLowerCase(IrpUtils.dumbLocale)))
+            userComm.warningMsg("Multiple definitions of protocol `" + current.name.toLowerCase(IrpUtils.dumbLocale) + "'. Keeping the last.");
+        protocols.put(current.name.toLowerCase(IrpUtils.dumbLocale), current);
+
+        if (testParse) {
+            IrpLexer lex = new IrpLexer(new ANTLRStringStream(current.irp));
+            CommonTokenStream tokens = new CommonTokenStream(lex);
+
+            IrpParser parser = new IrpParser(tokens);
+            try {
+                parser.protocol();
+            } catch (RecognitionException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+    }
+
+    private static class UnparsedProtocol {
+
+        public static final String unnamed = "unnamed_protocol";
+        public String name;
+        public String documentation;
+        public String irp;
+        public String efcTranslation;
+        public ArrayList<Short> ueiProtocol;
+
+        UnparsedProtocol(String irp) {
+            this.irp = irp;
+            this.name = unnamed;
+            documentation = null;
+            efcTranslation = null;
+            ueiProtocol = new ArrayList<>();
+        }
+
+        UnparsedProtocol() {
+            this(null);
+        }
+
+        @Override
+        public String toString() {
+            return name + "\t" + irp;
+        }
     }
 }
 

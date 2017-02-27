@@ -9,15 +9,15 @@ import org.testng.annotations.Test;
 
 public class CleanerNGTest {
 
-    public CleanerNGTest() {
-    }
-
     @BeforeClass
     public static void setUpClass() throws Exception {
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
+    }
+
+    public CleanerNGTest() {
     }
 
     @BeforeMethod

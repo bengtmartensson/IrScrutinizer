@@ -20,8 +20,19 @@ import java.util.List;
  *
  */
 final class Transmit {
+    private static final int WBUF_SIZE = 1024;// was 256;
+    private static final int LOG_ERR = 1;
+    private static final int LOG_WARNING = 2;
 
+    /**
+     * if the gap is lower than this value, we will concatenate the signals and
+     * send the signal chain at a single blow
+     */
+    private static final int LIRCD_EXACT_GAP_THRESHOLD = 10000;
     private IrRemote remote; // Could really remove all the remote arguments on the private functions...
+    private boolean valid = false;
+    private int debug = 0;
+    private Sbuf send_buffer = new Sbuf();
 
     private Transmit() {
     }
@@ -36,33 +47,6 @@ final class Transmit {
             init_send(remote, code, debug);
         }
     }
-
-    private static class Sbuf {
-        int[] data; //int *data;
-        int[] _data = new int[WBUF_SIZE]; // int _data[WBUF_SIZE];
-        int wptr;
-        boolean/*int*/ too_long;
-        boolean/*int*/ is_biphase;
-        int pendingp;
-        int pendings;
-        int sum;
-
-        public int[] getData(int gap) {
-            int[] array = new int[wptr + wptr % 2];
-            System.arraycopy(data, 0, array, 0, wptr);
-            if ((wptr & 1) == 1)
-                array[array.length - 1] = gap;
-            return array;
-        }
-
-        public int[] getData() {
-            int[] array = new int[wptr];
-            System.arraycopy(data, 0, array, 0, wptr);
-            return array;
-        }
-    };
-
-    private boolean valid = false;
 
     /**
      *
@@ -97,13 +81,6 @@ final class Transmit {
         return valid ? send_buffer.getData() : null;
     }
 
-    private int debug = 0;
-
-    private static final int WBUF_SIZE = 1024;// was 256;
-
-    private static final int LOG_ERR = 1;
-    private static final int LOG_WARNING = 2;
-
     private void logprintf(int level, String format, Object... args) {
         System.err.println(String.format(remote.getSource() + " (" + remote.getName() + "): " + format, args));
     }
@@ -112,14 +89,6 @@ final class Transmit {
         if (debug > 0)
             System.err.println(String.format(remote.getName() + ": " + format, args));
     }
-
-    /**
-     * if the gap is lower than this value, we will concatenate the signals and
-     * send the signal chain at a single blow
-     */
-    private static final int LIRCD_EXACT_GAP_THRESHOLD = 10000;
-
-    private Sbuf send_buffer = new Sbuf();
 
     private void clear_send_buffer() {
         LOGPRINTF(3, "clearing transmit buffer");
@@ -556,5 +525,29 @@ final class Transmit {
             return false;
         }
         return true;
+    }
+    private static class Sbuf {
+        int[] data; //int *data;
+        int[] _data = new int[WBUF_SIZE]; // int _data[WBUF_SIZE];
+        int wptr;
+        boolean/*int*/ too_long;
+        boolean/*int*/ is_biphase;
+        int pendingp;
+        int pendings;
+        int sum;
+
+        public int[] getData(int gap) {
+            int[] array = new int[wptr + wptr % 2];
+            System.arraycopy(data, 0, array, 0, wptr);
+            if ((wptr & 1) == 1)
+                array[array.length - 1] = gap;
+            return array;
+        }
+
+        public int[] getData() {
+            int[] array = new int[wptr];
+            System.arraycopy(data, 0, array, 0, wptr);
+            return array;
+        }
     }
 }

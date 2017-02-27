@@ -23,6 +23,13 @@ public class BitStream extends PrimitiveIrStreamItem {
     private int length;
     private long data[];
 
+    public BitStream(Protocol env) {
+        super(env);
+        data = new long[1];
+        data[0] = 0L;
+        length = 0;
+    }
+
     @Override
     public String toString() {
         if (data.length == 1)
@@ -37,13 +44,6 @@ public class BitStream extends PrimitiveIrStreamItem {
             }
             return "BitStream, length = " + length + ", data = " + dataString + "] = " + binString;
         }
-    }
-
-    public BitStream(Protocol env) {
-        super(env);
-        data = new long[1];
-        data[0] = 0L;
-        length = 0;
     }
 
     public void add(BitField bitField) throws IncompatibleArgumentException {

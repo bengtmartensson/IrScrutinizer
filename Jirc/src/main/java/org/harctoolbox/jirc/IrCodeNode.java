@@ -30,17 +30,17 @@ final class IrCodeNode {
         this(IrNCode.parseLircNumber(code));
     }
 
+    IrCodeNode(List<Long> list) {
+        code = list.get(0);
+        list.remove(0);
+        next = list.isEmpty() ? null : new IrCodeNode(list);
+    }
+
     /**
      * @return the code
      */
     public long getCode() {
         return code;
-    }
-
-    IrCodeNode(List<Long> list) {
-        code = list.get(0);
-        list.remove(0);
-        next = list.isEmpty() ? null : new IrCodeNode(list);
     }
 
     /**

@@ -43,6 +43,110 @@ import org.w3c.dom.Element;
  */
 public class Protocol {
 
+    private static void assignIfValid(Map<String, Long> actualVars, String name, long value) {
+        if (value != IrpUtils.invalid)
+            actualVars.put(name, value);
+    }
+
+    /**
+     * Returns a parameter Map&lt;String, Long&gt; suitable for using as argument to renderIRSignal by evaluating the arguments.
+     * @param additionalParams String of assignments like a=12 b=34 c=56
+     * @return tests- irpmaster?Map&lt;String, Long&gt; for using as argument to renderIrSignal
+     */
+    public static Map<String, Long> parseParams(String additionalParams) {
+        Map<String, Long> params = new HashMap<>();
+        String[] arr = additionalParams.split("[,=\\s;]+");
+        //for (int i = 0; i < arr.length; i++)
+        //    System.out.println(arr[i]);
+        for (int i = 0; i < arr.length/2; i++)
+            params.put(arr[2*i], IrpUtils.parseLong(arr[2*i+1], false));
+
+        return params;
+    }
+
+    /**
+     * Returns a parameter tests- irpmaster?Map&lt;String, Long&gt; suitable for using as argument to renderIrSignal by evaluating the arguments.
+     * The four first parameters overwrite the parameters in the additional parameters, if in conflict.
+     * @param D device number. Use -1 for not assigned.
+     * @param S subdevice number. Use -1 for not assigned.
+     * @param F function number (obc, command number). Use -1 for not assigned.
+     * @param T toggle. Use -1 for not assigned.
+     * @param additionalParams String of assignments like a=12 b=34 c=56
+     * @return Map&lt;String, Long&gt; for using as argument to renderIrSignal
+     */
+    public static Map<String, Long> parseParams(int D, int S, int F, int T, String additionalParams) {
+        Map<String, Long> params = parseParams(additionalParams);
+        assignIfValid(params, "D", (long) D);
+        assignIfValid(params, "S", (long) S);
+        assignIfValid(params, "F", (long) F);
+        assignIfValid(params, "T", (long) T);
+        return params;
+    }
+    /**
+     * "Smart" method for decoding parameters. If the first argument contains the character "=",
+     * the arguments are assume to be assignments using the "=". Otherwise,
+     *
+     * <ul>
+     * <li>one argument is supposed to be F
+     * <li>two argumente are supposed to be D and F
+     * <li>three arguments are supposed to be D, S, and F
+     * <li>four arguments are supposed to be D, S, F, and T.
+     * </ul>
+     *
+     * @param args String array of parameters
+     * @param skip Number of elements in the args to skip
+     * @return parameter Map&lt;String, Long&gt; suitable for rendering signals
+     * @throws IncompatibleArgumentException
+     */
+    public static Map<String, Long> parseParams(String[] args, int skip) throws IncompatibleArgumentException {
+        return args[skip].contains("=")
+                ? parseNamedProtocolArgs(args, skip)
+                : parsePositionalProtocolArgs(args, skip);
+    }
+    private static Map<String, Long> parseNamedProtocolArgs(String[] args, int skip) throws IncompatibleArgumentException {
+        Map<String, Long> params = new HashMap<>();
+        for (int i = skip; i < args.length; i++) {
+            String[] str = args[i].split("=");
+            if (str.length != 2)
+                throw new IncompatibleArgumentException("`" + args[i] + "' is not a parameter assignment");
+            String name = str[0].trim();
+            long value = Long.parseLong(str[1]);
+            params.put(name, value);
+        }
+        return params;
+    }
+    private static Map<String, Long> parsePositionalProtocolArgs(String[] args, int skip) throws IncompatibleArgumentException {
+        Map<String, Long> params = new LinkedHashMap<>();
+        int index = skip;
+        switch (args.length - skip) {
+            case 4:
+                params.put("D", Long.parseLong(args[index++]));
+                params.put("S", Long.parseLong(args[index++]));
+                params.put("F", Long.parseLong(args[index++]));
+                params.put("T", Long.parseLong(args[index]));
+                break;
+            case 3:
+                params.put("D", Long.parseLong(args[index++]));
+                params.put("S", Long.parseLong(args[index++]));
+                params.put("F", Long.parseLong(args[index]));
+                break;
+            case 2:
+                params.put("D", Long.parseLong(args[index++]));
+                params.put("F", Long.parseLong(args[index]));
+                break;
+            case 1:
+                params.put("F", Long.parseLong(args[index]));
+                break;
+            case 0:
+                break;
+            default:
+                throw new IncompatibleArgumentException("Too many parameters");
+        }
+        return params;
+    }
+
+    // There is no need for a main routine here, the one in IrpMaster is universal enough.
+
     private String name;
     private String documentation;
     private String irpString;
@@ -61,6 +165,67 @@ public class Protocol {
     private Document doc = null;
     private Element root = null;
     private Element currentElement = null;
+    /**
+     *
+     * @param generalSpec
+     */
+    public Protocol(GeneralSpec generalSpec) {
+        if (generalSpec == null)
+            throw new RuntimeException("empty generalSpec");
+        this.generalSpec = generalSpec;
+        this.nameEngine = new NameEngine();
+    }
+    /** Just for testing and debugging */
+    public Protocol() {
+        this(new GeneralSpec());
+    }
+    public Protocol(String name, String irpString, String documentation) throws UnassignedException, ParseException {
+        this.name = name;
+        this.documentation = documentation;
+        this.irpString = irpString;
+        this.nameEngine = new NameEngine();
+        IrpLexer lex = new IrpLexer(new ANTLRStringStream(irpString));
+        tokens = new CommonTokenStream(lex);
+        IrpParser parser = new IrpParser(tokens);
+        IrpParser.protocol_return r;
+        try {
+            r = parser.protocol();
+        } catch (RecognitionException ex) {
+            throw new ParseException(ex);
+        }
+        AST = r.getTree();
+
+        for (int i = 0; i < AST.getChildCount(); i++) {
+            CommonTree ch = (CommonTree) AST.getChild(i);
+            switch (ch.getText()) {
+                case "GENERALSPEC":
+                    generalSpec = new GeneralSpec(ch);
+                    break;
+                case "PARAMETER_SPECS":
+                    parameterSpecs = new ParameterSpecs(ch);
+                    break;
+                case "BITSPEC_IRSTREAM":
+                    topBitspecIrsteam = ch;
+                    break;
+                case "DEFINITIONS":
+                    // nothing to do
+                    break;
+                default:
+                    throw new RuntimeException("This cannot happen");
+            }
+        }
+        if (parameterSpecs == null) {
+            UserComm.warning("Parameter specs are missing from protocol. Runtime errors due to unassigned variables are possile. Also silent truncation of parameters can occur. Further messages on parameters will be suppressed.");
+            parameterSpecs = new ParameterSpecs();
+        }
+        if (generalSpec == null) {
+            throw new UnassignedException("GeneralSpec missing from protocol");
+        }
+
+        Debug.debugIrpParser("GeneralSpec: " + generalSpec);
+        Debug.debugIrpParser("nameEngine: " + nameEngine);
+        Debug.debugIrpParser("parameterSpec: " + parameterSpecs);
+    }
 
     public long evaluateName(String name) throws UnassignedException, DomainViolationException {
         long result;
@@ -229,69 +394,6 @@ public class Protocol {
         return ps != null && ps.getDefault() != null;
     }
 
-    /**
-     *
-     * @param generalSpec
-     */
-    public Protocol(GeneralSpec generalSpec) {
-        if (generalSpec == null)
-            throw new RuntimeException("empty generalSpec");
-        this.generalSpec = generalSpec;
-        this.nameEngine = new NameEngine();
-    }
-
-    /** Just for testing and debugging */
-    public Protocol() {
-        this(new GeneralSpec());
-    }
-
-    public Protocol(String name, String irpString, String documentation) throws UnassignedException, ParseException {
-        this.name = name;
-        this.documentation = documentation;
-        this.irpString = irpString;
-        this.nameEngine = new NameEngine();
-        IrpLexer lex = new IrpLexer(new ANTLRStringStream(irpString));
-        tokens = new CommonTokenStream(lex);
-        IrpParser parser = new IrpParser(tokens);
-        IrpParser.protocol_return r;
-        try {
-            r = parser.protocol();
-        } catch (RecognitionException ex) {
-            throw new ParseException(ex);
-        }
-        AST = r.getTree();
-
-        for (int i = 0; i < AST.getChildCount(); i++) {
-            CommonTree ch = (CommonTree) AST.getChild(i);
-            switch (ch.getText()) {
-                case "GENERALSPEC":
-                    generalSpec = new GeneralSpec(ch);
-                    break;
-                case "PARAMETER_SPECS":
-                    parameterSpecs = new ParameterSpecs(ch);
-                    break;
-                case "BITSPEC_IRSTREAM":
-                    topBitspecIrsteam = ch;
-                    break;
-                case "DEFINITIONS":
-                    // nothing to do
-                    break;
-                default:
-                    throw new RuntimeException("This cannot happen");
-            }
-        }
-        if (parameterSpecs == null) {
-            UserComm.warning("Parameter specs are missing from protocol. Runtime errors due to unassigned variables are possile. Also silent truncation of parameters can occur. Further messages on parameters will be suppressed.");
-            parameterSpecs = new ParameterSpecs();
-        }
-        if (generalSpec == null) {
-            throw new UnassignedException("GeneralSpec missing from protocol");
-        }
-
-        Debug.debugIrpParser("GeneralSpec: " + generalSpec);
-        Debug.debugIrpParser("nameEngine: " + nameEngine);
-        Debug.debugIrpParser("parameterSpec: " + parameterSpecs);
-    }
 
     /**
      * Debugging and testing purposes only
@@ -622,10 +724,6 @@ public class Protocol {
         return renderIrSignal(actualVars, (int) IrpUtils.all, considerRepeatMins);
     }
 
-    private static void assignIfValid(Map<String, Long> actualVars, String name, long value) {
-        if (value != IrpUtils.invalid)
-            actualVars.put(name, value);
-    }
     public IrSignal renderIrSignal(long device, long subdevice, long function) throws DomainViolationException, UnassignedException, IncompatibleArgumentException, InvalidRepeatException {
         return renderIrSignal(device, subdevice, function, -1L);
     }
@@ -659,105 +757,4 @@ public class Protocol {
         return tryRender(ivs, pass, considerRepeatMins, this.virgin);
     }
 
-     /**
-     * Returns a parameter Map&lt;String, Long&gt; suitable for using as argument to renderIRSignal by evaluating the arguments.
-     * @param additionalParams String of assignments like a=12 b=34 c=56
-     * @return tests- irpmaster?Map&lt;String, Long&gt; for using as argument to renderIrSignal
-     */
-    public static Map<String, Long> parseParams(String additionalParams) {
-        Map<String, Long> params = new HashMap<>();
-        String[] arr = additionalParams.split("[,=\\s;]+");
-        //for (int i = 0; i < arr.length; i++)
-        //    System.out.println(arr[i]);
-        for (int i = 0; i < arr.length/2; i++)
-            params.put(arr[2*i], IrpUtils.parseLong(arr[2*i+1], false));
-
-        return params;
-    }
-
-    /**
-     * Returns a parameter tests- irpmaster?Map&lt;String, Long&gt; suitable for using as argument to renderIrSignal by evaluating the arguments.
-     * The four first parameters overwrite the parameters in the additional parameters, if in conflict.
-     * @param D device number. Use -1 for not assigned.
-     * @param S subdevice number. Use -1 for not assigned.
-     * @param F function number (obc, command number). Use -1 for not assigned.
-     * @param T toggle. Use -1 for not assigned.
-     * @param additionalParams String of assignments like a=12 b=34 c=56
-     * @return Map&lt;String, Long&gt; for using as argument to renderIrSignal
-     */
-    public static Map<String, Long> parseParams(int D, int S, int F, int T, String additionalParams) {
-        Map<String, Long> params = parseParams(additionalParams);
-        assignIfValid(params, "D", (long) D);
-        assignIfValid(params, "S", (long) S);
-        assignIfValid(params, "F", (long) F);
-        assignIfValid(params, "T", (long) T);
-        return params;
-    }
-
-    /**
-     * "Smart" method for decoding parameters. If the first argument contains the character "=",
-     * the arguments are assume to be assignments using the "=". Otherwise,
-     *
-     * <ul>
-     * <li>one argument is supposed to be F
-     * <li>two argumente are supposed to be D and F
-     * <li>three arguments are supposed to be D, S, and F
-     * <li>four arguments are supposed to be D, S, F, and T.
-     * </ul>
-     *
-     * @param args String array of parameters
-     * @param skip Number of elements in the args to skip
-     * @return parameter Map&lt;String, Long&gt; suitable for rendering signals
-     * @throws IncompatibleArgumentException
-     */
-    public static Map<String, Long> parseParams(String[] args, int skip) throws IncompatibleArgumentException {
-        return args[skip].contains("=")
-                ? parseNamedProtocolArgs(args, skip)
-                : parsePositionalProtocolArgs(args, skip);
-    }
-
-    private static Map<String, Long> parseNamedProtocolArgs(String[] args, int skip) throws IncompatibleArgumentException {
-        Map<String, Long> params = new HashMap<>();
-            for (int i = skip; i < args.length; i++) {
-                String[] str = args[i].split("=");
-                if (str.length != 2)
-                    throw new IncompatibleArgumentException("`" + args[i] + "' is not a parameter assignment");
-                String name = str[0].trim();
-                long value = Long.parseLong(str[1]);
-                params.put(name, value);
-            }
-            return params;
-    }
-
-    private static Map<String, Long> parsePositionalProtocolArgs(String[] args, int skip) throws IncompatibleArgumentException {
-        Map<String, Long> params = new LinkedHashMap<>();
-        int index = skip;
-        switch (args.length - skip) {
-            case 4:
-                params.put("D", Long.parseLong(args[index++]));
-                params.put("S", Long.parseLong(args[index++]));
-                params.put("F", Long.parseLong(args[index++]));
-                params.put("T", Long.parseLong(args[index]));
-                break;
-            case 3:
-                params.put("D", Long.parseLong(args[index++]));
-                params.put("S", Long.parseLong(args[index++]));
-                params.put("F", Long.parseLong(args[index]));
-                break;
-            case 2:
-                params.put("D", Long.parseLong(args[index++]));
-                params.put("F", Long.parseLong(args[index]));
-                break;
-            case 1:
-                params.put("F", Long.parseLong(args[index]));
-                break;
-            case 0:
-                break;
-            default:
-                throw new IncompatibleArgumentException("Too many parameters");
-        }
-        return params;
-    }
-
-    // There is no need for a main routine here, the one in IrpMaster is universal enough.
 }

@@ -35,6 +35,30 @@ import org.antlr.runtime.tree.CommonTree;
 
 public class NameEngine {
 
+    private static void usage(int code) {
+        System.err.println("Usage:");
+        System.err.println("\tNameEngine [<name>=<value>|{<name>=<expression>}]+");
+        System.exit(code);
+    }
+
+    /**
+     * Just for testing purposes.
+     *
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        if (args.length == 0)
+            usage(IrpUtils.exitUsageError);
+        Protocol prot = new Protocol(new GeneralSpec());
+        try {
+            prot.assign(args, 0);
+        } catch (IncompatibleArgumentException ex) {
+            System.err.println(ex.getMessage());
+            usage(IrpUtils.exitFatalProgramFailure);
+        }
+        System.out.println(prot.nameEngineString());
+    }
+
     private Map<String, CommonTree> map;
 
     public NameEngine() {
@@ -201,27 +225,4 @@ public class NameEngine {
         return (str.length() == 0 ? "" : str.substring(0, str.length()-1));
     }
 
-    private static void usage(int code) {
-        System.err.println("Usage:");
-        System.err.println("\tNameEngine [<name>=<value>|{<name>=<expression>}]+");
-        System.exit(code);
-    }
-
-    /**
-     * Just for testing purposes.
-     *
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        if (args.length == 0)
-            usage(IrpUtils.exitUsageError);
-        Protocol prot = new Protocol(new GeneralSpec());
-        try {
-            prot.assign(args, 0);
-        } catch (IncompatibleArgumentException ex) {
-            System.err.println(ex.getMessage());
-            usage(IrpUtils.exitFatalProgramFailure);
-        }
-        System.out.println(prot.nameEngineString());
-    }
 }

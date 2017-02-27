@@ -26,6 +26,15 @@ import java.util.List;
  *
  */
 public class Cleaner {
+    public static IrSequence clean(IrSequence irSequence, int absoluteTolerance, double relativeTolerance) {
+        Cleaner cleaner = new Cleaner(irSequence, absoluteTolerance, relativeTolerance);
+        return cleaner.toIrSequence();
+    }
+
+    public static ModulatedIrSequence clean(ModulatedIrSequence irSequence, int absoluteTolerance, double relativeTolerance) {
+        Cleaner cleaner = new Cleaner(irSequence, absoluteTolerance, relativeTolerance);
+        return new ModulatedIrSequence(cleaner.toIrSequence(), irSequence.getFrequency(), irSequence.getDutyCycle());
+    }
 
     private int rawData[];
     private List<Integer> dumbTimingsTable;
@@ -113,21 +122,4 @@ public class Cleaner {
         }
     }
 
-    public static IrSequence clean(IrSequence irSequence, int absoluteTolerance, double relativeTolerance) {
-        Cleaner cleaner = new Cleaner(irSequence, absoluteTolerance, relativeTolerance);
-        return cleaner.toIrSequence();
-    }
-
-    //public static IrSequence clean(IrSequence irSequence) {
-    //     return clean(irSequence, (int) IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance);
-    //}
-
-    public static ModulatedIrSequence clean(ModulatedIrSequence irSequence, int absoluteTolerance, double relativeTolerance) {
-        Cleaner cleaner = new Cleaner(irSequence, absoluteTolerance, relativeTolerance);
-        return new ModulatedIrSequence(cleaner.toIrSequence(), irSequence.getFrequency(), irSequence.getDutyCycle());
-    }
-
-    //public static ModulatedIrSequence clean(ModulatedIrSequence irSequence) {
-    //     return clean(irSequence, (int) IrpUtils.defaultAbsoluteTolerance, IrpUtils.defaultRelativeTolerance);
-    //}
 }

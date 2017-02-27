@@ -9,6 +9,19 @@ import java.util.Locale;
  */
 final class IrNCode {
 
+    public static long parseLircNumber(String s) {
+        return s.toLowerCase(Locale.US).startsWith("0x") ? parseUnsignedLongHex(s.substring(2))
+                : s.startsWith("0") ? Long.parseLong(s, 8)
+                : Long.parseLong(s);
+    }
+    private static long parseUnsignedLongHex(String s) {
+        if (s.length() == 16) {
+            long value = new BigInteger(s, 16).longValue();
+            return value;
+        }
+        return Long.parseLong(s, 16);
+    }
+
     private String name;
     private long code;
     //public int length;
@@ -34,19 +47,6 @@ final class IrNCode {
         next = codelist.isEmpty() ? null : new IrCodeNode(codelist);
     }
 
-    public static long parseLircNumber(String s) {
-        return s.toLowerCase(Locale.US).startsWith("0x") ? parseUnsignedLongHex(s.substring(2))
-                : s.startsWith("0") ? Long.parseLong(s, 8)
-                : Long.parseLong(s);
-    }
-
-    private static long parseUnsignedLongHex(String s) {
-        if (s.length() == 16) {
-            long value = new BigInteger(s, 16).longValue();
-            return value;
-        }
-        return Long.parseLong(s, 16);
-    }
 
     /**
      * @return the name

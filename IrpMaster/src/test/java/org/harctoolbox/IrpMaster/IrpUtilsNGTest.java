@@ -18,15 +18,15 @@ import org.testng.annotations.Test;
  */
 public class IrpUtilsNGTest {
 
-    public IrpUtilsNGTest() {
-    }
-
     @BeforeClass
     public static void setUpClass() throws Exception {
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
+    }
+
+    public IrpUtilsNGTest() {
     }
 
     @BeforeMethod

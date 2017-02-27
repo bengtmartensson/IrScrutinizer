@@ -49,6 +49,40 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
     public final static String path = "/api";
     private final static String globalCacheDbOrigin = controlTowerIrDatabaseHost;
 
+    private static String httpEncode(String s) throws UnsupportedEncodingException {
+        String str = s.replaceAll("&", "xampx").replaceAll("/", "xfslx")
+                .replaceAll(">", "xgtx").replaceAll("<", "xltx")
+                .replaceAll(":", "xcolx").replaceAll("\\?", "xquex")
+                .replaceAll("%", "xmodx").replaceAll("\\+", "xaddx");
+        return URLEncoder.encode(str, "utf-8").replaceAll("\\+", "%20");
+    }
+
+    public static void main(String[] args) {
+        Props props = new Props(null);
+        Importer.setProperties(props);
+        try {
+            ControlTowerIrDatabase gcdb = new ControlTowerIrDatabase(args[0], args[1], true);
+            //System.out.println(gcdb.getTypes());
+            //System.out.println(gcdb.getManufacturers());
+            System.out.println(gcdb.getDeviceTypes("Sony"));
+            System.out.println(gcdb.getModels("Sony", "Projector"));
+            System.out.println(gcdb.getManufacturers("Blu Ray"));
+            System.out.println(gcdb.getModels("Oppo Digital", "Blu Ray"));
+            System.out.println(gcdb.getModel(1758));
+            gcdb.login();
+            System.out.println(gcdb.getStatus());
+            gcdb.getCodeset(1758, false);
+            System.out.println(gcdb.getStatus());
+            gcdb.logout();
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(ControlTowerIrDatabase.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (LoginException ex) {
+            System.err.println("Login failed: " + ex.getMessage());
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
     private boolean verbose = false;
     private String apiKey;
     private final String email;
@@ -64,29 +98,32 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
     private String deviceType;
     private RemoteSet remoteSet;
 
-    public static class LoginException extends Exception {
-        public LoginException(String message) {
-            super(message);
-        }
+    public ControlTowerIrDatabase(String apiKey, boolean verbose) {
+        super(globalCacheDbOrigin);
+        this.company = null;
+        this.name = null;
+        this.accountType = null;
+        this.codesRequestedToday = -1;
+        this.email = null;
+        this.password = null;
+        this.apiKey = apiKey;
+        this.verbose = verbose;
     }
 
-    public static class Model {
-        private final String brand;
-        private final String type;
-        private final String name;
-        private final String notes;
+    public ControlTowerIrDatabase(boolean verbose) {
+        this(null, null, verbose);
+    }
 
-        public Model(JsonObject obj) {
-            brand = obj.get("Brand").asString();
-            type = obj.get("Type").asString();
-            name = obj.get("Name").asString();
-            notes = obj.get("Notes").asString();
-        }
-
-        @Override
-        public String toString() {
-            return "Brand: " + brand + "; Type: " + type + "; Name: " + name + "; Notes: " + notes;
-        }
+    public ControlTowerIrDatabase(String email, String password, boolean verbose) {
+        super(globalCacheDbOrigin);
+        this.company = null;
+        this.name = null;
+        this.accountType = null;
+        this.codesRequestedToday = -1;
+        this.email = email;
+        this.password = password;
+        this.apiKey = null;
+        this.verbose = verbose;
     }
 
     private JsonObject postAndGetObject(String str, String payload) throws MalformedURLException, IOException, LoginException {
@@ -309,75 +346,38 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         remoteSet = new RemoteSet(getCreatingUser(), origin, remote);
     }
 
-    private static String httpEncode(String s) throws UnsupportedEncodingException {
-        String str = s.replaceAll("&", "xampx").replaceAll("/", "xfslx")
-                .replaceAll(">", "xgtx").replaceAll("<", "xltx")
-                .replaceAll(":", "xcolx").replaceAll("\\?", "xquex")
-                .replaceAll("%", "xmodx").replaceAll("\\+", "xaddx");
-        return URLEncoder.encode(str, "utf-8").replaceAll("\\+", "%20");
-    }
-
-    public ControlTowerIrDatabase(String apiKey, boolean verbose) {
-        super(globalCacheDbOrigin);
-        this.company = null;
-        this.name = null;
-        this.accountType = null;
-        this.codesRequestedToday = -1;
-        this.email = null;
-        this.password = null;
-        this.apiKey = apiKey;
-        this.verbose = verbose;
-    }
-
-    public ControlTowerIrDatabase(boolean verbose) {
-        this(null, null, verbose);
-    }
-
-    public ControlTowerIrDatabase(String email, String password, boolean verbose) {
-        super(globalCacheDbOrigin);
-        this.company = null;
-        this.name = null;
-        this.accountType = null;
-        this.codesRequestedToday = -1;
-        this.email = email;
-        this.password = password;
-        this.apiKey = null;
-        this.verbose = verbose;
-    }
 
     @Override
     public RemoteSet getRemoteSet() {
         return remoteSet;
     }
 
-    public static void main(String[] args) {
-        Props props = new Props(null);
-        Importer.setProperties(props);
-        try {
-            ControlTowerIrDatabase gcdb = new ControlTowerIrDatabase(args[0], args[1], true);
-            //System.out.println(gcdb.getTypes());
-            //System.out.println(gcdb.getManufacturers());
-            System.out.println(gcdb.getDeviceTypes("Sony"));
-            System.out.println(gcdb.getModels("Sony", "Projector"));
-            System.out.println(gcdb.getManufacturers("Blu Ray"));
-            System.out.println(gcdb.getModels("Oppo Digital", "Blu Ray"));
-            System.out.println(gcdb.getModel(1758));
-            gcdb.login();
-            System.out.println(gcdb.getStatus());
-            gcdb.getCodeset(1758, false);
-            System.out.println(gcdb.getStatus());
-            gcdb.logout();
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(ControlTowerIrDatabase.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (LoginException ex) {
-            System.err.println("Login failed: " + ex.getMessage());
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
-    }
 
     @Override
     public String getFormatName() {
         return "Global Caché Control Tower IR Database";
+    }
+    public static class LoginException extends Exception {
+        public LoginException(String message) {
+            super(message);
+        }
+    }
+    public static class Model {
+        private final String brand;
+        private final String type;
+        private final String name;
+        private final String notes;
+
+        public Model(JsonObject obj) {
+            brand = obj.get("Brand").asString();
+            type = obj.get("Type").asString();
+            name = obj.get("Name").asString();
+            notes = obj.get("Notes").asString();
+        }
+
+        @Override
+        public String toString() {
+            return "Brand: " + brand + "; Type: " + type + "; Name: " + name + "; Notes: " + notes;
+        }
     }
 }

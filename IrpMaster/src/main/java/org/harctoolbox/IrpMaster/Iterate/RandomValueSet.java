@@ -27,17 +27,24 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 
 public class RandomValueSet extends ValueSet {
 
-    long max;
-    int index; // How many time next() has been called.
-    int noRandoms;
     static Random rng;
-
     public static void initRng(int seed) {
         rng = seed > 0 ? new Random(seed) : new Random();
     }
 
     public static void initRng() {
         initRng((int) IrpUtils.invalid);
+    }
+
+    long max;
+    int index; // How many time next() has been called.
+    int noRandoms;
+    public RandomValueSet(long min, long max, int noRandoms) {
+        super(min);
+
+        this.max = max;
+        this.noRandoms = noRandoms;
+        index = 0;
     }
 
     @Override
@@ -49,14 +56,7 @@ public class RandomValueSet extends ValueSet {
                 + "}";
     }
 
-    public RandomValueSet(long min, long max, int noRandoms) {
-        super(min);
 
-        this.max = max;
-        this.noRandoms = noRandoms;
-        index = 0;
-    }
-    
     @Override
     public void reset() {
         index = 0;

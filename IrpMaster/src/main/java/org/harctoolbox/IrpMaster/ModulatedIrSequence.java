@@ -27,32 +27,16 @@ public class ModulatedIrSequence extends IrSequence {
     private static final double allowedFrequencyDeviation = 0.05;
     private static final double zeroModulationLimit = 0.000001;
 
+    public static ModulatedIrSequence concatenate(Collection<IrSequence> sequences, double frequency, double dutyCycle) {
+        return new ModulatedIrSequence(IrSequence.concatenate(sequences), frequency, dutyCycle);
+    }
+
     /** Modulation frequency in Hz. Use 0 for no modulation, use -1 for no information. */
     protected double frequency = 0;
 
     /** Duty cycle of the modulation, a number between 0 and 1. Use -1 for unassigned.*/
     protected double dutyCycle = (double) IrpUtils.invalid;
 
-    /**
-     *
-     * @return modulation frequency in Hz.
-     */
-    public final double getFrequency() {
-        return frequency;
-    }
-
-    /**
-     *
-     * @return Duty cycle.
-     */
-    public final double getDutyCycle() {
-        return dutyCycle;
-    }
-
-    @Override
-    public String toString() {
-        return "{" + Integer.toString((int)Math.round(frequency)) + "," + super.toString() + "}";
-    }
 
     private ModulatedIrSequence() {
     }
@@ -130,6 +114,24 @@ public class ModulatedIrSequence extends IrSequence {
             System.arraycopy(seq.data, 0, data, beginIndex, seq.data.length);
             beginIndex += seq.data.length;
         }
+    }
+    /**
+     *
+     * @return modulation frequency in Hz.
+     */
+    public final double getFrequency() {
+        return frequency;
+    }
+    /**
+     *
+     * @return Duty cycle.
+     */
+    public final double getDutyCycle() {
+        return dutyCycle;
+    }
+    @Override
+    public String toString() {
+        return "{" + Integer.toString((int)Math.round(frequency)) + "," + super.toString() + "}";
     }
 
     /**
@@ -255,9 +257,6 @@ public class ModulatedIrSequence extends IrSequence {
         return new ModulatedIrSequence(irSequence, frequency, dutyCycle);
     }
 
-    public static ModulatedIrSequence concatenate(Collection<IrSequence> sequences, double frequency, double dutyCycle) {
-        return new ModulatedIrSequence(IrSequence.concatenate(sequences), frequency, dutyCycle);
-    }
 
     @Override
     public final ModulatedIrSequence[] chop(double amount) {

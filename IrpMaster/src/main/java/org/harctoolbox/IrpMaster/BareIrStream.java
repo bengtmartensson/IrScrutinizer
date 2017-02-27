@@ -25,24 +25,35 @@ import java.util.ArrayList;
  */
 public class BareIrStream extends IrStreamItem {
 
+    protected ArrayList<IrStreamItem> irStreamItems = null;
+    //protected BitSpec bitSpec;
+    private int noAlternatives = 0;
+
+    public BareIrStream(Protocol env) {
+        this(env, null, null, 0);
+    }
+
+    public BareIrStream(Protocol env, ArrayList<IrStreamItem>items, BitSpec bitSpec, int noAlternatives) {
+        super(env);
+        this.irStreamItems = items;
+        this.noAlternatives = noAlternatives;
+        //this.bitSpec = bitSpec;
+    }
+
     //@Override
     boolean stringOk(String s) {
         return s.startsWith("(");
     }
-    
-    protected ArrayList<IrStreamItem> irStreamItems = null;
-    //protected BitSpec bitSpec;
-    private int noAlternatives = 0;
-    
+
     public void concatenate(BareIrStream bareIrStream) {
         irStreamItems.addAll(bareIrStream.irStreamItems);
     }
-    
+
     @Override
     public boolean isEmpty() {
         return irStreamItems.isEmpty();
     }
-    
+
     @Override
     public int getNoAlternatives() {
         return noAlternatives;
@@ -56,7 +67,7 @@ public class BareIrStream extends IrStreamItem {
             if (type.equals("Bitfield")) {
                 if (bitStream == null)
                     bitStream = new BitStream(environment);
-                
+
                 bitStream.add((BitField)item, environment.getBitDirection());
             } else if (type.equals("Duration") || type.equals("Extent") || type.equals("IRStream")) {
                 if (bitStream != null) {
@@ -75,27 +86,16 @@ public class BareIrStream extends IrStreamItem {
         }
         return primaryItems;
     }*/
-    
-    public BareIrStream(Protocol env) {
-        this(env, null, null, 0);
-    }
-    
-    public BareIrStream(Protocol env, ArrayList<IrStreamItem>items, BitSpec bitSpec, int noAlternatives) {
-        super(env);
-        this.irStreamItems = items;
-        this.noAlternatives = noAlternatives;
-        //this.bitSpec = bitSpec;
-    }
-      
+
     @Override
     public String toString() {
         return irStreamItems.toString();
     }
-    
+
     /*private static ArrayList<Double> normalize(ArrayList<Double> list, boolean nukeLeadingZeros) {
         if (list == null || list.isEmpty())
             return list;
-        
+
         // Nuke leading gaps
         while (nukeLeadingZeros && list.size() > 1 && list.get(0) <= 0)
             list.remove(0);

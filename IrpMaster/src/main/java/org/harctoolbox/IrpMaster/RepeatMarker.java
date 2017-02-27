@@ -20,6 +20,20 @@ package org.harctoolbox.IrpMaster;
  * This class implements Repeatmarker as per Chapter 8.
  */
 public class RepeatMarker {
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        System.out.println((new RepeatMarker("")));
+        System.out.println((new RepeatMarker('*')));
+        System.out.println((new RepeatMarker("*")));
+        System.out.println((new RepeatMarker('+')));
+        System.out.println((new RepeatMarker("1+")));
+        System.out.println((new RepeatMarker("0+")));
+        System.out.println((new RepeatMarker("7")));
+        System.out.println((new RepeatMarker("7+")));
+        System.out.println((new RepeatMarker("\t7+   ")));
+    }
 
     int min = 1;
     int max = 1;
@@ -127,18 +141,4 @@ public class RepeatMarker {
                 : "??";
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        System.out.println((new RepeatMarker("")));
-        System.out.println((new RepeatMarker('*')));
-        System.out.println((new RepeatMarker("*")));
-        System.out.println((new RepeatMarker('+')));
-        System.out.println((new RepeatMarker("1+")));
-        System.out.println((new RepeatMarker("0+")));
-        System.out.println((new RepeatMarker("7")));
-        System.out.println((new RepeatMarker("7+")));
-        System.out.println((new RepeatMarker("\t7+   ")));
-    }
 }

@@ -22,7 +22,7 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 
 /**
  * This class bundles input arguments together.
- * 
+ *
  * Giving a parameter a negative value is ignored, i.e. equivalent to not making any assignment at all.
  * Thus, for example using the four parameter main method, the user can assign T without assigning S.
  *
@@ -30,17 +30,17 @@ import org.harctoolbox.IrpMaster.IrpUtils;
  */
 public class SingletonValueSet extends ValueSet {
 
-    @Override
-    public String toString() {
-        return "{" + min + "}";
-    }
-
     /**
-     * 
+     *
      * @param value
      */
     public SingletonValueSet(long value) {
         super(value);
+    }
+
+    @Override
+    public String toString() {
+        return "{" + min + "}";
     }
 
     @Override

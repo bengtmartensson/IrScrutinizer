@@ -26,8 +26,6 @@ public abstract class IrStreamItem {
     protected Protocol environment;
     protected int noAlternatives = 0;
 
-    public abstract boolean isEmpty() throws IncompatibleArgumentException;
-
     public IrStreamItem(Protocol env) {
         environment = env;
         Debug.debugIrStreamItems(this.getClass().getSimpleName() + " constructed.");
@@ -36,6 +34,8 @@ public abstract class IrStreamItem {
     public IrStreamItem() {
         Debug.debugIrStreamItems(this.getClass().getSimpleName() + " constructed.");
     }
+
+    public abstract boolean isEmpty() throws IncompatibleArgumentException;
 
     /**
      * To be overridden in Variation

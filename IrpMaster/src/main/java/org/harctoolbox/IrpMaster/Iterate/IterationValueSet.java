@@ -22,7 +22,7 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 
 /**
  * This class bundles input arguments together.
- * 
+ *
  * Giving a parameter a negative value is ignored, i.e. equivalent to not making any assignment at all.
  * Thus, for example using the four parameter main method, the user can assign T without assigning S.
  *
@@ -33,17 +33,8 @@ public class IterationValueSet extends ValueSet {
     private long max;
     private int increment;
 
-    @Override
-    public String toString() {
-        return "{"
-                + formatThing("min", (int) min)
-                + formatThing(", max", (int) max)
-                + formatThing(", increment", increment)
-                + "}";
-    }
-
     /**
-     * 
+     *
      * @param min
      * @param max
      * @param increment
@@ -52,6 +43,15 @@ public class IterationValueSet extends ValueSet {
         super(min);
         this.max = max;
         this.increment = increment;
+    }
+
+    @Override
+    public String toString() {
+        return "{"
+                + formatThing("min", (int) min)
+                + formatThing(", max", (int) max)
+                + formatThing(", increment", increment)
+                + "}";
     }
 
     @Override

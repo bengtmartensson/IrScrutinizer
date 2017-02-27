@@ -31,15 +31,11 @@ public class ExchangeIR {
     /** The number basis for Analyzer outputs. Quite ugly...*/
     private static int analyzerBasis = 16;
 
-    public static void setAnalyzerBasis(int basis) {
-        analyzerBasis = basis;
-    }
-
     /** Number of characters in the hexadecimal representation of UEI learned signals. */
     public static final int ueiLearnedCharsInDigit = 2;
 
-    /** Instantiating this class is meaningless. */
-    private ExchangeIR() {
+    public static void setAnalyzerBasis(int basis) {
+        analyzerBasis = basis;
     }
 
     /**
@@ -73,5 +69,8 @@ public class ExchangeIR {
      */
     public static Analyzer newAnalyzer(ModulatedIrSequence irSequence) {
         return newAnalyzer(irSequence, irSequence.getFrequency());
+    }
+    /** Instantiating this class is meaningless. */
+    private ExchangeIR() {
     }
 }

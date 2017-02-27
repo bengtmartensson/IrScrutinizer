@@ -34,12 +34,6 @@ public class UeiLearnedSignal {
     private static final int errLimit = 25;
 
     /**
-     * Instantiating this class is meaningless.
-     */
-    private UeiLearnedSignal() {
-    }
-
-    /**
      * Constructs a UEI learned signal from an IrSignal.
      *
      * @param irSignal
@@ -99,5 +93,11 @@ public class UeiLearnedSignal {
         //RepeatFinder repeatFinder = newRepeatFinder(seq);
         //System.out.println(repeatFinder);
         DecodeIR.invoke(irSignal);
+    }
+
+    /**
+     * Instantiating this class is meaningless.
+     */
+    private UeiLearnedSignal() {
     }
 }

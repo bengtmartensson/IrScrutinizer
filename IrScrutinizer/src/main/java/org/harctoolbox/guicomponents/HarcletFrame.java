@@ -27,8 +27,68 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 public class HarcletFrame extends javax.swing.JFrame {
+
+    public static HarcletFrame newHarcletFrame(Component parent, HarcPanel panel, boolean exitOnClose, String lafClassName) {
+        HarcletFrame harcletFrame = new HarcletFrame(panel, exitOnClose, lafClassName);
+        harcletFrame.setLocationRelativeTo(parent);
+        harcletFrame.setVisible(true);
+        return harcletFrame;
+    }
+
+
+    private static void doExit(int exitcode) {
+        System.exit(exitcode);
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        String lafName = null;
+        String className = "TimeFrequencyCalculator";
+        HarcPanel panel = null;
+
+        if (args.length == 1)
+            className = args[0];
+        else if (args.length == 2) {
+            lafName = args[0];
+            className = args[1];
+        }
+
+
+        /* Create and display the form */
+        final String laf = lafName;
+        //String packageName = Package.getPackage(laf)
+        try {
+            Class<?> clazz = Class.forName("org.harctoolbox.guicomponents." + className);
+
+            Constructor<?> constructor = clazz.getConstructor((Class<?>[]) null);
+
+            panel = (HarcPanel) constructor.newInstance((Object[]) null);
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | ClassNotFoundException ex) {
+            System.err.println(ex.getMessage());
+        }
+        final HarcPanel harcPanel = panel;
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                //new HarcletFrame(new HexCalculator(), true, laf).setVisible(true);
+                new HarcletFrame(harcPanel, true, laf).setVisible(true);
+            }
+        });
+    }
+
     private final boolean exitOnClose;
 
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JMenuItem closeMenuItem;
+    private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenu helpMenu;
+    private javax.swing.JMenuItem helpMenuItem;
+    private final HarcPanel harclet;
+    private javax.swing.JMenuBar jMenuBar;
+    // End of variables declaration//GEN-END:variables
     /**
      * Creates new form
      * @param panel
@@ -53,13 +113,6 @@ public class HarcletFrame extends javax.swing.JFrame {
         if (exitOnClose) {
             super.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         }
-    }
-
-    public static HarcletFrame newHarcletFrame(Component parent, HarcPanel panel, boolean exitOnClose, String lafClassName) {
-        HarcletFrame harcletFrame = new HarcletFrame(panel, exitOnClose, lafClassName);
-        harcletFrame.setLocationRelativeTo(parent);
-        harcletFrame.setVisible(true);
-        return harcletFrame;
     }
 
     /**
@@ -135,24 +188,23 @@ public class HarcletFrame extends javax.swing.JFrame {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(harclet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(harclet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(harclet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(harclet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
-         JOptionPane.showMessageDialog(this, harclet.getAboutMessage(), "About " + harclet.getProgName(),
+        JOptionPane.showMessageDialog(this, harclet.getAboutMessage(), "About " + harclet.getProgName(),
                 JOptionPane.INFORMATION_MESSAGE,
                 new ImageIcon(HarcletFrame.class.getResource("/icons/Crystal-Clear/48x48/actions/info.png")));
     }//GEN-LAST:event_aboutMenuItemActionPerformed
@@ -174,56 +226,4 @@ public class HarcletFrame extends javax.swing.JFrame {
             dispose();
         }
     }//GEN-LAST:event_closeMenuItemActionPerformed
-
-    private static void doExit(int exitcode) {
-        System.exit(exitcode);
-    }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        String lafName = null;
-        String className = "TimeFrequencyCalculator";
-        HarcPanel panel = null;
-
-        if (args.length == 1)
-            className = args[0];
-        else if (args.length == 2) {
-            lafName = args[0];
-            className = args[1];
-        }
-
-
-        /* Create and display the form */
-        final String laf = lafName;
-        //String packageName = Package.getPackage(laf)
-        try {
-            Class<?> clazz = Class.forName("org.harctoolbox.guicomponents." + className);
-
-            Constructor<?> constructor = clazz.getConstructor((Class<?>[]) null);
-
-            panel = (HarcPanel) constructor.newInstance((Object[]) null);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | ClassNotFoundException ex) {
-            System.err.println(ex.getMessage());
-        }
-        final HarcPanel harcPanel = panel;
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                //new HarcletFrame(new HexCalculator(), true, laf).setVisible(true);
-                new HarcletFrame(harcPanel, true, laf).setVisible(true);
-            }
-        });
-    }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem aboutMenuItem;
-    private javax.swing.JMenuItem closeMenuItem;
-    private javax.swing.JMenu fileMenu;
-    private javax.swing.JMenu helpMenu;
-    private javax.swing.JMenuItem helpMenuItem;
-    private final HarcPanel harclet;
-    private javax.swing.JMenuBar jMenuBar;
-    // End of variables declaration//GEN-END:variables
 }

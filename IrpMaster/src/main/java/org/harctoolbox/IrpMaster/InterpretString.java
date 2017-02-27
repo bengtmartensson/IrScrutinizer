@@ -19,9 +19,6 @@ package org.harctoolbox.IrpMaster;
 
 public class InterpretString {
 
-    /** Instantiating this class is meaningless. */
-    private InterpretString() {}
-
     /**
      * Tries to interpret the string argument as one of our known formats, and return an IrSignal.
      * If the string starts with "[", interpret it as raw data, already split in intro-,
@@ -159,4 +156,6 @@ public class InterpretString {
             return null;
         }
     }
+    /** Instantiating this class is meaningless. */
+    private InterpretString() {}
 }

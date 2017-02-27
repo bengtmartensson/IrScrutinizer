@@ -38,156 +38,7 @@ import org.harctoolbox.IrpMaster.IrpUtils;
  * This class is a general purpose console.
  */
 public class Console extends javax.swing.JScrollPane {
-    public interface IErrorFunction {
-        void err(Exception ex, String str);
-
-        void err(String str);
-    }
-
-    private static class SimpleErrorFunction implements IErrorFunction {
-        PrintStream consolePrintStream;
-
-        SimpleErrorFunction(PrintStream consolePrintStream) {
-            this.consolePrintStream = consolePrintStream;
-        }
-
-        @Override
-        public void err(Exception ex, String message) {
-            err(ex.getMessage() + ". " + message);
-        }
-
-        @Override
-        public void err(String str) {
-            consolePrintStream.println(str);
-        }
-    }
-
-    /**
-     * Sets a used defined error reporting function.
-     * @param errorFunction
-     */
-    public void setErrorFunction(IErrorFunction errorFunction) {
-        this.errorFunction = errorFunction;
-    }
-
-    /**
-     * Clears the console.
-     */
-    public void clear() {
-        consoleTextArea.setText(null);
-    }
-
-    /**
-     * Saves the console content as text to the file given as argument.
-     * @param file
-     * @throws FileNotFoundException
-     */
-    public void save(File file) throws FileNotFoundException {
-        try (PrintStream ps = new PrintStream(new FileOutputStream(file), true, IrpUtils.dumbCharsetName)) {
-            ps.println(consoleTextArea.getText());
-        } catch (UnsupportedEncodingException ex) {
-            throw new InternalError();
-        }
-    }
-
-    /**
-     * Returns all text in the console.
-     * @return Content as String.
-     */
-    public String getText() {
-        return consoleTextArea.getText();
-    }
-
-    /**
-     * Returns the selected text of the console.
-     * @return Selection as String.
-     */
-    public String getSelectedText() {
-        return consoleTextArea.getSelectedText();
-    }
-
-    /**
-     * Copy the selected text in the console to the clipboard.
-     */
-    public void copySelectionToClipboard() {
-        (new CopyClipboardText()).toClipboard(getSelectedText());
-    }
-
-    /**
-     * Copy the console as text to the clipboard.
-     */
-    public void copyToClipboard() {
-        (new CopyClipboardText()).toClipboard(getText());
-    }
-
-    /**
-     * Sets the system's stdout to this console.
-     */
-    public void setStdOut() {
-        System.setOut(consolePrintStream);
-    }
-
-    /**
-     * Sets the system's stderr to this console.
-     */
-    public void setStdErr() {
-        System.setErr(consolePrintStream);
-    }
-
-    /**
-     * Returns the print stream. Do a System.setErr(...getPrintStream()) to redirect stderr.
-     * @return
-     */
-    //public PrintStream getPrintStream() {
-    //    return consolePrintStream;
-    //}
-
-    /**
-     * Prints on the console.
-     * @param str
-     */
-    public void println(String str) {
-        consolePrintStream.println(str);
-    }
-
-    // From Real Gagnon
-    private class FilteredStream extends FilterOutputStream {
-
-        FilteredStream(OutputStream aStream) {
-            super(aStream);
-        }
-
-        @Override
-        public void write(byte b[]) throws IOException {
-            String aString = new String(b, "US-ASCII");
-            consoleTextArea.append(aString);
-        }
-
-        @Override
-        public void write(byte b[], int off, int len) throws IOException {
-            String aString = new String(b, off, len, "US-ASCII");
-            consoleTextArea.append(aString);
-            consoleTextArea.setCaretPosition(consoleTextArea.getDocument().getLength());
-        }
-    }
-
-    private static class CopyClipboardText implements ClipboardOwner {
-
-        @Override
-        public void lostOwnership(Clipboard c, Transferable t) {
-        }
-
-        public void toClipboard(String str) {
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(str), this);
-        }
-
-        //public String fromClipboard() throws UnsupportedFlavorException, IOException {
-        //    return (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this).getTransferData(DataFlavor.stringFlavor);
-        //}
-    }
-
     private IErrorFunction errorFunction = null;
-
     private final javax.swing.JMenuItem consoleClearMenuItem;
     private final javax.swing.JMenuItem consoleCopyMenuItem;
     private final javax.swing.JMenuItem consoleCopySelectionMenuItem;
@@ -195,65 +46,7 @@ public class Console extends javax.swing.JScrollPane {
     private final javax.swing.JPopupMenu consolePopupMenu;
     private final javax.swing.JMenuItem consoleSaveMenuItem;
     private final javax.swing.JTextArea consoleTextArea;
-
     private PrintStream consolePrintStream = null;
-
-    private void consoleClearMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        clear();
-    }
-
-    private void consoleTextAreaMousePressed(java.awt.event.MouseEvent evt) {
-        if (evt.isPopupTrigger())
-           consolePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-    }
-
-    private void consoleTextAreaMouseReleased(java.awt.event.MouseEvent evt) {
-        consoleTextAreaMousePressed(evt);
-    }
-
-    private void consoleCopyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        copyToClipboard();
-    }
-
-    private void consoleCopySelectionMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        this.copySelectionToClipboard();
-    }
-
-    private void consoletextSaveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        try {
-            File file = SelectFile.selectFile(this, "Save console text as...", null, true, false, "Text file", "txt");
-            if (file != null)
-                save(file);
-        } catch (FileNotFoundException ex) {
-            errorFunction.err(ex, "File not found");
-        }
-    }
-
-    private void consoletextPrintMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        File file;
-        try {
-            file = File.createTempFile("console", ".txt");
-        } catch (IOException ex) {
-            errorFunction.err(ex, "");
-            return;
-        }
-        try (PrintStream pos = new PrintStream(new FileOutputStream(file), true, "US-ASCII")) {
-            pos.println(getText());
-        } catch (IOException ex) {
-            errorFunction.err(ex, "");
-            return;
-        }
-
-        try {
-            Desktop.getDesktop().print(file);
-            file.deleteOnExit();
-        } catch (UnsupportedOperationException ex) {
-            errorFunction.err("Desktop does not support printing. Print the file "
-                    + file.getAbsolutePath() + " manually.");
-        } catch (IOException ex) {
-            errorFunction.err(ex, "");
-        }
-    }
 
     public Console() {
         errorFunction = new SimpleErrorFunction(consolePrintStream);
@@ -352,6 +145,209 @@ public class Console extends javax.swing.JScrollPane {
                     false, "US-ASCII");
         } catch (UnsupportedEncodingException ex) {
             assert false;
+        }
+    }
+
+    /**
+     * Sets a used defined error reporting function.
+     * @param errorFunction
+     */
+    public void setErrorFunction(IErrorFunction errorFunction) {
+        this.errorFunction = errorFunction;
+    }
+
+    /**
+     * Clears the console.
+     */
+    public void clear() {
+        consoleTextArea.setText(null);
+    }
+
+    /**
+     * Saves the console content as text to the file given as argument.
+     * @param file
+     * @throws FileNotFoundException
+     */
+    public void save(File file) throws FileNotFoundException {
+        try (PrintStream ps = new PrintStream(new FileOutputStream(file), true, IrpUtils.dumbCharsetName)) {
+            ps.println(consoleTextArea.getText());
+        } catch (UnsupportedEncodingException ex) {
+            throw new InternalError();
+        }
+    }
+
+    /**
+     * Returns all text in the console.
+     * @return Content as String.
+     */
+    public String getText() {
+        return consoleTextArea.getText();
+    }
+
+    /**
+     * Returns the selected text of the console.
+     * @return Selection as String.
+     */
+    public String getSelectedText() {
+        return consoleTextArea.getSelectedText();
+    }
+
+    /**
+     * Copy the selected text in the console to the clipboard.
+     */
+    public void copySelectionToClipboard() {
+        (new CopyClipboardText()).toClipboard(getSelectedText());
+    }
+
+    /**
+     * Copy the console as text to the clipboard.
+     */
+    public void copyToClipboard() {
+        (new CopyClipboardText()).toClipboard(getText());
+    }
+
+    /**
+     * Sets the system's stdout to this console.
+     */
+    public void setStdOut() {
+        System.setOut(consolePrintStream);
+    }
+
+    /**
+     * Sets the system's stderr to this console.
+     */
+    public void setStdErr() {
+        System.setErr(consolePrintStream);
+    }
+
+    /**
+     * Returns the print stream. Do a System.setErr(...getPrintStream()) to redirect stderr.
+     * @return
+     */
+    //public PrintStream getPrintStream() {
+    //    return consolePrintStream;
+    //}
+
+    /**
+     * Prints on the console.
+     * @param str
+     */
+    public void println(String str) {
+        consolePrintStream.println(str);
+    }
+
+
+    private void consoleClearMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        clear();
+    }
+
+    private void consoleTextAreaMousePressed(java.awt.event.MouseEvent evt) {
+        if (evt.isPopupTrigger())
+           consolePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+    }
+
+    private void consoleTextAreaMouseReleased(java.awt.event.MouseEvent evt) {
+        consoleTextAreaMousePressed(evt);
+    }
+
+    private void consoleCopyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        copyToClipboard();
+    }
+
+    private void consoleCopySelectionMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        this.copySelectionToClipboard();
+    }
+
+    private void consoletextSaveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            File file = SelectFile.selectFile(this, "Save console text as...", null, true, false, "Text file", "txt");
+            if (file != null)
+                save(file);
+        } catch (FileNotFoundException ex) {
+            errorFunction.err(ex, "File not found");
+        }
+    }
+
+    private void consoletextPrintMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        File file;
+        try {
+            file = File.createTempFile("console", ".txt");
+        } catch (IOException ex) {
+            errorFunction.err(ex, "");
+            return;
+        }
+        try (PrintStream pos = new PrintStream(new FileOutputStream(file), true, "US-ASCII")) {
+            pos.println(getText());
+        } catch (IOException ex) {
+            errorFunction.err(ex, "");
+            return;
+        }
+
+        try {
+            Desktop.getDesktop().print(file);
+            file.deleteOnExit();
+        } catch (UnsupportedOperationException ex) {
+            errorFunction.err("Desktop does not support printing. Print the file "
+                    + file.getAbsolutePath() + " manually.");
+        } catch (IOException ex) {
+            errorFunction.err(ex, "");
+        }
+    }
+
+    private static class SimpleErrorFunction implements IErrorFunction {
+        PrintStream consolePrintStream;
+
+        SimpleErrorFunction(PrintStream consolePrintStream) {
+            this.consolePrintStream = consolePrintStream;
+        }
+
+        @Override
+        public void err(Exception ex, String message) {
+            err(ex.getMessage() + ". " + message);
+        }
+
+        @Override
+        public void err(String str) {
+            consolePrintStream.println(str);
+        }
+    }
+    private static class CopyClipboardText implements ClipboardOwner {
+
+        @Override
+        public void lostOwnership(Clipboard c, Transferable t) {
+        }
+
+        public void toClipboard(String str) {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(str), this);
+        }
+
+        //public String fromClipboard() throws UnsupportedFlavorException, IOException {
+        //    return (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this).getTransferData(DataFlavor.stringFlavor);
+        //}
+    }
+    public interface IErrorFunction {
+        void err(Exception ex, String str);
+
+        void err(String str);
+    }
+    // From Real Gagnon
+    private class FilteredStream extends FilterOutputStream {
+
+        FilteredStream(OutputStream aStream) {
+            super(aStream);
+        }
+
+        @Override
+        public void write(byte b[]) throws IOException {
+            String aString = new String(b, "US-ASCII");
+            consoleTextArea.append(aString);
+        }
+
+        @Override
+        public void write(byte b[], int off, int len) throws IOException {
+            String aString = new String(b, off, len, "US-ASCII");
+            consoleTextArea.append(aString);
+            consoleTextArea.setCaretPosition(consoleTextArea.getDocument().getLength());
         }
     }
 }

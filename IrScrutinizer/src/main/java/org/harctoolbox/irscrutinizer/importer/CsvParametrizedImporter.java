@@ -38,11 +38,47 @@ import org.harctoolbox.girr.Command;
  * Columns are numbered starting with 1.
  */
 public class CsvParametrizedImporter extends CsvImporter {
+    public static Collection<Command> process(Reader reader,
+            String separator, int nameColumn, boolean nameMultiColumn, String filename, boolean verbose, int base, int Fcolumn, int Dcolumn,
+            int Scolumn, int protocolColumn) throws IOException, IrpMasterException {
+        CsvParametrizedImporter csvImportParametrized = new CsvParametrizedImporter(
+                separator, nameColumn, nameMultiColumn, verbose, base, Fcolumn, Dcolumn, Scolumn, protocolColumn);
+        csvImportParametrized.load(reader, filename);
+        return csvImportParametrized.getCommands();
+    }
+
+    public static void main(String[] args) {
+        try {
+            Reader r = new InputStreamReader(new FileInputStream(args[0]), IrpUtils.dumbCharset);
+            Collection<Command> signals = process(r,",", 1, false, args[0], true, 10, 3, -1, -1, -1);
+            for (Command s : signals)
+                System.out.println(s.toString());
+        } catch (IOException | IrpMasterException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
     private int numberBase;
     private int fColumn;
     private int dColumn;
     private int sColumn;
     private int protocolColumn;
+
+    public CsvParametrizedImporter(int separatorIndex, int nameColumn, boolean nameMultiColumn, boolean verbose, int base, int Fcolumn, int Dcolumn,
+            int Scolumn, int protocolColumn) {
+        this(CsvImporter.getSeparator(separatorIndex), nameColumn, nameMultiColumn, verbose, base, Fcolumn, Dcolumn,
+                Scolumn, protocolColumn);
+    }
+
+    public CsvParametrizedImporter(String separator, int nameColumn, boolean nameMultiColumn, boolean verbose, int numberBase, int Fcolumn, int Dcolumn,
+            int Scolumn, int protocolColumn) {
+        super(separator, nameColumn, nameMultiColumn);
+        this.numberBase = numberBase;
+        this.fColumn = Fcolumn;
+        this.dColumn = Dcolumn;
+        this.sColumn = Scolumn;
+        this.protocolColumn = protocolColumn;
+    }
 
     /**
      * @param protocolColumn the protocolColumn to set
@@ -79,22 +115,6 @@ public class CsvParametrizedImporter extends CsvImporter {
         this.sColumn = sColumn;
     }
 
-    public CsvParametrizedImporter(int separatorIndex, int nameColumn, boolean nameMultiColumn, boolean verbose, int base, int Fcolumn, int Dcolumn,
-            int Scolumn, int protocolColumn) {
-        this(CsvImporter.getSeparator(separatorIndex), nameColumn, nameMultiColumn, verbose, base, Fcolumn, Dcolumn,
-            Scolumn, protocolColumn);
-    }
-
-
-    public CsvParametrizedImporter(String separator, int nameColumn, boolean nameMultiColumn, boolean verbose, int numberBase, int Fcolumn, int Dcolumn,
-            int Scolumn, int protocolColumn) {
-        super(separator, nameColumn, nameMultiColumn);
-        this.numberBase = numberBase;
-        this.fColumn = Fcolumn;
-        this.dColumn = Dcolumn;
-        this.sColumn = Scolumn;
-        this.protocolColumn = protocolColumn;
-    }
 
     @Override
     public void load(File file, String origin, String charsetName) throws FileNotFoundException, IOException, ParseException {
@@ -169,25 +189,5 @@ public class CsvParametrizedImporter extends CsvImporter {
             }
         }
         return invalid;
-    }
-
-    public static Collection<Command> process(Reader reader,
-            String separator, int nameColumn, boolean nameMultiColumn, String filename, boolean verbose, int base, int Fcolumn, int Dcolumn,
-            int Scolumn, int protocolColumn) throws IOException, IrpMasterException {
-        CsvParametrizedImporter csvImportParametrized = new CsvParametrizedImporter(
-                separator, nameColumn, nameMultiColumn, verbose, base, Fcolumn, Dcolumn, Scolumn, protocolColumn);
-        csvImportParametrized.load(reader, filename);
-        return csvImportParametrized.getCommands();
-    }
-
-    public static void main(String[] args) {
-        try {
-            Reader r = new InputStreamReader(new FileInputStream(args[0]), IrpUtils.dumbCharset);
-            Collection<Command> signals = process(r,",", 1, false, args[0], true, 10, 3, -1, -1, -1);
-            for (Command s : signals)
-                System.out.println(s.toString());
-        } catch (IOException | IrpMasterException ex) {
-            System.err.println(ex.getMessage());
-        }
     }
 }

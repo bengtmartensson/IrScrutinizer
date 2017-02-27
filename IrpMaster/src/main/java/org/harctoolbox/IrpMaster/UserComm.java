@@ -22,9 +22,38 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 public class UserComm {
-    private boolean quiet = false;
-
     private static UserComm instance = new UserComm();
+    public static void setQuiet(boolean quiet) {
+        instance.quiet = quiet;
+    }
+    public static void warning(String msg) {
+        instance.warningMsg(msg);
+    }
+    public static void error(String msg) {
+        instance.errorMsg(msg);
+    }
+    public static void print(String msg) {
+        instance.printMsg(msg);
+    }
+    public static void exception(Exception ex) {
+        instance.exceptionMsg(ex);
+    }
+    public static void setLogging(PrintStream logfile) {
+        instance.setLogfile(logfile);
+    }
+    /**
+     * For testing and debugging only.
+     * @param args
+     */
+    public static void main(String[] args) {
+        try {
+            System.out.println(instance.getLine("Enter what you desire>"));
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    private boolean quiet = false;
     private PrintStream logfile = null;
 
     public void setLogfile(PrintStream printStream) {
@@ -70,39 +99,4 @@ public class UserComm {
         return isr.readLine();
     }
 
-    public static void setQuiet(boolean quiet) {
-        instance.quiet = quiet;
-    }
-
-    public static void warning(String msg) {
-        instance.warningMsg(msg);
-    }
-
-    public static void error(String msg) {
-        instance.errorMsg(msg);
-    }
-
-    public static void print(String msg) {
-        instance.printMsg(msg);
-    }
-
-    public static void exception(Exception ex) {
-        instance.exceptionMsg(ex);
-    }
-
-    public static void setLogging(PrintStream logfile) {
-        instance.setLogfile(logfile);
-    }
-
-    /**
-     * For testing and debugging only.
-     * @param args
-     */
-    public static void main(String[] args) {
-        try {
-            System.out.println(instance.getLine("Enter what you desire>"));
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
-    }
 }

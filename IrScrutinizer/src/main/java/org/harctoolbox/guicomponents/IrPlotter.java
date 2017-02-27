@@ -47,21 +47,6 @@ public class IrPlotter extends HarcPanel {
             + "License: GPL3.\n\n"
             + "Project home page: http://www.harctoolbox.org";
 
-    /** max horizontal coordinate, in microseconds */
-    private int xmin = 0;
-    private int xmax = 200000;
-    private int[] irdata = null;
-    private int noIntroBursts;
-    private int noRepeatBursts;
-    private int noRepeats;
-    private int onY;
-    private int offY;
-    private int dragBeginX = invalid;
-    private int dragEndX = invalid;
-
-    private JMenu plotterWidthsMenu;
-    private JPopupMenu plotterPopupMenu;
-
     private final static int topMargin = 10;
     private final static int bottomMargin = 40;
     private final static int leftMargin = 15;
@@ -82,6 +67,21 @@ public class IrPlotter extends HarcPanel {
     private final static Color introColor = Color.RED;
     private final static Color repeatColor = Color.BLUE;
     private final static Color endingColor = Color.GREEN;
+    private final static int invalid = -1;
+
+    /** max horizontal coordinate, in microseconds */
+    private int xmin = 0;
+    private int xmax = 200000;
+    private int[] irdata = null;
+    private int noIntroBursts;
+    private int noRepeatBursts;
+    private int noRepeats;
+    private int onY;
+    private int offY;
+    private int dragBeginX = invalid;
+    private int dragEndX = invalid;
+    private JMenu plotterWidthsMenu;
+    private JPopupMenu plotterPopupMenu;
 
     private boolean usePulseAsTiming = false;
     private boolean ignoreLast = false;
@@ -89,7 +89,6 @@ public class IrPlotter extends HarcPanel {
 
     private boolean useMilliSeconds = false;
 
-    private final static int invalid = -1;
     private final int[] plotterWidths = { 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000, 7000, 8000, 10000 };
 
     public IrPlotter(boolean zoomSupport) {

@@ -25,52 +25,6 @@ package org.harctoolbox.IrpMaster;
  */
 public class Debug {
 
-    public static enum Item {
-
-        Main,
-        Configfile,
-        IrpParser,
-        ASTParser,
-        NameEngine,
-        BitFields,
-        Parameters,
-        Expressions,
-        IrSignals,
-        IrStreamItems,
-        BitSpec,
-        DecodeIR,
-        IrStreams,
-        BitStream,
-        Evaluate;
-
-        public static int power(Item it) {
-            return 1 << it.ordinal();
-        }
-
-        public static String helpString(String separator) {
-            StringBuilder result = new StringBuilder();
-            for (Item it : Item.values())
-                result.append(it).append("=").append(power(it)).append(separator);
-            return result.substring(0, result.length()-separator.length());
-        }
-
-        public static String helpString() {
-            return helpString(",");
-        }
-
-        public static String helpString(int index) {
-            return values()[index].name();
-        }
-
-        public static int size() {
-            return values().length;
-        }
-    };
-
-    private int debug = 0;
-
-    private UserComm userComm;
-
     private static Debug instance = new Debug(0);
 
     public static Debug getInstance() {
@@ -91,42 +45,6 @@ public class Debug {
 
     public static int getDebug() {
         return instance.debug;
-    }
-
-    public Debug(int debug) {
-        this(debug, new UserComm());
-    }
-
-    public Debug(int debug, UserComm userComm) {
-        this.debug = debug;
-        this.userComm = userComm;
-    }
-
-    public void debugMsg(Item type, String msg) {
-	if (debugOn(type))
-            userComm.debugMsg(type.name(), msg);
-    }
-
-    public void debugMsg(String msg) {
-        userComm.debugMsg("", msg);
-    }
-
-    public boolean debugOn(Item type) {
-        return (Item.power(type) & debug) != 0;
-    }
-
-    @Override
-    public String toString() {
-        return toString(",");
-    }
-
-    public String toString(String separator) {
-        StringBuilder result = new StringBuilder();
-        for (Item it : Item.values())
-            if (debugOn(it))
-                result.append(it).append(separator);
-
-        return "[" + (result.length() == 0 ? "" : result.substring(0, result.length()-separator.length())) + "]";
     }
 
     public static void debugMain(String msg) {
@@ -195,6 +113,79 @@ public class Debug {
         if (args.length > 0) {
             Debug debug = new Debug(Integer.parseInt(args[0]));
             System.out.println(debug);
+        }
+    }
+
+    private int debug = 0;
+    private UserComm userComm;
+    public Debug(int debug) {
+        this(debug, new UserComm());
+    }
+    public Debug(int debug, UserComm userComm) {
+        this.debug = debug;
+        this.userComm = userComm;
+    }
+    public void debugMsg(Item type, String msg) {
+        if (debugOn(type))
+            userComm.debugMsg(type.name(), msg);
+    }
+    public void debugMsg(String msg) {
+        userComm.debugMsg("", msg);
+    }
+    public boolean debugOn(Item type) {
+        return (Item.power(type) & debug) != 0;
+    }
+    @Override
+    public String toString() {
+        return toString(",");
+    }
+    public String toString(String separator) {
+        StringBuilder result = new StringBuilder();
+        for (Item it : Item.values())
+            if (debugOn(it))
+                result.append(it).append(separator);
+
+        return "[" + (result.length() == 0 ? "" : result.substring(0, result.length()-separator.length())) + "]";
+    }
+    public static enum Item {
+
+        Main,
+        Configfile,
+        IrpParser,
+        ASTParser,
+        NameEngine,
+        BitFields,
+        Parameters,
+        Expressions,
+        IrSignals,
+        IrStreamItems,
+        BitSpec,
+        DecodeIR,
+        IrStreams,
+        BitStream,
+        Evaluate;
+
+        public static int power(Item it) {
+            return 1 << it.ordinal();
+        }
+
+        public static String helpString(String separator) {
+            StringBuilder result = new StringBuilder();
+            for (Item it : Item.values())
+                result.append(it).append("=").append(power(it)).append(separator);
+            return result.substring(0, result.length()-separator.length());
+        }
+
+        public static String helpString() {
+            return helpString(",");
+        }
+
+        public static String helpString(int index) {
+            return values()[index].name();
+        }
+
+        public static int size() {
+            return values().length;
         }
     }
 }

@@ -30,6 +30,21 @@ import java.util.LinkedHashMap;
  */
 public class EvaluateLog {
 
+    private static void usage(int exitcode) {
+        System.err.println("Usage:\n\tEvaluateLogs <logfile>");
+        System.exit(exitcode);
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        if (args.length == 0)
+            usage(IrpUtils.exitUsageError);
+        EvaluateLog el = new EvaluateLog(args[0]);
+        System.out.println(el);
+    }
+
     LinkedHashMap<String, Integer>map = new LinkedHashMap<>();
 
     public EvaluateLog(String filename) {
@@ -74,17 +89,4 @@ public class EvaluateLog {
     }
 
 
-    private static void usage(int exitcode) {
-        System.err.println("Usage:\n\tEvaluateLogs <logfile>");
-        System.exit(exitcode);
-    }
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        if (args.length == 0)
-            usage(IrpUtils.exitUsageError);
-        EvaluateLog el = new EvaluateLog(args[0]);
-        System.out.println(el);
-    }
 }

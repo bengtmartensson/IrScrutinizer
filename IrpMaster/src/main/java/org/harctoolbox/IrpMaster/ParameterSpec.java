@@ -27,6 +27,34 @@ import org.antlr.runtime.tree.CommonTree;
  * @author Bengt Martensson
  */
 public class ParameterSpec {
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        ParameterSpec dev = null;
+        ParameterSpec toggle = null;
+        ParameterSpec func = null;
+        try {
+            dev = new ParameterSpec("d", 0, 255, false, "255-s");
+            toggle = new ParameterSpec("t", 0, 1, true, 0);
+            func = new ParameterSpec("F", 0, 1, false, 0);
+            System.out.println(new ParameterSpec("Fx", 0, 1, false, 0));
+            System.out.println(new ParameterSpec("Fx", 0, 1, false));
+            System.out.println(new ParameterSpec("Fx", 0, 1));
+            System.out.println(new ParameterSpec("D:0..31"));
+            System.out.println(new ParameterSpec("D@:0..31=42"));
+            System.out.println(new ParameterSpec("D:0..31=42*3+33"));
+            System.out.println(dev);
+            System.out.println(toggle);
+            System.out.println(func);
+            System.out.println(dev.isOK(-1));
+            System.out.println(dev.isOK(0));
+            System.out.println(dev.isOK(255));
+            System.out.println(dev.isOK(256));
+        } catch (ParseException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
 
     private String name;
     private long min;
@@ -34,10 +62,6 @@ public class ParameterSpec {
     private CommonTree deflt;
     private boolean memory = false;
 
-    @Override
-    public String toString() {
-        return name + (memory ? "@" : "") + ":" + min + ".." + max + (deflt != null ? ("=" + deflt.toStringTree()) : "");
-    }
 
     public ParameterSpec(String name, int min, int max, boolean memory, int deflt) {
         this(name, min, max, memory, IrpParser.newIntegerTree(deflt));
@@ -94,6 +118,10 @@ public class ParameterSpec {
             throw new ParseException(ex);
         }
     }
+    @Override
+    public String toString() {
+        return name + (memory ? "@" : "") + ":" + min + ".." + max + (deflt != null ? ("=" + deflt.toStringTree()) : "");
+    }
 
     private void load(CommonTree t) {
         memory = t.getText().equals("PARAMETER_SPEC_MEMORY");
@@ -131,32 +159,4 @@ public class ParameterSpec {
         return memory;
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        ParameterSpec dev = null;
-        ParameterSpec toggle = null;
-        ParameterSpec func = null;
-        try {
-            dev = new ParameterSpec("d", 0, 255, false, "255-s");
-            toggle = new ParameterSpec("t", 0, 1, true, 0);
-            func = new ParameterSpec("F", 0, 1, false, 0);
-            System.out.println(new ParameterSpec("Fx", 0, 1, false, 0));
-            System.out.println(new ParameterSpec("Fx", 0, 1, false));
-            System.out.println(new ParameterSpec("Fx", 0, 1));
-            System.out.println(new ParameterSpec("D:0..31"));
-            System.out.println(new ParameterSpec("D@:0..31=42"));
-            System.out.println(new ParameterSpec("D:0..31=42*3+33"));
-            System.out.println(dev);
-            System.out.println(toggle);
-            System.out.println(func);
-            System.out.println(dev.isOK(-1));
-            System.out.println(dev.isOK(0));
-            System.out.println(dev.isOK(255));
-            System.out.println(dev.isOK(256));
-        } catch (ParseException ex) {
-            System.out.println(ex.getMessage());
-        }
-    }
 }

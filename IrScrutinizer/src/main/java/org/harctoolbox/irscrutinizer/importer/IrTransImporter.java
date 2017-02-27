@@ -47,131 +47,19 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
     public static final String defaultCharsetName = "windows-1252";
     private static final int dummyEndingGap = 50000;
 
+    public static void main(String[] args) {
+        IrTransImporter importer = new IrTransImporter();
+        try {
+            importer.load(new File(args[0]));
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        } catch (ParseException ex) {
+            System.err.println(ex.getMessage() + ex.getErrorOffset());
+        }
+    }
+
     public IrTransImporter() {
         super();
-    }
-
-    private static enum TimingType {
-        rc5,
-        rc6,
-        normal
-    }
-
-    private static class Timing {
-
-        int[][] durations = null;
-        int repetitions = -1;
-        int pause = -1;
-        int framelength = -1;
-        int frequency = -1;
-        boolean freqMeas = false;
-        boolean startBit = false;
-        boolean repeatStart = false;
-        TimingType type = TimingType.normal;
-        boolean noToggle = false;
-        boolean rcmmToggle = false;
-    }
-
-    private static enum CommandType {
-        raw,
-        ccf,
-        timing
-    }
-
-    private static abstract class IrTransCommand {
-        String name;
-
-        private IrTransCommand() {}
-
-        protected IrTransCommand(String name) {
-            this.name = name;
-        }
-
-        abstract Command toCommand() throws IrpMasterException;
-    }
-
-    private static class IrTransCommandIndexed extends IrTransCommand {
-        private final String data;
-        private final Timing timing;
-
-        IrTransCommandIndexed(String name, String data, Timing timing) {
-            super(name);
-            this.data = data;
-            this.timing = timing;
-        }
-
-        @Override
-        Command toCommand() throws IrpMasterException {
-            if (timing.type == TimingType.rc5) {
-                    // {36k,msb,889}<1,-1|-1,1>((1:1,~F:1:6,T:1,D:5,F:6,^114m)+,T=1-T)[T@:0..1=0,D:0..31,F:0..127]
-                    long payload = Long.parseLong(data, 2);
-                    long F6 = (~(payload >> 12)) & 1;
-                    long F = (F6 << 6) | (payload & 0x3f);
-                    long D = (payload >> 6) & 0x1f;
-                    long T = (payload >> 11) & 1;
-                    Map<String, Long> parameters = new HashMap<>(4);
-                    parameters.put("F", F);
-                    parameters.put("D", D);
-                    parameters.put("T", T);
-                    return new Command(name, null, "RC5", parameters);
-            } else if (timing.type == TimingType.rc6) {
-                    // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
-                    // http://www.irtrans.de/forum/viewtopic.php?f=18&t=99
-                    long payload = Long.parseLong(data.substring(2), 2);
-                    long F = payload & 0xff;
-                    long D = (payload >> 8) & 0xff;
-                    Map<String, Long> parameters = new HashMap<>(4);
-                    parameters.put("F", F);
-                    parameters.put("D", D);
-                    return new Command(name, null, "RC6", parameters);
-            } else {
-                    int[] times = new int[2 * data.length()];
-                    for (int i = 0; i < data.length(); i++) {
-                        char ch = data.charAt(i);
-                        int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
-                        if (index >= timing.durations.length)
-                            throw new IrpMasterException("Undefined timing :" + ch);
-                        times[2 * i] = timing.durations[index][0];
-                        times[2 * i + 1] = timing.durations[index][1];
-                    }
-                    IrSignal irSignal = timing.repetitions <= 1
-                            ? new IrSignal(times, times.length / 2, 0, 1000 * timing.frequency)
-                            : new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
-                    return new Command(name, null, irSignal);
-            }
-        }
-    }
-
-    private static class IrTransCommandRaw extends IrTransCommand {
-        private final int[] durations;
-        private final int frequency;
-
-        IrTransCommandRaw(String name, int frequency, int[] durations, int effectiveLength) {
-            super(name);
-            this.frequency = frequency;
-            this.durations = new int[effectiveLength];
-            System.arraycopy(durations, 0, this.durations, 0, effectiveLength);
-        }
-
-        @Override
-        Command toCommand() {
-            IrSignal irSignal = new IrSignal(durations, 0, durations.length/2, 1000 * frequency);
-            return new Command(name, null, irSignal);
-        }
-    }
-
-    private static class IrTransCommandCcf extends IrTransCommand {
-        String ccf;
-
-        IrTransCommandCcf(String name, String ccf) {
-            super(name);
-            this.ccf = ccf;
-        }
-
-        @Override
-        Command toCommand() throws IrpMasterException {
-            return new Command(name, null, ccf);
-        }
     }
 
     private Remote parseRemote(LineNumberReader reader) throws IOException, ParseException {
@@ -430,14 +318,120 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         return "IrTrans";
     }
 
-    public static void main(String[] args) {
-        IrTransImporter importer = new IrTransImporter();
-        try {
-            importer.load(new File(args[0]));
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        } catch (ParseException ex) {
-            System.err.println(ex.getMessage() + ex.getErrorOffset());
+    private static enum TimingType {
+        rc5,
+        rc6,
+        normal
+    }
+    private static class Timing {
+
+        int[][] durations = null;
+        int repetitions = -1;
+        int pause = -1;
+        int framelength = -1;
+        int frequency = -1;
+        boolean freqMeas = false;
+        boolean startBit = false;
+        boolean repeatStart = false;
+        TimingType type = TimingType.normal;
+        boolean noToggle = false;
+        boolean rcmmToggle = false;
+    }
+    private static enum CommandType {
+        raw,
+        ccf,
+        timing
+    }
+    private static abstract class IrTransCommand {
+        String name;
+
+        private IrTransCommand() {}
+
+        protected IrTransCommand(String name) {
+            this.name = name;
         }
+
+        abstract Command toCommand() throws IrpMasterException;
+    }
+    private static class IrTransCommandIndexed extends IrTransCommand {
+        private final String data;
+        private final Timing timing;
+
+        IrTransCommandIndexed(String name, String data, Timing timing) {
+            super(name);
+            this.data = data;
+            this.timing = timing;
+        }
+
+        @Override
+                Command toCommand() throws IrpMasterException {
+                    if (timing.type == TimingType.rc5) {
+                        // {36k,msb,889}<1,-1|-1,1>((1:1,~F:1:6,T:1,D:5,F:6,^114m)+,T=1-T)[T@:0..1=0,D:0..31,F:0..127]
+                        long payload = Long.parseLong(data, 2);
+                        long F6 = (~(payload >> 12)) & 1;
+                        long F = (F6 << 6) | (payload & 0x3f);
+                        long D = (payload >> 6) & 0x1f;
+                        long T = (payload >> 11) & 1;
+                        Map<String, Long> parameters = new HashMap<>(4);
+                        parameters.put("F", F);
+                        parameters.put("D", D);
+                        parameters.put("T", T);
+                        return new Command(name, null, "RC5", parameters);
+                    } else if (timing.type == TimingType.rc6) {
+                        // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
+                        // http://www.irtrans.de/forum/viewtopic.php?f=18&t=99
+                        long payload = Long.parseLong(data.substring(2), 2);
+                        long F = payload & 0xff;
+                        long D = (payload >> 8) & 0xff;
+                        Map<String, Long> parameters = new HashMap<>(4);
+                        parameters.put("F", F);
+                        parameters.put("D", D);
+                        return new Command(name, null, "RC6", parameters);
+                    } else {
+                        int[] times = new int[2 * data.length()];
+                        for (int i = 0; i < data.length(); i++) {
+                            char ch = data.charAt(i);
+                            int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
+                            if (index >= timing.durations.length)
+                                throw new IrpMasterException("Undefined timing :" + ch);
+                            times[2 * i] = timing.durations[index][0];
+                            times[2 * i + 1] = timing.durations[index][1];
+                        }
+                        IrSignal irSignal = timing.repetitions <= 1
+                                ? new IrSignal(times, times.length / 2, 0, 1000 * timing.frequency)
+                                : new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
+                        return new Command(name, null, irSignal);
+                    }
+                }
+    }
+    private static class IrTransCommandRaw extends IrTransCommand {
+        private final int[] durations;
+        private final int frequency;
+
+        IrTransCommandRaw(String name, int frequency, int[] durations, int effectiveLength) {
+            super(name);
+            this.frequency = frequency;
+            this.durations = new int[effectiveLength];
+            System.arraycopy(durations, 0, this.durations, 0, effectiveLength);
+        }
+
+        @Override
+                Command toCommand() {
+                    IrSignal irSignal = new IrSignal(durations, 0, durations.length/2, 1000 * frequency);
+                    return new Command(name, null, irSignal);
+                }
+    }
+    private static class IrTransCommandCcf extends IrTransCommand {
+        String ccf;
+
+        IrTransCommandCcf(String name, String ccf) {
+            super(name);
+            this.ccf = ccf;
+        }
+
+        @Override
+                Command toCommand() throws IrpMasterException {
+                    return new Command(name, null, ccf);
+                }
     }
 }

@@ -30,8 +30,39 @@ import org.antlr.runtime.tree.CommonTree;
  * @author Bengt Martensson
  */
 public class ParameterSpecs {
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        try {
+            System.out.println(new ParameterSpecs("[T@:0..1=0,D:0..31,F:0..128,S:0..255=D-255]"));
+        } catch (ParseException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
 
     private HashMap<String, ParameterSpec>map;
+    public ParameterSpecs() {
+        map = new HashMap<>();
+    }
+    public ParameterSpecs(String parameter_specs) throws ParseException {
+        this();
+        IrpLexer lex = new IrpLexer(new ANTLRStringStream(parameter_specs));
+        CommonTokenStream tokens = new CommonTokenStream(lex);
+        IrpParser parser = new IrpParser(tokens);
+        IrpParser.parameter_specs_return r;
+        try {
+            r = parser.parameter_specs();
+            CommonTree ct = (CommonTree) r.getTree();
+            load(ct);
+        } catch (RecognitionException ex) {
+            throw new ParseException(ex);
+        }
+    }
+    public ParameterSpecs(CommonTree t) {
+        this();
+        load(t);
+    }
 
     public boolean isEmpty() {
         return map.isEmpty();
@@ -49,29 +80,6 @@ public class ParameterSpecs {
         return map.get(name);
     }
 
-    public ParameterSpecs() {
-        map = new HashMap<>();
-    }
-
-    public ParameterSpecs(String parameter_specs) throws ParseException {
-        this();
-        IrpLexer lex = new IrpLexer(new ANTLRStringStream(parameter_specs));
-        CommonTokenStream tokens = new CommonTokenStream(lex);
-        IrpParser parser = new IrpParser(tokens);
-        IrpParser.parameter_specs_return r;
-        try {
-            r = parser.parameter_specs();
-            CommonTree ct = (CommonTree) r.getTree();
-            load(ct);
-        } catch (RecognitionException ex) {
-            throw new ParseException(ex);
-        }
-    }
-
-    public ParameterSpecs(CommonTree t) {
-        this();
-        load(t);
-    }
 
     private void load(CommonTree t) {
         for (int i = 0; i < t.getChildCount(); i++) {
@@ -91,14 +99,4 @@ public class ParameterSpecs {
         return "[" + str.toString() + "]";
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        try {
-            System.out.println(new ParameterSpecs("[T@:0..1=0,D:0..31,F:0..128,S:0..255=D-255]"));
-        } catch (ParseException ex) {
-            System.err.println(ex.getMessage());
-        }
-    }
 }

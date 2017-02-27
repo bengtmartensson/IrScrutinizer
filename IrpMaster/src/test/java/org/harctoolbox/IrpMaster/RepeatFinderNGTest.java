@@ -14,15 +14,15 @@ import org.testng.annotations.Test;
  */
 public class RepeatFinderNGTest {
 
-    public RepeatFinderNGTest() {
-    }
-
     @BeforeClass
     public static void setUpClass() throws Exception {
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
+    }
+
+    public RepeatFinderNGTest() {
     }
 
     @BeforeMethod

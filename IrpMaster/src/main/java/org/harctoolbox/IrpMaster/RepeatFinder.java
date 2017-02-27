@@ -68,73 +68,22 @@ public class RepeatFinder {
         defaultAbsoluteTolerance = aDefaultAbsoluteTolerance;
     }
 
-    public static class RepeatFinderData {
-        private int beginLength;
-        private int repeatLength;
-        private int numberRepeats;
-        private int endingLength;
-        private double lastGap;
-        private double repeatsDuration;
+    public static IrSignal findRepeat(ModulatedIrSequence irSequence, double absoluteTolerance, double relativeTolerance) {
+        RepeatFinder repeatFinder = new RepeatFinder(irSequence, absoluteTolerance, relativeTolerance);
+        return repeatFinder.toIrSignal(irSequence);
+    }
 
-        private RepeatFinderData() {
-            this(0, 0, 0, 0);
-        }
+    public static IrSignal findRepeat(ModulatedIrSequence irSequence) {
+        return findRepeat(irSequence, defaultAbsoluteTolerance, defaultRelativeTolerance);
+    }
 
-        public RepeatFinderData(int beginLength, int repeatLength, int numberRepeats, int endingLength) {
-            if (beginLength % 2 != 0 || repeatLength % 2 != 0 || endingLength % 2 != 0)
-                throw new IllegalArgumentException("Lengths and start must be even");
-            this.beginLength = beginLength;
-            this.repeatLength = repeatLength;
-            this.numberRepeats = numberRepeats;
-            this.endingLength = endingLength;
-            this.lastGap = 0;
-            this.repeatsDuration = 0;
-        }
+    public static IrSignal findRepeatClean(ModulatedIrSequence irSequence, double absoluteTolerance, double relativeTolerance) {
+        RepeatFinder repeatFinder = new RepeatFinder(irSequence, absoluteTolerance, relativeTolerance);
+        return repeatFinder.toIrSignalClean(irSequence);
+    }
 
-        @Override
-        public String toString() {
-            return "beginLength = " + beginLength
-                    + "; repeatLength = " + repeatLength
-                    + "; numberRepeats = " + numberRepeats
-                    + "; endingLength = " + endingLength
-                    + "; repeatsDuration = " + repeatsDuration;
-        }
-
-        /**
-         * @return the repeatStart
-         */
-        public int getBeginLength() {
-            return beginLength;
-        }
-
-        /**
-         * @return the numberRepeats
-         */
-        public int getNumberRepeats() {
-            return numberRepeats;
-        }
-
-        /**
-         * @return the repeatLength
-         */
-        public int getRepeatLength() {
-            return repeatLength;
-        }
-
-        public int getEndingLength() {
-            return endingLength;
-        }
-
-        public IrSignal chopIrSequence(ModulatedIrSequence irSequence) {
-            try {
-                return numberRepeats > 1
-                        ? irSequence.toIrSignal(beginLength, repeatLength, numberRepeats)
-                        : // no repeat found, just do the trival
-                        irSequence.toIrSignal();
-            } catch (IncompatibleArgumentException ex) {
-                throw new InternalError(); // cannot happen: repeatStart repeatLength have been checked to be even.
-            }
-        }
+    public static IrSignal findRepeatClean(ModulatedIrSequence irSequence) {
+        return findRepeatClean(irSequence, defaultAbsoluteTolerance, defaultRelativeTolerance);
     }
 
     private double relativeTolerance;
@@ -155,23 +104,6 @@ public class RepeatFinder {
         this(irSequence, defaultAbsoluteTolerance, defaultRelativeTolerance);
     }
 
-    public static IrSignal findRepeat(ModulatedIrSequence irSequence, double absoluteTolerance, double relativeTolerance) {
-        RepeatFinder repeatFinder = new RepeatFinder(irSequence, absoluteTolerance, relativeTolerance);
-        return repeatFinder.toIrSignal(irSequence);
-    }
-
-    public static IrSignal findRepeat(ModulatedIrSequence irSequence) {
-        return findRepeat(irSequence, defaultAbsoluteTolerance, defaultRelativeTolerance);
-    }
-
-    public static IrSignal findRepeatClean(ModulatedIrSequence irSequence, double absoluteTolerance, double relativeTolerance) {
-        RepeatFinder repeatFinder = new RepeatFinder(irSequence, absoluteTolerance, relativeTolerance);
-        return repeatFinder.toIrSignalClean(irSequence);
-    }
-
-    public static IrSignal findRepeatClean(ModulatedIrSequence irSequence) {
-        return findRepeatClean(irSequence, defaultAbsoluteTolerance, defaultRelativeTolerance);
-    }
 
     private void analyze() {
         RepeatFinderData candidate = new RepeatFinderData();
@@ -245,5 +177,73 @@ public class RepeatFinder {
 
     public RepeatFinderData getRepeatFinderData() {
         return repeatFinderData;
+    }
+    public static class RepeatFinderData {
+        private int beginLength;
+        private int repeatLength;
+        private int numberRepeats;
+        private int endingLength;
+        private double lastGap;
+        private double repeatsDuration;
+
+        private RepeatFinderData() {
+            this(0, 0, 0, 0);
+        }
+
+        public RepeatFinderData(int beginLength, int repeatLength, int numberRepeats, int endingLength) {
+            if (beginLength % 2 != 0 || repeatLength % 2 != 0 || endingLength % 2 != 0)
+                throw new IllegalArgumentException("Lengths and start must be even");
+            this.beginLength = beginLength;
+            this.repeatLength = repeatLength;
+            this.numberRepeats = numberRepeats;
+            this.endingLength = endingLength;
+            this.lastGap = 0;
+            this.repeatsDuration = 0;
+        }
+
+        @Override
+        public String toString() {
+            return "beginLength = " + beginLength
+                    + "; repeatLength = " + repeatLength
+                    + "; numberRepeats = " + numberRepeats
+                    + "; endingLength = " + endingLength
+                    + "; repeatsDuration = " + repeatsDuration;
+        }
+
+        /**
+         * @return the repeatStart
+         */
+        public int getBeginLength() {
+            return beginLength;
+        }
+
+        /**
+         * @return the numberRepeats
+         */
+        public int getNumberRepeats() {
+            return numberRepeats;
+        }
+
+        /**
+         * @return the repeatLength
+         */
+        public int getRepeatLength() {
+            return repeatLength;
+        }
+
+        public int getEndingLength() {
+            return endingLength;
+        }
+
+        public IrSignal chopIrSequence(ModulatedIrSequence irSequence) {
+            try {
+                return numberRepeats > 1
+                        ? irSequence.toIrSignal(beginLength, repeatLength, numberRepeats)
+                        : // no repeat found, just do the trival
+                        irSequence.toIrSignal();
+            } catch (IncompatibleArgumentException ex) {
+                throw new InternalError(); // cannot happen: repeatStart repeatLength have been checked to be even.
+            }
+        }
     }
 }

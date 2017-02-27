@@ -26,23 +26,8 @@ import org.harctoolbox.IrpMaster.UnassignedException;
  *
  */
 public abstract class ValueSet implements Iterable<Long> {
-    protected long min;
-    protected long current; // Memory for the iterator
-
     protected static String formatThing(String prefix, int variable) {
         return (variable == IrpUtils.invalid) ? "" : (prefix + "=" + variable);
-    }
-
-    protected ValueSet(long min) {
-        this.min = min;
-        current = IrpUtils.invalid;
-    }
-
-    /**
-     * Resets the iterator to virgin state.
-     */
-    public void reset() {
-        current = IrpUtils.invalid;
     }
 
     /**
@@ -123,4 +108,20 @@ public abstract class ValueSet implements Iterable<Long> {
             }
         }
     }
+
+    protected long min;
+    protected long current; // Memory for the iterator
+
+    protected ValueSet(long min) {
+        this.min = min;
+        current = IrpUtils.invalid;
+    }
+
+    /**
+     * Resets the iterator to virgin state.
+     */
+    public void reset() {
+        current = IrpUtils.invalid;
+    }
+
 }

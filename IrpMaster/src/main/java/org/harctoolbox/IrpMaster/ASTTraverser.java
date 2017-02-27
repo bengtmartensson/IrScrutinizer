@@ -26,6 +26,37 @@ import org.antlr.runtime.tree.CommonTree;
  * @author Bengt Martensson
  */
 public class ASTTraverser {
+    private final static int indentDepth = 3;
+
+    private static String indent(int level) {
+        return IrpUtils.spaces((level-1)*indentDepth);
+    }
+
+    // Some static convenience functions
+    public static long expression(Protocol env, CommonTree tree) throws UnassignedException, DomainViolationException {
+        ASTTraverser ast = new ASTTraverser(env);
+        return ast.expression(tree, 1);
+    }
+
+    public static PrimaryIrStream bitspec_irstream(int pass, boolean considerRepeatMin, Protocol env, CommonTree tree) throws UnassignedException, InvalidRepeatException, DomainViolationException, IncompatibleArgumentException {
+        ASTTraverser ast = new ASTTraverser(pass, considerRepeatMin, env);
+        return ast.bitspec_irstream(tree, 1, false, null);
+    }
+
+    public static Duration duration(Protocol env, CommonTree tree) throws UnassignedException, DomainViolationException {
+        ASTTraverser ast = new ASTTraverser(env);
+        return ast.duration(tree, 1, true);
+    }
+
+    public static BitField bitfield(Protocol env, CommonTree tree) throws UnassignedException, DomainViolationException {
+        ASTTraverser ast = new ASTTraverser(env);
+        return ast.bitfield(tree, 1, true);
+    }
+
+    public static GeneralSpec generalspec(CommonTree tree) throws UnassignedException {
+        ASTTraverser ast = new ASTTraverser(null);
+        return ast.generalspec(tree, 1);
+    }
 
     private Protocol env;
     private int state;
@@ -371,10 +402,6 @@ public class ASTTraverser {
         return ok;
     }
 
-    private final static int indentDepth = 3;
-    private static String indent(int level) {
-        return IrpUtils.spaces((level-1)*indentDepth);
-    }
 
     private void nodeBegin(CommonTree tree, int level) {
         if (Debug.getInstance().debugOn(Debug.Item.ASTParser))
@@ -391,29 +418,4 @@ public class ASTTraverser {
             Debug.debugASTParser(indent(level) + "AST intermediate node (" + type + ") " + tree.getText() + " entered, having " + tree.getChildCount() + " child(ren).");
     }
 
-    // Some static convenience functions
-    public static long expression(Protocol env, CommonTree tree) throws UnassignedException, DomainViolationException {
-        ASTTraverser ast = new ASTTraverser(env);
-        return ast.expression(tree, 1);
-    }
-
-    public static PrimaryIrStream bitspec_irstream(int pass, boolean considerRepeatMin, Protocol env, CommonTree tree) throws UnassignedException, InvalidRepeatException, DomainViolationException, IncompatibleArgumentException {
-        ASTTraverser ast = new ASTTraverser(pass, considerRepeatMin, env);
-        return ast.bitspec_irstream(tree, 1, false, null);
-    }
-
-    public static Duration duration(Protocol env, CommonTree tree) throws UnassignedException, DomainViolationException {
-        ASTTraverser ast = new ASTTraverser(env);
-        return ast.duration(tree, 1, true);
-    }
-
-    public static BitField bitfield(Protocol env, CommonTree tree) throws UnassignedException, DomainViolationException {
-        ASTTraverser ast = new ASTTraverser(env);
-        return ast.bitfield(tree, 1, true);
-    }
-
-    public static GeneralSpec generalspec(CommonTree tree) throws UnassignedException {
-        ASTTraverser ast = new ASTTraverser(null);
-        return ast.generalspec(tree, 1);
-    }
 }

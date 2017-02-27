@@ -28,6 +28,12 @@ public class ShiftValueSet extends ValueSet {
     long max;
     int shift;
 
+    public ShiftValueSet(long min, long max, int shift) {
+        super(min);
+        this.max = max;
+        this.shift = shift;
+    }
+
     @Override
     public String toString() {
         return "{"
@@ -35,12 +41,6 @@ public class ShiftValueSet extends ValueSet {
                 + formatThing(", max", (int) max)
                 + formatThing(", shift", shift)
                 + "}";
-    }
-
-    public ShiftValueSet(long min, long max, int shift) {
-        super(min);
-        this.max = max;
-        this.shift = shift;
     }
 
     @Override

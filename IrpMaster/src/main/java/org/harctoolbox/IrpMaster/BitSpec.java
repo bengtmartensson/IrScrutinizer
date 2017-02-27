@@ -23,12 +23,7 @@ import java.util.ArrayList;
  *
  */
 public class BitSpec extends IrStreamItem {
-    
-    // Number of bits encoded
-    private int chunkSize;
-    
-    private PrimaryIrStream[] bitCodes;
-    
+
     // Computes the upper integer part of the 2-logarithm of the integer n.
     // Treat n = 1 differently, since coding on a one-letter alphaber is ... special.
     private static int computeNoBits(int n) {
@@ -40,29 +35,33 @@ public class BitSpec extends IrStreamItem {
             x >>= 1;
         return m;
     }
-    
+
+    // Number of bits encoded
+    private int chunkSize;
+    private PrimaryIrStream[] bitCodes;
+
     public BitSpec(Protocol env, PrimaryIrStream[] s) {
         super(env);
         bitCodes = s;
         chunkSize = computeNoBits(s.length);
     }
-    
+
     public BitSpec(Protocol env, ArrayList<PrimaryIrStream> list) {
         this(env, list.toArray(new PrimaryIrStream[list.size()]));
     }
-    
+
     public PrimaryIrStream getBitIrsteam(int index) throws IncompatibleArgumentException {
         if (index >= bitCodes.length)
             throw new IncompatibleArgumentException("Cannot encode " + index + " with current bitspec.");
         return this.bitCodes[index];
     }
-    
+
     public void assignBitSpecs(BitSpec bitSpec) {
         for (PrimaryIrStream pis : bitCodes) {
             pis.assignBitSpecs(bitSpec);
         }
     }
-    
+
     @Override
     public String toString() {
         if (bitCodes == null || bitCodes.length == 0)
@@ -76,7 +75,7 @@ public class BitSpec extends IrStreamItem {
         }
         return s.append(">").toString();
     }
-    
+
     public int getChunkSize() {
         return chunkSize;
     }

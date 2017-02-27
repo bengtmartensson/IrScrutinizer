@@ -52,6 +52,9 @@ final public class Lirc2Xml {
     final static String defaultExtension = "girr";
     static final String DEFAULT_EXPORTDIR = ".";
 
+    private static JCommander argumentParser;
+    private static CommandLineArgs commandLineArgs = new CommandLineArgs();
+
     private static String basename(String s) {
         StringBuilder sb = new StringBuilder(s);
         int n = sb.lastIndexOf(File.separator);
@@ -63,9 +66,6 @@ final public class Lirc2Xml {
         return sb.toString();
     }
 
-    private Lirc2Xml() {
-    }
-
     private static void usage(int exitcode) {
         StringBuilder str = new StringBuilder();
         argumentParser.usage(str);
@@ -73,42 +73,6 @@ final public class Lirc2Xml {
         (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
         System.exit(exitcode);
     }
-
-    private final static class CommandLineArgs {
-
-        @Parameter(names = {"-c", "--ccf", "--hex", "--pronto"}, description = "Generate the CCF (\"Hex\", \"Pronto\") form of the signals")
-        boolean generateCcf = false;
-        @Parameter(names = {"-d", "--debug"}, description = "Debug. Not really useful...")
-        int debug = 0;
-        @Parameter(names = {"-e", "--encoding", "--outputencoding"}, description = "Character encoding of the generated XML file")
-        String encoding = "UTF-8";
-        @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
-        boolean helpRequested = false;
-        @Parameter(names = {"-f", "--fatraw"}, description = "Use the fat format for raw signals")
-        boolean fatRaw = false;
-        @Parameter(names = {"-i", "--inputencoding"}, description = "Character encoding used for reading input")
-        String inputEncoding = ConfigFile.defaultCharsetName;
-        @Parameter(names = {"-l", "--lirccode"}, description = "Also accept lirc files without timing info, so-called Lirccode remotes.")
-        boolean lircCode = false;
-        @Parameter(names = {"-o", "--outfile"}, description = "Output filename")
-        String outputfile = null;
-        @Parameter(names = {"-p", "--parameters"}, description = "Generate the protocol name and parameters (if possible) for the signals")
-        boolean generateParameters = false;
-        @Parameter(names = {"-s", "--schemalocation"}, description = "Create schema location attribute")
-        boolean createSchemaLocation = false;
-        @Parameter(names = {"-r", "--remote"}, description = "Name of the remote to include in the export (will export all if left empty)")
-        String remote = null;
-        @Parameter(names = {"-R", "--raw"}, description = "Generate the raw form of the signals")
-        boolean generateRaw = false;
-        @Parameter(names = {"-v", "--version"}, description = "Display version information")
-        boolean versionRequested;
-        @Parameter(names = {"-x", "--xslt"}, description = "Link to XSLT stylesheet")
-        String stylesheetUrl = null;
-        @Parameter(description = "[configfile]")
-        ArrayList<String> configfile = new ArrayList<>();
-    }
-    private static JCommander argumentParser;
-    private static CommandLineArgs commandLineArgs = new CommandLineArgs();
 
     /**
      * This is the "Lirc2Xml" command line program. Use the --help command line for a short synopsis.
@@ -239,5 +203,42 @@ final public class Lirc2Xml {
             System.err.println(ex.getMessage());
             System.exit(IrpUtils.exitIoError);
         }
+    }
+
+    private Lirc2Xml() {
+    }
+
+    private final static class CommandLineArgs {
+
+        @Parameter(names = {"-c", "--ccf", "--hex", "--pronto"}, description = "Generate the CCF (\"Hex\", \"Pronto\") form of the signals")
+                boolean generateCcf = false;
+        @Parameter(names = {"-d", "--debug"}, description = "Debug. Not really useful...")
+                int debug = 0;
+        @Parameter(names = {"-e", "--encoding", "--outputencoding"}, description = "Character encoding of the generated XML file")
+                String encoding = "UTF-8";
+        @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
+                boolean helpRequested = false;
+        @Parameter(names = {"-f", "--fatraw"}, description = "Use the fat format for raw signals")
+                boolean fatRaw = false;
+        @Parameter(names = {"-i", "--inputencoding"}, description = "Character encoding used for reading input")
+                String inputEncoding = ConfigFile.defaultCharsetName;
+        @Parameter(names = {"-l", "--lirccode"}, description = "Also accept lirc files without timing info, so-called Lirccode remotes.")
+                boolean lircCode = false;
+        @Parameter(names = {"-o", "--outfile"}, description = "Output filename")
+                String outputfile = null;
+        @Parameter(names = {"-p", "--parameters"}, description = "Generate the protocol name and parameters (if possible) for the signals")
+                boolean generateParameters = false;
+        @Parameter(names = {"-s", "--schemalocation"}, description = "Create schema location attribute")
+                boolean createSchemaLocation = false;
+        @Parameter(names = {"-r", "--remote"}, description = "Name of the remote to include in the export (will export all if left empty)")
+                String remote = null;
+        @Parameter(names = {"-R", "--raw"}, description = "Generate the raw form of the signals")
+                boolean generateRaw = false;
+        @Parameter(names = {"-v", "--version"}, description = "Display version information")
+                boolean versionRequested;
+        @Parameter(names = {"-x", "--xslt"}, description = "Link to XSLT stylesheet")
+                String stylesheetUrl = null;
+        @Parameter(description = "[configfile]")
+                ArrayList<String> configfile = new ArrayList<>();
     }
 }

@@ -34,6 +34,37 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 
 // Interfaces to Desktop
 public class GuiUtils {
+    public static void fatal(Exception ex, int errorcode) {
+        fatal(ex, errorcode, null);
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public static void fatal(Exception ex, int errorcode, EmergencyFixer fixer) {
+        String message = ex.getClass().getSimpleName() + ": " + ex.getMessage();
+        if (System.console() != null)
+            System.err.println(message);
+
+        // Is headless an option?
+        JOptionPane.showMessageDialog(null, message, "Fatal error", JOptionPane.ERROR_MESSAGE);
+
+        if (fixer != null) {
+            boolean answer = confirm(null, fixer.getQuestion());
+            if (answer)
+                fixer.fix();
+            String finalMessage = answer ? fixer.getYesMessage() : fixer.getNoMessage();
+            if (finalMessage != null)
+                JOptionPane.showMessageDialog(null, finalMessage, null,
+                        JOptionPane.INFORMATION_MESSAGE,
+                        new ImageIcon(GuiUtils.class.getResource("/icons/Crystal-Clear/48x48/actions/info.png")));
+        }
+        ex.printStackTrace();
+        System.exit(errorcode);
+    }
+
+    private static boolean confirm(JFrame frame, String message) {
+        return JOptionPane.showConfirmDialog(frame, message, "Confirmation requested", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
+    }
+
     private final int maxGuiMessageLength;
     private boolean usePopupsForErrors = false;
     private boolean usePopupsForHelp = false;
@@ -41,17 +72,6 @@ public class GuiUtils {
     private final String programName;
     private final JFrame frame;
     private boolean verbose = false;
-
-    public interface EmergencyFixer {
-        public void fix();
-
-        public String getQuestion();
-
-        public String getYesMessage();
-
-        public String getNoMessage();
-
-    }
 
     public GuiUtils(JFrame frame, String programName, int maxGuiMessageLength) {
         this.maxGuiMessageLength = maxGuiMessageLength;
@@ -91,37 +111,6 @@ public class GuiUtils {
         } else {
             System.err.println(message);
         }
-    }
-
-    public static void fatal(Exception ex, int errorcode) {
-        fatal(ex, errorcode, null);
-    }
-
-//    public static void fatal(Exception ex, int errorcode, EmergencyFixer fixer) {
-//        fatal(ex.getClass().getSimpleName() + ": " + ex.getMessage(), errorcode, fixer);
-//    }
-
-    @SuppressWarnings("CallToPrintStackTrace")
-    public static void fatal(Exception ex, int errorcode, EmergencyFixer fixer) {
-        String message = ex.getClass().getSimpleName() + ": " + ex.getMessage();
-        if (System.console() != null)
-            System.err.println(message);
-
-        // Is headless an option?
-        JOptionPane.showMessageDialog(null, message, "Fatal error", JOptionPane.ERROR_MESSAGE);
-
-        if (fixer != null) {
-            boolean answer = confirm(null, fixer.getQuestion());
-            if (answer)
-                fixer.fix();
-            String finalMessage = answer ? fixer.getYesMessage() : fixer.getNoMessage();
-            if (finalMessage != null)
-                JOptionPane.showMessageDialog(null, finalMessage, null,
-                        JOptionPane.INFORMATION_MESSAGE,
-                        new ImageIcon(GuiUtils.class.getResource("/icons/Crystal-Clear/48x48/actions/info.png")));
-        }
-        ex.printStackTrace();
-        System.exit(errorcode);
     }
 
     public void trace(String message) {
@@ -207,10 +196,6 @@ public class GuiUtils {
 
     public boolean confirm(String message) {
         return confirm(frame, message);
-    }
-
-    private static boolean confirm(JFrame frame, String message) {
-        return JOptionPane.showConfirmDialog(frame, message, "Confirmation requested", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
     }
 
     public void mail(String address, String subject, String body) throws URISyntaxException, IOException {
@@ -344,5 +329,16 @@ public class GuiUtils {
             }
         }
         return current != null && current.equals(versionString);
+    }
+
+    public interface EmergencyFixer {
+        public void fix();
+
+        public String getQuestion();
+
+        public String getYesMessage();
+
+        public String getNoMessage();
+
     }
 }

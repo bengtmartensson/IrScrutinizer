@@ -25,46 +25,83 @@ import org.antlr.runtime.tree.CommonTree;
 /**
  * This class implements GeneralSpec as given in Chapter 2 of Dixon: "Specification of IRP Notation", second draft.
  * This class is immutable; can only be build by the constructor, and not altered.
- * 
+ *
  */
 public class GeneralSpec {
-    
-    /** Carrier frequency in Hz */
-    private double frequency = IrpUtils.defaultFrequency;
-    
-    /** Duty cycle in percent. IrpUtils.invalid (-1) is defined to denote "don't care". */
-    private double dutyCycle = defaultDutyCycle;
-    
-    public final static double defaultDutyCycle = IrpUtils.invalid;
-    
-    /** BitDirection */
-    private BitDirection bitDirection = defaultBitDirection;
-    
-    public final static BitDirection defaultBitDirection = BitDirection.lsb; 
-    
-    /** Timing unit in us */
-    private double unit = 1;
-    
-    public final static double defaultUnit = 1;
-    
-    /** Timing unit in pulses, if and only if given by the user.*/
-    private double unit_pulses = IrpUtils.invalid;
-    
-    //private CommonTree AST;
 
-    @Override
-    public String toString() {
-        return "Frequency = " + frequency + "Hz, unit = " + unit + "us, " + bitDirection + (dutyCycle > 0 ? (", Duty cycle = " + dutyCycle + "%.") : ", Duty cycle: -."); 
+    public final static double defaultDutyCycle = IrpUtils.invalid;
+    public final static BitDirection defaultBitDirection = BitDirection.lsb;
+    public final static double defaultUnit = 1;
+    private static CommonTree toAST(String str) {
+        IrpLexer lex = new IrpLexer(new ANTLRStringStream(str));
+        CommonTokenStream tokens = new CommonTokenStream(lex);
+        IrpParser parser = new IrpParser(tokens);
+        IrpParser.generalspec_return r;
+        CommonTree AST = null;
+        try {
+            r = parser.generalspec();
+            AST = (CommonTree) r.getTree();
+        } catch (RecognitionException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return AST;
     }
-    
-    private void updateUnit() {
-        if (unit_pulses != IrpUtils.invalid) {
-            if (frequency == 0)
-                throw new ArithmeticException("Units in p and frequency == 0 do not go together.");
-            unit = unit_pulses*(1000000.0/frequency);
+
+    private static GeneralSpec newGeneralSpec(CommonTree AST) {
+        GeneralSpec generalSpec = null;
+        try {
+            generalSpec = ASTTraverser.generalspec(AST);
+        } catch (UnassignedException ex) {
+            assert false; //this cannot happen
+        }
+        return generalSpec;
+    }
+
+    private static void test(String str) {
+        GeneralSpec gs = new GeneralSpec(str);
+        System.out.println(toAST(str).toStringTree());
+        System.out.println(gs);
+    }
+
+    /**
+     * Just for testing and debugging.
+     *
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        if (args.length > 0) {
+            test(args[0]);
+        } else {
+            //test("{0k,,10p}"); // Thows error
+            //test("{ }"); // Seem to trigger bug in ANTLR
+            test("{38.4k,564}");
+            test("{564,38.4k}");
+            test("{msb, 889u}");
+            test("{42%, 10p,msb,40k}");
+            test("{msb ,40k , 33.33333% ,10p }");
+            test("{msb, 123u, 100k, 10p, 1000k}");
         }
     }
-    
+
+    /** Carrier frequency in Hz */
+    private double frequency = IrpUtils.defaultFrequency;
+
+    /** Duty cycle in percent. IrpUtils.invalid (-1) is defined to denote "don't care". */
+    private double dutyCycle = defaultDutyCycle;
+
+
+    /** BitDirection */
+    private BitDirection bitDirection = defaultBitDirection;
+
+
+    /** Timing unit in us */
+    private double unit = 1;
+
+
+    /** Timing unit in pulses, if and only if given by the user.*/
+    private double unit_pulses = IrpUtils.invalid;
+
+
     /**
      * This constructor is intended for debugging and testing only.
      *
@@ -82,7 +119,7 @@ public class GeneralSpec {
         this.dutyCycle = dutyCycle;
         updateUnit();
     }
-    
+
     private GeneralSpec(GeneralSpec src) {
         this.bitDirection = src.bitDirection;
         this.unit = src.unit;
@@ -91,84 +128,48 @@ public class GeneralSpec {
         this.dutyCycle = src.dutyCycle;
         updateUnit();
     }
-    
+
     /** This constructor is intended for debugging and testing only */
     public GeneralSpec() {
         this(defaultBitDirection, defaultUnit, -1, IrpUtils.defaultFrequency, defaultDutyCycle);
     }
-    
-    private static CommonTree toAST(String str) {
-        IrpLexer lex = new IrpLexer(new ANTLRStringStream(str));
-        CommonTokenStream tokens = new CommonTokenStream(lex);
-        IrpParser parser = new IrpParser(tokens);
-        IrpParser.generalspec_return r;
-        CommonTree AST = null;
-        try {
-            r = parser.generalspec();
-            AST = (CommonTree) r.getTree();
-        } catch (RecognitionException ex) {
-            System.err.println(ex.getMessage());
-        }
-        return AST;
-    }
-    
-    private static GeneralSpec newGeneralSpec(CommonTree AST) {
-        GeneralSpec generalSpec = null;
-        try {
-            generalSpec = ASTTraverser.generalspec(AST);
-        } catch (UnassignedException ex) {
-            assert false; //this cannot happen
-        }
-        return generalSpec;
-    }
-    
+
+
     public GeneralSpec(CommonTree tree) {
         this(newGeneralSpec(tree));
     }
-    
+
     public GeneralSpec(String str) {
         this(newGeneralSpec(toAST(str)));
     }
-    
+    //private CommonTree AST;
+
+    @Override
+    public String toString() {
+        return "Frequency = " + frequency + "Hz, unit = " + unit + "us, " + bitDirection + (dutyCycle > 0 ? (", Duty cycle = " + dutyCycle + "%.") : ", Duty cycle: -.");
+    }
+    private void updateUnit() {
+        if (unit_pulses != IrpUtils.invalid) {
+            if (frequency == 0)
+                throw new ArithmeticException("Units in p and frequency == 0 do not go together.");
+            unit = unit_pulses*(1000000.0/frequency);
+        }
+    }
+
     BitDirection getBitDirection() {
         return bitDirection;
     }
-    
+
     public double getFrequency() {
         return frequency;
     }
-    
+
     public double getUnit() {
         return unit;
     }
-    
+
     public double getDutyCycle() {
         return dutyCycle;
     }
-    
-    private static void test(String str) {
-        GeneralSpec gs = new GeneralSpec(str);
-        System.out.println(toAST(str).toStringTree());
-        System.out.println(gs);
-    }
-    
-    /**
-     * Just for testing and debugging.
-     * 
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        if (args.length > 0) {
-            test(args[0]);
-        } else {
-            //test("{0k,,10p}"); // Thows error
-            //test("{ }"); // Seem to trigger bug in ANTLR
-            test("{38.4k,564}");
-            test("{564,38.4k}");
-            test("{msb, 889u}");
-            test("{42%, 10p,msb,40k}");
-            test("{msb ,40k , 33.33333% ,10p }");
-            test("{msb, 123u, 100k, 10p, 1000k}");
-        }
-    }
+
 }

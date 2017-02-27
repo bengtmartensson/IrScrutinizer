@@ -50,20 +50,6 @@ public class Pronto {
     private final static String rc6Irp  = "{36k,444,msb}<-1,1|1,-1>(6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m,T=1-T)+ [D:0..255,F:0..255,T@:0..1=0]";
     private final static String nec1Irp = "{38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,1,-78,(16,-4,1,-173)*) [D:0..255,S:0..255=255-D,F:0..255]";
 
-    private IrSignal irSignal;
-
-    /**
-     * Constructor from IrSignal.
-     * @param irSignal
-     * @throws IncompatibleArgumentException
-     */
-    public Pronto(IrSignal irSignal) throws IncompatibleArgumentException {
-        this.irSignal = irSignal;
-        if (irSignal.getEndingLength() != 0) {
-            UserComm.warning("When computing the Pronto representation, a (non-empty) ending sequence was ignored");
-        }
-    }
-
     /**
      * Formats an integer like seen in CCF strings, in printf-ish, using "%04X".
      * @param n Integer to be formatted.
@@ -94,13 +80,6 @@ public class Pronto {
                 : 1000000.0 / ((double) code * prontoConstant);
     }
 
-    /**
-     * Computes the carrier frequency in Hz.
-     * @return Frequency in Hz.
-     */
-    public final double getFrequency() {
-        return irSignal.frequency;
-    }
 
     /**
      * Computes pulse time.
@@ -328,21 +307,6 @@ public class Pronto {
         return ccf;
     }
 
-    /**
-     * CCF array of initial sequence
-     * @return CCF array
-     */
-    public final int[] initArray() {
-        return toArray(irSignal.frequency, irSignal.introSequence.data);
-    }
-
-    /**
-     * CCF array of repeat sequence
-     * @return CCF array
-     */
-    public final int[] repeatArray() {
-        return toArray(irSignal.frequency, irSignal.repeatSequence.data);
-    }
 
     /**
      * CCF array of complete signal, i.e. the CCF string before formatting
@@ -370,37 +334,6 @@ public class Pronto {
         return data;
     }
 
-    /**
-     * CCF array of complete signal, i.e. the CCF string before formatting
-     * @return CCF array
-     */
-    public final int[] toArray() {
-        if (irSignal.getIntroLength() % 2 != 0 || irSignal.getRepeatLength() % 2 != 0)
-            // Probably forgot normalize() if I get here.
-            throw new RuntimeException("IR Sequences must be of even length.");
-
-        int[] data = new int[4 + irSignal.getIntroLength() + irSignal.getRepeatLength()];
-        int index = 0;
-        data[index++] = irSignal.getFrequency() > 0 ? learnedCode : learnedZeroFrequencyCode;
-        data[index++] = getProntoCode(irSignal.getFrequency());
-        data[index++] = irSignal.getIntroLength()/2;
-        data[index++] = irSignal.getRepeatLength()/2;
-        for (int i = 0; i < irSignal.getIntroLength(); i++)
-            data[index++] = pulses(irSignal.getIntroDouble(i), irSignal.getFrequency());
-
-        for (int i = 0; i < irSignal.getRepeatLength(); i++)
-            data[index++] = pulses(irSignal.getRepeatDouble(i), irSignal.getFrequency());
-
-        return data;
-    }
-
-    /**
-     * Computes the ("long", raw) CCF string
-     * @return CCF string
-     */
-    public String toPrintString() {
-        return toPrintString(toArray());
-    }
 
     /**
      * Formats a CCF as string.
@@ -542,5 +475,68 @@ public class Pronto {
         } catch (IrpMasterException ex) {
             System.err.println(ex.getMessage());
         }
+    }
+    private IrSignal irSignal;
+    /**
+     * Constructor from IrSignal.
+     * @param irSignal
+     * @throws IncompatibleArgumentException
+     */
+    public Pronto(IrSignal irSignal) throws IncompatibleArgumentException {
+        this.irSignal = irSignal;
+        if (irSignal.getEndingLength() != 0) {
+            UserComm.warning("When computing the Pronto representation, a (non-empty) ending sequence was ignored");
+        }
+    }
+    /**
+     * Computes the carrier frequency in Hz.
+     * @return Frequency in Hz.
+     */
+    public final double getFrequency() {
+        return irSignal.frequency;
+    }
+    /**
+     * CCF array of initial sequence
+     * @return CCF array
+     */
+    public final int[] initArray() {
+        return toArray(irSignal.frequency, irSignal.introSequence.data);
+    }
+    /**
+     * CCF array of repeat sequence
+     * @return CCF array
+     */
+    public final int[] repeatArray() {
+        return toArray(irSignal.frequency, irSignal.repeatSequence.data);
+    }
+    /**
+     * CCF array of complete signal, i.e. the CCF string before formatting
+     * @return CCF array
+     */
+    public final int[] toArray() {
+        if (irSignal.getIntroLength() % 2 != 0 || irSignal.getRepeatLength() % 2 != 0)
+            // Probably forgot normalize() if I get here.
+            throw new RuntimeException("IR Sequences must be of even length.");
+
+        int[] data = new int[4 + irSignal.getIntroLength() + irSignal.getRepeatLength()];
+        int index = 0;
+        data[index++] = irSignal.getFrequency() > 0 ? learnedCode : learnedZeroFrequencyCode;
+        data[index++] = getProntoCode(irSignal.getFrequency());
+        data[index++] = irSignal.getIntroLength()/2;
+        data[index++] = irSignal.getRepeatLength()/2;
+        for (int i = 0; i < irSignal.getIntroLength(); i++)
+            data[index++] = pulses(irSignal.getIntroDouble(i), irSignal.getFrequency());
+
+        for (int i = 0; i < irSignal.getRepeatLength(); i++)
+            data[index++] = pulses(irSignal.getRepeatDouble(i), irSignal.getFrequency());
+
+        return data;
+    }
+    /**
+     * Computes the ("long", raw) CCF string
+     * @return CCF string
+     */
+    public String toPrintString() {
+        return toPrintString(toArray());
     }
 }

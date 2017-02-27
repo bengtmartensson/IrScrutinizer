@@ -41,6 +41,47 @@ import java.util.Map;
  *
  */
 public class IrSignal {
+    /**
+     * Just for testing. Invokes the IrSignal(String ProtocolsIniPath, int offset, String[] args)
+     * and tests the result.
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
+        if (args.length == 0) {
+            int times[] = {
+                -9024, -4512, -564, -1692, +564, -564, +564, -564, +564, -564, +564, -564, +564, -564,
+                +564, -564, +564, -564, +564, -564, +564, -1692, +564, -564, +564, -564, +564, -564, +564, -564,
+                +564, -564, +564, -564, +564, -1692, +564, -1692, +564, -564, +564, -564, +564, -564, +564, -564,
+                +564, -564, +564, -564, +564, -564, +564, -564, +564, -1692, +564, -1692, +564, -1692, +564, -1692,
+                +564, -1692, +564, -1692, +564, -43992,
+                +9024, -2256, +564, -97572};
+            try {
+                IrSignal irSignal = new IrSignal(times, 34, 2, 38400);
+                System.out.println(irSignal.ccfString());
+                System.out.println(irSignal.toString(true));
+                System.out.println(irSignal.toString(false));
+                System.out.println(irSignal);
+            } catch (IncompatibleArgumentException ex) {
+                System.err.println(ex.getMessage());
+            }
+        } else {
+            String protocolsIni = "data/IrpProtocols.ini";
+            int arg_i = 0;
+            if (args[arg_i].equals("-c")) {
+                arg_i++;
+                protocolsIni = args[arg_i++];
+            }
+            try {
+                IrSignal irSignal = new IrSignal(protocolsIni, arg_i, args);
+                System.out.println(irSignal);
+                System.out.println(irSignal.ccfString());
+                DecodeIR.invoke(irSignal);
+            } catch (IrpMasterException | FileNotFoundException ex) {
+                System.err.println(ex.getMessage());
+            }
+        }
+    }
 
     /** Intro sequence, always sent once. Can be empty, but not null. */
     protected IrSequence introSequence;
@@ -60,6 +101,227 @@ public class IrSignal {
 
     /** Duty cycle of the modulation. Between 0 and 1. Use -1 for not assigned. */
     protected double dutyCycle = (double) IrpUtils.invalid;
+    /**
+     * Constructs an IrSignal from its arguments.
+     * @param frequency
+     * @param dutyCycle
+     * @param introSequence
+     * @param repeatSequence
+     * @param endingSequence
+     */
+    public IrSignal(double frequency, double dutyCycle, IrSequence introSequence, IrSequence repeatSequence, IrSequence endingSequence) {
+        this.frequency = frequency;
+        this.dutyCycle = dutyCycle;
+        // If the given intro sequence is identical to the repeat sequence, reject it.
+        this.introSequence = ((introSequence != null) && !introSequence.isEqual(repeatSequence)) ? introSequence : new IrSequence();
+        this.repeatSequence = repeatSequence != null ? repeatSequence : new IrSequence();
+        this.endingSequence = ((endingSequence != null) && !endingSequence.isEqual(repeatSequence)) ? endingSequence : new IrSequence();
+
+        map = new EnumMap<>(Pass.class);
+
+        map.put(Pass.intro, introSequence);
+        map.put(Pass.repeat, repeatSequence);
+        map.put(Pass.ending, endingSequence);
+    }
+    /**
+     * Constructs an IrSignal from its arguments.
+     *
+     * @param durations
+     * @param noIntroBursts
+     * @param noRepeatBursts
+     * @param frequency
+     */
+    public IrSignal(int[] durations, int noIntroBursts, int noRepeatBursts, int frequency) {
+        this(durations, noIntroBursts, noRepeatBursts, frequency, (double) IrpUtils.invalid);
+    }
+    /**
+     * Constructs an IrSignal from its arguments.
+     *
+     * @param frequency
+     * @param dutyCycle
+     * @param introSequence
+     * @param repeatSequence
+     * @param endingSequence
+     * @throws IncompatibleArgumentException
+     */
+    public IrSignal(double frequency, double dutyCycle, String introSequence, String repeatSequence,
+            String endingSequence) throws IncompatibleArgumentException {
+        this(frequency, dutyCycle, new IrSequence(introSequence), new IrSequence(repeatSequence),
+                new IrSequence(endingSequence));
+    }
+    /**
+     * Constructs an IrSignal from its arguments.
+     *
+     * The first 2*noIntroBursts durations belong to the Intro signal,
+     * the next 2*noRepeatBursts to the repetition part, and the remaining to the ending sequence.
+     *
+     * @param durations Integer array of durations. Signs of the entries are ignored,
+     * @param noIntroBursts Number of bursts (half the number of entries) belonging to the intro sequence.
+     * @param noRepeatBursts Number of bursts (half the number of entries) belonging to the intro sequence.
+     * @param frequency Modulation frequency in Hz.
+     * @param dutyCycle Duty cycle of modulation pulse, between 0 and 1. Use -1 for not specified.
+     */
+    public IrSignal(int[] durations, int noIntroBursts, int noRepeatBursts, int frequency, double dutyCycle) {
+        this((double) frequency, dutyCycle,
+                new IrSequence(durations, 0, 2*noIntroBursts),
+                new IrSequence(durations, 2*noIntroBursts, 2*noRepeatBursts),
+                new IrSequence(durations, 2*(noIntroBursts+noRepeatBursts), durations.length - 2*(noIntroBursts + noRepeatBursts)));
+    }
+    /**
+     * Constructs an IrSignal of zero length.
+     */
+    public IrSignal() {
+        this(new int[0], 0, 0, (int) IrpUtils.defaultFrequency);
+    }
+    /**
+     * Creates an IrSignal from a CCF string. Also some "short formats" of CCF are recognized.
+     * @see Pronto
+     *
+     * @param ccf String supposed to represent a valid CCF signal.
+     * @throws IrpMasterException Error in CCF
+     */
+    public IrSignal(String ccf) throws IrpMasterException {
+        copyFrom(Pronto.ccfSignal(ccf));
+    }
+    /**
+     * Creates an IrSignal from a CCF array. Also some "short formats" of CCF are recognized.
+     * @see Pronto
+     *
+     * @param ccf Integer array supposed to represent a valid CCF signal.
+     * @throws IrpMasterException Error in CCF
+     */
+    public IrSignal(int[] ccf) throws IrpMasterException {
+        copyFrom(Pronto.ccfSignal(ccf));
+    }
+    /**
+     * Creates an IrSignal from a CCF array. Also some "short formats" of CCF are recognized.
+     * @param begin starting index
+     * @see Pronto
+     *
+     * @param ccf String array supposed to represent a valid CCF signal.
+     * @throws IrpMasterException Error in CCF
+     */
+    public IrSignal(String[] ccf, int begin) throws IrpMasterException {
+        copyFrom(Pronto.ccfSignal(ccf, begin));
+    }
+    /**
+     * Intended to construct an IrSignal from the args of a main-routine,
+     * for example for exporting. It can be used to decode the non-option arguments.
+     * Either the arguments are hexadecimal numbers to be interpreted as a CCF type signal,
+     * or it is expected to be a protocol name followed by a number of parameters.
+     * The parameters can be given either as name=value pairs, and/or as unnamed parameters,
+     * whereas one parameter is taken to be F, two parameters are taken to be D and F,
+     * three parameters D, S, and F, while four parameters are interpreted as D, S, F, and T.
+     *
+     * @see IrpMaster
+     * @see Protocol
+     *
+     * @param protocolsIniPath Path to Protocols.ini of the IrpMaster. There is no default.
+     * @param offset How many initial elements of the argument vector to ignore.
+     * @param args String array, typically the arguments of main.
+     *
+     * @throws IrpMasterException
+     * @throws FileNotFoundException
+     * @throws UnassignedException
+     */
+    public IrSignal(String protocolsIniPath, int offset, String... args) throws IrpMasterException, FileNotFoundException, UnassignedException {
+        if (args == null || args.length - offset < 1)
+            throw new IncompatibleArgumentException("Too few arguments");
+
+        if (args[offset].matches("^[0-9]{3}[0-9a-fA-F]$")) {
+            // This is a CCF
+            int[] ccf = new int[args.length - offset];
+            for (int i = 0; i < args.length - offset; i++)
+                ccf[i] = Integer.parseInt(args[i], 16);
+            copyFrom(Pronto.ccfSignal(ccf));
+        } else {
+            int arg_i = offset;
+            String protocolName = args[arg_i++];
+            LinkedHashMap<String, Long> parameters = new LinkedHashMap<>();
+
+            // Parse name = value assignments
+            while (arg_i < args.length && !args[arg_i].isEmpty() && args[arg_i].contains("=")) {
+                String[] kv = args[arg_i++].split("=");
+                if (kv.length != 2)
+                    throw new IncompatibleArgumentException("Parse error by " + args[arg_i - 1]);
+                parameters.put(kv[0], IrpUtils.parseLong(kv[1], true));
+            }
+
+            // Arguments left are shorthand assignments.
+            switch (args.length - arg_i) {
+                case 0:
+                    break;
+                case 1:
+                    parameters.put("F", IrpUtils.parseLong(args[arg_i++], true));
+                    break;
+                case 2:
+                    parameters.put("D", IrpUtils.parseLong(args[arg_i++], true));
+                    parameters.put("F", IrpUtils.parseLong(args[arg_i++], true));
+                    break;
+                case 3:
+                    parameters.put("D", IrpUtils.parseLong(args[arg_i++], true));
+                    parameters.put("S", IrpUtils.parseLong(args[arg_i++], true));
+                    parameters.put("F", IrpUtils.parseLong(args[arg_i++], true));
+                    break;
+                case 4:
+                    parameters.put("D", IrpUtils.parseLong(args[arg_i++], true));
+                    parameters.put("S", IrpUtils.parseLong(args[arg_i++], true));
+                    parameters.put("F", IrpUtils.parseLong(args[arg_i++], true));
+                    parameters.put("T", IrpUtils.parseLong(args[arg_i++], true));
+                    break;
+                default:
+                    throw new IncompatibleArgumentException("Too many parameters.");
+                    //break;
+            }
+            if (parameters.isEmpty())
+                throw new IncompatibleArgumentException("No parameters given.");
+
+            IrpMaster irpMaster = new IrpMaster(protocolsIniPath);
+            Protocol protocol = irpMaster.newProtocol(protocolName);
+            IrSignal irSignal = protocol.renderIrSignal(parameters);
+            copyFrom(irSignal);
+        }
+    }
+    /**
+     * Convenience version of the constructor with an IrpMaster instance.
+     * Equivalent to IrSignal(new IrpMaster(protocolsIniPath), protocolName, parameters).
+     *
+     * @param protocolsIniPath Path to IrpProtocols.ini
+     * @param protocolName name of protocol
+     * @param parameters Dictionary of parameter values
+     * @throws FileNotFoundException
+     * @throws IrpMasterException
+     */
+    public IrSignal(String protocolsIniPath, String protocolName, Map<String, Long> parameters) throws FileNotFoundException, IrpMasterException {
+        this(new IrpMaster(protocolsIniPath), protocolName, parameters);
+    }
+    /**
+     * Constructs an IrSignal from its arguments.
+     * @param irpMaster
+     * @param protocolName name of protocol
+     * @param parameters Dictionary of parameter values
+     * @throws IrpMasterException
+     */
+    public IrSignal(IrpMaster irpMaster, String protocolName, Map<String, Long> parameters) throws IrpMasterException {
+        Protocol protocol = irpMaster.newProtocol(protocolName);
+        if (protocol == null)
+            throw new IrpMasterException("Protocol \"" + protocolName + "\" is not known.");
+
+        IrSignal irSignal = protocol.renderIrSignal(parameters);
+        copyFrom(irSignal);
+    }
+    /**
+     * Constructs an IrSignal from its arguments.
+     * @param protocolsIniPath Path to IrpProtocols.ini
+     * @param protocolName name of protocol
+     * @param parameters String of parameter assignments like "D=12 F=34"
+     * @throws FileNotFoundException
+     * @throws IrpMasterException
+     */
+    public IrSignal(String protocolsIniPath, String protocolName, String parameters)
+            throws FileNotFoundException, IrpMasterException {
+        this(protocolsIniPath, protocolName, Protocol.parseParams(parameters));
+    }
 
     public final double getFrequency() {
         return frequency;
@@ -316,82 +578,6 @@ public class IrSignal {
         return Math.max(introSequence.getGap(), repeatSequence.getGap());
     }
 
-    /**
-     * Constructs an IrSignal from its arguments.
-     * @param frequency
-     * @param dutyCycle
-     * @param introSequence
-     * @param repeatSequence
-     * @param endingSequence
-     */
-    public IrSignal(double frequency, double dutyCycle, IrSequence introSequence, IrSequence repeatSequence, IrSequence endingSequence) {
-        this.frequency = frequency;
-        this.dutyCycle = dutyCycle;
-        // If the given intro sequence is identical to the repeat sequence, reject it.
-        this.introSequence = ((introSequence != null) && !introSequence.isEqual(repeatSequence)) ? introSequence : new IrSequence();
-        this.repeatSequence = repeatSequence != null ? repeatSequence : new IrSequence();
-        this.endingSequence = ((endingSequence != null) && !endingSequence.isEqual(repeatSequence)) ? endingSequence : new IrSequence();
-
-        map = new EnumMap<>(Pass.class);
-
-        map.put(Pass.intro, introSequence);
-        map.put(Pass.repeat, repeatSequence);
-        map.put(Pass.ending, endingSequence);
-    }
-
-    /**
-     * Constructs an IrSignal from its arguments.
-     *
-     * @param durations
-     * @param noIntroBursts
-     * @param noRepeatBursts
-     * @param frequency
-     */
-    public IrSignal(int[] durations, int noIntroBursts, int noRepeatBursts, int frequency) {
-        this(durations, noIntroBursts, noRepeatBursts, frequency, (double) IrpUtils.invalid);
-    }
-
-    /**
-     * Constructs an IrSignal from its arguments.
-     *
-     * @param frequency
-     * @param dutyCycle
-     * @param introSequence
-     * @param repeatSequence
-     * @param endingSequence
-     * @throws IncompatibleArgumentException
-     */
-    public IrSignal(double frequency, double dutyCycle, String introSequence, String repeatSequence,
-            String endingSequence) throws IncompatibleArgumentException {
-        this(frequency, dutyCycle, new IrSequence(introSequence), new IrSequence(repeatSequence),
-                new IrSequence(endingSequence));
-    }
-
-    /**
-     * Constructs an IrSignal from its arguments.
-     *
-     * The first 2*noIntroBursts durations belong to the Intro signal,
-     * the next 2*noRepeatBursts to the repetition part, and the remaining to the ending sequence.
-     *
-     * @param durations Integer array of durations. Signs of the entries are ignored,
-     * @param noIntroBursts Number of bursts (half the number of entries) belonging to the intro sequence.
-     * @param noRepeatBursts Number of bursts (half the number of entries) belonging to the intro sequence.
-     * @param frequency Modulation frequency in Hz.
-     * @param dutyCycle Duty cycle of modulation pulse, between 0 and 1. Use -1 for not specified.
-     */
-    public IrSignal(int[] durations, int noIntroBursts, int noRepeatBursts, int frequency, double dutyCycle) {
-        this((double) frequency, dutyCycle,
-                new IrSequence(durations, 0, 2*noIntroBursts),
-                new IrSequence(durations, 2*noIntroBursts, 2*noRepeatBursts),
-                new IrSequence(durations, 2*(noIntroBursts+noRepeatBursts), durations.length - 2*(noIntroBursts + noRepeatBursts)));
-    }
-
-    /**
-     * Constructs an IrSignal of zero length.
-     */
-    public IrSignal() {
-        this(new int[0], 0, 0, (int) IrpUtils.defaultFrequency);
-    }
 
     // Plunders the victim. Therefore private, othewise would violate immutability.
     private void copyFrom(IrSignal victim) {
@@ -403,161 +589,6 @@ public class IrSignal {
         map = victim.map;
     }
 
-    /**
-     * Creates an IrSignal from a CCF string. Also some "short formats" of CCF are recognized.
-     * @see Pronto
-     *
-     * @param ccf String supposed to represent a valid CCF signal.
-     * @throws IrpMasterException Error in CCF
-     */
-    public IrSignal(String ccf) throws IrpMasterException {
-        copyFrom(Pronto.ccfSignal(ccf));
-    }
-
-    /**
-     * Creates an IrSignal from a CCF array. Also some "short formats" of CCF are recognized.
-     * @see Pronto
-     *
-     * @param ccf Integer array supposed to represent a valid CCF signal.
-     * @throws IrpMasterException Error in CCF
-     */
-    public IrSignal(int[] ccf) throws IrpMasterException {
-        copyFrom(Pronto.ccfSignal(ccf));
-    }
-
-    /**
-     * Creates an IrSignal from a CCF array. Also some "short formats" of CCF are recognized.
-     * @param begin starting index
-     * @see Pronto
-     *
-     * @param ccf String array supposed to represent a valid CCF signal.
-     * @throws IrpMasterException Error in CCF
-     */
-    public IrSignal(String[] ccf, int begin) throws IrpMasterException {
-        copyFrom(Pronto.ccfSignal(ccf, begin));
-    }
-
-    /**
-     * Intended to construct an IrSignal from the args of a main-routine,
-     * for example for exporting. It can be used to decode the non-option arguments.
-     * Either the arguments are hexadecimal numbers to be interpreted as a CCF type signal,
-     * or it is expected to be a protocol name followed by a number of parameters.
-     * The parameters can be given either as name=value pairs, and/or as unnamed parameters,
-     * whereas one parameter is taken to be F, two parameters are taken to be D and F,
-     * three parameters D, S, and F, while four parameters are interpreted as D, S, F, and T.
-     *
-     * @see IrpMaster
-     * @see Protocol
-     *
-     * @param protocolsIniPath Path to Protocols.ini of the IrpMaster. There is no default.
-     * @param offset How many initial elements of the argument vector to ignore.
-     * @param args String array, typically the arguments of main.
-     *
-     * @throws IrpMasterException
-     * @throws FileNotFoundException
-     * @throws UnassignedException
-     */
-    public IrSignal(String protocolsIniPath, int offset, String... args) throws IrpMasterException, FileNotFoundException, UnassignedException {
-        if (args == null || args.length - offset < 1)
-            throw new IncompatibleArgumentException("Too few arguments");
-
-        if (args[offset].matches("^[0-9]{3}[0-9a-fA-F]$")) {
-            // This is a CCF
-            int[] ccf = new int[args.length - offset];
-            for (int i = 0; i < args.length - offset; i++)
-                ccf[i] = Integer.parseInt(args[i], 16);
-            copyFrom(Pronto.ccfSignal(ccf));
-        } else {
-            int arg_i = offset;
-            String protocolName = args[arg_i++];
-            LinkedHashMap<String, Long> parameters = new LinkedHashMap<>();
-
-            // Parse name = value assignments
-            while (arg_i < args.length && !args[arg_i].isEmpty() && args[arg_i].contains("=")) {
-                String[] kv = args[arg_i++].split("=");
-                if (kv.length != 2)
-                    throw new IncompatibleArgumentException("Parse error by " + args[arg_i - 1]);
-                parameters.put(kv[0], IrpUtils.parseLong(kv[1], true));
-            }
-
-            // Arguments left are shorthand assignments.
-            switch (args.length - arg_i) {
-                case 0:
-                    break;
-                case 1:
-                    parameters.put("F", IrpUtils.parseLong(args[arg_i++], true));
-                    break;
-                case 2:
-                    parameters.put("D", IrpUtils.parseLong(args[arg_i++], true));
-                    parameters.put("F", IrpUtils.parseLong(args[arg_i++], true));
-                    break;
-                case 3:
-                    parameters.put("D", IrpUtils.parseLong(args[arg_i++], true));
-                    parameters.put("S", IrpUtils.parseLong(args[arg_i++], true));
-                    parameters.put("F", IrpUtils.parseLong(args[arg_i++], true));
-                    break;
-                case 4:
-                    parameters.put("D", IrpUtils.parseLong(args[arg_i++], true));
-                    parameters.put("S", IrpUtils.parseLong(args[arg_i++], true));
-                    parameters.put("F", IrpUtils.parseLong(args[arg_i++], true));
-                    parameters.put("T", IrpUtils.parseLong(args[arg_i++], true));
-                    break;
-                default:
-                    throw new IncompatibleArgumentException("Too many parameters.");
-                    //break;
-            }
-            if (parameters.isEmpty())
-                throw new IncompatibleArgumentException("No parameters given.");
-
-            IrpMaster irpMaster = new IrpMaster(protocolsIniPath);
-            Protocol protocol = irpMaster.newProtocol(protocolName);
-            IrSignal irSignal = protocol.renderIrSignal(parameters);
-            copyFrom(irSignal);
-        }
-    }
-
-    /**
-     * Convenience version of the constructor with an IrpMaster instance.
-     * Equivalent to IrSignal(new IrpMaster(protocolsIniPath), protocolName, parameters).
-     *
-     * @param protocolsIniPath Path to IrpProtocols.ini
-     * @param protocolName name of protocol
-     * @param parameters Dictionary of parameter values
-     * @throws FileNotFoundException
-     * @throws IrpMasterException
-     */
-    public IrSignal(String protocolsIniPath, String protocolName, Map<String, Long> parameters) throws FileNotFoundException, IrpMasterException {
-        this(new IrpMaster(protocolsIniPath), protocolName, parameters);
-    }
-
-    /**
-     * Constructs an IrSignal from its arguments.
-     * @param irpMaster
-     * @param protocolName name of protocol
-     * @param parameters Dictionary of parameter values
-     * @throws IrpMasterException
-     */
-    public IrSignal(IrpMaster irpMaster, String protocolName, Map<String, Long> parameters) throws IrpMasterException {
-        Protocol protocol = irpMaster.newProtocol(protocolName);
-        if (protocol == null)
-            throw new IrpMasterException("Protocol \"" + protocolName + "\" is not known.");
-
-        IrSignal irSignal = protocol.renderIrSignal(parameters);
-        copyFrom(irSignal);
-    }
-
-    /**
-     * Constructs an IrSignal from its arguments.
-     * @param protocolsIniPath Path to IrpProtocols.ini
-     * @param protocolName name of protocol
-     * @param parameters String of parameter assignments like "D=12 F=34"
-     * @throws FileNotFoundException
-     * @throws IrpMasterException
-     */
-    public IrSignal(String protocolsIniPath, String protocolName, String parameters)
-            throws FileNotFoundException, IrpMasterException {
-        this(protocolsIniPath, protocolName, Protocol.parseParams(parameters));
-    }
 
     /**
      * Returns a ModulatedIrSequence consisting of one intro sequence,
@@ -655,45 +686,4 @@ public class IrSignal {
         return Pronto.toPrintString(this);
     }
 
-    /**
-     * Just for testing. Invokes the IrSignal(String ProtocolsIniPath, int offset, String[] args)
-     * and tests the result.
-     *
-     * @param args
-     */
-    public static void main(String[] args) {
-        if (args.length == 0) {
-            int times[] = {
-                -9024, -4512, -564, -1692, +564, -564, +564, -564, +564, -564, +564, -564, +564, -564,
-                +564, -564, +564, -564, +564, -564, +564, -1692, +564, -564, +564, -564, +564, -564, +564, -564,
-                +564, -564, +564, -564, +564, -1692, +564, -1692, +564, -564, +564, -564, +564, -564, +564, -564,
-                +564, -564, +564, -564, +564, -564, +564, -564, +564, -1692, +564, -1692, +564, -1692, +564, -1692,
-                +564, -1692, +564, -1692, +564, -43992,
-                +9024, -2256, +564, -97572};
-            try {
-                IrSignal irSignal = new IrSignal(times, 34, 2, 38400);
-                System.out.println(irSignal.ccfString());
-                System.out.println(irSignal.toString(true));
-                System.out.println(irSignal.toString(false));
-                System.out.println(irSignal);
-            } catch (IncompatibleArgumentException ex) {
-                System.err.println(ex.getMessage());
-            }
-        } else {
-            String protocolsIni = "data/IrpProtocols.ini";
-            int arg_i = 0;
-            if (args[arg_i].equals("-c")) {
-                arg_i++;
-                protocolsIni = args[arg_i++];
-            }
-            try {
-                IrSignal irSignal = new IrSignal(protocolsIni, arg_i, args);
-                System.out.println(irSignal);
-                System.out.println(irSignal.ccfString());
-                DecodeIR.invoke(irSignal);
-            } catch (IrpMasterException | FileNotFoundException ex) {
-                System.err.println(ex.getMessage());
-            }
-        }
-    }
 }

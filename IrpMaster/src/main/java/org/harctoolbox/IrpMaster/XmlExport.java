@@ -64,16 +64,6 @@ public class XmlExport {
     public static final String burstLengthAttributeName = "burstlength";
     public static final String commentAttributeName = "comment";
 
-    private final Document doc;
-
-    public XmlExport(Document doc) {
-        this.doc = doc;
-    }
-
-    public XmlExport() {
-        doc = newDocument();
-    }
-
     public static Document newDocument() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
@@ -86,6 +76,17 @@ public class XmlExport {
         }
         return doc;
     }
+
+    private final Document doc;
+
+    public XmlExport(Document doc) {
+        this.doc = doc;
+    }
+
+    public XmlExport() {
+        doc = newDocument();
+    }
+
 
 
     public void printDOM(OutputStream ostr, Document stylesheet) {
