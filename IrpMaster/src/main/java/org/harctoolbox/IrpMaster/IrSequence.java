@@ -16,7 +16,6 @@ this program. If not, see http://www.gnu.org/licenses/.
  */
 package org.harctoolbox.IrpMaster;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -39,7 +38,7 @@ import java.util.Collection;
  * @see ModulatedIrSequence
  *
  */
-public class IrSequence implements Cloneable, Serializable {
+public class IrSequence implements Cloneable {
     /**
      * Duration data, possibly with signs, which are ignored (by this class).
      */

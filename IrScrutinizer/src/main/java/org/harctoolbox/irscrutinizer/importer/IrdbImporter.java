@@ -23,7 +23,6 @@ import com.eclipsesource.json.JsonValue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -269,7 +268,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         return getCommand(functionName);
     }
 
-    public static class ProtocolDeviceSubdevice implements Serializable {
+    public static class ProtocolDeviceSubdevice {
         private String protocol;
         private long device;
         private long subdevice; // use -1 for no subdevice

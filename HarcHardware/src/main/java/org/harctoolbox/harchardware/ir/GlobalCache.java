@@ -47,7 +47,7 @@ import org.harctoolbox.harchardware.comm.IWeb;
 import org.harctoolbox.harchardware.comm.TcpSocketChannel;
 import org.harctoolbox.harchardware.comm.TcpSocketPort;
 
-public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, ITransmitter, ICapture, IWeb/*, Serializable*/ {
+public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, ITransmitter, ICapture, IWeb {
 
 
     private final static int smallDelay = 10; // ms

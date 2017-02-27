@@ -19,7 +19,6 @@ package org.harctoolbox.girr;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ import org.xml.sax.SAXException;
 /**
  * This class models a collection of Remotes, indexed by their names.
  */
-public class RemoteSet implements Serializable {
+public class RemoteSet {
 
     /**
      * String of the form major.minor identifying the protocol version

@@ -17,12 +17,10 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.importer;
 
-import java.io.Serializable;
-
 /**
  * This class does something interesting and useful. Or not...
  */
-public abstract class DatabaseImporter extends Importer implements Serializable {
+public abstract class DatabaseImporter extends Importer {
     DatabaseImporter(String origin) {
         super();
         this.origin = origin;

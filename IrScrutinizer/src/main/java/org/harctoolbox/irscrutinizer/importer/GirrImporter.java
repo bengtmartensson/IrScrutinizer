@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.Serializable;
 import java.net.URL;
 import java.text.ParseException;
 import javax.xml.XMLConstants;
@@ -37,11 +36,11 @@ import org.xml.sax.SAXParseException;
  * This class imports Girr files. Only Girr files having remotes as root element are presently supported.
  *
  */
-public class GirrImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
+public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
     public static final String homeUrl = "http://www.harctoolbox.org/girr";
 
-    private transient Schema schema;
-    private transient URL url;
+    private Schema schema;
+    private URL url;
     private boolean validate;
 
     public GirrImporter(boolean validate, URL url) {

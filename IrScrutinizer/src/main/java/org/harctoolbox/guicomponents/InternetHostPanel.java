@@ -52,7 +52,7 @@ public class InternetHostPanel extends JPanel {
 
     private GuiUtils guiUtils;
 
-    private transient IHarcHardware hardware;
+    private IHarcHardware hardware;
     private boolean listenable;
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);

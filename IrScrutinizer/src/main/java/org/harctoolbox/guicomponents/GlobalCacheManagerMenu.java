@@ -19,7 +19,6 @@ package org.harctoolbox.guicomponents;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import javax.swing.AbstractButton;
@@ -31,7 +30,7 @@ import javax.swing.JRadioButton;
 import javax.swing.MenuElement;
 import org.harctoolbox.harchardware.ir.GlobalCache;
 
-public class GlobalCacheManagerMenu implements Serializable /*extends GlobalCacheManagerAbstractMenu*/ {
+public class GlobalCacheManagerMenu /*extends GlobalCacheManagerAbstractMenu*/ {
     public static final String PROP_GC_ADDR = "PROP_GC_ADDR";
     private final JMenu globalCacheMenu;
     private JRadioButton[] globalCacheRadioButtons = new JRadioButton[0];

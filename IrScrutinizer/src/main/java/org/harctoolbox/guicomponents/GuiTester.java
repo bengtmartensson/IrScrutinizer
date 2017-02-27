@@ -41,12 +41,11 @@ import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 
 public class GuiTester extends javax.swing.JFrame {
     private boolean verbose = true;
-    private final transient LookAndFeelManager lookAndFeelManager;
+    private final LookAndFeelManager lookAndFeelManager;
     private static final String helpText = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
 
     private GuiUtils guiUtils = new GuiUtils(this, "tester", 1000);
-    //private final transient JythonEngine jythonEngine = null;
-    private transient IrTransIRDB irtrans;
+    private IrTransIRDB irtrans;
     private final GlobalCacheManagerMenu globalCacheManagerMenu;
     private IrpMaster irpMaster;
 

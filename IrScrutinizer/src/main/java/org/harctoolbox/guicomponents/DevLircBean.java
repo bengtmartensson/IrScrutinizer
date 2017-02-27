@@ -37,10 +37,10 @@ public class DevLircBean extends javax.swing.JPanel implements ISendingReceiving
     private String portName;
     private String propsString;
     private GuiUtils guiUtils;
-    private transient DevLirc hardware;
+    private DevLirc hardware;
     private boolean listenable;
     private boolean enableSending;
-    private final transient PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
+    private final PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
 
     /**
      * Creates new form DevLircBean

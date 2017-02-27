@@ -18,7 +18,6 @@
 package org.harctoolbox.girr;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -59,7 +58,7 @@ import org.w3c.dom.NodeList;
  * erroneous data. The other classes in the package may not; they should just
  * ignore individual unparseable commands.
  */
-public class Command implements Serializable {
+public class Command {
 
     /** Attribute name for toggle used in girr file */
     private final static String toggleAttributeName = "T";
@@ -188,7 +187,7 @@ public class Command implements Serializable {
      * }
      * }*/
 
-    private transient Protocol protocol;
+    private Protocol protocol;
     private MasterType masterType;
     private String notes;
     private String name;

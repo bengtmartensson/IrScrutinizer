@@ -23,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,7 +41,7 @@ import org.harctoolbox.irscrutinizer.Version;
  * This class imports CML files.
  *
  */
-public class CmlImporter extends RemoteSetImporter implements IFileImporter, Serializable {
+public class CmlImporter extends RemoteSetImporter implements IFileImporter {
     private static final int remoteToken = 0xbbbbbbbb;
     private static final int commandToken = 0xcccccccc;
     private static final int EOF = -1;

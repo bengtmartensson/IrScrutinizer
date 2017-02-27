@@ -39,7 +39,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel implements ISending
     private int baudRate;
     private String version;
     private GuiUtils guiUtils;
-    private transient IHarcHardware hardware;
+    private IHarcHardware hardware;
     private final boolean settableBaudRate;
     private boolean listenable;
 
@@ -180,7 +180,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel implements ISending
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
-    private final transient PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
+    private final PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
 
     public void setup(String desiredPort) throws IOException {
         ComboBoxModel<String> model = portComboBox.getModel();

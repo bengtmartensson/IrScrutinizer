@@ -20,13 +20,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.Serializable;
 
-public class UserComm implements Serializable {
+public class UserComm {
     private boolean quiet = false;
 
     private static UserComm instance = new UserComm();
-    private transient PrintStream logfile = null;
+    private PrintStream logfile = null;
 
     public void setLogfile(PrintStream printStream) {
         logfile = printStream;

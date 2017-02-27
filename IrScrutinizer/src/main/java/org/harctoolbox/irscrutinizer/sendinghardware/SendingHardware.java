@@ -38,12 +38,8 @@ public abstract class SendingHardware <T extends IRawIrSender & IHarcHardware> {
     public static final String PROP_RAWIRSENDER = "PROP_RAWIRSENDER";
     public static final String PROP_VERBOSE = "PROP_VERBOSE";
     private final JPanel panel;
-    //protected T rawIrSender;
     protected Props properties;
     protected GuiUtils guiUtils;
-    //private boolean verbose;
-
-    //private final transient PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
 
     protected SendingHardware(JPanel panel, Props properties, GuiUtils guiUtils) {
         //this.rawIrSender = null;

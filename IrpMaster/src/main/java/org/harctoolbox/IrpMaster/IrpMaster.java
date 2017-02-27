@@ -38,9 +38,9 @@ import org.harctoolbox.IrpMaster.Iterate.RandomValueSet;
 // Prefered order for protocol parameters:
 // D, S, F, T, and then the rest in alphabetical order.
 
-public class IrpMaster implements Serializable {
+public class IrpMaster {
 
-    private static class UnparsedProtocol implements Serializable {
+    private static class UnparsedProtocol {
 
         public static final String unnamed = "unnamed_protocol";
         public String name;

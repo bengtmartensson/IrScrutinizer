@@ -19,7 +19,6 @@ package org.harctoolbox.guicomponents;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -77,7 +76,7 @@ public class IrpMasterBean extends javax.swing.JPanel {
     }
 
     // should probably not be here, but somewhere else
-    public static class DefaultSignalNameFormatter implements ISignalNameFormatter, Serializable {
+    public static class DefaultSignalNameFormatter implements ISignalNameFormatter {
         private StringBuilder doParameter(Map<String, Long> parameters, String parameterName) {
             if (!parameters.containsKey(parameterName))
                 return new StringBuilder(0);

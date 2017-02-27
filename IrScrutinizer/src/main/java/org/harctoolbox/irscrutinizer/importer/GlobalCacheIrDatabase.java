@@ -47,6 +47,7 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
         return URLEncoder.encode(s, "utf-8").replaceAll("\\+", "%20");
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         Props props = new Props(null);
         Importer.setProperties(props);
@@ -63,8 +64,6 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
     }
 
     private boolean verbose = false;
-
-    //private transient Proxy proxy = Proxy.NO_PROXY;
 
     private final String apiKey;
     private Map<String, String> manufacturerMap = null;

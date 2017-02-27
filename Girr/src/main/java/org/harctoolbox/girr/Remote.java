@@ -17,7 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.girr;
 
-import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -36,7 +35,7 @@ import org.w3c.dom.NodeList;
  * It has a name for identification, and a number of comment-like text fields. Most importantly,
  * it has a dictionary of Commands, indexed by their names.
  */
-public class Remote implements Serializable {
+public class Remote {
 
     private static Map<String,Command> commandToMap(Command command) {
         Map<String,Command> result = new HashMap<>(1);
@@ -314,7 +313,7 @@ public class Remote implements Serializable {
         return notes;
     }
 
-    public static class MetaData implements Serializable {
+    public static class MetaData {
         private String name;
         private String displayName;
         private String manufacturer;
@@ -388,13 +387,13 @@ public class Remote implements Serializable {
             return remoteName;
         }
     }
-    public static class CompareNameCaseSensitive implements Comparator<Remote>, Serializable {
+    public static class CompareNameCaseSensitive implements Comparator<Remote> {
         @Override
         public int compare(Remote o1, Remote o2) {
             return o1.metaData.name.compareTo(o2.metaData.name);
         }
     }
-    public static class CompareNameCaseInsensitive implements Comparator<Remote>, Serializable {
+    public static class CompareNameCaseInsensitive implements Comparator<Remote> {
         @Override
         public int compare(Remote o1, Remote o2) {
             return o1.metaData.name.compareToIgnoreCase(o2.metaData.name);

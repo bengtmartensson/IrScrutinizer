@@ -293,7 +293,7 @@ public class GenericSerialSenderBean extends javax.swing.JPanel {
         serialPortBean.setHardware(hardware);
     }
 
-    private final transient PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
+    private final PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
     public static final String PROP_PORTNAME = "PROP_PORTNAME";
     public static final String PROP_BAUDRATE = "PROP_BAUDRATE";
     public static final String PROP_DATASIZE = "PROP_DATASIZE";

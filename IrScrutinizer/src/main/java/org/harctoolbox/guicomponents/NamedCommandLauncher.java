@@ -31,7 +31,7 @@ import org.harctoolbox.harchardware.ir.Transmitter;
  */
 public class NamedCommandLauncher extends JPanel {
     private GuiUtils guiUtils;
-    private transient IRemoteCommandIrSender hardware;
+    private IRemoteCommandIrSender hardware;
     private DefaultComboBoxModel<String> transmitterComboBoxModel;
     private DefaultComboBoxModel<String> remoteComboBoxModel;
     private DefaultComboBoxModel<String> commandComboBoxModel;

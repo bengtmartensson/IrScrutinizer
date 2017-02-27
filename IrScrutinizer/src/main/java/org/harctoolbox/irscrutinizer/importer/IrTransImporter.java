@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
-import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,7 +42,7 @@ import org.harctoolbox.irscrutinizer.Version;
  * However, that description is incomplete.
  *
  */
-public class IrTransImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
+public class IrTransImporter extends RemoteSetImporter implements IReaderImporter {
     public static final String homeUrl = "http://www.irtrans.com";
     public static final String defaultCharsetName = "windows-1252";
     private static final int dummyEndingGap = 50000;

@@ -31,7 +31,6 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 
@@ -39,7 +38,7 @@ import org.harctoolbox.IrpMaster.IrpUtils;
  * This class is a general purpose console.
  */
 public class Console extends javax.swing.JScrollPane {
-    public interface IErrorFunction extends Serializable {
+    public interface IErrorFunction {
         void err(Exception ex, String str);
 
         void err(String str);
@@ -197,7 +196,7 @@ public class Console extends javax.swing.JScrollPane {
     private final javax.swing.JMenuItem consoleSaveMenuItem;
     private final javax.swing.JTextArea consoleTextArea;
 
-    private transient PrintStream consolePrintStream = null;
+    private PrintStream consolePrintStream = null;
 
     private void consoleClearMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         clear();
@@ -316,7 +315,7 @@ public class Console extends javax.swing.JScrollPane {
         consolePopupMenu.add(consoleSaveMenuItem);
         consolePopupMenu.add(jSeparator9);
 
-        consolePrintMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/printer.png"))); // NOI18N
+        consolePrintMenuItem.setIcon(new javax.swing.ImageIcon(Console.class.getResource("/icons/Crystal-Clear/22x22/apps/printer.png"))); // NOI18N
         consolePrintMenuItem.setText("Print...");
         consolePrintMenuItem.setToolTipText("Print the content of the console to a printer.");
         consolePrintMenuItem.addActionListener(new java.awt.event.ActionListener() {

@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.Serializable;
 import java.io.StringReader;
 import java.util.Collection;
 import org.harctoolbox.jirc.ConfigFile;
@@ -31,7 +30,7 @@ import org.harctoolbox.jirc.IrRemote;
 /**
  * This class is basically a wrapper around Jirc.
  */
-public class LircImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
+public class LircImporter extends RemoteSetImporter implements IReaderImporter {
     public static final String remotesUrl = "http://lirc.sourceforge.net/remotes/";
     public static final String homeUrl = "http://www.lirc.org/";
 

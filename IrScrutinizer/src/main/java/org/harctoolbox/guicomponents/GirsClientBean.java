@@ -56,7 +56,7 @@ public class GirsClientBean extends javax.swing.JPanel implements ISendingReceiv
     private String portName;
     private int baudRate;
     private GuiUtils guiUtils;
-    private transient GirsClient<?> hardware;
+    private GirsClient<?> hardware;
     private int portNumber;
     private String ipName;
     private int pingTimeout;
@@ -252,7 +252,7 @@ public class GirsClientBean extends javax.swing.JPanel implements ISendingReceiv
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
-    private final transient PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
+    private final PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
 
     private void setupPortComboBox(boolean useCached) throws IOException {
         if (hardware != null)

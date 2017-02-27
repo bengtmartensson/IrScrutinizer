@@ -39,9 +39,9 @@ import org.harctoolbox.irscrutinizer.Props;
  * @param <T>
  */
 public class FileImporterBean<T extends IFileImporter & IImporter>  extends javax.swing.JPanel {
-    private transient T importer;
+    private T importer;
     private GuiUtils guiUtils;
-    private transient Props properties;
+    private Props properties;
 
     private class FileImporterBeanTransferHandler extends TransferHandler {
 

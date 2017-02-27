@@ -22,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,7 +33,7 @@ import javax.swing.JOptionPane;
 import org.harctoolbox.IrpMaster.IrpUtils;
 
 // Interfaces to Desktop
-public class GuiUtils implements Serializable {
+public class GuiUtils {
     private final int maxGuiMessageLength;
     private boolean usePopupsForErrors = false;
     private boolean usePopupsForHelp = false;
@@ -102,6 +101,7 @@ public class GuiUtils implements Serializable {
 //        fatal(ex.getClass().getSimpleName() + ": " + ex.getMessage(), errorcode, fixer);
 //    }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public static void fatal(Exception ex, int errorcode, EmergencyFixer fixer) {
         String message = ex.getClass().getSimpleName() + ": " + ex.getMessage();
         if (System.console() != null)

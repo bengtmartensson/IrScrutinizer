@@ -39,7 +39,7 @@ public class SerialPortBean extends javax.swing.JPanel {
     private int stopBits; // semantics follows gnu.io.SerialPort
     private GuiUtils guiUtils;
     private boolean verbose;
-    private transient IHarcHardware hardware;
+    private IHarcHardware hardware;
 
     public static final String PROP_PORTNAME = "PROP_PORTNAME";
     public static final String PROP_BAUD = "PROP_BAUD";

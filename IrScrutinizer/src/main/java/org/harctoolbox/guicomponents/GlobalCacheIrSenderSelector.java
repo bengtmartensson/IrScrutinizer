@@ -31,7 +31,7 @@ import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 
 public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
     private GuiUtils guiUtils;
-    private transient GlobalCache globalCache;
+    private GlobalCache globalCache;
     private boolean verbose;
     private int timeout;
 
@@ -40,7 +40,7 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
     private int port;
     private boolean senderSupport;
 
-    private final transient PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
+    private final PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
     public static final String PROP_GLOBALCACHE = "PROP_GLOBALCACHE";
     public static final String PROP_IPNAME = "PROP_IPNAME";
     public static final String PROP_MODULE = "PROP_MODULE";

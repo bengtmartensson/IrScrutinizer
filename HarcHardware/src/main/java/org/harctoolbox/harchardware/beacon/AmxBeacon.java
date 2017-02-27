@@ -18,7 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.harchardware.beacon;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -29,7 +28,7 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.harchardware.Utils;
 
 
-public class AmxBeacon implements Serializable {
+public class AmxBeacon {
     public  final static String broadcastIp = "239.255.250.250";
     public  final static int broadcastPort = 9131;
     public  final static String beaconPreamble = "AMXB";
