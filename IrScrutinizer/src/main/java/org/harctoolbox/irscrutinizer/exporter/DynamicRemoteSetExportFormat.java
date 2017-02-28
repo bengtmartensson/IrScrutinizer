@@ -66,7 +66,8 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
             for (File f : files) {
                 try {
                     Map<String, IExporterFactory> map = parseExportFormats(guiUtils, f); // allow hierarchies
-                    result.putAll(map);
+                    for (Map.Entry<String, IExporterFactory> kvp : map.entrySet())
+                        putWithCheck(guiUtils, result, kvp.getKey(), kvp.getValue());
                 } catch (ParserConfigurationException | SAXException | IOException ex) {
                     String message = "Export formats file \"" + f.getPath() + "\" could not be read, ignoring it. " + ex.getLocalizedMessage();
                     if (guiUtils != null)
@@ -77,10 +78,10 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
             }
             return result;
         } else
-            return parseExportFormatsFile(file);
+            return parseExportFormatsFile(guiUtils, file);
     }
 
-    private static Map<String, IExporterFactory> parseExportFormatsFile(File file) throws ParserConfigurationException, SAXException, IOException {
+    private static Map<String, IExporterFactory> parseExportFormatsFile(GuiUtils guiUtils, File file) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setNamespaceAware(true);
@@ -96,7 +97,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
                     ? new DynamicRemoteSetExportFormat(el)
                     : new DynamicCommandExportFormat(el);
 
-            result.put(ef.getFormatName(), new IExporterFactory() {
+            putWithCheck(guiUtils, result, ef.getFormatName(), new IExporterFactory() {
 
                 @Override
                 public ICommandExporter newExporter() {
@@ -105,6 +106,12 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
             });
         }
         return result;
+    }
+
+    private static void putWithCheck(GuiUtils guiUtils, Map<String, IExporterFactory> result, String formatName, IExporterFactory iExporterFactory) {
+        if (result.containsKey(formatName))
+            guiUtils.warning("Export format \"" + formatName + "\" present more than once; keeping the last.");
+        result.put(formatName, iExporterFactory);
     }
 
     private static boolean isFat(Document doc) {
