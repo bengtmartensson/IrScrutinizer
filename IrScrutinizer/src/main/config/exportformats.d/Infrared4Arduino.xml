@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (C) 2016 Bengt Martensspm
+Copyright (C) 2016 Bengt Martensson
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // It supports:
 //
 // * Infrared4Arduino https://github.com/bengtmartensson/Infrared4Arduino,
-//                    http://www.harctoolbox.org/Infrared4Arduino.html (planned)
+//                    http://www.harctoolbox.org/Infrared4Arduino.html
 
 // For problems, bugs, and suggestions, please open an issue at
 // https://github.com/bengtmartensson/harctoolboxbundle/issues
