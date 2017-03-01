@@ -26,7 +26,8 @@ rm -rf ${APPIMAGEDIR}
 install -d ${MYPROG_HOME}
 install --mode=444 target/${APPNAME}-jar-with-dependencies.jar ${MYPROG_HOME}
 install --mode=444 target/*.ini ${MYPROG_HOME}
-install --mode=444 target/exportformats.xml ${MYPROG_HOME}
+install -d ${MYPROG_HOME}/exportformats.d
+install --mode=444 target/exportformats.d/* ${MYPROG_HOME}/exportformats.d
 install -d ${MYPROG_HOME}/contributed
 install --mode=444 target/contributed/* ${MYPROG_HOME}/contributed
 install -d ${MYPROG_HOME}/doc

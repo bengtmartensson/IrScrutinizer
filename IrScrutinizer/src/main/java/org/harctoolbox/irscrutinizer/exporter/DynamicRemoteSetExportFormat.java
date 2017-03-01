@@ -46,7 +46,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * This class is a RemoteSetExporter that dynamically takes its content from the contents of the configuration file exportformats.xml.
+ * This class is a RemoteSetExporter that dynamically takes its content from the contents of a configuration file,
+ * or a directory of such.
  */
 public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements IRemoteSetExporter {
 
@@ -260,7 +261,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
 
     private final static class CommandLineArgs {
 
-        @Parameter(names = {"-c", "--configuration"}, required = true, description = "Pathname of exportformats.xml")
+        @Parameter(names = {"-c", "--configuration"}, required = true, description = "Pathname of exportformats file/directory")
         private String exportFormatsPathname = null;
 
         @Parameter(names = {"-e", "--encoding"}, description = "Encoding of the generated document")
