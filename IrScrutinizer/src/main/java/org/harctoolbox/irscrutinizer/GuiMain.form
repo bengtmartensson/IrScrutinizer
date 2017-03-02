@@ -62,7 +62,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rawCodeCopyAllMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="rawCodePasteMenuItem">
+        <MenuItem class="javax.swing.JMenuItem" name="rawCodePasteReplacingMenuItem">
           <Properties>
             <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
               <KeyStroke key="INSERT"/>
@@ -72,6 +72,19 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Paste (replacing)"/>
             <Property name="toolTipText" type="java.lang.String" value="Paste from clipboard, replacing previous contents."/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rawCodePasteReplacingMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="rawCodePasteMenuItem">
+          <Properties>
+            <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+              <KeyStroke key="Ctrl+V"/>
+            </Property>
+            <Property name="mnemonic" type="int" value="80"/>
+            <Property name="text" type="java.lang.String" value="Paste"/>
+            <Property name="toolTipText" type="java.lang.String" value="Paste content of clipboard at the position of the caret."/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rawCodePasteMenuItemActionPerformed"/>

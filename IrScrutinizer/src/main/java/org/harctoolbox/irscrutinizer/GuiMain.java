@@ -53,6 +53,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JPopupMenu.Separator;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.TransferHandler;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -190,14 +191,16 @@ public class GuiMain extends javax.swing.JFrame {
     private class SignalScrutinizerTransferHandler extends TransferHandler {
         @Override
         public boolean canImport(TransferHandler.TransferSupport support) {
-            if (!support.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
-                return false;
+            if (support.isDrop()) {
+                if (!support.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
+                    return false;
 
-            boolean copySupported = (COPY & support.getSourceDropActions()) == COPY;
-            if (!copySupported)
-                return false;
+                boolean copySupported = (COPY & support.getSourceDropActions()) == COPY;
+                if (!copySupported)
+                    return false;
 
-            support.setDropAction(COPY);
+                support.setDropAction(COPY);
+            }
             return true;
         }
 
@@ -206,16 +209,28 @@ public class GuiMain extends javax.swing.JFrame {
             if (!canImport(support))
                 return false;
 
-            Transferable transferable = support.getTransferable();
             try {
-                List<File> list = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
-                if (list.size() > 1) {
-                    guiUtils.error("Only one file can be dropped");
-                    return false;
-                }
+                Transferable transferable = support.getTransferable();
+                if (support.isDrop()) {
+                    List<File> list = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                    if (list.size() > 1) {
+                        guiUtils.error("Only one file can be dropped");
+                        return false;
+                    }
 
-                importModulatedIrSequenceFile(list.get(0));
-            } catch (UnsupportedFlavorException | IOException e) {
+                    importModulatedIrSequenceFile(list.get(0));
+                } else {
+                    // I am sure there is a smarter way ;-)
+                    String content = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                    JTextArea component = (JTextArea) support.getComponent();
+                    String old = component.getText();
+                    int index = component.getCaretPosition();
+                    String newContent = (old.substring(0, index) + content + old.substring(index)).replace('\n', ' ');
+                    component.setText(newContent);
+                    component.setCaretPosition(index + content.length());
+                }
+            } catch (UnsupportedFlavorException | IOException ex) {
+                guiUtils.error(ex);
                 return false;
             }
             return true;
@@ -1803,6 +1818,20 @@ public class GuiMain extends javax.swing.JFrame {
         capturedDataTextArea.setText(clip.replace('\n', ' '));
     }
 
+    // There is almost certainly a more eleganat way of doing this ;-).
+    private void insertCapturedDataTextAreaFromClipboard() {
+        String clip = (new CopyClipboardText(null)).fromClipboard();
+        if (clip == null)
+            clip = "";
+        String old = capturedDataTextArea.getText();
+        if (old == null)
+            old = "";
+        int index = capturedDataTextArea.getCaretPosition();
+        String newContent = (old.substring(0, index) + clip + old.substring(index)).replace('\n', ' ');
+        capturedDataTextArea.setText(newContent);
+        capturedDataTextArea.setCaretPosition(index + clip.length());
+    }
+
     private void loadExportFormatsGuiRefresh() {
         try {
             loadExportFormats();
@@ -1831,6 +1860,7 @@ public class GuiMain extends javax.swing.JFrame {
         jSeparator8 = new javax.swing.JPopupMenu.Separator();
         rawCodeCopyMenuItem = new javax.swing.JMenuItem();
         rawCodeCopyAllMenuItem = new javax.swing.JMenuItem();
+        rawCodePasteReplacingMenuItem = new javax.swing.JMenuItem();
         rawCodePasteMenuItem = new javax.swing.JMenuItem();
         rawCodePasteAnalyzeMenuItem = new javax.swing.JMenuItem();
         rawCodeSelectAllMenuItem = new javax.swing.JMenuItem();
@@ -2381,10 +2411,21 @@ public class GuiMain extends javax.swing.JFrame {
         });
         CCFCodePopupMenu.add(rawCodeCopyAllMenuItem);
 
-        rawCodePasteMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_INSERT, 0));
-        rawCodePasteMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/editpaste.png"))); // NOI18N
-        rawCodePasteMenuItem.setText("Paste (replacing)");
-        rawCodePasteMenuItem.setToolTipText("Paste from clipboard, replacing previous contents.");
+        rawCodePasteReplacingMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_INSERT, 0));
+        rawCodePasteReplacingMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/editpaste.png"))); // NOI18N
+        rawCodePasteReplacingMenuItem.setText("Paste (replacing)");
+        rawCodePasteReplacingMenuItem.setToolTipText("Paste from clipboard, replacing previous contents.");
+        rawCodePasteReplacingMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rawCodePasteReplacingMenuItemActionPerformed(evt);
+            }
+        });
+        CCFCodePopupMenu.add(rawCodePasteReplacingMenuItem);
+
+        rawCodePasteMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
+        rawCodePasteMenuItem.setMnemonic('P');
+        rawCodePasteMenuItem.setText("Paste");
+        rawCodePasteMenuItem.setToolTipText("Paste content of clipboard at the position of the caret.");
         rawCodePasteMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rawCodePasteMenuItemActionPerformed(evt);
@@ -7224,10 +7265,9 @@ public class GuiMain extends javax.swing.JFrame {
         (new CopyClipboardText(null)).toClipboard(capturedDataTextArea.getText().trim());
     }//GEN-LAST:event_rawCodeCopyAllMenuItemActionPerformed
 
-    private void rawCodePasteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawCodePasteMenuItemActionPerformed
+    private void rawCodePasteReplacingMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawCodePasteReplacingMenuItemActionPerformed
         setCapturedDataTextAreaFromClipboard();
-        //reAnalyze();
-    }//GEN-LAST:event_rawCodePasteMenuItemActionPerformed
+    }//GEN-LAST:event_rawCodePasteReplacingMenuItemActionPerformed
 
     private void rawCodeSelectAllMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawCodeSelectAllMenuItemActionPerformed
         capturedDataTextArea.selectAll();
@@ -8950,6 +8990,10 @@ public class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_lircTimeoutMenuItemActionPerformed
 
+    private void rawCodePasteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawCodePasteMenuItemActionPerformed
+        insertCapturedDataTextAreaFromClipboard();
+    }//GEN-LAST:event_rawCodePasteMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9355,6 +9399,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem rawCodeCopyMenuItem;
     private javax.swing.JMenuItem rawCodePasteAnalyzeMenuItem;
     private javax.swing.JMenuItem rawCodePasteMenuItem;
+    private javax.swing.JMenuItem rawCodePasteReplacingMenuItem;
     private javax.swing.JMenuItem rawCodeSaveMenuItem;
     private javax.swing.JMenuItem rawCodeSelectAllMenuItem;
     private javax.swing.JTabbedPane rawCookedTabbedPane;
