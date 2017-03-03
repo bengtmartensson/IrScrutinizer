@@ -18,6 +18,7 @@ package org.harctoolbox.IrpMaster;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * This class models an IR Sequence, which is a sequence of pulse pairs, often called "bursts".
@@ -55,9 +56,9 @@ public class IrSequence implements Cloneable {
         return s;
     }
 
-    private static ArrayList<Double> normalize(ArrayList<Double> list, boolean nukeLeadingZeros) {
+    private static void normalize(List<Double> list, boolean nukeLeadingZeros) {
         if (list == null || list.isEmpty())
-            return list;
+            return;
 
         // Nuke leading gaps
         while (nukeLeadingZeros && list.size() > 1 && list.get(0) <= 0)
@@ -71,11 +72,10 @@ public class IrSequence implements Cloneable {
                 list.add(i, val);
             }
         }
-        return list;
     }
 
     private static boolean equalSign(double x, double y) {
-        return x <= 0 && y <= 0 || x >= 0 && y >= 0;
+        return x <= 0 == y <= 0;
     }
 
     /**
@@ -247,13 +247,13 @@ public class IrSequence implements Cloneable {
      * @param list List of durations as Double, containing signs.
      * @throws IncompatibleArgumentException If data ens with a flash, not a gap.
      */
-    public IrSequence(ArrayList<Double>list) throws IncompatibleArgumentException {
-        ArrayList<Double> normalized = normalize(list, true);
-        if (normalized.size() % 2 != 0)
+    public IrSequence(List<Double>list) throws IncompatibleArgumentException {
+        normalize(list, true);
+        if (list.size() % 2 != 0)
             throw new IncompatibleArgumentException("IrSequence cannot end with a flash.");
-        data = new double[normalized.size()];
-        for (int i = 0; i < normalized.size(); i++)
-            data[i] = normalized.get(i);
+        data = new double[list.size()];
+        for (int i = 0; i < list.size(); i++)
+            data[i] = list.get(i);
     }
 
     /**
@@ -421,7 +421,7 @@ public class IrSequence implements Cloneable {
      * @return Array of IrSequences
      */
     public IrSequence[] chop(double threshold) {
-        ArrayList<IrSequence> arrayList = new ArrayList<>(8);
+        List<IrSequence> arrayList = new ArrayList<>(8);
         int beg = 0;
         for (int i = 1; i < data.length; i += 2) {
             if (data[i] >= threshold || i == data.length - 1) {
