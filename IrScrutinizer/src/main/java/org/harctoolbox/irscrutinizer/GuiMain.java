@@ -1188,12 +1188,11 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private Map<String, Command> getCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel) throws IrpMasterException {
-        ArrayList<String>duplicateNames = tableModel.getNonUniqueNames();
+        List<String>duplicateNames = tableModel.getNonUniqueNames();
         if (!duplicateNames.isEmpty()) {
             StringBuilder str = new StringBuilder("The following names are non-unique: ");
-            for (String s : duplicateNames)
-                str.append(" ").append(s);
-            str.append("\n").append("Only one signal per name will be preserved in the export.");
+            str.append(String.join(", ", duplicateNames));
+            str.append(".\n").append("Only one signal per name will be preserved in the export.");
             str.append("\n").append("Continue?");
             boolean answer = guiUtils.confirm(str.toString());
             if (!answer)
@@ -1606,9 +1605,8 @@ public class GuiMain extends javax.swing.JFrame {
                 @SuppressWarnings("unchecked")
                 Map<String, Long> params = new HashMap<>(command.getParameters());
                 params.put("F", F);
-                Command cmd = new Command((new IrpMasterBean.DefaultSignalNameFormatter()).format(command.getProtocolName(), params),
-                        null, protocolName, params);
-                registerParameterCommand(cmd);
+                registerParameterCommand(new Command((new IrpMasterBean.DefaultSignalNameFormatter()).format(command.getProtocolName(), params),
+                        null, protocolName, params));
             }
         }
     }
