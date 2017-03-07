@@ -85,8 +85,8 @@ public class UdpSocketPort implements ICommandLineDevice, IHarcHardware {
     }
 
     @Override
-    public void setVerbosity(boolean verbose) {
-        udpSocketChannel.setVerbosity(verbose);
+    public void setVerbose(boolean verbose) {
+        udpSocketChannel.setVerbose(verbose);
     }
 
     @Override

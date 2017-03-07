@@ -36,9 +36,10 @@ public interface IHarcHardware extends Closeable {
 
     /**
      * Sets a verbosity flag, causing commands to be executed verbosely. Exact semantic depends on the implementation.
-     * @param verbosity on or off
+     * Typically, all communication with the device is echoed to stderr.
+     * @param verbose on or off
      */
-    public void setVerbosity(boolean verbosity);
+    public void setVerbose(boolean verbose);
 
     /**
      * Sets a debug parameter. Exact semantic depends on the implementation.

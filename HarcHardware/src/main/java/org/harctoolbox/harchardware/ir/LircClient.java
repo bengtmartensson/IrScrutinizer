@@ -255,8 +255,8 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender, IIrSen
     }
 
     @Override
-    public void setVerbosity(boolean verbosity) {
-        this.verbose = verbosity;
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     @Override

@@ -211,8 +211,8 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
     }
 
     @Override
-    public void setVerbosity(boolean verbosity) {
-        this.verbose = verbosity;
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     @Override

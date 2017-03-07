@@ -35,7 +35,6 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> imp
     private final JPanel panel;
     protected Props properties;
     protected GuiUtils guiUtils;
-    protected boolean verbose;
     private final CapturingHardwareManager capturingHardwareManager;
 
     protected CapturingHardware(JPanel panel, Props properties, GuiUtils guiUtils,
@@ -44,7 +43,6 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> imp
         this.properties = properties;
         this.guiUtils = guiUtils;
         this.capturingHardwareManager = capturingHardwareManager;
-        this.verbose = properties.getVerbose();
     }
 
     /**
@@ -59,10 +57,6 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> imp
      */
     public abstract T getCapturer();
 
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
-    }
-
     @Override
     public void close() {
         try {
@@ -74,7 +68,7 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> imp
     }
 
     protected void setupHardwareCommonEnd() {
-        if (verbose && getCapturer() != null)
+        if (properties.getVerbose() && getCapturer() != null)
             try {
                 guiUtils.info("Capture device: " + getCapturer().getClass().getSimpleName() + ", Hardware version: " + getCapturer().getVersion());
             } catch (IOException ex) {
@@ -94,7 +88,7 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> imp
 
     @Override
     public boolean stopCapture() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return getCapturer().stopCapture();
     }
 
     @Override
@@ -103,8 +97,9 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> imp
     }
 
     @Override
-    public void setVerbosity(boolean verbosity) {
-        getCapturer().setVerbosity(verbosity);
+    public void setVerbose(boolean verbose) {
+        if (getCapturer() != null)
+            getCapturer().setVerbose(verbose);
     }
 
     @Override

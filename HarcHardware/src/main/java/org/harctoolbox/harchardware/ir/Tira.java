@@ -326,7 +326,7 @@ import org.harctoolbox.harchardware.IHarcHardware;
     }
 
     @Override
-    public void setVerbosity(boolean verbosity) {
+    public void setVerbose(boolean verbose) {
     }
 
     @Override

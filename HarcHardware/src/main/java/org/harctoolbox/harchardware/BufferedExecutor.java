@@ -74,8 +74,8 @@ public class BufferedExecutor implements ICommandLineDevice {
     }
 
     @Override
-    public void setVerbosity(boolean verbosity) {
-        executor.setVerbosity(verbosity);
+    public void setVerbose(boolean verbose) {
+        executor.setVerbose(verbose);
     }
 
     @Override

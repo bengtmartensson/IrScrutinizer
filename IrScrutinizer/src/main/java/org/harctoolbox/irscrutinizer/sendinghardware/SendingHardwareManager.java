@@ -77,8 +77,8 @@ public class SendingHardwareManager {
         return selected.getName();
     }
 
-    public void setVerbosity(boolean verbose) {
-        selected.setVerbosity(verbose);
+    public void setVerbose(boolean verbose) {
+        selected.setVerbose(verbose);
     }
 
     public boolean sendIr(IrSignal irSignal, int count) throws IOException, IrpMasterException, NoSuchTransmitterException, HardwareUnavailableException, HarcHardwareException {
@@ -164,7 +164,7 @@ public class SendingHardwareManager {
         selected = null;
         try {
             hardware.setup();
-            hardware.setVerbosity(properties.getVerbose());
+            hardware.setVerbose(properties.getVerbose());
             selected = hardware;
             properties.setTransmitHardware(hardware.getName());
         } catch (IOException ex) {

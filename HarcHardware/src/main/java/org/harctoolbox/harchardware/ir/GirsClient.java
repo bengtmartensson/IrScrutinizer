@@ -169,8 +169,8 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
     }
 
     @Override
-    public void setVerbosity(boolean verbose) {
-        hardware.setVerbosity(verbose);
+    public void setVerbose(boolean verbose) {
+        hardware.setVerbose(verbose);
         this.verbose = verbose;
     }
 

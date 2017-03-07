@@ -155,7 +155,7 @@ public class GirsClientBean extends javax.swing.JPanel implements ISendingReceiv
                 @Override
                 public void propertyChange(String name, Object oldValue, Object newValue) {
                     if (hardware != null)
-                        hardware.setVerbosity((Boolean) newValue);
+                        hardware.setVerbose((Boolean) newValue);
                 }
             });
         }

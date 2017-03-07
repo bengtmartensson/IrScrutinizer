@@ -102,8 +102,8 @@ public class UrlPort implements ICommandLineDevice {
     }
 
     @Override
-    public void setVerbosity(boolean verbosity) {
-        this.verbose = verbosity;
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     @Override

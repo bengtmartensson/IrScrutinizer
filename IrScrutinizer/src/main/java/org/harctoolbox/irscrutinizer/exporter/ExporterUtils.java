@@ -308,6 +308,30 @@ public class ExporterUtils {
         return Long.reverse(n & mask) >>> (Long.SIZE - bits);
     }
 
+    public static int xor(int x, int y) {
+        return x ^ y;
+    }
+
+    public static long xor(long x, long y) {
+        return x ^ y;
+    }
+
+    public static int or(int x, int y) {
+        return x | y;
+    }
+
+    public static long or(long x, long y) {
+        return x | y;
+    }
+
+    public static int and(int x, int y) {
+        return x & y;
+    }
+
+    public static long and(long x, long y) {
+        return x & y;
+    }
+
     private static long mkMask(long length) {
         return (1L << length) - 1L;
     }

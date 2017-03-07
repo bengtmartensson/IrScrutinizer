@@ -134,8 +134,8 @@ public class FramedDevice {
         return hardware.getVersion();
     }
 
-    public void setVerbosity(boolean verbosity) {
-        hardware.setVerbosity(verbosity);
+    public void setVerbose(boolean verbose) {
+        hardware.setVerbose(verbose);
     }
 
     public void setDebug(int debug) {

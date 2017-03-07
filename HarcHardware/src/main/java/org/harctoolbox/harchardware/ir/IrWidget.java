@@ -314,7 +314,7 @@ public class IrWidget implements IHarcHardware, ICapture {
     }
 
     @Override
-    public void setVerbosity(boolean verbose) {
+    public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
 

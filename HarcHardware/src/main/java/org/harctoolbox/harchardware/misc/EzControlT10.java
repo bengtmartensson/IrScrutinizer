@@ -307,8 +307,8 @@ public class EzControlT10 implements IHarcHardware, IWeb {
     }
 
     @Override
-    public void setVerbosity(boolean verbosity) {
-        this.verbose = verbosity;
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     public void setInterface(Interface interfaze) {

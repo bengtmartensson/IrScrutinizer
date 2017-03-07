@@ -134,8 +134,8 @@ public abstract class LocalSerialPort implements IHarcHardware {
         commPort = portIdentifier.open(this.getClass().getName(), msToWaitForPort);
     }
     @Override
-    public void setVerbosity(boolean verbosity) {
-        this.verbose = verbosity;
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
     /**
      * Opens the device.

@@ -151,7 +151,7 @@ public class TcpSocketChannel implements ICommandLineDevice, IBytesCommand {
     }
 
     @Override
-    public void setVerbosity(boolean verbose) {
+    public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
 

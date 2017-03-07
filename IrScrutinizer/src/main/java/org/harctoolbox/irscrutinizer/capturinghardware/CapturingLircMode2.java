@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013 Bengt Martensson.
+Copyright (C) 2013, 2017 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,53 +29,59 @@ import org.harctoolbox.irscrutinizer.Props;
  */
 public class CapturingLircMode2 extends CapturingHardware<LircMode2> implements ICapturingHardware<LircMode2> {
 
-    private String commandName;
     private LircMode2 hardware;
+    private ProcessBuilder processBuilder;
+    private Process process;
+    private String[] command;
+    private boolean useStdin;
 
-    // Since the LIRC process is finicky, start it only once, and then leave it running until the program terminates.
-    public CapturingLircMode2(String commandName, JPanel panel, Props properties, GuiUtils guiUtils,
+    public CapturingLircMode2(boolean useStdin, String commandName, JPanel panel, Props properties, GuiUtils guiUtils,
             CapturingHardwareManager capturingHardwareManager) {
         super(panel, properties, guiUtils, capturingHardwareManager);
-        this.commandName = commandName;
+        command = commandName.split("\\s+");
+        hardware = null;
+        this.useStdin = useStdin;
     }
 
     /**
-     * @return the commandName
-     */
-    public String getCommandName() {
-        return commandName;
-    }
-
-    /**
+     * @param useStdin
      * @param commandName the commandName to set
      */
-    public void setCommandName(String commandName) {
-        this.commandName = commandName;
-        if (hardware != null)
-            hardware.setCommand(commandName);
-        properties.setLircMode2Command(commandName);
+    public void setCommandName(boolean useStdin, String commandName) {
+        this.useStdin = useStdin;
+        command = commandName.split("\\s+");
     }
 
     @Override
     public void open() throws IOException {
-        hardware.open();
+        close();
+        if (useStdin)
+            hardware = new LircMode2(properties.getVerbose(), properties.getCaptureEndingTimeout());
+        else {
+            processBuilder = new ProcessBuilder(command);
+            processBuilder.redirectInput(ProcessBuilder.Redirect.INHERIT);
+            processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
+            process = processBuilder.start();
+            hardware = new LircMode2(process.getInputStream(), properties.getVerbose(), properties.getCaptureEndingTimeout());
+        }
+    }
+
+    public void stop() throws IOException {
+        if (hardware != null)
+            hardware.close();
+        if (process != null)
+            process.destroy();
+        process = null;
+        processBuilder = null;
     }
 
     @Override
     public void setup() {
-        //setupHardwareCommonStart();
         try {
-            hardware = new LircMode2(commandName, properties.getVerbose(),
-                    properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndingTimeout());
             selectMe();
         } catch (IOException | HarcHardwareException ex) {
             guiUtils.error(ex);
         }
-        //setupHardwareCommonEnd(lircMode2command);
-        //properties.setCaptureDevice(lircMode2RadioButtonMenuItem.getText());
-
-        //setupHardwareCommonEnd(lircMode2command);
-        //properties.setCaptureDevice(lircMode2RadioButtonMenuItem.getText());
     }
 
     @Override

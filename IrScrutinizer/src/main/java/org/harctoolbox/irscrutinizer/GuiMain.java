@@ -103,6 +103,8 @@ public class GuiMain extends javax.swing.JFrame {
     private final String applicationHome;
     private java.awt.Component lastPane;
     private int dynamicExportFormatsMenuPosition;
+    private boolean initialized = false;
+    private boolean stdinHasBeenClosed = false;
 
     private final String testSignalCcf = // NEC1 12.34 56
             "0000 006C 0022 0002 015B 00AD 0016 0016 0016 0016 0016 0041 0016 0041 "
@@ -516,7 +518,7 @@ public class GuiMain extends javax.swing.JFrame {
         properties.addVerboseChangeListener(new Props.IPropertyChangeListener() {
             @Override
             public void propertyChange(String name, Object oldValue, Object newValue) {
-                sendingHardwareManager.setVerbosity((Boolean)newValue);
+                sendingHardwareManager.setVerbose((Boolean)newValue);
                 guiUtils.setVerbose((Boolean)newValue);
             }
         });
@@ -581,7 +583,7 @@ public class GuiMain extends javax.swing.JFrame {
                 globalCacheCaptureSelector, captureGlobalCachePanel,
                 properties, guiUtils, capturingHardwareManager));
 
-        capturingHardwareManager.add(new CapturingLircMode2(properties.getLircMode2Command(),
+        capturingHardwareManager.add(new CapturingLircMode2(properties.getLircMode2UseStdin(), properties.getLircMode2Command(),
                 captureLircMode2Panel, properties, guiUtils, capturingHardwareManager));
 
         capturingHardwareManager.add(new CapturingSendingHardware<GirsClient>(captureGirsPanel, girsClientPanel,
@@ -635,7 +637,7 @@ public class GuiMain extends javax.swing.JFrame {
         properties.addVerboseChangeListener(new Props.IPropertyChangeListener() {
             @Override
             public void propertyChange(String name, Object oldValue, Object newValue) {
-                capturingHardwareManager.setVerbosity((Boolean)newValue);
+                capturingHardwareManager.setVerbose((Boolean)newValue);
             }
         });
 
@@ -741,6 +743,7 @@ public class GuiMain extends javax.swing.JFrame {
         }
 
         processArguments(arguments);
+        initialized = true;
     } // end of constructor
 
     private void processArguments(List<String> arguments) {
@@ -1575,6 +1578,10 @@ public class GuiMain extends javax.swing.JFrame {
                             registerParameterSignal(irSignal, null, null);
                         }
                     }
+                    if (!capturingHardwareManager.isReady()) {
+                        guiUtils.error("Selected capture device is no longer ready");
+                        startStopToggleButton.setSelected(false);
+                    }
                 } catch (IOException | HarcHardwareException | IrpMasterException ex) {
                     guiUtils.error(ex);
                     startStopToggleButton.setSelected(false);
@@ -1840,6 +1847,10 @@ public class GuiMain extends javax.swing.JFrame {
         } catch (IOException | SAXException | ParserConfigurationException ex) {
             guiUtils.error(ex);
         }
+    }
+
+    private boolean mode2UseStdin() {
+        return mode2TabbedPane.getSelectedIndex() == 0;
     }
 
     /**
@@ -2202,11 +2213,14 @@ public class GuiMain extends javax.swing.JFrame {
         globalCacheCaptureSelector = new org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector(guiUtils, properties.getVerbose(), properties.getSendingTimeout(), false);
         capturingGlobalCacheHardwareHelpButton = new javax.swing.JButton();
         captureLircMode2Panel = new javax.swing.JPanel();
-        lircMode2CommandTextField = new javax.swing.JTextField();
-        jLabel24 = new javax.swing.JLabel();
         startMode2Button = new javax.swing.JButton();
         stopMode2Button = new javax.swing.JButton();
         capturingMode2HardwareHelpButton = new javax.swing.JButton();
+        mode2TabbedPane = new javax.swing.JTabbedPane();
+        mode2StdinPane = new javax.swing.JPanel();
+        mode2SubprocessPane = new javax.swing.JPanel();
+        lircMode2CommandTextField = new javax.swing.JTextField();
+        mode2CommandLabel = new javax.swing.JLabel();
         captureDevLircPanel = new javax.swing.JPanel();
         capturingDevLircHardwareHelpButton = new javax.swing.JButton();
         devLircCapturingSendingBean = new CapturingSendingBean(this);
@@ -5705,10 +5719,6 @@ public class GuiMain extends javax.swing.JFrame {
 
         capturingHardwareTabbedPane.addTab("Global Caché", captureGlobalCachePanel);
 
-        lircMode2CommandTextField.setText(properties.getLircMode2Command());
-
-        jLabel24.setText("LIRC Mode 2 command");
-
         startMode2Button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/connect_creating.png"))); // NOI18N
         startMode2Button.setMnemonic('S');
         startMode2Button.setText("Start");
@@ -5738,6 +5748,54 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
+        mode2TabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                mode2TabbedPaneStateChanged(evt);
+            }
+        });
+
+        javax.swing.GroupLayout mode2StdinPaneLayout = new javax.swing.GroupLayout(mode2StdinPane);
+        mode2StdinPane.setLayout(mode2StdinPaneLayout);
+        mode2StdinPaneLayout.setHorizontalGroup(
+            mode2StdinPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        mode2StdinPaneLayout.setVerticalGroup(
+            mode2StdinPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        mode2TabbedPane.addTab("Standard Input", mode2StdinPane);
+
+        lircMode2CommandTextField.setText(properties.getLircMode2Command());
+
+        mode2CommandLabel.setText("Mode 2 command");
+
+        javax.swing.GroupLayout mode2SubprocessPaneLayout = new javax.swing.GroupLayout(mode2SubprocessPane);
+        mode2SubprocessPane.setLayout(mode2SubprocessPaneLayout);
+        mode2SubprocessPaneLayout.setHorizontalGroup(
+            mode2SubprocessPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mode2SubprocessPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(mode2SubprocessPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(mode2CommandLabel)
+                    .addComponent(lircMode2CommandTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+        mode2SubprocessPaneLayout.setVerticalGroup(
+            mode2SubprocessPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mode2SubprocessPaneLayout.createSequentialGroup()
+                .addContainerGap(13, Short.MAX_VALUE)
+                .addComponent(mode2CommandLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lircMode2CommandTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(47, 47, 47))
+        );
+
+        mode2TabbedPane.addTab("Command in Sub-process", mode2SubprocessPane);
+
+        mode2TabbedPane.setSelectedIndex(properties.getLircMode2UseStdin() ? 0 : 1);
+
         javax.swing.GroupLayout captureLircMode2PanelLayout = new javax.swing.GroupLayout(captureLircMode2Panel);
         captureLircMode2Panel.setLayout(captureLircMode2PanelLayout);
         captureLircMode2PanelLayout.setHorizontalGroup(
@@ -5745,32 +5803,35 @@ public class GuiMain extends javax.swing.JFrame {
             .addGroup(captureLircMode2PanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel24)
-                    .addComponent(lircMode2CommandTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureLircMode2PanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(capturingMode2HardwareHelpButton))
                     .addGroup(captureLircMode2PanelLayout.createSequentialGroup()
-                        .addComponent(startMode2Button)
-                        .addGap(18, 18, 18)
-                        .addComponent(stopMode2Button)))
-                .addContainerGap(240, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureLircMode2PanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingMode2HardwareHelpButton)
+                        .addGroup(captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(captureLircMode2PanelLayout.createSequentialGroup()
+                                .addComponent(startMode2Button)
+                                .addGap(18, 18, 18)
+                                .addComponent(stopMode2Button))
+                            .addComponent(mode2TabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 200, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         captureLircMode2PanelLayout.setVerticalGroup(
             captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(captureLircMode2PanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel24)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lircMode2CommandTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(startMode2Button)
-                    .addComponent(stopMode2Button))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
-                .addComponent(capturingMode2HardwareHelpButton)
-                .addContainerGap())
+                .addComponent(mode2TabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(captureLircMode2PanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(capturingMode2HardwareHelpButton)
+                        .addContainerGap())
+                    .addGroup(captureLircMode2PanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(startMode2Button)
+                            .addComponent(stopMode2Button))
+                        .addContainerGap(35, Short.MAX_VALUE))))
         );
 
         capturingHardwareTabbedPane.addTab("LIRC Mode 2", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), captureLircMode2Panel); // NOI18N
@@ -7392,6 +7453,9 @@ public class GuiMain extends javax.swing.JFrame {
             }
             captureThread = new CaptureThread();
             captureThread.start();
+//        } else {
+//            if (!startStopToggleButton.isSelected())
+//                capturingHardwareManager.stopCapture();
         }
     }//GEN-LAST:event_startStopToggleButtonActionPerformed
 
@@ -8473,12 +8537,15 @@ public class GuiMain extends javax.swing.JFrame {
     private void startMode2ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startMode2ButtonActionPerformed
         CapturingLircMode2 lircMode2 = (CapturingLircMode2) capturingHardwareManager.getCapturingHardware("LIRC Mode 2");
         String cmd = lircMode2CommandTextField.getText();
-        lircMode2.setCommandName(cmd);
+        properties.setLircMode2Command(cmd);
+        lircMode2.setCommandName(mode2UseStdin(), cmd);
         try {
             lircMode2.open();
             lircMode2CommandTextField.setEnabled(false);
             stopMode2Button.setEnabled(true);
             startMode2Button.setEnabled(false);
+            mode2TabbedPane.setEnabled(false);
+            mode2CommandLabel.setEnabled(false);
         } catch (IOException ex) {
             guiUtils.error(ex);
         }
@@ -8487,9 +8554,14 @@ public class GuiMain extends javax.swing.JFrame {
     private void stopMode2ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopMode2ButtonActionPerformed
         CapturingLircMode2 lircMode2 = (CapturingLircMode2) capturingHardwareManager.getCapturingHardware("LIRC Mode 2");
         lircMode2.close();
+        if (mode2UseStdin())
+            stdinHasBeenClosed = true;
         lircMode2CommandTextField.setEnabled(true);
         stopMode2Button.setEnabled(false);
-        startMode2Button.setEnabled(true);
+        startMode2Button.setEnabled(!stdinHasBeenClosed);
+        mode2TabbedPane.setEnabled(true);
+        mode2CommandLabel.setEnabled(true);
+
     }//GEN-LAST:event_stopMode2ButtonActionPerformed
 
     private void clonePlotMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clonePlotMenuItemActionPerformed
@@ -8992,6 +9064,12 @@ public class GuiMain extends javax.swing.JFrame {
         insertCapturedDataTextAreaFromClipboard();
     }//GEN-LAST:event_rawCodePasteMenuItemActionPerformed
 
+    private void mode2TabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_mode2TabbedPaneStateChanged
+        if (initialized)
+            properties.setLircMode2UseStdin(mode2TabbedPane.getSelectedIndex() == 0);
+        startMode2Button.setEnabled(!mode2UseStdin() || !stdinHasBeenClosed);
+    }//GEN-LAST:event_mode2TabbedPaneStateChanged
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9276,7 +9354,6 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
-    private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
@@ -9344,8 +9421,12 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu loadMenu;
     private javax.swing.JMenuItem mainDocuMenuItem;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JLabel mode2CommandLabel;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<Mode2Importer> mode2FileImporterBean;
     private javax.swing.JPanel mode2ImportPanel;
+    private javax.swing.JPanel mode2StdinPane;
+    private javax.swing.JPanel mode2SubprocessPane;
+    private javax.swing.JTabbedPane mode2TabbedPane;
     private javax.swing.JMenuItem moveDownMenuItem;
     private javax.swing.JMenuItem moveDownMenuItem1;
     private javax.swing.JMenuItem moveUpMenuItem;

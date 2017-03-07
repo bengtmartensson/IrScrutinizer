@@ -93,7 +93,7 @@ public class IrAudioDevice implements IHarcHardware, IRawIrSender {
     }
 
     @Override
-    public void setVerbosity(boolean verbose) {
+    public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
 

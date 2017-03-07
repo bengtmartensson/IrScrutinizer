@@ -47,7 +47,6 @@ public class CapturingHardwareManager {
     private ButtonGroup buttonGroup;
     private final Props properties;
     private ICapturingHardware<? extends IHarcHardware> selected;
-    private boolean verbosity;
     private final GuiUtils guiUtils;
 
     public CapturingHardwareManager(GuiUtils guiUtils, Props properties, JTabbedPane tabbedPane, AbstractButton startButton) {
@@ -92,13 +91,16 @@ public class CapturingHardwareManager {
         return table.get(name);
     }
 
-    public void setVerbosity(boolean verbosity) {
-        this.verbosity = verbosity;
-        selected.setVerbose(verbosity);
+    public void setVerbose(boolean verbose) {
+        selected.setVerbose(verbose);
     }
 
     public boolean isReady() {
         return (selected != null) && selected.isValid();
+    }
+
+    public boolean stopCapture() {
+        return selected.stopCapture();
     }
 
     public boolean hasSelection() {
@@ -196,7 +198,7 @@ public class CapturingHardwareManager {
             selected = hardware;
             hardware.setup();
         }
-        selected.setVerbose(verbosity);
+        selected.setVerbose(properties.getVerbose());
         if (startButton != null)
             startButton.setEnabled(true);
 

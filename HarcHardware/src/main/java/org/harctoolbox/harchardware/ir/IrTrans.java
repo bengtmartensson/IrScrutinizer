@@ -178,8 +178,8 @@ public class IrTrans implements IHarcHardware, IRawIrSender, ITransmitter, IWeb 
     }
 
     @Override
-    public void setVerbosity(boolean verbosity) {
-        this.verbose = verbosity;
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     @Override

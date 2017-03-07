@@ -126,7 +126,7 @@ public class UdpSocketChannel {
         socket.setSoTimeout(timeout);
     }
 
-    public void setVerbosity(boolean verbose) {
+    public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
 

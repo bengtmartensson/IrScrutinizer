@@ -137,8 +137,8 @@ public class TcpSocketPort implements ICommandLineDevice, IBytesCommand, IHarcHa
     }
 
     @Override
-    public void setVerbosity(boolean verbose) {
-        tcpSocketChannel.setVerbosity(verbose);
+    public void setVerbose(boolean verbose) {
+        tcpSocketChannel.setVerbose(verbose);
     }
 
     @Override

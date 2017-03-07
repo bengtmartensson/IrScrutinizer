@@ -50,7 +50,7 @@ public class IrDummy implements IHarcHardware, IRawIrSender, IIrSenderStop, ITra
         }
     }
 
-    private boolean verbosity;
+    private boolean verbose;
     private int debug;
     private int timeout;
     private boolean valid;
@@ -76,8 +76,8 @@ public class IrDummy implements IHarcHardware, IRawIrSender, IIrSenderStop, ITra
     }
 
     @Override
-    public void setVerbosity(boolean verbosity) {
-        this.verbosity = verbosity;
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     @Override

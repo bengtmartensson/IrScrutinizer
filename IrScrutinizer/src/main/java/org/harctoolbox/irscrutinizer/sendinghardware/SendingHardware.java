@@ -63,9 +63,9 @@ public abstract class SendingHardware <T extends IRawIrSender & IHarcHardware> {
     /**
      * @param verbose the verbose to set
      */
-    public void setVerbosity(boolean verbose) {
+    public void setVerbose(boolean verbose) {
         if (getRawIrSender() != null)
-            getRawIrSender().setVerbosity(verbose);
+            getRawIrSender().setVerbose(verbose);
     }
 
     /**

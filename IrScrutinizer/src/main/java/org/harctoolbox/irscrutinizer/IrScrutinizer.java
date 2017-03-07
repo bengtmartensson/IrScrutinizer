@@ -163,40 +163,40 @@ public class IrScrutinizer {
 
             @Override
             public void run() {
-                try {
-                    new GuiMain(applicationHome, propsfilename, verbose, debug, userlevel, arguments).setVisible(true);
-                } catch (HeadlessException ex) {
-                    System.err.println("This program does not run in headless mode.");
-                } catch (ParseException | IOException | IncompatibleArgumentException | URISyntaxException
-                        | RuntimeException ex) {
-                    GuiUtils.fatal(ex, IrpUtils.exitConfigReadError, new GuiUtils.EmergencyFixer () {
-                        private String backupfile;
+            try {
+                new GuiMain(applicationHome, propsfilename, verbose, debug, userlevel, arguments).setVisible(true);
+            } catch (HeadlessException ex) {
+                System.err.println("This program does not run in headless mode.");
+            } catch (ParseException | IOException | IncompatibleArgumentException | URISyntaxException
+                    | RuntimeException ex) {
+                GuiUtils.fatal(ex, IrpUtils.exitConfigReadError, new GuiUtils.EmergencyFixer () {
+                    private String backupfile;
 
-                        @Override
-                        public void fix() {
-                            backupfile = nukeProperties(false);
-                        }
+                    @Override
+                    public void fix() {
+                        backupfile = nukeProperties(false);
+                    }
 
-                        @Override
-                        public String getQuestion() {
-                            return "Remove the properites file?";
-                        }
+                    @Override
+                    public String getQuestion() {
+                        return "Remove the properites file?";
+                    }
 
-                        @Override
-                        public String getYesMessage() {
-                            return "Renamed the properties file to " + backupfile + ".";
-                        }
+                    @Override
+                    public String getYesMessage() {
+                        return "Renamed the properties file to " + backupfile + ".";
+                    }
 
-                        @Override
-                        public String getNoMessage() {
-                            return null;
-                        }
-                    });
-                } catch (ParserConfigurationException ex) {
-                    GuiUtils.fatal(ex, IrpUtils.exitInternalFailure);
-                } catch (SAXException ex) {
-                    GuiUtils.fatal(ex, IrpUtils.exitXmlError);
-                }
+                    @Override
+                    public String getNoMessage() {
+                        return null;
+                    }
+                });
+            } catch (ParserConfigurationException ex) {
+                GuiUtils.fatal(ex, IrpUtils.exitInternalFailure);
+            } catch (SAXException ex) {
+                GuiUtils.fatal(ex, IrpUtils.exitXmlError);
+            }
             }
         });
     }

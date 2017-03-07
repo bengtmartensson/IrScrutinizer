@@ -42,7 +42,7 @@ public interface ISendingHardware <T extends IRawIrSender & IHarcHardware> {
 
     public JPanel getPanel();
 
-    public void setVerbosity(boolean verbosity);
+    public void setVerbose(boolean verbose);
 
     public void close();
 

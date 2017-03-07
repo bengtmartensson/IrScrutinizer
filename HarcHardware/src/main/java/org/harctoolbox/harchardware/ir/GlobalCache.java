@@ -49,7 +49,6 @@ import org.harctoolbox.harchardware.comm.TcpSocketPort;
 
 public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, ITransmitter, ICapture, IWeb {
 
-
     private final static int smallDelay = 10; // ms
     private final static int gcPort = 4998;
     private final static int gcFirstSerialPort = 4999;
@@ -602,8 +601,8 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
     }
 
     @Override
-    public void setVerbosity(boolean verbosity) {
-        this.verbose = verbosity;
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     @Override
@@ -1095,8 +1094,8 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
         }
 
         @Override
-        public void setVerbosity(boolean verbosity) {
-            tcpSocketChannel.setVerbosity(verbose);
+        public void setVerbose(boolean verbose) {
+            tcpSocketChannel.setVerbose(verbose);
         }
 
         @Override
