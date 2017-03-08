@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
-import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
@@ -43,18 +42,15 @@ public class CapturingHardwareManager {
     private final LinkedHashMap<String, ICapturingHardware<?>> table;
     private final JTabbedPane tabbedPane;
     private JMenu menu = null;
-    private final AbstractButton startButton;
     private ButtonGroup buttonGroup;
     private final Props properties;
     private ICapturingHardware<? extends IHarcHardware> selected;
     private final GuiUtils guiUtils;
 
-    public CapturingHardwareManager(GuiUtils guiUtils, Props properties, JTabbedPane tabbedPane, AbstractButton startButton) {
+    public CapturingHardwareManager(GuiUtils guiUtils, Props properties, JTabbedPane tabbedPane) {
         this.guiUtils = guiUtils;
         this.properties = properties;
         this.tabbedPane = tabbedPane;
-        this.startButton = startButton;
-        this.startButton.setEnabled(false);
         table = new LinkedHashMap<>(16);
     }
 
@@ -154,11 +150,9 @@ public class CapturingHardwareManager {
      */
     public void select(String name) throws IOException, HarcHardwareException {
         ICapturingHardware<?> hardware = table.get(name);
-        if (hardware == null) {
-            if (startButton != null)
-                startButton.setEnabled(false);
+        if (hardware == null)
             throw new IllegalArgumentException(name + " does not exist in map.");
-        }
+
         select(hardware);
     }
 
@@ -184,8 +178,6 @@ public class CapturingHardwareManager {
     public void selectDoWork(String name) throws IOException, HarcHardwareException {
         ICapturingHardware<?> hardware = table.get(name);
         if (hardware == null) {
-            if (startButton != null)
-                startButton.setEnabled(false);
             throw new IllegalArgumentException(name + " does not exist in map.");
         }
         selectDoWork(hardware);
@@ -199,8 +191,6 @@ public class CapturingHardwareManager {
             hardware.setup();
         }
         selected.setVerbose(properties.getVerbose());
-        if (startButton != null)
-            startButton.setEnabled(true);
 
         properties.setCaptureDevice(hardware.getName());
 

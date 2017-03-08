@@ -2217,18 +2217,20 @@
                                           </Group>
                                       </Group>
                                   </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="startButton" linkSize="17" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Component id="startButton" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="transmitSignalButton1" linkSize="17" min="-2" max="-2" attributes="0"/>
+                                      <Component id="continuousCaptureButton" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="pasteAnalyzeButton" linkSize="17" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                                      <Component id="transmitSignalButton" linkSize="17" max="32767" attributes="0"/>
+                                      <Component id="transmitSignalButton1" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="signalExportButton" linkSize="17" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="196" max="32767" attributes="0"/>
-                                      <Component id="scrutinizeSignalHelpButton" linkSize="17" min="-2" pref="102" max="-2" attributes="0"/>
+                                      <Component id="pasteAnalyzeButton" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="transmitSignalButton" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="signalExportButton" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace pref="34" max="32767" attributes="0"/>
+                                      <Component id="scrutinizeSignalHelpButton" min="-2" pref="102" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -2268,6 +2270,7 @@
                                   <Component id="transmitSignalButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="signalExportButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="pasteAnalyzeButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="continuousCaptureButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                           </Group>
@@ -2332,7 +2335,6 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Capture"/>
                         <Property name="toolTipText" type="java.lang.String" value="Reads an IR signal from the hardware configured in the Capturing Hardware tab"/>
-                        <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startButtonActionPerformed"/>
@@ -2423,6 +2425,18 @@
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pasteAnalyzeButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JToggleButton" name="continuousCaptureButton">
+                      <Properties>
+                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/reload.png"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Capt. (cont.)"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Reads an IR signal from the hardware configured in the Capturing Hardware tab"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="continuousCaptureButtonActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>

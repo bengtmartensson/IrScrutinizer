@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013, 2014, 2015 Bengt Martensson.
+Copyright (C) 2013, 2014, 2015, 2017 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JPopupMenu.Separator;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JToggleButton;
 import javax.swing.TransferHandler;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -574,7 +575,7 @@ public class GuiMain extends javax.swing.JFrame {
         optionsMenu.add(sendingHardwareManager.getMenu());
 
         capturingHardwareManager = new CapturingHardwareManager(guiUtils, properties,
-                capturingHardwareTabbedPane, startButton);
+                capturingHardwareTabbedPane/*, startButton*/);
 
         capturingHardwareManager.add(new CapturingSerial<>(IrWidget.class, captureIrWidgetPanel,
                 irWidgetSerialPortSimpleBean, properties, guiUtils, capturingHardwareManager));
@@ -1559,35 +1560,39 @@ public class GuiMain extends javax.swing.JFrame {
         (new CopyClipboardText(null)).toClipboard(str.toString());
     }
 
+    private static interface CaptureThreadClient {
+
+        JToggleButton getButton();
+        void processSequence(ModulatedIrSequence modulatedIrSequence);
+    }
+
     private class CaptureThread extends Thread {
-        CaptureThread() {
+        private final CaptureThreadClient client;
+
+        CaptureThread(CaptureThreadClient client) {
+            this.client = client;
         }
 
         @Override
         public void run() {
-            while (startStopToggleButton.isSelected()) {
+            startButton.setEnabled(false);
+            while (client.getButton().isSelected()) {
                 try {
                     ModulatedIrSequence sequence = captureIrSequence();
-                    if (sequence != null) {
-                        IrSignal irSignal = InterpretString.interpretIrSequence(sequence,
-                                properties.getInvokeRepeatFinder(),
-                                properties.getInvokeCleaner());
-                        if (rawPanel.isVisible()) {
-                            registerRawSignal(irSignal, null, null);
-                        } else {
-                            registerParameterSignal(irSignal, null, null);
-                        }
-                    }
+                    if (sequence != null)
+                        client.processSequence(sequence);
+
                     if (!capturingHardwareManager.isReady()) {
                         guiUtils.error("Selected capture device is no longer ready");
-                        startStopToggleButton.setSelected(false);
+                        client.getButton().setSelected(false);
                     }
                 } catch (IOException | HarcHardwareException | IrpMasterException ex) {
                     guiUtils.error(ex);
-                    startStopToggleButton.setSelected(false);
+                    client.getButton().setSelected(false);
                 }
             }
-            captureThread = null;
+            captureThread = null; // thread suicide
+            startButton.setEnabled(true);
             enableRawCaptureOnly(false);
         }
     }
@@ -1977,6 +1982,7 @@ public class GuiMain extends javax.swing.JFrame {
         scrutinizeSignalHelpButton = new javax.swing.JButton();
         transmitSignalButton1 = new javax.swing.JButton();
         pasteAnalyzeButton = new javax.swing.JButton();
+        continuousCaptureButton = new javax.swing.JToggleButton();
         plotScrollPane = new javax.swing.JScrollPane();
         irPlotter = new org.harctoolbox.guicomponents.IrPlotter();
         remoteScrutinizerPanel = new javax.swing.JPanel();
@@ -3044,7 +3050,6 @@ public class GuiMain extends javax.swing.JFrame {
         startButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_record.png"))); // NOI18N
         startButton.setText("Capture");
         startButton.setToolTipText("Reads an IR signal from the hardware configured in the Capturing Hardware tab");
-        startButton.setEnabled(false);
         startButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 startButtonActionPerformed(evt);
@@ -3107,6 +3112,15 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
 
+        continuousCaptureButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/reload.png"))); // NOI18N
+        continuousCaptureButton.setText("Capt. (cont.)");
+        continuousCaptureButton.setToolTipText("Reads an IR signal from the hardware configured in the Capturing Hardware tab");
+        continuousCaptureButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                continuousCaptureButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout infoPanelLayout = new javax.swing.GroupLayout(infoPanel);
         infoPanel.setLayout(infoPanelLayout);
         infoPanelLayout.setHorizontalGroup(
@@ -3148,21 +3162,21 @@ public class GuiMain extends javax.swing.JFrame {
                     .addGroup(infoPanelLayout.createSequentialGroup()
                         .addComponent(startButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(continuousCaptureButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(transmitSignalButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(pasteAnalyzeButton)
-                        .addGap(12, 12, 12)
-                        .addComponent(transmitSignalButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(transmitSignalButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(signalExportButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 196, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                         .addComponent(scrutinizeSignalHelpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())))
         );
 
         infoPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel3, jLabel4});
-
-        infoPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {pasteAnalyzeButton, scrutinizeSignalHelpButton, signalExportButton, startButton, transmitSignalButton, transmitSignalButton1});
 
         infoPanelLayout.setVerticalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3193,7 +3207,8 @@ public class GuiMain extends javax.swing.JFrame {
                     .addComponent(transmitSignalButton1)
                     .addComponent(transmitSignalButton)
                     .addComponent(signalExportButton)
-                    .addComponent(pasteAnalyzeButton))
+                    .addComponent(pasteAnalyzeButton)
+                    .addComponent(continuousCaptureButton))
                 .addGap(5, 5, 5))
         );
 
@@ -7447,15 +7462,33 @@ public class GuiMain extends javax.swing.JFrame {
             startStopToggleButton.setSelected(false);
             return;
         }
+        if (startStopToggleButton.isSelected() && captureThread != null) {
+            guiUtils.error("Another capture thread is running. This must first be ended.");
+            startStopToggleButton.setSelected(false);
+            return;
+        }
         if (captureThread == null) {
             if (rawCookedTabbedPane.getSelectedIndex() == 1) {
                 enableRawCaptureOnly(true);
             }
-            captureThread = new CaptureThread();
+            captureThread = new CaptureThread(new CaptureThreadClient() {
+                @Override
+                public JToggleButton getButton() {
+                    return startStopToggleButton;
+                }
+
+                @Override
+                public void processSequence(ModulatedIrSequence sequence) {
+                    IrSignal irSignal = InterpretString.interpretIrSequence(sequence,
+                            properties.getInvokeRepeatFinder(),
+                            properties.getInvokeCleaner());
+                    if (rawPanel.isVisible())
+                        registerRawSignal(irSignal, null, null);
+                    else
+                        registerParameterSignal(irSignal, null, null);
+                }
+            });
             captureThread.start();
-//        } else {
-//            if (!startStopToggleButton.isSelected())
-//                capturingHardwareManager.stopCapture();
         }
     }//GEN-LAST:event_startStopToggleButtonActionPerformed
 
@@ -8216,7 +8249,7 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void captureTestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_captureTestButtonActionPerformed
         if (captureThread != null) {
-            guiUtils.error("A capture is still running in \"Scrutinize Remote\". Please stop it first.");
+            guiUtils.error("A capture thread is running. This must first be ended.");
             return;
         }
         if (!capturingHardwareManager.hasSelection()) {
@@ -8400,9 +8433,10 @@ public class GuiMain extends javax.swing.JFrame {
             return;
         }
         if (captureThread != null) {
-            guiUtils.error("A capture is still running in \"Scrutinize Remote\". Please stop it first.");
+            guiUtils.error("A capture thread is running. This must first be ended.");
             return;
         }
+        Cursor old = setBusyCursor();
         try {
             ModulatedIrSequence modulatedIrSequence = captureIrSequence();
 
@@ -8412,6 +8446,8 @@ public class GuiMain extends javax.swing.JFrame {
                 guiUtils.message("no signal received");
         } catch (IOException | HarcHardwareException | IrpMasterException ex) {
             guiUtils.error(ex);
+        } finally {
+            resetCursor(old);
         }
     }//GEN-LAST:event_startButtonActionPerformed
 
@@ -9070,6 +9106,34 @@ public class GuiMain extends javax.swing.JFrame {
         startMode2Button.setEnabled(!mode2UseStdin() || !stdinHasBeenClosed);
     }//GEN-LAST:event_mode2TabbedPaneStateChanged
 
+    private void continuousCaptureButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_continuousCaptureButtonActionPerformed
+        if (!capturingHardwareManager.isReady()) {
+            guiUtils.error("No capture device selected, aborting");
+            continuousCaptureButton.setSelected(false);
+            return;
+        }
+        if (continuousCaptureButton.isSelected() && captureThread != null) {
+            guiUtils.error("Another capture thread is running. This must first be ended.");
+            continuousCaptureButton.setSelected(false);
+            return;
+        }
+
+        if (continuousCaptureButton.isSelected()) {
+            captureThread = new CaptureThread(new CaptureThreadClient() {
+                @Override
+                public JToggleButton getButton() {
+                    return continuousCaptureButton;
+                }
+
+                @Override
+                public void processSequence(ModulatedIrSequence sequence) {
+                    processIr(sequence);
+                }
+            });
+            captureThread.start();
+        }
+    }//GEN-LAST:event_continuousCaptureButtonActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9130,6 +9194,7 @@ public class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel commandFusionSendPanel;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean commandFusionSendingSerialPortBean;
     private org.harctoolbox.guicomponents.Console console;
+    private javax.swing.JToggleButton continuousCaptureButton;
     private javax.swing.JButton controlTowerBrowseButton;
     private javax.swing.JComboBox<String> controlTowerCodeSetComboBox;
     private javax.swing.JComboBox<String> controlTowerDeviceTypeComboBox;
