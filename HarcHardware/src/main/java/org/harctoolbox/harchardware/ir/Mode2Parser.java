@@ -117,7 +117,7 @@ public class Mode2Parser {
         loop:
         while (true) {
             synchronized (reader) {
-                line = reader != null ? reader.readLine() : null;
+                line = reader.readLine();
             }
             if (verbose)
                 System.err.println(line);
