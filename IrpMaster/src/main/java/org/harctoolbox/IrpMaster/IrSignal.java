@@ -47,6 +47,7 @@ public class IrSignal {
      *
      * @param args
      */
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     public static void main(String[] args) {
         if (args.length == 0) {
             int times[] = {
@@ -224,6 +225,7 @@ public class IrSignal {
      * @throws FileNotFoundException
      * @throws UnassignedException
      */
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     public IrSignal(String protocolsIniPath, int offset, String... args) throws IrpMasterException, FileNotFoundException, UnassignedException {
         if (args == null || args.length - offset < 1)
             throw new IncompatibleArgumentException("Too few arguments");

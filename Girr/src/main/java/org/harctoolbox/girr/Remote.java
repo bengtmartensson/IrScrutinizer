@@ -17,12 +17,12 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.girr;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.w3c.dom.Document;
@@ -177,17 +177,19 @@ public class Remote {
             element.appendChild(notesEl);
         }
         if (applicationParameters != null) {
-            for (Entry<String, Map<String, String>> kvp : applicationParameters.entrySet()) {
+            applicationParameters.entrySet().forEach((kvp) -> {
                 Element appEl = doc.createElementNS(XmlExporter.girrNamespace, "applicationData");
                 appEl.setAttribute("application", kvp.getKey());
                 element.appendChild(appEl);
-                for (Entry<String, String>param : kvp.getValue().entrySet() ) {
+                kvp.getValue().entrySet().stream().map((param) -> {
                     Element paramEl = doc.createElementNS(XmlExporter.girrNamespace, "appParameter");
                     paramEl.setAttribute("name", param.getKey());
                     paramEl.setAttribute("value", param.getValue());
+                    return paramEl;
+                }).forEachOrdered((paramEl) -> {
                     appEl.appendChild(paramEl);
-                }
-            }
+                });
+            });
         }
 
         CommandSet commandSet = new CommandSet(null, null, commands, protocol, parameters);
@@ -203,12 +205,13 @@ public class Remote {
      * @param repeatCount
      */
     public void addFormat(Command.CommandTextFormat format, int repeatCount) {
-        for (Command command : commands.values())
+        commands.values().forEach((command) -> {
             try {
                 command.addFormat(format, repeatCount);
             } catch (IrpMasterException ex) {
                 // TODO: invoke logger
             }
+        });
     }
 
     /**
@@ -387,13 +390,15 @@ public class Remote {
             return remoteName;
         }
     }
-    public static class CompareNameCaseSensitive implements Comparator<Remote> {
+
+    public static class CompareNameCaseSensitive implements Comparator<Remote>, Serializable {
         @Override
         public int compare(Remote o1, Remote o2) {
             return o1.metaData.name.compareTo(o2.metaData.name);
         }
     }
-    public static class CompareNameCaseInsensitive implements Comparator<Remote> {
+
+    public static class CompareNameCaseInsensitive implements Comparator<Remote>, Serializable {
         @Override
         public int compare(Remote o1, Remote o2) {
             return o1.metaData.name.compareToIgnoreCase(o2.metaData.name);

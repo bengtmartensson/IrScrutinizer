@@ -343,8 +343,7 @@ public class IrpUtils {
                 + formatVariable(params, "F", "Function: ", "")
                 + formatVariable(params, "T", ", Toggle: ", "");
 
-        for (String var : map.keySet())
-            result += formatVariable(params, var, ", " + var + "=", "");
+        result = map.keySet().stream().map((var) -> formatVariable(params, var, ", " + var + "=", "")).reduce(result, String::concat);
 
         return result;
     }
@@ -389,6 +388,7 @@ public class IrpUtils {
         return result;
     }
 
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     public static void main(String[] args) {
         for (String arg : args)
             System.out.println(arg);
@@ -403,5 +403,9 @@ public class IrpUtils {
 
         int status = IrpMaster.makeHex(outFile, true, configFilename, preamble, protocolName, device, OBC);
         System.out.println(status);
+    }
+
+    public static void exit(int exitcode) {
+        System.exit(exitcode);
     }
 }

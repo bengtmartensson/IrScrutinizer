@@ -108,6 +108,7 @@ public class EzControlT10 implements IHarcHardware, IWeb {
         System.exit(exitcode);
     }
 
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     public static void main(String args[]) {
         boolean verbose = false;
         String ezcontrolHost = defaultEzcontrolIP;
@@ -724,7 +725,7 @@ public class EzControlT10 implements IHarcHardware, IWeb {
         return res;
     }
 
-    @SuppressWarnings("empty-statement")
+    @SuppressWarnings({"empty-statement", "ValueOfIncrementOrDecrementUsed"})
     private boolean setupTimers() {
         if (timers != null) {
             return true;

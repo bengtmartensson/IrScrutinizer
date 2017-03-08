@@ -18,7 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.guicomponents;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -117,12 +116,8 @@ public class GuiTester extends javax.swing.JFrame {
         }
 
         globalCacheManagerMenu = new GlobalCacheManagerMenu(globalCacheMenu, guiUtils, buttonGroup1, null, true);
-        globalCacheManagerMenu.addPropertyChangeListener(new PropertyChangeListener() {
-
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                globalCacheLearnerTextField.setText(((InetAddress) evt.getNewValue()).getHostName());
-            }
+        globalCacheManagerMenu.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            globalCacheLearnerTextField.setText(((InetAddress) evt.getNewValue()).getHostName());
         });
 
         globalCacheIrSenderSelector.setGuiUtils(guiUtils);
@@ -139,12 +134,9 @@ public class GuiTester extends javax.swing.JFrame {
         //jythonPanel1.init("init.py");
         //jythonPanel1.assign("guitester", this);
         //jythonPanel1.assign("globalcacheselector", globalCacheIrSenderSelector);
-        irpMasterBean.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals(IrpMasterBean.PROP_PROTOCOL_NAME))
-                    guiUtils.message("Someone changed protocol from " + evt.getOldValue() + " to " + evt.getNewValue());
-            }
+        irpMasterBean.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> {
+            if (evt.getPropertyName().equals(IrpMasterBean.PROP_PROTOCOL_NAME))
+                guiUtils.message("Someone changed protocol from " + evt.getOldValue() + " to " + evt.getNewValue());
         });
     }
 
@@ -752,11 +744,8 @@ public class GuiTester extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new GuiTester().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new GuiTester().setVisible(true);
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -71,7 +71,7 @@ public class Duration extends PrimitiveIrStreamItem {
     private static void usage(int code) {
         System.out.println("Usage:");
         System.out.println("\tDuration [<generalSpec>] <duration> [<variable>=<value>]*");
-        System.exit(code);
+        IrpUtils.exit(code);
     }
 
     public static void main(String[] args) {

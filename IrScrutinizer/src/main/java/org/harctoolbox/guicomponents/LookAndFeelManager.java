@@ -59,12 +59,9 @@ public class LookAndFeelManager {
                 JRadioButton menuItem = new JRadioButton(lafNames[i]);
                 lafRadioButtons[i] = menuItem;
                 final int lafIndex = i;
-                menuItem.addActionListener(new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        setLAF(lafIndex);
-                        updateLAF();
-                    }
+                menuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+                    setLAF(lafIndex);
+                    updateLAF();
                 });
 
                 lafButtonGroup.add(menuItem);

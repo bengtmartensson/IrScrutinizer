@@ -159,10 +159,7 @@ public class IrScrutinizer {
 
     private static void guiExecute(final String applicationHome, final String propsfilename,
             final boolean verbose, final int debug, final int userlevel, final List<String> arguments) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
+        java.awt.EventQueue.invokeLater(() -> {
             try {
                 new GuiMain(applicationHome, propsfilename, verbose, debug, userlevel, arguments).setVisible(true);
             } catch (HeadlessException ex) {
@@ -196,7 +193,6 @@ public class IrScrutinizer {
                 GuiUtils.fatal(ex, IrpUtils.exitInternalFailure);
             } catch (SAXException ex) {
                 GuiUtils.fatal(ex, IrpUtils.exitXmlError);
-            }
             }
         });
     }

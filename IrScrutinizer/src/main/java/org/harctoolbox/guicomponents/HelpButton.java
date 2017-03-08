@@ -36,11 +36,8 @@ public class HelpButton extends JButton {
         super.setText("Help");
         super.setToolTipText("Display help.");
         super.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        super.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                guiUtils.help(helpText);
-            }
+        super.addActionListener((java.awt.event.ActionEvent evt) -> {
+            guiUtils.help(helpText);
         });
     }
 

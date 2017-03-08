@@ -76,7 +76,7 @@ public class Wave {
 
         (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
 
-        System.exit(exitcode);
+        IrpUtils.exit(exitcode);
     }
 
     /**
@@ -214,6 +214,7 @@ public class Wave {
      * @param divide If true, divides the carrier frequency by 2, to be used with full-wave rectifiers, e.g. a pair of IR LEDs in anti-parallel.
      * @throws IncompatibleArgumentException
      */
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     public Wave(double freq, double[] data,
             int sampleFrequency, int sampleSize, int channels, boolean bigEndian,
             boolean omitTail, boolean square, boolean divide)
@@ -454,7 +455,8 @@ public class Wave {
         int ind = 0;
 
         for (Integer val : durations) {
-            arr[ind++] = val;
+            arr[ind] = val;
+            ind++;
             if (debug > 0)
                 System.err.print(val + " ");
         }

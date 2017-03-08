@@ -432,11 +432,8 @@ public class IrPlotter extends HarcPanel {
         resetMenuItem.setToolTipText("Reset the axis of the plotter");
         //resetMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, 0));
         resetMenuItem.setMnemonic('R');
-        resetMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                reset();
-            }
+        resetMenuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+            reset();
         });
         plotterPopupMenu.add(resetMenuItem);
         plotterPopupMenu.add(plotterWidthsMenu);
@@ -444,11 +441,8 @@ public class IrPlotter extends HarcPanel {
         cloneMenuItem.setText("Clone Plot");
         cloneMenuItem.setToolTipText("Create a frozen clone of the current plot in a popup window.");
         cloneMenuItem.setMnemonic('C');
-        cloneMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createPopupClone();
-            }
+        cloneMenuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+            createPopupClone();
         });
         plotterPopupMenu.add(cloneMenuItem);
     }
@@ -473,12 +467,9 @@ public class IrPlotter extends HarcPanel {
         for (int width : plotterWidths) {
             JMenuItem menuItem = new JMenuItem(Integer.toString(width));
             final int localWidth = width;
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    //properties.setPlotterWidth(localWidth);
-                    setWidth(localWidth);
-                }
+            menuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+                //properties.setPlotterWidth(localWidth);
+                setWidth(localWidth);
             });
 
             plotterWidthsMenu.add(menuItem);

@@ -86,9 +86,9 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
     public static void main(String args[]) {
         try {
             RemoteSet buttons = importXcf(args[0]);
-            for (Remote button : buttons.getRemotes()) {
+            buttons.getRemotes().forEach((button) -> {
                 System.out.println(button.toString());
-            }
+            });
         } catch (SAXException ex) {
             System.err.println(ex.getMessage());
         } catch (IOException | IrpMasterException | ParseException ex) {
@@ -127,6 +127,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         }
     }
 
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     private String transmogrify(String s) {
         return s.isEmpty() ? ("empty_" + learnedIrCodeIndex++)
                 : (s.equals("Learned IR Code") || s.equals("Learnt IR Code")) ? (s + "_" + learnedIrCodeIndex++)
@@ -186,11 +187,9 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
         Map<String,Remote> remotes = new HashMap<>(16);
 
-        for (Element module : moduleIndex.values()) {
-            Remote remote = loadModule(module);
-            if (!remote.getCommands().isEmpty())
-                remotes.put(remote.getName(), remote);
-        }
+        moduleIndex.values().stream().map((module) -> loadModule(module)).filter((remote) -> (!remote.getCommands().isEmpty())).forEachOrdered((remote) -> {
+            remotes.put(remote.getName(), remote);
+        });
         remoteSet = new RemoteSet(getCreatingUser(), origin, //java.lang.String source,
                 (new Date()).toString(), //creationDate,
                 Version.appName, //java.lang.String tool,

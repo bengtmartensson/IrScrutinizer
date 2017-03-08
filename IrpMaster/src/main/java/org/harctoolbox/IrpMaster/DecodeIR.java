@@ -315,13 +315,14 @@ public class DecodeIR {
 	System.err.println("Usage:");
 	System.err.println("DecodeIR [OPTIONS] -v | --version | --help |  CCF-code | raw-code| - | <filename>");
         System.err.println("where OPTIONS = -d|--debug <n>, -i|--intro <n>, -r|--repetition <n>, -e|--ending <n>, -s|--skip <n>, -f|--frequency <frequency in Hz>");
-	System.exit(exitcode);
+	IrpUtils.exit(exitcode);
     }
 
     /**
      * Allows for calling DecodeIR from the command line
      * @param args -- IR signal in Pronto format to be decoded.
      */
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     public static void main(String[] args) {
         int debug = 0;
         int frequency = 0;
@@ -647,8 +648,9 @@ public class DecodeIR {
             if (OBC >= 0)
                 result.put("F", (long)OBC);
 
-            for (String name : this.miscNames.keySet())
+            this.miscNames.keySet().forEach((name) -> {
                 result.put(name, (long)miscNames.get(name));
+            });
 
             return result;
         }

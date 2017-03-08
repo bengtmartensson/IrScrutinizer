@@ -69,12 +69,9 @@ public class HarcletFrame extends javax.swing.JFrame {
             System.err.println(ex.getMessage());
         }
         final HarcPanel harcPanel = panel;
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                //new HarcletFrame(new HexCalculator(), true, laf).setVisible(true);
-                new HarcletFrame(harcPanel, true, laf).setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            //new HarcletFrame(new HexCalculator(), true, laf).setVisible(true);
+            new HarcletFrame(harcPanel, true, laf).setVisible(true);
         });
     }
 
@@ -139,11 +136,8 @@ public class HarcletFrame extends javax.swing.JFrame {
         closeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0));
         closeMenuItem.setText(exitOnClose ? "Exit" : "Close");
         closeMenuItem.setIcon(new javax.swing.ImageIcon(HarcletFrame.class.getResource("/icons/Crystal-Clear/22x22/actions/stop.png"))); // NOI18N
-        closeMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                closeMenuItemActionPerformed(evt);
-            }
+        closeMenuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+            closeMenuItemActionPerformed(evt);
         });
 
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -161,11 +155,8 @@ public class HarcletFrame extends javax.swing.JFrame {
         aboutMenuItem.setMnemonic('A');
         aboutMenuItem.setText("About...");
         aboutMenuItem.setIcon(new javax.swing.ImageIcon(HarcletFrame.class.getResource("/icons/Crystal-Clear/22x22/actions/info.png"))); // NOI18N
-        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aboutMenuItemActionPerformed(evt);
-            }
+        aboutMenuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+            aboutMenuItemActionPerformed(evt);
         });
         helpMenu.add(aboutMenuItem);
 
@@ -173,11 +164,8 @@ public class HarcletFrame extends javax.swing.JFrame {
         helpMenuItem.setText("Help...");
         helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
         helpMenuItem.setIcon(new javax.swing.ImageIcon(HarcletFrame.class.getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        helpMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                helpMenuItemActionPerformed(evt);
-            }
+        helpMenuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+            helpMenuItemActionPerformed(evt);
         });
         helpMenu.add(helpMenuItem);
 

@@ -68,12 +68,13 @@ public class IrpMaster {
 
     private static void usage(int returncode) {
         ((returncode == 0) ? System.out : System.err).println(usageMessage);
-        System.exit(returncode);
+        IrpUtils.exit(returncode);
     }
 
     /**
      * @param args See the usage message.
      */
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     public static void main(String[] args) {
         InputVariableSetValues inputVariableSetValues = null;
         LinkedHashMap<String, String> usersParameters = new LinkedHashMap<>(8);
@@ -796,8 +797,9 @@ public class IrpMaster {
     }
 
     private void dump(PrintStream ps) {
-        for (String s : protocols.keySet())
+        protocols.keySet().forEach((s) -> {
             dump(ps, s);
+        });
     }
 
     private void dump(String filename) throws FileNotFoundException {

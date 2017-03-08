@@ -240,12 +240,8 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
         this.stopButton.setVisible(senderSupport);
         setup();
 
-        GlobalCacheManager.getInstance().addPropertyChangeListener(new PropertyChangeListener() {
-
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                setup();
-            }
+        GlobalCacheManager.getInstance().addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            setup();
         });
     }
 

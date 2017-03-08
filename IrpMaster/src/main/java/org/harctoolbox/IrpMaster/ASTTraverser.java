@@ -155,8 +155,10 @@ public class ASTTraverser {
             reverse = true;
             offset++;
         }
+        @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
         long data = expression((CommonTree)tree.getChild(offset++), level+1);
-        long width = infinite ? BitField.getMaxWidth() : expression((CommonTree)tree.getChild(offset++), level+1);
+        long width = infinite ? BitField.getMaxWidth() : expression((CommonTree)tree.getChild(offset), level+1);
+        offset++;
         long skip = offset < tree.getChildCount() ? expression((CommonTree)tree.getChild(offset), level+1) : 0;
         BitField bitField = new BitField(env, complement, reverse, infinite, data, width, skip);
         nodeEnd(tree, level, bitField);

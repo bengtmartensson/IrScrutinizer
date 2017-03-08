@@ -19,7 +19,6 @@ package org.harctoolbox.irscrutinizer.capturinghardware;
 
 import gnu.io.NoSuchPortException;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.JPanel;
@@ -54,31 +53,29 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
         this.baudRate = serialPortSimpleBean.getBaudRate();
         this.portName = serialPortSimpleBean.getPortName();
         this.clazz = clazz;
+        hardware = null;
 
-        serialPortSimpleBean.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                String propertyName = evt.getPropertyName();
+        serialPortSimpleBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            String propertyName = evt.getPropertyName();
 
-                try {
-                    switch (propertyName) {
-                        case SerialPortSimpleBean.PROP_BAUD:
-                            setup();
-                            break;
-                        case SerialPortSimpleBean.PROP_PORTNAME:
-                            if (evt.getNewValue() == null)
-                                return;
-                            setup();
-                            break;
+            try {
+                switch (propertyName) {
+                    case SerialPortSimpleBean.PROP_BAUD:
+                        setup();
+                        break;
+                    case SerialPortSimpleBean.PROP_PORTNAME:
+                        if (evt.getNewValue() == null)
+                            return;
+                        setup();
+                        break;
                         //case SerialPortSimpleBean.PROP_VERSION:
-                        case SerialPortSimpleBean.PROP_ISOPEN:
-                            break;
-                        default:
-                            throw new RuntimeException("Programmming error detected");
-                    }
-                } catch (IOException ex) {
-                    guiUtils.error(ex);
+                    case SerialPortSimpleBean.PROP_ISOPEN:
+                        break;
+                    default:
+                        throw new RuntimeException("Programmming error detected");
                 }
+            } catch (IOException ex) {
+                guiUtils.error(ex);
             }
         });
     }

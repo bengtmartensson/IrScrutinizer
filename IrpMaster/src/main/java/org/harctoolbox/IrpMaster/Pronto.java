@@ -140,6 +140,7 @@ public class Pronto {
      * @throws DomainViolationException
      * @throws InvalidRepeatException
      */
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     public final static IrSignal ccfSignal(int[] ccf) throws ParseException, IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException {
         if (ccf.length < 4)
             throw new IncompatibleArgumentException("CCF is invalid since less than 4 numbers long.");
@@ -315,6 +316,7 @@ public class Pronto {
      * @param repetition
      * @return CCF array
      */
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     public final static int[] toArray(double frequency, double[] intro, double[] repetition) /*throws RuntimeException*/ {
         if (intro.length % 2 == 1 || repetition.length % 2 == 1)
             throw new RuntimeException("IR Sequences must be of even length.");
@@ -389,6 +391,7 @@ public class Pronto {
      * @return integer array of short CCF, or null om failure.
      * @throws IncompatibleArgumentException for paramters outside of its allowed domain.
      */
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     public final static int[] shortCCF(String protocolName, int device, int subdevice, int command) throws IncompatibleArgumentException {
         int index = 0;
         if (protocolName.equalsIgnoreCase("rc5")) {
@@ -450,6 +453,7 @@ public class Pronto {
         }
     }
 
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     public static void main(String[] args) {
         try {
             @SuppressWarnings("UnusedAssignment")
@@ -515,6 +519,7 @@ public class Pronto {
      * CCF array of complete signal, i.e. the CCF string before formatting
      * @return CCF array
      */
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     public final int[] toArray() {
         if (irSignal.getIntroLength() % 2 != 0 || irSignal.getRepeatLength() % 2 != 0)
             // Probably forgot normalize() if I get here.

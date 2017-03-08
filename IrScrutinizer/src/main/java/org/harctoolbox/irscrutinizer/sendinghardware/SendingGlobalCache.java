@@ -18,7 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.sendinghardware;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.JPanel;
 import org.harctoolbox.IrpMaster.IrSignal;
@@ -47,37 +46,29 @@ public class SendingGlobalCache extends SendingHardware<GlobalCache> implements 
         initialIp = properties.getGlobalCacheIpName();
         this.globalCacheIrSenderSelector = newGlobalCacheIrSenderSelector;
         globalCacheIrSenderSelector.setTimeout(properties.getGlobalCacheTimeout());
-        properties.addGlobalCacheTimeoutChangeListener(new Props.IPropertyChangeListener() {
-
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                globalCacheIrSenderSelector.setTimeout((Integer) newValue);
-            }
+        properties.addGlobalCacheTimeoutChangeListener((String name, Object oldValue, Object newValue) -> {
+            globalCacheIrSenderSelector.setTimeout((Integer) newValue);
         });
-        this.globalCacheIrSenderSelector.addPropertyChangeListener(new PropertyChangeListener() {
+        this.globalCacheIrSenderSelector.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            try {
+                setup();
 
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                try {
-                    setup();
-
-                    switch (evt.getPropertyName()) {
-                        case GlobalCacheIrSenderSelector.PROP_IPNAME:
-                            rawIrSender = globalCacheIrSenderSelector.getGlobalCache();
-                            properties.setGlobalCacheIpName((String) evt.getNewValue());
-                            break;
-                        case GlobalCacheIrSenderSelector.PROP_MODULE:
-                            properties.setGlobalCacheModule((Integer) evt.getNewValue());
-                            break;
-                        case GlobalCacheIrSenderSelector.PROP_PORT:
-                            properties.setGlobalCachePort((Integer) evt.getNewValue());
-                            break;
-                        default:
-                            throw new RuntimeException("Programming error");
-                    }
-                } catch (IOException | HarcHardwareException ex) {
-                    guiUtils.error(ex);
+                switch (evt.getPropertyName()) {
+                    case GlobalCacheIrSenderSelector.PROP_IPNAME:
+                        rawIrSender = globalCacheIrSenderSelector.getGlobalCache();
+                        properties.setGlobalCacheIpName((String) evt.getNewValue());
+                        break;
+                    case GlobalCacheIrSenderSelector.PROP_MODULE:
+                        properties.setGlobalCacheModule((Integer) evt.getNewValue());
+                        break;
+                    case GlobalCacheIrSenderSelector.PROP_PORT:
+                        properties.setGlobalCachePort((Integer) evt.getNewValue());
+                        break;
+                    default:
+                        throw new RuntimeException("Programming error");
                 }
+            } catch (IOException | HarcHardwareException ex) {
+                guiUtils.error(ex);
             }
         });
     }

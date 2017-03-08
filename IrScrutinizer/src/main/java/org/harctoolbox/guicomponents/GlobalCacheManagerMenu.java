@@ -49,11 +49,8 @@ public class GlobalCacheManagerMenu /*extends GlobalCacheManagerAbstractMenu*/ {
         this.buttonGroup = buttonGroup;
         setup();
 
-        GlobalCacheManager.getInstance().addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                setup();
-            }
+        GlobalCacheManager.getInstance().addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            setup();
         });
     }
 
@@ -83,11 +80,8 @@ public class GlobalCacheManagerMenu /*extends GlobalCacheManagerAbstractMenu*/ {
 
         menuItem.setSelected(inetAddress.equals(globalCacheInetAddress));
 
-        menuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setGlobalCache(inetAddress);
-            }
+        menuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+            setGlobalCache(inetAddress);
         });
     }
 
@@ -105,7 +99,8 @@ public class GlobalCacheManagerMenu /*extends GlobalCacheManagerAbstractMenu*/ {
 
         int index = 0;
         for (InetAddress ipName : manualGlobalCaches) {
-            addGlobalCache(index++, ipName.getHostName(), ipName, "Manually entered GlobalCache.");
+            addGlobalCache(index, ipName.getHostName(), ipName, "Manually entered GlobalCache.");
+            index++;
         }
 
         if (automaticGlobalCaches.length > 0 && manualGlobalCaches.length > 0)
@@ -113,24 +108,22 @@ public class GlobalCacheManagerMenu /*extends GlobalCacheManagerAbstractMenu*/ {
 
         String[] automaticGlobalCachesPretty = GlobalCacheManager.getInstance().getAutomaticPrettyNames();
         for (int i = 0; i < automaticGlobalCaches.length; i++) {
-            addGlobalCache(index++, automaticGlobalCachesPretty[i],
+            addGlobalCache(index, automaticGlobalCachesPretty[i],
                     automaticGlobalCaches[i], "Automatically discovered GlobalCache.");
+            index++;
         }
 
         globalCacheMenu.add(new Separator());
         JMenuItem manualAddMenuItem = new JMenuItem("Add manually...");
         manualAddMenuItem.setMnemonic('A');
         globalCacheMenu.add(manualAddMenuItem);
-        manualAddMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try {
-                    String ip = guiUtils.getInput("Enter GlobalCache IP-Name or -address", "GlobalCache entry", GlobalCache.defaultGlobalCacheIP);
-                    if (ip != null)
-                        GlobalCacheManager.getInstance().addManualGlobalCache(InetAddress.getByName(ip));
-                } catch (UnknownHostException ex) {
-                    guiUtils.error(ex);
-                }
+        manualAddMenuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+            try {
+                String ip = guiUtils.getInput("Enter GlobalCache IP-Name or -address", "GlobalCache entry", GlobalCache.defaultGlobalCacheIP);
+                if (ip != null)
+                    GlobalCacheManager.getInstance().addManualGlobalCache(InetAddress.getByName(ip));
+            } catch (UnknownHostException ex) {
+                guiUtils.error(ex);
             }
         });
         globalCacheMenu.repaint();

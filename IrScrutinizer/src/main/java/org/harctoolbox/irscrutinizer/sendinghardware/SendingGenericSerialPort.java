@@ -21,7 +21,6 @@ import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.JPanel;
 import org.harctoolbox.guicomponents.GuiUtils;
@@ -64,36 +63,33 @@ public class SendingGenericSerialPort extends SendingHardware<IrGenericSerial> i
         rawIrSender = null;
         initialPort = properties.getGenericSerialPortDeviceName();
         //serialPortBean.setVerbose(properties.getVerbose());
-        genericSerialSenderBean.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                switch (evt.getPropertyName()) {
-                    case GenericSerialSenderBean.PROP_PORTNAME:
-                        properties.setGenericSerialPortDeviceName((String) evt.getNewValue());
-                        try {
-                            setupGenericSerialPort();
-                        } catch (IOException ex) {
-                            guiUtils.error(ex);
-                        }
-                        break;
-                    case GenericSerialSenderBean.PROP_COMMAND:
-                        rawIrSender.setCommand(genericSerialSenderBean.getCommand());
-                        break;
-                    case GenericSerialSenderBean.PROP_RAW:
-                        rawIrSender.setRaw(genericSerialSenderBean.getRaw());
-                        break;
-                    case GenericSerialSenderBean.PROP_SEPARATOR:
-                        rawIrSender.setSeparator(genericSerialSenderBean.getSeparator());
-                        break;
-                    case GenericSerialSenderBean.PROP_USESIGNS:
-                        rawIrSender.setUseSigns(genericSerialSenderBean.getUseSigns());
-                        break;
-                    case GenericSerialSenderBean.PROP_LINEENDING:
-                        rawIrSender.setLineEnding(genericSerialSenderBean.getLineEnding());
-                        break;
-                    default:
-                        throw new RuntimeException("Programming error");
-                }
+        genericSerialSenderBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+                case GenericSerialSenderBean.PROP_PORTNAME:
+                    properties.setGenericSerialPortDeviceName((String) evt.getNewValue());
+                    try {
+                        setupGenericSerialPort();
+                    } catch (IOException ex) {
+                        guiUtils.error(ex);
+                    }
+                    break;
+                case GenericSerialSenderBean.PROP_COMMAND:
+                    rawIrSender.setCommand(genericSerialSenderBean.getCommand());
+                    break;
+                case GenericSerialSenderBean.PROP_RAW:
+                    rawIrSender.setRaw(genericSerialSenderBean.getRaw());
+                    break;
+                case GenericSerialSenderBean.PROP_SEPARATOR:
+                    rawIrSender.setSeparator(genericSerialSenderBean.getSeparator());
+                    break;
+                case GenericSerialSenderBean.PROP_USESIGNS:
+                    rawIrSender.setUseSigns(genericSerialSenderBean.getUseSigns());
+                    break;
+                case GenericSerialSenderBean.PROP_LINEENDING:
+                    rawIrSender.setLineEnding(genericSerialSenderBean.getLineEnding());
+                    break;
+                default:
+                    throw new RuntimeException("Programming error");
             }
         });
     }

@@ -69,14 +69,14 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         ArrayList<Timing> timings = parseTimings(reader);
         Map<String, IrTransCommand> parsedCommands = parseCommands(reader, timings);
         Map<String, Command> commands = new LinkedHashMap<>(4);
-        for (IrTransCommand cmd : parsedCommands.values()) {
+        parsedCommands.values().forEach((cmd) -> {
             try {
                 Command command = cmd.toCommand();
                 commands.put(command.getName(), command);
             } catch (IrpMasterException ex) {
                 System.err.println(cmd.name + " Unparsable signal: " + ex.getMessage());
             }
-        }
+        });
         return new Remote(new Remote.MetaData(name), null, null, commands, null);
     }
 
@@ -112,10 +112,12 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         return commands;
     }
 
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     private IrTransCommand parseCommand(String line, ArrayList<Timing> timings, int lineNo) throws ParseException {
         IrTransCommand command = null;
         String[] arr = line.trim().split("[\\[\\]]");
         int index = 1;
+
         String name = arr[index++];
         index++;
         String type = arr[index++];
@@ -190,6 +192,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         return true;
     }
 
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     private ArrayList<Timing> parseTimings(LineNumberReader reader) throws IOException, ParseException {
         ArrayList<Timing> timings = new ArrayList<>(16);
         boolean hasTiming = gobbleTo(reader, "[TIMING]", false);

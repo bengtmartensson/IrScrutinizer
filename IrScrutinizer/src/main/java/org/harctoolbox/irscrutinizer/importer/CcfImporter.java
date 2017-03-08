@@ -85,8 +85,9 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
             ArrayList<Command> commandList = loadChildren(panel.getChildren(), deviceName, panelName);
             boolean uniqueNames = addCommands(commandList);
             totalUniqueNames = totalUniqueNames && uniqueNames;
-            for (Command command : commandList)
+            commandList.forEach((command) -> {
                 commands.put(command.getName(), command);
+            });
         }
 
         Remote remote = new Remote(new Remote.MetaData(deviceName),

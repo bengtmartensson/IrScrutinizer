@@ -31,9 +31,9 @@ public final class LocalSerialPortRaw extends LocalSerialPort implements IBytesC
         ArrayList<String> names;
         try {
             names = getSerialPortNames(false);
-            for (String name : names) {
+            names.forEach((name) -> {
                 System.out.println(name);
-            }
+            });
 
             LocalSerialPortRaw port = new LocalSerialPortRaw(defaultPort, 38400, 8, 1, Parity.EVEN, FlowControl.NONE, 10000, true);
 

@@ -21,7 +21,6 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -115,6 +114,7 @@ public class Protocol {
         }
         return params;
     }
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     private static Map<String, Long> parsePositionalProtocolArgs(String[] args, int skip) throws IncompatibleArgumentException {
         Map<String, Long> params = new LinkedHashMap<>(args.length - skip);
         int index = skip;
@@ -346,11 +346,7 @@ public class Protocol {
      * @return existence of other parameters.
      */
     public boolean hasAdvancedParameters() {
-        for (String param : parameterSpecs.getNames())
-            if (!(param.equals("F") || param.equals("D") || param.equals("S") || param.equals("T")))
-                return true;
-
-        return false;
+        return parameterSpecs.getNames().stream().anyMatch((param) -> (!(param.equals("F") || param.equals("D") || param.equals("S") || param.equals("T"))));
     }
 
     public String getIrp() {
@@ -446,8 +442,9 @@ public class Protocol {
 
     public void addSignal(Map<String, Long> actualParameters) {
         Element el = doc.createElement("signal");
-        for (Entry<String, Long> entry : actualParameters.entrySet())
+        actualParameters.entrySet().forEach((entry) -> {
             el.setAttribute(entry.getKey(), Long.toString(entry.getValue()));
+        });
 
         root.appendChild(el);
         currentElement = el;

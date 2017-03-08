@@ -75,10 +75,9 @@ public class PrimaryIrStream extends PrimaryIrStreamItem {
             bitSpec.assignBitSpecs(parentBitSpec);
         }
 
-        for (PrimaryIrStreamItem item : irStreamItems) {
-            if (item.getClass().getSimpleName().equals("PrimaryIrStream"))
-                ((PrimaryIrStream) item).assignBitSpecs(bitSpec);
-        }
+        irStreamItems.stream().filter((item) -> (item.getClass().getSimpleName().equals("PrimaryIrStream"))).forEachOrdered((item) -> {
+            ((PrimaryIrStream) item).assignBitSpecs(bitSpec);
+        });
     }
 
     @Override

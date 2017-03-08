@@ -38,8 +38,9 @@ public final class LocalSerialPortBuffered extends LocalSerialPort implements IC
         ArrayList<String> names;
         try (LocalSerialPortBuffered port = new LocalSerialPortBuffered("/dev/ttyS0", 9600, 8, 1, Parity.NONE, FlowControl.NONE, 10000, true)) {
             names = getSerialPortNames(false);
-            for (String name : names)
+            names.forEach((name) -> {
                 System.out.println(name);
+            });
 
             String cmd = "#POW\r";
             port.open();

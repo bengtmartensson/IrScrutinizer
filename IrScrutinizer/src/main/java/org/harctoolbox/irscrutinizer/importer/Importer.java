@@ -123,8 +123,10 @@ public abstract class Importer {
     protected String uniqueName(String name) {
         String uniqueName = name;
         int index = 1;
-        while (commandIndex.containsKey(uniqueName))
-            uniqueName = name + '$' + Integer.toString(index++);
+        while (commandIndex.containsKey(uniqueName)) {
+            uniqueName = name + '$' + Integer.toString(index);
+            index++;
+        }
 
         return uniqueName;
     }
@@ -160,7 +162,8 @@ public abstract class Importer {
         ModulatedIrSequence[] array = new ModulatedIrSequence[commands.size()];
         int index = 0;
         for (Command command : commands) {
-            array[index++] = command.toIrSignal().toModulatedIrSequence(1);
+            array[index] = command.toIrSignal().toModulatedIrSequence(1);
+            index++;
         }
         return new ModulatedIrSequence(array);
     }

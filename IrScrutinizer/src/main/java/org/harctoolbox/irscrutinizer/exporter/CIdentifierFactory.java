@@ -41,7 +41,8 @@ public class CIdentifierFactory {
         int n = 1;
         String candidate = str;
         while (table.containsValue(candidate)) {
-            candidate = str + "_" + n++;
+            candidate = str + "_" + n;
+            n++;
         }
         table.put(position, candidate);
         return candidate;

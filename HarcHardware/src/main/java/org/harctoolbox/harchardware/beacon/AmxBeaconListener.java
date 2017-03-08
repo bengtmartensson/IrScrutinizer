@@ -95,9 +95,9 @@ public class AmxBeaconListener {
                 //break;
             case 1:
                 Collection<Node> result = listen(Integer.parseInt(args[0]), true);
-                for (Node r : result) {
+                result.forEach((r) -> {
                     System.out.println(r);
-                }
+                });
                 break;
             case 2:
                 Node r = listenFor("-Make", args[0], Integer.parseInt(args[1]));
@@ -166,8 +166,9 @@ public class AmxBeaconListener {
 
     private synchronized void printNodes() {
         System.out.println(nodes.size());
-        for (InetAddress addr : nodes.keySet())
-                System.out.println(debug ? nodes.get(addr) : (addr.getHostName() + " " + nodes.get(addr).lastAliveDate));
+        nodes.keySet().forEach((addr) -> {
+            System.out.println(debug ? nodes.get(addr) : (addr.getHostName() + " " + nodes.get(addr).lastAliveDate));
+        });
     }
 
     /**
@@ -318,9 +319,9 @@ public class AmxBeaconListener {
         @Override
         public String toString() {
             StringBuilder res = new StringBuilder(128);
-            for (String s : table.keySet()) {
+            table.keySet().forEach((s) -> {
                 res.append("\n").append("table[").append(s).append("] = ").append(table.get(s));
-            }
+            });
             return "IP = " + addr.getHostName() + "\n"
                     + "port = " + port
                     + res.toString()
@@ -394,8 +395,9 @@ public class AmxBeaconListener {
 
         @Override
         public void func(Map<InetAddress, Node> nodes) {
-            for (Node node : nodes.values())
+            nodes.values().forEach((node) -> {
                 System.out.println(node);
+            });
         }
 
     }

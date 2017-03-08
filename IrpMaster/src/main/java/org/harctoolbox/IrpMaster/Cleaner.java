@@ -87,7 +87,8 @@ public class Cleaner {
             int lastDuration = -1;
             while (indexInSortedTimings < sorted.length
                     && IrpUtils.isEqual(dumbTiming, sorted[indexInSortedTimings], absoluteTolerance, relativeTolerance)) {
-                int duration = sorted[indexInSortedTimings++];
+                int duration = sorted[indexInSortedTimings];
+                indexInSortedTimings++;
                 if (duration == lastDuration)
                     continue;
                 lastDuration = duration;

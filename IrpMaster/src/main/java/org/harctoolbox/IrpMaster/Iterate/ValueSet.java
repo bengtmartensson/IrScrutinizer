@@ -87,7 +87,8 @@ public abstract class ValueSet implements Iterable<Long> {
         int seed = (int) IrpUtils.invalid;
         int arg_i = 0;
         if (args[arg_i].equals("-s")) {
-            seed = Integer.parseInt(args[++arg_i]);
+            arg_i++;
+            seed = Integer.parseInt(args[arg_i]);
             arg_i++;
         }
 

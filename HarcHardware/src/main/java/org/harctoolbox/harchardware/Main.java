@@ -138,8 +138,9 @@ public class Main {
         if (noHardware == 0 && commandLineArgs.beacon) {
             System.err.println("Listening for AMX Beacons for " + commandLineArgs.timeout/1000 + " seconds, be patient.");
             Collection<AmxBeaconListener.Node> nodes = AmxBeaconListener.listen(commandLineArgs.timeout, commandLineArgs.verbose);
-            for (AmxBeaconListener.Node node : nodes)
+            nodes.forEach((node) -> {
                 System.out.println(node);
+            });
             doExit(IrpUtils.exitSuccess);
         }
 

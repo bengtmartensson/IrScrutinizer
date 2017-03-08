@@ -64,7 +64,7 @@ public class BitField extends PrimaryIrStreamItem {
     private static void usage(int code) {
         System.out.println("Usage:");
         System.out.println("\tBitfield [-d]? <bitfield> [<name>=<value>|{<name>=<value>}]*");
-        System.exit(code);
+        IrpUtils.exit(code);
     }
 
     public static void main(String[] args) {

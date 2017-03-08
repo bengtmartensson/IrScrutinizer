@@ -37,7 +37,8 @@ public abstract class NamedIrSignal {
     private static int count = 0;
 
     private static synchronized int incrementCount() {
-        return ++count;
+        count++;
+        return count;
     }
 
     protected static synchronized void decrementCount() {

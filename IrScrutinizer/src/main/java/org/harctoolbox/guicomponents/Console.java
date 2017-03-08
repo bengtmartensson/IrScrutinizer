@@ -65,11 +65,8 @@ public class Console extends javax.swing.JScrollPane {
         consoleClearMenuItem.setIcon(new javax.swing.ImageIcon(Console.class.getResource("/icons/Crystal-Clear/22x22/actions/eraser.png"))); // NOI18N
         consoleClearMenuItem.setText("Clear");
         consoleClearMenuItem.setToolTipText("Discard the content of the console window.");
-        consoleClearMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                consoleClearMenuItemActionPerformed(evt);
-            }
+        consoleClearMenuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+            consoleClearMenuItemActionPerformed(evt);
         });
         consolePopupMenu.add(consoleClearMenuItem);
         consolePopupMenu.add(jSeparator5);
@@ -77,21 +74,15 @@ public class Console extends javax.swing.JScrollPane {
         consoleCopySelectionMenuItem.setIcon(new javax.swing.ImageIcon(Console.class.getResource("/icons/Crystal-Clear/22x22/actions/editcopy.png"))); // NOI18N
         consoleCopySelectionMenuItem.setText("Copy selection");
         consoleCopySelectionMenuItem.setToolTipText("Copy currently selected text to the clipboard.");
-        consoleCopySelectionMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                consoleCopySelectionMenuItemActionPerformed(evt);
-            }
+        consoleCopySelectionMenuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+            consoleCopySelectionMenuItemActionPerformed(evt);
         });
         consolePopupMenu.add(consoleCopySelectionMenuItem);
 
         consoleCopyMenuItem.setText("Copy all");
         consoleCopyMenuItem.setToolTipText("Copy the content of the console to the clipboard.");
-        consoleCopyMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                consoleCopyMenuItemActionPerformed(evt);
-            }
+        consoleCopyMenuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+            consoleCopyMenuItemActionPerformed(evt);
         });
         consolePopupMenu.add(consoleCopyMenuItem);
         consolePopupMenu.add(jSeparator8);
@@ -99,11 +90,8 @@ public class Console extends javax.swing.JScrollPane {
         consoleSaveMenuItem.setIcon(new javax.swing.ImageIcon(Console.class.getResource("/icons/Crystal-Clear/22x22/actions/filesaveas.png"))); // NOI18N
         consoleSaveMenuItem.setText("Save...");
         consoleSaveMenuItem.setToolTipText("Save the content of the console to a text file.");
-        consoleSaveMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                consoletextSaveMenuItemActionPerformed(evt);
-            }
+        consoleSaveMenuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+            consoletextSaveMenuItemActionPerformed(evt);
         });
         consolePopupMenu.add(consoleSaveMenuItem);
         consolePopupMenu.add(jSeparator9);
@@ -111,11 +99,8 @@ public class Console extends javax.swing.JScrollPane {
         consolePrintMenuItem.setIcon(new javax.swing.ImageIcon(Console.class.getResource("/icons/Crystal-Clear/22x22/apps/printer.png"))); // NOI18N
         consolePrintMenuItem.setText("Print...");
         consolePrintMenuItem.setToolTipText("Print the content of the console to a printer.");
-        consolePrintMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                consoletextPrintMenuItemActionPerformed(evt);
-            }
+        consolePrintMenuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+            consoletextPrintMenuItemActionPerformed(evt);
         });
         consolePopupMenu.add(consolePrintMenuItem);
 

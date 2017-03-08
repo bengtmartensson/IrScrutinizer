@@ -48,7 +48,8 @@ public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Lo
         int seed = (int) IrpUtils.invalid;
         int arg_i = 0;
         if (args[arg_i].equals("-s")) {
-            seed = Integer.parseInt(args[++arg_i]);
+            arg_i++;
+            seed = Integer.parseInt(args[arg_i]);
             arg_i++;
         }
         RandomValueSet.initRng(seed);
@@ -207,10 +208,12 @@ public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Lo
     }
 
     public void reset() {
-        for (String var : map.keySet()) {
+        map.keySet().stream().map((var) -> {
             map.get(var).reset();
+            return var;
+        }).forEachOrdered((var) -> {
             currentAssignment.put(var, iterators.get(var).next());
-        }
+        });
         virgin = true;
     }
 

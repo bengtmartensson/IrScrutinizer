@@ -140,7 +140,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
                 JsonObject obj = val.asObject();
                 String deviceType = obj.get("devicetype").asString();
                 if (!deviceTypes.containsKey(deviceType))
-                    deviceTypes.put(deviceType, new LinkedHashMap<ProtocolDeviceSubdevice, Map<String, Long>>(8));
+                    deviceTypes.put(deviceType, new LinkedHashMap<>(8));
                 Map<ProtocolDeviceSubdevice, Map<String, Long>> devCollection = deviceTypes.get(deviceType);
                 ProtocolDeviceSubdevice pds = new ProtocolDeviceSubdevice(obj);
                 if (pds.getProtocol() == null) {
@@ -148,7 +148,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
                     continue;
                 }
                 if (!devCollection.containsKey(pds))
-                    devCollection.put(pds, new LinkedHashMap<String, Long>(8));
+                    devCollection.put(pds, new LinkedHashMap<>(8));
                 Map<String, Long> cmnds = devCollection.get(pds);
                 long function = parseLong(obj.get("function").asString()); // barfs for illegal
                 String functionName = obj.get("functionname").asString();

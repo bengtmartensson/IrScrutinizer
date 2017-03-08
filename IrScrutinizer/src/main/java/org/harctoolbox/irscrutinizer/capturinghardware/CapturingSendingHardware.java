@@ -18,7 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.capturinghardware;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.JPanel;
 import org.harctoolbox.guicomponents.CapturingSendingBean;
@@ -47,23 +46,20 @@ public class CapturingSendingHardware <T extends ICapture & IHarcHardware> exten
         capturingSendingBean.setOpened(sendingHardware.getRawIrSender() != null && sendingHardware.getRawIrSender().isValid());
         capturingSendingBean.setSenderPanel(sendingPanel);
 
-        sendingBean.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                String propertyName = evt.getPropertyName();
-                switch (propertyName) {
-                    case ISendingReceivingBean.PROP_BAUD:
-                    case ISendingReceivingBean.PROP_PORTNAME:
-                    case GirsClientBean.PROP_IPNAME:
-                    case GirsClientBean.PROP_TYPE:
-                    case ISendingReceivingBean.PROP_PROPS:
-                        break;
-                    case ISendingReceivingBean.PROP_ISOPEN:
-                        capturingSendingBean.setOpened(sendingHardware.getRawIrSender().isValid());
-                        break;
-                    default:
-                        throw new RuntimeException("Unknown property: " + propertyName);
-                }
+        sendingBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            String propertyName = evt.getPropertyName();
+            switch (propertyName) {
+                case ISendingReceivingBean.PROP_BAUD:
+                case ISendingReceivingBean.PROP_PORTNAME:
+                case GirsClientBean.PROP_IPNAME:
+                case GirsClientBean.PROP_TYPE:
+                case ISendingReceivingBean.PROP_PROPS:
+                    break;
+                case ISendingReceivingBean.PROP_ISOPEN:
+                    capturingSendingBean.setOpened(sendingHardware.getRawIrSender().isValid());
+                    break;
+                default:
+                    throw new RuntimeException("Unknown property: " + propertyName);
             }
         });
     }

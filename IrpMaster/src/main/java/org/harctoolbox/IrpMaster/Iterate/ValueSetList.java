@@ -40,7 +40,8 @@ public class ValueSetList implements Iterable<Long> {
         int seed = (int) IrpUtils.invalid;
         int arg_i = 0;
         if (args[arg_i].equals("-s")) {
-            seed = Integer.parseInt(args[++arg_i]);
+            arg_i++;
+            seed = Integer.parseInt(args[arg_i]);
             arg_i++;
         }
         RandomValueSet.initRng(seed);
@@ -81,8 +82,9 @@ public class ValueSetList implements Iterable<Long> {
     public void reset() {
         currentSetIndex = (int) IrpUtils.invalid;
         setIterator = null;
-        for (ValueSet valueSet : valueSets)
+        valueSets.forEach((valueSet) -> {
             valueSet.reset();
+        });
 
     }
 

@@ -106,8 +106,9 @@ public abstract class RemoteSetExporter extends Exporter {
     public void export(Collection<Command> commands, String source, String title, int repeatCount,
             File saveFile, String charsetName) throws IOException, IrpMasterException, TransformerException {
         Map<String, Command> cmds = new HashMap<>(32);
-        for (Command command : commands)
+        commands.forEach((command) -> {
             cmds.put(command.getName(), command);
+        });
 
         export(cmds, source, title, new Remote.MetaData(), repeatCount, saveFile, charsetName);
     }

@@ -21,7 +21,6 @@ import java.awt.Component;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.Map.Entry;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JRadioButton;
@@ -92,26 +91,26 @@ public class SendingHardwareManager {
         menu.setText("Transmitting Hardware");
         menu.setToolTipText("Allows direct selection of transmitting hardware");
         buttonGroup = new ButtonGroup();
-        for (Entry<String, ISendingHardware<?>> kvp : table.entrySet()) {
+        table.entrySet().stream().map((kvp) -> {
             String name = kvp.getKey();
             final ISendingHardware<?> hardware = kvp.getValue();
             JRadioButton menuItem = new JRadioButton(name);
             menuItem.setSelected(name.equals(selection));
             //portRadioButtons[i] = menuItem;
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    try {
-                        select(hardware);
-                    } catch (HarcHardwareException ex) {
-                        guiUtils.error(ex);
-                    }
+            menuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+                try {
+                    select(hardware);
+                } catch (HarcHardwareException ex) {
+                    guiUtils.error(ex);
                 }
             });
-
+            return menuItem;
+        }).map((menuItem) -> {
             buttonGroup.add(menuItem);
+            return menuItem;
+        }).forEachOrdered((menuItem) -> {
             menu.add(menuItem);
-        }
+        });
     }
 
     public JMenu getMenu() {
@@ -180,7 +179,8 @@ public class SendingHardwareManager {
     }
 
     public void close() {
-        for (ISendingHardware<?> hardware : table.values())
+        table.values().forEach((hardware) -> {
             hardware.close();
+        });
     }
 }

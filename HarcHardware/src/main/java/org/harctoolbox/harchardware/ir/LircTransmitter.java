@@ -50,7 +50,7 @@ public class LircTransmitter extends Transmitter {
     }
 
     public LircTransmitter(int[] transmitters) {
-        this.transmitters = transmitters;
+        this.transmitters = transmitters.clone();
     }
 
     public LircTransmitter(int xmitter) throws NoSuchTransmitterException {

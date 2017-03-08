@@ -20,7 +20,6 @@ import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.w3c.dom.Document;
@@ -134,18 +133,20 @@ public class CommandSet {
             Element parametersEl = doc.createElementNS(XmlExporter.girrNamespace, "parameters");
             parametersEl.setAttribute("protocol", protocol.toLowerCase(Locale.US));
             element.appendChild(parametersEl);
-            for (Entry<String, Long> parameter : parameters.entrySet()) {
+            parameters.entrySet().stream().map((parameter) -> {
                 Element parameterEl = doc.createElementNS(XmlExporter.girrNamespace, "parameter");
                 parameterEl.setAttribute("name", parameter.getKey());
                 parameterEl.setAttribute("value", parameter.getValue().toString());
+                return parameterEl;
+            }).forEachOrdered((parameterEl) -> {
                 parametersEl.appendChild(parameterEl);
-            }
+            });
         }
         if (commands != null) {
-            for (Command command : commands.values()) {
+            commands.values().forEach((command) -> {
                 element.appendChild(command.xmlExport(doc, null, fatRaw,
                         generateRaw, generateCcf, generateParameters));
-            }
+            });
         }
         return element;
     }
@@ -157,11 +158,12 @@ public class CommandSet {
      * @param repeatCount
      */
     public void addFormat(Command.CommandTextFormat format, int repeatCount) {
-        for (Command command : commands.values())
+        commands.values().forEach((command) -> {
             try {
                 command.addFormat(format, repeatCount);
             } catch (IrpMasterException ex) {
                 // TODO: invoke logger
             }
+        });
     }
 }

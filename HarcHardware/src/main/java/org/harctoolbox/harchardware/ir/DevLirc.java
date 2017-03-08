@@ -18,7 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.harchardware.ir;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,12 +46,7 @@ public class DevLirc implements IRawIrSender, IReceive, ICapture, ITransmitter, 
 
         return new File(DEVSLASHLIRC).isDirectory()
                 ? new File(DEVSLASHLIRC).listFiles()
-                : new File(DEV).listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.matches(LIRCDEVPATTERN);
-                    }
-                });
+                : new File(DEV).listFiles((File dir, String name) -> name.matches(LIRCDEVPATTERN));
     }
 
     public static void main(String[] args) {

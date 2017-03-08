@@ -58,7 +58,8 @@ public class Wol {
             int arg_i = 0;
             if (args[arg_i].equals("-f")) {
                 arg_i++;
-                String ethersPath = args[arg_i++];
+                String ethersPath = args[arg_i];
+                arg_i++;
                 Ethers.setPathname(ethersPath);
             }
             String thing = args[arg_i];

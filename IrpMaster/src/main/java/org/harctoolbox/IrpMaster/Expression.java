@@ -55,7 +55,7 @@ public class Expression {
     private static void usage(int code) {
         System.out.println("Usage:");
         System.out.println("\tExpression [-d]? <expression> [<name>=<value>|{<name>=<expression>}]*");
-        System.exit(code);
+        IrpUtils.exit(code);
     }
 
     /**

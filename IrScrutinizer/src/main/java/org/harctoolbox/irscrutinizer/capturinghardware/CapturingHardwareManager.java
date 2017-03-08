@@ -21,7 +21,6 @@ import java.awt.Component;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.Map.Entry;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
@@ -114,26 +113,26 @@ public class CapturingHardwareManager {
         menu.setText("Capturing Hardware");
         menu.setToolTipText("Allows direct selection of capturing hardware");
         buttonGroup = new ButtonGroup();
-        for (Entry<String, ICapturingHardware<?>> kvp : table.entrySet()) {
+        table.entrySet().stream().map((kvp) -> {
             String name = kvp.getKey();
             final ICapturingHardware<?> hardware = kvp.getValue();
             JRadioButton menuItem = new JRadioButton(name);
             menuItem.setSelected(name.equals(selection));
             //portRadioButtons[i] = menuItem;
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    try {
-                        select(hardware);
-                    } catch (IOException | HarcHardwareException ex) {
-                        guiUtils.error(ex);
-                    }
+            menuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+                try {
+                    select(hardware);
+                } catch (IOException | HarcHardwareException ex) {
+                    guiUtils.error(ex);
                 }
             });
-
+            return menuItem;
+        }).map((menuItem) -> {
             buttonGroup.add(menuItem);
+            return menuItem;
+        }).forEachOrdered((menuItem) -> {
             menu.add(menuItem);
-        }
+        });
     }
 
     public JMenu getMenu() {
@@ -203,7 +202,8 @@ public class CapturingHardwareManager {
     }
 
     public void close() {
-        for (ICapturingHardware<?> hardware : table.values())
+        table.values().forEach((hardware) -> {
             hardware.close();
+        });
     }
 }

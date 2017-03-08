@@ -31,7 +31,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -215,6 +214,7 @@ public class GuiMain extends javax.swing.JFrame {
             try {
                 Transferable transferable = support.getTransferable();
                 if (support.isDrop()) {
+                    @SuppressWarnings("unchecked")
                     List<File> list = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
                     if (list.size() > 1) {
                         guiUtils.error("Only one file can be dropped");
@@ -258,7 +258,7 @@ public class GuiMain extends javax.swing.JFrame {
      * @throws java.text.ParseException
      * @throws URISyntaxException
      */
-    @SuppressWarnings({"OverridableMethodCallInConstructor", "OverridableMethodCallInConstructor"})
+    @SuppressWarnings({"OverridableMethodCallInConstructor", "OverridableMethodCallInConstructor", "ResultOfObjectAllocationIgnored", "ResultOfObjectAllocationIgnored"})
     public GuiMain(String applicationHome, String propsfilename, boolean verbose,
             int debug, int userlevel, List<String> arguments)
             throws ParserConfigurationException, SAXException, IOException, IncompatibleArgumentException, java.text.ParseException, URISyntaxException {
@@ -300,11 +300,8 @@ public class GuiMain extends javax.swing.JFrame {
 
         lircImporter = new LircImporter();
         lircImporter.setRejectLircCode(properties.getRejectLircCodeImports());
-        properties.addRejectLircCodeImportsChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                lircImporter.setRejectLircCode((Boolean) newValue);
-            }
+        properties.addRejectLircCodeImportsChangeListener((String name1, Object oldValue, Object newValue) -> {
+            lircImporter.setRejectLircCode((Boolean) newValue);
         });
 
         irTransImporter = new IrTransImporter();
@@ -314,47 +311,29 @@ public class GuiMain extends javax.swing.JFrame {
         ccfImporter.setTranslateProntoFont(properties.getTranslateProntoFont());
         xcfImporter = new XcfImporter();
         xcfImporter.setTranslateProntoFont(properties.getTranslateProntoFont());
-        properties.addTranslateProntoFontChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                ccfImporter.setTranslateProntoFont((Boolean) newValue);
-                xcfImporter.setTranslateProntoFont((Boolean) newValue);
-            }
+        properties.addTranslateProntoFontChangeListener((String name1, Object oldValue, Object newValue) -> {
+            ccfImporter.setTranslateProntoFont((Boolean) newValue);
+            xcfImporter.setTranslateProntoFont((Boolean) newValue);
         });
 
         csvRawImporter = new CsvRawImporter(properties.getRawSeparatorIndex(), properties.getRawNameColumn(),
                 properties.getRawNameMultiColumn(), properties.getCodeColumn(),
                 properties.getIncludeTail());
 
-        properties.addRawSeparatorIndexChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                csvRawImporter.setSeparatorIndex((Integer)newValue);
-            }
+        properties.addRawSeparatorIndexChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvRawImporter.setSeparatorIndex((Integer)newValue);
         });
-        properties.addRawNameColumnChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                csvRawImporter.setNameColumn((Integer)newValue);
-            }
+        properties.addRawNameColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvRawImporter.setNameColumn((Integer)newValue);
         });
-        properties.addRawNameMultiColumnChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                csvRawImporter.setNameMultiColumn((Boolean)newValue);
-            }
+        properties.addRawNameMultiColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvRawImporter.setNameMultiColumn((Boolean)newValue);
         });
-        properties.addCodeColumnChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                csvRawImporter.setCodeColumn((Integer)newValue);
-            }
+        properties.addCodeColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvRawImporter.setCodeColumn((Integer)newValue);
         });
-        properties.addIncludeTailChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                csvRawImporter.setIncludeTail((Boolean)newValue);
-            }
+        properties.addIncludeTailChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvRawImporter.setIncludeTail((Boolean)newValue);
         });
 
         csvParametrizedImporter = new CsvParametrizedImporter(
@@ -368,92 +347,56 @@ public class GuiMain extends javax.swing.JFrame {
                 properties.getSColumn(),
                 properties.getProtocolColumn());
 
-        properties.addParametricSeparatorIndexChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                csvParametrizedImporter.setSeparatorIndex((Integer) newValue);
-            }
+        properties.addParametricSeparatorIndexChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setSeparatorIndex((Integer) newValue);
         });
 
-        properties.addParametricNameColumnChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                csvParametrizedImporter.setNameColumn((Integer) newValue);
-            }
+        properties.addParametricNameColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setNameColumn((Integer) newValue);
         });
 
-        properties.addParametricNumberBaseIndexChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                csvParametrizedImporter.setNumberBase(numberbaseIndex2numberbase((Integer) newValue));
-            }
+        properties.addParametricNumberBaseIndexChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setNumberBase(numberbaseIndex2numberbase((Integer) newValue));
         });
 
-        properties.addFColumnChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                csvParametrizedImporter.setFColumn((Integer) newValue);
-            }
+        properties.addFColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setFColumn((Integer) newValue);
         });
 
-        properties.addDColumnChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                csvParametrizedImporter.setDColumn((Integer) newValue);
-            }
+        properties.addDColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setDColumn((Integer) newValue);
         });
 
-        properties.addSColumnChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                csvParametrizedImporter.setSColumn((Integer) newValue);
-            }
+        properties.addSColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setSColumn((Integer) newValue);
         });
 
-        properties.addProtocolColumnChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                csvParametrizedImporter.setProtocolColumn((Integer) newValue);
-            }
+        properties.addProtocolColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setProtocolColumn((Integer) newValue);
         });
 
-        properties.addParametrizedNameMultiColumnChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                csvParametrizedImporter.setNameMultiColumn((Boolean) newValue);
-            }
+        properties.addParametrizedNameMultiColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setNameMultiColumn((Boolean) newValue);
         });
 
         ictImporter = new IctImporter();
 
         girrImporter = new GirrImporter(properties.getGirrValidate(), new URL(properties.getGirrSchemaLocation()));
-        properties.addGirrSchemaLocationChangeListener(new Props.IPropertyChangeListener() {
-
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                try {
-                    girrImporter.setUrl(new URL((String)newValue));
-                } catch (MalformedURLException ex) {
-                    guiUtils.error(ex);
-                }
+        properties.addGirrSchemaLocationChangeListener((String name1, Object oldValue, Object newValue) -> {
+            try {
+                girrImporter.setUrl(new URL((String)newValue));
+            } catch (MalformedURLException ex) {
+                guiUtils.error(ex);
             }
         });
 
-        properties.addGirrValidateChangeListener(new Props.IPropertyChangeListener() {
-
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                girrImporter.setValidate((Boolean) newValue);
-            }
+        properties.addGirrValidateChangeListener((String name1, Object oldValue, Object newValue) -> {
+            girrImporter.setValidate((Boolean) newValue);
         });
 
         waveImporter = new WaveImporter(properties.getImportWaveDivideCarrier());
-        properties.addImportWaveDivideCarrierChangeListener(new Props.IPropertyChangeListener() {
-
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                waveImporter.setDivideCarrier((Boolean) newValue);
-            }
+        properties.addImportWaveDivideCarrierChangeListener((String name1, Object oldValue, Object newValue) -> {
+            waveImporter.setDivideCarrier((Boolean) newValue);
         });
 
         RepeatFinder.setDefaultAbsoluteTolerance(properties.getAbsoluteTolerance());
@@ -476,12 +419,9 @@ public class GuiMain extends javax.swing.JFrame {
         capturedDataTextArea.setTransferHandler(new SignalScrutinizerTransferHandler());
 
         // Cannot do this in initComponents, since then it will be called therein
-        importTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
-            @Override
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                int index  = importTabbedPane.getSelectedIndex();
-                properties.setImportPaneSelectedIndex(index);
-            }
+        importTabbedPane.addChangeListener((javax.swing.event.ChangeEvent evt) -> {
+            int index  = importTabbedPane.getSelectedIndex();
+            properties.setImportPaneSelectedIndex(index);
         });
 
         // Scroll the tables to the last line
@@ -516,12 +456,9 @@ public class GuiMain extends javax.swing.JFrame {
         ParametrizedIrSignal.setIrpMaster(irpMaster);
 
         sendingHardwareManager = new SendingHardwareManager(guiUtils, properties, sendingHardwareTabbedPane);
-        properties.addVerboseChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                sendingHardwareManager.setVerbose((Boolean)newValue);
-                guiUtils.setVerbose((Boolean)newValue);
-            }
+        properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
+            sendingHardwareManager.setVerbose((Boolean)newValue);
+            guiUtils.setVerbose((Boolean)newValue);
         });
 
         SendingGlobalCache sendingGlobalCache = new SendingGlobalCache(globalCachePanel, properties,
@@ -610,66 +547,51 @@ public class GuiMain extends javax.swing.JFrame {
             guiUtils.error(ex);
         }
 
-        properties.addCaptureBeginTimeoutChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                try {
-                    capturingHardwareManager.getCapturer().setBeginTimeout((Integer) newValue);
-                } catch (IOException ex) {
-                    guiUtils.error(ex);
-                }
+        properties.addCaptureBeginTimeoutChangeListener((String name1, Object oldValue, Object newValue) -> {
+            try {
+                capturingHardwareManager.getCapturer().setBeginTimeout((Integer) newValue);
+            } catch (IOException ex) {
+                guiUtils.error(ex);
             }
         });
 
-        properties.addCaptureMaxSizeChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                capturingHardwareManager.getCapturer().setCaptureMaxSize((Integer) newValue);
-            }
+        properties.addCaptureMaxSizeChangeListener((String name1, Object oldValue, Object newValue) -> {
+            capturingHardwareManager.getCapturer().setCaptureMaxSize((Integer) newValue);
         });
 
-        properties.addCaptureEndingTimeoutChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                capturingHardwareManager.getCapturer().setEndingTimeout((Integer) newValue);
-            }
+        properties.addCaptureEndingTimeoutChangeListener((String name1, Object oldValue, Object newValue) -> {
+            capturingHardwareManager.getCapturer().setEndingTimeout((Integer) newValue);
         });
 
-        properties.addVerboseChangeListener(new Props.IPropertyChangeListener() {
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                capturingHardwareManager.setVerbose((Boolean)newValue);
-            }
+        properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
+            capturingHardwareManager.setVerbose((Boolean)newValue);
         });
 
         optionsMenu.add(capturingHardwareManager.getMenu());
 
-        irpMasterBean.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                switch (evt.getPropertyName()) {
-                    case IrpMasterBean.PROP_PROTOCOL_NAME:
-                        properties.setIrpMasterCurrentProtocol((String) evt.getNewValue());
-                        break;
-                    case IrpMasterBean.PROP_D:
-                        properties.setIrpMasterCurrentD((String) evt.getNewValue());
-                        break;
-                    case IrpMasterBean.PROP_S:
-                        properties.setIrpMasterCurrentS((String) evt.getNewValue());
-                        break;
-                    case IrpMasterBean.PROP_F:
-                        properties.setIrpMasterCurrentF((String) evt.getNewValue());
-                        break;
-                    case IrpMasterBean.PROP_T:
-                        properties.setIrpMasterCurrentT((String) evt.getNewValue());
-                        break;
-                    case IrpMasterBean.PROP_ADDITIONAL_PARAMS:
-                        properties.setIrpMasterCurrentAdditionalParameters((String) evt.getNewValue());
-                        break;
-                    default:
-                        guiUtils.error("Programming error detected: " + evt.getPropertyName());
-                        break;
-                }
+        irpMasterBean.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+                case IrpMasterBean.PROP_PROTOCOL_NAME:
+                    properties.setIrpMasterCurrentProtocol((String) evt.getNewValue());
+                    break;
+                case IrpMasterBean.PROP_D:
+                    properties.setIrpMasterCurrentD((String) evt.getNewValue());
+                    break;
+                case IrpMasterBean.PROP_S:
+                    properties.setIrpMasterCurrentS((String) evt.getNewValue());
+                    break;
+                case IrpMasterBean.PROP_F:
+                    properties.setIrpMasterCurrentF((String) evt.getNewValue());
+                    break;
+                case IrpMasterBean.PROP_T:
+                    properties.setIrpMasterCurrentT((String) evt.getNewValue());
+                    break;
+                case IrpMasterBean.PROP_ADDITIONAL_PARAMS:
+                    properties.setIrpMasterCurrentAdditionalParameters((String) evt.getNewValue());
+                    break;
+                default:
+                    guiUtils.error("Programming error detected: " + evt.getPropertyName());
+                    break;
             }
         });
 
@@ -888,38 +810,10 @@ public class GuiMain extends javax.swing.JFrame {
 
     private void loadExportFormats() throws ParserConfigurationException, SAXException, IOException {
         exportFormatManager = new ExportFormatManager(guiUtils,
-                new File(properties.mkPathAbsolute(properties.getExportFormatFilePath())),
-                //new File(properties.getExportDir()),
-                new ExportFormatManager.IExportFormatSelector() {
-            @Override
-            public void select(String name) {
-                selectFormat(name);
-            }
-        },
-                new IExporterFactory() {
-            @Override
-            public ICommandExporter newExporter() {
-                return newGirrExporter();
-            }
-        },
-                new IExporterFactory() {
-            @Override
-            public ICommandExporter newExporter() {
-                return newWaveExporter();
-            }
-        },
-                new IExporterFactory() {
-            @Override
-            public ICommandExporter newExporter() {
-                return newTextExporter();
-            }
-        },
-                new IExporterFactory() {
-            @Override
-            public ICommandExporter newExporter() {
-                return newProntoClassicExporter();
-            }
-        });
+                new File(properties.mkPathAbsolute(properties.getExportFormatFilePath())), //new File(properties.getExportDir()),
+                (String name1) -> {
+                    selectFormat(name1);
+                }, () -> newGirrExporter(), () -> newWaveExporter(), () -> newTextExporter(), () -> newProntoClassicExporter());
     }
 
     private RemoteSetExporter newRemoteExporter() {

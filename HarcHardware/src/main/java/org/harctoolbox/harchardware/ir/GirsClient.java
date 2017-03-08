@@ -117,7 +117,7 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
             if (irSequence == null) {
                 System.err.println("No input");
                 gc.close();
-                System.exit(1);
+                IrpUtils.exit(1);
             }
             ModulatedIrSequence seq = new ModulatedIrSequence(irSequence, IrpUtils.defaultFrequency);
             System.out.println(seq);

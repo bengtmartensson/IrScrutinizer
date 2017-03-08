@@ -166,8 +166,10 @@ public class IrTrans implements IHarcHardware, IRawIrSender, ITransmitter, IWeb 
     public String[] getTransmitterNames() {
         String [] result = new String[Led.values().length];
         int i = 0;
-        for (Led led : Led.values())
-            result[i++] = led.name();
+        for (Led led : Led.values()) {
+            result[i] = led.name();
+            i++;
+        }
         return result;
     }
 

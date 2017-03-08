@@ -36,8 +36,10 @@ public class EthernetAddress {
                     throw new InvalidEthernetAddressException(str);
 
                 int i = 0;
-                for (String s : chunks)
-                    addr[i++] = (byte) Integer.parseInt(s, 16);
+                for (String s : chunks) {
+                    addr[i] = (byte) Integer.parseInt(s, 16);
+                    i++;
+                }
             }
             return addr;
         } catch (NumberFormatException ex) {

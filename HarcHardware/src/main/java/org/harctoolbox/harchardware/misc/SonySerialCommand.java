@@ -121,6 +121,7 @@ public class SonySerialCommand {
         this.data = data;
     }
 
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     private SonySerialCommand(int n1, int n2, Type sg, int payload) {
         int index = 0;
         data = new byte[size];

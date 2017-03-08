@@ -75,18 +75,20 @@ public final class ConfigFile {
                 }
                 Collection<IrRemote> map = readConfig(file, charsetName, rejectLircCode);
 
-                for (IrRemote irRemote : map) {
+                map.forEach((irRemote) -> {
                     String remoteName = irRemote.getName();
                     int n = 1;
-                    while (dictionary.containsKey(remoteName))
-                        remoteName = irRemote.getName() + "$" + n++;
+                    while (dictionary.containsKey(remoteName)) {
+                        remoteName = irRemote.getName() + "$" + n;
+                        n++;
+                    }
 
                     if (n > 1)
                         System.err.println("Warning: remote name " + irRemote.getName()
                                 + " (source: " + irRemote.getSource()
                                 + ") already present, renaming to " + remoteName);
                     dictionary.put(remoteName, irRemote);
-                }
+                });
             }
             return dictionary.values();
         } else if (!filename.canRead())

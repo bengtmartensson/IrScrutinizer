@@ -151,12 +151,9 @@ public class GirsClientBean extends javax.swing.JPanel implements ISendingReceiv
         setType(properties != null ? Type.valueOf(properties.getGirsClientType()) : defaultType);
 
         if (properties != null) { // to be javabeans safe...
-            properties.addVerboseChangeListener(new Props.IPropertyChangeListener() {
-                @Override
-                public void propertyChange(String name, Object oldValue, Object newValue) {
-                    if (hardware != null)
-                        hardware.setVerbose((Boolean) newValue);
-                }
+            properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
+                if (hardware != null)
+                    hardware.setVerbose((Boolean) newValue);
             });
         }
     }

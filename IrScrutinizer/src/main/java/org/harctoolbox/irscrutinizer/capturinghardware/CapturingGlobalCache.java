@@ -18,7 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.capturinghardware;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
@@ -45,28 +44,20 @@ public class CapturingGlobalCache extends CapturingHardware<GlobalCache> impleme
         this.initialIp = hostname.isEmpty() ? null : hostname;
         this.globalCacheIrSenderSelector = globalCacheIrSenderSelector;
         globalCacheIrSenderSelector.setTimeout(properties.getCaptureBeginTimeout());
-        properties.addCaptureBeginTimeoutChangeListener(new Props.IPropertyChangeListener() {
-
-            @Override
-            public void propertyChange(String name, Object oldValue, Object newValue) {
-                globalCacheIrSenderSelector.setTimeout(properties.getCaptureBeginTimeout());
-            }
+        properties.addCaptureBeginTimeoutChangeListener((String name, Object oldValue, Object newValue) -> {
+            globalCacheIrSenderSelector.setTimeout(properties.getCaptureBeginTimeout());
         });
         //setupHardwareCommonStart();
 
-        globalCacheIrSenderSelector.addPropertyChangeListener(new PropertyChangeListener() {
-
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                try {
-                    setup();
-                    if (evt.getPropertyName().equals(GlobalCacheIrSenderSelector.PROP_IPNAME)) {
-                        //rawIrSender = globalCacheIrSenderSelector.getGlobalCache();
-                        properties.setGlobalCacheCaptureIpName((String) evt.getNewValue());
-                    }
-                } catch (IOException | HarcHardwareException ex) {
-                    Logger.getLogger(CapturingGlobalCache.class.getName()).log(Level.SEVERE, null, ex);
+        globalCacheIrSenderSelector.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            try {
+                setup();
+                if (evt.getPropertyName().equals(GlobalCacheIrSenderSelector.PROP_IPNAME)) {
+                    //rawIrSender = globalCacheIrSenderSelector.getGlobalCache();
+                    properties.setGlobalCacheCaptureIpName((String) evt.getNewValue());
                 }
+            } catch (IOException | HarcHardwareException ex) {
+                Logger.getLogger(CapturingGlobalCache.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }

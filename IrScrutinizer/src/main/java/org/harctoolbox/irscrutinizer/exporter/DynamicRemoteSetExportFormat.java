@@ -21,7 +21,6 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -58,17 +57,13 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     static Map<String, IExporterFactory> parseExportFormats(GuiUtils guiUtils, File file) throws ParserConfigurationException, SAXException, IOException {
         if (file.isDirectory()) {
             Map<String, IExporterFactory> result = new HashMap<>(32);
-            File[] files = file.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.endsWith(".xml");
-                }
-            });
+            File[] files = file.listFiles((File dir, String name) -> name.endsWith(".xml"));
             for (File f : files) {
                 try {
                     Map<String, IExporterFactory> map = parseExportFormats(guiUtils, f); // allow hierarchies
-                    for (Map.Entry<String, IExporterFactory> kvp : map.entrySet())
+                    map.entrySet().forEach((kvp) -> {
                         putWithCheck(guiUtils, result, kvp.getKey(), kvp.getValue());
+                    });
                 } catch (ParserConfigurationException | SAXException | IOException ex) {
                     String message = "Export formats file \"" + f.getPath() + "\" could not be read, ignoring it. " + ex.getLocalizedMessage();
                     if (guiUtils != null)
@@ -98,13 +93,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
                     ? new DynamicRemoteSetExportFormat(el)
                     : new DynamicCommandExportFormat(el);
 
-            putWithCheck(guiUtils, result, ef.getFormatName(), new IExporterFactory() {
-
-                @Override
-                public ICommandExporter newExporter() {
-                    return ef;
-                }
-            });
+            putWithCheck(guiUtils, result, ef.getFormatName(), () -> ef);
         }
         return result;
     }

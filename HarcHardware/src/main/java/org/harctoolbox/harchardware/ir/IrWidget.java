@@ -399,19 +399,23 @@ public class IrWidget implements IHarcHardware, ICapture {
             } else {
                 if (currentState) { // starting flash
                     currentGap += gapDuration(data[i]);
-                    if (index > 0)
-                        times[index++] = -currentGap;
+                    if (index > 0) {
+                        times[index] = -currentGap;
+                        index++;
+                    }
                     currentCount = data[i];
                     currentGap = 0;
                 } else { // starting gap
-                    times[index++] = pulseDuration(currentCount);
+                    times[index] = pulseDuration(currentCount);
+                    index++;
                     currentGap = gapDuration(data[i-1]) + msPerTick;
                     currentCount = 0;
                 }
             }
             previousState = currentState;
         }
-        times[index++] = currentState ? pulseDuration(currentCount) : -currentGap;
+        times[index] = currentState ? pulseDuration(currentCount) : -currentGap;
+        index++;
         if (debug > 0)
             System.out.println(index + " " + pulses + " " + gaps);
         if (debug > 0)

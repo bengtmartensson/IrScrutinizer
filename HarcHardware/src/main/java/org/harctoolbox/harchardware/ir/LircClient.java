@@ -247,9 +247,12 @@ public class LircClient implements IHarcHardware, IRemoteCommandIrSender, IIrSen
     public String[] getTransmitterNames() {
         String[] result = new String[portMax - portMin + 2];
         int index = 0;
-        result[index++] = "default";
-        for (int i = portMin; i <= portMax; i++)
-            result[index++] = Integer.toString(i);
+        result[index] = "default";
+        index++;
+        for (int i = portMin; i <= portMax; i++) {
+            result[index] = Integer.toString(i);
+            index++;
+        }
 
         return result;
     }

@@ -160,7 +160,7 @@ public final class Props {
                 needSave = true;
             }
         }
-        changeListeners.put(key, new ArrayList<IPropertyChangeListener>(16));
+        changeListeners.put(key, new ArrayList<>(16));
     }
 
     public boolean getWasReset() {
@@ -264,8 +264,9 @@ public final class Props {
 
     private void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
         ArrayList<IPropertyChangeListener> presentListeners = changeListeners.get(propertyName);
-        for (IPropertyChangeListener listener : presentListeners)
+        presentListeners.forEach((listener) -> {
             listener.propertyChange(propertyName, oldValue, newValue);
+        });
     }
 
     private void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {

@@ -52,8 +52,10 @@ public class Mode2Parser {
                     : new Mode2Parser(new File(args[0]), false, Integer.parseInt(args[1]));
             List<IrSequence> seqs = parser.readIrSequencesUntilEOF();
             int i = 0;
-            for (IrSequence part : seqs)
-                System.out.println("signal_" + i++ + ":" + new IrSequence(part).toPrintString(true)); // Easy to parse for IrScrutinizer
+            for (IrSequence part : seqs) {
+                System.out.println("signal_" + i + ":" + new IrSequence(part).toPrintString(true)); // Easy to parse for IrScrutinizer
+                i++;
+            }
         } catch (IOException ex) {
             Logger.getLogger(Mode2Parser.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -135,9 +135,11 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
             String str = obj.get("IRCode").asString();
             String[] chunks = str.split(",");
             int index = 0;
-            int frequency = Integer.parseInt(chunks[index++].trim());
+            int frequency = Integer.parseInt(chunks[index].trim());
+            index++;
             index++; // number repetitions, discard
-            int repIndex = Integer.parseInt(chunks[index++].trim());
+            int repIndex = Integer.parseInt(chunks[index].trim());
+            index++;
             int[] durations = new int[chunks.length - index];
             double T = 1000000f/(double)frequency; // period time in micro seconds
             for (int i = 0; i <  chunks.length - index; i++)

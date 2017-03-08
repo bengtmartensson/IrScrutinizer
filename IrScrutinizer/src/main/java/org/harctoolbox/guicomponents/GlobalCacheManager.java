@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.harctoolbox.harchardware.beacon.AmxBeaconListener;
 import org.harctoolbox.harchardware.ir.GlobalCache;
 
@@ -163,12 +162,16 @@ public final class GlobalCacheManager {
             int oldValue = sillyHashCode();
             automaticGlobalCaches = new ArrayList<>(4);
             automaticGlobalCacheTypes = new ArrayList<>(4);
-            for (Entry<InetAddress, AmxBeaconListener.Node> node : nodes.entrySet()) {
+            nodes.entrySet().stream().map((node) -> {
                 automaticGlobalCaches.add(node.getKey());
+                return node;
+            }).map((node) -> {
                 automaticGlobalCacheTypes.add(node.getValue().get("-Model"));
+                return node;
+            }).forEachOrdered((node) -> {
                 //ipAddressMap.put(node.getKey(), oldValue)
                 removeManualGlobalCache(node.getKey());
-            }
+            });
             int newValue = sillyHashCode();
             propertyChangeSupport.firePropertyChange(PROP_GCMANAGER_NAME, oldValue, newValue);
         }

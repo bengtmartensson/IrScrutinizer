@@ -32,7 +32,7 @@ public class EvaluateLog {
 
     private static void usage(int exitcode) {
         System.err.println("Usage:\n\tEvaluateLogs <logfile>");
-        System.exit(exitcode);
+        IrpUtils.exit(exitcode);
     }
 
     /**
@@ -81,10 +81,10 @@ public class EvaluateLog {
     public String toString() {
         int total = 0;
         StringBuilder result = new StringBuilder(128);
-        for (String protocol : map.keySet()) {
+        total = map.keySet().stream().map((protocol) -> {
             result.append(protocol).append(": ").append(map.get(protocol)).append("\n");
-            total += map.get(protocol);
-        }
+            return protocol;
+        }).map((protocol) -> map.get(protocol)).reduce(total, Integer::sum);
         return result.toString() + "\nTotal: " + total;
     }
 

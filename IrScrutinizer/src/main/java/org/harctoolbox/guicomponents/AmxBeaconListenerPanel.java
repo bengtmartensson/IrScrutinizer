@@ -19,7 +19,6 @@ package org.harctoolbox.guicomponents;
 
 import java.net.InetAddress;
 import java.util.Map;
-import java.util.Map.Entry;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.harctoolbox.harchardware.beacon.AmxBeaconListener;
@@ -72,20 +71,18 @@ public class AmxBeaconListenerPanel extends HarcPanel {
         @Override
         public void func(Map<InetAddress, Node> hm) {
             DefaultMutableTreeNode root = new DefaultMutableTreeNode("Nodes");
-            for (Node n : hm.values()) {
-                DefaultMutableTreeNode node = doNode(n);
+            hm.values().stream().map((n) -> doNode(n)).forEachOrdered((node) -> {
                 root.add(node);
-            }
+            });
             DefaultTreeModel treeModel = new DefaultTreeModel(root);
             tree.setModel(treeModel);
         }
 
         private DefaultMutableTreeNode doNode(Node node) {
             DefaultMutableTreeNode n = new DefaultMutableTreeNode(node.getInetAddress().getHostName());
-            for (Entry<String,String>kvp : node.getTable().entrySet()) {
-                DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(kvp.getKey() + ": " + kvp.getValue());
+            node.getTable().entrySet().stream().map((kvp) -> new DefaultMutableTreeNode(kvp.getKey() + ": " + kvp.getValue())).forEachOrdered((leaf) -> {
                 n.add(leaf);
-            }
+            });
             return n;
         }
     }

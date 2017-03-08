@@ -58,7 +58,7 @@ public class GuiUtils {
                         new ImageIcon(GuiUtils.class.getResource("/icons/Crystal-Clear/48x48/actions/info.png")));
         }
         ex.printStackTrace();
-        System.exit(errorcode);
+        IrpUtils.exit(errorcode);
     }
 
     private static boolean confirm(JFrame frame, String message) {

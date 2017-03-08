@@ -72,8 +72,8 @@ public abstract class RemoteSetImporter extends ReaderImporter implements IRemot
 
     protected void setupCommands() {
         clearCommands();
-        for (Remote remote : remoteSet.getRemotes()) {
+        remoteSet.getRemotes().forEach((remote) -> {
             addCommands(remote.getCommands().values());
-        }
+        });
     }
 }

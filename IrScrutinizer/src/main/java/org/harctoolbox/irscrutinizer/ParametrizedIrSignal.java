@@ -64,14 +64,14 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         if (params == null)
             return "";
         StringBuilder str = new StringBuilder(16);
-        for (Entry<String, Long> kvp : params.entrySet()) {
+        params.entrySet().forEach((kvp) -> {
             String key = kvp.getKey();
             if (!(key.equals("D") || key.equals("S") || key.equals("F") || key.equals("T"))) {
                 if (str.length() > 0)
                     str.append(" ");
                 str.append(key).append("=").append(kvp.getValue());
             }
-        }
+        });
         return str.toString();
     }
 

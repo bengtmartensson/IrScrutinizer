@@ -18,7 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.sendinghardware;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.JPanel;
 import org.harctoolbox.guicomponents.GuiUtils;
@@ -42,19 +41,15 @@ public class SendingLircClient extends SendingHardware<LircCcfClient> implements
     public SendingLircClient(JPanel panel, Props properties, GuiUtils gui,
             InternetHostPanel internetHostPanel, NamedCommandLauncher namedCommandLauncher) {
         super(panel, properties, gui);
+        rawIrSender = null;
         this.internetHostPanel = internetHostPanel;
         this.namedCommandLauncher = namedCommandLauncher;
-        this.internetHostPanel.addPropertyChangeListener(new PropertyChangeListener() {
-
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                try {
-                    setup();
-                } catch (IOException | HarcHardwareException ex) {
-                    guiUtils.error(ex);
-                }
+        this.internetHostPanel.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            try {
+                setup();
+            } catch (IOException | HarcHardwareException ex) {
+                guiUtils.error(ex);
             }
-
         });
     }
 

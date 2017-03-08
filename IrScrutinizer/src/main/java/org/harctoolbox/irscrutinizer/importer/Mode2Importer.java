@@ -74,8 +74,10 @@ public class Mode2Importer extends ReaderImporter implements IModulatedIrSequenc
             data.add((int)(IrpUtils.milliseconds2microseconds * getEndingTimeout()));
         int[] array = new int[data.size()];
         int i = 0;
-        for (Integer duration : data)
-            array[i++] = duration;
+        for (Integer duration : data) {
+            array[i] = duration;
+            i++;
+        }
         try {
             sequence = new ModulatedIrSequence(array, getFallbackFrequency());
         } catch (IncompatibleArgumentException ex) {

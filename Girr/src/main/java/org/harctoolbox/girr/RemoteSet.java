@@ -306,9 +306,9 @@ public class RemoteSet {
             adminDataEl.appendChild(notesEl);
         }
 
-        for (Remote remote : remotes.values()) {
+        remotes.values().forEach((remote) -> {
             element.appendChild(remote.xmlExport(doc, fatRaw, generateRaw, generateCcf, generateParameters));
-        }
+        });
         return element;
     }
 
@@ -339,8 +339,9 @@ public class RemoteSet {
      * @throws IrpMasterException
      */
     public void addFormat(Command.CommandTextFormat format, int repeatCount) throws IrpMasterException {
-        for (Remote remote : remotes.values())
+        remotes.values().forEach((remote) -> {
             remote.addFormat(format, repeatCount);
+        });
     }
 
     /**
@@ -350,8 +351,9 @@ public class RemoteSet {
      */
     public ArrayList<Command> getAllCommands() {
         ArrayList<Command> allCommands = new ArrayList<>(32);
-        for (Remote remote : remotes.values())
+        remotes.values().forEach((remote) -> {
             allCommands.addAll(remote.getCommands().values());
+        });
         return allCommands;
     }
 

@@ -23,7 +23,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
-import java.util.Map.Entry;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -154,12 +153,14 @@ public class XmlExport {
         el.appendChild(toElement(decode.toString(), textTagName));
         Element parametersEl = doc.createElement(parametersTagName);
         el.appendChild(parametersEl);
-        for (Entry<String, Long>kvp : decode.getParameters().entrySet()) {
+        decode.getParameters().entrySet().stream().map((kvp) -> {
             Element paramEl = doc.createElement(parameterTagName);
             paramEl.setAttribute(parameterNameAttributeName, kvp.getKey());
             paramEl.setAttribute(parameterValueAttributeName, Long.toString(kvp.getValue()));
+            return paramEl;
+        }).forEachOrdered((paramEl) -> {
             parametersEl.appendChild(paramEl);
-        }
+        });
         return el;
     }
 
@@ -205,12 +206,14 @@ public class XmlExport {
         el.setAttribute(protocolAttributeName, protocolName);
         Element parametersEl = doc.createElement(parametersTagName);
         el.appendChild(parametersEl);
-        for (Entry<String, Long>kvp : parameters.entrySet()) {
+        parameters.entrySet().stream().map((kvp) -> {
             Element paramEl = doc.createElement(parameterTagName);
             paramEl.setAttribute(parameterNameAttributeName, kvp.getKey());
             paramEl.setAttribute(parameterValueAttributeName, Long.toString(kvp.getValue()));
+            return paramEl;
+        }).forEachOrdered((paramEl) -> {
             parametersEl.appendChild(paramEl);
-        }
+        });
         return el;
     }
 }

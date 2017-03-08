@@ -51,8 +51,9 @@ public class CsvParametrizedImporter extends CsvImporter {
         try {
             Reader r = new InputStreamReader(new FileInputStream(args[0]), IrpUtils.dumbCharset);
             Collection<Command> signals = process(r,",", 1, false, args[0], true, 10, 3, -1, -1, -1);
-            for (Command s : signals)
+            signals.forEach((s) -> {
                 System.out.println(s.toString());
+            });
         } catch (IOException | IrpMasterException ex) {
             System.err.println(ex.getMessage());
         }

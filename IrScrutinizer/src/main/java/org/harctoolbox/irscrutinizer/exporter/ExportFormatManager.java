@@ -72,11 +72,8 @@ public class ExportFormatManager {
             final String name = formatName;
             JMenuItem menuItem = new JCheckBoxMenuItem(name);
             menuItem.setSelected(name.equals(selection));
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    exportFormatSelector.select(name);
-                }
+            menuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+                exportFormatSelector.select(name);
             });
 
             buttonGroup.add(menuItem);

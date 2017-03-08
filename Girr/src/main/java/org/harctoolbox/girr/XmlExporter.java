@@ -158,12 +158,14 @@ public class XmlExporter {
 
             } else {
                 if (parameters != null)
-                    for (Map.Entry<String, String> kvp : parameters.entrySet()) {
+                    parameters.entrySet().stream().map((kvp) -> {
                         Element e = stylesheet.createElementNS(xsltNamespace, "xsl:param");
                         e.setAttribute("name", kvp.getKey());
                         e.setAttribute("select", kvp.getValue());
-                        stylesheet.getDocumentElement().insertBefore(e, stylesheet.getDocumentElement().getFirstChild());
-                    }
+                    return e;
+                }).forEachOrdered((e) -> {
+                    stylesheet.getDocumentElement().insertBefore(e, stylesheet.getDocumentElement().getFirstChild());
+                });
                 NodeList nodeList = stylesheet.getDocumentElement().getElementsByTagNameNS(xsltNamespace, "output");
                 if (nodeList.getLength() > 0) {
                     Element e = (Element) nodeList.item(0);

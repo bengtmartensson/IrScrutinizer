@@ -107,8 +107,8 @@ public class NamedCommandLauncher extends JPanel {
             String[] remotes = hardware.getRemotes();
             if (remotes == null || remotes.length == 0) {
                 guiUtils.warning("No remotes present");
-                remoteComboBox.setModel(new DefaultComboBoxModel<String>());
-                commandComboBox.setModel(new DefaultComboBoxModel<String>());
+                remoteComboBox.setModel(new DefaultComboBoxModel<>());
+                commandComboBox.setModel(new DefaultComboBoxModel<>());
                 return;
             }
             java.util.Arrays.sort(remotes, String.CASE_INSENSITIVE_ORDER);
@@ -117,8 +117,8 @@ public class NamedCommandLauncher extends JPanel {
             loadCommands(remoteComboBoxModel.getElementAt(0));
         } catch (IOException ex) {
             hardware = null;
-            remoteComboBox.setModel(new DefaultComboBoxModel<String>());
-            commandComboBox.setModel(new DefaultComboBoxModel<String>());
+            remoteComboBox.setModel(new DefaultComboBoxModel<>());
+            commandComboBox.setModel(new DefaultComboBoxModel<>());
             throw ex;
         }
     }

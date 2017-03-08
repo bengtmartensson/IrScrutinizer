@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Map.Entry;
 import javax.swing.JTree;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
@@ -152,20 +151,17 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         Collection<Remote> remotes = remoteSet.getRemotes();
         ArrayList<Remote> remoteList = new ArrayList<>(remotes);
         Collections.sort(remoteList, new Remote.CompareNameCaseInsensitive());
-        for (Remote remote : remoteList) {
-            DefaultMutableTreeNode node = newRemoteNode(remote);
+        remoteList.stream().map((remote) -> newRemoteNode(remote)).forEachOrdered((node) -> {
             root.add(node);
-        }
+        });
         return new DefaultTreeModel(root);
     }
 
     private DefaultMutableTreeNode newRemoteNode(Remote remote) {
         DefaultMutableTreeNode n = new DefaultMutableTreeNode(remote);
-        for (Entry<String, Command> kvp : remote.getCommands().entrySet()) {
-            DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(kvp.getValue());
-
+        remote.getCommands().entrySet().stream().map((kvp) -> new DefaultMutableTreeNode(kvp.getValue())).forEachOrdered((leaf) -> {
             n.add(leaf);
-        }
+        });
         return n;
     }
 

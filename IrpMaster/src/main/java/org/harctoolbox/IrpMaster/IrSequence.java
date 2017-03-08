@@ -165,6 +165,7 @@ public class IrSequence implements Cloneable {
      * @throws IncompatibleArgumentException If last duration is not a gap, and fixOddSequences false.
      * @throws NumberFormatException
      */
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     public IrSequence(String str, boolean fixOddSequences) throws IncompatibleArgumentException, NumberFormatException {
         if (str == null || str.trim().isEmpty()) {
             data = new double[0];

@@ -173,14 +173,17 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
         if (chunks.length < 6)
             return null;
         int index = 0;
-        if (!chunks[index++].trim().equals(sendIrPrefix))
+        if (!chunks[index].trim().equals(sendIrPrefix))
             return null;
+        index++;
 
         index++; // module, discard
         index++; // send index, discard
-        int frequency = Integer.parseInt(chunks[index++].trim());
+        int frequency = Integer.parseInt(chunks[index].trim());
+        index++;
         index++; // number repetitions, discard
-        int repIndex = Integer.parseInt(chunks[index++].trim());
+        int repIndex = Integer.parseInt(chunks[index].trim());
+        index++;
         int[] durations = new int[chunks.length - index];
         double T = 1000000f / (double) frequency; // period time in micro seconds
         for (int i = 0; i < chunks.length - index; i++)
@@ -550,7 +553,8 @@ public class GlobalCache implements IHarcHardware, IRawIrSender, IIrSenderStop, 
         int index = 0;
         for (Integer module : irModules) {
             for (int trans = 0; trans < connectorsPerModule; trans++) {
-                result[index++] = module.toString() + ":" + (trans + connectorMin);
+                result[index] = module.toString() + ":" + (trans + connectorMin);
+                index++;
             }
         }
         return result;

@@ -18,7 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.sendinghardware;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.JPanel;
 import org.harctoolbox.devslashlirc.LircDeviceException;
@@ -40,23 +39,20 @@ public class SendingDevLirc extends SendingHardware<DevLirc> implements ISending
         super(panel, props, guiUtils_);
         this.devLircBean = devLircBean;
         this.portName = devLircBean.getPortName();
-        devLircBean.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                String propertyName = evt.getPropertyName();
-                switch (propertyName) {
-                    case DevLircBean.PROP_PROPS:
-                        break;
-                    case DevLircBean.PROP_PORTNAME:
-                        if (evt.getNewValue() == null)
-                            return;
-                        setup();
-                        break;
-                    case DevLircBean.PROP_ISOPEN:
-                        break;
-                    default:
-                        throw new RuntimeException("Unknown property " + propertyName);
-                }
+        devLircBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            String propertyName = evt.getPropertyName();
+            switch (propertyName) {
+                case DevLircBean.PROP_PROPS:
+                    break;
+                case DevLircBean.PROP_PORTNAME:
+                    if (evt.getNewValue() == null)
+                        return;
+                    setup();
+                    break;
+                case DevLircBean.PROP_ISOPEN:
+                    break;
+                default:
+                    throw new RuntimeException("Unknown property " + propertyName);
             }
         });
     }

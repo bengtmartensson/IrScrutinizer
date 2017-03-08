@@ -19,7 +19,6 @@ package org.harctoolbox.irscrutinizer.sendinghardware;
 
 import gnu.io.NoSuchPortException;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.JPanel;
@@ -46,31 +45,28 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
         this.baudRate = serialPortSimpleBean.getBaudRate();
         this.portName = serialPortSimpleBean.getPortName();
         this.clazz = clazz;
-        serialPortSimpleBean.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                String propertyName = evt.getPropertyName();
-                try {
-                    switch (propertyName) {
-                        //case SerialPortSimpleBean.PROP_VERSION:
-                        //    break;
-                        case SerialPortSimpleBean.PROP_PORTNAME:
-                            if (evt.getNewValue() == null)
-                                return;
-                            setup();
-                            break;
-                        case SerialPortSimpleBean.PROP_BAUD:
-                            setup();
-                            break;
-                        case SerialPortSimpleBean.PROP_ISOPEN:
-                            break;
-                        default:
-                            guiUtils.error("Unknown property " + propertyName);
-                            break;
-                    }
-                } catch (IOException ex) {
-                    guiUtils.error(ex);
+        serialPortSimpleBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            String propertyName = evt.getPropertyName();
+            try {
+                switch (propertyName) {
+                    //case SerialPortSimpleBean.PROP_VERSION:
+                    //    break;
+                    case SerialPortSimpleBean.PROP_PORTNAME:
+                        if (evt.getNewValue() == null)
+                            return;
+                        setup();
+                        break;
+                    case SerialPortSimpleBean.PROP_BAUD:
+                        setup();
+                        break;
+                    case SerialPortSimpleBean.PROP_ISOPEN:
+                        break;
+                    default:
+                        guiUtils.error("Unknown property " + propertyName);
+                        break;
                 }
+            } catch (IOException ex) {
+                guiUtils.error(ex);
             }
         });
     }

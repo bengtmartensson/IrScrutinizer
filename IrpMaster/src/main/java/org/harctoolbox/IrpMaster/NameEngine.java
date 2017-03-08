@@ -38,7 +38,7 @@ public class NameEngine {
     private static void usage(int code) {
         System.err.println("Usage:");
         System.err.println("\tNameEngine [<name>=<value>|{<name>=<expression>}]+");
-        System.exit(code);
+        IrpUtils.exit(code);
     }
 
     /**
@@ -140,12 +140,10 @@ public class NameEngine {
      * @param initial If false, Parameters with memory (state variables) are not reset.
      */
     public void loadDefaults(ParameterSpecs parameterSpecs, boolean initial) {
-        for (ParameterSpec param : parameterSpecs.getParams()) {
-            if ((initial || ! param.hasMemory()) && param.getDefault() != null) {
-                //System.out.println(">>>>>" + param.getName());
-                map.put(param.getName(), param.getDefault());
-            }
-        }
+        parameterSpecs.getParams().stream().filter((param) -> ((initial || ! param.hasMemory()) && param.getDefault() != null)).forEachOrdered((param) -> {
+            //System.out.println(">>>>>" + param.getName());
+            map.put(param.getName(), param.getDefault());
+        });
     }
 
     public void loadActualParameters(Map<String, Long> ivs, ParameterSpecs paramSpecs) throws DomainViolationException {
@@ -202,9 +200,9 @@ public class NameEngine {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder(64);
-        for (String name : map.keySet()) {
+        map.keySet().forEach((name) -> {
             str.append(name).append("=").append(map.get(name).toStringTree()).append(",");
-        }
+        });
         return "{" + (str.length() == 0 ? "" : str.substring(0, str.length()-1)) + "}";
     }
 
@@ -218,10 +216,9 @@ public class NameEngine {
      */
     public String notationString(String equals, String separator) {
         StringBuilder str = new StringBuilder(64);
-        for (String name : map.keySet()) {
-            if (!name.startsWith("$") && !map.get(name).toStringTree().startsWith("("))
-                str.append(name).append(equals).append(map.get(name).toStringTree()).append(separator);
-        }
+        map.keySet().stream().filter((name) -> (!name.startsWith("$") && !map.get(name).toStringTree().startsWith("("))).forEachOrdered((name) -> {
+            str.append(name).append(equals).append(map.get(name).toStringTree()).append(separator);
+        });
         return (str.length() == 0 ? "" : str.substring(0, str.length()-1));
     }
 

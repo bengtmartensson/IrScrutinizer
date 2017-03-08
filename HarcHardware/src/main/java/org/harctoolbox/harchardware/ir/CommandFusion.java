@@ -223,6 +223,7 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
     // 1 = T (transmitted TO IR learner) or R (reply FROM IR learner)
     // 2-4 = IRL (signifying we are communicating with an IR Learner)
     // 5-7 = The command name. See below for available commands.
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     private Payload decode(byte[] data, Byte token) {
         int index = 0;
         for (int i = 0; i < introBytes.length; i++)
@@ -250,6 +251,7 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         return encode(cmd, data, transmitToken);
     }
 
+    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
     private byte[] encode(String cmd, String data, byte token) {
         byte[] result = new byte[7 + learnerName.length() + cmd.length() + data.length()];
         int index = 0;
@@ -285,8 +287,10 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         }
         byte[] result = new byte[data.size()];
         int i = 0;
-        for (Byte b : data)
-            result[i++] = b;
+        for (Byte b : data) {
+            result[i] = b;
+            i++;
+        }
         return result;
     }
 

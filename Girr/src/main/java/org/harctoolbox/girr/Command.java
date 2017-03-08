@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
 import org.harctoolbox.IrpMaster.IrSignal;
@@ -95,9 +94,9 @@ public class Command {
         if (map == null || map.isEmpty())
             return "";
         StringBuilder str = new StringBuilder(64);
-        for (Entry<String,Long>kvp : map.entrySet()) {
+        map.entrySet().forEach((kvp) -> {
             str.append(kvp.getKey()).append("=").append(Long.toString(kvp.getValue())).append(" ");
-        }
+        });
         return str.substring(0, str.length() - 1);
     }
 
@@ -596,12 +595,11 @@ public class Command {
                 str.append(".").append(parameters.get("S"));
             if (parameters.containsKey("F"))
                 str.append(" Function: ").append(parameters.get("F"));
-            for (Entry<String, Long> kvp : parameters.entrySet()) {
+            parameters.entrySet().forEach((kvp) -> {
                 String parName = kvp.getKey();
-                if (parName.equals("F") || parName.equals("D") || parName.equals("F"))
-                    continue;
-                str.append(" ").append(parName).append("=").append(kvp.getValue());
-            }
+                if (!(parName.equals("F") || parName.equals("D") || parName.equals("F")))
+                    str.append(" ").append(parName).append("=").append(kvp.getValue());
+            });
         }
 
         return str.toString();
@@ -889,12 +887,14 @@ public class Command {
                     if (protocolName != null)
                         parametersEl.setAttribute("protocol", protocolName.toLowerCase(Locale.US));
                     element.appendChild(parametersEl);
-                    for (Entry<String, Long> parameter : parameters.entrySet()) {
+                    parameters.entrySet().stream().map((parameter) -> {
                         Element parameterEl = doc.createElementNS(XmlExporter.girrNamespace, "parameter");
                         parameterEl.setAttribute("name", parameter.getKey());
                         parameterEl.setAttribute("value", parameter.getValue().toString());
+                        return parameterEl;
+                    }).forEachOrdered((parameterEl) -> {
                         parametersEl.appendChild(parameterEl);
-                    }
+                    });
                 }
             } catch (IrpMasterException ex) {
                 element.appendChild(doc.createComment("Parameters requested but could not be generated."));
@@ -940,12 +940,14 @@ public class Command {
             }
         }
         if (otherFormats != null) {
-            for (Entry<String, String> format : otherFormats.entrySet()) {
+            otherFormats.entrySet().stream().map((format) -> {
                 Element formatEl = doc.createElementNS(XmlExporter.girrNamespace, "format");
                 formatEl.setAttribute("name", format.getKey());
                 formatEl.setTextContent(format.getValue());
+                return formatEl;
+            }).forEachOrdered((formatEl) -> {
                 element.appendChild(formatEl);
-            }
+            });
         }
         return element;
     }

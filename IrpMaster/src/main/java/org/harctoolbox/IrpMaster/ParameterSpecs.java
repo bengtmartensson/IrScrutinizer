@@ -93,8 +93,9 @@ public class ParameterSpecs {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder(32);
-        for (ParameterSpec ps : map.values())
+        map.values().forEach((ps) -> {
             str.append(ps.toString()).append(",");
+        });
 
         if (str.length() > 0)
             str.deleteCharAt(str.length()-1);
