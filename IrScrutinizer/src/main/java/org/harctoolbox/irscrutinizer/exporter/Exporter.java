@@ -20,6 +20,10 @@ package org.harctoolbox.irscrutinizer.exporter;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -65,8 +69,13 @@ public abstract class Exporter {
         return (new SimpleDateFormat(dateFormatString)).format(new Date());
     }
 
-    public synchronized static File getLastSaveFile() {
-        return lastSaveFile;
+    public synchronized static File getLastSaveFileOrCopy() throws IOException {
+        if (lastSaveFile == null || !lastSaveFile.getName().endsWith(".girr"))
+            return lastSaveFile;
+
+        Path newPath = Paths.get(lastSaveFile.getCanonicalPath() + ".txt");
+        Files.copy(Paths.get(lastSaveFile.getCanonicalPath()), newPath, REPLACE_EXISTING);
+        return newPath.toFile();
     }
 
     private synchronized static void setLastSaveFile(File theLastSaveFile) {

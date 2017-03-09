@@ -7909,10 +7909,15 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_automaticExportFilenamesCheckBoxActionPerformed
 
     private void openLastFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openLastFileButtonActionPerformed
-        if (Exporter.getLastSaveFile() == null)
-            guiUtils.error("There is no \"last file\".");
-        else
-            guiUtils.editOrOpen(Exporter.getLastSaveFile());
+        try {
+            File file = Exporter.getLastSaveFileOrCopy();
+            if (file != null)
+                guiUtils.editOrOpen(file);
+            else
+                guiUtils.error("There is no \"last file\".");
+        } catch (IOException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_openLastFileButtonActionPerformed
 
     private void exportGenerateRawCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportGenerateRawCheckBoxActionPerformed
@@ -8003,10 +8008,15 @@ public class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_disregardRepeatMinsCheckBoxMenuItemActionPerformed
 
     private void openLastExportFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openLastExportFileMenuItemActionPerformed
-        if (Exporter.getLastSaveFile() != null)
-            guiUtils.edit(Exporter.getLastSaveFile());
-        else
-            guiUtils.error("No export has been made in this session.");
+        try {
+            File file = Exporter.getLastSaveFileOrCopy();
+            if (file != null)
+                guiUtils.editOrOpen(file);
+            else
+                guiUtils.error("No export has been made in this session.");
+        } catch (IOException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_openLastExportFileMenuItemActionPerformed
 
     private void signalSignalTextMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signalSignalTextMenuItemActionPerformed
