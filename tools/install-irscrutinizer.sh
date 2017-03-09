@@ -115,5 +115,8 @@ sed -e "s|Exec=.*|Exec=/bin/sh \"${PREFIX}/bin/${MYPROG_LOWER}\"|" \
     -e "s|Icon=.*|Icon=${MYPROG_HOME}/${MYPROG_LOWER}.png|" target/${MYPROG_LOWER}.desktop \
   > ${PREFIX}/share/applications/${MYPROG_LOWER}.desktop
 
+# Install mime type file for girr
+install --mode 444 target/girr.xml ${PREFIX}/share/applications
+
 echo "Consider deleting old properties with the command "
 echo "irscrutinizer --nuke-properties"
