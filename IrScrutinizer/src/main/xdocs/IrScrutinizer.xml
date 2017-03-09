@@ -524,7 +524,7 @@ other panes can transfer data to this pane.
 
 For text
 import, the signal can be in either Pronto CCF format, raw format (indicated by
-a leading "+"-sign), or in the UEI learned format. The signal is printed in the
+a leading "+"-sign), or in the <a href="Glossary.html#UEILearnedFormat">UEI learned format</a>. The signal is printed in the
 data window, in the preferred text format, which can be selected from the
 options menu. The text representation may be edited (assuming sufficient
 knowledge!), after which the edited signal is analyzed and plotted again by
