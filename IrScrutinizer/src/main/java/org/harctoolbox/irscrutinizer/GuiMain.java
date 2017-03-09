@@ -678,8 +678,10 @@ public class GuiMain extends javax.swing.JFrame {
                 guiUtils.error(ex);
             }
         }
-        if (sum > 0)
+        if (sum > 0) {
             selectImportPane(ImportType.parametricRemote);
+            parameterTableModel.clearUnsavedChanges();
+        }
     }
 
     private boolean checkUnsavedStuff() {
