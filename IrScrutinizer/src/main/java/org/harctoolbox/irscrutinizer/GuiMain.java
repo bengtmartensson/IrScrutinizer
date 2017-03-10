@@ -2096,7 +2096,7 @@ public class GuiMain extends javax.swing.JFrame {
         sendingGirsClientHelpButton = new javax.swing.JButton();
         girsTcpSerialComboBean = new org.harctoolbox.guicomponents.GirsClientBean(guiUtils, properties);
         commandFusionSendPanel = new javax.swing.JPanel();
-        commandFusionSendingSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionPortName(), CommandFusion.defaultBaudRate, false);
+        commandFusionSendingSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionPortName(), CommandFusion.DEFAULTBAUDRATE, false);
         sendingCommandFusionHelpButton = new javax.swing.JButton();
         genericSerialPanel = new javax.swing.JPanel();
         genericSerialSenderBean = new org.harctoolbox.irscrutinizer.sendinghardware.GenericSerialSenderBean(guiUtils);
