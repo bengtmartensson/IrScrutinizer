@@ -201,7 +201,7 @@ public class IrScrutinizer {
 
     private final static class CommandLineArgs {
 
-        @Parameter(names = {"-D", "--debug"}, description = "Debug code")
+        @Parameter(names = {"-D", "--debug"}, description = "Debug code", hidden = true)
         private int debug = 0;
 
         @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
@@ -226,7 +226,7 @@ public class IrScrutinizer {
         @Parameter(names = {"-v", "--verbose"}, description = "Have some commands executed verbosely")
         private boolean verbose;
 
-        @Parameter(names = {"-x", "--experimental"}, description = "Enable experimental features")
+        @Parameter(names = {"-x", "--experimental"}, description = "Enable experimental features", hidden = true)
         private boolean experimental;
 
         @Parameter(description = "Arguments to the program")
