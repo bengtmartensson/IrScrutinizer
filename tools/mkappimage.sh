@@ -3,7 +3,8 @@
 # Create a directory for AppImage, and call AppImageAssistant.
 # Should be called from the IrScrutinizer directory.
 #
-# TODO: should check membership in groups dialout and lock, as in irscrutinizer.sh
+# TODO: should check membership in groups dialout, lock, and lirc,
+# as in irscrutinizer.sh
 
 # Since the lock directory is sometimes different from /var/lock,
 # we prefer the system's rxtx (if existing) over our own.

@@ -53,6 +53,14 @@ id -Gn | grep -q lock  || {
     fi
 }
 
+# Check that we are in grouo "lirc", complain otherwise
+id -Gn | grep -q lirc  || {
+    if [ "$EUID" != "0" ]; then
+        echo "Warning: current user $USER not in group lirc"
+        echo "run e.g. 'sudo usermod -aG lirc $USER' to fix"
+    fi
+}
+
 # Copy stuff to MYPROG_HOME
 install -d ${MYPROG_HOME}
 install --mode=444 target/${MYPROG}-jar-with-dependencies.jar ${MYPROG_HOME}
