@@ -7,7 +7,7 @@
   </header>
 <body>
 <note>This is a reference manual. It is written for completeness and correctness, not
-    for accessability. For an easier introduction, see
+    for accessibility. For an easier introduction, see
     <a href="http://www.hifi-remote.com/wiki/index.php?title=IrScrutinizer_Guide">this tutorial</a>.
 </note>
 
@@ -60,6 +60,10 @@ not to hold the author responsible.</warning>
 	  <td>2016-08-30</td>
 	  <td>Version for release 1.3. Misc. minor improvements.</td>
 	</tr>
+        <tr>
+	  <td>2017-03-12</td>
+	  <td>Version for release 1.4. Misc. minor improvements.</td>
+	</tr>
       </table>
 
 <section>
@@ -71,7 +75,7 @@ exporting of infrared (IR) signals. For capturing and sending IR signals
 several different hardware sensors and senders are supported. IR Signals can be
 imported not only by capturing from one of the supported hardware
 sensors (among others: IrWidget, Global Caché, Command Fusion, and Arduino), but also from a
-number of different file formats (among others: LIRC, Wave, CML, Pronto Classic and
+number of different file formats (among others: Lirc, Wave, CML, Pronto Classic and
 professional, RMDU (partially), and different text based formats; not only from
 files, but also from the clipboard, from URLs, and from file hierarchies), as
 well as the Internet IR Databases by Global Caché and by IRDB. Imported signals
@@ -85,7 +89,7 @@ Internet community can be generated.</p>
 functionality of the program is available on every Java platform. The native
 libraries (DecodeIR and RXTX) are presently available for 32- and 64-bit
 versions of Windows, Linux (x86, amd-64, arm version 7), and MacOsX, and can with moderate effort be compiled for other
-platforms. (The library DevSlashLirc is available for Linux only.)</p>
+platforms. (The library DevSlashLirc is available (and meaningful!) for Linux only.)</p>
 <p>
 For someone with knowledge in the problem domain of IR signals and
 their parameterization, this program is believed to be simple to
@@ -135,7 +139,7 @@ The final version was released in Febrary 2014, slightly ironically called versi
 <title>Copyright and License</title>
 <p>The program, as well as this document, is copyright by myself. My
 copyright does not extend to the embedded "components" Analyze,
-Makehex, DecodeIR, and Jirc.  ExchangeIR was written by
+DecodeIR, and Jirc.  ExchangeIR was written by
 Graham Dixon and published under <a
  href="http://www.gnu.org/licenses/gpl.html">GPL3 license</a>. A subset has been translated to Java by Bengt Martensson.
 DecodeIR was originally written by John S. Fine, with later
@@ -176,7 +180,7 @@ the <a href="http://www.eclipse.org/legal/epl-v10.html">Eclipse Eclipse Public
 License Version 1.0</a>.</p>
 
 
-<p><a href="http://www.lirc.org">LIRC (Linux Infrared Remote Control)</a> is according
+<p><a href="http://www.lirc.org">Lirc (Linux Infrared Remote Control)</a> is according
 to its web site copyright 1999 by Karsten Scheibler
 and Christoph Bartelmus (with contribution of may others), and is licensed
 under GPL2. The parts used here have been translated to Java by myself,
@@ -195,7 +199,7 @@ and is licensed under the <a href="http://www.gnu.org/licenses/lgpl.html">LGPL l
 
 <p>The program contains icons from Dangerous Prototypes
 and IrTrans. These are used exclusively in the context of these firms, and only
-used to illustrate their products. The icons for JP1 and LIRC are also
+used to illustrate their products. The icons for JP1 and Lirc are also
 exclusively used to illustrate themselves.</p>
 
 <p>
@@ -252,28 +256,36 @@ parameters.</dd>
 <section>
 <title>Installation</title>
 <section>
+    <title>Download</title>
+    <p>The latest official release is always <a href="https://github.com/bengtmartensson/harctoolboxbundle/releases/latest">available here</a>.</p>
+<p>In addition, there are <a href="https://github.com/bengtmartensson/harctoolboxbundle/releases/tag/ci-build">continuous integration builds</a>,
+    at least most of the time. These are build from a snapshot of the current sources. Because of this, they are more likely to contain bugs,
+    or even to be outright useless.
+    </p>
+</section>
+<section>
 <title>General</title>
 <p>IrScrutinizer, and all but two of its third-party additions, are written in Java,
 which means that it should run on every computer with a modern Java installed;
-Windows, Linux (including Raspberry Pi), Macintosh, etc. Java 1.7 or later is required. The
+Windows, Linux (including Raspberry Pi), Macintosh, etc. Java 8 or later is required. The
 exception are DecodeIR and the native part of RXTX, which are written in C++
 and C respectively, and invoked as shared library
     (<code>.dll</code> in Windows, <code>.so</code> in Linux, <code>.jnilib</code> or <code>.dylib</code> in Mac OS X).
-For Linux, there is also the DevSlashLirc library.
+    For Linux, there is also the <em>DevSlashLirc</em> library.
     If DecodeIR, RXTX, or DevSlashLirc are
 not available on for a particular platform it is not a major problem, as most parts of IrScrutinizer will
 work fine without it; just the DecodeIR-related functions, the serial
 hardware access, or the access to certain hardware will be unavailable.</p>
 
 <p>In all versions, IrScrutinizer behave civilized, in that the installation
-directory can be read only after the installation.
+directory is not written to, and thus can be read-only as soon as the installation has taken place.
 </p>
 <p>As of version 1.3, there are six different way of installing the program, described next.</p>
 </section>
 <section><title>Windows</title>
 <p>First make sure that the current Java is installed.</p>
 <p>Download the <a
-href="http://www.harctoolbox.org/downloads/IrScrutinizer.exe">Window setup
+href="https://github.com/bengtmartensson/harctoolboxbundle/releases/latest">Window setup
 file</a> and double click it. Select any installation
 directory you like; suggested is <code>C:\Program Files\IrScrutinizer</code>,
 unless you can not install with administrator rights. Unless
@@ -299,8 +311,10 @@ people may like to delete the properties file too, see <a href="#Properties">pro
     one large monolithic executable application that is downloaded, made executable, and run, without any
     installation in classic sense. At this moment, only 64-bit x86 Linux is supported, but it is believed
 to run on all modern, 64-bit x86 Linux distrubutions. Just download
-    <a href="http://www.harctoolbox.org/downloads/IrScrutinizer-x86_64.AppImage">IrScrutinizer-x86_64.AppImage</a>,
-    make executable, and double click (alternativelly, start from the command line). Make sure that the current Java is installed.</p>
+    <a href="https://github.com/bengtmartensson/harctoolboxbundle/releases/latest">IrScrutinizer-x86_64.AppImage</a>,
+    make executable, and double click (alternativelly, start from the command line).
+    Possibly contrary to the AppImage philosophy, this appimage does not come with its own Java,
+    but requires it to be installed separatly. (Otherwise it would have been 10 times larger.)</p>
 
     <section>
         <title>Serial device access</title>
@@ -385,7 +399,7 @@ ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irpmaster
 <section>
     <title>Fedora Linux</title>
     <p>Fedora rpm packages are
-        available for the previous version 1.1.3.</p>
+        available for the now obsolete version 1.1.3.</p>
         <p>To install, the command <code>sudo dnf install harctoolbox harctoolbox-doc</code> should be issued in a terminal window.
         This will install IrScrutinizer as a desktop program, as well as the command line
         commands <code>irscrutinizer</code> and <code>irpmaster</code>.
@@ -433,7 +447,7 @@ The main window is composed of seven sub panes denoted
 by "Scrutinize signal" (for processing single signal), "Scrutinize remote" (for
 collecting several signals to one "remote"), "Generate" (generates IR signal
 from protocol name and parameters), "Import", "Export",
-"Capturing Hardware", and "Sending Hardware"
+"Sending Hardware", and "Capturing Hardware"
 respectively. These panels will be discussed in Section <a
 href="#GUI+Elements+walkthrough">GUI Elements walk through</a></p>
     </section>
@@ -453,22 +467,21 @@ sometimes an <a href="Glossary.html#EndingSequence">ending sequence</a>.</p>
     </section>
 
 <section><title>Adding new export formats</title>
-<p>Only some of the many export formats are  defined in the Java code
-of the program, the rest in the file  <code>exportformats.xml</code>,
-located in the root of the install directory. By modifying this file,
+<p>Only a few of the many export formats are  defined in the main Java code,
+the rest are defined in files in the directory  <code>exportformats.d</code>,
+located in the root of the install directory. By adding a file here,
 the user can simply add his/her own export formats according to own
-needs. An exporformat consists of a number of properties, together
+needs. An export format consists of a number of properties, together
 with a small "program" written in the transformation language XSLT,
 for transforming a Girr-XML-tree to the desired text format.</p>
 
-<p>The rest of this section documents the format of the file, and is
+<p>The rest of this section documents the format of these files, and is
 supposed to be read only when needed. Fundamental knowledge of XML and
 <a href="Glossary.html#XSLT">XSLT transformations</a> are assumed.</p>
 
-<section><title>Format of the file
-<code>exportformats.xml</code></title>
+<section><title>Format of the files in <code>exportformats.d</code></title>
 <p>The file is an XML file read without validation. The syntax and semantics
-are believed to be essentailly self explaining, or clear from the
+are believed to be essentially self explaining, or clear from the
 examples already in there. An export format is
 packed in an element of type <code>exportformat</code>. It contains
 the following attributes:</p>
@@ -494,7 +507,7 @@ href="Girr.html#Fat+Format">"fat" format</a>, with
 root element, into the desired text format. It may be advisable to use
 the already present formats as guide.</p>
 
-<p>After editing the file, it can be reloaded either by re-starting the
+<p>After editing or adding export format files, they can be reloaded either by re-starting the
 program, or by selecting Options -> Export formats database -> Reload.</p>
     </section>
 </section>
@@ -504,7 +517,8 @@ program, or by selecting Options -> Export formats database -> Reload.</p>
 <code><![CDATA[%LOCALAPPDATA%\IrScrutinizer\IrScrutinizer.properties.xml]]></code> using Windows
 Vista and later (on my Windows 7 system, this is <code>%HOME%\AppData\Local\IrScrutinizer\IrScrutinizer.properties.xml</code>), otherwise in
 <code>%APPDATA%\IrScrutinizer\IrScrutinizer.properties.xml</code>. Using other operating
-systems, it is stored under <code>$HOME/.config/IrScrutinizer/properties.xml</code>. It is
+systems, it is stored according to the <a href="https://specifications.freedesktop.org/basedir-spec/latest/index.html">FreeDesktop specification</a>.
+Per default, this is <code>$HOME/.config/IrScrutinizer/properties.xml</code>. It is
 not deleted by  un-install. (If weird problems appear, for example after an update, try
 deleting this file. For this, there is a command line option <code>--nuke-properties</code> that can be used to
 conveniently delete the present property file, without knowing its exact name.)
@@ -522,8 +536,11 @@ from a file (using the context menu in the data window, or through File ->
 Import -> Import as single sequence), or pasted from the clipboard. Also, some
 other panes can transfer data to this pane.
 
+The button "Capt. (cont.)" a tread is started, that continously captures signals
+from the hardware. Only the last signal is kept.
+
 For text
-import, the signal can be in either Pronto CCF format, raw format (indicated by
+import, the signal can be in either Pronto Hex format, raw format (indicated by
 a leading "+"-sign), or in the <a href="Glossary.html#UEILearnedFormat">UEI learned format</a>. The signal is printed in the
 data window, in the preferred text format, which can be selected from the
 options menu. The text representation may be edited (assuming sufficient
@@ -531,16 +548,18 @@ knowledge!), after which the edited signal is analyzed and plotted again by
 pressing the "Scrutinize" button. The signal may be sent to the sending
 hardware by pressing the "Transmit" button.</p>
 
-<p>Using context menus, the result can be sent to the clipboard or saved
-to a file.</p>
-
-<p>The plot can be zoomed by pressing the left mouse button and dragging.
-Printing and exported as graph is presently not implemented.</p>
+<p>The plot can be horizontally zoomed by pressing the left mouse button and dragging.
+Printing and exported as graph are presently not implemented.</p>
 
 <p>The menu entry Actions -> Enter test signal (or its accelerator, the F9
 key) enters a test signal.</p>
-<p>
-Transforming the signal between different formats may introduce
+
+<p>Using context menus, the result can be sent to the clipboard or saved
+to a file. The menu entry "clone plot" makes a clone of the plot.
+    This can be used for comparing with subsequent plots.</p>
+
+    <p>
+Note that transforming the signal between different formats may introduce
 rounding errors. In rare cases, this may causing decoding
 to fail.
 </p>
@@ -720,10 +739,10 @@ combinations to the tree.</p>
 IrScrutinizer. The importer is capable of importing directory hierarchies.</p>
 	</section>
 
-<section><title>LIRC</title>
-<p>The <a href="Glossary.html#LIRC">LIRC</a> import feature is based upon <a
-href="Jirc.html">Jirc</a>, which is basically a subset of LIRC translated into Java.
-The LIRC importer can even import a file
+<section><title>Lirc</title>
+<p>The <a href="Glossary.html#Lirc">Lirc</a> import feature is based upon <a
+href="Jirc.html">Jirc</a>, which is basically a subset of Lirc translated into Java.
+The Lirc importer can even import a file
 system hierarchy by selecting the top directory as File/URL. (Importing the
 entire lirc.org database with over 100000 commands takes around 1 minute and 1GB
 of memory.)</p>
@@ -777,6 +796,7 @@ found for example at <a
 href="http://files.remotecentral.com/prontopro/index.html">Remote
 Central</a>. IrScrutinizer can read in these files to its import tree, even
 preserving the Pronto "devices" as nodes in the tree.</p>
+<p>This is not extensively tested.</p>
 	</section>
 
 <section><title>ICT IrScope format</title>
@@ -835,24 +855,27 @@ console.</p>
 other programs to use the computed results. Single signals (from the
 "Scrutinize signal" pane), collections of signals (from the "Scrutinize remote"
 pane), or generated signals can be exported. Exports can be generated in a
-number of different formats. Some (Girr (=XML) and text) can contain both
+number of different formats. Some (Girr and text) can contain both
 the Pronto format and the "raw" format (timings in
 microseconds, positive for pulses, negative for gaps), as well as other
-formats. These formats, together with Wave, LIRC, and Pronto Classic, are
+formats. These formats, together with Wave, Lirc, and Pronto Classic, are
 built-in in the program. However, it is possible to define new
 export formats by extending a configuration file, see <a
     href="#Adding+new+export+formats">Adding new export formats</a>.</p>
-<p>Export file
-names are either user selected from a file
+<p>The file
+names of the exports are either user selected from a file
 selector, or, if "Automatic file names" has been selected,
 automatically generated.</p>
 
-<p>The export is performed by pressing the "Export" button. The "..."-marked
+<p>The export is performed by pressing the one of the Export buttons. The "..."-marked
 button allows for manually selecting the export directory. It is recommended to
 create a new, empty directory for the exports. The just-created export file can
 be immediately inspected by pressing the "Open last file"-button, which will open
-it in the "standard way" of the used operating system. (Also available on the
-actions menu.) The "Open" button
+it in the "standard way" of the operating system.
+  (Also available on the actions menu.)
+(Girr exports become a special treatment in order not to invoke another
+    instance of the IrScrutinizer. They are copied to a temporary <code>.txt</code> file.)
+    The "Open" button
 similarly opens the operating systems standard directory browser (Windows
 Explorer, Konquistador, Nautilus,...) on the export directory.</p>
 
@@ -860,7 +883,7 @@ Explorer, Konquistador, Nautilus,...) on the export directory.</p>
     export an <a href="Glossary.html#IrSequence">IR sequence</a> rather than an
 <a href="Glossary.html#IrSignal">IR signal</a> (consisting of an intro sequence, an repetition sequence (to be
 included 0 or more times), and an (most often empty) ending
-sequence). Using these formats, the number of repetition sequences to include
+sequence). When using these formats, the number of repetition sequences to include
 can be selected.</p>
 <p>The character set used for the export can be selected through <code>Options -> Export options -> Character set...</code>
             Note however that this makes sense only for text based formats, including XML.</p>
@@ -883,7 +906,7 @@ can be selected.</p>
     This uses one of the three Arduino Infrared libraries
     <a href="https://github.com/z3t0/Arduino-IRremote">IRremote</a>,
     <a href="https://github.com/cyborg5/IRLib">IRLib</a>,
-    and <a href="https://github.com/bengtmartensson/Infrared4Arduino">Infrared4Arduino</a>.
+    and <a href="http://harctoolbox.org/Infrared4Arduino.html">Infrared4Arduino</a>.
     As the name suggests, the <a href="Glossary.html#RawIrSignal">raw form of the signals</a> are used.
     </p></section>
 
@@ -891,7 +914,7 @@ can be selected.</p>
     <p>Generates a similar C++ sketch for the Arduino as in the raw case, but tries to
         use the <a href="Glossary.html#ParametricIRSignal">parametric form</a> whenever possible, i.e.,
         whenever the protocol is one that can be generated by the underlying infrared library. This version supports
-        Infrared4Arduino only.
+        <a href="http://harctoolbox.org/Infrared4Arduino.html">Infrared4Arduino</a> only.
     </p></section>
 
     <section><title>Arduino/IRremote</title>
@@ -954,15 +977,21 @@ can be selected.</p>
     <p>Simple text protocol for describing a single <a
             href="Glossary.html#IrSeqeunce">IrSequence</a>.</p></section>
 
-    <section><title>LIRC</title>
-    <p>The LIRC-exports are in <a href="Glossary.html#lircd.conf">lircd.conf</a>-format.
-        These uses the raw LIRC format, except for a few well known protocol (presently NEC1 and RC5). They can be
-        concatenated together and used as the LIRC server data base. Can also be used with <a
+    <section><title>Lirc Raw</title>
+    <p>The Lirc-exports are in <a href="Glossary.html#lircd.conf">lircd.conf</a>- raw format.
+        These use the raw Lirc format, except for a few well known protocol (presently NEC1 and RC5). They can be
+        concatenated together and used as the Lirc server data base. Can also be used with <a
             href="http://winlirc.sourceforge.net/">WinLirc</a>.
     </p></section>
 
+    <section>
+        <title>Lirc</title>
+    <p>Like "Lirc Raw", but recognizes a large number of the protocols, for which lircd.conf files
+        in "cooked" (opposite of raw) are generated. For other protocols, it falls back to the raw form.
+    </p></section>
+
     <section><title>mode2</title>
-    <p>A primitive debugging "signal format", consisting on interleaved on- and off durations.</p></section>
+    <p>A primitive debugging "signal format" used by Lirc, consisting on interleaved on- and off durations.</p></section>
 
     <section>
         <title>Pronto Classic</title>
@@ -982,10 +1011,10 @@ can be selected.</p>
     <section><title>RemoteMaster</title>
     <p>Produce a rudimentary <a href="Glossary.html#rmdu">device update</a> (<code>.rmdu</code> file)
     for <a href="Glossary.html#RemoteMaster">RemoteMaster</a>.
-    This can be imported into RemoteMaster (after appending the file <code>ImportOnly.protocols.ini</code> to its
-    <code>protocols.ini</code>). RemoteMaster will now have the parameters, but not an
+    After importing, RemoteMaster will have the parameters, but not an
     <a href="Glossary.html#Executor">executor</a>, nor button assignments. These have to be entered manually
-    in RemoteMaster.
+    in RemoteMaster. The procedure is described in detail
+    <a href="http://www.hifi-remote.com/wiki/index.php?title=Importing_Foreign_IR_Remotes_in_RemoteMaster">here</a>.
     </p></section>
 
     <section><title>Spreadsheet</title>
@@ -1029,7 +1058,7 @@ of the deployed IR sending/capturing hardware.</p>
 <p>Note that there is exactly one <em>selected device</em>, corresponding to the the selected sub-pane of the "Sending HW" pane.
 This device may be opened or not. An opened device may be selected or not. There may be more than opened device.</p>
 
-<p>Selected ports etc. are stored in the properties, thereby
+<p>The currently selected ports etc. are stored in the properties, thereby
 remembered between sessions. So, for future sessions, only opening the
 preferred device is necessary. </p>
 
@@ -1055,8 +1084,8 @@ Global Caché API specification</a> for the exact meaning of these
 terms).</p>
 	</section>
 	  <section>
-	    <title>The "LIRC" pane</title>
-<p>To be fully usable for IrScrutinizer, the LIRC server has to be extended to be
+	    <title>The "Lirc" pane</title>
+<p>To be fully usable for IrScrutinizer, the Lirc server has to be extended to be
 able to cope with CCF signal not residing in the local data base, but sent from
 a client like IrScrutinizer, thus mimicking the function of e.g. a
 Global Caché. The needed modification ("patch") is in detail described <a
@@ -1067,42 +1096,45 @@ this patch, the configuration page can be used to send the predefined commands
 as a GUI version of
 the <a href="http://www.lirc.org/html/irsend.html"><code>irsend</code>
 command</a>.</p>
-<p>The LIRC server needs to be started in network listening mode with
+<p>The Lirc server needs to be started in network listening mode with
 the <code>-l</code> or <code>--listen</code> option. Default TCP port is
 8765.</p>
 
 <p>When selecting the Lirc sub-pane, the therein selected Lircd is inquired for its version
     and its remotes. If successful, the "Remote" and
-"Command" combo boxes should now be selectable. After selecting a remote and one
-of its command, it can be sent to the LIRC server by pressing the "Send"
-button. (It can be said that this is really a
-    graphical version of the Lirc <code>irsend</code> command.) If (and only if) the LIRC server has the above described patch applied,
-transmitting signals to  "LIRC" now works. </p>
+"Command" combo boxes should now be enabled. After selecting a remote and one
+    of its command, it can be sent to the Lirc server by pressing the "Send" button.</p>
+
 
 <p>After entering another IP-Address or name, and port (stay with 8765 unless a reason
-to do otherwise), pressing the "Reload" button will update the LIRC server with its known remotes and their commands
+to do otherwise), pressing the "Reload" button will update the Lirc server with its known remotes and their commands
     (however, not the version).
     </p>
 
-<!--p>Due to LIRC's peculiar form of API stop command, the "Stop IR" command
+    <p>Transmitting other signals to  Lirc works only if the Lirc server has the above described patch applied.</p>
+
+
+<!--p>Due to Lirc's peculiar form of API stop command, the "Stop IR" command
 presently does not work. See <a
 href="http://sourceforge.net/mailarchive/forum.php?thread_name=461617A4.4000404%40bengt-martensson.de&amp;forum_name=lirc-list">this
-thread</a> in the LIRC mailing list for a background.</p-->
+thread</a> in the Lirc mailing list for a background.</p-->
 	  </section>
           <section>
             <title>/dev/lirc (Linux only)</title>
-            <p>On Linux, so-called mode-2 capable IR hardware, capable of sending and/or receiving, can be accessed directly.
-                When connected, and in some cases, after loading suitable drivers, a device file <code>/dev/lirc</code><em>n</em>
-                (for <em>n</em> = 0, 1, 2,...) will occur. Of course, this must be read- and writeable by the current user;
+            <p>On Linux, so-called mode-2 capable IR hardware using the <code>/dev/lirc</code> device,
+can be accessed directly, both for sending and receiving.
+                When connected, and in some cases after loading suitable drivers, a device file <code>/dev/lirc</code><em>n</em>
+                (for <em>n</em> = 0, 1, 2,...) will be created. Of course, this must be read- and/or writeable by the current user;
                 in e.g. Fedora this is the case for member of the group <code>lirc</code>.</p>
 
-                <p>After opening the device, its properties will be listed. See the man page <a href="http://lirc.org/html/lirc.html">lirc(4)</a> for an explanation.</p>
-                <p>Alhtough not a priori impossible, presenty no <code>/dev/lirc</code> device (to my knowledge) implements frequency measurement.</p>
+                <p>After opening the device, its properties will be listed.
+                    See the man page <a href="http://lirc.org/html/lirc.html">lirc(4)</a> for an explanation.</p>
+                <p>Although not a priori impossible, to my knowledge no <code>/dev/lirc</code> device  implements frequency measurement.</p>
         </section>
 	  <section>
 	    <title>The "IRTrans" pane</title>
 <p>
-The configuration of IRTrans is similar to LIRC, so it will be described
+The configuration of IRTrans is similar to Lirc, so it will be described
 more briefly.</p>
 <p>Enter IP name or -address and select an IR port (default "intern"). If the
 Ethernet IRTrans contains an "IR Database" (which is a slightly misleading term
@@ -1147,24 +1179,26 @@ reconnecting the device may help.</p>
 the combo box, pressing "Refresh" if necessary. "Open" the port
 thereafter. The opening of LAN connected device is simliar.</p>
 
-<p>Normally, the Girs server uses the "analyze" command to capture IR signals,
+<p>Normally, the Girs server uses the Girs <code>analyze</code> command to capture IR signals,
 which is normally deploying a non-demodulating sensor, providing a frequency measurement.
-If selecting the "Use receive for capture", instead the "receive" command will be used,
-which normally uses a demodulating sensor, and thus no frequency measurement will be produced.</p>
+If this is not desired (for example when the non-demodulating sensor is missing),
+selecting "Use receive for capture", instead the <code>receive</code> command will be used,
+which normally uses a demodulating sensor. In this case, no frequency measurement will be produced,
+    and instead the fallback frequency (selectable/changeable as Options -> Fallback frequency) will be used.</p>
 </section>
 <section>
 <title>The "Audio" Pane</title>
 <p>
-As additional hardware device, IrScrutinizer can generate wave files, that can be
+As additional "hardware sending device", IrScrutinizer can generate wave files, that can be
 used to control IR-LEDs. This technique has been described many times in the
 Internet the last few years, see for example <a
-href="http://lirc.org/html/audio.html">this page</a> within the LIRC
+href="http://lirc.org/html/audio.html">this page</a> within the Lirc
 project. The hardware consists of a pair of anti-parallel IR-LEDs, preferably
 in series with a resistor. Theoretically, this corresponds to a full wave
 rectification of a sine wave. Taking advantage of the fact that the LEDs are
 conducting only for a the time when the forward voltage exceeds a certain
 threshold, it is easy to see that this will generate an on/off signal with the
-double frequency of the original sine wave. (See the first picture in the LIRC
+double frequency of the original sine wave. (See the first picture in the Lirc
 article for a picture.) Thus, a IR carrier of 38kHz (which is fairly typical)
 can be generated through a 19kHz audio signal, which is (as opposed to 38kHz)
 within the realm of medium quality sound equipment, for example using mobile
@@ -1264,19 +1298,38 @@ manually.</p>
 communication is working.</p>
 	</section>
 
-<section><title>LIRC Mode2</title>
-<p><code>mode2</code> is a program from the LIRC distribution, that prints timing
-information in a simple text format to its standard-out. In theory, any program
-that prints information in that format can be used. The command line for the
+<section>
+    <title>Lirc Mode2</title>
+<p>
+    <a href="http://www.lirc.org/html/mode2.html">
+        <code>mode2</code>
+    </a> is a program from the Lirc distribution, that prints timing
+information in a simple text format to standard output. (Note that in Lirc terminology,
+    there are really <a href="Glossary.html#Mode2">three meanings</a> of the term "mode2".)
+    IrScrutinizer can read a stream in this format, either on its standard input, or from a program
+run in an internal subprocess. This way, effectively any Lirc mode2 driver can be used
+to capture IR signals for Lirc (assuming "normal" modulation frequency).
+This makes IrScrutinizer a viable replacement of the
+<a href="http://www.lirc.org/html/irrecord.html">
+        <code>irrecord</code>
+    </a> program.
+</p>
+
+<section>
+    <title>Standard input</title>
+<p>To use with standard input, the program can be started for example with a command like</p>
+<source>$ mode2 --driver default | irscrutinizer &amp; </source>.
+<p>As capturing device
+"Lirc Mode 2" and the subpane "Standard input" is selected.</p>
+</section>
+<section>
+    <title>Command in sub-process</title>
+<p>In theory, any program
+that prints information in the mode2 format can be used. The command line for the
 program with possible parameters is to be entered as command. With the Start
 button, a sub-process is started, running the given command line. The "Stop" button
-stops the sub-process &mdash; although sometimes this may not stop the started
-program.</p>
-
-<p>Since the <code>/dev/lirc</code> functionallity functionally surpasses the "mode2" function, this is now deprecated,
-and will likely be removed in a future version.</p>
-
-<p>Has been tested only on Linux, should however work on all systems.</p>
+stops the sub-process.</p>
+</section>
 	</section>
 
         <section>
@@ -1376,6 +1429,10 @@ conveniently controlling my favorite IR controlled device from the sofa?</title>
 with mouse commands (appropriate hardware assumed), the program is intended for
 developing codes for other deployment solutions.
 </p>
+<p>Check out <a href="https://github.com/bengtmartensson/JGirs">JGirs</a>,
+    which is an IR server implementing the <a href="Girs.html">Girs</a> specification.
+    It can be considered as "IrScrutinizer as a server".
+</p>
 </section>
 <section><title>The pane interface sucks.</title>
 <p>Yes.  There are several use cases when the
@@ -1420,7 +1477,7 @@ longer than that, the problem is almost surely hardware related, i.e., the
 program looks for possibly non-existant hardware. To fix this, make
 sure that the selected capture- and sending devices (these are save
 between sessions!) do not correspond to something non-existant. The
-most "innocent" settings are: capture: LIRC mode 2, and sending:
+most "innocent" settings are: capture: Lirc mode 2, and sending:
 Audio port. These are also the defaults when the program starts up for
 the first time. Also, consider deleting possible
     "junk devices" in the Windows device manager under <code>COM &amp; LPT</code>
@@ -1490,7 +1547,7 @@ necessary adaptations.
     It depends on several other subprojects within harctoolbox. The project <code>harctoolboxbundle</code> consists
     of these subproject bundled together, with some dependent third-party components added.</p>
 
-    <p>The released versions are found on the <a href="http://www.harctoolbox.org/downloads/index.html">download page</a>.
+    <p>The released versions are found on the <a href="https://github.com/bengtmartensson/harctoolboxbundle/releases">download page</a>.
     The development sources are maintained on <a href="https://github.com/bengtmartensson/harctoolboxbundle">my GitHub repository</a>.
     Forking and pull requests are welcome!</p>
 <section>
@@ -1671,9 +1728,7 @@ manufacturer of Ethernet connected IR-hardware. The <a
  href="http://www.irtrans.com/en/shop/lan.php">"IRTrans Ethernet"
 module</a>, preferably with "IRDB Option" (internal flash memory), is
 directly supported by the current software.</li>
-  <li><a href="http://www.lirc.org">LIRC, Linux InfraRed Control</a>
-This project contain drivers for almost everything IR-related. The present
-project is able to use a <a href="lirc_ccf.html">modified LIRC-server</a> for transmitting IR signals.</li>
+  <li><a href="http://www.lirc.org">Lirc, Linux Infrared Remote Control.</a></li>
 </ol>
     </section>
   </body>

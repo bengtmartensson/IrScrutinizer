@@ -6,7 +6,7 @@
     It depends on several other subprojects within harctoolbox. The project `harctoolboxbundle` consists
     of these subproject bundled together, with some dependent third-party components added.
 
-The released versions are found on the [download page](http://www.harctoolbox.org/downloads/index.html).
+The released versions are found on the [download page](https://github.com/bengtmartensson/harctoolboxbundle/releases).
     The development sources are maintained on [my GitHub repository](https://github.com/bengtmartensson/harctoolboxbundle).
     Forking and pull requests are welcome!
 

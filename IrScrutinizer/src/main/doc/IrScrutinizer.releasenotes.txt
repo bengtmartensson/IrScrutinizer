@@ -1,6 +1,53 @@
+Release notes for IrScrutinizer, including IrpMaster, Girr, HardHardware,
+and Jirc.
+
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/harctoolboxbundle/issues
 
+Version 1.4
+
+Open issues in this release:
+  * MacOS 10.11.*: Crash in RXTX when closing serial USB device, #64.
+
+User visible changes:
+
+Core:
+ - Java 8 new required #180.
+ - Fixed inaccurate computation of period dependent units #152.
+ - Some protocols updated, in particular documentation #153. IRP:
+   Blaupunkt, Bose, CanalSat, NRC16, NRC16-32, Proton, Proton-40, RC5-7F,
+   RC5-57, RC5x, StreamZap, StreamZap-57, TDC-38, TDC-58.
+
+Installation:
+ - Mime type file girr.xml now installed on freedesktop etc. #184
+
+GUI:
+ - Double clicking a *.girr file no longer considered unsaved content #183.
+ - Paste in Scrutinize Signal data window was broken #171
+ - Continuous capture of signal in Scrutinize signal implemented #168.
+ - "Open last file" no longer invokes new instance of IrScrutinizer #149
+
+Hardware:
+ - Lirc Mode2 as input re-implemented #181.
+ - Lirc Mode2 as input can now read from stdin #178.
+ - /dev/lirc support was broken, at least on Fedora, fixed #177
+ - Several issues in the CommandFusion driver fixed #158
+
+Export
+ - Lirc Export vastly improved, #175, #174, #141.
+ - Girrexport: erroneous xsi:schemaLocation fixed #173
+ - Assert that frequency in Arduino export is integer #169
+ - Reorganized multiple export format files #167, #156.
+ - TransformationException in XmlExporter.printDOM is caught too early,
+   causing error message to get lost.  #154
+
+Importer:
+ - if "Load File" invoked file selector, the wait cursor was not shown. #16
+ - 1mporter fileselector type combo box contained both "Zip files (*.zip)" and
+   "Zipped files (*.zip)" #160
+ - IrTrans import: evaluate RC parameter #157
+
+==============================================================================
 Version 1.3
 
 Open issues in this release:
