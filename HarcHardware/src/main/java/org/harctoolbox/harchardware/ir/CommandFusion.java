@@ -205,6 +205,11 @@ public class CommandFusion extends IrSerial<LocalSerialPortRaw> implements IRawI
         super(LocalSerialPortRaw.class, portName, baudRate, DATASIZE, STOPBITS, PARITY, DEFAULTFLOWCONTROL, -1/*beginTimeout*/, verbose);
     }
 
+    // Necessary for the HardwareManager. Do not "clean up".
+    public CommandFusion(String portName, int baudRate, int timeoutNotUsed, boolean verbose) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
+        this(portName, baudRate, verbose);
+    }
+
     /**
      * Dummy without function.
      * @param debug
