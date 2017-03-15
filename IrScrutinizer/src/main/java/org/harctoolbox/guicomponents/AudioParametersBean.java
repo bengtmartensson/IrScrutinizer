@@ -17,6 +17,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.guicomponents;
 
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import javax.sound.sampled.AudioFormat;
@@ -25,6 +26,7 @@ import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.IrpMaster.Wave;
 import org.harctoolbox.harchardware.ir.IrAudioDevice;
+import org.harctoolbox.irscrutinizer.Props;
 
 public class AudioParametersBean extends javax.swing.JPanel {
 
@@ -32,14 +34,31 @@ public class AudioParametersBean extends javax.swing.JPanel {
     private final static boolean bigEndian = false;
     private final static boolean divideCarrier = true;
     private final static boolean square = true;
-    private boolean verbose = false;
-    private int sampleSize = 8;
+    private boolean verbose;
+    private final Props properties;
+    private final PropertyChangeSupport propertyChangeSupport;
+    private final static String PROP_SAMPLEFREQUENCY = "PROP_SAMPLEFREQUENCY";
+    private final static String PROP_NOCHANNELS = "PROP_NOCHANNELS";
+    private final static String PROP_SAMPLESIZE = "PROP_SAMPLESIZE";
+    private final static String PROP_OMITTRAILINGGAP = "PROP_OMITTRAILINGGAP";
+    private IrAudioDevice hardware;
 
     /**
      * Creates new form AudioParametersBean
      */
     public AudioParametersBean() {
+        this(null);
+    }
+
+    /**
+     * Creates new form AudioParametersBean
+     * @param properties
+     */
+    public AudioParametersBean(Props properties) {
+        this.verbose = false;
+        this.properties = properties;
         initComponents();
+        this.propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
     }
 
     /**
@@ -53,7 +72,7 @@ public class AudioParametersBean extends javax.swing.JPanel {
      * @return the sampleSize
      */
     public int getSampleSize() {
-        return sampleSize;
+        return Integer.parseInt((String) sampleSizeComboBox.getSelectedItem());
     }
 
     /**
@@ -89,6 +108,50 @@ public class AudioParametersBean extends javax.swing.JPanel {
         return omitTrailingGapCheckBox.isSelected();
     }
 
+    private void setSampleSize(int sampleSize) {
+        int old = Integer.parseInt((String) sampleSizeComboBox.getSelectedItem());
+        sampleSizeComboBox.setSelectedItem(Integer.toString(sampleSize));
+
+        propertyChangeSupport.firePropertyChange(PROP_SAMPLESIZE, old, sampleSize);
+        if (properties != null)
+            properties.setWaveSampleSize(sampleSize);
+        if (hardware != null)
+            hardware.setSampleSize(sampleSize);
+    }
+
+    private void setSampleFrequency(int sampleFrequency) {
+        int old = Integer.parseInt((String) sampleFrequencyComboBox.getSelectedItem());
+        sampleSizeComboBox.setSelectedItem(Integer.toString(sampleFrequency));
+
+        propertyChangeSupport.firePropertyChange(PROP_SAMPLEFREQUENCY, old, sampleFrequency);
+        if (properties != null)
+            properties.setWaveSampleFrequency(sampleFrequency);
+        if (hardware != null)
+            hardware.setSampleFrequency(sampleFrequency);
+    }
+
+    private void setChannels(int channels) {
+        int old = Integer.parseInt((String) channelsComboBox.getSelectedItem());
+        channelsComboBox.setSelectedItem(Integer.toString(channels));
+
+        propertyChangeSupport.firePropertyChange(PROP_NOCHANNELS, old, channels);
+        if (properties != null)
+            properties.setWaveChannels(channels);
+        if (hardware != null)
+            hardware.setChannels(channels);
+    }
+
+    private void setOmitTrailingGap(boolean omitTrailingGap) {
+        boolean old = omitTrailingGapCheckBox.isSelected();
+        omitTrailingGapCheckBox.setSelected(omitTrailingGap);
+
+        propertyChangeSupport.firePropertyChange(PROP_OMITTRAILINGGAP, old, omitTrailingGap);
+        if (properties != null)
+            properties.setWaveOmitTrailingGap(omitTrailingGap);
+        if (hardware != null)
+            hardware.setOmitTail(omitTrailingGap);
+    }
+
     public AudioFormat getAudioFormat() {
         return new AudioFormat(encoding, getSampleFrequency(), getSampleSize(), getChannels(),
                 getSampleSize()/8*getChannels(), getSampleFrequency(), getBigEndian());
@@ -98,8 +161,12 @@ public class AudioParametersBean extends javax.swing.JPanel {
         return new Wave(irSequence, getAudioFormat(), getOmitTrailingGap(), getSquare(), getDivideCarrier());
     }
 
-    public IrAudioDevice newIrAudioDevice() {
-        return new IrAudioDevice(getSampleFrequency(), getChannels(), getOmitTrailingGap(), verbose);
+    public void setupHardware() {
+        hardware = new IrAudioDevice(getSampleFrequency(), getSampleSize(), getChannels(), getOmitTrailingGap(), verbose);
+    }
+
+    public IrAudioDevice getHardware() {
+        return hardware;
     }
 
     public void export(File file, ModulatedIrSequence irSequence) throws IncompatibleArgumentException {
@@ -128,21 +195,39 @@ public class AudioParametersBean extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
 
         sampleFrequencyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "44100", "48000", "96000", "192000" }));
-        sampleFrequencyComboBox.setSelectedIndex(1);
+        sampleFrequencyComboBox.setSelectedItem(Integer.toString(properties.getWaveSampleFrequency()));
         sampleFrequencyComboBox.setToolTipText("Sample frequency of the generated signal.");
+        sampleFrequencyComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sampleFrequencyComboBoxActionPerformed(evt);
+            }
+        });
 
         channelsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2" }));
+        channelsComboBox.setSelectedItem(Integer.toString(properties.getWaveChannels()));
         channelsComboBox.setToolTipText("Number of channnels in generated signal. Normal is one channel. If two, the second channel is just exactly the opposite of the first.");
+        channelsComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                channelsComboBoxActionPerformed(evt);
+            }
+        });
 
         omitTrailingGapCheckBox.setMnemonic('O');
+        omitTrailingGapCheckBox.setSelected(properties.getWaveOmitTrailingGap());
         omitTrailingGapCheckBox.setText("Omit trailing gap");
         omitTrailingGapCheckBox.setToolTipText("If true, the last silence is left out of the generated wave signal.");
+        omitTrailingGapCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                omitTrailingGapCheckBoxActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Sample freq.");
 
         jLabel2.setText("# Channels");
 
         sampleSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "8", "16" }));
+        sampleSizeComboBox.setSelectedItem(Integer.toString(properties.getWaveSampleSize()));
         sampleSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sampleSizeComboBoxActionPerformed(evt);
@@ -194,8 +279,20 @@ public class AudioParametersBean extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void sampleSizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleSizeComboBoxActionPerformed
-        sampleSize = Integer.parseInt((String) sampleSizeComboBox.getSelectedItem());
+        setSampleSize(Integer.parseInt((String) sampleSizeComboBox.getSelectedItem()));
     }//GEN-LAST:event_sampleSizeComboBoxActionPerformed
+
+    private void sampleFrequencyComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleFrequencyComboBoxActionPerformed
+        setSampleFrequency(Integer.parseInt((String) sampleFrequencyComboBox.getSelectedItem()));
+    }//GEN-LAST:event_sampleFrequencyComboBoxActionPerformed
+
+    private void channelsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_channelsComboBoxActionPerformed
+        setChannels(Integer.parseInt((String) channelsComboBox.getSelectedItem()));
+    }//GEN-LAST:event_channelsComboBoxActionPerformed
+
+    private void omitTrailingGapCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_omitTrailingGapCheckBoxActionPerformed
+        setOmitTrailingGap(omitTrailingGapCheckBox.isSelected());
+    }//GEN-LAST:event_omitTrailingGapCheckBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> channelsComboBox;

@@ -2043,7 +2043,7 @@ public class GuiMain extends javax.swing.JFrame {
         jLabel33 = new javax.swing.JLabel();
         exportGirrHelpButton = new javax.swing.JButton();
         waveExportOptionsPanel = new javax.swing.JPanel();
-        exportAudioParametersBean = new org.harctoolbox.guicomponents.AudioParametersBean();
+        exportAudioParametersBean = new org.harctoolbox.guicomponents.AudioParametersBean(properties);
         exportWaveHelpButton = new javax.swing.JButton();
         sendirExportOptionsPanel = new javax.swing.JPanel();
         sendirModuleComboBox = new javax.swing.JComboBox<>();
@@ -2087,7 +2087,7 @@ public class GuiMain extends javax.swing.JFrame {
         irTransNamedCommandLauncher = new org.harctoolbox.guicomponents.NamedCommandLauncher(guiUtils);
         sendingIrTransHelpButton = new javax.swing.JButton();
         audioPanel = new javax.swing.JPanel();
-        transmitAudioParametersBean = new org.harctoolbox.guicomponents.AudioParametersBean();
+        transmitAudioParametersBean = new org.harctoolbox.guicomponents.AudioParametersBean(properties);
         sendingAudioHelpButton = new javax.swing.JButton();
         irToyPanel = new javax.swing.JPanel();
         irToySerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrToyPortName(), properties.getIrToyPortBaudRate(), true);

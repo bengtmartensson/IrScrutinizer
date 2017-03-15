@@ -41,7 +41,8 @@ public class SendingIrAudioPort extends SendingHardware<IrAudioDevice> implement
     @Override
     public void setup() throws IOException, HarcHardwareException {
         audioParametersBean.setVerbose(properties.getVerbose());
-        rawIrSender = audioParametersBean.newIrAudioDevice();
+        audioParametersBean.setupHardware();
+        rawIrSender = audioParametersBean.getHardware();
     }
 
     @Override

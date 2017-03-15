@@ -23,6 +23,7 @@ import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.IrpMaster.Wave;
+import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
 
 /**
@@ -73,17 +74,30 @@ public class IrAudioDevice implements IHarcHardware, IRawIrSender {
         this(sampleFrequency, 8, channels, false, omitTail, true, true, verbose);
     }
 
+    /**
+     *
+     * @param sampleFrequency
+     * @param sampleSize
+     * @param channels
+     * @param omitTail
+     * @param verbose
+     */
+    public IrAudioDevice(int sampleFrequency, int sampleSize, int channels, boolean omitTail, boolean verbose) {
+        this(sampleFrequency, sampleSize, channels, false, omitTail, true, true, verbose);
+    }
+
     @Override
-    public boolean sendIr(IrSignal irSignal, int count, Transmitter transmitter) throws NoSuchTransmitterException, IrpMasterException, IOException {
+    public boolean sendIr(IrSignal irSignal, int count, Transmitter transmitter) throws NoSuchTransmitterException, IrpMasterException, IOException, HarcHardwareException {
         ModulatedIrSequence seq = irSignal.toModulatedIrSequence(count);
         Wave wave = new Wave(seq, sampleFrequency, sampleSize, channels, bigEndian, omitTail, square, divide);
         try {
             wave.play();
             if (verbose)
-                System.err.println("Sent IrSignal @ " + sampleFrequency + "Hz, " + sampleSize + "bits to audio device");
+                System.err.println("Sent IrSignal @ " + sampleFrequency + "Hz, " + sampleSize + "bits, "
+                        + (channels == 2 ? "stereo" : "mono") + ", to audio device");
             return true;
         } catch (LineUnavailableException ex) {
-            return false;
+            throw new HarcHardwareException(ex);
         }
     }
 
@@ -99,7 +113,7 @@ public class IrAudioDevice implements IHarcHardware, IRawIrSender {
 
     @Override
     public void setTimeout(int timeout) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // there is no timeout to be set.
     }
 
     @Override
@@ -124,5 +138,40 @@ public class IrAudioDevice implements IHarcHardware, IRawIrSender {
 
     @Override
     public void setDebug(int debug) {
+    }
+
+    /**
+     * @return the sampleFrequency
+     */
+    public int getSampleFrequency() {
+        return sampleFrequency;
+    }
+
+    /**
+     * @param sampleFrequency the sampleFrequency to set
+     */
+    public void setSampleFrequency(int sampleFrequency) {
+        this.sampleFrequency = sampleFrequency;
+    }
+
+    /**
+     * @param sampleSize the sampleSize to set
+     */
+    public void setSampleSize(int sampleSize) {
+        this.sampleSize = sampleSize;
+    }
+
+    /**
+     * @param channels the channels to set
+     */
+    public void setChannels(int channels) {
+        this.channels = channels;
+    }
+
+    /**
+     * @param omitTail the omitTail to set
+     */
+    public void setOmitTail(boolean omitTail) {
+        this.omitTail = omitTail;
     }
 }

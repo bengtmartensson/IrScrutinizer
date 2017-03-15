@@ -56,6 +56,11 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="sendingTimeout" type="int" default='"2000"' doc='Timeout when sending signals, in milliseconds' />
     <property name="transmitGeneratedCount" type="int" default='"1"' doc="Number of times to send signal by transmit generated." />
 
+    <property name="waveSampleFrequency" type="int" default='"48000"' doc="Sample frequency (!= modulation frequency) of generated wave files."/>
+    <property name="waveChannels" type="int" default='"1"' doc="Number of channels in generated wave files."/>
+    <property name="waveSampleSize" type="int" default='"8"' doc="Bit width in generated wave files."/>
+    <property name="waveOmitTrailingGap" type="boolean" default='"48000"' doc="If true, omit the last silence from generated wave files."/>
+
     <property name="fallbackFrequency" type="int" default='"38000"' doc='Fallback frequency, for use with demodulating sensors' />
     <property name="analyzerBase" type="int" default='"16"' doc='Number base for printing analyzer results' />
     <property name="ignoreEndingSilence" type="boolean" default='"false"' doc='If true, the last silence in the recorded signal will not be shown in plots'/>

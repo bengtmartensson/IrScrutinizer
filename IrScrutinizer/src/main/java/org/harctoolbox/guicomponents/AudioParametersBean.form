@@ -75,9 +75,14 @@
             <StringItem index="3" value="192000"/>
           </StringArray>
         </Property>
-        <Property name="selectedIndex" type="int" value="1"/>
+        <Property name="selectedItem" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="Integer.toString(properties.getWaveSampleFrequency())" type="code"/>
+        </Property>
         <Property name="toolTipText" type="java.lang.String" value="Sample frequency of the generated signal."/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sampleFrequencyComboBoxActionPerformed"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>
@@ -90,8 +95,14 @@
             <StringItem index="1" value="2"/>
           </StringArray>
         </Property>
+        <Property name="selectedItem" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="Integer.toString(properties.getWaveChannels())" type="code"/>
+        </Property>
         <Property name="toolTipText" type="java.lang.String" value="Number of channnels in generated signal. Normal is one channel. If two, the second channel is just exactly the opposite of the first."/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="channelsComboBoxActionPerformed"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>
@@ -99,9 +110,15 @@
     <Component class="javax.swing.JCheckBox" name="omitTrailingGapCheckBox">
       <Properties>
         <Property name="mnemonic" type="int" value="79"/>
+        <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="properties.getWaveOmitTrailingGap()" type="code"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="Omit trailing gap"/>
         <Property name="toolTipText" type="java.lang.String" value="If true, the last silence is left out of the generated wave signal."/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="omitTrailingGapCheckBoxActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
@@ -120,6 +137,9 @@
             <StringItem index="0" value="8"/>
             <StringItem index="1" value="16"/>
           </StringArray>
+        </Property>
+        <Property name="selectedItem" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="Integer.toString(properties.getWaveSampleSize())" type="code"/>
         </Property>
       </Properties>
       <Events>

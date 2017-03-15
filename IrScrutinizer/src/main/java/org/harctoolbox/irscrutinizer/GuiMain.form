@@ -5420,6 +5420,9 @@
                       </Layout>
                       <SubComponents>
                         <Component class="org.harctoolbox.guicomponents.AudioParametersBean" name="exportAudioParametersBean">
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.AudioParametersBean(properties)"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="exportWaveHelpButton">
                           <Properties>
@@ -6215,6 +6218,9 @@
                       </Layout>
                       <SubComponents>
                         <Component class="org.harctoolbox.guicomponents.AudioParametersBean" name="transmitAudioParametersBean">
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.AudioParametersBean(properties)"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="sendingAudioHelpButton">
                           <Properties>
