@@ -107,7 +107,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                 commands.put(command.name, command);
             } catch (ParseException | NumberFormatException ex) {
                 // just ignore unparsable command, go on reading
-                System.err.println("Command " + line + " (line " + reader.getLineNumber() + ") did not parse, ignored.");
+                System.err.println("Command " + line + " (line " + reader.getLineNumber() + ") did not parse, ignored. " + ex.getLocalizedMessage());
             }
         }
         return commands;
@@ -128,6 +128,8 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                 if (!arr[index++].equals("FREQ"))
                     throw new ParseException("No FREQ in raw signal", lineNo);
                 int frequency = Integer.parseInt(arr[index++]);
+                if (arr[index].equals("FREQ-MEAS"))
+                    index += 2;
                 if (!arr[index++].equals("D"))
                     throw new ParseException("[D] not found", lineNo);
                 String data = arr[index++];
@@ -268,9 +270,11 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                             int timingNumber = Integer.parseInt(token);
                             String[] durations = arr[++index].split(" ");
                             for (int i = 0; i < 2; i++)
-                                timing.durations[timingNumber-1][i] = Integer.parseInt(durations[i]);
+                                timing.durations[timingNumber - 1][i] = Integer.parseInt(durations[i]);
                         } catch (NumberFormatException ex) {
-                            throw new ParseException("Unknown token: " + token, reader.getLineNumber());
+                            //throw new ParseException("Unknown token: " + token, reader.getLineNumber());
+                            System.err.println("Warning: Unknown token: " + token + ", line "
+                                    + reader.getLineNumber() + ", ignored.");
                         }
                         break;
                 }
@@ -406,13 +410,59 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                     case rc6: {
                         // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
                         // http://www.irtrans.de/forum/viewtopic.php?f=18&t=99
+                        if (!data.substring(0, 2).equals("S1"))
+                            throw new org.harctoolbox.IrpMaster.ParseException();
+                        int numberBits = data.length() - 7;
                         long payload = Long.parseLong(data.substring(2), 2);
+                        long M = (payload >> (numberBits + 2)) & 7;
+                        Map<String, Long> parameters = new HashMap<>(5);
                         long F = payload & 0xff;
                         long D = (payload >> 8) & 0xff;
-                        Map<String, Long> parameters = new HashMap<>(4);
-                        parameters.put("F", F);
                         parameters.put("D", D);
-                        return new Command(name, null, "RC6", parameters);
+                        parameters.put("F", F);
+                        String protocolName;
+                        switch (numberBits) {
+                            case 16: {
+                                if (M != 0)
+                                    throw new IrpMasterException("Unknown M = " + M + " in RC6-M-16");
+
+                                protocolName = "RC6";
+                            }
+                            break;
+                            case 20: {
+                                if (M != 6)
+                                    throw new IrpMasterException("Unknown M = " + M + " in RC6-M-20");
+
+                                long S = (payload >> 8) & 0x0f;
+                                D = (payload >> 12) & 0xff;
+                                parameters.put("S", S);
+                                parameters.put("D", D);
+                                protocolName = "RC6-6-20";
+                            }
+                            break;
+                            case 32: {
+                                long OEM2 = (payload >> 16) & 0xff;
+                                long OEM1 = (payload >> 24) & 0xff;
+                                if (M == 6 && OEM1 == 128) {
+                                    // MCE
+                                    long T = D >> 7;
+                                    D &= 0x7f;
+                                    parameters.put("T", T);
+                                    parameters.put("S", OEM2);
+                                    parameters.put("D", D);
+                                    protocolName = "MCE";
+                                } else {
+                                    parameters.put("OEM1", OEM1);
+                                    parameters.put("OEM2", OEM2);
+                                    parameters.put("M", M);
+                                    protocolName = "RC6-M-32";
+                                }
+                            }
+                            break;
+                            default:
+                                throw new IrpMasterException("Unimplemented RC6 bitlength :" + numberBits);
+                        }
+                        return new Command(name, null, protocolName, parameters);
                     }
                     default:
                         int[] times = new int[2 * data.length()];
