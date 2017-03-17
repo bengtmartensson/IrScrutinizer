@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
@@ -66,7 +67,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         String name = parseName(reader);
         if (name == null)
             return null; // EOF
-        ArrayList<Timing> timings = parseTimings(reader);
+        List<Timing> timings = parseTimings(reader);
         Map<String, IrTransCommand> parsedCommands = parseCommands(reader, timings);
         Map<String, Command> commands = new LinkedHashMap<>(4);
         parsedCommands.values().forEach((cmd) -> {
@@ -93,9 +94,9 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         return arr[1];
     }
 
-    private LinkedHashMap<String, IrTransCommand> parseCommands(LineNumberReader reader, ArrayList<Timing> timings) throws IOException, ParseException {
+    private Map<String, IrTransCommand> parseCommands(LineNumberReader reader, List<Timing> timings) throws IOException, ParseException {
         gobbleTo(reader, "[COMMANDS]", true);
-        LinkedHashMap<String, IrTransCommand> commands = new LinkedHashMap<>(32);
+        Map<String, IrTransCommand> commands = new LinkedHashMap<>(32);
         while (true) {
             String line = reader.readLine();
             if (line == null || line.trim().isEmpty())
@@ -113,7 +114,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
     }
 
     @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
-    private IrTransCommand parseCommand(String line, ArrayList<Timing> timings, int lineNo) throws ParseException {
+    private IrTransCommand parseCommand(String line, List<Timing> timings, int lineNo) throws ParseException {
         IrTransCommand command = null;
         String[] arr = line.trim().split("[\\[\\]]");
         int index = 1;
@@ -193,8 +194,8 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
     }
 
     @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
-    private ArrayList<Timing> parseTimings(LineNumberReader reader) throws IOException, ParseException {
-        ArrayList<Timing> timings = new ArrayList<>(16);
+    private List<Timing> parseTimings(LineNumberReader reader) throws IOException, ParseException {
+        List<Timing> timings = new ArrayList<>(16);
         boolean hasTiming = gobbleTo(reader, "[TIMING]", false);
         if (!hasTiming)
             return null;
@@ -326,6 +327,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         rc6,
         normal
     }
+
     private static class Timing {
 
         int[][] durations = null;
@@ -340,11 +342,13 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         boolean noToggle = false;
         boolean rcmmToggle = false;
     }
+
     private static enum CommandType {
         raw,
         ccf,
         timing
     }
+
     private static abstract class IrTransCommand {
         String name;
 
@@ -356,7 +360,9 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
 
         abstract Command toCommand() throws IrpMasterException;
     }
+
     private static class IrTransCommandIndexed extends IrTransCommand {
+
         private final String data;
         private final Timing timing;
 
@@ -367,8 +373,48 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         }
 
         @Override
-                Command toCommand() throws IrpMasterException {
-                    if (null == timing.type) {
+        Command toCommand() throws IrpMasterException {
+            if (null == timing.type) {
+                int[] times = new int[2 * data.length()];
+                for (int i = 0; i < data.length(); i++) {
+                    char ch = data.charAt(i);
+                    int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
+                    if (index >= timing.durations.length)
+                        throw new IrpMasterException("Undefined timing :" + ch);
+                    times[2 * i] = timing.durations[index][0];
+                    times[2 * i + 1] = timing.durations[index][1];
+                }
+                IrSignal irSignal = timing.repetitions <= 1
+                        ? new IrSignal(times, times.length / 2, 0, 1000 * timing.frequency)
+                        : new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
+                return new Command(name, null, irSignal);
+            } else
+                switch (timing.type) {
+                    case rc5: {
+                        // {36k,msb,889}<1,-1|-1,1>((1:1,~F:1:6,T:1,D:5,F:6,^114m)+,T=1-T)[T@:0..1=0,D:0..31,F:0..127]
+                        long payload = Long.parseLong(data, 2);
+                        long F6 = (~(payload >> 12)) & 1;
+                        long F = (F6 << 6) | (payload & 0x3f);
+                        long D = (payload >> 6) & 0x1f;
+                        long T = (payload >> 11) & 1;
+                        Map<String, Long> parameters = new HashMap<>(4);
+                        parameters.put("F", F);
+                        parameters.put("D", D);
+                        parameters.put("T", T);
+                        return new Command(name, null, "RC5", parameters);
+                    }
+                    case rc6: {
+                        // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
+                        // http://www.irtrans.de/forum/viewtopic.php?f=18&t=99
+                        long payload = Long.parseLong(data.substring(2), 2);
+                        long F = payload & 0xff;
+                        long D = (payload >> 8) & 0xff;
+                        Map<String, Long> parameters = new HashMap<>(4);
+                        parameters.put("F", F);
+                        parameters.put("D", D);
+                        return new Command(name, null, "RC6", parameters);
+                    }
+                    default:
                         int[] times = new int[2 * data.length()];
                         for (int i = 0; i < data.length(); i++) {
                             char ch = data.charAt(i);
@@ -382,51 +428,11 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                                 ? new IrSignal(times, times.length / 2, 0, 1000 * timing.frequency)
                                 : new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
                         return new Command(name, null, irSignal);
-                    } else switch (timing.type) {
-                case rc5:
-                {
-                    // {36k,msb,889}<1,-1|-1,1>((1:1,~F:1:6,T:1,D:5,F:6,^114m)+,T=1-T)[T@:0..1=0,D:0..31,F:0..127]
-                    long payload = Long.parseLong(data, 2);
-                    long F6 = (~(payload >> 12)) & 1;
-                    long F = (F6 << 6) | (payload & 0x3f);
-                    long D = (payload >> 6) & 0x1f;
-                    long T = (payload >> 11) & 1;
-                    Map<String, Long> parameters = new HashMap<>(4);
-                    parameters.put("F", F);
-                    parameters.put("D", D);
-                    parameters.put("T", T);
-                    return new Command(name, null, "RC5", parameters);
                 }
-                case rc6:
-                {
-                    // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
-                    // http://www.irtrans.de/forum/viewtopic.php?f=18&t=99
-                    long payload = Long.parseLong(data.substring(2), 2);
-                    long F = payload & 0xff;
-                    long D = (payload >> 8) & 0xff;
-                    Map<String, Long> parameters = new HashMap<>(4);
-                    parameters.put("F", F);
-                    parameters.put("D", D);
-                    return new Command(name, null, "RC6", parameters);
-                }
-                default:
-                    int[] times = new int[2 * data.length()];
-                    for (int i = 0; i < data.length(); i++) {
-                        char ch = data.charAt(i);
-                        int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
-                        if (index >= timing.durations.length)
-                            throw new IrpMasterException("Undefined timing :" + ch);
-                        times[2 * i] = timing.durations[index][0];
-                        times[2 * i + 1] = timing.durations[index][1];
-                    }
-                    IrSignal irSignal = timing.repetitions <= 1
-                            ? new IrSignal(times, times.length / 2, 0, 1000 * timing.frequency)
-                            : new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
-                    return new Command(name, null, irSignal);
-            }
-                }
+        }
     }
     private static class IrTransCommandRaw extends IrTransCommand {
+
         private final int[] durations;
         private final int frequency;
 
@@ -438,12 +444,14 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         }
 
         @Override
-                Command toCommand() {
-                    IrSignal irSignal = new IrSignal(durations, 0, durations.length/2, 1000 * frequency);
-                    return new Command(name, null, irSignal);
-                }
+        Command toCommand() {
+            IrSignal irSignal = new IrSignal(durations, 0, durations.length / 2, 1000 * frequency);
+            return new Command(name, null, irSignal);
+        }
     }
+
     private static class IrTransCommandCcf extends IrTransCommand {
+
         String ccf;
 
         IrTransCommandCcf(String name, String ccf) {
@@ -452,8 +460,8 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         }
 
         @Override
-                Command toCommand() throws IrpMasterException {
-                    return new Command(name, null, ccf);
-                }
+        Command toCommand() throws IrpMasterException {
+            return new Command(name, null, ccf);
+        }
     }
 }
