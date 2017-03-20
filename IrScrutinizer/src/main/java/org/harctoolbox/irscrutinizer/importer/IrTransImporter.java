@@ -426,6 +426,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                                 if (M != 0)
                                     throw new IrpMasterException("Unknown M = " + M + " in RC6-M-16");
 
+                                // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
                                 protocolName = "RC6";
                             }
                             break;
@@ -433,6 +434,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                                 if (M != 6)
                                     throw new IrpMasterException("Unknown M = " + M + " in RC6-M-20");
 
+                                // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,6:3,<-2,2|2,-2>(T:1),D:8,S:4,F:8,-100m)+,T=1-T)[D:0..255,S:0..15,F:0..255,T@:0..1=0]
                                 long S = (payload >> 8) & 0x0f;
                                 D = (payload >> 12) & 0xff;
                                 parameters.put("S", S);
@@ -440,11 +442,23 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                                 protocolName = "RC6-6-20";
                             }
                             break;
+                            case 24: {
+                                if (M != 6)
+                                    throw new IrpMasterException("Unknown M = " + M + " in RC6-M-24");
+
+                                // {36k,444,msb}<-1,1|1,-1>(6,-2,1:1,6:3,<-2,2|2,-2>(T:1),D:8,S:8,F:8,-100m/*???*/)+[D:0..255,S:0..255,F:0..255,T@:0..1=0]
+                                long S = (payload >> 8) & 0xff;
+                                D = (payload >> 16) & 0xff;
+                                parameters.put("S", S);
+                                parameters.put("D", D);
+                                protocolName = "Replay";
+                            }
+                            break;
                             case 32: {
                                 long OEM2 = (payload >> 16) & 0xff;
                                 long OEM1 = (payload >> 24) & 0xff;
                                 if (M == 6 && OEM1 == 128) {
-                                    // MCE
+                                    // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,6:3,-2,2,OEM1:8,S:8,T:1,D:7,F:8,^107m)+,T=1-T) {OEM1=128}[D:0..127,S:0..255,F:0..255,T@:0..1=0]
                                     long T = D >> 7;
                                     D &= 0x7f;
                                     parameters.put("T", T);
@@ -452,6 +466,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                                     parameters.put("D", D);
                                     protocolName = "MCE";
                                 } else {
+                                    // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,M:3,<-2,2|2,-2>(T:1),OEM1:8,OEM2:8,D:8,F:8,^107m)+,T=1-T)[OEM1:0..255,OEM2:0..255,D:0..255,F:0..255,M:0..7,T@:0..1=0]
                                     parameters.put("OEM1", OEM1);
                                     parameters.put("OEM2", OEM2);
                                     parameters.put("M", M);
