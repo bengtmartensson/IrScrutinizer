@@ -1318,7 +1318,7 @@ This makes IrScrutinizer a viable replacement of the
 <section>
     <title>Standard input</title>
 <p>To use with standard input, the program can be started for example with a command like</p>
-<source>$ mode2 --driver default | irscrutinizer &amp; </source>.
+<source>$ mode2 --driver default | irscrutinizer &amp; </source>
 <p>As capturing device
 "Lirc Mode 2" and the subpane "Standard input" is selected.</p>
 </section>
