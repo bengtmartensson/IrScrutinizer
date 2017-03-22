@@ -182,11 +182,6 @@ public class ParametrizedIrSignal extends NamedIrSignal {
 
 
     public Command toCommand() throws IrpMasterException {
-        if (protocolName == null || protocolName.isEmpty())
-            throw new IrpMasterException("Protocol name is empty");
-        if (parameters == null || parameters.isEmpty())
-            throw new IrpMasterException("Parameters missing");
-
         // Strip out parameter named "hex" before sending to IrpMaster
         // (not used by any current protocols, just causes noisy warnings).
         @SuppressWarnings("unchecked")
