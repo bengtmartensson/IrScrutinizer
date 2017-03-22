@@ -76,7 +76,7 @@
           </StringArray>
         </Property>
         <Property name="selectedItem" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="Integer.toString(properties.getWaveSampleFrequency())" type="code"/>
+          <Connection code="properties != null ? Integer.toString(properties.getWaveSampleFrequency()) : &quot;48000&quot;" type="code"/>
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="Sample frequency of the generated signal."/>
       </Properties>
@@ -96,7 +96,7 @@
           </StringArray>
         </Property>
         <Property name="selectedItem" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="Integer.toString(properties.getWaveChannels())" type="code"/>
+          <Connection code="properties != null ? Integer.toString(properties.getWaveChannels()) : &quot;1&quot;" type="code"/>
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="Number of channnels in generated signal. Normal is one channel. If two, the second channel is just exactly the opposite of the first."/>
       </Properties>
@@ -111,7 +111,7 @@
       <Properties>
         <Property name="mnemonic" type="int" value="79"/>
         <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="properties.getWaveOmitTrailingGap()" type="code"/>
+          <Connection code="properties != null ? properties.getWaveOmitTrailingGap() : false" type="code"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Omit trailing gap"/>
         <Property name="toolTipText" type="java.lang.String" value="If true, the last silence is left out of the generated wave signal."/>
@@ -139,7 +139,7 @@
           </StringArray>
         </Property>
         <Property name="selectedItem" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="Integer.toString(properties.getWaveSampleSize())" type="code"/>
+          <Connection code="properties != null ? Integer.toString(properties.getWaveSampleSize()) : &quot;8&quot;" type="code"/>
         </Property>
       </Properties>
       <Events>

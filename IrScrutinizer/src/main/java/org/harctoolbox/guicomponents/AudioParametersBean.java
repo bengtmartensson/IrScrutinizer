@@ -195,7 +195,7 @@ public class AudioParametersBean extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
 
         sampleFrequencyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "44100", "48000", "96000", "192000" }));
-        sampleFrequencyComboBox.setSelectedItem(Integer.toString(properties.getWaveSampleFrequency()));
+        sampleFrequencyComboBox.setSelectedItem(properties != null ? Integer.toString(properties.getWaveSampleFrequency()) : "48000");
         sampleFrequencyComboBox.setToolTipText("Sample frequency of the generated signal.");
         sampleFrequencyComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -204,7 +204,7 @@ public class AudioParametersBean extends javax.swing.JPanel {
         });
 
         channelsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2" }));
-        channelsComboBox.setSelectedItem(Integer.toString(properties.getWaveChannels()));
+        channelsComboBox.setSelectedItem(properties != null ? Integer.toString(properties.getWaveChannels()) : "1");
         channelsComboBox.setToolTipText("Number of channnels in generated signal. Normal is one channel. If two, the second channel is just exactly the opposite of the first.");
         channelsComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -213,7 +213,7 @@ public class AudioParametersBean extends javax.swing.JPanel {
         });
 
         omitTrailingGapCheckBox.setMnemonic('O');
-        omitTrailingGapCheckBox.setSelected(properties.getWaveOmitTrailingGap());
+        omitTrailingGapCheckBox.setSelected(properties != null ? properties.getWaveOmitTrailingGap() : false);
         omitTrailingGapCheckBox.setText("Omit trailing gap");
         omitTrailingGapCheckBox.setToolTipText("If true, the last silence is left out of the generated wave signal.");
         omitTrailingGapCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -227,7 +227,7 @@ public class AudioParametersBean extends javax.swing.JPanel {
         jLabel2.setText("# Channels");
 
         sampleSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "8", "16" }));
-        sampleSizeComboBox.setSelectedItem(Integer.toString(properties.getWaveSampleSize()));
+        sampleSizeComboBox.setSelectedItem(properties != null ? Integer.toString(properties.getWaveSampleSize()) : "8");
         sampleSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sampleSizeComboBoxActionPerformed(evt);
