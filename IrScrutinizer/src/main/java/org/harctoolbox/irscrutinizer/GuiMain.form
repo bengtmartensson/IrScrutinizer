@@ -356,6 +356,14 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearMenuItem1ActionPerformed"/>
           </Events>
         </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="checkParametrizedSignalsMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Check commands"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="checkParametrizedSignalsMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="saveCookedMenuItem">
           <Properties>
             <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
@@ -643,6 +651,14 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="checkRawCommandsMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Check commands"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="checkRawCommandsMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="saveRawMenuItem">

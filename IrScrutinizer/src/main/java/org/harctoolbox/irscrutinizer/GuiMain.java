@@ -1078,32 +1078,14 @@ public class GuiMain extends javax.swing.JFrame {
     }
 
     private File saveCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel, String title, RemoteSetExporter exporter) throws IrpMasterException, IOException, TransformerException {
-        Map<String, Command> commands = getCommands(tableModel);
+        Map<String, Command> commands = tableModel.getCommandsWithSanityCheck(guiUtils);
         if (commands == null)
             return null;
+
         File file = saveCommands(commands, "IrScrutinizer " + tableModel.getType() + " table", title, exporter);
         if (file != null)
             tableModel.clearUnsavedChanges();
         return file;
-    }
-
-    private Map<String, Command> getCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel) throws IrpMasterException {
-        List<String>duplicateNames = tableModel.getNonUniqueNames();
-        if (!duplicateNames.isEmpty()) {
-            StringBuilder str = new StringBuilder("The following names are non-unique: ");
-            str.append(String.join(", ", duplicateNames));
-            str.append(".\n").append("Only one signal per name will be preserved in the export.");
-            str.append("\n").append("Continue?");
-            boolean answer = guiUtils.confirm(str.toString());
-            if (!answer)
-                return null;
-        }
-
-        if (tableModel.getRowCount() == 0) {
-            guiUtils.error("No " + tableModel.getType() + " signals present; export aborted.");
-            return null;
-        }
-        return tableModel.getCommands(true);
     }
 
     private File saveCommands(Map<String, Command> commands, String source, String title, RemoteSetExporter exporter) throws IrpMasterException, IOException, TransformerException {
@@ -1803,6 +1785,7 @@ public class GuiMain extends javax.swing.JFrame {
         debugTableRowMenuItem1 = new javax.swing.JMenuItem();
         jSeparator14 = new javax.swing.JPopupMenu.Separator();
         clearMenuItem1 = new javax.swing.JMenuItem();
+        checkParametrizedSignalsMenuItem = new javax.swing.JMenuItem();
         saveCookedMenuItem = new javax.swing.JMenuItem();
         jSeparator19 = new javax.swing.JPopupMenu.Separator();
         parametrizedCopyAllMenuItem = new javax.swing.JMenuItem();
@@ -1839,6 +1822,7 @@ public class GuiMain extends javax.swing.JFrame {
         debugTableRowMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
         clearMenuItem = new javax.swing.JMenuItem();
+        checkRawCommandsMenuItem = new javax.swing.JMenuItem();
         saveRawMenuItem = new javax.swing.JMenuItem();
         jSeparator28 = new javax.swing.JPopupMenu.Separator();
         rawCopyAllMenuItem = new javax.swing.JMenuItem();
@@ -2563,6 +2547,14 @@ public class GuiMain extends javax.swing.JFrame {
         });
         parameterTablePopupMenu.add(clearMenuItem1);
 
+        checkParametrizedSignalsMenuItem.setText("Check commands");
+        checkParametrizedSignalsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkParametrizedSignalsMenuItemActionPerformed(evt);
+            }
+        });
+        parameterTablePopupMenu.add(checkParametrizedSignalsMenuItem);
+
         saveCookedMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, 0));
         saveCookedMenuItem.setMnemonic('E');
         saveCookedMenuItem.setText("Export");
@@ -2818,6 +2810,14 @@ public class GuiMain extends javax.swing.JFrame {
             }
         });
         rawTablePopupMenu.add(clearMenuItem);
+
+        checkRawCommandsMenuItem.setText("Check commands");
+        checkRawCommandsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkRawCommandsMenuItemActionPerformed(evt);
+            }
+        });
+        rawTablePopupMenu.add(checkRawCommandsMenuItem);
 
         saveRawMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, 0));
         saveRawMenuItem.setMnemonic('E');
@@ -9040,6 +9040,19 @@ public class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_continuousCaptureButtonActionPerformed
 
+    private void checkTable(NamedIrSignal.LearnedIrSignalTableModel tableModel) {
+        boolean success = tableModel.sanityCheck(guiUtils);
+        guiUtils.info(success ? "No problems found" : "Problems found");
+    }
+
+    private void checkParametrizedSignalsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkParametrizedSignalsMenuItemActionPerformed
+        checkTable(parameterTableModel);
+    }//GEN-LAST:event_checkParametrizedSignalsMenuItemActionPerformed
+
+    private void checkRawCommandsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkRawCommandsMenuItemActionPerformed
+        checkTable(rawTableModel);
+    }//GEN-LAST:event_checkRawCommandsMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9083,6 +9096,8 @@ public class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CcfImporter> ccfFileImporterBean;
     private javax.swing.JPanel ccfImportPanel;
     private javax.swing.JRadioButtonMenuItem ccfRadioButtonMenuItem;
+    private javax.swing.JMenuItem checkParametrizedSignalsMenuItem;
+    private javax.swing.JMenuItem checkRawCommandsMenuItem;
     private javax.swing.JMenuItem checkUpToDateMenuItem;
     private javax.swing.JCheckBoxMenuItem cleanerCheckBoxMenuItem;
     private javax.swing.JMenuItem clearConsoleMenuItem;

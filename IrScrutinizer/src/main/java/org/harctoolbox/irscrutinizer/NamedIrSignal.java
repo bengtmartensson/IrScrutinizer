@@ -22,12 +22,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.guicomponents.GuiUtils;
 
 /**
  *
@@ -228,25 +231,79 @@ public abstract class NamedIrSignal {
 
         public abstract Command toCommand(int row) throws IrpMasterException;
 
-        public Map<String, Command> getCommands(boolean forgiveSillySignals) throws IrpMasterException {
-            Map<String, Command> commands = new LinkedHashMap<>(getRowCount() + 10);
+        public Map<String, Command> getCommands() {
+            Map<String, Command> commands = new LinkedHashMap<>(getRowCount());
             for (int row = 0; row < getRowCount(); row++) {
                 try {
                     Command command = toCommand(row);
-                    if (command != null)
-                        commands.put(command.getName(), command);
+                    commands.put(command.getName(), command);
                 } catch (IrpMasterException ex) {
-                    if (forgiveSillySignals) {
                         String commandName = (String) getValueAt(row, columnsFunc.getPosName());
                         String commandComment = (String) getValueAt(row, columnsFunc.getPosComment());
                         System.err.println("Warning: Signal named " + commandName + " ("
                                 + commandComment + ") could not be rendered (" + ex.getMessage() + "); ignored.");
-                    } else {
-                        throw ex;
-                    }
                 }
             }
             return commands;
+        }
+
+        public boolean sanityCheck(GuiUtils guiUtils) {
+            Map<String, Command> commands = getCommands();
+            return sanityCheck(commands);
+        }
+
+
+        public Map<String, Command> getCommandsWithSanityCheck(GuiUtils guiUtils) {
+            Map<String, Command> commands = getCommands();
+            boolean status = sanityCheck(commands);
+            return status || guiUtils.confirm("Some signals in export erroneous. Continue anyhow?") ? commands : null;
+        }
+
+        private boolean checkNonUniqueNames() {
+            List<String> duplicateNames = getNonUniqueNames();
+            if (!duplicateNames.isEmpty()) {
+                StringBuilder str = new StringBuilder("The following names are non-unique: ");
+                str.append(String.join(", ", duplicateNames));
+                str.append(".\n").append("Only one signal per name will be preserved in the export.");
+                System.err.println(str);
+                return false;
+            }
+            return true;
+        }
+
+        private boolean sanityCheck(Map<String, Command> commands) {
+            if (commands.isEmpty()) {
+                System.err.println("No signals present.");
+                return false;
+            }
+            boolean success = true;
+            for (Command command : commands.values()) {
+                success = checkCommandSanity(command) && success;
+            }
+
+            return checkNonUniqueNames() && success;
+        }
+
+        // likely to be overridden
+        protected boolean checkName(String name) {
+            if (name.contains(" ")) {
+                System.err.println("Command named \"" + name + "\" contains space.");
+                return false;
+            }
+            return true;
+        }
+
+        protected boolean checkCommandSanity(Command command) {
+            if (!checkName(command.getName()))
+                return false;
+
+            try {
+                IrSignal irSignal = command.toIrSignal();
+                return irSignal != null;
+            } catch (IrpMasterException ex) {
+                System.err.println(ex.getMessage());
+                return false;
+            }
         }
 
         public synchronized void clearComment() {
