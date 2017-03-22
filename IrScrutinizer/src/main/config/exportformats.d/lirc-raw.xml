@@ -83,6 +83,13 @@ end remote
 </xsl:template>
 
     <xsl:template match="girr:command">
+        <xsl:text>&#9;&#9;# </xsl:text>
+        <xsl:value-of select="translate(@name, ' ', '_')"/>
+        <xsl:text> cannot be rendered, omitted
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:command[girr:raw]">
         <xsl:text>&#9;&#9;name </xsl:text>
         <xsl:value-of select="translate(@name, ' ', '_')"/>
         <xsl:text>

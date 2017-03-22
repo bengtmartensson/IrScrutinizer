@@ -83,6 +83,12 @@ end remote
 </xsl:text>
       </xsl:template>
       <xsl:template match="girr:command">
+         <xsl:text>		# </xsl:text>
+         <xsl:value-of select="translate(@name, ' ', '_')"/>
+         <xsl:text xml:space="preserve"> not renderable, skipped
+</xsl:text>
+      </xsl:template>
+      <xsl:template match="girr:command[raw]">
          <xsl:text>		name </xsl:text>
          <xsl:value-of select="translate(@name, ' ', '_')"/>
          <xsl:text xml:space="preserve">
@@ -3000,6 +3006,78 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
             <xsl:with-param name="F"
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="T"
+                            select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
+      <!-- ################## Protocol RC6-M-32 ################ -->
+      <!-- IRP: {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,M:3,<-2,2|2,-2>(T:1),OEM1:8,OEM2:8,D:8,F:8,^107m)*,T=1-T)[OEM1:0..255,OEM2:0..255,D:0..255,F:0..255,M:0..7,T@:0..1=0] -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'rc6-m-32']">
+         <xsl:text xml:space="preserve">begin remote
+	# Protocol name: RC6-M-32
+	name		</xsl:text>
+         <xsl:value-of select="translate(../@name, ' ', '_')"/>
+         <xsl:text>
+	bits		37
+	flags		RC5|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		444	444
+	one		444	444
+	header		2664	888
+	gap		107000
+	frequency	36000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-rc6-m-32">
+         <xsl:param name="OEM1"/>
+         <xsl:param name="OEM2"/>
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:param name="M"/>
+         <xsl:param name="T"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="translate(@name, ' ', '_')"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), 1, 1, 0, false(), false(), $M, 3, 0, false(), false(), $OEM1, 8, 0, false(), false(), $OEM2, 8, 0, false(), false(), $D, 8, 0, false(), false(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='rc6-m-32']">
+         <xsl:call-template name="command-rc6-m-32">
+            <xsl:with-param name="OEM1"
+                            select="number(girr:parameters/girr:parameter[@name='OEM1']/@value)"/>
+            <xsl:with-param name="OEM2"
+                            select="number(girr:parameters/girr:parameter[@name='OEM2']/@value)"/>
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="M"
+                            select="number(girr:parameters/girr:parameter[@name='M']/@value)"/>
+            <xsl:with-param name="T" select="0"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='rc6-m-32' and girr:parameters/girr:parameter[@name='T']]">
+         <xsl:call-template name="command-rc6-m-32">
+            <xsl:with-param name="OEM1"
+                            select="number(girr:parameters/girr:parameter[@name='OEM1']/@value)"/>
+            <xsl:with-param name="OEM2"
+                            select="number(girr:parameters/girr:parameter[@name='OEM2']/@value)"/>
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="M"
+                            select="number(girr:parameters/girr:parameter[@name='M']/@value)"/>
             <xsl:with-param name="T"
                             select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
          </xsl:call-template>
