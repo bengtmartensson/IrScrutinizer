@@ -61,8 +61,12 @@ public class GuiUtils {
         IrpUtils.exit(errorcode);
     }
 
+    private static boolean confirm(JFrame frame, String message, int optionType) {
+        return JOptionPane.showConfirmDialog(frame, message, "Confirmation requested", optionType) == JOptionPane.OK_OPTION;
+    }
+
     private static boolean confirm(JFrame frame, String message) {
-        return JOptionPane.showConfirmDialog(frame, message, "Confirmation requested", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
+        return confirm(frame, message, JOptionPane.OK_CANCEL_OPTION);
     }
 
     private final int maxGuiMessageLength;
@@ -195,7 +199,11 @@ public class GuiUtils {
     }
 
     public boolean confirm(String message) {
-        return confirm(frame, message);
+        return confirm(message, JOptionPane.OK_CANCEL_OPTION);
+    }
+
+    public boolean confirm(String message, int optionType) {
+        return confirm(frame, message, optionType);
     }
 
     public void mail(String address, String subject, String body) throws URISyntaxException, IOException {
