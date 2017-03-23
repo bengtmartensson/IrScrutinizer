@@ -24,6 +24,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ComponentAdapter;
@@ -49,15 +50,19 @@ import javax.comm.DriverGenUnix;
 import javax.swing.AbstractButton;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JPopupMenu.Separator;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.TransferHandler;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.Position;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.harctoolbox.IrpMaster.*;
@@ -191,6 +196,16 @@ public class GuiMain extends javax.swing.JFrame {
     };
 
     private class SignalScrutinizerTransferHandler extends TransferHandler {
+
+        TransferHandler oldhandler;
+        private Position p0 = null;
+        private Position p1 = null;
+
+        private SignalScrutinizerTransferHandler(TransferHandler oldhandler) {
+            super();
+            this.oldhandler = oldhandler;
+        }
+
         @Override
         public boolean canImport(TransferHandler.TransferSupport support) {
             if (support.isDrop()) {
@@ -222,23 +237,51 @@ public class GuiMain extends javax.swing.JFrame {
                     }
 
                     importModulatedIrSequenceFile(list.get(0));
+                    return true;
                 } else {
-                    // I am sure there is a smarter way ;-)
-                    String content = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                    JTextArea component = (JTextArea) support.getComponent();
-                    String old = component.getText();
-                    int index = component.getCaretPosition();
-                    String newContent = (old.substring(0, index) + content + old.substring(index)).replace('\n', ' ');
-                    component.setText(newContent);
-                    component.setCaretPosition(index + content.length());
+                    return oldhandler.importData(support);
                 }
             } catch (UnsupportedFlavorException | IOException ex) {
                 guiUtils.error(ex);
                 return false;
             }
-            return true;
         }
-    };
+
+        @Override
+        protected Transferable createTransferable(JComponent component) {
+            JTextComponent textComponent = (JTextComponent) component;
+            int start = textComponent.getSelectionStart();
+            int end = textComponent.getSelectionEnd();
+
+            if (start == end)
+                return null;
+
+            try {
+                Document doc = textComponent.getDocument();
+                p0 = doc.createPosition(start);
+                p1 = doc.createPosition(end);
+            } catch (BadLocationException e) {
+                guiUtils.error("Can't create position.");
+            }
+            return new StringSelection(textComponent.getSelectedText());
+        }
+
+        @Override
+        public int getSourceActions(JComponent c) {
+            return oldhandler.getSourceActions(c);
+        }
+
+        @Override
+        protected void exportDone(JComponent component, Transferable data, int action) {
+            if (action == MOVE && (p0 != null) && (p1 != null) && (p0.getOffset() != p1.getOffset())) {
+                try {
+                    ((JTextComponent) component).getDocument().remove(p0.getOffset(), p1.getOffset() - p0.getOffset());
+                } catch (BadLocationException e) {
+                    guiUtils.error("Can't remove text from source.");
+                }
+            }
+        }
+    }
 
     /**
      * Main class for the GUI. Throws exceptions if configuration files cannot be found or on similar errors.
@@ -415,8 +458,7 @@ public class GuiMain extends javax.swing.JFrame {
         cookedPanel.setTransferHandler(new GirrImporterBeanTransferHandler(false));
         rawPanel.setTransferHandler(new GirrImporterBeanTransferHandler(true));
 
-        signalScrutinizerPanel.setTransferHandler(new SignalScrutinizerTransferHandler());
-        capturedDataTextArea.setTransferHandler(new SignalScrutinizerTransferHandler());
+        capturedDataTextArea.setTransferHandler(new SignalScrutinizerTransferHandler(capturedDataTextArea.getTransferHandler()));
 
         // Cannot do this in initComponents, since then it will be called therein
         importTabbedPane.addChangeListener((javax.swing.event.ChangeEvent evt) -> {
