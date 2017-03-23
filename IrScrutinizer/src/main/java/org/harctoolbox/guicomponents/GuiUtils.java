@@ -239,51 +239,45 @@ public class GuiUtils {
         }
     }
 
+    // Do NOT add an edit(...) function!
+
+    /**
+     * For maximal portability and robustness, and since the support of edit is
+     * ... not omnipresent, use only this function.
+     *
+     * @param file file or directory to be opened/edited.
+     */
     public void open(File file) {
         if (!Desktop.isDesktopSupported()) {
             error("Desktop not supported");
             return;
         }
-        if (!Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
-            error("Desktop does not support open");
-            return;
-        }
-        try {
-            Desktop.getDesktop().open(file);
-            if (verbose)
-                trace("open file \"" + file.toString() + "\"");
-        } catch (IllegalArgumentException | IOException ex) {
-            error(ex);
-        }
-    }
 
-    public void edit(File file) {
-        if (!Desktop.isDesktopSupported()) {
-            error("Desktop not supported");
-            return;
+        if (Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+            try {
+                Desktop.getDesktop().open(file);
+                if (verbose)
+                    trace("open file \"" + file.toString() + "\" succeeded");
+                return;
+            } catch (IOException ex) {
+                if (verbose)
+                    trace("open file \"" + file.toString() + "\" failed: " + ex.getLocalizedMessage());
+            }
         }
-        if (!Desktop.getDesktop().isSupported(Desktop.Action.EDIT)) {
-            error("Desktop does not support edit");
-            return;
-        }
-        try {
-            Desktop.getDesktop().edit(file);
-            if (verbose)
-                trace("edit file \"" + file.toString() + "\"");
-        } catch (IllegalArgumentException | IOException ex) {
-            error(ex);
-        }
-    }
 
-    // Since the support of edit is ... not omnipresent, use only
-    // this function
-    public void editOrOpen(File file) {
-        if (Desktop.getDesktop().isSupported(Desktop.Action.EDIT))
-            edit(file);
-        else if (Desktop.getDesktop().isSupported(Desktop.Action.OPEN))
-            open(file);
-        else
-            error("Desktop supports neither edit nor open");
+        if (Desktop.getDesktop().isSupported(Desktop.Action.EDIT)) {
+            try {
+                Desktop.getDesktop().edit(file);
+                if (verbose)
+                    trace("edit file \"" + file.toString() + "\" succeeded");
+                return;
+            } catch (IOException ex) {
+                if (verbose)
+                    trace("edit file \"" + file.toString() + "\" failed: " + ex.getLocalizedMessage());
+            }
+        }
+
+        error("Neither edit nor open supported/working");
     }
 
     public void browseOrEdit(String urlOrFilename) {
@@ -291,7 +285,7 @@ public class GuiUtils {
             URL url = new URL(urlOrFilename);
             browse(url.toURI());
         } catch (MalformedURLException | URISyntaxException ex) {
-            editOrOpen(new File(urlOrFilename));
+            open(new File(urlOrFilename));
         }
     }
 

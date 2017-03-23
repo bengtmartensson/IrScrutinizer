@@ -7912,7 +7912,7 @@ public class GuiMain extends javax.swing.JFrame {
         try {
             File file = Exporter.getLastSaveFileOrCopy();
             if (file != null)
-                guiUtils.editOrOpen(file);
+                guiUtils.open(file);
             else
                 guiUtils.error("There is no \"last file\".");
         } catch (IOException ex) {
@@ -8011,7 +8011,7 @@ public class GuiMain extends javax.swing.JFrame {
         try {
             File file = Exporter.getLastSaveFileOrCopy();
             if (file != null)
-                guiUtils.editOrOpen(file);
+                guiUtils.open(file);
             else
                 guiUtils.error("No export has been made in this session.");
         } catch (IOException ex) {
