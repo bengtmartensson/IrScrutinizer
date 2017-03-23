@@ -2290,7 +2290,6 @@ public class GuiMain extends javax.swing.JFrame {
         CCFCodePopupMenu.add(signalClearMenuItem);
         CCFCodePopupMenu.add(jSeparator8);
 
-        rawCodeCopyMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
         rawCodeCopyMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/editcopy.png"))); // NOI18N
         rawCodeCopyMenuItem.setText("Copy selection");
         rawCodeCopyMenuItem.setToolTipText("Copy current selection to the clipboard");
@@ -2309,7 +2308,6 @@ public class GuiMain extends javax.swing.JFrame {
         });
         CCFCodePopupMenu.add(rawCodeCopyAllMenuItem);
 
-        rawCodePasteReplacingMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_INSERT, 0));
         rawCodePasteReplacingMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/editpaste.png"))); // NOI18N
         rawCodePasteReplacingMenuItem.setText("Paste (replacing)");
         rawCodePasteReplacingMenuItem.setToolTipText("Paste from clipboard, replacing previous contents.");
@@ -2320,7 +2318,6 @@ public class GuiMain extends javax.swing.JFrame {
         });
         CCFCodePopupMenu.add(rawCodePasteReplacingMenuItem);
 
-        rawCodePasteMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
         rawCodePasteMenuItem.setMnemonic('P');
         rawCodePasteMenuItem.setText("Paste");
         rawCodePasteMenuItem.setToolTipText("Paste content of clipboard at the position of the caret.");
@@ -2331,7 +2328,6 @@ public class GuiMain extends javax.swing.JFrame {
         });
         CCFCodePopupMenu.add(rawCodePasteMenuItem);
 
-        rawCodePasteAnalyzeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, 0));
         rawCodePasteAnalyzeMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/cache.png"))); // NOI18N
         rawCodePasteAnalyzeMenuItem.setText("Paste & Scrutinize");
         rawCodePasteAnalyzeMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -2341,7 +2337,6 @@ public class GuiMain extends javax.swing.JFrame {
         });
         CCFCodePopupMenu.add(rawCodePasteAnalyzeMenuItem);
 
-        rawCodeSelectAllMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
         rawCodeSelectAllMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/ark_selectall.png"))); // NOI18N
         rawCodeSelectAllMenuItem.setText("Select all");
         rawCodeSelectAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -2352,7 +2347,6 @@ public class GuiMain extends javax.swing.JFrame {
         CCFCodePopupMenu.add(rawCodeSelectAllMenuItem);
         CCFCodePopupMenu.add(jSeparator23);
 
-        rawCodeAnalyzeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
         rawCodeAnalyzeMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/gear.png"))); // NOI18N
         rawCodeAnalyzeMenuItem.setText("Scrutinize");
         rawCodeAnalyzeMenuItem.addActionListener(new java.awt.event.ActionListener() {
