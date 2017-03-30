@@ -31,7 +31,7 @@ import org.harctoolbox.harchardware.ir.LircTransmitter;
 /**
  *
  */
-public class DevLircBean extends javax.swing.JPanel implements ISendingReceivingBean {
+public final class DevLircBean extends javax.swing.JPanel implements ISendingReceivingBean {
     private static final String notInitialized = "not initialized";
 
     private String portName;
@@ -109,7 +109,7 @@ public class DevLircBean extends javax.swing.JPanel implements ISendingReceiving
     /**
      * @param portName the port to set
      */
-    public final void setPortName(String portName) {
+    public void setPortName(String portName) {
         if (portName == null || portName.isEmpty())
             return;
 

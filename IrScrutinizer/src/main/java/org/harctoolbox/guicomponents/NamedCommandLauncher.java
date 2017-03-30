@@ -29,7 +29,7 @@ import org.harctoolbox.harchardware.ir.Transmitter;
 /**
  *
  */
-public class NamedCommandLauncher extends JPanel {
+public final class NamedCommandLauncher extends JPanel {
     private GuiUtils guiUtils;
     private IRemoteCommandIrSender hardware;
     private DefaultComboBoxModel<String> transmitterComboBoxModel;
@@ -64,7 +64,7 @@ public class NamedCommandLauncher extends JPanel {
         enableStuff();
     }
 
-    public final void setHardware(IRemoteCommandIrSender hardware) throws IOException {
+    public void setHardware(IRemoteCommandIrSender hardware) throws IOException {
         this.hardware = hardware;
         //supportsStopIr = (hardware != null) && IRemoteCommandIrSenderStop.class.isInstance(hardware);
         if (hardware == null) {

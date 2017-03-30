@@ -81,7 +81,7 @@ import org.harctoolbox.irscrutinizer.importer.*;
 import org.harctoolbox.irscrutinizer.sendinghardware.*;
 import org.xml.sax.SAXException;
 
-public class GuiMain extends javax.swing.JFrame {
+public final class GuiMain extends javax.swing.JFrame {
 
     private Props properties;
     private int debug = 0; // presently not used

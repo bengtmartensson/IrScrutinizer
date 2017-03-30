@@ -20,7 +20,7 @@ package org.harctoolbox.guicomponents;
 import javax.swing.JPanel;
 import org.harctoolbox.irscrutinizer.GuiMain;
 
-public class CapturingSendingBean extends javax.swing.JPanel {
+public final class CapturingSendingBean extends javax.swing.JPanel {
 
     private GuiMain guiMain;
     private JPanel senderPanel;

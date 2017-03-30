@@ -21,7 +21,7 @@ import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.Rectangle;
 
-public class AckWithMemoryDialog extends javax.swing.JDialog {
+public final class AckWithMemoryDialog extends javax.swing.JDialog {
 
     private boolean answer;
     private final PropertyFlip propertyFlip;

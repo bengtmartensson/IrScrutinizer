@@ -29,7 +29,7 @@ import javax.swing.DefaultComboBoxModel;
 import org.harctoolbox.harchardware.ir.GlobalCache;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 
-public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
+public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
     private GuiUtils guiUtils;
     private GlobalCache globalCache;
     private boolean verbose;
@@ -140,7 +140,7 @@ public class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
      * @throws UnknownHostException
      * @throws IOException
      */
-    public final void setIpName(String ipName) throws UnknownHostException, IOException {
+    public void setIpName(String ipName) throws UnknownHostException, IOException {
         if (ipName == null || ipName.isEmpty() || ipName.equals(getIpName()))
             return;
 

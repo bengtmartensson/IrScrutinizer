@@ -30,7 +30,7 @@ import org.harctoolbox.harchardware.comm.LocalSerialPort;
 /**
  *
  */
-public class SerialPortBean extends javax.swing.JPanel {
+public final class SerialPortBean extends javax.swing.JPanel {
     private String portName;
     private int baud;
     private int dataSize;

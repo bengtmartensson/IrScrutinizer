@@ -46,7 +46,7 @@ import org.harctoolbox.girr.Command;
 /**
  *
  */
-public class IrpMasterBean extends javax.swing.JPanel {
+public final class IrpMasterBean extends javax.swing.JPanel {
     private static final String invalidParameterString = Long.toString(IrpUtils.invalid);
 
     public static final String PROP_PROTOCOL_NAME = "protocolName";

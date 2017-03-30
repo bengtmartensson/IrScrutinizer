@@ -31,7 +31,7 @@ import org.harctoolbox.harchardware.comm.LocalSerialPort;
 /**
  *
  */
-public class SerialPortSimpleBean extends javax.swing.JPanel implements ISendingReceivingBean {
+public final class SerialPortSimpleBean extends javax.swing.JPanel implements ISendingReceivingBean {
     private static final int defaultBaudRate = 9600;
     private static final String notInitialized = "not initialized";
 
@@ -103,7 +103,7 @@ public class SerialPortSimpleBean extends javax.swing.JPanel implements ISending
     /**
      * @param portName the port to set
      */
-    public final void setPortName(String portName) {
+    public void setPortName(String portName) {
         if (portName == null || portName.isEmpty())
             return;
 

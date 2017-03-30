@@ -38,7 +38,7 @@ import org.harctoolbox.harchardware.ir.GirsClient;
 import org.harctoolbox.irscrutinizer.Props;
 
 
-public class GirsClientBean extends javax.swing.JPanel implements ISendingReceivingBean {
+public final class GirsClientBean extends javax.swing.JPanel implements ISendingReceivingBean {
 
     public static final String PROP_IPNAME = "PROP_IPNAME";
     public static final String PROP_TYPE = "PROP_TYPE";

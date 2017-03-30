@@ -26,7 +26,7 @@ import org.harctoolbox.guicomponents.GuiUtils;
  * The mandatory about popup ;-).
  *
  */
-public class AboutPopup extends javax.swing.JDialog {
+public final class AboutPopup extends javax.swing.JDialog {
 
     private GuiUtils guiUtils;
     private String decodeIRVersion;

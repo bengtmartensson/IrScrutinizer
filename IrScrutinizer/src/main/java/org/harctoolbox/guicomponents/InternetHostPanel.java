@@ -28,7 +28,7 @@ import javax.swing.JPanel;
 import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ir.LircClient;
 
-public class InternetHostPanel extends JPanel {
+public final class InternetHostPanel extends JPanel {
     public static final String PROP_IP_NAME = "ipName";
     public static final String PROP_PORT_NUMBER = "portNumber";
     public static final String PROP_READY = "PROP_READY";
@@ -83,7 +83,7 @@ public class InternetHostPanel extends JPanel {
         browseButton.setEnabled(useBrowse);
     }
 
-    public final void setUsePort(boolean value) {
+    public void setUsePort(boolean value) {
         usePort = value;
         portTextField.setEnabled(value);
         portLabel.setText(value ? "Port" : null);
@@ -113,7 +113,7 @@ public class InternetHostPanel extends JPanel {
         propertyChangeSupport.firePropertyChange(PROP_READY, oldReady, ready);
     }
 
-    public final void setIpName(String name) {
+    public void setIpName(String name) {
         if (name == null || name.equals(ipName))
             return;
 
@@ -128,7 +128,7 @@ public class InternetHostPanel extends JPanel {
         return portNumber;
     }
 
-    public final void setPortNumber(int value) {
+    public void setPortNumber(int value) {
         int oldPortNumber = portNumber;
         portNumber = value;
         portTextField.setText(Integer.toString(value));
