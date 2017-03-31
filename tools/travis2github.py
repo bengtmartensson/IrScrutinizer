@@ -55,7 +55,7 @@ if (release != None):
     headers = {'Authorization': 'token ' + token}
     response = requests.delete(release["url"], headers=headers)
     print response
-    #assert(response.status_code==204)
+    assert(response.status_code==204)
     # Nuke the corresponding tag
     #resp = requests.delete('https://api.github.com/repos/' + username + '/' + repo + '/git/refs/tags/' + release_name, headers=headers)
     #print resp
@@ -76,7 +76,7 @@ print url
 response = requests.post(url, data=json.dumps(payload), headers=headers)
 print response
 print response.content
-# assert(response.status_code==201)
+assert(response.status_code==201)
 release = json.loads(response.content)
 
 # # Delete all binary assets of that release with the corresponding filename
