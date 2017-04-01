@@ -16,6 +16,7 @@ this program. If not, see http://www.gnu.org/licenses/.
  */
 package org.harctoolbox.IrpMaster;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
@@ -29,7 +30,7 @@ import org.antlr.runtime.tree.CommonTree;
  *
  * @author Bengt Martensson
  */
-public class ParameterSpecs {
+public class ParameterSpecs implements Serializable {
     /**
      * @param args the command line arguments
      */

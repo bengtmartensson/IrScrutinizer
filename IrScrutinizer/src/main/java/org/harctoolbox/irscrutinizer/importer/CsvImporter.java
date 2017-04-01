@@ -17,6 +17,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.importer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import org.harctoolbox.IrpMaster.IrpUtils;
 
@@ -25,7 +26,7 @@ import org.harctoolbox.IrpMaster.IrpUtils;
  *
  * Columns are numbered starting with 1.
  */
-public abstract class CsvImporter extends RemoteSetImporter implements IReaderImporter {
+public abstract class CsvImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
     protected final static int invalid = (int) IrpUtils.invalid;
     private final static String[][] separators = new String[][] {
         new String[] { ", (comma)", "," },

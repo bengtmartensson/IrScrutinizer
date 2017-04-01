@@ -36,7 +36,7 @@ public class AmxBeaconListenerPanel extends HarcPanel {
             + "License: GPL3.\n\n"
             + "Project home page: http://www.harctoolbox.org";
 
-    private final AmxBeaconListener listener;
+    private final transient AmxBeaconListener listener;
 
     @Override
     public String getHelpMessage() {

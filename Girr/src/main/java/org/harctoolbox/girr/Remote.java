@@ -35,7 +35,7 @@ import org.w3c.dom.NodeList;
  * It has a name for identification, and a number of comment-like text fields. Most importantly,
  * it has a dictionary of Commands, indexed by their names.
  */
-public class Remote {
+public final class Remote implements Serializable {
 
     private static Map<String,Command> commandToMap(Command command) {
         Map<String,Command> result = new HashMap<>(1);
@@ -316,7 +316,7 @@ public class Remote {
         return notes;
     }
 
-    public static class MetaData {
+    public static class MetaData implements Serializable {
         private String name;
         private String displayName;
         private String manufacturer;

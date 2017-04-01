@@ -22,6 +22,7 @@ import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -38,7 +39,7 @@ import org.harctoolbox.irscrutinizer.Version;
  * This class imports CommandFusion files. Only CommandFusion files having exactly one remote are presently supported.
  *
  */
-public class CommandFusionImporter extends RemoteSetImporter implements IReaderImporter {
+public class CommandFusionImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
     public static final String homeUrl = "http://www.commandfusion.com/index.php";
 
     public static void main(String[] args) {

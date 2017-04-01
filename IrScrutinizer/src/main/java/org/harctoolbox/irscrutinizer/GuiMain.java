@@ -85,26 +85,26 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private Props properties;
     private int debug = 0; // presently not used
-    private final LookAndFeelManager lookAndFeelManager;
+    private final transient LookAndFeelManager lookAndFeelManager;
     private GuiUtils guiUtils;
-    private GlobalCacheIrDatabase globalCacheIrDatabase = null;
-    private ControlTowerIrDatabase controlTowerIrDatabase = null;
+    private transient GlobalCacheIrDatabase globalCacheIrDatabase = null;
+    private transient ControlTowerIrDatabase controlTowerIrDatabase = null;
     private Map<String, String> controlTowerCodesetTable = null;
-    private IrdbImporter irdbImporter = null;
+    private transient IrdbImporter irdbImporter = null;
     private IrpMaster irpMaster = null;
     private ProtocolsIni protocolsIni = null;
-    private CcfImporter ccfImporter;
-    private XcfImporter xcfImporter;
+    private transient CcfImporter ccfImporter;
+    private transient XcfImporter xcfImporter;
     private CmlImporter cmlImporter;
     private CommandFusionImporter commandFusionImporter;
     private CsvRawImporter csvRawImporter;
     private CsvParametrizedImporter csvParametrizedImporter;
     private RmduImporter rmduImporter;
     private IctImporter ictImporter;
-    private GirrImporter girrImporter;
+    private transient GirrImporter girrImporter;
     private final LircImporter lircImporter;
-    private final IrTransImporter irTransImporter;
-    private WaveImporter waveImporter;
+    private final transient IrTransImporter irTransImporter;
+    private transient WaveImporter waveImporter;
     private final String applicationHome;
     private java.awt.Component lastPane;
     private int dynamicExportFormatsMenuPosition;
@@ -125,12 +125,12 @@ public final class GuiMain extends javax.swing.JFrame {
     private final ParametrizedIrSignal.ParameterIrSignalTableColumnModel parameterTableColumnModel;
     private final RawIrSignal.RawTableModel rawTableModel;
     private final ParametrizedIrSignal.ParameterIrSignalTableModel parameterTableModel;
-    private CaptureThread captureThread = null;
+    private transient CaptureThread captureThread = null;
     private final String[] prontoModelNames;
     private ExportFormatManager exportFormatManager;
-    private SendingHardwareManager sendingHardwareManager = null;
-    private SendingLircClient sendingLircClient;
-    private CapturingHardwareManager capturingHardwareManager;
+    private transient SendingHardwareManager sendingHardwareManager = null;
+    private transient SendingLircClient sendingLircClient;
+    private transient CapturingHardwareManager capturingHardwareManager;
 
     private Remote.MetaData metaData = new Remote.MetaData("unnamed");
 

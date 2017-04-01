@@ -18,6 +18,7 @@ package org.harctoolbox.IrpMaster;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -40,7 +41,7 @@ import org.w3c.dom.Element;
  * There are too many public functions in the API...
  *
  */
-public class Protocol {
+public class Protocol implements Serializable {
 
     private static void assignIfValid(Map<String, Long> actualVars, String name, long value) {
         if (value != IrpUtils.invalid)
@@ -150,21 +151,21 @@ public class Protocol {
     private String name;
     private String documentation;
     private String irpString;
-    private CommonTree AST;
+    private transient CommonTree AST;
     private GeneralSpec generalSpec;
     private NameEngine nameEngine;
     private ParameterSpecs parameterSpecs;
-    private CommonTree topBitspecIrsteam;
-    private CommonTokenStream tokens;
+    private transient CommonTree topBitspecIrsteam;
+    private transient CommonTokenStream tokens;
 
     // True the first time render is called, then false -- to be able to initialize.
     private boolean virgin = true;
 
     private int count = 0;
 
-    private Document doc = null;
-    private Element root = null;
-    private Element currentElement = null;
+    private transient Document doc = null;
+    private transient Element root = null;
+    private transient Element currentElement = null;
     /**
      *
      * @param generalSpec

@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +34,7 @@ import org.harctoolbox.girr.Command;
  * This class allows for the creation of rendered IR signals in the ICT Format, used by the IRScope.
  *
  */
-public class IctImporter extends RemoteSetImporter implements IReaderImporter {
+public class IctImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
 
     private static final int invalid = -1;
     private static final int lengthInsertedGap = 100000;

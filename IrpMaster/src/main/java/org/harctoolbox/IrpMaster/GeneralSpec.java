@@ -17,6 +17,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.IrpMaster;
 
+import java.io.Serializable;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
@@ -27,7 +28,7 @@ import org.antlr.runtime.tree.CommonTree;
  * This class is immutable; can only be build by the constructor, and not altered.
  *
  */
-public class GeneralSpec {
+public class GeneralSpec implements Serializable {
 
     public final static double defaultDutyCycle = IrpUtils.invalid;
     public final static BitDirection defaultBitDirection = BitDirection.lsb;

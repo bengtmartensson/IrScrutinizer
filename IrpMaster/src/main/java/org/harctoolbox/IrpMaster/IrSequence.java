@@ -16,6 +16,7 @@ this program. If not, see http://www.gnu.org/licenses/.
  */
 package org.harctoolbox.IrpMaster;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +40,7 @@ import java.util.List;
  * @see ModulatedIrSequence
  *
  */
-public class IrSequence implements Cloneable {
+public class IrSequence implements Cloneable, Serializable {
     private static final double epsilon = 0.001;
     private static final int dummySpaceDuration = 50; // should not translate to 0000 in Pronto
 

@@ -44,7 +44,7 @@ import org.w3c.dom.ProcessingInstruction;
 /**
  * Utility class for XML export. Usage in other contexts not recommended.
  */
-public class XmlExporter {
+public final class XmlExporter {
 
     /**
      * Name space for the XML Schemas
@@ -129,7 +129,9 @@ public class XmlExporter {
         }
         return doc;
     }
+
     private final Document document;
+
     /**
      *
      * @param doc

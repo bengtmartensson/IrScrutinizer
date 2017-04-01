@@ -17,6 +17,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.IrpMaster;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,7 +34,7 @@ import org.antlr.runtime.tree.CommonTree;
 // TODO: There are probably too many accessing functions here.
 // Clean up by eliminating and making private.
 
-public class NameEngine {
+public class NameEngine implements Serializable {
 
     private static void usage(int code) {
         System.err.println("Usage:");
@@ -59,7 +60,7 @@ public class NameEngine {
         System.out.println(prot.nameEngineString());
     }
 
-    private final Map<String, CommonTree> map;
+    private final transient Map<String, CommonTree> map;
 
     public NameEngine() {
         map = new HashMap<>(4);

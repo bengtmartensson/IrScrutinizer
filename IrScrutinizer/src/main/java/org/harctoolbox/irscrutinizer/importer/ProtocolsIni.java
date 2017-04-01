@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,7 +32,7 @@ import org.harctoolbox.IrpMaster.IrpUtils;
 /**
  * This class contains a simple importer for the RemoteMaster's protocols.ini.
  */
-public class ProtocolsIni {
+public class ProtocolsIni implements Serializable {
     private static long reverse(long x, int width) {
         long y = Long.reverse(x);
         if (width > 0)

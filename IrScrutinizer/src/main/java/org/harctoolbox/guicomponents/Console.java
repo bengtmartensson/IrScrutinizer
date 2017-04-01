@@ -38,7 +38,7 @@ import org.harctoolbox.IrpMaster.IrpUtils;
  * This class is a general purpose console.
  */
 public class Console extends javax.swing.JScrollPane {
-    private IErrorFunction errorFunction = null;
+    private transient IErrorFunction errorFunction = null;
     private final javax.swing.JMenuItem consoleClearMenuItem;
     private final javax.swing.JMenuItem consoleCopyMenuItem;
     private final javax.swing.JMenuItem consoleCopySelectionMenuItem;
@@ -46,7 +46,7 @@ public class Console extends javax.swing.JScrollPane {
     private final javax.swing.JPopupMenu consolePopupMenu;
     private final javax.swing.JMenuItem consoleSaveMenuItem;
     private final javax.swing.JTextArea consoleTextArea;
-    private PrintStream consolePrintStream = null;
+    private transient PrintStream consolePrintStream = null;
 
     public Console() {
         errorFunction = new SimpleErrorFunction(consolePrintStream);

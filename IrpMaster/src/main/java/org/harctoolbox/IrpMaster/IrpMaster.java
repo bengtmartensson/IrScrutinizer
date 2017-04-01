@@ -38,7 +38,7 @@ import org.harctoolbox.IrpMaster.Iterate.RandomValueSet;
 // Prefered order for protocol parameters:
 // D, S, F, T, and then the rest in alphabetical order.
 
-public class IrpMaster {
+public class IrpMaster implements Serializable {
 
     private final static int max_recursion_depth_expanding = 5;
     private static boolean testParse = false;
@@ -684,7 +684,7 @@ public class IrpMaster {
         return irSignal.ccfString();
     }
 
-    private UserComm userComm;
+    private transient UserComm userComm;
     private String configFileVersion = "not found";
 
     // The key is the protocol name folded to lower case. Case preserved name is in UnparsedProtocol.name.
@@ -917,7 +917,7 @@ public class IrpMaster {
         }
     }
 
-    private static class UnparsedProtocol {
+    private static class UnparsedProtocol implements Serializable {
 
         public static final String unnamed = "unnamed_protocol";
         public String name;

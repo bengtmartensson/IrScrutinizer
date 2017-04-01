@@ -66,8 +66,8 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         return doc;
     }
 
-    private static Map<String, Element> mkIndex(Element element, String tagId) {
-        Map<String, Element> index = new LinkedHashMap<>(16);
+    private static LinkedHashMap<String, Element> mkIndex(Element element, String tagId) {
+        LinkedHashMap<String, Element> index = new LinkedHashMap<>(16);
         NodeList things = element.getElementsByTagName(tagId);
         int length = things.getLength();
         for (int i = 0; i < length; i++) {
@@ -98,11 +98,11 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
     private boolean translateProntoFont = true;
 
-    private Map<String, String> nameIndex;
-    private Map<String, Element> pageIndex;
-    private Map<String, Element> actionListIndex;
-    private Map<String, Element> moduleIndex;
-    private Map<String, Element> actionIndex;
+    private transient Map<String, String> nameIndex;
+    private transient Map<String, Element> pageIndex;
+    private transient Map<String, Element> actionListIndex;
+    private transient Map<String, Element> moduleIndex;
+    private transient Map<String, Element> actionIndex;
 
     private int learnedIrCodeIndex;
 
@@ -283,7 +283,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
 
     private void setupNamesIndex(Element element) {
-        nameIndex = new HashMap<>(32);
+        nameIndex = new LinkedHashMap<>(32);
         NodeList nl = element.getElementsByTagName("STRING");
         for (int i = 0; i < nl.getLength(); i++) {
             Element e = (Element) nl.item(i);

@@ -39,7 +39,7 @@ import org.xml.sax.SAXParseException;
 public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
     public static final String homeUrl = "http://www.harctoolbox.org/girr";
 
-    private Schema schema;
+    private transient Schema schema;
     private URL url;
     private boolean validate;
 

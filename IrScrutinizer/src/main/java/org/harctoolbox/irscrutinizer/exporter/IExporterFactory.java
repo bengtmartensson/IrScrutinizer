@@ -17,10 +17,12 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.exporter;
 
+import java.io.Serializable;
+
 /**
  *
  */
-public interface IExporterFactory {
+public interface IExporterFactory extends Serializable {
 
     public ICommandExporter newExporter();
 }

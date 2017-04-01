@@ -120,7 +120,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     //private boolean verbose = false;
     private String manufacturer;
     private RemoteSet remoteSet;
-    private Map<String, Map<ProtocolDeviceSubdevice, Map<String, Long>>> deviceTypes;
+    private LinkedHashMap<String, Map<ProtocolDeviceSubdevice, Map<String, Long>>> deviceTypes;
 
     public IrdbImporter(String manufacturer, boolean verbose) throws IOException {
         super(irdbOriginName);

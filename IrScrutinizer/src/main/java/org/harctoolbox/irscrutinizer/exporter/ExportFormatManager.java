@@ -20,10 +20,10 @@ package org.harctoolbox.irscrutinizer.exporter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
@@ -36,9 +36,9 @@ import org.xml.sax.SAXException;
 /**
  * This class does something interesting and useful. Or not...
  */
-public class ExportFormatManager {
+public class ExportFormatManager implements Serializable {
 
-    private final Map<String, IExporterFactory> exportFormats;
+    private final LinkedHashMap<String, IExporterFactory> exportFormats;
     private final IExportFormatSelector exportFormatSelector;
     private JMenu menu;
     private ButtonGroup buttonGroup;
@@ -105,7 +105,7 @@ public class ExportFormatManager {
         Collections.sort(list, String.CASE_INSENSITIVE_ORDER);
         return list.toArray(new String[list.size()]);
     }
-    public interface IExportFormatSelector {
+    public interface IExportFormatSelector extends Serializable {
         public void select(String name);
     }
 }

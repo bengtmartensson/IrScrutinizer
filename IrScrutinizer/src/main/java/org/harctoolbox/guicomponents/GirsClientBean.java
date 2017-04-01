@@ -56,7 +56,7 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
     private String portName;
     private int baudRate;
     private GuiUtils guiUtils;
-    private GirsClient<?> hardware;
+    private transient GirsClient<?> hardware;
     private int portNumber;
     private String ipName;
     private int pingTimeout;

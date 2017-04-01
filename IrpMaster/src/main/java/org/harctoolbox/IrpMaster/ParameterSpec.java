@@ -16,6 +16,7 @@ this program. If not, see http://www.gnu.org/licenses/.
  */
 package org.harctoolbox.IrpMaster;
 
+import java.io.Serializable;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
@@ -26,7 +27,7 @@ import org.antlr.runtime.tree.CommonTree;
  *
  * @author Bengt Martensson
  */
-public class ParameterSpec {
+public class ParameterSpec implements Serializable {
     /**
      * @param args the command line arguments
      */
@@ -56,7 +57,7 @@ public class ParameterSpec {
     private String name;
     private long min;
     private long max;
-    private CommonTree deflt;
+    private transient CommonTree deflt;
     private boolean memory = false;
 
 

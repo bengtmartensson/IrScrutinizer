@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,7 +34,7 @@ import javax.swing.JOptionPane;
 import org.harctoolbox.IrpMaster.IrpUtils;
 
 // Interfaces to Desktop
-public class GuiUtils {
+public class GuiUtils implements Serializable {
     public static void fatal(Exception ex, int errorcode) {
         fatal(ex, errorcode, null);
     }

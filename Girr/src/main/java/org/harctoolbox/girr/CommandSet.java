@@ -16,6 +16,7 @@
  */
 package org.harctoolbox.girr;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -30,7 +31,7 @@ import org.w3c.dom.NodeList;
 /**
  * A CommandSet is a set of Command's with the same protocol, but different parameter values.
  */
-public class CommandSet {
+public final class CommandSet implements Serializable {
 
     private String notes;
     private String protocol;

@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,7 +44,7 @@ import org.w3c.dom.Document;
 /**
  * This class is a simple-minded importer of RMDU files.
  */
-public class RmduImporter extends RemoteSetImporter implements IReaderImporter {
+public class RmduImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
 
     public static final String homeUrl = "http://www.hifi-remote.com/wiki/index.php?title=Remote_Master_Manual";
     public static final String defaultCharsetName = "WINDOWS-1252";

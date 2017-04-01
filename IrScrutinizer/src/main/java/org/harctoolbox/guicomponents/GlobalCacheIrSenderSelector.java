@@ -31,7 +31,7 @@ import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 
 public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
     private GuiUtils guiUtils;
-    private GlobalCache globalCache;
+    private transient GlobalCache globalCache;
     private boolean verbose;
     private int timeout;
 

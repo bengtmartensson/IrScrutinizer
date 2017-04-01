@@ -41,7 +41,7 @@ public class AudioParametersBean extends javax.swing.JPanel {
     private final static String PROP_NOCHANNELS = "PROP_NOCHANNELS";
     private final static String PROP_SAMPLESIZE = "PROP_SAMPLESIZE";
     private final static String PROP_OMITTRAILINGGAP = "PROP_OMITTRAILINGGAP";
-    private IrAudioDevice hardware;
+    private transient IrAudioDevice hardware;
 
     /**
      * Creates new form AudioParametersBean
