@@ -95,6 +95,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
             } else if (chunks[0].equals("note")) {
                 processSignal(data, name, origin);
                 data.clear();
+                chunks = line.split("[ =]");
                 name = chunks[1];
             } else if (chunks[0].equals("irscope"))
                 ;
