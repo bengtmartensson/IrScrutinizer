@@ -165,9 +165,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
         } else {
             try {
                 loadIncremental(XmlUtils.openXmlFile(fileOrDirectory, validate ? schema : null, true, true), origin);
-            } catch (SAXParseException | ParseException ex) {
-
-            } catch (SAXException | NotGirrRemoteSetException ex) {
+            } catch (ParseException | SAXException | NotGirrRemoteSetException ex) {
                 throw new IOException(ex.getMessage());
             }
         }
