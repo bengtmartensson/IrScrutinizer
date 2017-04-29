@@ -255,6 +255,10 @@ public abstract class NamedIrSignal {
 
         public Map<String, Command> getCommandsWithSanityCheck(GuiUtils guiUtils) {
             Map<String, Command> commands = getCommands();
+            if (commands.isEmpty()) {
+                guiUtils.error("No signals present, aborting export.");
+                return null;
+            }
             boolean status = sanityCheck(commands);
             return status || guiUtils.confirm("Some signals in export erroneous. Continue anyhow?") ? commands : null;
         }
