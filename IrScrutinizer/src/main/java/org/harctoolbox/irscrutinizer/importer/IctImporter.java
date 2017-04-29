@@ -38,6 +38,8 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
 
     private static final int invalid = -1;
     private static final int lengthInsertedGap = 100000;
+    private static final int IRSCOPE_ENDING_GAP = -500000;
+    private static final String IRSCOPE_ENDING_STRING = Integer.toString(IRSCOPE_ENDING_GAP);
 
     public static Collection<Command> importer(File file, String charsetName) throws IOException, ParseException, IrpMasterException {
         IctImporter imp = new IctImporter();
@@ -52,6 +54,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
     }
 
     private int lineNumber;
+    private int anonymousNumber;
     private int frequency = invalid;
     private int sampleCount = invalid;
     private int noSamples;
@@ -72,9 +75,10 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
         prepareLoad(origin);
         hasComplainedAboutMissingFrequency = false;
         BufferedReader bufferedReader = new BufferedReader(reader);
+        anonymousNumber = 0;
         lineNumber = 0;
         noSamples = 0;
-        String name = "unnamed";
+        String name = "unnamed_" + anonymousNumber;
         ArrayList<Integer> data = new ArrayList<>(64);
         while (true) {
             String line = bufferedReader.readLine();
@@ -92,11 +96,21 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
             } else if (chunks[0].equals("pulse")) {
                 data.add(Integer.parseInt(chunks[1]));
                 noSamples++;
-            } else if (chunks[0].equals("note")) {
+            } else if (chunks[0].equals(IRSCOPE_ENDING_STRING)) {
+                data.add(IRSCOPE_ENDING_GAP);
+                noSamples++;
                 processSignal(data, name, origin);
                 data.clear();
+                anonymousNumber++;
+                name = "unnamed_" + anonymousNumber;
+            } else if (chunks[0].equals("note")) {
+                if (!data.isEmpty()) {
+                    processSignal(data, name, origin);
+                    data.clear();
+                }
                 chunks = line.split("[ =]");
                 name = chunks[1];
+                anonymousNumber--;
             } else if (chunks[0].equals("irscope"))
                 ;
             else if (chunks[0].startsWith("-")) {
