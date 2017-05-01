@@ -76,18 +76,18 @@ public abstract class Importer {
      * @return the invokeRepeatFinder
      */
     protected boolean isInvokeRepeatFinder() {
-        return properties.getInvokeRepeatFinder();
+        return properties != null && properties.getInvokeRepeatFinder();
     }
 
     /**
      * @return the invokeAnalyzer
      */
     protected boolean isInvokeAnalyzer() {
-        return properties.getInvokeAnalyzer();
+        return properties != null && properties.getInvokeAnalyzer();
     }
 
     protected boolean isVerbose() {
-        return properties.getVerbose();
+        return properties != null && properties.getVerbose();
     }
 
     /**
@@ -101,7 +101,7 @@ public abstract class Importer {
      * @return the generateCcf
      */
     protected boolean isGenerateCcf() {
-        return properties.getGenerateCcf();
+        return properties != null && properties.getGenerateCcf();
     }
 
     /**
