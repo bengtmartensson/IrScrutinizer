@@ -109,8 +109,10 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
                     data.clear();
                 }
                 chunks = line.split("[ =]");
-                name = chunks[1];
-                anonymousNumber--;
+                if (chunks.length >= 2) {
+                    name = chunks[1];
+                    anonymousNumber--;
+                }
             } else if (chunks[0].equals("irscope"))
                 ;
             else if (chunks[0].startsWith("-")) {
@@ -129,8 +131,12 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
                 System.err.println("Warning: Ignored line: " + lineNumber);
         }
         processSignal(data, name, origin);
-        if (noSamples != sampleCount)
-            System.err.println("Warning: sample_count erroneous or missing (expected " + noSamples + " was " + sampleCount + ")");
+        if (noSamples != sampleCount) {
+            if (sampleCount == -1)
+                System.err.println("Warning: sample_count missing (" + noSamples + " samples found)");
+            else
+                System.err.println("Warning: sample_count erroneous (expected " + sampleCount + ", found " + noSamples + ")");
+        }
         setupRemoteSet();
     }
 
