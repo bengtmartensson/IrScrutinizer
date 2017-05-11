@@ -108,7 +108,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
                     processSignal(data, name, origin);
                     data.clear();
                 }
-                chunks = line.split("[ =]");
+                chunks = line.split("=");
                 if (chunks.length >= 2) {
                     name = chunks[1];
                     anonymousNumber--;
