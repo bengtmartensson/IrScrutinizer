@@ -617,11 +617,11 @@ public final class Command implements Serializable {
         try {
             checkForParameters();
         } catch (IrpMasterException ex) {
-            return "Raw signal";
+            return "Undecoded signal";
         }
         return (parameters != null && !parameters.isEmpty()) ? protocolName + ", " + toPrintString(parameters)
                 : ccf != null ? ccf[0]
-                : "Raw signal";
+                : "Undecoded signal";
     }
 
     /**
