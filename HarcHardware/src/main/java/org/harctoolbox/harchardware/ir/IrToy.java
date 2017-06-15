@@ -150,6 +150,7 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
     private int captureMaxSize = defaultCaptureMaxSize;
     private int IOdirections = -1;
     private int IOdata = 0;
+    private boolean useSignalingLed;
 
     public IrToy() throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException {
         this(defaultPortName, defaultBaudRate, defaultFlowControl, defaultBeginTimeout, defaultCaptureMaxSize, false);
@@ -226,13 +227,15 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
      * @throws IOException
      */
     public void setPin(int pin, boolean state) throws IOException {
-        int mask = 1 << pin;
-        IOdirections &= ~mask;
-        if (state)
-            IOdata |= mask;
-        else
-            IOdata &= ~mask;
-        setIOData();
+        if (useSignalingLed) {
+            int mask = 1 << pin;
+            IOdirections &= ~mask;
+            if (state)
+                IOdata |= mask;
+            else
+                IOdata &= ~mask;
+            setIOData();
+        }
     }
 
     @Override
@@ -241,9 +244,27 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
         reset(5);
         send(cmdVersion);
         version = readString(lengthVersionString);
+        checkVersion();
         goSamplingMode();
         setupSendingModes();
         setPin(powerPin, true);
+    }
+
+    public void checkVersion() throws HarcHardwareException, IOException {
+        int numerical;
+        try {
+            numerical = Integer.parseInt(version.substring(1));
+        } catch (NumberFormatException ex) {
+            throw new HarcHardwareException("Unsupported firmware: " + version);
+        }
+        int hwVersion = numerical / 100;
+        int swMainVersion = (numerical / 10) % 10;
+        int swMinorVersion = numerical % 10;
+        if (!(hwVersion == 2 && swMainVersion == 2 && swMinorVersion != 3))
+            // Just does not work, see http://dangerousprototypes.com/forum/viewtopic.php?f=29&t=4024&start=23
+            throw new HarcHardwareException("Unsupported firmware: " + version);
+
+        useSignalingLed = swMinorVersion >= 2;
     }
 
     @Override
@@ -471,11 +492,13 @@ public final class IrToy extends IrSerial<LocalSerialPortRaw> implements IRawIrS
     }
 
     public void setLedMute(boolean status) throws IOException {
-        send(status ? cmdLedMuteOn : cmdLedMuteOff);
+        if (useSignalingLed)
+            send(status ? cmdLedMuteOn : cmdLedMuteOff);
     }
 
     public void setLed(boolean status) throws IOException {
-        send(status ? cmdLedOn : cmdLedOff);
+        if (useSignalingLed)
+            send(status ? cmdLedOn : cmdLedOff);
     }
 
     private void setFrequency(double frequency) throws IOException {
