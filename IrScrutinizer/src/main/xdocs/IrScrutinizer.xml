@@ -1152,7 +1152,9 @@ module is then accessed using the UDP text mode.</p>
 <section>
 <title>The "IrToy" Pane</title>
 <p>Using this pane, the IrToy (version 2) can be used to transmit IR signals.
-    To my knowledge, only the firmware version 2.2.2 works.</p>
+    The firmware versions 2.0, 2.1, 2.2, as well as the in-official "2.4" work.
+    (These are identified by a version string like <code>V220</code> etc.)
+    However, only version 2.2 has been exhaustively tested.</p>
 
     <p>The ending timeout for receive is 1.4 seconds, and cannot be changed. This is not optimal for most IR signal capture use cases.</p>
 </section>
