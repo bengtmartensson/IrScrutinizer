@@ -500,12 +500,17 @@ of repetitions for an export.</dd>
 </dl>
 <p>The element contains a single child element, namely the XSLT
 transformation, which is an element of type
-<code>xsl:stylesheet</code>, with attributes as in the examples. It
-should transform a Girr XML DOM tree in the <a
+    <code>xsl:stylesheet</code>, with attributes as in the examples.</p>
+<p>The task of the transformaton is to transform a Girr XML DOM tree in the <a
 href="Girr.html#Fat+Format">"fat" format</a>, with
 <code>remotes</code> as
 root element, into the desired text format. It may be advisable to use
 the already present formats as guide.</p>
+<p>
+    For testing and developing new export formats in this for, the main routine of
+    the class <code>org.harctoolbox.irscrutinizer.exporter.DynamicRemoteSetExportFormat</code>
+    may be used. It can be used to transform a Girr file(s) from the command line.
+</p>
 
 <p>After editing or adding export format files, they can be reloaded either by re-starting the
 program, or by selecting Options -> Export formats database -> Reload.</p>
