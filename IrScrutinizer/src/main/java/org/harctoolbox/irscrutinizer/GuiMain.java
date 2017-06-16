@@ -664,7 +664,7 @@ public final class GuiMain extends javax.swing.JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
-                boolean leave = checkUnsavedStuff();
+                boolean leave = checkRunningCapture() && checkUnsavedStuff();
                 if (leave)
                     System.exit(IrpUtils.exitSuccess);
             }
@@ -724,6 +724,13 @@ public final class GuiMain extends javax.swing.JFrame {
             selectImportPane(ImportType.parametricRemote);
             parameterTableModel.clearUnsavedChanges();
         }
+    }
+
+    private boolean checkRunningCapture() {
+        if (captureThread == null)
+            return true;
+        guiUtils.error("Capture thread is running. Exiting not possible.");
+        return false;
     }
 
     private boolean checkUnsavedStuff() {
@@ -7088,7 +7095,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_protocolSpecMenuItemActionPerformed
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
-        boolean shouldQuit = checkUnsavedStuff();
+        boolean shouldQuit = checkRunningCapture() && checkUnsavedStuff();
         if (shouldQuit)
             System.exit(IrpUtils.exitSuccess);
     }//GEN-LAST:event_exitMenuItemActionPerformed
