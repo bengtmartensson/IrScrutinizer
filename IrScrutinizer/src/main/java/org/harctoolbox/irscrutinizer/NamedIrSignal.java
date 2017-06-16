@@ -143,6 +143,8 @@ public abstract class NamedIrSignal {
 
         public abstract int getPosNumber();
 
+        public abstract int getPosVerified();
+
         public int noFields() {
             return columnNames.length - toIgnore;
         }
@@ -163,6 +165,18 @@ public abstract class NamedIrSignal {
             Object[] result = new Object[columnNames.length];
             System.arraycopy(columnNames, 0, result, 0, columnNames.length);
             return result;
+        }
+
+        public boolean isUnimportant(int column) {
+            return column == getPosDate() || column == getPosNumber();
+        }
+
+        public boolean isImportant(int column) {
+            return column == getPosName();
+        }
+
+        public boolean uninterestingIfAllEqual(int column) {
+            return column == getPosComment() || column == getPosVerified();
         }
     }
 
@@ -368,6 +382,21 @@ public abstract class NamedIrSignal {
             return false;
         }
 
+        public boolean isAllEqualColumn(int column) {
+            Object firstThing = getValueAt(0, column);
+            for (int row = 1; row < this.getRowCount(); row++) {
+                Object thing = getValueAt(row, column);
+                if (firstThing == null) {
+                    if (thing != null)
+                        return false;
+                } else {
+                    if (!firstThing.equals(thing))
+                        return false;
+                }
+            }
+            return true;
+        }
+
         public ArrayList<Integer> getUninterestingColumns() {
             ArrayList<Integer> list = new ArrayList<>(16);
             if (getRowCount() > 0) { // If the table is empty, do not consider any columns unused.
@@ -380,27 +409,19 @@ public abstract class NamedIrSignal {
         }
 
         public boolean isInterestingColumn(int column) {
-            if (columnsFunc.getPosDate() == column || columnsFunc.getPosNumber() == column)
+            if (columnsFunc.isUnimportant(column))
                 return false;
 
-            if (columnsFunc.getPosName() == column) // prevents from removing all columns
+            if (columnsFunc.isImportant(column))
                 return true;
+
+            if (!isUsedColumn(column))
+                return false;
 
             if (getRowCount() < 2)
                 return true;
 
-            Object firstThing = getValueAt(0, column);
-            for (int row = 1; row < this.getRowCount(); row++) {
-                Object thing = getValueAt(row, column);
-                if (firstThing == null) {
-                    if (thing != null)
-                        return true;
-                } else {
-                    if (!firstThing.equals(thing))
-                        return true;
-                }
-            }
-            return false;
+            return ! (columnsFunc.uninterestingIfAllEqual(column) && isAllEqualColumn(column));
         }
 
         // Derived classes should define a public version of the function, taking only

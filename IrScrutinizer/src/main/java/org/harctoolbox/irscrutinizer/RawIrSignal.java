@@ -47,7 +47,7 @@ public class RawIrSignal extends NamedIrSignal {
     public static void setDecode(boolean aDecode) {
         decode = aDecode;
     }
-    
+
     private IrSignal irSignal;
     private String analyzerString;
     private DecodeIR.DecodedSignal[] decodes;
@@ -186,6 +186,16 @@ public class RawIrSignal extends NamedIrSignal {
         @Override
         public int getPosNumber() {
             return posNumber;
+        }
+
+        @Override
+        public int getPosVerified() {
+            return posVerified;
+        }
+
+        @Override
+        public boolean uninterestingIfAllEqual(int column) {
+            return super.uninterestingIfAllEqual(column) || column == posFrequency;
         }
 
         @Override

@@ -234,6 +234,14 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         }
 
         @Override
+        public boolean isImportant(int column) {
+            return super.isImportant(column)
+                    || column == posProtocol
+                    || column == posD
+                    || column == posF;
+        }
+
+        @Override
         public int getPosName() {
             return posName;
         }
@@ -258,6 +266,10 @@ public class ParametrizedIrSignal extends NamedIrSignal {
             return posParameterIrSignal;
         }
 
+        @Override
+        public int getPosVerified() {
+            return posVerified;
+        }
 
         @Override
         public boolean isEditable(int i) {
