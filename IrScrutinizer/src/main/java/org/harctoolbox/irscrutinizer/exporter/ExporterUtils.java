@@ -298,6 +298,115 @@ public class ExporterUtils {
                                 bf10, length10, bf11, length11, bf12, length12);
     }
 
+    public static String processBitFields(
+            boolean complement0, boolean reverse0, int data0, int length0, int chop0,
+            boolean complement1, boolean reverse1, int data1, int length1, int chop1,
+            boolean complement2, boolean reverse2, int data2, int length2, int chop2,
+            boolean complement3, boolean reverse3, int data3, int length3, int chop3,
+            boolean complement4, boolean reverse4, int data4, int length4, int chop4,
+            boolean complement5, boolean reverse5, int data5, int length5, int chop5,
+            boolean complement6, boolean reverse6, int data6, int length6, int chop6,
+            boolean complement7, boolean reverse7, int data7, int length7, int chop7,
+            boolean complement8, boolean reverse8, int data8, int length8, int chop8,
+            boolean complement9, boolean reverse9, int data9, int length9, int chop9,
+            boolean complement10, boolean reverse10, int data10, int length10, int chop10,
+            boolean complement11, boolean reverse11, int data11, int length11, int chop11,
+            boolean complement12, boolean reverse12, int data12, int length12, int chop12,
+            boolean complement13, boolean reverse13, int data13, int length13, int chop13) {
+        long bf0 = processFiniteBitFieldLong(complement0, reverse0, data0, length0, chop0);
+        long bf1 = processFiniteBitFieldLong(complement1, reverse1, data1, length1, chop1);
+        long bf2 = processFiniteBitFieldLong(complement2, reverse2, data2, length2, chop2);
+        long bf3 = processFiniteBitFieldLong(complement3, reverse3, data3, length3, chop3);
+        long bf4 = processFiniteBitFieldLong(complement4, reverse4, data4, length4, chop4);
+        long bf5 = processFiniteBitFieldLong(complement5, reverse5, data5, length5, chop5);
+        long bf6 = processFiniteBitFieldLong(complement6, reverse6, data6, length6, chop6);
+        long bf7 = processFiniteBitFieldLong(complement7, reverse7, data7, length7, chop7);
+        long bf8 = processFiniteBitFieldLong(complement8, reverse8, data8, length8, chop8);
+        long bf9 = processFiniteBitFieldLong(complement9, reverse9, data9, length9, chop9);
+        long bf10 = processFiniteBitFieldLong(complement10, reverse10, data10, length10, chop10);
+        long bf11 = processFiniteBitFieldLong(complement11, reverse11, data11, length11, chop11);
+        long bf12 = processFiniteBitFieldLong(complement12, reverse12, data12, length12, chop12);
+        long bf13 = processFiniteBitFieldLong(complement13, reverse13, data13, length13, chop13);
+        return processBitFields(bf0, length0, bf1, length1, bf2, length2, bf3, length3, bf4, length4,
+                                bf5, length5, bf6, length6, bf7, length7, bf8, length8, bf9, length9,
+                                bf10, length10, bf11, length11, bf12, length12, bf13, length13);
+    }
+
+    public static String processBitFields(
+            boolean complement0, boolean reverse0, int data0, int length0, int chop0,
+            boolean complement1, boolean reverse1, int data1, int length1, int chop1,
+            boolean complement2, boolean reverse2, int data2, int length2, int chop2,
+            boolean complement3, boolean reverse3, int data3, int length3, int chop3,
+            boolean complement4, boolean reverse4, int data4, int length4, int chop4,
+            boolean complement5, boolean reverse5, int data5, int length5, int chop5,
+            boolean complement6, boolean reverse6, int data6, int length6, int chop6,
+            boolean complement7, boolean reverse7, int data7, int length7, int chop7,
+            boolean complement8, boolean reverse8, int data8, int length8, int chop8,
+            boolean complement9, boolean reverse9, int data9, int length9, int chop9,
+            boolean complement10, boolean reverse10, int data10, int length10, int chop10,
+            boolean complement11, boolean reverse11, int data11, int length11, int chop11,
+            boolean complement12, boolean reverse12, int data12, int length12, int chop12,
+            boolean complement13, boolean reverse13, int data13, int length13, int chop13,
+            boolean complement14, boolean reverse14, int data14, int length14, int chop14) {
+        long bf0 = processFiniteBitFieldLong(complement0, reverse0, data0, length0, chop0);
+        long bf1 = processFiniteBitFieldLong(complement1, reverse1, data1, length1, chop1);
+        long bf2 = processFiniteBitFieldLong(complement2, reverse2, data2, length2, chop2);
+        long bf3 = processFiniteBitFieldLong(complement3, reverse3, data3, length3, chop3);
+        long bf4 = processFiniteBitFieldLong(complement4, reverse4, data4, length4, chop4);
+        long bf5 = processFiniteBitFieldLong(complement5, reverse5, data5, length5, chop5);
+        long bf6 = processFiniteBitFieldLong(complement6, reverse6, data6, length6, chop6);
+        long bf7 = processFiniteBitFieldLong(complement7, reverse7, data7, length7, chop7);
+        long bf8 = processFiniteBitFieldLong(complement8, reverse8, data8, length8, chop8);
+        long bf9 = processFiniteBitFieldLong(complement9, reverse9, data9, length9, chop9);
+        long bf10 = processFiniteBitFieldLong(complement10, reverse10, data10, length10, chop10);
+        long bf11 = processFiniteBitFieldLong(complement11, reverse11, data11, length11, chop11);
+        long bf12 = processFiniteBitFieldLong(complement12, reverse12, data12, length12, chop12);
+        long bf13 = processFiniteBitFieldLong(complement13, reverse13, data13, length13, chop13);
+        long bf14 = processFiniteBitFieldLong(complement14, reverse14, data14, length14, chop14);
+        return processBitFields(bf0, length0, bf1, length1, bf2, length2, bf3, length3, bf4, length4,
+                                bf5, length5, bf6, length6, bf7, length7, bf8, length8, bf9, length9,
+                                bf10, length10, bf11, length11, bf12, length12, bf13, length13, bf14, length14);
+    }
+
+    public static String processBitFields(
+            boolean complement0, boolean reverse0, int data0, int length0, int chop0,
+            boolean complement1, boolean reverse1, int data1, int length1, int chop1,
+            boolean complement2, boolean reverse2, int data2, int length2, int chop2,
+            boolean complement3, boolean reverse3, int data3, int length3, int chop3,
+            boolean complement4, boolean reverse4, int data4, int length4, int chop4,
+            boolean complement5, boolean reverse5, int data5, int length5, int chop5,
+            boolean complement6, boolean reverse6, int data6, int length6, int chop6,
+            boolean complement7, boolean reverse7, int data7, int length7, int chop7,
+            boolean complement8, boolean reverse8, int data8, int length8, int chop8,
+            boolean complement9, boolean reverse9, int data9, int length9, int chop9,
+            boolean complement10, boolean reverse10, int data10, int length10, int chop10,
+            boolean complement11, boolean reverse11, int data11, int length11, int chop11,
+            boolean complement12, boolean reverse12, int data12, int length12, int chop12,
+            boolean complement13, boolean reverse13, int data13, int length13, int chop13,
+            boolean complement14, boolean reverse14, int data14, int length14, int chop14,
+            boolean complement15, boolean reverse15, int data15, int length15, int chop15) {
+        long bf0 = processFiniteBitFieldLong(complement0, reverse0, data0, length0, chop0);
+        long bf1 = processFiniteBitFieldLong(complement1, reverse1, data1, length1, chop1);
+        long bf2 = processFiniteBitFieldLong(complement2, reverse2, data2, length2, chop2);
+        long bf3 = processFiniteBitFieldLong(complement3, reverse3, data3, length3, chop3);
+        long bf4 = processFiniteBitFieldLong(complement4, reverse4, data4, length4, chop4);
+        long bf5 = processFiniteBitFieldLong(complement5, reverse5, data5, length5, chop5);
+        long bf6 = processFiniteBitFieldLong(complement6, reverse6, data6, length6, chop6);
+        long bf7 = processFiniteBitFieldLong(complement7, reverse7, data7, length7, chop7);
+        long bf8 = processFiniteBitFieldLong(complement8, reverse8, data8, length8, chop8);
+        long bf9 = processFiniteBitFieldLong(complement9, reverse9, data9, length9, chop9);
+        long bf10 = processFiniteBitFieldLong(complement10, reverse10, data10, length10, chop10);
+        long bf11 = processFiniteBitFieldLong(complement11, reverse11, data11, length11, chop11);
+        long bf12 = processFiniteBitFieldLong(complement12, reverse12, data12, length12, chop12);
+        long bf13 = processFiniteBitFieldLong(complement13, reverse13, data13, length13, chop13);
+        long bf14 = processFiniteBitFieldLong(complement14, reverse14, data14, length14, chop14);
+        long bf15 = processFiniteBitFieldLong(complement15, reverse15, data15, length15, chop15);
+        return processBitFields(bf0, length0, bf1, length1, bf2, length2, bf3, length3, bf4, length4,
+                                bf5, length5, bf6, length6, bf7, length7, bf8, length8, bf9, length9,
+                                bf10, length10, bf11, length11, bf12, length12, bf13, length13, bf14, length14,
+                                bf15, length15);
+    }
+
     public static int reverse(int n, int bits) {
         int mask = (1 << bits) - 1;
         return Integer.reverse(n & mask) >>> (Integer.SIZE - bits);
