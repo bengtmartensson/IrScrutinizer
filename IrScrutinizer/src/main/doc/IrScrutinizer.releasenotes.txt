@@ -4,6 +4,37 @@ and Jirc.
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/harctoolboxbundle/issues
 
+==============================================================================
+Version 1.4.1
+
+This release essentially serves to checkpoint the project, preparing for
+a certain reorganization (#215), and migration to IrpTransmogrifier (#212).
+
+Open issues in this release:
+  * MacOS 10.11.*: Crash in RXTX when closing serial USB device, #64.
+
+User visible changes:
+
+Core:
+ - Add protocol RC6-6-28 #209
+
+Export:
+ - More lirc export formats #216
+ - New export format Broadlink-Python IR
+ - Several issues in wave export and audio sending device #187
+
+Import:
+ - Fixed bug in ICT importer #206
+ - Improved IrTrans RC6 import #188.
+
+Gui:
+ - Improved handling of "Hide uninteresting columns" in the scrutinize remote tables #203.
+ - Fixed problem by pasting #171
+
+Hardware:
+ - IrToy: support also versions 2.0 and 2.1 of the IrToy firmware #209.
+
+==============================================================================
 Version 1.4
 
 Open issues in this release:

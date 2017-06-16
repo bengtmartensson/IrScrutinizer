@@ -9,12 +9,6 @@ http://maven.apache.org/maven-v4_0_0.xsd">
     <packaging>jar</packaging>
     <version>20070620</version>
     <name>Crystal-Clear-Icons</name>
-    <parent>
-        <groupId>org.harctoolbox</groupId>
-        <artifactId>HarctoolboxBundle</artifactId>
-        <version>1.4.1dev</version>
-        <relativePath>..</relativePath>
-    </parent>
     <licenses>
         <license>
             <name>LGPLv2+</name>

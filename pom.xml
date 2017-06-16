@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.harctoolbox</groupId>
     <artifactId>HarctoolboxBundle</artifactId>
-    <version>1.4.1dev</version>  <!-- UPDATE ME -->
+    <version>1.4.1</version>  <!-- UPDATE ME -->
     <name>HarctoolboxBundle</name>
     <packaging>pom</packaging>
     <licenses>
@@ -101,11 +101,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <reposurl>${basedir}/repos</reposurl>
-        <IrScrutinizer.version>1.4.1dev</IrScrutinizer.version>
-        <IrpMaster.version>1.4</IrpMaster.version>
-        <Girr.version>1.4</Girr.version>
-        <Jirc.version>1.4</Jirc.version>
-        <HarcHardware.version>1.4.1dev</HarcHardware.version>
+        <IrScrutinizer.version>1.4.1</IrScrutinizer.version>
+        <IrpMaster.version>1.4.1</IrpMaster.version>
+        <Girr.version>1.4.1</Girr.version>
+        <Jirc.version>1.4.1</Jirc.version>
+        <HarcHardware.version>1.4.1</HarcHardware.version>
     </properties>
     <distributionManagement>
         <repository>

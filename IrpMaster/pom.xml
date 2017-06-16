@@ -7,12 +7,12 @@
     <groupId>org.harctoolbox</groupId>
     <artifactId>IrpMaster</artifactId>
     <packaging>jar</packaging>
-    <version>1.4</version>
+    <version>1.4.1</version>
     <name>IrpMaster</name>
     <parent>
         <groupId>org.harctoolbox</groupId>
         <artifactId>HarctoolboxBundle</artifactId>
-        <version>1.4.1dev</version>
+        <version>1.4.1</version>
         <relativePath>..</relativePath>
     </parent>
     <licenses>
