@@ -8,12 +8,22 @@ before_install:
 - sudo add-apt-repository ppa:dns/gnu -y
 - sudo apt-get update -qq
 install:
-- sudo apt-get install -y --force-yes autoconf dos2unix icoutils python-requests
+- sudo apt-get install -y --force-yes autoconf dos2unix icoutils
 script:
-- tools/build-DevSlashLirc.sh
-- tools/build-appimagekit.sh
 - tools/build-decodeir.sh
 - tools/build-exchangeir.sh
+- tools/build-IrpMaster.sh
+- tools/build-Girr.sh
+- tools/build-Jirc.sh
+- tools/build-DevSlashLirc.sh
+- tools/build-HarcHardwareBundle.sh
 - tools/build-tonto.sh -n
+- tools/build-appimagekit.sh
 - mvn install -DskipTests=true -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -B -V
-- tools/travis2github.py IrScrutinizer/target/IrScrutinizer-bin.zip IrScrutinizer/target/IrScrutinizer-*-app.zip IrScrutinizer/target/IrScrutinizer-*AppImage
+- ls -lh target
+- tools/upload.sh IrScrutinizer/target/IrScrutinizer-bin.zip IrScrutinizer/target/IrScrutinizer-*-app.zip IrScrutinizer/target/IrScrutinizer-*AppImage
+
+branches:
+  except:
+    - # Do not build tags that we create when we upload to GitHub Releases
+    - /^(?i:ci-build)$/
