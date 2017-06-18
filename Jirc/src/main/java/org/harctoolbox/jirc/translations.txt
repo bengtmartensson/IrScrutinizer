@@ -1,9 +1,0 @@
-#define lirc_t int        int
-typedef __u64 ir_code;  long
-__u32                   int
-__u64                   long
-struct timeval          Date
-ir_remote               IrRemote
-ir_code_node            IrCodeNode
-ir_ncode                IrNCode
-extern struct hardware hw  -> Hardware.hw
