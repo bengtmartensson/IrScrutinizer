@@ -54,6 +54,10 @@
             <directory>src/main/doc</directory>
             <outputDirectory/>
         </fileSet>
+        <fileSet>
+            <directory>target/maven-shared-archive-resources</directory>
+            <outputDirectory/>
+        </fileSet>
     </fileSets>
     <files>
         <file>
@@ -65,17 +69,17 @@
             <source>../schemas/girr.xsd</source>
             <outputDirectory>schemas</outputDirectory>
         </file>
-        <file>
+        <!--file>
             <source>../Girr/src/main/resources/girr.xml</source>
             <outputDirectory>.</outputDirectory>
-        </file>
+        </file-->
         <file>
             <source>target/generated-documents/IrScrutinizer.html</source>
             <outputDirectory>doc</outputDirectory>
         </file>
-        <file>
+        <!--file>
             <source>../IrpMaster/target/generated-documents/IrpMaster.html</source>
             <outputDirectory>doc</outputDirectory>
-        </file>
+        </file-->
     </files>
 </assembly>

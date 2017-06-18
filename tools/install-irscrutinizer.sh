@@ -65,11 +65,11 @@ id -Gn | grep -q lirc  || {
 install -d ${MYPROG_HOME}
 install --mode=444 target/${MYPROG}-jar-with-dependencies.jar ${MYPROG_HOME}
 install --mode=444 target/${MYPROG}.png ${MYPROG_HOME}/${MYPROG_LOWER}.png
-install --mode=444 target/*.ini ${MYPROG_HOME}
+install --mode=444 target/*.ini target/maven-shared-archive-resources/*.ini ${MYPROG_HOME}
 install -d ${MYPROG_HOME}/exportformats.d
 install --mode=444 target/exportformats.d/* ${MYPROG_HOME}/exportformats.d
-install -d ${MYPROG_HOME}/contributed
-install --mode=444 target/contributed/*.ini ${MYPROG_HOME}/contributed
+#install -d ${MYPROG_HOME}/contributed
+#install --mode=444 target/contributed/*.ini ${MYPROG_HOME}/contributed
 install --mode=444 target/doc/README* target/doc/LICENSE* ${MYPROG_HOME}
 
 # Create trivial wrappers
@@ -124,7 +124,7 @@ sed -e "s|Exec=.*|Exec=/bin/sh \"${PREFIX}/bin/${MYPROG_LOWER}\"|" \
   > ${PREFIX}/share/applications/${MYPROG_LOWER}.desktop
 
 # Install mime type file for girr
-install --mode 444 target/girr.xml ${PREFIX}/share/applications
+install --mode 444 target/maven-shared-archive-resources/girr.xml ${PREFIX}/share/applications
 
 echo "Consider deleting old properties with the command "
 echo "irscrutinizer --nuke-properties"

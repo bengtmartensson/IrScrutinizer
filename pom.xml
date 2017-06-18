@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
-<!--This is a generated file, do not edit.-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.harctoolbox</groupId>
     <artifactId>HarctoolboxBundle</artifactId>
-    <version>1.4.1</version>  <!-- UPDATE ME -->
+    <version>1.5dev</version>
     <name>HarctoolboxBundle</name>
     <packaging>pom</packaging>
     <licenses>
@@ -101,11 +100,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <reposurl>${basedir}/repos</reposurl>
-        <IrScrutinizer.version>1.4.1</IrScrutinizer.version>
-        <IrpMaster.version>1.4.1</IrpMaster.version>
-        <Girr.version>1.4.1</Girr.version>
-        <Jirc.version>1.4.1</Jirc.version>
-        <HarcHardware.version>1.4.1</HarcHardware.version>
+        <IrScrutinizer.version>1.5dev</IrScrutinizer.version>
+        <IrpMaster.version>1.5dev</IrpMaster.version>
+        <Girr.version>1.5dev</Girr.version>
+        <Jirc.version>1.5dev</Jirc.version>
+        <HarcHardware.version>1.5dev</HarcHardware.version>
     </properties>
     <distributionManagement>
         <repository>
@@ -117,12 +116,11 @@
 
     <modules>
         <module>IrScrutinizer</module>
-        <module>IrpMaster</module>
-        <module>Girr</module>
+        <!--module>Girr</module>
         <module>Jirc</module>
-        <module>HarcHardware</module>
+        <module>HarcHardware</module-->
         <module>Crystal-Clear-Icons</module>
-        <module>rxtx-2.2pre2h</module>
+        <!--module>rxtx-2.2pre2h</module-->
         <!--module>package</module-->
     </modules>
 
