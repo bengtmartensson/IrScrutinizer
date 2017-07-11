@@ -91,8 +91,7 @@ if [ "$TRAVIS_COMMIT" != "$tag_sha" ] ; then
 #  fi
    BODY="WARNING: This is a snapshot of the current development stand. "
    BODY+="It may have different issues, and possibly does not work at all. "
-   BODY+="If this is not what you want, use the latest official release instead, "
-   BODY+="found immediately below."
+   BODY+="If this is not what you want, use the latest official release instead."
 
   release_infos=$(curl -H "Authorization: token ${GITHUB_TOKEN}" \
        --data '{"tag_name": "'"$RELEASE_NAME"'","target_commitish": "'"$TRAVIS_BRANCH"'","name": "'"Continuous build"'","body": "'"$BODY"'","draft": false,"prerelease": true}' "https://api.github.com/repos/$REPO_SLUG/releases")
