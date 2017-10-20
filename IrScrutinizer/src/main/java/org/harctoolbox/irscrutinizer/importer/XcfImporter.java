@@ -256,6 +256,8 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
     private Command loadItem(Element item) {
         Element actionList = actionListIndex.get(item.getAttribute("id"));
+        if (actionList == null)
+            return null;
         NodeList actions = actionList.getElementsByTagName("Action");
         if (actions.getLength() == 0)
             return null;
