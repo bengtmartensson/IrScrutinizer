@@ -16,4 +16,4 @@ script:
 - tools/build-exchangeir.sh
 - tools/build-tonto.sh -n
 - mvn install -DskipTests=true -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -B -V
-- tools/travis2github.py IrScrutinizer/target/IrScrutinizer-bin.zip IrScrutinizer/target/IrScrutinizer-*-app.zip IrScrutinizer/target/IrScrutinizer-*AppImage
+- tools/upload.sh IrScrutinizer/target/IrScrutinizer-bin.zip IrScrutinizer/target/IrScrutinizer-*-app.zip IrScrutinizer/target/IrScrutinizer-*AppImage
