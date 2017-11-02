@@ -485,7 +485,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                             char ch = data.charAt(i);
                             int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
                             if (index >= timing.durations.length)
-                                throw new IrpMasterException("Undefined timing :" + ch);
+                                throw new IrpMasterException("Undefined timing: " + ch);
                             times[2 * i] = timing.durations[index][0];
                             times[2 * i + 1] = timing.durations[index][1];
                         }
