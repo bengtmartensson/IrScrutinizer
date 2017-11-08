@@ -727,10 +727,15 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private boolean checkRunningCapture() {
-        if (captureThread == null)
-            return true;
-        guiUtils.error("Capture thread is running. Exiting not possible.");
-        return false;
+        if (captureThreadRunning()) {
+            guiUtils.error("Capture thread is running. Exiting not possible.");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean captureThreadRunning() {
+        return captureThread != null && captureThread.isAlive();
     }
 
     private boolean checkUnsavedStuff() {
@@ -7401,12 +7406,12 @@ public final class GuiMain extends javax.swing.JFrame {
             startStopToggleButton.setSelected(false);
             return;
         }
-        if (startStopToggleButton.isSelected() && captureThread != null) {
+        if (startStopToggleButton.isSelected() && captureThreadRunning()) {
             guiUtils.error("Another capture thread is running. This must first be ended.");
             startStopToggleButton.setSelected(false);
             return;
         }
-        if (captureThread == null) {
+        if (!captureThreadRunning()) {
             if (rawCookedTabbedPane.getSelectedIndex() == 1) {
                 enableRawCaptureOnly(true);
             }
@@ -8197,7 +8202,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_capturingHardwareTabbedPaneStateChanged
 
     private void captureTestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_captureTestButtonActionPerformed
-        if (captureThread != null) {
+        if (captureThreadRunning()) {
             guiUtils.error("A capture thread is running. This must first be ended.");
             return;
         }
@@ -8381,7 +8386,7 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.error("No capture device selected, aborting");
             return;
         }
-        if (captureThread != null) {
+        if (captureThreadRunning()) {
             guiUtils.error("A capture thread is running. This must first be ended.");
             return;
         }
@@ -9061,7 +9066,7 @@ public final class GuiMain extends javax.swing.JFrame {
             continuousCaptureButton.setSelected(false);
             return;
         }
-        if (continuousCaptureButton.isSelected() && captureThread != null) {
+        if (continuousCaptureButton.isSelected() && captureThreadRunning()) {
             guiUtils.error("Another capture thread is running. This must first be ended.");
             continuousCaptureButton.setSelected(false);
             return;

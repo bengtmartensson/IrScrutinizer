@@ -46,17 +46,19 @@ import org.xml.sax.SAXException;
  */
 public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
-    private static final String xcfXmlFileName = "ConfigEdit.xml";
-    private static final String defaultCharsetName = "WINDOWS-1252";
+    private static final String XCF_XML_FILENAME = "ConfigEdit.xml";
+    private static final String DEFAULT_CHARSETNAME = "WINDOWS-1252";
 
     private static Document openConfig(File filename) throws SAXException, IOException {
         ZipFile zipFile = null;
         Document doc = null;
         try {
             zipFile = new ZipFile(filename);
-            ZipEntry entry = zipFile.getEntry(xcfXmlFileName);
+            ZipEntry entry = zipFile.getEntry(XCF_XML_FILENAME);
             if (entry == null)
-                entry = zipFile.getEntry("/" + xcfXmlFileName);
+                entry = zipFile.getEntry("/" + XCF_XML_FILENAME);
+            if (entry == null)
+                throw new IOException("Cannot read " + filename.getCanonicalPath() + " as XCF file." );
             InputStream stream = zipFile.getInputStream(entry);
             doc = XmlUtils.openXmlStream(stream, null, false, false);
         } finally {
@@ -79,7 +81,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
     public static RemoteSet importXcf(String filename) throws IOException, SAXException, ParseException, IrpMasterException {
         XcfImporter importer = new XcfImporter();
-        importer.load(new File(filename), defaultCharsetName);
+        importer.load(new File(filename), DEFAULT_CHARSETNAME);
         return importer.getRemoteSet();
     }
 
@@ -96,6 +98,13 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         }
     }
 
+    private static String childContent(Element element, String tagName) {
+        NodeList nl = element.getElementsByTagName(tagName);
+        if (nl.getLength() == 0)
+            return null;
+        return nl.item(0).getTextContent();
+    }
+
     private boolean translateProntoFont = true;
 
     private transient Map<String, String> nameIndex;
@@ -105,7 +114,6 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
     private transient Map<String, Element> actionIndex;
 
     private int learnedIrCodeIndex;
-
 
     public XcfImporter() {
         super();
@@ -145,6 +153,16 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
         // First read all the STRINGs into an index
         Element root = doc.getDocumentElement();
+        String version = root.getAttribute("Version");
+        if (version.charAt(0) == '5')
+            load5(root);
+        else
+            load4(root);
+    }
+
+    @SuppressWarnings("empty-statement")
+    private void load4(Element root) throws ParseException {
+        // First read all the STRINGs into an index
         NodeList topThings = root.getChildNodes();
         for (int i = 0; i < topThings.getLength(); i++) {
             if (topThings.item(i).getNodeType() != Node.ELEMENT_NODE)
@@ -238,6 +256,8 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
     private Command loadItem(Element item) {
         Element actionList = actionListIndex.get(item.getAttribute("id"));
+        if (actionList == null)
+            return null;
         NodeList actions = actionList.getElementsByTagName("Action");
         if (actions.getLength() == 0)
             return null;
@@ -323,6 +343,66 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         }
     }
 
+    private void load5(Element root) throws ParseException {
+        NodeList deviceNodes = root.getElementsByTagName("Device");
+
+        if (deviceNodes.getLength() == 0)
+            throw new ParseException("No Device element present.", -1);
+
+        Map<String, Remote> remotes = new LinkedHashMap<>(deviceNodes.getLength());
+
+        for (int i = 0; i < deviceNodes.getLength(); i++) {
+            Remote remote = parseDevice((Element) deviceNodes.item(i));
+            if (remote != null)
+                remotes.put(remote.getName(), remote);
+        }
+        remoteSet = new RemoteSet(getCreatingUser(), origin, //java.lang.String source,
+                (new Date()).toString(), //creationDate,
+                Version.appName, //java.lang.String tool,
+                Version.version, //java.lang.String toolVersion,
+                null, //java.lang.String tool2,
+                null, //java.lang.String tool2Version,
+                null, //java.lang.String notes,
+                remotes);
+    }
+
+    private Remote parseDevice(Element device) {
+        String controlType = childContent(device, "ControlType");
+        if (controlType != null && !controlType.equals("IR"))
+            return null;
+
+        NodeList functions = device.getElementsByTagName("Function");
+        Map<String, Command> commands = new LinkedHashMap<>(functions.getLength());
+        for (int i = 0; i < functions.getLength(); i++) {
+            Command command = parseFunction((Element) functions.item(i));
+            if (command != null)
+                commands.put(command.getName(), command);
+        }
+
+        Remote.MetaData metaData = parseMetaData(device);
+        return new Remote(metaData, null, null, commands, null);
+    }
+
+    private Command parseFunction(Element element) {
+        String name = childContent(element, "Name");
+        String ccf = childContent(element, "IrCode");
+        try {
+            return new Command(name, null /*comment*/, ccf);
+        } catch (IrpMasterException ex) {
+            return null;
+        }
+    }
+
+    private Remote.MetaData parseMetaData(Element device) {
+        String manufacturer = childContent(device, "Brand");
+        String deviceClass = childContent(device, "DeviceType");
+        String model = childContent(device, "Model");
+        String displayName = manufacturer + " " + model;
+        String name = manufacturer + "_" + model; // FIXME
+
+        return new Remote.MetaData(name, displayName, manufacturer, model, deviceClass, null /* remoteName */);
+    }
+
     @Override
     public boolean canImportDirectories() {
         return false;
@@ -335,7 +415,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
     @Override
     public void load(Reader reader, String originName) throws IOException, FileNotFoundException, ParseException {
-        dumbLoad(reader, originName, defaultCharsetName);
+        dumbLoad(reader, originName, DEFAULT_CHARSETNAME);
     }
 
     @Override
