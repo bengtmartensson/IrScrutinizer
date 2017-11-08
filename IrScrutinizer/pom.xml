@@ -412,22 +412,22 @@
                             </arguments>
                         </configuration>
                     </execution>
-                    <!--execution>
+                    <execution>
                         <id>sillify docs</id>
                         <phase>package</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>unix2dos</executable> <!- - Fedora pkg: dos2unix - ->
+                            <executable>unix2dos</executable> <!-- Fedora pkg: dos2unix -->
                             <workingDirectory>${project.build.directory}/doc</workingDirectory>
                             <arguments>
                                 <argument>${project.name}.releasenotes.txt</argument>
-                                <argument>IrpMaster.releasenotes.txt</argument>
+                                <!--argument>IrpMaster.releasenotes.txt</argument-->
                                 <argument>LICENSE.txt</argument>
                             </arguments>
                         </configuration>
-                    </execution-->
+                    </execution>
                     <execution>
                         <id>copy icon</id>
                         <phase>package</phase>

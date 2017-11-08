@@ -2315,7 +2315,6 @@ public final class GuiMain extends javax.swing.JFrame {
         aboutMenuItem = new javax.swing.JMenuItem();
         mainDocuMenuItem = new javax.swing.JMenuItem();
         tutorialMenuItem = new javax.swing.JMenuItem();
-        irpMasterDocuMenuItem = new javax.swing.JMenuItem();
         homePageMenuItem = new javax.swing.JMenuItem();
         releaseNotesMenuItem = new javax.swing.JMenuItem();
         protocolSpecMenuItem = new javax.swing.JMenuItem();
@@ -6979,15 +6978,6 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         helpMenu.add(tutorialMenuItem);
 
-        irpMasterDocuMenuItem.setMnemonic('I');
-        irpMasterDocuMenuItem.setText("IrpMaster Documentation");
-        irpMasterDocuMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                irpMasterDocuMenuItemActionPerformed(evt);
-            }
-        });
-        helpMenu.add(irpMasterDocuMenuItem);
-
         homePageMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/kfm_home.png"))); // NOI18N
         homePageMenuItem.setMnemonic('H');
         homePageMenuItem.setText("Project home page");
@@ -8773,14 +8763,6 @@ public final class GuiMain extends javax.swing.JFrame {
         unsetParameter("T");
     }//GEN-LAST:event_unsetTMenuItemActionPerformed
 
-    private void irpMasterDocuMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpMasterDocuMenuItemActionPerformed
-        try {
-            guiUtils.browse(new File(properties.mkPathAbsolute(properties.getIrpMasterHelpfilePath())));
-        } catch (URISyntaxException | MalformedURLException ex) {
-            guiUtils.error(ex);
-        }
-    }//GEN-LAST:event_irpMasterDocuMenuItemActionPerformed
-
     private void debugCodeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugCodeMenuItemActionPerformed
         try {
             Integer t = guiUtils.getIntegerInput("Debug Code", Debug.getDebug());
@@ -9365,7 +9347,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.irscrutinizer.importer.TreeImporter irdbTreeImporter;
     private javax.swing.JMenuItem irpFormatsIniReloadMenuItem;
     private org.harctoolbox.guicomponents.IrpMasterBean irpMasterBean;
-    private javax.swing.JMenuItem irpMasterDocuMenuItem;
     private javax.swing.JMenuItem irpProtocolsEditMenuItem;
     private javax.swing.JMenu irpProtocolsIniMenu;
     private javax.swing.JMenuItem irpProtocolsSelectMenuItem;
