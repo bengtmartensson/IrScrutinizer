@@ -7,12 +7,12 @@
     <groupId>org.harctoolbox</groupId>
     <artifactId>IrScrutinizer</artifactId>
     <packaging>jar</packaging>
-    <version>1.4.2dev</version>
+    <version>1.5.0-SNAPSHOT</version>
     <name>IrScrutinizer</name>
     <parent>
         <groupId>org.harctoolbox</groupId>
         <artifactId>HarctoolboxBundle</artifactId>
-        <version>1.4.1</version>
+        <version>1.5.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <licenses>
@@ -30,6 +30,10 @@
         <project.exepath>/usr/local/bin/${project.nameLowercase}</project.exepath>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <IrpMaster.version>1.5dev</IrpMaster.version>
+        <Girr.version>1.5dev</Girr.version>
+        <Jirc.version>1.5dev</Jirc.version>
+        <HarcHardware.version>1.5dev</HarcHardware.version>
     </properties>
     <distributionManagement>
         <repository>
@@ -40,19 +44,6 @@
     </distributionManagement>
 
     <profiles>
-        <profile>
-            <id>buildingFedoraPackage</id>
-            <activation>
-                <property>
-                    <name>building_fedora_package</name>
-                </property>
-            </activation>
-            <properties>
-                <project.icon>${project.nameLowercase}</project.icon>
-                <project.exepath>/usr/bin/${project.nameLowercase}</project.exepath>
-            </properties>
-        </profile>
-
         <!-- Build the Windows setup.exe, if possible -->
         <profile>
             <id>buildSetup.exe</id>
@@ -130,6 +121,25 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <version>1.5</version>
+                <configuration>
+                    <resourceBundles>
+                        <resourceBundle>org.harctoolbox:IrpMaster:${IrpMaster.version}</resourceBundle>
+                        <resourceBundle>org.harctoolbox:Girr:${Girr.version}</resourceBundle>
+                    </resourceBundles>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Generate Version.java from Version.xml using mkVersion.xsl. -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -317,20 +327,24 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target</outputDirectory>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/config</directory>
                                     <filtering>true</filtering>
                                 </resource>
-                                <resource>
+                                <!--resource>
+                                    <directory>${project.build.directory}/maven-shared-archive-resources</directory>
+                                    <filtering>false</filtering>
+                                </resource-->
+                                <!--resource>
                                     <directory>../IrpMaster/src/main/config</directory>
                                     <filtering>false</filtering>
                                 </resource>
                                 <resource>
                                     <directory>../Girr/src/main/resources</directory>
                                     <filtering>false</filtering>
-                                </resource>
+                                </resource-->
                             </resources>
                         </configuration>
                     </execution>
@@ -347,13 +361,13 @@
                                     <directory>src/main/doc</directory>
                                     <filtering>true</filtering>
                                 </resource>
-                                <resource>
+                                <!--resource>
                                     <directory>../IrpMaster/src/main/doc</directory>
                                     <include>IrpMaster.releasenotes.txt</include>
                                 </resource>
                                 <resource>
                                     <directory>../IrpMaster/target/generated-documents</directory>
-                                </resource>
+                                </resource-->
                                 <resource>
                                     <directory>target/generated-documents</directory>
                                 </resource>
@@ -398,14 +412,14 @@
                             </arguments>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!--execution>
                         <id>sillify docs</id>
                         <phase>package</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>unix2dos</executable> <!-- Fedora pkg: dos2unix -->
+                            <executable>unix2dos</executable> <!- - Fedora pkg: dos2unix - ->
                             <workingDirectory>${project.build.directory}/doc</workingDirectory>
                             <arguments>
                                 <argument>${project.name}.releasenotes.txt</argument>
@@ -413,7 +427,7 @@
                                 <argument>LICENSE.txt</argument>
                             </arguments>
                         </configuration>
-                    </execution>
+                    </execution-->
                     <execution>
                         <id>copy icon</id>
                         <phase>package</phase>
@@ -494,6 +508,30 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>net.nicoulaj.maven.plugins</groupId>
+                <artifactId>checksum-maven-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>files</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <fileSets>
+                        <fileSet>
+                            <directory>${project.build.directory}</directory>
+                            <includes>
+                                <include>${project.artifactId}-${project.version}.exe</include>
+                                <include>*.AppImage*</include>
+                                <include>*.zip</include>
+                            </includes>
+                        </fileSet>
+                    </fileSets>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -501,26 +539,32 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>IrpMaster</artifactId>
+            <version>${IrpMaster.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>HarcHardware</artifactId>
+            <version>${HarcHardware.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Girr</artifactId>
+            <version>${Girr.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Jirc</artifactId>
+            <version>${Jirc.version}</version>
         </dependency>
         <dependency>
             <groupId>com.mrallen</groupId>
             <artifactId>tonto</artifactId>
+            <version>1.44</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Crystal-Clear-Icons</artifactId>
+            <version>20070620</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>

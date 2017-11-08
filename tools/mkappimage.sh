@@ -26,11 +26,12 @@ rm -rf ${APPIMAGEDIR}
 # Copy stuff to MYPROG_HOME
 install -d ${MYPROG_HOME}
 install --mode=444 target/${APPNAME}-jar-with-dependencies.jar ${MYPROG_HOME}
-install --mode=444 target/*.ini ${MYPROG_HOME}
+install --mode=444 target/maven-shared-archive-resources/*.ini ${MYPROG_HOME}
+#install --mode=444 target/maven-shared-archive-resources/girr.xml ${MYPROG_HOME}
 install -d ${MYPROG_HOME}/exportformats.d
 install --mode=444 target/exportformats.d/* ${MYPROG_HOME}/exportformats.d
-install -d ${MYPROG_HOME}/contributed
-install --mode=444 target/contributed/* ${MYPROG_HOME}/contributed
+#install -d ${MYPROG_HOME}/contributed
+#install --mode=444 target/contributed/* ${MYPROG_HOME}/contributed
 install -d ${MYPROG_HOME}/doc
 install --mode=444 target/doc/* ${MYPROG_HOME}/doc
 install -d ${MYPROG_HOME}/schemas
