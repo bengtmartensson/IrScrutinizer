@@ -21,7 +21,7 @@ script:
 - tools/build-appimagekit.sh
 - mvn install -DskipTests=true -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -B -V
 - ls -lh target IrScrutinizer/target
-- tools/upload.sh IrScrutinizer/target/IrScrutinizer-*-bin.zip IrScrutinizer/target/IrScrutinizer-*-app.zip IrScrutinizer/target/IrScrutinizer-*AppImage
+- tools/upload.sh IrScrutinizer/target/IrScrutinizer-*-bin.zip IrScrutinizer/target/IrScrutinizer-*-app.zip IrScrutinizer/target/IrScrutinizer-*AppImage IrScrutinizer/target/IrScrutinizer-*-*.md5 IrScrutinizer/target/IrScrutinizer-*-*.sha1
 
 branches:
   except:

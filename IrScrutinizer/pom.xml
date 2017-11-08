@@ -7,12 +7,12 @@
     <groupId>org.harctoolbox</groupId>
     <artifactId>IrScrutinizer</artifactId>
     <packaging>jar</packaging>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.5.0-SNAPSHOT</version>
     <name>IrScrutinizer</name>
     <parent>
         <groupId>org.harctoolbox</groupId>
         <artifactId>HarctoolboxBundle</artifactId>
-        <version>1.5-SNAPSHOT</version>
+        <version>1.5.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <licenses>
@@ -30,6 +30,10 @@
         <project.exepath>/usr/local/bin/${project.nameLowercase}</project.exepath>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <IrpMaster.version>1.5dev</IrpMaster.version>
+        <Girr.version>1.5dev</Girr.version>
+        <Jirc.version>1.5dev</Jirc.version>
+        <HarcHardware.version>1.5dev</HarcHardware.version>
     </properties>
     <distributionManagement>
         <repository>
@@ -40,19 +44,6 @@
     </distributionManagement>
 
     <profiles>
-        <profile>
-            <id>buildingFedoraPackage</id>
-            <activation>
-                <property>
-                    <name>building_fedora_package</name>
-                </property>
-            </activation>
-            <properties>
-                <project.icon>${project.nameLowercase}</project.icon>
-                <project.exepath>/usr/bin/${project.nameLowercase}</project.exepath>
-            </properties>
-        </profile>
-
         <!-- Build the Windows setup.exe, if possible -->
         <profile>
             <id>buildSetup.exe</id>
@@ -517,6 +508,30 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>net.nicoulaj.maven.plugins</groupId>
+                <artifactId>checksum-maven-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>files</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <fileSets>
+                        <fileSet>
+                            <directory>${project.build.directory}</directory>
+                            <includes>
+                                <include>${project.artifactId}-${project.version}.exe</include>
+                                <include>*.AppImage*</include>
+                                <include>*.zip</include>
+                            </includes>
+                        </fileSet>
+                    </fileSets>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -524,26 +539,32 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>IrpMaster</artifactId>
+            <version>${IrpMaster.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>HarcHardware</artifactId>
+            <version>${HarcHardware.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Girr</artifactId>
+            <version>${Girr.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Jirc</artifactId>
+            <version>${Jirc.version}</version>
         </dependency>
         <dependency>
             <groupId>com.mrallen</groupId>
             <artifactId>tonto</artifactId>
+            <version>1.44</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Crystal-Clear-Icons</artifactId>
+            <version>20070620</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
