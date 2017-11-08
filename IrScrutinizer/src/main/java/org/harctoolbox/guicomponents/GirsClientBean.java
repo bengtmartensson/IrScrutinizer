@@ -310,9 +310,12 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
             if (opening) {
                 initHardware();
                 hardware.open();
-                hardware.setUseReceiveForCapture(useReceiveForCaptureCheckBox.isSelected());
+                boolean canCapture = hardware.hasCaptureModule();
+                useReceiveForCaptureCheckBox.setEnabled(canCapture);
+                useReceiveForCaptureCheckBox.setSelected(! canCapture);
             } else {
                 hardware.close();
+                useReceiveForCaptureCheckBox.setSelected(false);
             }
             propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, hardware.isValid());
         } finally {
@@ -338,6 +341,7 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
         modulesTextField.setEnabled(isOpen);
         modulesLabel.setEnabled(isOpen);
         openToggleButton.setSelected(isOpen);
+        useReceiveForCaptureCheckBox.setEnabled(isOpen && hardware.hasCaptureModule());
     }
 
     private Cursor setBusyCursor() {
@@ -574,6 +578,7 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
         modulesLabel.setEnabled(false);
 
         useReceiveForCaptureCheckBox.setText("Use receive for capture");
+        useReceiveForCaptureCheckBox.setEnabled(false);
         useReceiveForCaptureCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 useReceiveForCaptureCheckBoxActionPerformed(evt);
@@ -696,7 +701,11 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
 
     private void useReceiveForCaptureCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useReceiveForCaptureCheckBoxActionPerformed
         if (hardware.isValid())
-            hardware.setUseReceiveForCapture(useReceiveForCaptureCheckBox.isSelected());
+            try {
+                hardware.setUseReceiveForCapture(useReceiveForCaptureCheckBox.isSelected());
+        } catch (HarcHardwareException ex) {
+            guiUtils.error("Girs server does not support capture");
+        }
     }//GEN-LAST:event_useReceiveForCaptureCheckBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

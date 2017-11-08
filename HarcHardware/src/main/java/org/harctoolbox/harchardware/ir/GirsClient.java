@@ -53,7 +53,9 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
     private final static String resetCommand = "reset";
     private final static String ledCommand = "led";
     private final static String lcdCommand = "lcd";
+    private final static String captureModuleName = "capture";
     private final static String okString = "OK";
+    private final static String errorString = "ERROR";
     private final static String timeoutString = ".";
     private final static String separator = " ";
 
@@ -154,8 +156,17 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
         this.useReceiveForCapture = false;
     }
 
-    public void setUseReceiveForCapture(boolean val) {
+    public void setUseReceiveForCapture(boolean val) throws HarcHardwareException {
+        if (!val && !hasCaptureModule())
+            throw new HarcHardwareException("Capture not supported");
         this.useReceiveForCapture = val;
+    }
+
+    public void setUseReceiveForCapture() {
+        try {
+            setUseReceiveForCapture(! hasCaptureModule());
+        } catch (HarcHardwareException ex) {
+        }
     }
 
     @Override
@@ -251,6 +262,10 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
         return modules.contains(module.toLowerCase(Locale.US));
     }
 
+    public boolean hasCaptureModule() {
+        return modules.contains(captureModuleName);
+    }
+
     /**
      * @param fallbackFrequency the fallbackFrequency to set
      */
@@ -282,6 +297,7 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
             System.err.println(versionCommand + " returned '" + version + "'.");
         if (line != null)
             modules = Arrays.asList(line.toLowerCase(Locale.US).split("\\s+"));
+        setUseReceiveForCapture();
     }
 
     @SuppressWarnings("SleepWhileInLoop")
@@ -385,6 +401,8 @@ public class GirsClient<T extends ICommandLineDevice & IHarcHardware>  implement
                 return null;
 
             str = str.trim();
+            if (str.toUpperCase(Locale.US).startsWith(errorString))
+                throw new HarcHardwareException("Girs server does not support capture.");
 
             double frequency = fallbackFrequency;
             if (str.startsWith("f=")) {
