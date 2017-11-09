@@ -2240,7 +2240,7 @@ public final class GuiMain extends javax.swing.JFrame {
         clearSignalMenuItem = new javax.swing.JMenuItem();
         openLastExportFileMenuItem = new javax.swing.JMenuItem();
         jSeparator21 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        jumpToLastPanelMenuItem = new javax.swing.JMenuItem();
         optionsMenu = new javax.swing.JMenu();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         outputFormatMenu = new javax.swing.JMenu();
@@ -6430,15 +6430,15 @@ public final class GuiMain extends javax.swing.JFrame {
         actionsMenu.add(openLastExportFileMenuItem);
         actionsMenu.add(jSeparator21);
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_LEFT, java.awt.event.InputEvent.ALT_MASK));
-        jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/previous.png"))); // NOI18N
-        jMenuItem2.setText("Jump to last panel");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        jumpToLastPanelMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_LEFT, java.awt.event.InputEvent.ALT_MASK));
+        jumpToLastPanelMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/previous.png"))); // NOI18N
+        jumpToLastPanelMenuItem.setText("Jump to last panel");
+        jumpToLastPanelMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                jumpToLastPanelMenuItemActionPerformed(evt);
             }
         });
-        actionsMenu.add(jMenuItem2);
+        actionsMenu.add(jumpToLastPanelMenuItem);
 
         menuBar.add(actionsMenu);
 
@@ -7424,6 +7424,8 @@ public final class GuiMain extends javax.swing.JFrame {
             });
             captureThread.start();
         }
+        topLevelTabbedPane.setEnabled(! startStopToggleButton.isSelected());
+        jumpToLastPanelMenuItem.setEnabled(! startStopToggleButton.isSelected());
     }//GEN-LAST:event_startStopToggleButtonActionPerformed
 
     private void debugTableRowMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugTableRowMenuItemActionPerformed
@@ -7817,9 +7819,9 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_protocolsIniTextFieldActionPerformed
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+    private void jumpToLastPanelMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jumpToLastPanelMenuItemActionPerformed
         selectLastPane();
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    }//GEN-LAST:event_jumpToLastPanelMenuItemActionPerformed
 
     private void sColumnComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sColumnComboBoxActionPerformed
         properties.setSColumn(sColumnComboBox.getSelectedIndex());
@@ -9068,6 +9070,8 @@ public final class GuiMain extends javax.swing.JFrame {
             });
             captureThread.start();
         }
+        topLevelTabbedPane.setEnabled(! continuousCaptureButton.isSelected());
+        jumpToLastPanelMenuItem.setEnabled(! continuousCaptureButton.isSelected());
     }//GEN-LAST:event_continuousCaptureButtonActionPerformed
 
     private void checkTable(NamedIrSignal.LearnedIrSignalTableModel tableModel) {
@@ -9394,7 +9398,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenuItem jMenuItem12;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
@@ -9424,6 +9427,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JPopupMenu.Separator jSeparator8;
     private javax.swing.JPopupMenu.Separator jSeparator9;
+    private javax.swing.JMenuItem jumpToLastPanelMenuItem;
     private javax.swing.JMenu lafMenu;
     private javax.swing.JMenuItem lengthMenuItem;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<LircImporter> lircFileImporterBean;
