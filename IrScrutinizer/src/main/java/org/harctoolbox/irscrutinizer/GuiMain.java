@@ -664,9 +664,11 @@ public final class GuiMain extends javax.swing.JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
-                boolean leave = checkRunningCapture() && checkUnsavedStuff();
-                if (leave)
+                boolean leave = checkUnsavedStuff();
+                if (leave) {
+                    killRunningCapture();
                     System.exit(IrpUtils.exitSuccess);
+                }
             }
         });
 
@@ -726,12 +728,17 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }
 
-    private boolean checkRunningCapture() {
+    private boolean killRunningCapture() {
         if (captureThreadRunning()) {
-            guiUtils.error("Capture thread is running. Exiting not possible.");
-            return false;
+            captureThread.terminate();
+            try {
+                if (captureThread != null)
+                    captureThread.join(1000L);
+            } catch (InterruptedException ex) {
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 
     private boolean captureThreadRunning() {
@@ -1500,15 +1507,17 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private class CaptureThread extends Thread {
         private final CaptureThreadClient client;
+        private boolean terminate;
 
         CaptureThread(CaptureThreadClient client) {
             this.client = client;
+            terminate = false;
         }
 
         @Override
         public void run() {
             startButton.setEnabled(false);
-            while (client.getButton().isSelected()) {
+            while (! terminate && client.getButton().isSelected()) {
                 try {
                     ModulatedIrSequence sequence = captureIrSequence();
                     if (sequence != null)
@@ -1526,6 +1535,10 @@ public final class GuiMain extends javax.swing.JFrame {
             captureThread = null; // thread suicide
             startButton.setEnabled(true);
             enableRawCaptureOnly(false);
+        }
+
+        private void terminate() {
+            terminate = true;
         }
     }
 
@@ -7090,9 +7103,11 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_protocolSpecMenuItemActionPerformed
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
-        boolean shouldQuit = checkRunningCapture() && checkUnsavedStuff();
-        if (shouldQuit)
+        boolean shouldQuit = checkUnsavedStuff();
+        if (shouldQuit) {
+            killRunningCapture();
             System.exit(IrpUtils.exitSuccess);
+        }
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void verboseCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verboseCheckBoxMenuItemActionPerformed
