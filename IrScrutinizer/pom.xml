@@ -127,12 +127,13 @@
                 <version>1.5</version>
                 <configuration>
                     <resourceBundles>
-                        <resourceBundle>org.harctoolbox:IrpMaster:${IrpMaster.version}</resourceBundle>
-                        <resourceBundle>org.harctoolbox:Girr:${Girr.version}</resourceBundle>
+                        <resourceBundle>${project.groupId}:IrpMaster:${IrpMaster.version}</resourceBundle>
+                        <resourceBundle>${project.groupId}:Girr:${Girr.version}</resourceBundle>
                     </resourceBundles>
                 </configuration>
                 <executions>
                     <execution>
+                        <id>process-remote-resources</id>
                         <goals>
                             <goal>process</goal>
                         </goals>
@@ -322,7 +323,7 @@
                 <executions>
                     <execution>
                         <id>copy-resources</id>
-                        <phase>validate</phase>
+                        <phase>compile</phase> <!-- must come after validate, since that unpacks the remote resources -->
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -333,18 +334,12 @@
                                     <directory>src/main/config</directory>
                                     <filtering>true</filtering>
                                 </resource>
-                                <!--resource>
-                                    <directory>${project.build.directory}/maven-shared-archive-resources</directory>
-                                    <filtering>false</filtering>
-                                </resource-->
-                                <!--resource>
-                                    <directory>../IrpMaster/src/main/config</directory>
+                                <resource>
+                                    <directory>target/maven-shared-archive-resources</directory>
+                                    <include>IrpProtocols.ini</include>
+                                    <include>girr.xml</include>
                                     <filtering>false</filtering>
                                 </resource>
-                                <resource>
-                                    <directory>../Girr/src/main/resources</directory>
-                                    <filtering>false</filtering>
-                                </resource-->
                             </resources>
                         </configuration>
                     </execution>
