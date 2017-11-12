@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<!-- Refence: https://www.unifiedremote.com/tutorials/how-to-create-a-custom-ir-remote -->
+<!-- Reference: https://www.unifiedremote.com/tutorials/how-to-create-a-custom-ir-remote -->
 
 <exportformats:exportformat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
