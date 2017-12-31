@@ -20,7 +20,6 @@ package org.harctoolbox.irscrutinizer;
 import com.hifiremote.exchangeir.Analyzer;
 import com.neuron.app.tonto.ProntoModel;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
@@ -118,8 +117,6 @@ public final class GuiMain extends javax.swing.JFrame {
             + "0016 0016 0016 0041 0016 0041 0016 0041 0016 0016 0016 0016 0016 0041 "
             + "0016 0041 0016 0041 0016 0016 0016 0016 0016 0016 0016 0041 0016 0041 "
             + "0016 06A4 015B 0057 0016 0E6C";
-
-    private final static Cursor waitCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
 
     private final RawIrSignal.RawTableColumnModel rawTableColumnModel;
     private final ParametrizedIrSignal.ParameterIrSignalTableColumnModel parameterTableColumnModel;
@@ -1377,7 +1374,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private <T extends IFileImporter & ICommandImporter> void importRemoteByFileSelector(T importer, boolean raw) {
-        Cursor oldCursor = setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             repaint();
             try {
@@ -1391,7 +1388,7 @@ public final class GuiMain extends javax.swing.JFrame {
         } catch (IrpMasterException | IOException | java.text.ParseException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(oldCursor);
+            busyWindow.unBusy();
         }
     }
 
@@ -1754,16 +1751,6 @@ public final class GuiMain extends javax.swing.JFrame {
         if (!formatName.equals(exportFormatComboBox.getSelectedItem()))
             exportFormatComboBox.setSelectedItem(formatName);
         exportFormatManager.setMenuSelection(formatName);
-    }
-
-    private Cursor setBusyCursor() {
-        Cursor oldCursor = getCursor();
-        setCursor(waitCursor);
-        return oldCursor;
-    }
-
-    private void resetCursor(Cursor cursor) {
-        setCursor(cursor);
     }
 
     private void setCapturedDataTextAreaFromClipboard() {
@@ -7549,7 +7536,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_globalCacheDBBrowseButtonActionPerformed
 
     private void gcdbManufacturerComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gcdbManufacturerComboBoxActionPerformed
-        Cursor oldCursor = setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             if (globalCacheIrDatabase == null) {
                 globalCacheIrDatabase = new GlobalCacheIrDatabase(properties.getGlobalCacheApiKey(), properties.getVerbose());
@@ -7573,12 +7560,12 @@ public final class GuiMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(oldCursor);
+            busyWindow.unBusy();
         }
     }//GEN-LAST:event_gcdbManufacturerComboBoxActionPerformed
 
     private void gcdbDeviceTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gcdbDeviceTypeComboBoxActionPerformed
-        Cursor oldCursor = this.setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             String manufacturer = (String) gcdbManufacturerComboBox.getSelectedItem();
             String deviceType = (String) gcdbDeviceTypeComboBox.getSelectedItem();
@@ -7592,12 +7579,12 @@ public final class GuiMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(oldCursor);
+            busyWindow.unBusy();
         }
     }//GEN-LAST:event_gcdbDeviceTypeComboBoxActionPerformed
 
     private void gcdbImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gcdbImportButtonActionPerformed
-        Cursor oldCursor = this.setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             String manufacturer = (String) gcdbManufacturerComboBox.getSelectedItem();
             String deviceType = (String) gcdbDeviceTypeComboBox.getSelectedItem();
@@ -7607,7 +7594,7 @@ public final class GuiMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(oldCursor);
+            busyWindow.unBusy();
         }
     }//GEN-LAST:event_gcdbImportButtonActionPerformed
 
@@ -7616,7 +7603,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_irdbBrowseButtonActionPerformed
 
     private void irdbManufacturerComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irdbManufacturerComboBoxActionPerformed
-        Cursor oldCursor = setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             if (irdbManufacturerComboBox.getModel().getSize() == 1) {
                 String[] manufacturers = IrdbImporter.getManufacturers(properties.getVerbose());
@@ -7641,19 +7628,19 @@ public final class GuiMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(oldCursor);
+            busyWindow.unBusy();
         }
     }//GEN-LAST:event_irdbManufacturerComboBoxActionPerformed
 
     private void irdbDeviceTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irdbDeviceTypeComboBoxActionPerformed
-        Cursor oldCursor = this.setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         String deviceType = (String) irdbDeviceTypeComboBox.getSelectedItem();
         Set<IrdbImporter.ProtocolDeviceSubdevice> pdss = irdbImporter.getProtocolDeviceSubdevice(deviceType);
         DefaultComboBoxModel dcbm = new DefaultComboBoxModel(pdss.toArray(new IrdbImporter.ProtocolDeviceSubdevice[pdss.size()]));
         irdbCodeSetComboBox.setModel(dcbm);
         irdbCodeSetComboBox.setEnabled(true);
         irdbTreeImporter.clear();
-        resetCursor(oldCursor);
+        busyWindow.unBusy();
     }//GEN-LAST:event_irdbDeviceTypeComboBoxActionPerformed
 
     private void irdbImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irdbImportButtonActionPerformed
@@ -7910,7 +7897,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_generateButtonActionPerformed
 
     private void transmitGenerateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitGenerateButtonActionPerformed
-        Cursor old = setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             boolean success = transmit(irpMasterBean.render());
             if (!success)
@@ -7918,7 +7905,7 @@ public final class GuiMain extends javax.swing.JFrame {
         } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(old);
+            busyWindow.unBusy();
         }
     }//GEN-LAST:event_transmitGenerateButtonActionPerformed
 
@@ -7931,14 +7918,14 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_toScrutinizeButtonActionPerformed
 
     private void transferToRawRemoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transferToRawRemoteButtonActionPerformed
-        Cursor old = setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             Collection<Command> commands = irpMasterBean.getCommands().values();
             registerRawCommands(commands);
         } catch (IrpMasterException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(old);
+            busyWindow.unBusy();
         }
     }//GEN-LAST:event_transferToRawRemoteButtonActionPerformed
 
@@ -8167,7 +8154,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void sendingHardwareTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sendingHardwareTabbedPaneStateChanged
         if (sendingHardwareManager == null)
             return;
-        Cursor oldCursor = setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             for (ISendingHardware<?> hardware : sendingHardwareManager.getSendingHardware()) {
                 if (hardware.getPanel() == sendingHardwareTabbedPane.getSelectedComponent()) {
@@ -8178,7 +8165,7 @@ public final class GuiMain extends javax.swing.JFrame {
         } catch (HarcHardwareException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(oldCursor);
+            busyWindow.unBusy();
         }
     }//GEN-LAST:event_sendingHardwareTabbedPaneStateChanged
 
@@ -8193,7 +8180,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void capturingHardwareTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_capturingHardwareTabbedPaneStateChanged
         if (capturingHardwareManager == null)
             return;
-        Cursor oldCursor = setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             for (ICapturingHardware<?> hardware : capturingHardwareManager.getCapturingHardware()) {
                 if (hardware.getPanel() == capturingHardwareTabbedPane.getSelectedComponent()) {
@@ -8204,7 +8191,7 @@ public final class GuiMain extends javax.swing.JFrame {
         } catch (IOException | HarcHardwareException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(oldCursor);
+            busyWindow.unBusy();
         }
     }//GEN-LAST:event_capturingHardwareTabbedPaneStateChanged
 
@@ -8222,7 +8209,7 @@ public final class GuiMain extends javax.swing.JFrame {
             return;
         }
 
-        Cursor oldCursor = setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             ModulatedIrSequence modulatedIrSequence = captureIrSequence();
 
@@ -8246,7 +8233,7 @@ public final class GuiMain extends javax.swing.JFrame {
         } catch (IOException | HarcHardwareException | IrpMasterException | NumberFormatException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(oldCursor);
+            busyWindow.unBusy();
         }
     }//GEN-LAST:event_captureTestButtonActionPerformed
 
@@ -8370,13 +8357,13 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.error("Nothing to transmit");
             return;
         }
-        Cursor old = setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             transmit(irSignal);
         } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(old);
+            busyWindow.unBusy();
         }
     }//GEN-LAST:event_transmitSignalButtonActionPerformed
 
@@ -8397,7 +8384,7 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.error("A capture thread is running. This must first be ended.");
             return;
         }
-        Cursor old = setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             ModulatedIrSequence modulatedIrSequence = captureIrSequence();
 
@@ -8408,7 +8395,7 @@ public final class GuiMain extends javax.swing.JFrame {
         } catch (IOException | HarcHardwareException | IrpMasterException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(old);
+            busyWindow.unBusy();
         }
     }//GEN-LAST:event_startButtonActionPerformed
 
@@ -8428,14 +8415,14 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_capturedDataTextAreaMousePressed
 
     private void transferToParametricRemoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transferToParametricRemoteButtonActionPerformed
-        Cursor old = setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             Collection<Command> commands = irpMasterBean.getCommands().values();
             registerParameterSignal(commands);
         } catch (IrpMasterException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(old);
+            busyWindow.unBusy();
         }
     }//GEN-LAST:event_transferToParametricRemoteButtonActionPerformed
 
@@ -8937,7 +8924,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_importMode2HelpButtonActionPerformed
 
     private void controlTowerImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_controlTowerImportButtonActionPerformed
-        Cursor oldCursor = this.setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             String manufacturer = (String) controlTowerManufacturerComboBox.getSelectedItem();
             String deviceType = (String) controlTowerDeviceTypeComboBox.getSelectedItem();
@@ -8948,7 +8935,7 @@ public final class GuiMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(oldCursor);
+            busyWindow.unBusy();
         }
     }//GEN-LAST:event_controlTowerImportButtonActionPerformed
 
@@ -8961,7 +8948,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_controlTowerBrowseButtonActionPerformed
 
     private void controlTowerManufacturerComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_controlTowerManufacturerComboBoxActionPerformed
-        Cursor oldCursor = setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             if (controlTowerIrDatabase == null) {
                 controlTowerIrDatabase = new ControlTowerIrDatabase(properties.getVerbose());
@@ -8986,12 +8973,12 @@ public final class GuiMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(oldCursor);
+            busyWindow.unBusy();
         }
     }//GEN-LAST:event_controlTowerManufacturerComboBoxActionPerformed
 
     private void controlTowerDeviceTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_controlTowerDeviceTypeComboBoxActionPerformed
-        Cursor oldCursor = this.setBusyCursor();
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             String manufacturer = (String) controlTowerManufacturerComboBox.getSelectedItem();
             String deviceType = (String) controlTowerDeviceTypeComboBox.getSelectedItem();
@@ -9005,7 +8992,7 @@ public final class GuiMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             guiUtils.error(ex);
         } finally {
-            resetCursor(oldCursor);
+            busyWindow.unBusy();
         }
     }//GEN-LAST:event_controlTowerDeviceTypeComboBoxActionPerformed
 

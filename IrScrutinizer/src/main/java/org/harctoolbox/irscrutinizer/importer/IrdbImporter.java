@@ -82,7 +82,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     }
 
     private static void setupManufacturers(boolean verbose) throws IOException {
-        manufacturers = new ArrayList<>(1024);
+        ArrayList<String> newManufacturers = new ArrayList<>(1024);
         String path = String.format(urlFormatBrands, 1);
         for (int index = 1; index <= 100 && !path.isEmpty(); index++) {
             JsonObject o = getJsonObject(path, verbose);
@@ -95,10 +95,11 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
             for (JsonValue val : objects) {
                 JsonObject obj = val.asObject();
                 String brand = obj.get("brand").asString();
-                if (!manufacturers.contains(brand))
-                    manufacturers.add(brand);
+                if (!newManufacturers.contains(brand))
+                    newManufacturers.add(brand);
             }
         }
+        manufacturers = newManufacturers;
     }
 
     public static void main(String[] args) {
