@@ -18,7 +18,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer;
 
 /**
- * This class does something interesting and useful. Or not...
+ * This class abstracts a number of lower-level hardware exceptions-
  */
 public class HardwareUnavailableException extends Exception {
     public HardwareUnavailableException(String str) {

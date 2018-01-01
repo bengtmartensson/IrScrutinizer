@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013, 2014, 2015, 2017 Bengt Martensson.
+Copyright (C) 2013, 2014, 2015, 2017, 2018 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -55,7 +55,6 @@ import javax.swing.JPopupMenu.Separator;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.TransferHandler;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.BadLocationException;
@@ -69,7 +68,6 @@ import org.harctoolbox.IrpMaster.DecodeIR.DecodeIrException;
 import org.harctoolbox.devslashlirc.LircHardware;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
-import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.guicomponents.*;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.TimeoutException;
@@ -83,7 +81,6 @@ import org.xml.sax.SAXException;
 public final class GuiMain extends javax.swing.JFrame {
 
     private Props properties;
-    private int debug = 0; // presently not used
     private final transient LookAndFeelManager lookAndFeelManager;
     private GuiUtils guiUtils;
     private transient GlobalCacheIrDatabase globalCacheIrDatabase = null;
@@ -109,6 +106,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private int dynamicExportFormatsMenuPosition;
     private boolean initialized = false;
     private boolean stdinHasBeenClosed = false;
+    private final transient TableUtils tableUtils;
 
     private final String testSignalCcf = // NEC1 12.34 56
             "0000 006C 0022 0002 015B 00AD 0016 0016 0016 0016 0016 0041 0016 0041 "
@@ -131,6 +129,9 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private Remote.MetaData metaData = new Remote.MetaData("unnamed");
 
+    private final static String feedbackMail = "feedback@harctoolbox.org";
+    private final static String issuesUrl = "https://github.com/bengtmartensson/harctoolboxbundle/issues";
+    private final static String gitUrl = "https://github.com/bengtmartensson/harctoolboxbundle/";
     private final static int importSequenceAskThreshold = 3;
     private final static int maxCharsInGuiMessages = 150;
     private final static int transmitSignalMouseButton = 2;
@@ -178,6 +179,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
             Transferable transferable = support.getTransferable();
             try {
+                @SuppressWarnings("unchecked")
                 List<File> list = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
                 for (File file : list)
                     try {
@@ -288,7 +290,6 @@ public final class GuiMain extends javax.swing.JFrame {
      * @param applicationHome
      * @param propsfilename Name of properties file. Null for system default.
      * @param verbose Verbose execution of some commands, dependent on invoked programs.
-     * @param debug Debug value handed over to invoked programs/functions.
      * @param userlevel Presently not used.
      * @param arguments
      * @throws ParserConfigurationException
@@ -300,9 +301,8 @@ public final class GuiMain extends javax.swing.JFrame {
      */
     @SuppressWarnings({"OverridableMethodCallInConstructor", "OverridableMethodCallInConstructor", "ResultOfObjectAllocationIgnored", "ResultOfObjectAllocationIgnored"})
     public GuiMain(String applicationHome, String propsfilename, boolean verbose,
-            int debug, int userlevel, List<String> arguments)
+            int userlevel, List<String> arguments)
             throws ParserConfigurationException, SAXException, IOException, IncompatibleArgumentException, java.text.ParseException, URISyntaxException {
-        this.debug = debug;
         this.applicationHome = applicationHome;
         System.setProperty("harctoolbox.jniLibsHome", applicationHome);
         // First try to load library from absolute path,
@@ -332,6 +332,7 @@ public final class GuiMain extends javax.swing.JFrame {
         guiUtils.setUsePopupsForHelp(properties.getUsePopupsForHelp());
         guiUtils.setOfferStackTrace(properties.getOfferStackTrace());
         guiUtils.setVerbose(properties.getVerbose());
+        tableUtils = new TableUtils(guiUtils);
 
         ProntoModel[] prontomodels = ProntoModel.getModels();
         prontoModelNames = new String[prontomodels.length];
@@ -755,8 +756,6 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         };
 
-
-
         AckWithMemoryDialog.PropertyFlip rawFlip = new AckWithMemoryDialog.PropertyFlip() {
             @Override
             public boolean getProperty() {
@@ -796,9 +795,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     public int importGirr(File file, boolean raw, String charsetName) throws java.text.ParseException, IOException, IrpMasterException {
-        girrImporter.possiblyZipLoad(file, charsetName);
-        RemoteSet remoteSet = girrImporter.getRemoteSet();
-        return importCommands(remoteSet.getAllCommands(), raw);
+        return importCommands(girrImporter.getAllCommands(file, charsetName), raw);
     }
 
     public int importGirr(File file, boolean raw) throws java.text.ParseException, IOException, IrpMasterException {
@@ -826,7 +823,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private GirrExporter newGirrExporter() {
         return new GirrExporter(properties.getCreatingUser(),
-                //new File(properties.getExportDir()),
                 properties.getGirrStyleSheetType(),
                 properties.getGirrStyleSheetUrl(),
                 properties.getGirrFatRaw(),
@@ -834,27 +830,13 @@ public final class GuiMain extends javax.swing.JFrame {
                 properties.getExportGenerateRaw(),
                 properties.getExportGenerateCcf(),
                 properties.getExportGenerateParameters(),
-                //properties.getExportCount(),
                 setupExtraTextFormats());
     }
 
-    private WaveExporter newWaveExporter() {
-        return new WaveExporter(//new File(properties.getExportDir()),
-                exportAudioParametersBean.getSampleFrequency(),
-                exportAudioParametersBean.getSampleSize(),
-                exportAudioParametersBean.getChannels(),
-                exportAudioParametersBean.getBigEndian(),
-                exportAudioParametersBean.getOmitTrailingGap(),
-                exportAudioParametersBean.getSquare(),
-                exportAudioParametersBean.getDivideCarrier());
-    }
-
     private TextExporter newTextExporter() {
-        return new TextExporter(//new File(properties.getExportDir()),
-                properties.getExportGenerateRaw(),
+        return new TextExporter(properties.getExportGenerateRaw(),
                 properties.getExportGenerateCcf(),
                 properties.getExportGenerateParameters(),
-                //properties.getExportCount(),
                 setupExtraTextFormats());
     }
 
@@ -873,7 +855,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 new File(properties.mkPathAbsolute(properties.getExportFormatFilePath())), //new File(properties.getExportDir()),
                 (String name1) -> {
                     selectFormat(name1);
-                }, () -> newGirrExporter(), () -> newWaveExporter(), () -> newTextExporter(), () -> newProntoClassicExporter());
+                }, () -> newGirrExporter(), () -> exportAudioParametersBean.newWaveExporter(), () -> newTextExporter(), () -> newProntoClassicExporter());
     }
 
     private RemoteSetExporter newRemoteExporter() {
@@ -918,11 +900,6 @@ public final class GuiMain extends javax.swing.JFrame {
             rmduImporter = new RmduImporter(protocolsIni);
         else
             rmduImporter.setProtocolsIni(protocolsIni);
-    }
-
-    // Convenience function for use of Scrutinizelets.
-    public Props getProperties() {
-        return properties;
     }
 
     private void clearSignal() {
@@ -1083,6 +1060,11 @@ public final class GuiMain extends javax.swing.JFrame {
         displaySignal(irSignal);
     }
 
+    public void scrutinizeIrSignal(JTable table) throws IrpMasterException, ErroneousSelectionException {
+        Command command = tableUtils.commandTableSelectedRow(table);
+        scrutinizeIrSignal(command.toIrSignal());
+    }
+
     private void displaySignal(IrSignal irSignal) {
         setFrequencyParameter(irSignal);
         setCaptureWindow(irSignal);
@@ -1169,7 +1151,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void saveSelectedSignal(JTable table, String title) {
         try {
-            File savedFile = saveSignal(commandTableSelectedRow(table), title, newExporter());
+            File savedFile = saveSignal(tableUtils.commandTableSelectedRow(table), title, newExporter());
             guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
         } catch (IrpMasterException | IOException | ErroneousSelectionException | TransformerException ex) {
             guiUtils.error(ex);
@@ -1293,20 +1275,6 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }
 
-    private static ModulatedIrSequence concatenateAsSequence(Collection<Command>commands) throws IrpMasterException {
-        double frequency = IrpUtils.invalid;
-        double dutyCycle = IrpUtils.invalid;
-        IrSequence seq = new IrSequence();
-        for (Command c : commands) {
-            if (frequency < 0) // take the first sensible frequency
-                frequency = c.getFrequency();
-            if (dutyCycle <= 0)
-                dutyCycle = c.getDutyCycle();
-            seq = seq.append(c.toIrSignal().toModulatedIrSequence(1));
-        }
-        return new ModulatedIrSequence(seq, frequency, dutyCycle);
-    }
-
     private void importSequence(ICommandImporter importer) throws IrpMasterException {
         Collection<Command> commands = importer.getCommands();
         if (commands.isEmpty()) {
@@ -1317,7 +1285,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 && ! guiUtils.confirm("There are " + commands.size() + " commands. Proceed?"))
             return;
 
-        processIr(concatenateAsSequence(commands));
+        processIr(Command.concatenateAsSequence(commands));
     }
 
     public int importCommands(Collection<Command> commands, boolean raw) {
@@ -1548,7 +1516,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void parameterTableAddMissingF() throws IrpMasterException, ErroneousSelectionException {
-        Command command = commandTableSelectedRow(parameterTable);
+        Command command = tableUtils.commandTableSelectedRow(parameterTable);
         if (command == null)
             throw new IllegalArgumentException("No command selected.");
         ArrayList<Long> presentFs = parameterTableModel.listF(command);
@@ -1565,127 +1533,10 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }
 
-    // Requires the row sorter to be disabled
-    private void tableMoveSelection(JTable table, boolean up) {
-        int row = table.getSelectedRow();
-        int lastRow = row + table.getSelectedRowCount() - 1;
-
-        if (row < 0) {
-            guiUtils.error("No signal selected");
-            return;
-        }
-        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-        if (up) {
-            if (row == 0) {
-                guiUtils.error("Cannot move up");
-                return;
-            }
-        } else { // down
-            if (lastRow >= tableModel.getRowCount() - 1) {
-                guiUtils.error("Cannot move down");
-                return;
-            }
-        }
-
-        if (up) {
-            tableModel.moveRow(row, lastRow, row - 1);
-            table.addRowSelectionInterval(row - 1, row - 1);
-            table.removeRowSelectionInterval(lastRow, lastRow);
-        } else {
-            tableModel.moveRow(row, lastRow, row + 1);
-            table.addRowSelectionInterval(lastRow + 1, lastRow + 1);
-            table.removeRowSelectionInterval(row, row);
-        }
-    }
-
-    // If using sorter and deleting several rows, need to compute the to-be-removed model-indexes,
-    // sort them, and remove them in descending order. I presently do not care enough...
-    private void deleteTableSelectedRows(JTable table) throws ErroneousSelectionException {
-        barfIfNoneSelected(table);
-        if (table.getRowSorter() != null && table.getSelectedRowCount() > 1) {
-            guiUtils.error("Deleting several rows with enabled row sorter not yet implemented");
-            return;
-        }
-        int row = table.getSelectedRow();
-
-        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-
-        for (int i = table.getSelectedRowCount(); i > 0; i--)
-            tableModel.removeRow(table.convertRowIndexToModel(row + i - 1));
-    }
-
-    private void printTableSelectedRow(JTable table) throws ErroneousSelectionException {
-        barfIfNotExactlyOneSelected(table);
-        int modelRow = table.convertRowIndexToModel(table.getSelectedRow());
-        NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
-        String str = tableModel.toPrintString(modelRow);
-        guiUtils.message(str);
-    }
-
-    private void transmitTableSelectedRow(JTable table) throws IrpMasterException, NoSuchTransmitterException, IOException, HardwareUnavailableException, HarcHardwareException, ErroneousSelectionException {
-        barfIfNotExactlyOneSelected(table);
-        int modelRow = table.convertRowIndexToModel(table.getSelectedRow());
-        NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
-        Command command = tableModel.toCommand(modelRow);
-        transmit(command);
-    }
-
-    private void barfIfManySelected(JTable table) throws ErroneousSelectionException {
-        if (table.getSelectedRowCount() > 1)
-            throw new ErroneousSelectionException("Only one row may be selected");
-    }
-
-    private void barfIfNoneSelected(JTable table) throws ErroneousSelectionException {
-        if (table.getSelectedRow() == -1)
-            throw new ErroneousSelectionException("No row selected");
-    }
-
-    private void barfIfNotExactlyOneSelected(JTable table) throws ErroneousSelectionException {
-        barfIfManySelected(table);
-        barfIfNoneSelected(table);
-    }
-
-    private void scrutinizeTableSelectedRow(JTable table) throws IrpMasterException, ErroneousSelectionException {
-        barfIfNotExactlyOneSelected(table);
-
-        int modelRow = table.convertRowIndexToModel(table.getSelectedRow());
-        NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
-        Command command = tableModel.toCommand(modelRow);
-        scrutinizeIrSignal(command.toIrSignal());
-    }
-
-    private Command commandTableSelectedRow(JTable table) throws IrpMasterException, ErroneousSelectionException {
-        barfIfNotExactlyOneSelected(table);
-        int selectedRow = table.getSelectedRow();
-        int modelRow = table.convertRowIndexToModel(selectedRow);
-        NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
-        Command command = tableModel.toCommand(modelRow);
-        return command;
-    }
-
-    private void clearTableConfirm(JTable table) {
-        if (guiUtils.confirm("Delete it all?")) {
-            ((DefaultTableModel) table.getModel()).setRowCount(0);
-            ((NamedIrSignal.LearnedIrSignalTableModel) table.getModel()).clearUnsavedChanges();
-        }
-    }
-
     private void setParameter(String name) {
         Long answer = guiUtils.getLongInput("Enter new value for " + name, 0);
-        if (answer == null)
-            return;
-
-        parameterTableModel.setParameter(name, answer);
-    }
-
-    private void unsetParameter(String name) {
-        parameterTableModel.unsetParameter(name);
-    }
-
-    private void setMiscParameters() {
-
-        String value = guiUtils.getInput("Enter \"Misc. Params\" as string", "Parameters entry", "X=0");
-        parameterTableModel.setMiscParameters(value);
+        if (answer != null)
+            parameterTableModel.setParameter(name, answer);
     }
 
     private void setupIrTrans() throws UnknownHostException, IOException {
@@ -1701,8 +1552,13 @@ public final class GuiMain extends javax.swing.JFrame {
         return sendingHardwareManager.sendIr(irSignal, Integer.parseInt((String)noTransmitsComboBox.getSelectedItem()));
     }
 
-    public boolean  transmit(Command command) throws IrpMasterException, NoSuchTransmitterException, IOException, HardwareUnavailableException, HarcHardwareException {
+    public boolean transmit(Command command) throws IrpMasterException, NoSuchTransmitterException, IOException, HardwareUnavailableException, HarcHardwareException {
         return transmit(command.toIrSignal());
+    }
+
+    private boolean transmit(JTable table) throws IrpMasterException, ErroneousSelectionException, IOException, HarcHardwareException, HardwareUnavailableException {
+        Command command = tableUtils.commandTableSelectedRow(table);
+        return transmit(command);
     }
 
     public void selectImportPane(ImportType type) {
@@ -7362,22 +7218,22 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void deleteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMenuItemActionPerformed
         try {
-            deleteTableSelectedRows(rawTable);
+            tableUtils.deleteTableSelectedRows(rawTable);
         } catch (ErroneousSelectionException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_deleteMenuItemActionPerformed
 
     private void clearMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearMenuItemActionPerformed
-        clearTableConfirm(rawTable);
+        tableUtils.clearTableConfirm(rawTable);
     }//GEN-LAST:event_clearMenuItemActionPerformed
 
     private void moveUpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpMenuItemActionPerformed
-       tableMoveSelection(rawTable, true);
+       tableUtils.tableMoveSelection(rawTable, true);
     }//GEN-LAST:event_moveUpMenuItemActionPerformed
 
     private void moveDownMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveDownMenuItemActionPerformed
-        this.tableMoveSelection(rawTable, false);
+        tableUtils.tableMoveSelection(rawTable, false);
     }//GEN-LAST:event_moveDownMenuItemActionPerformed
 
     private void exportSignalGirrMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSignalGirrMenuItemActionPerformed
@@ -7432,7 +7288,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void debugTableRowMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugTableRowMenuItemActionPerformed
         try {
-            printTableSelectedRow(rawTable);
+            tableUtils.printTableSelectedRow(rawTable);
         } catch (ErroneousSelectionException ex) {
             guiUtils.error(ex);
         }
@@ -7459,16 +7315,16 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_scrutinizeMenuItemActionPerformed
 
     private void moveUpMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpMenuItem1ActionPerformed
-        tableMoveSelection(parameterTable, true);
+        tableUtils.tableMoveSelection(parameterTable, true);
     }//GEN-LAST:event_moveUpMenuItem1ActionPerformed
 
     private void moveDownMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveDownMenuItem1ActionPerformed
-        tableMoveSelection(parameterTable, false);
+        tableUtils.tableMoveSelection(parameterTable, false);
     }//GEN-LAST:event_moveDownMenuItem1ActionPerformed
 
     private void deleteMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMenuItem1ActionPerformed
         try {
-            deleteTableSelectedRows(parameterTable);
+            tableUtils.deleteTableSelectedRows(parameterTable);
         } catch (ErroneousSelectionException ex) {
             guiUtils.error(ex);
         }
@@ -7476,14 +7332,14 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void debugTableRowMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugTableRowMenuItem1ActionPerformed
         try {
-            printTableSelectedRow(parameterTable);
+            tableUtils.printTableSelectedRow(parameterTable);
         } catch (ErroneousSelectionException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_debugTableRowMenuItem1ActionPerformed
 
     private void clearMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearMenuItem1ActionPerformed
-        clearTableConfirm(parameterTable);
+        tableUtils.clearTableConfirm(parameterTable);
     }//GEN-LAST:event_clearMenuItem1ActionPerformed
 
     private void hideColumnMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideColumnMenuItem1ActionPerformed
@@ -8428,7 +8284,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void transmitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitMenuItemActionPerformed
         try {
-            transmitTableSelectedRow(parameterTable);
+            transmit(parameterTable);
         } catch (HardwareUnavailableException ex) {
             guiUtils.error("Transmitting hardware not selected or not ready.");
         } catch (IrpMasterException | IOException | HarcHardwareException | ErroneousSelectionException ex) {
@@ -8438,7 +8294,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void sendMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendMenuItemActionPerformed
         try {
-            transmitTableSelectedRow(rawTable);
+            transmit(rawTable);
         } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException | ErroneousSelectionException ex) {
             guiUtils.error(ex);
         }
@@ -8606,7 +8462,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void scrutinizeParametricMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scrutinizeParametricMenuItemActionPerformed
         try {
-            scrutinizeTableSelectedRow(parameterTable);
+            scrutinizeIrSignal(parameterTable);
         } catch (IrpMasterException | ErroneousSelectionException ex) {
              guiUtils.error(ex);
         }
@@ -8675,7 +8531,8 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_offerStackTraceCheckBoxMenuItemActionPerformed
 
     private void setMiscParamsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setMiscParamsMenuItemActionPerformed
-        setMiscParameters();
+        String value = guiUtils.getInput("Enter \"Misc. Params\" as string", "Parameters entry", "X=0");
+        parameterTableModel.setMiscParameters(value);
     }//GEN-LAST:event_setMiscParamsMenuItemActionPerformed
 
     private void parametrizedMultiColumnNameCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parametrizedMultiColumnNameCheckBoxActionPerformed
@@ -8693,7 +8550,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 return;
             table.setRowSelectionInterval(row, row);
             try {
-                transmitTableSelectedRow(table);
+                transmit(table);
             } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException | ErroneousSelectionException ex) {
                 guiUtils.error(ex);
             }
@@ -8764,7 +8621,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_importSignalAsMode2MenuItem1importSignalAsWaveMenuItemActionPerformed
 
     private void unsetTMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unsetTMenuItemActionPerformed
-        unsetParameter("T");
+        parameterTableModel.unsetParameter("T");
     }//GEN-LAST:event_unsetTMenuItemActionPerformed
 
     private void debugCodeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugCodeMenuItemActionPerformed
@@ -8847,7 +8704,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void gitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gitMenuItemActionPerformed
         try {
-            guiUtils.browse(new URI(IrScrutinizer.gitUrl));
+            guiUtils.browse(new URI(gitUrl));
         } catch (URISyntaxException ex) {
             guiUtils.error(ex);
         }
@@ -8855,7 +8712,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void homePageMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homePageMenuItem1ActionPerformed
         try {
-            guiUtils.browse(new URI(IrScrutinizer.issuesUrl));
+            guiUtils.browse(new URI(issuesUrl));
         } catch (URISyntaxException ex) {
             guiUtils.error(ex);
         }
@@ -8873,7 +8730,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     lookAndFeelManager.getCurrentLAFClassName()
             ).replace(" ", "%20").replace("\\", "%5C");
             String subject = ("Feedback to " + Version.versionString).replace(" ", "%20");
-            guiUtils.mail(IrScrutinizer.feedbackMail, subject, body);
+            guiUtils.mail(feedbackMail, subject, body);
         } catch (URISyntaxException | IOException ex) {
             guiUtils.error(ex);
         }

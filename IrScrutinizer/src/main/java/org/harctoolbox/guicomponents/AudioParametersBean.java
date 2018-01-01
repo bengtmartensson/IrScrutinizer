@@ -27,6 +27,7 @@ import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.IrpMaster.Wave;
 import org.harctoolbox.harchardware.ir.IrAudioDevice;
 import org.harctoolbox.irscrutinizer.Props;
+import org.harctoolbox.irscrutinizer.exporter.WaveExporter;
 
 public class AudioParametersBean extends javax.swing.JPanel {
 
@@ -175,6 +176,13 @@ public class AudioParametersBean extends javax.swing.JPanel {
 
     public void play(ModulatedIrSequence irSequence) throws LineUnavailableException, IncompatibleArgumentException, IOException {
         newWave(irSequence).play();
+    }
+
+    public WaveExporter newWaveExporter() {
+        return new WaveExporter(getSampleFrequency(), getSampleSize(),
+                getChannels(), getBigEndian(),
+                getOmitTrailingGap(), getSquare(),
+                getDivideCarrier());
     }
 
     /**

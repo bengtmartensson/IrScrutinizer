@@ -26,10 +26,7 @@ import java.awt.Window;
  */
 public class BusyWindow {
     private final static Cursor WAIT_CURSOR = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
-    
-    private final Window window;
-    private Cursor oldCursor;
-    
+
     /**
      * Static convenience function, factory function, that combines the constructor and the busy() call.
      * @param window
@@ -40,15 +37,18 @@ public class BusyWindow {
         busyWindow.busy();
         return busyWindow;
     }
-     
+
+    private final Window window;
+    private Cursor oldCursor;
+
     /**
-     * @param window 
+     * @param window
      */
     public BusyWindow(Window window) {
         this.window = window;
         oldCursor = null;
     }
-    
+
     /**
      * Sets the wait cursor
      */
@@ -56,7 +56,7 @@ public class BusyWindow {
         oldCursor = window.getCursor();
         window.setCursor(WAIT_CURSOR);
     }
-    
+
     /**
      * Resets cursor
      */
@@ -66,10 +66,10 @@ public class BusyWindow {
         window.setCursor(oldCursor);
         oldCursor = null;
     }
-    
+
     /**
      * Returns status
-     * @return 
+     * @return
      */
     public boolean isBusy() {
         return oldCursor != null;

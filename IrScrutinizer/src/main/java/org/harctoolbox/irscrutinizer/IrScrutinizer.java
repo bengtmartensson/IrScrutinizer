@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013, 2014 Bengt Martensson.
+Copyright (C) 2013, 2014. 2018 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -37,23 +37,15 @@ import org.harctoolbox.guicomponents.GuiUtils;
 import org.xml.sax.SAXException;
 
 /**
- * This class decodes command line parameters and fires up the GUI.
+ * This class decodes command line parameters and fires up either IrpMaster.main or the GUI.
  */
 public class IrScrutinizer {
 
-    public final static String feedbackMail = "feedback@harctoolbox.org";
-
-    public final static String issuesUrl = "https://github.com/bengtmartensson/harctoolboxbundle/issues";
-
-    public final static String gitUrl = "https://github.com/bengtmartensson/harctoolboxbundle/";
-
-    /** Number indicating invalid value. */
-    public final static long invalid = -1;
     private final static String backupsuffix = "back";
-
 
     private static JCommander argumentParser;
     private static final CommandLineArgs commandLineArgs = new CommandLineArgs();
+
     private static void usage(int exitcode) {
         StringBuilder str = new StringBuilder(256);
         argumentParser.usage(str);
@@ -61,6 +53,7 @@ public class IrScrutinizer {
         (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
         doExit(exitcode); // placifying FindBugs...
     }
+
     private static void doExit(int exitcode) {
         System.exit(exitcode);
     }
@@ -117,10 +110,7 @@ public class IrScrutinizer {
 
         try {
             String applicationHome = findApplicationHome(commandLineArgs.applicationHome);
-            if (commandLineArgs.debug > 0)
-                System.err.println("applicationHome = " + applicationHome);
-
-            guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.debug,
+            guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose,
                     commandLineArgs.experimental ? 1 : 0, commandLineArgs.arguments);
         } catch (URISyntaxException ex) {
             System.err.println(ex.getMessage());
@@ -158,10 +148,10 @@ public class IrScrutinizer {
     }
 
     private static void guiExecute(final String applicationHome, final String propsfilename,
-            final boolean verbose, final int debug, final int userlevel, final List<String> arguments) {
+            final boolean verbose, final int userlevel, final List<String> arguments) {
         java.awt.EventQueue.invokeLater(() -> {
             try {
-                new GuiMain(applicationHome, propsfilename, verbose, debug, userlevel, arguments).setVisible(true);
+                new GuiMain(applicationHome, propsfilename, verbose, userlevel, arguments).setVisible(true);
             } catch (HeadlessException ex) {
                 System.err.println("This program does not run in headless mode.");
             } catch (ParseException | IOException | IncompatibleArgumentException | URISyntaxException
@@ -196,13 +186,11 @@ public class IrScrutinizer {
             }
         });
     }
+
     private IrScrutinizer() {
     }
 
     private final static class CommandLineArgs {
-
-        @Parameter(names = {"-D", "--debug"}, description = "Debug code", hidden = true)
-        private int debug = 0;
 
         @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
         private boolean helpRequested = false;

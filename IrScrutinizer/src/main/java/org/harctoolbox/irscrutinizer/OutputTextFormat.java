@@ -17,22 +17,16 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer;
 
-/**
- */
 public enum OutputTextFormat {
     raw,
-    ccf,
-    uei;
+    ccf;
 
     public String displayName() {
         return this == raw ? "Raw (recommended)"
-                : this == ccf ? "CCF (\"hex\", \"Pronto\")"
-                : "UEI Learned";
+                : "CCF (\"hex\", \"Pronto\")";
     }
 
     public static OutputTextFormat newOutputTextFormat(int n) {
-        return n == 0 ? raw
-                : n == 1 ? ccf
-                : uei;
+        return n == 0 ? raw : ccf;
     }
 }

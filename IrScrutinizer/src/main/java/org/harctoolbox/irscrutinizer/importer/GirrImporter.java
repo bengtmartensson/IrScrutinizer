@@ -23,10 +23,12 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Collection;
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import org.harctoolbox.IrpMaster.XmlUtils;
+import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.RemoteSet;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -185,6 +187,12 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
     public String getFormatName() {
         return "Girr";
     }
+
+    public Collection<Command> getAllCommands(File file, String charsetName) throws ParseException, IOException {
+        possiblyZipLoad(file, charsetName);
+        return remoteSet.getAllCommands();
+    }
+
     private static class NotGirrRemoteSetException extends Exception {
         NotGirrRemoteSetException() {
             super("Not a Girr file with root element \"remotes\".");
