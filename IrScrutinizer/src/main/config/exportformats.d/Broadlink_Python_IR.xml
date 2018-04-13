@@ -105,6 +105,8 @@ if __name__ == "__main__":
         <xsl:value-of select="@name"/>
         <xsl:text>; </xsl:text>
         <xsl:apply-templates select="girr:parameters"/>
+        <xsl:text>
+</xsl:text>
         <xsl:apply-templates select="girr:raw[1]"/>
     </xsl:template>
 
@@ -113,8 +115,6 @@ if __name__ == "__main__":
         <xsl:value-of select="@protocol"/>
         <xsl:text>, Parameters:</xsl:text>
         <xsl:apply-templates select="girr:parameter"/>
-        <xsl:text>
-</xsl:text>
     </xsl:template>
 
     <xsl:template match="girr:parameter">
