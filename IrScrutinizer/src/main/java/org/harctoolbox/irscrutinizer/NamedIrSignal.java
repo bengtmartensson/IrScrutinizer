@@ -54,7 +54,11 @@ public abstract class NamedIrSignal {
     private String comment;
     private final int numeral;
 
-    public NamedIrSignal(String name, String comment) {
+    public NamedIrSignal(String name, String comment) throws NullPointerException {
+        if (name == null)
+            throw new NullPointerException("Name must be non-zero.");
+        if (comment == null)
+            throw new NullPointerException("comment must be non-zero, (can be empty).");
         numeral = incrementCount();
         date = new Date();
         this.name = name;
