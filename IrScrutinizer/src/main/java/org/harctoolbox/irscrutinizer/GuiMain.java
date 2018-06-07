@@ -1419,10 +1419,10 @@ public final class GuiMain extends javax.swing.JFrame {
         rawTableModel.addSignal(cir);
     }
 
-    private void registerParameterSignal(IrSignal irSignal, String name, String comment) {
+    private void registerParameterSignal(IrSignal irSignal) {
         if (irSignal != null) {
             try {
-                ParametrizedIrSignal pir = new ParametrizedIrSignal(irSignal, name, comment, properties.getParametrizedLearnIgnoreT());
+                ParametrizedIrSignal pir = new ParametrizedIrSignal(irSignal, properties.getParametrizedLearnIgnoreT());
                 registerParameterSignal(pir);
             } catch (DecodeIrException ex) {
                 guiUtils.message("Undecodable signal, ignored");
@@ -7277,7 +7277,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     if (rawPanel.isVisible())
                         registerRawSignal(irSignal, null, null);
                     else
-                        registerParameterSignal(irSignal, null, null);
+                        registerParameterSignal(irSignal);
                 }
             });
             captureThread.start();

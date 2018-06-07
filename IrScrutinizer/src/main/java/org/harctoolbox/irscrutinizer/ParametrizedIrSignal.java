@@ -107,6 +107,10 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         this(decode.getProtocol(), decode.getParameters(), name, comment);
     }
 
+    public ParametrizedIrSignal(IrSignal irSignal, boolean ignoreT) throws DecodeIrException {
+        this(irSignal, "", "", ignoreT);
+    }
+
     public ParametrizedIrSignal(IrSignal irSignal, String name, String comment, boolean ignoreT) throws DecodeIrException {
         super(name, comment);
         DecodeIR.DecodedSignal[] decodes = DecodeIR.decode(irSignal);
