@@ -27,6 +27,7 @@ rm -rf ${APPIMAGEDIR}
 install -d ${MYPROG_HOME}
 install --mode=444 target/${APPNAME}-jar-with-dependencies.jar ${MYPROG_HOME}
 install --mode=444 target/maven-shared-archive-resources/*.ini ${MYPROG_HOME}
+install --mode=444 target/protocols.ini ${MYPROG_HOME}
 #install --mode=444 target/maven-shared-archive-resources/girr.xml ${MYPROG_HOME}
 install -d ${MYPROG_HOME}/exportformats.d
 install --mode=444 target/exportformats.d/* ${MYPROG_HOME}/exportformats.d
