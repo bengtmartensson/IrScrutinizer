@@ -28,6 +28,7 @@ import org.harctoolbox.IrpMaster.IrpMaster;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.guicomponents.IrpMasterBean;
 
 /**
  *
@@ -193,6 +194,10 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         localParameters.remove("hex");
         Command command = new Command(getName(), getComment(), protocolName, localParameters);
         return command;
+    }
+
+    private String dummyName() {
+        return (new IrpMasterBean.DefaultSignalNameFormatter()).format(protocolName, parameters);
     }
 
     private static class ParameterIrSignalColumns extends NamedIrSignal.AbstractColumnFunction /*implements IColumn*/ {
@@ -376,6 +381,17 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         public void setMiscParameters(String value) {
             for (int row =  0; row < getRowCount(); row++)
                 setValueAt(value, row, ParameterIrSignalColumns.posMiscParameters);
+            fireTableDataChanged();
+        }
+
+        public void addDummyNames() {
+            for (int row = 0; row < getRowCount(); row++) {
+                ParametrizedIrSignal irSignal = getParameterIrSignal(row);
+                if (irSignal.getName().isEmpty()) {
+                    String newName = irSignal.dummyName();
+                    setValueAt(newName, row, ParameterIrSignalColumns.posName);
+                }
+            }
             fireTableDataChanged();
         }
 

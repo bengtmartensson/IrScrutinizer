@@ -1716,7 +1716,9 @@ public final class GuiMain extends javax.swing.JFrame {
         setTMenuItem = new javax.swing.JMenuItem();
         unsetTMenuItem = new javax.swing.JMenuItem();
         setMiscParamsMenuItem = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
         addMissingFsMenuItem = new javax.swing.JMenuItem();
+        addMissingNamesMenuItem = new javax.swing.JMenuItem();
         rawTablePopupMenu = new javax.swing.JPopupMenu();
         rawSorterCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator25 = new javax.swing.JPopupMenu.Separator();
@@ -2606,6 +2608,7 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         parametrizedAdvancedMenu.add(setMiscParamsMenuItem);
+        parametrizedAdvancedMenu.add(jSeparator4);
 
         addMissingFsMenuItem.setText("Add missing Fs");
         addMissingFsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -2614,6 +2617,14 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         parametrizedAdvancedMenu.add(addMissingFsMenuItem);
+
+        addMissingNamesMenuItem.setText("Ass missing names");
+        addMissingNamesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addMissingNamesMenuItemActionPerformed(evt);
+            }
+        });
+        parametrizedAdvancedMenu.add(addMissingNamesMenuItem);
 
         parameterTablePopupMenu.add(parametrizedAdvancedMenu);
 
@@ -4340,7 +4351,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(parametrizedBaseComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(csvParametrizedFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
+                    .addComponent(csvParametrizedFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 276, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, parametrizedCsvImportPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(importTextParametrizedHelpButton)
@@ -5645,7 +5656,7 @@ public final class GuiMain extends javax.swing.JFrame {
                         .addGroup(captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(startMode2Button)
                             .addComponent(stopMode2Button))
-                        .addContainerGap(35, Short.MAX_VALUE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         capturingHardwareTabbedPane.addTab("LIRC Mode 2", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), captureLircMode2Panel); // NOI18N
@@ -8946,6 +8957,10 @@ public final class GuiMain extends javax.swing.JFrame {
         checkTable(rawTableModel);
     }//GEN-LAST:event_checkRawCommandsMenuItemActionPerformed
 
+    private void addMissingNamesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addMissingNamesMenuItemActionPerformed
+        parameterTableModel.addDummyNames();
+    }//GEN-LAST:event_addMissingNamesMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -8954,6 +8969,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu actionsMenu;
     private javax.swing.JMenuItem addEmptyParametrizedSignalMenuItem;
     private javax.swing.JMenuItem addMissingFsMenuItem;
+    private javax.swing.JMenuItem addMissingNamesMenuItem;
     private javax.swing.JMenuItem analysisToClipboardMenuItem;
     private javax.swing.JRadioButtonMenuItem analyzerBase10RadioButtonMenuItem;
     private javax.swing.JRadioButtonMenuItem analyzerBase16RadioButtonMenuItem;
@@ -9281,6 +9297,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator28;
     private javax.swing.JPopupMenu.Separator jSeparator29;
     private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;

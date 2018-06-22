@@ -502,12 +502,22 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setMiscParamsMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="addMissingFsMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Add missing Fs"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addMissingFsMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="addMissingNamesMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Ass missing names"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addMissingNamesMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -6767,7 +6777,7 @@
                                               <Component id="startMode2Button" alignment="3" min="-2" max="-2" attributes="0"/>
                                               <Component id="stopMode2Button" alignment="3" min="-2" max="-2" attributes="0"/>
                                           </Group>
-                                          <EmptySpace pref="35" max="32767" attributes="0"/>
+                                          <EmptySpace max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
