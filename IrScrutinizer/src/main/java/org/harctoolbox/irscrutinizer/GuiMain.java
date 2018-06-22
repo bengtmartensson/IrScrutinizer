@@ -1528,7 +1528,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 Map<String, Long> params = new HashMap<>(command.getParameters());
                 params.put("F", F);
                 registerParameterCommand(new Command((new IrpMasterBean.DefaultSignalNameFormatter()).format(command.getProtocolName(), params),
-                        null, protocolName, params));
+                        "", protocolName, params));
             }
         }
     }
