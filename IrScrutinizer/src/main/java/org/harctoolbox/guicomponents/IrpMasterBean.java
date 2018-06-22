@@ -19,8 +19,6 @@ package org.harctoolbox.guicomponents;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -43,6 +41,8 @@ import org.harctoolbox.IrpMaster.Protocol;
 import org.harctoolbox.IrpMaster.UnassignedException;
 import org.harctoolbox.IrpMaster.UnknownProtocolException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.irscrutinizer.DefaultSignalNameFormatter;
+import org.harctoolbox.irscrutinizer.ISignalNameFormatter;
 
 /**
  *
@@ -71,45 +71,6 @@ public final class IrpMasterBean extends javax.swing.JPanel {
     private String additionalParameters = "";
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-
-    public interface ISignalNameFormatter {
-        public String format(String protocolName, Map<String, Long>parameters);
-    }
-
-    // should probably not be here, but somewhere else
-    public static class DefaultSignalNameFormatter implements ISignalNameFormatter, Serializable {
-        private StringBuilder doParameter(Map<String, Long> parameters, String parameterName) {
-            if (!parameters.containsKey(parameterName))
-                return new StringBuilder(0);
-
-            StringBuilder str = new StringBuilder(64);
-            str.append(parameterName).append(parameters.get(parameterName));
-            parameters.remove(parameterName);
-            return str;
-        }
-
-        @Override
-        public String format(String protocolName, Map<String, Long> parameters) {
-            @SuppressWarnings("unchecked")
-            Map<String, Long> params = new HashMap<>(parameters);
-
-            StringBuilder tail = new StringBuilder(64);
-            tail.append(doParameter(params, "D"));
-            tail.append(doParameter(params, "S"));
-            tail.append(doParameter(params, "F"));
-            tail.append(doParameter(params, "T"));
-
-            StringBuilder mid = new StringBuilder(64);
-            for (String param : params.keySet().toArray(new String[params.size()])) { // toArray to avoid concurrent modification
-                mid.append(doParameter(params, param));
-            }
-
-            StringBuilder str = new StringBuilder(protocolName.replace(" ", "-"));
-            str.append("_").append(mid).append(tail);
-
-            return str.toString();
-        }
-    }
 
     /**
      * @param disregardRepeatMins the disregardRepeatMins to set

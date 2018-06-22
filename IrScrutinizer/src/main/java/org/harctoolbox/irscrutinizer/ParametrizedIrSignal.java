@@ -28,7 +28,6 @@ import org.harctoolbox.IrpMaster.IrpMaster;
 import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.girr.Command;
-import org.harctoolbox.guicomponents.IrpMasterBean;
 
 /**
  *
@@ -197,7 +196,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
     }
 
     private String dummyName() {
-        return (new IrpMasterBean.DefaultSignalNameFormatter()).format(protocolName, parameters);
+        return DefaultSignalNameFormatter.formatName(protocolName, parameters);
     }
 
     private static class ParameterIrSignalColumns extends NamedIrSignal.AbstractColumnFunction /*implements IColumn*/ {
