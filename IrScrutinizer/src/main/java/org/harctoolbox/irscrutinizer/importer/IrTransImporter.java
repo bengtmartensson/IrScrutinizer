@@ -69,6 +69,8 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
             return null; // EOF
         List<Timing> timings = parseTimings(reader);
         Map<String, IrTransCommand> parsedCommands = parseCommands(reader, timings);
+        if (parsedCommands.isEmpty())
+            throw new ParseException("Remote had no parsable commands.", 0);
         Map<String, Command> commands = new LinkedHashMap<>(4);
         parsedCommands.values().forEach((cmd) -> {
             try {
@@ -118,57 +120,60 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         IrTransCommand command = null;
         String[] arr = line.trim().split("[\\[\\]]");
         int index = 1;
-
-        String name = arr[index++];
-        index++;
-        String type = arr[index++];
-        switch (type) {
-            case "RAW": {
-                int noNumbers = Integer.parseInt(arr[index++]);
-                if (!arr[index++].equals("FREQ"))
-                    throw new ParseException("No FREQ in raw signal", lineNo);
-                int frequency = Integer.parseInt(arr[index++]);
-                if (arr[index].equals("FREQ-MEAS"))
-                    index += 2;
-                if (!arr[index++].equals("D"))
-                    throw new ParseException("[D] not found", lineNo);
-                String data = arr[index++];
-                String[] numbers = data.split(" ");
-                if (numbers.length != noNumbers)
-                    throw new ParseException("Wrong number of durations", lineNo);
-                int[] times = new int[noNumbers + (noNumbers % 2)];
-                int durationIndex = 0;
-                int numberIndex = 0;
-                while (numberIndex < noNumbers) {
-                    int t = Integer.parseInt(numbers[numberIndex]);
-                    if (t == 0) {
-                        times[durationIndex] = 256*Integer.parseInt(numbers[numberIndex+1]) + Integer.parseInt(numbers[numberIndex+2]);
-                        numberIndex += 3;
-                    } else {
-                        times[durationIndex] = t;
-                        numberIndex++;
+        try {
+            String name = arr[index++];
+            index++;
+            String type = arr[index++];
+            switch (type) {
+                case "RAW": {
+                    int noNumbers = Integer.parseInt(arr[index++]);
+                    if (!arr[index++].equals("FREQ"))
+                        throw new ParseException("No FREQ in raw signal", lineNo);
+                    int frequency = Integer.parseInt(arr[index++]);
+                    if (arr[index].equals("FREQ-MEAS"))
+                        index += 2;
+                    if (!arr[index++].equals("D"))
+                        throw new ParseException("[D] not found", lineNo);
+                    String data = arr[index++];
+                    String[] numbers = data.split(" ");
+                    if (numbers.length != noNumbers)
+                        throw new ParseException("Wrong number of durations", lineNo);
+                    int[] times = new int[noNumbers + (noNumbers % 2)];
+                    int durationIndex = 0;
+                    int numberIndex = 0;
+                    while (numberIndex < noNumbers) {
+                        int t = Integer.parseInt(numbers[numberIndex]);
+                        if (t == 0) {
+                            times[durationIndex] = 256 * Integer.parseInt(numbers[numberIndex + 1]) + Integer.parseInt(numbers[numberIndex + 2]);
+                            numberIndex += 3;
+                        } else {
+                            times[durationIndex] = t;
+                            numberIndex++;
+                        }
+                        durationIndex++;
                     }
-                    durationIndex++;
+                    if ((durationIndex % 2) != 0)
+                        times[durationIndex++] = dummyEndingGap;
+                    command = new IrTransCommandRaw(name, frequency, times, durationIndex);
+                    break;
                 }
-                if ((durationIndex % 2) != 0)
-                    times[durationIndex++] = dummyEndingGap;
-                command = new IrTransCommandRaw(name, frequency, times, durationIndex);
-                break;
-            }
 
-            case "CCF":
-                command = new IrTransCommandCcf(name, arr[index++]);
-                break;
-            case "T": {
-                int timingNo = Integer.parseInt(arr[index++]);
-                if (!arr[index++].equals("D"))
-                    throw new ParseException("[D] not found", lineNo);
-                String data = arr[index++];
-                command = new IrTransCommandIndexed(name, data, timings.get(timingNo));
-                break;
+                case "CCF":
+                    command = new IrTransCommandCcf(name, arr[index++]);
+                    break;
+                case "T": {
+                    int timingNo = Integer.parseInt(arr[index++]);
+                    if (!arr[index++].equals("D"))
+                        throw new ParseException("[D] not found", lineNo);
+                    String data = arr[index++];
+                    command = new IrTransCommandIndexed(name, data, timings.get(timingNo));
+                    break;
+                }
+                default:
+                    throw new ParseException("Unknown command type " + type, lineNo);
             }
-            default:
-                throw new ParseException("Unknown command type " + type, lineNo);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            throw new ParseException("unparsable line", lineNo);
         }
 
         if (index != arr.length)
