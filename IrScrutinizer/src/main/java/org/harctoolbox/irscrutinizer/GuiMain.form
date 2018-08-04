@@ -514,7 +514,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="addMissingNamesMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Ass missing names"/>
+                <Property name="text" type="java.lang.String" value="Add missing names"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addMissingNamesMenuItemActionPerformed"/>

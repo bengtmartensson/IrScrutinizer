@@ -2618,7 +2618,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         parametrizedAdvancedMenu.add(addMissingFsMenuItem);
 
-        addMissingNamesMenuItem.setText("Ass missing names");
+        addMissingNamesMenuItem.setText("Add missing names");
         addMissingNamesMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addMissingNamesMenuItemActionPerformed(evt);
