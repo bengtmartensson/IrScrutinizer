@@ -7581,6 +7581,8 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void setProtocolMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setProtocolMenuItemActionPerformed
         String newProtocol = guiUtils.getInput("Enter new protocol", "Protocol request", "NEC1");
+        if (newProtocol == null) // Cancel pressed
+            return;
         if (irpMaster.isKnown(newProtocol) ||
             guiUtils.confirm("The protocol \"" + newProtocol + "\" is unknown. Proceed anyhow?")) {
             parameterTableModel.setProtocol(newProtocol);
