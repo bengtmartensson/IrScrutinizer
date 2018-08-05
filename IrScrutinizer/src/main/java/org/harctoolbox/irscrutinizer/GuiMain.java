@@ -1716,6 +1716,9 @@ public final class GuiMain extends javax.swing.JFrame {
         setTMenuItem = new javax.swing.JMenuItem();
         unsetTMenuItem = new javax.swing.JMenuItem();
         setMiscParamsMenuItem = new javax.swing.JMenuItem();
+        transformNamesMenu = new javax.swing.JMenu();
+        addNamePrefixMenuItem = new javax.swing.JMenuItem();
+        transformNameMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         addMissingFsMenuItem = new javax.swing.JMenuItem();
         addMissingNamesMenuItem = new javax.swing.JMenuItem();
@@ -2608,6 +2611,29 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         parametrizedAdvancedMenu.add(setMiscParamsMenuItem);
+
+        transformNamesMenu.setText("Name transformations");
+        transformNamesMenu.setToolTipText("Transformations on the command names.");
+
+        addNamePrefixMenuItem.setText("Add prefix...");
+        addNamePrefixMenuItem.setToolTipText("Add a prefix to all names.");
+        addNamePrefixMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addNamePrefixMenuItemActionPerformed(evt);
+            }
+        });
+        transformNamesMenu.add(addNamePrefixMenuItem);
+
+        transformNameMenuItem.setText("Replace...");
+        transformNameMenuItem.setToolTipText("Replace a substring (regular expression) in command names.");
+        transformNameMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                transformNameMenuItemActionPerformed(evt);
+            }
+        });
+        transformNamesMenu.add(transformNameMenuItem);
+
+        parametrizedAdvancedMenu.add(transformNamesMenu);
         parametrizedAdvancedMenu.add(jSeparator4);
 
         addMissingFsMenuItem.setText("Add missing Fs");
@@ -8963,6 +8989,21 @@ public final class GuiMain extends javax.swing.JFrame {
         parameterTableModel.addDummyNames();
     }//GEN-LAST:event_addMissingNamesMenuItemActionPerformed
 
+    private void addNamePrefixMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNamePrefixMenuItemActionPerformed
+        String prefix = guiUtils.getInput("Enter desired prefix", "Prefix inquiry", "cmd_");
+        if (prefix != null)
+            parameterTableModel.namesTransform("^", prefix);
+    }//GEN-LAST:event_addNamePrefixMenuItemActionPerformed
+
+    private void transformNameMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transformNameMenuItemActionPerformed
+        String old = guiUtils.getInput("Enter string to be replaced (regular expression)", "String inquiry", "test");
+        if (old == null)
+            return;
+        String replacement = guiUtils.getInput("Replace \"" + old + "\" by ...", "String inquiry", old);
+        if (replacement != null)
+            parameterTableModel.namesTransform(old, replacement);
+    }//GEN-LAST:event_transformNameMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -8972,6 +9013,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem addEmptyParametrizedSignalMenuItem;
     private javax.swing.JMenuItem addMissingFsMenuItem;
     private javax.swing.JMenuItem addMissingNamesMenuItem;
+    private javax.swing.JMenuItem addNamePrefixMenuItem;
     private javax.swing.JMenuItem analysisToClipboardMenuItem;
     private javax.swing.JRadioButtonMenuItem analyzerBase10RadioButtonMenuItem;
     private javax.swing.JRadioButtonMenuItem analyzerBase16RadioButtonMenuItem;
@@ -9469,6 +9511,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JTabbedPane topLevelTabbedPane;
     private javax.swing.JButton transferToParametricRemoteButton;
     private javax.swing.JButton transferToRawRemoteButton;
+    private javax.swing.JMenuItem transformNameMenuItem;
+    private javax.swing.JMenu transformNamesMenu;
     private javax.swing.JCheckBoxMenuItem translateProntoFontCheckBoxMenuItem;
     private org.harctoolbox.guicomponents.AudioParametersBean transmitAudioParametersBean;
     private javax.swing.JButton transmitGenerateButton;

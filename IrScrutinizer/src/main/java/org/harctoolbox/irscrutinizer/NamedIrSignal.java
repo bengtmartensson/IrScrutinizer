@@ -430,6 +430,15 @@ public abstract class NamedIrSignal {
             return ! (columnsFunc.uninterestingIfAllEqual(column) && isAllEqualColumn(column));
         }
 
+        public void namesTransform(String from, String to) {
+            for (int row = 0; row < getRowCount(); row++) {
+                String oldName = (String) getValueAt(row, columnsFunc.getPosName());
+                String newName = oldName.replaceFirst(from, to);
+                setValueAt(newName, row, columnsFunc.getPosName());
+            }
+            fireTableDataChanged();
+        }
+
         // Derived classes should define a public version of the function, taking only
         // an instance of the derived class as argument.
         protected synchronized void addSignal(NamedIrSignal cir) {

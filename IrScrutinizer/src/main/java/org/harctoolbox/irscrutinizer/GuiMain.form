@@ -502,6 +502,32 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setMiscParamsMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <Menu class="javax.swing.JMenu" name="transformNamesMenu">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Name transformations"/>
+                <Property name="toolTipText" type="java.lang.String" value="Transformations on the command names."/>
+              </Properties>
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="addNamePrefixMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Add prefix..."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Add a prefix to all names."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addNamePrefixMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="transformNameMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Replace..."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Replace a substring (regular expression) in command names."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="transformNameMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="addMissingFsMenuItem">
