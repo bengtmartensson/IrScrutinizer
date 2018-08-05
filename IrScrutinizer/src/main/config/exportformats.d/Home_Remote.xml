@@ -58,7 +58,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <Variables>
                     <xsl:apply-templates select=".//girr:command"/>
                 </Variables>
-                <Devices/>
             </GCDevice>
         </xsl:template>
 
