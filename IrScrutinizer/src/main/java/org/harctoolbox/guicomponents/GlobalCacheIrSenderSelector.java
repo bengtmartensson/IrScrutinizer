@@ -172,6 +172,7 @@ public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
         if (senderSupport) {
             int oldModule = this.module;
             this.module = module;
+            setNumberOfPortsForModule(module);
             propertyChangeSupport.firePropertyChange(PROP_MODULE, oldModule, module);
         }
     }
@@ -192,6 +193,18 @@ public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
             this.port = port;
             propertyChangeSupport.firePropertyChange(PROP_PORT, oldPort, port);
         }
+    }
+
+    private void setNumberOfPortsForModule(int module) {
+        int number = globalCache.getModuleSecondNumber(module);
+        setNumberOfPorts(number);
+    }
+
+    private void setNumberOfPorts(int ports) {
+        String[] arr = new String[ports];
+        for (int i = 0; i < ports; i++)
+            arr[i] = Integer.toString(i+1);
+        portComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(arr));
     }
 
     /**
