@@ -8110,7 +8110,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
             if (modulatedIrSequence != null) {
                 IrSignal signal = InterpretString.interpretIrSequence(modulatedIrSequence, true, true);
-                guiUtils.message(modulatedIrSequence.toPrintString());
+                guiUtils.message(modulatedIrSequence.toPrintString(true));
                 guiUtils.message("f=" + (int) modulatedIrSequence.getFrequency());
                 DecodeIR.DecodedSignal[] decodes = DecodeIR.decode(signal);
                 if (decodes == null)
