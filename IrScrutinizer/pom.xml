@@ -369,6 +369,22 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>copy-resources-contributed</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/contributed</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>contributed</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                     <!-- Allow execution from the target directory, Linux64 only :-) -->
                     <execution>
                         <id>copy-linux64-so</id>
