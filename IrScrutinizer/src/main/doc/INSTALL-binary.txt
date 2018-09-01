@@ -1,14 +1,13 @@
 This is the generic binary distribution of IrScrutinizer. It runs on
-Linux, Windows, Macs, and probably on other similar systems as well.
+Linux (including Raspberry Pi), Windows, Macs,
+and probably on other similar systems as well.
 
-Users of Fedora Linux should probably use the Fedora package instead,
-available RSN. Installation will be, as root,
+Users of 64-bit Linux (that is almost all Linux systems on PCs today)
+can alternatively use the AppImage version, since it requres no installation.
+Windows users probably prefers using the Windows setup.exe.
+Mac OS users are recommended to use the app version.
 
-yum install irscrutinizer
-
-Users of other Linux-es should preferably exert pressure on their
-distributor to port the Fedora packages ;-). Windows users probably
-prefers the Windows setup.exe version.
+In all cases, a Java 8 or later needs to be installed first.
 
 To install, unpack in an empty directory of your choice, suggested is
 /usr/local/irscrutinizer. Inspect the wrapper irscrutinizer.sh, and

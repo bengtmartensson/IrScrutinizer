@@ -7,12 +7,12 @@
     <groupId>org.harctoolbox</groupId>
     <artifactId>IrScrutinizer</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.4.2</version>
     <name>IrScrutinizer</name>
     <parent>
         <groupId>org.harctoolbox</groupId>
         <artifactId>HarctoolboxBundle</artifactId>
-        <version>1.5.0-SNAPSHOT</version>
+        <version>1.4.2</version>
         <relativePath>..</relativePath>
     </parent>
     <licenses>
@@ -30,10 +30,10 @@
         <project.exepath>/usr/local/bin/${project.nameLowercase}</project.exepath>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <IrpMaster.version>1.5dev</IrpMaster.version>
-        <Girr.version>1.5dev</Girr.version>
-        <Jirc.version>1.5dev</Jirc.version>
-        <HarcHardware.version>1.5dev</HarcHardware.version>
+        <IrpMaster.version>1.4.2</IrpMaster.version>
+        <Girr.version>1.4.2</Girr.version>
+        <Jirc.version>1.4.2</Jirc.version>
+        <HarcHardware.version>1.4.2</HarcHardware.version>
     </properties>
     <distributionManagement>
         <repository>
