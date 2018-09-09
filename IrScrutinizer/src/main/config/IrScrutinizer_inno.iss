@@ -44,7 +44,7 @@ Source: "IrScrutinizer-jar-with-dependencies.jar"; DestName: "IrScrutinizer.jar"
 Source: "..\..\native\Windows-x86\*"; DestDir: "{app}\Windows-x86"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\native\Windows-amd64\*"; DestDir: "{app}\Windows-amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "*.ini"; DestDir: "{app}"; Flags: ignoreversion
-Source: "maven-shared-archive-resources/*.ini"; DestDir: "{app}"; Flags: ignoreversion
+;;;Source: "maven-shared-archive-resources/*.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "irscrutinizer.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "exportformats.d\*"; DestDir: "{app}\exportformats.d"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "contributed\import\*"; DestDir: "{app}\contributed\import"; Flags: ignoreversion recursesubdirs createallsubdirs

@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.text.ParseException;
-import org.harctoolbox.IrpMaster.IrpMasterException;
+import org.harctoolbox.ircore.InvalidArgumentException;
 
 /**
  * This class models reading from either a file or a stream (Reader), but not from a data base.
@@ -34,18 +34,18 @@ public interface IReaderImporter extends IFileImporter {
      * @param origin
      * @throws IOException Generic IO error.
      * @throws ParseException Generic parse error.
-     * @throws org.harctoolbox.IrpMaster.IrpMasterException
+     * @throws org.harctoolbox.ircore.InvalidArgumentException
      */
-    public void load(Reader reader, String origin) throws IOException, ParseException, IrpMasterException;
+    public void load(Reader reader, String origin) throws IOException, ParseException, InvalidArgumentException;
 
     /**
      * Loads from stdin.
      * @param charsetName
      * @throws IOException
      * @throws ParseException
-     * @throws org.harctoolbox.IrpMaster.IrpMasterException
+     * @throws org.harctoolbox.ircore.InvalidArgumentException
      */
-    public void load(String charsetName) throws IOException, ParseException, IrpMasterException;
+    public void load(String charsetName) throws IOException, ParseException, InvalidArgumentException;
 
     /**
      *
@@ -54,9 +54,9 @@ public interface IReaderImporter extends IFileImporter {
      * @param charsetName
      * @throws IOException
      * @throws ParseException
-     * @throws IrpMasterException
+     * @throws org.harctoolbox.ircore.InvalidArgumentException
      */
-    public void load(InputStream inputStream, String origin, String charsetName) throws IOException, ParseException, IrpMasterException;
+    public void load(InputStream inputStream, String origin, String charsetName) throws IOException, ParseException, InvalidArgumentException;
 
     /**
      * Load from the string given as the first argument.
@@ -66,9 +66,9 @@ public interface IReaderImporter extends IFileImporter {
      * @param charsetName
      * @throws IOException
      * @throws ParseException
-     * @throws org.harctoolbox.IrpMaster.IrpMasterException
+     * @throws org.harctoolbox.ircore.InvalidArgumentException
      */
-    public void load(String payload, String origin, String charsetName) throws IOException, ParseException, IrpMasterException;
+    public void load(String payload, String origin, String charsetName) throws IOException, ParseException, InvalidArgumentException;
 
     /**
      * If the argument can be parsed as an URL string, load from its content.
@@ -77,9 +77,9 @@ public interface IReaderImporter extends IFileImporter {
      * @param charsetName
      * @throws IOException
      * @throws ParseException
-     * @throws org.harctoolbox.IrpMaster.IrpMasterException
+     * @throws org.harctoolbox.ircore.InvalidArgumentException
      */
-    public void load(String urlOrFilename, String charsetName) throws IOException, ParseException, IrpMasterException;
+    public void load(String urlOrFilename, String charsetName) throws IOException, ParseException, InvalidArgumentException;
 
-    public void load(String urlOrFilename, boolean zip, String charsetName) throws IOException, ParseException;
+    public void load(String urlOrFilename, boolean zip, String charsetName) throws IOException, ParseException, InvalidArgumentException;
 }

@@ -20,10 +20,9 @@ package org.harctoolbox.irscrutinizer.exporter;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.transform.TransformerException;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.RemoteSet;
-import org.harctoolbox.girr.XmlExporter;
+import org.harctoolbox.irp.XmlUtils;
 import org.w3c.dom.Document;
 
 /**
@@ -60,12 +59,13 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws IOException, IrpMasterException, TransformerException {
+    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws IOException, TransformerException {
         for (Command.CommandTextFormat formatter : extraFormats)
             remoteSet.addFormat(formatter, count);
-        Document document = remoteSet.xmlExportDocument(title, girrStyleSheetType, girrStyleSheetUrl, fatRaw, createSchemaLocation,
+        Document document = remoteSet.toDocument(title, girrStyleSheetType, girrStyleSheetUrl, fatRaw, createSchemaLocation,
                 generateRaw, generateCcf, generateParameters);
-        (new XmlExporter(document)).printDOM(file, charsetName);
+        XmlUtils.printDOM(file, document, charsetName, null);
+        //(new XmlExporter(document)).printDOM(file, charsetName);
     }
 
     @Override

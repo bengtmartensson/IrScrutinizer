@@ -21,18 +21,18 @@ import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import org.harctoolbox.IrpMaster.IrpMasterException;
+import org.harctoolbox.ircore.InvalidArgumentException;
 
 /**
  * This class models reading from a file, but not a stream (Reader), or from a data base.
  */
 public interface IFileImporter {
 
-    public void load(File file, String charsetName) throws IOException, ParseException, IrpMasterException;
+    public void load(File file, String charsetName) throws IOException, ParseException, InvalidArgumentException;
 
-    public void possiblyZipLoad(File file, String charsetName) throws ParseException, IOException, IrpMasterException;
+    public void possiblyZipLoad(File file, String charsetName) throws ParseException, IOException, InvalidArgumentException;
 
-    public boolean loadFileSelector(Component component, String title, String defaultDir, String charsetName) throws IOException, ParseException, IrpMasterException;
+    public boolean loadFileSelector(Component component, String title, String defaultDir, String charsetName) throws IOException, ParseException, InvalidArgumentException;
 
     public boolean canImportDirectories();
 

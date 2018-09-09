@@ -612,7 +612,7 @@
           <SubComponents>
             <Component class="org.harctoolbox.guicomponents.IrpMasterBean" name="irpMasterBean">
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpMaster, &quot;rc5&quot;, false)"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpMaster, &quot;rc5&quot;)"/>
               </AuxValues>
             </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane2">

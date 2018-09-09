@@ -25,11 +25,11 @@ import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 import org.harctoolbox.irscrutinizer.Props;
 
@@ -80,7 +80,7 @@ public class SendingHardwareManager {
         selected.setVerbose(verbose);
     }
 
-    public boolean sendIr(IrSignal irSignal, int count) throws IOException, IrpMasterException, NoSuchTransmitterException, HardwareUnavailableException, HarcHardwareException {
+    public boolean sendIr(IrSignal irSignal, int count) throws IOException, NoSuchTransmitterException, HardwareUnavailableException, HarcHardwareException, InvalidArgumentException {
         if (selected == null)
             throw new HardwareUnavailableException("No transitting hardware selected.");
         return selected.sendIr(irSignal, count);

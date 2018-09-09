@@ -26,15 +26,16 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.irscrutinizer.Props;
 
 public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSetImporter {
@@ -58,7 +59,7 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
             //System.out.println(gcdb.getDeviceTypes("bell & howell"));
             System.out.println(gcdb.getCodeset("sony", "laser disc"));
             System.out.println(gcdb.getCommands("sony", "laser disc", "201"));
-        } catch (IOException ex) {
+        } catch (IOException | InvalidArgumentException ex) {
             System.err.println(ex.getMessage());
         }
     }
@@ -86,7 +87,7 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
         if (verbose)
             System.err.println("Opening " + url.toString());
         URLConnection urlConnection = url.openConnection(/*proxy*/);
-        return JsonArray.readFrom(new InputStreamReader(urlConnection.getInputStream(), IrpUtils.dumbCharset));
+        return JsonArray.readFrom(new InputStreamReader(urlConnection.getInputStream(), Charset.forName("US-ASCII")));
     }
 
     private Map<String, String> getMap(String urlFragment, String keyName, String valueName) throws IOException {
@@ -118,12 +119,12 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
                 "Codeset", "Key").values();
     }
 
-    public ArrayList<Command> getCommands(String manufacturerKey, String deviceTypeKey, String codeSet) throws IOException {
+    public ArrayList<Command> getCommands(String manufacturerKey, String deviceTypeKey, String codeSet) throws IOException, InvalidArgumentException {
         load(manufacturerKey, deviceTypeKey, codeSet);
         return getCommands();//codesMap;
     }
 
-    public void load(String manufacturerKey, String deviceTypeKey, String codeSet) throws IOException {
+    public void load(String manufacturerKey, String deviceTypeKey, String codeSet) throws IOException, InvalidArgumentException {
         clearCommands();
         manufacturer = manufacturerKey;
         deviceType = deviceTypeKey;

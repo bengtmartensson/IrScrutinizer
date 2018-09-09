@@ -1676,17 +1676,6 @@
             </Menu>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator20">
             </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="disregardRepeatMinsCheckBoxMenuItem">
-              <Properties>
-                <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="properties.getDisregardRepeatMins()" type="code"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Disregard repeat mins"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="disregardRepeatMinsCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
             <Menu class="javax.swing.JMenu" name="importOptionsMenu">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Import options"/>
@@ -1717,7 +1706,7 @@
                     <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="properties.getInvokeDecodeIr()" type="code"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Invoke DecodeIr"/>
+                    <Property name="text" type="java.lang.String" value="Invoke Decoder"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="invokeDecodeIrCheckBoxMenuItemActionPerformed"/>
@@ -2003,7 +1992,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="protocolSpecMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Protocol specs (DecodeIR)"/>
+                <Property name="text" type="java.lang.String" value="Browse Protocols"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="protocolSpecMenuItemActionPerformed"/>
@@ -2305,12 +2294,12 @@
                   <SubComponents>
                     <Component class="javax.swing.JLabel" name="jLabel3">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="DecodeIR:"/>
+                        <Property name="text" type="java.lang.String" value="Decode:"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel4">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="AnalyzeIR:"/>
+                        <Property name="text" type="java.lang.String" value="IRP:"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel7">
@@ -2906,7 +2895,7 @@
                     </Property>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpMaster, properties.getIrpMasterCurrentProtocol(), properties.getIrpMasterCurrentD(), properties.getIrpMasterCurrentS(), properties.getIrpMasterCurrentF(), properties.getIrpMasterCurrentT(), properties.getIrpMasterCurrentAdditionalParameters(), properties.getDisregardRepeatMins())"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpDatabase, properties.getIrpMasterCurrentProtocol(), properties.getIrpMasterCurrentD(), properties.getIrpMasterCurrentS(), properties.getIrpMasterCurrentF(), properties.getIrpMasterCurrentT(), properties.getIrpMasterCurrentAdditionalParameters())"/>
                   </AuxValues>
                 </Component>
                 <Component class="javax.swing.JButton" name="generateButton">
@@ -5035,7 +5024,6 @@
                                                           <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
                                                           <Group type="103" groupAlignment="0" attributes="0">
                                                               <Component id="exportGenerateSendIrCheckBox" min="-2" max="-2" attributes="0"/>
-                                                              <Component id="exportGenerateUeiCheckBox" min="-2" max="-2" attributes="0"/>
                                                               <Component id="exportGenerateShortCcfCheckBox" min="-2" max="-2" attributes="0"/>
                                                           </Group>
                                                       </Group>
@@ -5054,7 +5042,7 @@
                                                   <Component id="openLastFileButton" min="-2" max="-2" attributes="0"/>
                                               </Group>
                                           </Group>
-                                          <EmptySpace max="32767" attributes="0"/>
+                                          <EmptySpace pref="10" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <Group type="103" groupAlignment="0" attributes="0">
@@ -5088,7 +5076,6 @@
                                   <Group type="103" groupAlignment="3" attributes="0">
                                       <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="exportGenerateParametersCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="exportGenerateUeiCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <Component id="exportHelpButton" min="-2" max="-2" attributes="0"/>
@@ -5118,7 +5105,7 @@
                               <Component id="openLastFileButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
-                          <Component id="exportSpecificOptionsTabbedPane" max="32767" attributes="0"/>
+                          <Component id="exportSpecificOptionsTabbedPane" pref="180" max="32767" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -5756,17 +5743,6 @@
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportParametricRemoteButtonActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JCheckBox" name="exportGenerateUeiCheckBox">
-                  <Properties>
-                    <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="properties.getExportGenerateUei()" type="code"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="UEI Learned"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportGenerateUeiCheckBoxActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="exportGenerateSendIrCheckBox">

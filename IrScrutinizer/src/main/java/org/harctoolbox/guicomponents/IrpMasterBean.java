@@ -15,10 +15,14 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see http://www.gnu.org/licenses/.
 */
 
+/**
+ * Misleading name, should be called e.g. IrpTransmogrifierBean ...
+ */
 package org.harctoolbox.guicomponents;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.text.ParseException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,28 +31,32 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import org.harctoolbox.IrpMaster.DomainViolationException;
-import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
-import org.harctoolbox.IrpMaster.InvalidRepeatException;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpMaster;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.IrpUtils;
-import org.harctoolbox.IrpMaster.Iterate.InputVariableSetValues;
-import org.harctoolbox.IrpMaster.Iterate.RandomValueSet;
-import org.harctoolbox.IrpMaster.ParseException;
-import org.harctoolbox.IrpMaster.Protocol;
-import org.harctoolbox.IrpMaster.UnassignedException;
-import org.harctoolbox.IrpMaster.UnknownProtocolException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.ircore.IrCoreUtils;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.irp.InvalidNameException;
+import org.harctoolbox.irp.IrpDatabase;
+import org.harctoolbox.irp.IrpException;
+import org.harctoolbox.irp.IrpInvalidArgumentException;
+import org.harctoolbox.irp.NameUnassignedException;
+import org.harctoolbox.irp.Protocol;
+import org.harctoolbox.irp.UnknownProtocolException;
+import org.harctoolbox.irp.UnsupportedRepeatException;
 import org.harctoolbox.irscrutinizer.DefaultSignalNameFormatter;
 import org.harctoolbox.irscrutinizer.ISignalNameFormatter;
+import org.harctoolbox.valuesets.InputVariableSetValues;
+import org.harctoolbox.valuesets.RandomValueSet;
 
 /**
  *
  */
 public final class IrpMasterBean extends javax.swing.JPanel {
-    private static final String invalidParameterString = Long.toString(IrpUtils.invalid);
+    private static final String invalidParameterString = Long.toString(IrCoreUtils.INVALID);
+
+    private static final String FALLBACK_PROTOCOL_NAME = "NEC1";
 
     public static final String PROP_PROTOCOL_NAME = "protocolName";
     public static final String PROP_D = "D";
@@ -57,9 +65,8 @@ public final class IrpMasterBean extends javax.swing.JPanel {
     public static final String PROP_T = "T";
     public static final String PROP_ADDITIONAL_PARAMS = "ADDITIONAL_PARAMS";
     private JFrame frame;
-    private IrpMaster irpMaster;
+    private IrpDatabase irpDatabase;
     private String protocolName;
-    private boolean disregardRepeatMins;
     private GuiUtils guiUtils;
     private ISignalNameFormatter signalNameFormatter;
 
@@ -71,13 +78,6 @@ public final class IrpMasterBean extends javax.swing.JPanel {
     private String additionalParameters = "";
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-
-    /**
-     * @param disregardRepeatMins the disregardRepeatMins to set
-     */
-    public void setDisregardRepeatMins(boolean disregardRepeatMins) {
-        this.disregardRepeatMins = disregardRepeatMins;
-    }
 
     public void setSignalNameFormatter(ISignalNameFormatter signalNameFormatter) {
         this.signalNameFormatter = signalNameFormatter;
@@ -93,8 +93,8 @@ public final class IrpMasterBean extends javax.swing.JPanel {
     /**
      * @param irpMaster the irpMaster to set
      */
-    public void setIrpMaster(IrpMaster irpMaster) {
-        this.irpMaster = irpMaster;
+    public void setIrpMaster(IrpDatabase irpMaster) {
+        this.irpDatabase = irpMaster;
     }
 
     public String getProtocolName() {
@@ -108,36 +108,35 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         initComponents();
     }
 
-    public IrpMasterBean(JFrame frame, GuiUtils guiUtils, IrpMaster irpMaster, String intialProtocol, boolean disregardRepeatMins) {
-        this(frame, guiUtils, irpMaster, intialProtocol, "0", invalidParameterString, "0", "-", "", disregardRepeatMins);
+    public IrpMasterBean(JFrame frame, GuiUtils guiUtils, IrpDatabase irpMaster, String intialProtocol) {
+        this(frame, guiUtils, irpMaster, intialProtocol, "0", invalidParameterString, "0", "-", "");
     }
 
-    public IrpMasterBean(JFrame frame, GuiUtils guiUtils, IrpMaster irpMaster, String intialProtocol,
-            String initialD, String initialS, String initialF, String initialT, String initialAdditionalParameters, boolean disregardRepeatMins) {
+    public IrpMasterBean(JFrame frame, GuiUtils guiUtils, IrpDatabase irpDatabase, String intialProtocol,
+            String initialD, String initialS, String initialF, String initialT, String initialAdditionalParameters) {
         this.signalNameFormatter = new DefaultSignalNameFormatter();
         this.frame = frame;
         this.guiUtils = guiUtils;
-        this.disregardRepeatMins = disregardRepeatMins;
-        this.irpMaster = irpMaster;
-        this.protocolName = intialProtocol;
+        this.irpDatabase = irpDatabase;
+        this.protocolName = irpDatabase.isKnown(intialProtocol) ? intialProtocol : FALLBACK_PROTOCOL_NAME;
         initComponents();
         try {
             setupProtocol(protocolName, initialD, initialS, initialF, initialT, initialAdditionalParameters);
-            D = initialD;
-            S = initialS;
-            F = initialF;
-            T = initialT;
-            additionalParameters = initialAdditionalParameters;
-        } catch (ParseException | UnassignedException | UnknownProtocolException ex) {
+        } catch (IrpException ex) {
             guiUtils.error(ex);
         }
+        D = initialD;
+        S = initialS;
+        F = initialF;
+        T = initialT;
+        additionalParameters = initialAdditionalParameters;
     }
 
     private String[] irpMasterProtocols() {
-        if (irpMaster == null)
+        if (irpDatabase == null)
             return new String[]{"--"};
 
-        String[] protocolList = irpMaster.getNames().toArray(new String[irpMaster.getNames().size()]);
+        String[] protocolList = irpDatabase.getNames().toArray(new String[irpDatabase.getNames().size()]);
         java.util.Arrays.sort(protocolList, String.CASE_INSENSITIVE_ORDER);
         return protocolList;
     }
@@ -167,8 +166,9 @@ public final class IrpMasterBean extends javax.swing.JPanel {
     }
 
     private void setupProtocol(String protocolName, String initialD, String initialS, String initialF,
-            String initalT, String initialAdditionalParameters) throws UnassignedException, ParseException, UnknownProtocolException {
-        Protocol protocol = irpMaster.newProtocol(protocolName);
+            String initalT, String initialAdditionalParameters)
+            throws UnknownProtocolException, UnsupportedRepeatException, NameUnassignedException, InvalidNameException, IrpInvalidArgumentException {
+        Protocol protocol = irpDatabase.getProtocol(protocolName);
 
         checkParam(protocol, dTextField, dLabel, "D", initialD);
         checkParam(protocol, sTextField, sLabel, "S", initialS);
@@ -176,18 +176,18 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         checkParam(protocol, toggleComboBox, tLabel, "T", initalT);
 
         additionalParametersTextField.setText(initialAdditionalParameters);
-        additionalParametersLabel.setEnabled(protocol.hasAdvancedParameters());
-        additionalParametersTextField.setEnabled(protocol.hasAdvancedParameters());
+        additionalParametersLabel.setEnabled(protocol.hasNonStandardParameters());
+        additionalParametersTextField.setEnabled(protocol.hasNonStandardParameters());
 
-        irpTextField.setText(irpMaster.getIrp(protocolName));
+        irpTextField.setText(irpDatabase.getIrp(protocolName));
     }
 
-    public String getSignalName(/*long fOverride*/) throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException {
+    public String getSignalName(/*long fOverride*/) throws IrpException, IrCoreException, ParseException {
         Map<String, Long> parameters = getParameters(/*fOverride*/);
         return this.signalNameFormatter.format(protocolName, parameters);
     }
 
-    public Map<String, Long> getParameters() throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException {
+    public Map<String, Long> getParameters() throws IrpException, IrCoreException, ParseException {
         InputVariableSetValues parameterSets = getIntervalParameters();
         Iterator<LinkedHashMap<String, Long>> it = parameterSets.iterator();
         return it.hasNext() ? it.next() : null;
@@ -195,12 +195,12 @@ public final class IrpMasterBean extends javax.swing.JPanel {
 
     private void processParameter(Map<String, String> parameters, Protocol protocol, String name, JTextField textField) {
         if (protocol.hasParameter(name)
-                && !(protocol.hasParameterDefault(name) && textField.getText().trim().isEmpty()))
+                && !(protocol.getParameterDefault(name) != null && textField.getText().trim().isEmpty()))
             parameters.put(name, textField.getText());
     }
 
-    public InputVariableSetValues getIntervalParameters() throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException {
-        Protocol protocol = irpMaster.newProtocol(protocolName);
+    public InputVariableSetValues getIntervalParameters() throws UnknownProtocolException, NameUnassignedException, InvalidArgumentException, UnsupportedRepeatException, InvalidNameException, IrpInvalidArgumentException, ParseException {
+        Protocol protocol = irpDatabase.getProtocol(protocolName);
         Map<String, String> parameters = new LinkedHashMap<>(4);
 
         processParameter(parameters, protocol, "D", dTextField);
@@ -209,7 +209,7 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         String toggle = (String) toggleComboBox.getModel().getSelectedItem();
         if (!toggle.equals("-"))
             parameters.put("T", toggle);
-        String addParams = protocol.hasAdvancedParameters() ? additionalParametersTextField.getText() : null;
+        String addParams = protocol.hasNonStandardParameters() ? additionalParametersTextField.getText() : null;
         if (addParams != null && !addParams.trim().isEmpty()) {
             String[] str = addParams.trim().split("[ \t]+");
             for (String s : str) {
@@ -222,14 +222,14 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         return new InputVariableSetValues(parameters, true, protocol);
     }
 
-    public IrSignal render() throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException, DomainViolationException, InvalidRepeatException {
+    public IrSignal render() throws IrpException, IrCoreException, ParseException {
         Map<String, Long> parameters = getParameters();
-        Protocol protocol = irpMaster.newProtocol(protocolName);
-        IrSignal irSignal = protocol.renderIrSignal(parameters, !disregardRepeatMins);
+        Protocol protocol = irpDatabase.getProtocol(protocolName);
+        IrSignal irSignal = protocol.toIrSignal(parameters);
         return irSignal;
     }
 
-    public Map<String, Command> getCommands() throws UnassignedException, ParseException, UnknownProtocolException, IncompatibleArgumentException, IrpMasterException {
+    public Map<String, Command> getCommands() throws IrCoreException, IrpException, ParseException, GirrException {
         InputVariableSetValues intervals = getIntervalParameters();
         LinkedHashMap<String, Command> commands = new LinkedHashMap<>(16);
         for (LinkedHashMap<String, Long> params : intervals) {
@@ -451,9 +451,9 @@ public final class IrpMasterBean extends javax.swing.JPanel {
 
     private void protocolDocuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolDocuButtonActionPerformed
         //String protocolName = (String) protocolComboBox.getModel().getSelectedItem();
-        StringBuilder str = new StringBuilder(irpMaster.getIrp(protocolName)).append("\n\n");
-        if (irpMaster.getDocumentation(protocolName) != null)
-                str.append(irpMaster.getDocumentation(protocolName));
+        StringBuilder str = new StringBuilder(irpDatabase.getIrp(protocolName)).append("\n\n");
+        if (irpDatabase.getDocumentation(protocolName) != null)
+                str.append(irpDatabase.getDocumentation(protocolName));
         HelpPopup.newHelpPopup(frame, str.toString());
     }//GEN-LAST:event_protocolDocuButtonActionPerformed
 
@@ -463,7 +463,7 @@ public final class IrpMasterBean extends javax.swing.JPanel {
             protocolName = (String) protocolComboBox.getSelectedItem();
             setupProtocol(protocolName, invalidParameterString, invalidParameterString, invalidParameterString, invalidParameterString, "");
             propertyChangeSupport.firePropertyChange(PROP_PROTOCOL_NAME, oldProtocolName, protocolName);
-        } catch (UnassignedException | ParseException | UnknownProtocolException ex) {
+        } catch (InvalidNameException | IrpInvalidArgumentException | NameUnassignedException | UnknownProtocolException | UnsupportedRepeatException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_protocolComboBoxActionPerformed

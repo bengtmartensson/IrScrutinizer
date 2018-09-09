@@ -22,10 +22,10 @@ import java.io.File;
 import java.io.IOException;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.LineUnavailableException;
-import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
-import org.harctoolbox.IrpMaster.ModulatedIrSequence;
-import org.harctoolbox.IrpMaster.Wave;
 import org.harctoolbox.harchardware.ir.IrAudioDevice;
+import org.harctoolbox.harchardware.ir.Wave;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.irscrutinizer.Props;
 import org.harctoolbox.irscrutinizer.exporter.WaveExporter;
 
@@ -158,7 +158,7 @@ public class AudioParametersBean extends javax.swing.JPanel {
                 getSampleSize()/8*getChannels(), getSampleFrequency(), getBigEndian());
     }
 
-    public Wave newWave(ModulatedIrSequence irSequence) throws IncompatibleArgumentException {
+    public Wave newWave(ModulatedIrSequence irSequence) throws InvalidArgumentException {
         return new Wave(irSequence, getAudioFormat(), getOmitTrailingGap(), getSquare(), getDivideCarrier());
     }
 
@@ -170,11 +170,11 @@ public class AudioParametersBean extends javax.swing.JPanel {
         return hardware;
     }
 
-    public void export(File file, ModulatedIrSequence irSequence) throws IncompatibleArgumentException {
+    public void export(File file, ModulatedIrSequence irSequence) throws InvalidArgumentException {
         newWave(irSequence).export(file);
     }
 
-    public void play(ModulatedIrSequence irSequence) throws LineUnavailableException, IncompatibleArgumentException, IOException {
+    public void play(ModulatedIrSequence irSequence) throws LineUnavailableException, IOException, InvalidArgumentException {
         newWave(irSequence).play();
     }
 

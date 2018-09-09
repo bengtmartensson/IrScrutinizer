@@ -31,9 +31,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
-import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
-import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.guicomponents.GuiUtils;
+import org.harctoolbox.irp.IrpParseException;
+import org.harctoolbox.irp.IrpUtils;
 import org.xml.sax.SAXException;
 
 /**
@@ -50,7 +50,7 @@ public class IrScrutinizer {
         StringBuilder str = new StringBuilder(256);
         argumentParser.usage(str);
 
-        (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
+        (exitcode == IrpUtils.EXIT_SUCCESS ? System.out : System.err).println(str);
         doExit(exitcode); // placifying FindBugs...
     }
 
@@ -69,13 +69,13 @@ public class IrScrutinizer {
                 Props properties = new Props(appHome);
                 String[] newargs = new String[args.length + 1];
                 newargs[0] = "--config";
-                newargs[1] = properties.mkPathAbsolute(properties.getIrpProtocolsIniPath());
+                newargs[1] = properties.mkPathAbsolute(properties.getIrpProtocolsPath());
                 System.arraycopy(args, 1, newargs, 2, newargs.length - 2);
-                org.harctoolbox.IrpMaster.IrpMaster.main(newargs);
-                System.exit(IrpUtils.exitSuccess); // just to be safe
+                org.harctoolbox.irp.IrpTransmogrifier.main(newargs);
+                System.exit(IrpUtils.EXIT_SUCCESS); // just to be safe
             } catch (URISyntaxException ex) {
                 System.err.println(ex.getMessage());
-                System.exit(IrpUtils.exitUsageError);
+                System.exit(IrpUtils.EXIT_USAGE_ERROR);
             }
         }
 
@@ -86,26 +86,26 @@ public class IrScrutinizer {
             argumentParser.parse(args);
         } catch (ParameterException ex) {
             System.err.println(ex.getMessage());
-            usage(IrpUtils.exitUsageError);
+            usage(IrpUtils.EXIT_USAGE_ERROR);
         }
 
-        if (commandLineArgs.irpmaster)
-            usage(IrpUtils.exitUsageError);
+//        if (commandLineArgs.irpmaster)
+//            usage(IrpUtils.EXIT_USAGE_ERROR);
 
         if (commandLineArgs.helpRequested)
-            usage(IrpUtils.exitSuccess);
+            usage(IrpUtils.EXIT_SUCCESS);
 
         if (commandLineArgs.versionRequested) {
             System.out.println(Version.versionString);
             System.out.println("JVM: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version") + " " + System.getProperty("os.name") + "-" + System.getProperty("os.arch"));
             System.out.println();
             System.out.println(Version.licenseString);
-            System.exit(IrpUtils.exitSuccess);
+            System.exit(IrpUtils.EXIT_SUCCESS);
         }
 
         if (commandLineArgs.nukeProperties) {
             nukeProperties(true);
-            System.exit(IrpUtils.exitSuccess);
+            System.exit(IrpUtils.EXIT_SUCCESS);
         }
 
         try {
@@ -114,7 +114,7 @@ public class IrScrutinizer {
                     commandLineArgs.experimental ? 1 : 0, commandLineArgs.arguments);
         } catch (URISyntaxException ex) {
             System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitFatalProgramFailure);
+            System.exit(IrpUtils.EXIT_FATAL_PROGRAM_FAILURE);
         }
     }
 
@@ -154,9 +154,8 @@ public class IrScrutinizer {
                 new GuiMain(applicationHome, propsfilename, verbose, userlevel, arguments).setVisible(true);
             } catch (HeadlessException ex) {
                 System.err.println("This program does not run in headless mode.");
-            } catch (ParseException | IOException | IncompatibleArgumentException | URISyntaxException
-                    | RuntimeException ex) {
-                GuiUtils.fatal(ex, IrpUtils.exitConfigReadError, new GuiUtils.EmergencyFixer () {
+            } catch (ParseException | IOException /*| URISyntaxException*/ | IrpParseException | RuntimeException ex) {
+                GuiUtils.fatal(ex, IrpUtils.EXIT_CONFIG_READ_ERROR, new GuiUtils.EmergencyFixer() {
                     private String backupfile;
 
                     @Override
@@ -180,9 +179,9 @@ public class IrScrutinizer {
                     }
                 });
             } catch (ParserConfigurationException ex) {
-                GuiUtils.fatal(ex, IrpUtils.exitInternalFailure);
+                GuiUtils.fatal(ex, IrpUtils.EXIT_INTERNAL_FAILURE);
             } catch (SAXException ex) {
-                GuiUtils.fatal(ex, IrpUtils.exitXmlError);
+                GuiUtils.fatal(ex, IrpUtils.EXIT_XML_ERROR);
             }
         });
     }
@@ -202,8 +201,8 @@ public class IrScrutinizer {
         private boolean nukeProperties = false;
 
         // This option is sort of a dummy.
-        @Parameter(names = {"--irpmaster"}, description = "Invoke IrpMaster on the rest of the parameters; must be first option.")
-        private boolean irpmaster = false;
+//        @Parameter(names = {"--irpmaster"}, description = "Invoke IrpMaster on the rest of the parameters; must be first option.")
+//        private boolean irpmaster = false;
 
         @Parameter(names = {"-p", "--properties"}, description = "Pathname of properties file")
         private String propertiesFilename = null;

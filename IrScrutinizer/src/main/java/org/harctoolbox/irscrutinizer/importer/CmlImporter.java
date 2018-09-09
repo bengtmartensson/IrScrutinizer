@@ -19,7 +19,6 @@ package org.harctoolbox.irscrutinizer.importer;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -31,11 +30,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.irscrutinizer.Version;
 
 /**
@@ -52,9 +51,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
         try {
             CmlImporter cmlImporter = new CmlImporter();
             cmlImporter.load(args[0]);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(CmlImporter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException | ParseException | IrpMasterException ex) {
+        } catch (IOException | ParseException | InvalidArgumentException ex) {
             Logger.getLogger(CmlImporter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -75,21 +72,21 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
     }
 
     @Override
-    public void load(File file, String origin, String charsetName) throws IOException, ParseException {
+    public void load(File file, String origin, String charsetName) throws IOException, ParseException, InvalidArgumentException {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
             load(fileInputStream, origin, charsetName);
         }
     }
 
     @Override
-    public void load(InputStream reader, String origin, String charsetName) throws IOException, ParseException {
+    public void load(InputStream reader, String origin, String charsetName) throws IOException, ParseException, InvalidArgumentException {
         charactersetName = charsetName;
         prepareLoad(origin);
         remoteSet = parseRemoteSet(reader, origin);
         setupCommands();
     }
 
-    private RemoteSet parseRemoteSet(InputStream inputStream, String origin) throws IOException, ParseException {
+    private RemoteSet parseRemoteSet(InputStream inputStream, String origin) throws IOException, InvalidArgumentException {
         Map<String, Remote> remotes = new HashMap<>(64);
         while (true) {
             int token = searchToken(inputStream);
@@ -132,7 +129,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
         }
     }
 
-    private Remote parseRemote(InputStream inputStream) throws IOException {
+    private Remote parseRemote(InputStream inputStream) throws IOException, InvalidArgumentException {
         long status = inputStream.skip(12);
         if (status != 12)
             return null;//throw new IOException("to short skip");
@@ -158,7 +155,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
         return new Remote(metaData, null, null, commands, null);
     }
 
-    private Command parseCommand(InputStream inputStream, String remoteName) throws IOException {
+    private Command parseCommand(InputStream inputStream, String remoteName) throws IOException, InvalidArgumentException {
         byte[] x = getBytes(inputStream, 23);
         int wav = byte2unsigned(x[9]) + 256 * byte2unsigned(x[10]);
         int frequency = wav != 0 ? 1000000000 / wav : 0;

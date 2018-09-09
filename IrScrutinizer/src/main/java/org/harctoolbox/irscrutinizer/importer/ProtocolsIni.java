@@ -24,10 +24,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.harctoolbox.IrpMaster.IrpUtils;
 
 /**
  * This class contains a simple importer for the RemoteMaster's protocols.ini.
@@ -58,7 +58,7 @@ public class ProtocolsIni implements Serializable {
     private Map<String, Map<String,String>> nameMap;
 
     public ProtocolsIni(File file) throws IOException, ParseException {
-        this(new InputStreamReader(new FileInputStream(file), IrpUtils.dumbCharset));
+        this(new InputStreamReader(new FileInputStream(file), Charset.forName("US-ASCII")));
     }
 
     public ProtocolsIni(Reader reader) throws IOException, ParseException {

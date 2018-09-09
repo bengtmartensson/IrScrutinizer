@@ -32,12 +32,16 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.IrpUtils;
-import org.harctoolbox.IrpMaster.XmlUtils;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrCoreUtils;
+import org.harctoolbox.irp.IrpUtils;
+import org.harctoolbox.irp.XmlUtils;
 import org.harctoolbox.irscrutinizer.Version;
 import org.w3c.dom.Document;
 
@@ -56,7 +60,7 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
         StringBuilder str = new StringBuilder(256);
         argumentParser.usage(str);
 
-        (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
+        (exitcode == IrpUtils.EXIT_SUCCESS ? System.out : System.err).println(str);
         doExit(exitcode);
     }
     private static void doExit(int exitcode) {
@@ -73,16 +77,16 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
             argumentParser.parse(args);
         } catch (ParameterException ex) {
             System.err.println(ex.getMessage());
-            System.exit(IrpUtils.exitUsageError);
+            System.exit(IrpUtils.EXIT_USAGE_ERROR);
         }
 
         if (commandLineArgs.helpRequested)
-            usage(IrpUtils.exitSuccess);
+            usage(IrpUtils.EXIT_SUCCESS);
 
         if (commandLineArgs.versionRequested) {
             //System.out.println("Lirc2Xml version " + TOOL_VERSION);
             System.out.println("JVM: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version") + " " + System.getProperty("os.name") + "-" + System.getProperty("os.arch"));
-            System.exit(IrpUtils.exitSuccess);
+            System.exit(IrpUtils.EXIT_SUCCESS);
         }
 
         String configFilename = commandLineArgs.configfile.isEmpty() ? "STDIN" : commandLineArgs.configfile.get(0);
@@ -103,10 +107,10 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
             RemoteSet remoteSet = new RemoteSet(null,
                     configFilename, //String source,
                     rmdu.getRemote());
-            Document doc = remoteSet.xmlExportDocument("Rmdu import of " + IrpUtils.basename(configFilename), "xsl", commandLineArgs.stylesheetUrl, true, true, true, true, true);
+            Document doc = remoteSet.toDocument("Rmdu import of " + IrCoreUtils.basename(configFilename), "xsl", commandLineArgs.stylesheetUrl, true, true, true, true, true);
             XmlUtils.printDOM(new File(commandLineArgs.outputfile), doc);
-        } catch (IOException | ParseException | IrpMasterException ex) {
-            System.err.println(ex.getMessage());
+        } catch (InvalidArgumentException | IOException | ParseException ex) {
+            Logger.getLogger(RmduImporter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -155,11 +159,11 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
         return remote;
     }
 
-    public void load() throws IOException, ParseException, IrpMasterException {
+    public void load() throws IOException, ParseException, InvalidArgumentException {
         load(defaultCharsetName);
     }
 
-    public void load(File file) throws IOException, ParseException {
+    public void load(File file) throws IOException, ParseException, InvalidArgumentException {
         load(file, defaultCharsetName);
     }
 
@@ -235,10 +239,10 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
             Map<String, Long> commandParameters = new HashMap<>(8);
             commandParameters.putAll(protocolParams);
             Long hexObject = functionHex.get(functionNo);
-            long hex = hexObject != null ? hexObject : IrpUtils.invalid;
-            if (hex != IrpUtils.invalid)
+            long hex = hexObject != null ? hexObject : IrCoreUtils.INVALID;
+            if (hex != IrCoreUtils.INVALID)
                 commandParameters.put("hex", hex);
-            if (translators != null && translators.length > 0 && translators[0] != null && hex != IrpUtils.invalid) {
+            if (translators != null && translators.length > 0 && translators[0] != null && hex != IrCoreUtils.INVALID) {
                 commandParameters.put("F", translators[0].translate(hex));
             }
 
@@ -249,7 +253,7 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
                         commandParameters);
                 //commands.put(command.getName(), command);
                 addCommand(command);
-            } catch (IrpMasterException ex) {
+            } catch (GirrException ex) {
                 // just ignore the silly command
                 System.err.println("Warning: Command with name '" + kvp.getValue() + "' is erroneous and was ignored.");
             }
@@ -257,16 +261,18 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
 
         Map<String, Map<String,String>> appParams = new HashMap<>(8);
         appParams.put("rmdu", parameters);
-        Remote.MetaData metaData = new Remote.MetaData(IrpUtils.basename(origin),
+        Remote.MetaData metaData = new Remote.MetaData(IrCoreUtils.basename(origin),
                 null, // displayName
                 null, // manufacturer,
                 null, // model,
                 parameters.get("DeviceType"), // deviceClass,
                 parameters.get("Remote.name") // String remoteName,
         );
+        Map<String, String> notesMap = new HashMap<>(1);
+        notesMap.put("Notes", parameters.get("Notes"));
         remote = new Remote(metaData,
                 parameters.get("Description"), //String comment,
-                parameters.get("Notes"),
+                notesMap,
                 getCommandIndex(),
                 appParams,
                 parameters.get("Protocol.name"),

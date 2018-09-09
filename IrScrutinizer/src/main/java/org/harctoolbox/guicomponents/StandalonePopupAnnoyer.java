@@ -20,7 +20,7 @@ package org.harctoolbox.guicomponents;
 import java.awt.HeadlessException;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import org.harctoolbox.IrpMaster.IrpUtils;
+import org.harctoolbox.irp.IrpUtils;
 
 /**
  * This class is intended for a final error message.
@@ -41,12 +41,12 @@ public class StandalonePopupAnnoyer {
     public static void main(String[] args) {
         try {
             boolean result = errorContinue(args[0]);
-            System.exit(result ? IrpUtils.exitSuccess : IrpUtils.exitUsageError);
+            System.exit(result ? IrpUtils.EXIT_SUCCESS : IrpUtils.EXIT_USAGE_ERROR);
         } catch (HeadlessException ex) {
             System.err.println(args[0]);
             System.err.println();
             System.err.println("This program does not run in headless mode.");
-            System.exit(IrpUtils.exitUsageError);
+            System.exit(IrpUtils.EXIT_USAGE_ERROR);
         }
     }
 }

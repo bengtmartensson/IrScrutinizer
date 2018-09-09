@@ -17,13 +17,12 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer;
 
-import org.harctoolbox.IrpMaster.DecodeIR;
-import org.harctoolbox.IrpMaster.ExchangeIR;
-import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
-import org.harctoolbox.IrpMaster.IrSequence;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpMasterException;
+import java.util.Map;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.irp.Decoder;
+import org.harctoolbox.irp.IrpException;
 
 /**
  * Note: Editing of the sequences is not implemented (yet).
@@ -33,6 +32,7 @@ public class RawIrSignal extends NamedIrSignal {
 
     private static boolean generateCcf = true;
     private static boolean decode = true;
+    private static Decoder decoder = null;
 
     /**
      * @param aGenerateCcf the generateCcf to set
@@ -48,24 +48,31 @@ public class RawIrSignal extends NamedIrSignal {
         decode = aDecode;
     }
 
+    /**
+     * @param aDecoder the decoder to set
+     */
+    public static void setDecoder(Decoder aDecoder) {
+        decoder = aDecoder;
+    }
+
     private IrSignal irSignal;
     private String analyzerString;
-    private DecodeIR.DecodedSignal[] decodes;
+    private Map<String, Decoder.Decode> decodes;
 
     public RawIrSignal(IrSignal irSignal, String name, String comment, boolean invokeAnalyzer) {
         super(name, comment);
         setIrSignal(irSignal, invokeAnalyzer);
     }
 
-    public RawIrSignal(Command command, boolean invokeAnalyzer) throws IrpMasterException {
+    public RawIrSignal(Command command, boolean invokeAnalyzer) throws IrpException, IrCoreException {
         this(command.toIrSignal(), command.getName(), command.getComment(), invokeAnalyzer);
     }
 
     private void setIrSignal(IrSignal irSignal, boolean invokeAnalyzer) {
         this.irSignal = irSignal;
-        decodes = DecodeIR.decode(irSignal);
-        if (invokeAnalyzer  && irSignal.getIntroLength() > 0) // Analyzer misbehaves on zero length signals, be careful.
-            analyzerString = ExchangeIR.newAnalyzer(irSignal).toString();
+        decodes = decoder.decode(irSignal);
+//        if (invokeAnalyzer  && irSignal.getIntroLength() > 0) // Analyzer misbehaves on zero length signals, be careful.
+//            analyzerString = ExchangeIR.newAnalyzer(irSignal).toString();
     }
 
     public Command toCommand() {
@@ -77,16 +84,16 @@ public class RawIrSignal extends NamedIrSignal {
         return irSignal;
     }
 
-    public DecodeIR.DecodedSignal getDecode(int i) {
-        return decodes[i];
-    }
+//    public Decoder.Decode getDecode(int i) {
+//        return decodes[i];
+//    }
 
-    public String getDecodeString() {
-        return DecodeIR.DecodedSignal.toPrintString(decodes, false);
-    }
+//    public String getDecodeString() {
+//        return DecodeIR.DecodedSignal.toPrintString(decodes, false);
+//    }
 
     public int getNoDecodes() {
-        return decodes.length;
+        return decodes.size();
     }
 
     public String getAnalyzerString() {
@@ -94,33 +101,33 @@ public class RawIrSignal extends NamedIrSignal {
     }
 
     public void setFrequency(double newFrequency, boolean invokeAnalyzer) {
-        setIrSignal(new IrSignal(newFrequency, irSignal.getDutyCycle(), irSignal.getIntroSequence(), irSignal.getRepeatSequence(), irSignal.getEndingSequence()),
-                invokeAnalyzer);
+//        setIrSignal(new IrSignal(newFrequency, irSignal.getDutyCycle(), irSignal.getIntroSequence(), irSignal.getRepeatSequence(), irSignal.getEndingSequence()),
+//                invokeAnalyzer);
     }
 
-    public void setIntroSequence(String str, boolean invokeAnalyzer) throws IncompatibleArgumentException {
-        setIrSignal(new IrSignal(irSignal.getFrequency(), irSignal.getDutyCycle(), new IrSequence(str), irSignal.getRepeatSequence(), irSignal.getEndingSequence()),
-                invokeAnalyzer);
+    public void setIntroSequence(String str, boolean invokeAnalyzer) {
+//        setIrSignal(new IrSignal(irSignal.getFrequency(), irSignal.getDutyCycle(), new IrSequence(str), irSignal.getRepeatSequence(), irSignal.getEndingSequence()),
+//                invokeAnalyzer);
     }
 
-    public void setRepeatSequence(String str, boolean invokeAnalyzer) throws IncompatibleArgumentException {
-        setIrSignal(new IrSignal(irSignal.getFrequency(), irSignal.getDutyCycle(), irSignal.getIntroSequence(), new IrSequence(str), irSignal.getEndingSequence()),
-                invokeAnalyzer);
+    public void setRepeatSequence(String str, boolean invokeAnalyzer) {
+//        setIrSignal(new IrSignal(irSignal.getFrequency(), irSignal.getDutyCycle(), irSignal.getIntroSequence(), new IrSequence(str), irSignal.getEndingSequence()),
+//                invokeAnalyzer);
     }
 
-    public void setEndingSequence(String str, boolean invokeAnalyzer) throws IncompatibleArgumentException {
-        setIrSignal(new IrSignal(irSignal.getFrequency(), irSignal.getDutyCycle(), irSignal.getIntroSequence(), irSignal.getRepeatSequence(), new IrSequence(str)),
-                invokeAnalyzer);
+    public void setEndingSequence(String str, boolean invokeAnalyzer) {
+//        setIrSignal(new IrSignal(irSignal.getFrequency(), irSignal.getDutyCycle(), irSignal.getIntroSequence(), irSignal.getRepeatSequence(), new IrSequence(str)),
+//                invokeAnalyzer);
     }
 
     @Override
     public String csvString(String separator) {
         StringBuilder str = new StringBuilder(super.csvString(separator));
         str.append(irSignal.getFrequency()).append(separator);
-        str.append(irSignal.getIntroSequence().toPrintString(true)).append(separator);
-        str.append(irSignal.getRepeatSequence().toPrintString(true)).append(separator);
-        str.append(irSignal.getEndingSequence().toPrintString(true)).append(separator);
-        str.append(DecodeIR.DecodedSignal.toPrintString(decodes, true));
+        str.append(irSignal.getIntroSequence().toString(true)).append(separator);
+        str.append(irSignal.getRepeatSequence().toString(true)).append(separator);
+        str.append(irSignal.getEndingSequence().toString(true)).append(separator);
+//        str.append(DecodeIR.DecodedSignal.toPrintString(decodes, true));
         str.append(separator);
         str.append(analyzerString).append(separator);
         return str.toString();
@@ -208,10 +215,10 @@ public class RawIrSignal extends NamedIrSignal {
         public Object[] toObjectArray(RawIrSignal cir) {
             IrSignal irSignal = cir.getIrSignal();
             Object[] result = new Object[] {
-                        cir.getNumeral(), cir.getDate(), irSignal.getIntroSequence().toPrintString(true),
-                        irSignal.getRepeatSequence().toPrintString(true), irSignal.getEndingSequence().toPrintString(true),
-                        cir.getName(), cir.getDecodeString(), cir.getAnalyzerString(), cir.getValidated(),
-                        cir.getComment(), (int) irSignal.getFrequency(), cir, null
+                        cir.getNumeral(), cir.getDate(), irSignal.getIntroSequence().toString(true),
+                        irSignal.getRepeatSequence().toString(true), irSignal.getEndingSequence().toString(true),
+   //                     cir.getName(), cir.getDecodeString(), cir.getAnalyzerString(), cir.getValidated(),
+                        cir.getComment(), Math.round(irSignal.getFrequency()), cir, null
                     };
             assert(result.length == columnNames.length);
             return result;
@@ -271,7 +278,7 @@ public class RawIrSignal extends NamedIrSignal {
                     default:
                         throw new InternalError();
                 }
-            } catch (IncompatibleArgumentException | NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 System.err.println(ex.getMessage()); // FIXME; (good for now)
             }
         }

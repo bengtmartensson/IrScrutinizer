@@ -17,9 +17,10 @@
 package org.harctoolbox.irscrutinizer.importer;
 
 import java.util.Collection;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.ircore.ModulatedIrSequence;
+import org.harctoolbox.irp.IrpException;
 
 /**
  * This interface models a class that can import a number of IR signals.
@@ -36,9 +37,10 @@ public interface ICommandImporter extends IImporter {
      *
      * @return All commands in the collection concatenated to a single sequence.
      * Frequency and duty cycle are set to the average between minimum and maximum values by the components, if it makes sense.
-     * @throws IrpMasterException
+     * @throws org.harctoolbox.ircore.IrCoreException
+     * @throws org.harctoolbox.irp.IrpException
      */
-    public ModulatedIrSequence getConcatenatedCommands() throws IrpMasterException;
+    public ModulatedIrSequence getConcatenatedCommands() throws IrCoreException, IrpException;
 
     /**
      *

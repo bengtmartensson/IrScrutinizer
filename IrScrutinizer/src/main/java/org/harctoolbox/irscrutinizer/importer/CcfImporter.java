@@ -36,17 +36,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
+import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.irscrutinizer.Version;
 
 /**
  * Class for importing Pronto CCF files of the first generation.
  */
 public class CcfImporter extends RemoteSetImporter implements IFileImporter {
-    public static RemoteSet importCcf(String filename, String creatingUser) throws IOException, ParseException, IrpMasterException {
+    public static RemoteSet importCcf(String filename, String creatingUser) throws IOException, ParseException, InvalidArgumentException {
         CcfImporter importer = new CcfImporter();
         importer.load(filename);
         return importer.remoteSet;
@@ -55,7 +56,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
         try {
             RemoteSet remoteSet = importCcf(args[0], "The Creator");
             System.out.println(remoteSet);
-        } catch (IOException | IrpMasterException | ParseException e) {
+        } catch (IOException | ParseException | InvalidArgumentException ex) {
         }
     }
     private CCF ccf;
@@ -90,9 +91,11 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
             });
         }
 
+        Map<String, String> notes = new HashMap<>(1);
+        notes.put("note", "Imported by IrScrutinizer");
         Remote remote = new Remote(new Remote.MetaData(deviceName),
                 origin, //java.lang.String comment,
-                "Imported by IrScrutinizer", //java.lang.String notes,
+                notes,//"Imported by IrScrutinizer", //java.lang.String notes,
                 commands,
                 null //java.util.HashMap<java.lang.String,java.util.HashMap<java.lang.String,java.lang.String>> applicationParameters)
         );
@@ -131,7 +134,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
                         Command command = new Command(translateProntoFont ? ProntoIrCode.translateProntoFont(buttonName) : buttonName,
                                 deviceName + "/" + panelName, ccfString);
                         commandList.add(command);
-                    } catch (IrpMasterException ex) {
+                    } catch (GirrException ex) {
                         System.err.println(ex.getMessage());
                     }
                 }
@@ -145,7 +148,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
     }
 
     @Override
-    public void load(Reader reader, String origin) throws IOException, FileNotFoundException, ParseException {
+    public void load(Reader reader, String origin) throws IOException, FileNotFoundException, ParseException, InvalidArgumentException {
         dumbLoad(reader, origin, "windows-1252");
     }
 

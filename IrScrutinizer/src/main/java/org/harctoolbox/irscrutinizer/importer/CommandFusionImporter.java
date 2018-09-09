@@ -25,14 +25,16 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
+import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.irscrutinizer.Version;
 
 /**
@@ -46,7 +48,7 @@ public class CommandFusionImporter extends RemoteSetImporter implements IReaderI
         CommandFusionImporter importer = new CommandFusionImporter();
         try {
             importer.load(args[0]);
-        } catch (IOException | ParseException | IrpMasterException ex) {
+        } catch (IOException | ParseException | InvalidArgumentException ex) {
             Logger.getLogger(CommandFusionImporter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -84,7 +86,8 @@ public class CommandFusionImporter extends RemoteSetImporter implements IReaderI
         String manufacturer = remoteInfo.getString("Manufacturer", null);
         String model = remoteInfo.getString("DeviceModel", null);
         String remoteName = remoteInfo.getString("RemoteModel", null);
-        String notes = remoteInfo.getString("Description", null);
+        Map<String, String> notes = new HashMap<>(1);
+        notes.put("Description", remoteInfo.getString("Description", null));
 
         Remote remote = new Remote(new Remote.MetaData(name, null, manufacturer, model, deviceClass, remoteName),
                 null /* String comment */, notes, commands,
@@ -99,7 +102,7 @@ public class CommandFusionImporter extends RemoteSetImporter implements IReaderI
         Command command = null;
         try {
             command = new Command(name, null, ccf);
-        } catch (IrpMasterException ex) {
+        } catch (GirrException ex) {
             Logger.getLogger(CommandFusionImporter.class.getName()).log(Level.SEVERE, null, ex);
         }
         return command;

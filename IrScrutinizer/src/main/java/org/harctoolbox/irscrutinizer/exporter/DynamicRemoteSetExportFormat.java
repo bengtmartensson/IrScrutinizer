@@ -22,7 +22,6 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,12 +31,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.IrpUtils;
-import org.harctoolbox.IrpMaster.XmlUtils;
 import org.harctoolbox.girr.RemoteSet;
-import org.harctoolbox.girr.XmlExporter;
 import org.harctoolbox.guicomponents.GuiUtils;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.irp.IrpUtils;
+import org.harctoolbox.irp.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -113,7 +111,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         StringBuilder str = new StringBuilder(128);
         argumentParser.usage(str);
 
-        (exitcode == IrpUtils.exitSuccess ? System.out : System.err).println(str);
+        (exitcode == IrpUtils.EXIT_SUCCESS ? System.out : System.err).println(str);
         doExit(exitcode); // placifying FindBugs...
     }
 
@@ -129,17 +127,17 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
             argumentParser.parse(args);
         } catch (ParameterException ex) {
             System.err.println(ex.getMessage());
-            usage(IrpUtils.exitUsageError);
+            usage(IrpUtils.EXIT_USAGE_ERROR);
         }
 
         if (commandLineArgs.helpRequested)
-            usage(IrpUtils.exitSuccess);
+            usage(IrpUtils.EXIT_SUCCESS);
 
         File configFile = new File(commandLineArgs.exportFormatsPathname);
         String formatName = commandLineArgs.formatName;
         File girrFile = new File(commandLineArgs.parameters.get(0));
 
-        XmlExporter.setDebug(true);
+        //XmlExporter.setDebug(true);
 
         try {
             Map<String, IExporterFactory> exportFormats = parseExportFormats(null, configFile);
@@ -148,7 +146,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
             IExporterFactory format = exportFormats.get(formatName);
             if (format == null) {
                 System.err.println("No such export format ``" + formatName + "''");
-                System.exit(IrpUtils.exitSemanticUsageError);
+                System.exit(IrpUtils.EXIT_SEMANTIC_USAGE_ERROR);
             }
 
             ICommandExporter exporter = format.newExporter();
@@ -158,13 +156,13 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
                     : girrFile.getCanonicalPath().replaceAll("\\.girr$", "." + exporter.getPreferredFileExtension());
             Document doc = XmlUtils.openXmlFile(girrFile);
             if (!isFat(doc))
-                throw new IrpMasterException("Not a fat Girr file");
+                throw new InvalidArgumentException("Not a fat Girr file");
             if (DynamicRemoteSetExportFormat.class.isInstance(exporter))
                 ((DynamicRemoteSetExportFormat) exporter).export(doc, outFileName, commandLineArgs.encoding);
             else
                 ((DynamicCommandExportFormat) exporter).export(doc, outFileName, commandLineArgs.encoding, commandLineArgs.noTimes);
             System.err.println("Created " + outFileName);
-        } catch (ParserConfigurationException | SAXException | IOException | IrpMasterException | TransformerException ex) {
+        } catch (ParserConfigurationException | SAXException | IOException | TransformerException | InvalidArgumentException ex) {
             System.err.println(ex + ": " + ex.getMessage());
         }
     }
@@ -215,12 +213,12 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName) throws IOException, IrpMasterException, TransformerException {
+    public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName) throws IOException, TransformerException {
         export(remoteSet, title, count, saveFile.getCanonicalPath(), charsetName);
     }
 
-    private void export(RemoteSet remoteSet, String title, int count, String fileName, String charsetName) throws IOException, IrpMasterException, TransformerException {
-        Document document = remoteSet.xmlExportDocument(title,
+    private void export(RemoteSet remoteSet, String title, int count, String fileName, String charsetName) throws IOException, TransformerException {
+        Document document = remoteSet.toDocument(title,
                 null,
                 null,
                 true, //fatRaw,
@@ -232,11 +230,12 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         export(document, fileName, charsetName);
     }
 
-    private void export(Document document, String fileName, String charsetName) throws IOException, IrpMasterException, TransformerException {
-        XmlExporter xmlExporter = new XmlExporter(document);
-        try (OutputStream out = IrpUtils.getPrintSteam(fileName)) {
-            xmlExporter.printDOM(out, xslt, standardParameter(charsetName), binary, charsetName);
-        }
+    private void export(Document document, String fileName, String charsetName) throws IOException, TransformerException {
+        // FIXME
+//        XmlExporter xmlExporter = new XmlExporter(document);
+//        try (OutputStream out = IrCoreUtils.getPrintSteam(fileName)) {
+//            xmlExporter.printDOM(out, xslt, standardParameter(charsetName), binary, charsetName);
+//        }
     }
 
     private Map<String, String> standardParameter(String charsetName) {

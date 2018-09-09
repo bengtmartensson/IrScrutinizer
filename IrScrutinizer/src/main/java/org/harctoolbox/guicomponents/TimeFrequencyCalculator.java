@@ -18,7 +18,8 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.guicomponents;
 
 import java.io.IOException;
-import org.harctoolbox.IrpMaster.Pronto;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.Pronto;
 
 /**
  *
@@ -49,8 +50,8 @@ public class TimeFrequencyCalculator extends HarcPanel {
 
     private void updateFromFrequency() {
         try {
-            int freq = Integer.parseInt(frequencyTextField.getText());
-            prontocodeTextField.setText(Pronto.formatInteger(Pronto.getProntoCode(freq)));
+            double freq = Double.parseDouble(frequencyTextField.getText());
+            prontocodeTextField.setText(Pronto.formatInteger(Pronto.frequencyCode(freq)));
             updateFromFrequency(freq);
         } catch (NumberFormatException ex) {
             statusLine.setStatus("Cannot parse `" + frequencyTextField.getText() + "'");
@@ -59,15 +60,15 @@ public class TimeFrequencyCalculator extends HarcPanel {
 
     private void updateFromFrequencycode() {
         try {
-            int freq = (int) Pronto.getFrequency(Integer.parseInt(prontocodeTextField.getText(), 16));
+            int freq = (int) Pronto.frequency(Integer.parseInt(prontocodeTextField.getText(), 16));
             frequencyTextField.setText(Integer.toString(freq));
             updateFromFrequency(freq);
-        } catch (NumberFormatException ex) {
+        } catch (NumberFormatException | InvalidArgumentException ex) {
             statusLine.setStatus("Cannot parse `" + prontocodeTextField.getText() + "'");
         }
     }
 
-    private void updateFromFrequency(int freq) {
+    private void updateFromFrequency(double freq) {
         int time = Integer.parseInt(timeTextField.getText());
         noPeriodsTextField.setText(String.format("%.1f", (time * freq) / 1000000.0));
         statusLine.setStatus(null);

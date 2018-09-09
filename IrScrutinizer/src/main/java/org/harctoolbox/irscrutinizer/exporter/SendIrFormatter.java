@@ -17,10 +17,10 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.exporter;
 
-import org.harctoolbox.IrpMaster.IrSignal;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.harchardware.ir.GlobalCache;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
+import org.harctoolbox.ircore.IrSignal;
 
 /**
  * This class does something interesting and useful. Or not...

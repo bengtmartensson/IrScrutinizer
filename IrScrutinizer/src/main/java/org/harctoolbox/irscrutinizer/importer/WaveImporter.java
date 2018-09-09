@@ -21,8 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import org.harctoolbox.IrpMaster.ModulatedIrSequence;
-import org.harctoolbox.IrpMaster.Wave;
+import org.harctoolbox.harchardware.ir.Wave;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.ModulatedIrSequence;
 
 /**
  * This class wraps the IrpMaster Wave class to an importer.
@@ -54,7 +55,7 @@ public class WaveImporter extends FileImporter implements IModulatedIrSequenceIm
         }
     }
 
-    public void load(File file) throws IOException, ParseException {
+    public void load(File file) throws IOException, ParseException, InvalidArgumentException {
         load(file, "US-ASCII");
     }
 

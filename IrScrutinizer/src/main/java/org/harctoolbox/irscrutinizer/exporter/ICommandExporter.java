@@ -21,8 +21,10 @@ import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.transform.TransformerException;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.irp.IrpException;
 
 /**
  *
@@ -31,10 +33,10 @@ public interface ICommandExporter {
 
     public File export(Command command, String source, String title, int repeatCount,
             boolean automaticFilenames, Component parent, File exportDir, String charsetName)
-            throws IrpMasterException, IOException, TransformerException;
+            throws IOException, TransformerException, IrCoreException, IrpException, GirrException;
 
     public void export(Command command, String source, String title, int repeatCount, File exportFile,
-            String charsetName) throws IrpMasterException, IOException, TransformerException;
+            String charsetName) throws IOException, TransformerException, IrCoreException, IrpException, GirrException;
 
     public boolean considersRepetitions();
 

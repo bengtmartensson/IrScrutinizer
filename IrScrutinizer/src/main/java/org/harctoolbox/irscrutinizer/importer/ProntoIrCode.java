@@ -17,8 +17,8 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.importer;
 
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 
 public class ProntoIrCode {
 
@@ -87,7 +87,7 @@ public class ProntoIrCode {
         return comment;
     }
 
-    public Command toCommand(boolean generateRaw, boolean decode) throws IrpMasterException {
+    public Command toCommand(boolean generateRaw, boolean decode) throws GirrException {
         return new Command(name, comment, ccf);
     }
 

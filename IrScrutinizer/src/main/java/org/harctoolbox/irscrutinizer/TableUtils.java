@@ -19,8 +19,8 @@ package org.harctoolbox.irscrutinizer;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.guicomponents.ErroneousSelectionException;
 import org.harctoolbox.guicomponents.GuiUtils;
 
@@ -107,7 +107,7 @@ public class TableUtils {
         guiUtils.message(str);
     }
 
-    Command commandTableSelectedRow(JTable table) throws IrpMasterException, ErroneousSelectionException {
+    Command commandTableSelectedRow(JTable table) throws ErroneousSelectionException, GirrException {
         barfIfNotExactlyOneSelected(table);
         int selectedRow = table.getSelectedRow();
         int modelRow = table.convertRowIndexToModel(selectedRow);

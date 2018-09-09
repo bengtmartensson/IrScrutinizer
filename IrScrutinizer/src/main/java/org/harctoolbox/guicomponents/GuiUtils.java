@@ -31,10 +31,11 @@ import java.text.ParseException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import org.harctoolbox.IrpMaster.IrpUtils;
+import org.harctoolbox.ircore.IrCoreUtils;
 
 // Interfaces to Desktop
 public class GuiUtils implements Serializable {
+
     public static void fatal(Exception ex, int errorcode) {
         fatal(ex, errorcode, null);
     }
@@ -59,7 +60,7 @@ public class GuiUtils implements Serializable {
                         new ImageIcon(GuiUtils.class.getResource("/icons/Crystal-Clear/48x48/actions/info.png")));
         }
         ex.printStackTrace();
-        IrpUtils.exit(errorcode);
+        System.exit(errorcode);
     }
 
     private static boolean confirm(JFrame frame, String message, int optionType) {
@@ -190,8 +191,8 @@ public class GuiUtils implements Serializable {
     public Long getLongInput(String message, long oldValue) {
         String s = getInput(message, "Parameter input", Long.toString(oldValue));
         return s == null ? null
-                : s.trim().isEmpty() ? IrpUtils.invalid
-                : IrpUtils.parseLong(s, false);
+                : s.trim().isEmpty() ? IrCoreUtils.INVALID
+                : IrCoreUtils.parseLong(s, false);
     }
 
     public Double getDoubleInput(String message, double oldValue) {

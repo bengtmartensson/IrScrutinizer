@@ -24,13 +24,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrCoreUtils;
 
 /**
  * This class does something interesting and useful. Or not...
@@ -40,7 +42,7 @@ import org.harctoolbox.girr.Command;
 public class CsvParametrizedImporter extends CsvImporter {
     public static Collection<Command> process(Reader reader,
             String separator, int nameColumn, boolean nameMultiColumn, String filename, boolean verbose, int base, int Fcolumn, int Dcolumn,
-            int Scolumn, int protocolColumn) throws IOException, IrpMasterException {
+            int Scolumn, int protocolColumn) throws IOException {
         CsvParametrizedImporter csvImportParametrized = new CsvParametrizedImporter(
                 separator, nameColumn, nameMultiColumn, verbose, base, Fcolumn, Dcolumn, Scolumn, protocolColumn);
         csvImportParametrized.load(reader, filename);
@@ -49,12 +51,12 @@ public class CsvParametrizedImporter extends CsvImporter {
 
     public static void main(String[] args) {
         try {
-            Reader r = new InputStreamReader(new FileInputStream(args[0]), IrpUtils.dumbCharset);
+            Reader r = new InputStreamReader(new FileInputStream(args[0]), Charset.forName("US-ASCII"));
             Collection<Command> signals = process(r,",", 1, false, args[0], true, 10, 3, -1, -1, -1);
             signals.forEach((s) -> {
                 System.out.println(s.toString());
             });
-        } catch (IOException | IrpMasterException ex) {
+        } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }
     }
@@ -118,7 +120,7 @@ public class CsvParametrizedImporter extends CsvImporter {
 
 
     @Override
-    public void load(File file, String origin, String charsetName) throws FileNotFoundException, IOException, ParseException {
+    public void load(File file, String origin, String charsetName) throws FileNotFoundException, IOException, ParseException, InvalidArgumentException {
         try (FileInputStream stream = new FileInputStream(file)) {
             load(stream, origin, charsetName);
         }
@@ -140,7 +142,7 @@ public class CsvParametrizedImporter extends CsvImporter {
                 Command command = scrutinizeParameters(chunks, "Line " + lineNo + ", " + origin, rejectNumbers);
                 if (command != null)
                     addCommand(command);
-            } catch (IrpMasterException ex) {
+            } catch (GirrException ex) {
                 if (isVerbose())
                     System.err.println("Errors parsing line " + lineNo + ": \"" + line + "\": " + ex.getMessage());
             }
@@ -149,7 +151,7 @@ public class CsvParametrizedImporter extends CsvImporter {
         setupRemoteSet();
     }
 
-    private Command scrutinizeParameters(String[] chunks, String sourceAsComment, boolean rejectNumbers) throws IrpMasterException {
+    private Command scrutinizeParameters(String[] chunks, String sourceAsComment, boolean rejectNumbers) throws GirrException {
         String[] nameArray = gobbleString(chunks, nameColumn, nameMultiColumn, numberBase, "-", rejectNumbers);
         if (nameArray == null || nameArray.length == 0)
             return null;
@@ -174,7 +176,7 @@ public class CsvParametrizedImporter extends CsvImporter {
 
     private long gobbleLong(String[] chunks, int column, String name, int offset) {
         if (column == 0)
-            return IrpUtils.invalid;
+            return IrCoreUtils.INVALID;
         int colIndex = column > 0 ? column - 1 + offset : chunks.length + column;
 
         if (colIndex < chunks.length) {

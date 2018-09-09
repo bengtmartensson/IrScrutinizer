@@ -19,14 +19,14 @@ package org.harctoolbox.irscrutinizer.sendinghardware;
 
 import java.io.IOException;
 import javax.swing.JPanel;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ir.IRawIrSender;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 import org.harctoolbox.harchardware.ir.Transmitter;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 import org.harctoolbox.irscrutinizer.Props;
 
@@ -79,7 +79,7 @@ public abstract class SendingHardware <T extends IRawIrSender & IHarcHardware> {
         return null;
     }
 
-    public boolean sendIr(IrSignal irSignal, int count) throws NoSuchTransmitterException, IrpMasterException, IOException, HardwareUnavailableException, HarcHardwareException {
+    public boolean sendIr(IrSignal irSignal, int count) throws HardwareUnavailableException, NoSuchTransmitterException, HarcHardwareException, IOException, InvalidArgumentException {
 
         if (getRawIrSender() == null)
             throw new HardwareUnavailableException("Internal error: rawIrSender == null");

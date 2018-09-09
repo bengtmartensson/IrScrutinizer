@@ -19,11 +19,11 @@ package org.harctoolbox.irscrutinizer.capturinghardware;
 
 import java.io.IOException;
 import javax.swing.JPanel;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ir.ICapture;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.ModulatedIrSequence;
 
 /**
  *
@@ -41,7 +41,7 @@ public interface ICapturingHardware <T extends ICapture & IHarcHardware> {
 
     public void close();
 
-    public ModulatedIrSequence capture() throws HarcHardwareException, IOException, IrpMasterException;
+    public ModulatedIrSequence capture() throws HarcHardwareException, IOException, InvalidArgumentException;
 
     public boolean stopCapture();
 

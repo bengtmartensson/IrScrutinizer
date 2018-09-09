@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import org.harctoolbox.IrpMaster.IrpUtils;
 
 /**
  * This class is a general purpose console.
@@ -154,7 +153,7 @@ public class Console extends javax.swing.JScrollPane {
      * @throws FileNotFoundException
      */
     public void save(File file) throws FileNotFoundException {
-        try (PrintStream ps = new PrintStream(new FileOutputStream(file), true, IrpUtils.dumbCharsetName)) {
+        try (PrintStream ps = new PrintStream(new FileOutputStream(file), true,  "US-ASCII")) {
             ps.println(consoleTextArea.getText());
         } catch (UnsupportedEncodingException ex) {
             throw new InternalError();

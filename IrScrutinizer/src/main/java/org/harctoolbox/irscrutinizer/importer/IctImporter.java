@@ -24,11 +24,10 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.harctoolbox.IrpMaster.InterpretString;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.ircore.ModulatedIrSequence;
 
 /**
  * This class allows for the creation of rendered IR signals in the ICT Format, used by the IRScope.
@@ -41,7 +40,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
     private static final int IRSCOPE_ENDING_GAP = -500000;
     private static final String IRSCOPE_ENDING_STRING = Integer.toString(IRSCOPE_ENDING_GAP);
 
-    public static Collection<Command> importer(File file, String charsetName) throws IOException, ParseException, IrpMasterException {
+    public static Collection<Command> importer(File file, String charsetName) throws IOException, ParseException, InvalidArgumentException {
         IctImporter imp = new IctImporter();
         imp.load(file, file.getCanonicalPath(), charsetName);
         return imp.getCommands();
@@ -155,10 +154,10 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
 
         if (frequency < 0 && hasComplainedAboutMissingFrequency) {
             hasComplainedAboutMissingFrequency = true;
-            frequency = (int) IrpUtils.defaultFrequency;
-            System.err.println("Warning: carrier_frequency missing, assuming " + (int) IrpUtils.defaultFrequency);
+            frequency = (int) ModulatedIrSequence.DEFAULT_FREQUENCY;
+            System.err.println("Warning: carrier_frequency missing, assuming " + frequency);
         }
-        IrSignal irSignal = InterpretString.interpretIrSequence(dataArray, frequency, isInvokeRepeatFinder(), isInvokeAnalyzer());
+        IrSignal irSignal = null;// FIXME InterpretString.interpretIrSequence(dataArray, frequency, isInvokeRepeatFinder(), isInvokeAnalyzer());
         Command command = new Command(uniqueName(name), origin == null ? "ICT import" : ("ICT import from " + origin), irSignal);
         addCommand(command);
     }

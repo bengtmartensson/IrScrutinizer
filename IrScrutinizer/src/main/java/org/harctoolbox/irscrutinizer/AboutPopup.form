@@ -116,7 +116,7 @@
     <Component class="javax.swing.JLabel" name="versionLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="Version.versionString + &quot;; &quot; + org.harctoolbox.IrpMaster.Version.versionString" type="code"/>
+          <Connection code="Version.versionString" type="code"/>
         </Property>
       </Properties>
     </Component>
@@ -169,7 +169,7 @@
     <Component class="javax.swing.JLabel" name="versionLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="decodeIRVersion" type="code"/>
+          <Connection code="irpTransmogrifierVersion" type="code"/>
         </Property>
       </Properties>
       <AuxValues>

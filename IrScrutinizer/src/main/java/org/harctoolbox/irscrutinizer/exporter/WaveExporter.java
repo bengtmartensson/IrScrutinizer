@@ -19,11 +19,12 @@ package org.harctoolbox.irscrutinizer.exporter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.ModulatedIrSequence;
-import org.harctoolbox.IrpMaster.Wave;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.guicomponents.AudioParametersBean;
+import org.harctoolbox.harchardware.ir.Wave;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.ircore.ModulatedIrSequence;
+import org.harctoolbox.irp.IrpException;
 
 /**
  * This class does something interesting and useful. Or not...
@@ -81,14 +82,14 @@ public class WaveExporter extends CommandExporter implements ICommandExporter {
         return "wav";
     }
 
-    public void export(Command command, String source, String title, int repeatCount, File exportFile) throws IrpMasterException, FileNotFoundException {
+    public void export(Command command, String source, String title, int repeatCount, File exportFile) throws FileNotFoundException, IrpException, IrCoreException {
         export(command, source, title, repeatCount, exportFile, null);
     }
 
     @Override
     public void export(Command command, String source /* ignored */, String title /* ignored */,
             int repeatCount, File exportFile, String charsetName /* ignored */)
-            throws IrpMasterException, FileNotFoundException {
+            throws FileNotFoundException, IrpException, IrCoreException {
         ModulatedIrSequence seq = command.toIrSignal().toModulatedIrSequence(repeatCount);
         Wave wave = new Wave(seq,
                 sampleFrequency,

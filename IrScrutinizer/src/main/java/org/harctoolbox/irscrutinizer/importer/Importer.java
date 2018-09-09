@@ -22,9 +22,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.ircore.ModulatedIrSequence;
+import org.harctoolbox.irp.IrpException;
 import org.harctoolbox.irscrutinizer.Props;
 
 /**
@@ -158,14 +159,14 @@ public abstract class Importer {
         return commandIndex.get(name);
     }
 
-    public ModulatedIrSequence getConcatenatedCommands() throws IrpMasterException {
+    public ModulatedIrSequence getConcatenatedCommands() throws IrpException, IrCoreException {
         ModulatedIrSequence[] array = new ModulatedIrSequence[commands.size()];
         int index = 0;
         for (Command command : commands) {
             array[index] = command.toIrSignal().toModulatedIrSequence(1);
             index++;
         }
-        return new ModulatedIrSequence(array);
+        return ModulatedIrSequence.concatenate(array);
     }
 
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
