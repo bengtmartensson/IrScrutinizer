@@ -10,9 +10,7 @@ before_install:
 install:
 - sudo apt-get install -y --force-yes autoconf dos2unix icoutils
 script:
-- tools/build-decodeir.sh
-- tools/build-exchangeir.sh
-- tools/build-IrpMaster.sh
+- tools/build-IrpTransmogrifier.sh
 - tools/build-Girr.sh
 - tools/build-Jirc.sh
 - tools/build-DevSlashLirc.sh
