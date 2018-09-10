@@ -111,7 +111,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <!--property name="exportPersistentParams" type='boolean' default='"false"' doc='If true, parameters declared persistent in the IRP protocol (typically toggle T) are included in the parameteric export, omitted otherwise.'/-->
     <property name="translateProntoFont" type="boolean" default='"true"' doc='If true, one-character Pronto button names, likely using the Pronto font, are tranlated to readable strings.'/>
     <property name="protocolsIniPath" type="string" default='"protocols.ini"' doc='Path to protocols.ini' />
-    <property name="irpProtocolsPath" type="string" default='"/home/bengt/harctoolbox/IrpTransmogrifier/src/main/resources/IrpProtocols.xml"' doc='Path to IrpProtocols.ini' /> <!-- FIXME -->
+    <property name="irpProtocolsPath" type="string" default='"IrpProtocols.xml"' doc='Path to IrpProtocols.ini' />
     <property name="creatingUser" type="string" default='System.getProperty("user.name", "unknown")' doc='Name of the user, for documentation purposes'/>
     <property name="rawSeparatorIndex" type="int" default='"0"' doc='Field separator for parsing raw files.'/>
     <property name='rawNameColumn' type="int" default='"1"' doc='Column for name when parsing raw files.'/>

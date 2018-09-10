@@ -65,7 +65,7 @@ id -Gn | grep -q lirc  || {
 install -d ${MYPROG_HOME}
 install --mode=444 target/${MYPROG}-jar-with-dependencies.jar ${MYPROG_HOME}
 install --mode=444 target/${MYPROG}.png ${MYPROG_HOME}/${MYPROG_LOWER}.png
-install --mode=444 target/*.ini target/maven-shared-archive-resources/*.ini ${MYPROG_HOME}
+install --mode=444 target/*.ini target/*.xml target/maven-shared-archive-resources/*.ini ${MYPROG_HOME}
 install -d ${MYPROG_HOME}/exportformats.d
 install --mode=444 target/exportformats.d/* ${MYPROG_HOME}/exportformats.d
 install -d ${MYPROG_HOME}/contributed
@@ -83,6 +83,7 @@ chmod +x ${MYPROG_HOME}/${MYPROG_LOWER}.sh
 mkdir -p ${PREFIX}/bin
 ln -sf ../share/${MYPROG_LOWER}/${MYPROG_LOWER}.sh ${PREFIX}/bin/${MYPROG_LOWER}
 
+# FIXME
 echo "#!/bin/sh" > ${MYPROG_HOME}/irpmaster.sh
 echo "java -splash: -Djava.library.path=${LIB} -jar ${MYPROG_HOME}/${MYPROG}-jar-with-dependencies.jar --irpmaster -c ${MYPROG_HOME}/IrpProtocols.ini \"\$@\"" >> ${MYPROG_HOME}/irpmaster.sh
 chmod +x ${MYPROG_HOME}/irpmaster.sh
@@ -99,8 +100,8 @@ install --mode=444 ../schemas/*.xsd ${PREFIX}/share/xml/harctoolbox
 ln -sf ../xml/harctoolbox ${MYPROG_HOME}/schemas
 
 # Install DecodeIR
-install -d ${LIB}
-install --mode=444 ${FROMLIB}/libDecodeIR.* ${LIB}
+#install -d ${LIB}
+#install --mode=444 ${FROMLIB}/libDecodeIR.* ${LIB}
 
 # Install devslashlirc
 if [ -e ${FROMLIB}/libdevslashlirc.so ] ; then

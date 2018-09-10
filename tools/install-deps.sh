@@ -6,20 +6,6 @@
 #
 
 mvn install:install-file \
-    -DgroupId=com.hifiremote \
-    -DartifactId=DecodeIRCaller \
-    -Dversion=2.44 \
-    -Dpackaging=jar \
-    -Dfile=$( build-classpath com.hifiremote:DecodeIrCaller )
-
-mvn install:install-file \
-    -DgroupId=com.hifiremote \
-    -DartifactId=ExchangeIR \
-    -Dversion=0.0.8.2 \
-    -Dpackaging=jar \
-    -Dfile=$( build-classpath com.hifiremote:ExchangeIR )
-
-mvn install:install-file \
     -DgroupId=org.rxtx \
     -DartifactId=rxtx \
     -Dversion=2.2 \
