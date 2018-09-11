@@ -91,12 +91,12 @@ public class TableUtils {
             guiUtils.error("Deleting several rows with enabled row sorter not yet implemented");
             return;
         }
-        int row = table.getSelectedRow();
+        int[] rows = table.getSelectedRows();
 
         DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
 
-        for (int i = table.getSelectedRowCount(); i > 0; i--)
-            tableModel.removeRow(table.convertRowIndexToModel(row + i - 1));
+        for (int i = rows.length - 1; i >= 0; i--)
+            tableModel.removeRow(table.convertRowIndexToModel(rows[i]));
     }
 
     void printTableSelectedRow(JTable table) throws ErroneousSelectionException {
