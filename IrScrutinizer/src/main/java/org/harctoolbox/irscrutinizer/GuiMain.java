@@ -3514,7 +3514,6 @@ public final class GuiMain extends javax.swing.JFrame {
         });
 
         controlTowerManufacturerComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select me to load" }));
-        controlTowerManufacturerComboBox.setToolTipText(properties.getGlobalCacheApiKey().isEmpty() ? "API-Key not entered" : null);
         controlTowerManufacturerComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 controlTowerManufacturerComboBoxActionPerformed(evt);
@@ -4377,7 +4376,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(parametrizedBaseComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(csvParametrizedFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 276, Short.MAX_VALUE)
+                    .addComponent(csvParametrizedFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, parametrizedCsvImportPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(importTextParametrizedHelpButton)
