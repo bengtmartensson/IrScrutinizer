@@ -17,6 +17,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer;
 
+import java.util.Arrays;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import org.harctoolbox.IrpMaster.IrpMasterException;
@@ -83,20 +84,18 @@ public class TableUtils {
         }
     }
 
-    // If using sorter and deleting several rows, need to compute the to-be-removed model-indexes,
-    // sort them, and remove them in descending order. I presently do not care enough...
     void deleteTableSelectedRows(JTable table) throws ErroneousSelectionException {
         barfIfNoneSelected(table);
-        if (table.getRowSorter() != null && table.getSelectedRowCount() > 1) {
-            guiUtils.error("Deleting several rows with enabled row sorter not yet implemented");
-            return;
-        }
         int[] rows = table.getSelectedRows();
+        for (int i = 0; i < rows.length; i++)
+            rows[i] = table.convertRowIndexToModel(rows[i]);
+
+        Arrays.sort(rows);
 
         DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
 
         for (int i = rows.length - 1; i >= 0; i--)
-            tableModel.removeRow(table.convertRowIndexToModel(rows[i]));
+            tableModel.removeRow(rows[i]);
     }
 
     void printTableSelectedRow(JTable table) throws ErroneousSelectionException {
