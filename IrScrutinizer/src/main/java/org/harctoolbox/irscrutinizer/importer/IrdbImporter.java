@@ -42,7 +42,6 @@ import org.harctoolbox.girr.RemoteSet;
 
 public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter {
 
-    private final static Proxy proxy = Proxy.NO_PROXY;
     private final static long invalid = -1L;
     private final static String irdbOriginName = "IRDB";
 
@@ -51,6 +50,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     private final static String irdbHost = "irdb.tk";
     private final static String urlFormat = "/api/code/?brand=%s&page=%d";
     private final static String urlFormatBrands = "/api/brand/?page=%d";
+    private static Proxy proxy = Proxy.NO_PROXY;
 
     public static URI getHomeUri() {
         try {
@@ -75,7 +75,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     private static JsonObject getJsonObject(String urlString, boolean verbose) throws IOException {
         URL url = urlString.contains("//") ? new URL(urlString) : new URL("http", irdbHost, urlString);
         if (verbose)
-            System.err.print("Accessing " + url.toString() + "...");
+            System.err.print("Accessing " + url.toString() + " using proxy " + proxy + "...");
         URLConnection urlConnection = url.openConnection(proxy);
         InputStream stream = urlConnection.getInputStream();
         return JsonObject.readFrom(new InputStreamReader(stream, IrpUtils.dumbCharset));
@@ -116,6 +116,10 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         } catch (IOException | IrpMasterException ex) {
             System.err.println(ex.getMessage());
         }
+    }
+
+    public static void setProxy(Proxy newProxy) {
+        proxy = newProxy;
     }
 
     //private boolean verbose = false;
@@ -159,6 +163,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
             }
         }
     }
+
     @Override
     public RemoteSet getRemoteSet() {
         return remoteSet;

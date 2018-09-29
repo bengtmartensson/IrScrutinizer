@@ -24,9 +24,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.ParseException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -297,13 +299,23 @@ public class GuiUtils implements Serializable {
             System.err.println(helpText);
     }
 
-    public boolean checkUpToDate(String currentVersionUrl, String versionString) {
-        BufferedReader in = null;
-        String current = null;
+    public boolean checkUpToDate(String currentVersionUrl, String versionString, Proxy proxy) {
+        URL url;
         try {
-            URL url = new URL(currentVersionUrl);
-            in = new BufferedReader(new InputStreamReader(url.openStream(), "US-ASCII"));
+            url = new URL(currentVersionUrl);
+        } catch (MalformedURLException ex) {
+            //throw new ThisCannotHappenException(ex);
+            return false;
+        }
+
+        if (verbose)
+            trace("Opening " + url.toString() + " using proxy " + proxy);
+
+        String current = null;
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openConnection(proxy).getInputStream(), "US-ASCII"))) {
             String line = in.readLine();
+            if (verbose)
+                trace("got: \"" + line + "\"");
             if (line == null || line.isEmpty()) {
                 error("Problem getting current version");
                 return false;
@@ -312,15 +324,10 @@ public class GuiUtils implements Serializable {
             info(current.equals(versionString)
                     ? "You are using the latest version of " + programName + ", " + versionString
                     : "Current official version is " + current + ", your version is " + versionString + ".");
+        } catch (UnknownHostException ex) {
+            error("Unknown host (proxy): " + ex.getMessage());
         } catch (IOException ex) {
             error("Problem getting current version: " + ex.getMessage());
-        } finally {
-            try {
-                if (in != null)
-                    in.close();
-            } catch (IOException ex) {
-                error("Problem closing version check Url: " + ex.getMessage());
-            }
         }
         return current != null && current.equals(versionString);
     }

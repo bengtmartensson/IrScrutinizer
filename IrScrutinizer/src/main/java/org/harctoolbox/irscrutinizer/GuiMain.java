@@ -32,7 +32,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -107,6 +109,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private boolean initialized = false;
     private boolean stdinHasBeenClosed = false;
     private final transient TableUtils tableUtils;
+    private Proxy proxy = Proxy.NO_PROXY;
 
     private final String testSignalCcf = // NEC1 12.34 56
             "0000 006C 0022 0002 015B 00AD 0016 0016 0016 0016 0016 0041 0016 0041 "
@@ -138,6 +141,24 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private AboutPopup aboutBox;
     private Component currentPane = null;
+
+    private Proxy mkProxy() {
+        return mkProxy(properties.getProxyHostName(), properties.getProxyPort());
+    }
+
+    private static Proxy mkProxy(String hostName, int port) {
+        return hostName == null || hostName.isEmpty()
+                ? Proxy.NO_PROXY
+                : new Proxy(Proxy.Type.HTTP, new InetSocketAddress(hostName, port));
+    }
+
+    private void setupProxy() {
+        proxy = mkProxy();
+        IrdbImporter.setProxy(proxy);
+        ControlTowerIrDatabase.setProxy(proxy);
+        GlobalCacheIrDatabase.setProxy(proxy);
+        ReaderImporter.setProxy(proxy);
+    }
 
     private class ScrutinizeIrCaller implements LookAndFeelManager.ILookAndFeelManagerCaller {
         @Override
@@ -483,6 +504,8 @@ public final class GuiMain extends javax.swing.JFrame {
 
         enableSorter(rawTable, properties.getSorterOnRawTable());
         enableSorter(parameterTable, properties.getSorterOnParametrizedTable());
+
+        setupProxy();
 
         //console.setStdErr();
         //console.setStdOut();
@@ -2135,6 +2158,7 @@ public final class GuiMain extends javax.swing.JFrame {
         invokeAnalyzerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         printDecodesToConsoleCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         parametrizedLearnIgnoreTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        proxyMenuItem = new javax.swing.JMenuItem();
         irpProtocolsIniMenu = new javax.swing.JMenu();
         irpProtocolsEditMenuItem = new javax.swing.JMenuItem();
         irpProtocolsSelectMenuItem = new javax.swing.JMenuItem();
@@ -6560,6 +6584,14 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         optionsMenu.add(parametrizedLearnIgnoreTCheckBoxMenuItem);
 
+        proxyMenuItem.setText("Proxy Configuration ...");
+        proxyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                proxyMenuItemActionPerformed(evt);
+            }
+        });
+        optionsMenu.add(proxyMenuItem);
+
         irpProtocolsIniMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/database.png"))); // NOI18N
         irpProtocolsIniMenu.setText("IRP protocol database");
 
@@ -7003,7 +7035,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_ccfRadioButtonMenuItemActionPerformed
 
     private void checkUpToDateMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkUpToDateMenuItemActionPerformed
-        guiUtils.checkUpToDate(Version.currentVersionUrl, Version.versionString);
+        guiUtils.checkUpToDate(Version.currentVersionUrl, Version.versionString, proxy);
     }//GEN-LAST:event_checkUpToDateMenuItemActionPerformed
 
     private void hexCalcMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hexCalcMenuItemActionPerformed
@@ -9003,6 +9035,11 @@ public final class GuiMain extends javax.swing.JFrame {
             parameterTableModel.namesTransform(old, replacement);
     }//GEN-LAST:event_transformNameMenuItemActionPerformed
 
+    private void proxyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proxyMenuItemActionPerformed
+        ProxyConfigDialog.inquireProxyConfig(this, properties);
+        setupProxy();
+    }//GEN-LAST:event_proxyMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9409,6 +9446,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> protocolColumnComboBox;
     private javax.swing.JMenuItem protocolSpecMenuItem;
     private javax.swing.JTextField protocolsIniTextField;
+    private javax.swing.JMenuItem proxyMenuItem;
     private javax.swing.JMenuItem rawCodeAnalyzeMenuItem;
     private javax.swing.JMenuItem rawCodeClearMenuItem;
     private javax.swing.JComboBox<String> rawCodeColumnComboBox1;
