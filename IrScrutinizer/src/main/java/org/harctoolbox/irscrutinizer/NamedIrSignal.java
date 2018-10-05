@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -304,7 +305,7 @@ public abstract class NamedIrSignal {
 
         // likely to be overridden
         protected boolean checkName(String name) {
-            if (name.isEmpty()) {
+            if (name == null || name.isEmpty()) {
                 System.err.println("Command with empty name.");
                 return false;
             }
