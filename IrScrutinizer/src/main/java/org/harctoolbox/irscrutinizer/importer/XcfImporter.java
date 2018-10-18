@@ -33,7 +33,7 @@ import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.ircore.InvalidArgumentException;
-import org.harctoolbox.irp.XmlUtils;
+import org.harctoolbox.ircore.XmlUtils;
 import org.harctoolbox.irscrutinizer.Version;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

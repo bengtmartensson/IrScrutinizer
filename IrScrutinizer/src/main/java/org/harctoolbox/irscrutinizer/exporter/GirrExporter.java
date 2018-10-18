@@ -22,7 +22,7 @@ import java.io.IOException;
 import javax.xml.transform.TransformerException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.RemoteSet;
-import org.harctoolbox.irp.XmlUtils;
+import org.harctoolbox.ircore.XmlUtils;
 import org.w3c.dom.Document;
 
 /**
