@@ -135,6 +135,17 @@ public class ExporterUtilsNGTest {
         String result = ExporterUtils.processBitFields(false, false, 0xDE, 8, 0, false, false, 0xADFF, 8, 8);
         assertEquals(result, expResult);
 
+        expResult = "8000000000000000";
+        result = ExporterUtils.processBitFields(
+                false, false, 0x80, 8, 0,
+                false, false, 0x00, 8, 0,
+                false, false, 0x00, 8, 0,
+                false, false, 0x00, 8, 0,
+                false, false, 0x00, 8, 0,
+                false, false, 0x00, 8, 0,
+                false, false, 0x00, 8, 0,
+                false, false, 0x00, 8, 0);
+        assertEquals(result, expResult);
     }
 
     /**
