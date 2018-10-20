@@ -228,6 +228,19 @@
                                 </fileMapper>
                             </fileMappers>
                         </transformationSet>
+                        <transformationSet>
+                            <dir>${basedir}/target/maven-shared-archive-resources</dir>
+                            <outputDir>${basedir}/target/doc</outputDir>
+                            <includes>
+                                <include>IrpProtocols.xml</include>
+                            </includes>
+                            <stylesheet>${basedir}/target/maven-shared-archive-resources/IrpProtocols2html.xsl</stylesheet>
+                            <fileMappers>
+                                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+                                    <targetExtension>.html</targetExtension>
+                                </fileMapper>
+                            </fileMappers>
+                        </transformationSet>
                     </transformationSets>
                     <catalogs>
                         <catalog>../schemas/catalog.xml</catalog>

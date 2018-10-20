@@ -7052,8 +7052,8 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void protocolSpecMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolSpecMenuItemActionPerformed
         try {
-            guiUtils.browse(new URI("file:///usr/local/share/irptransmogrifier/IrpProtocols.html")); // FIXME
-        } catch (URISyntaxException ex) {
+            guiUtils.browse(new File(properties.mkPathAbsolute(properties.getProtocolDocfilePath())));
+        } catch (MalformedURLException | URISyntaxException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_protocolSpecMenuItemActionPerformed
