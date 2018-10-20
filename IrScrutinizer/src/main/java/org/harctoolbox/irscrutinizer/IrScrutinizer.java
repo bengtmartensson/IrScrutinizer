@@ -37,7 +37,7 @@ import org.harctoolbox.irp.IrpUtils;
 import org.xml.sax.SAXException;
 
 /**
- * This class decodes command line parameters and fires up either IrpMaster.main or the GUI.
+ * This class decodes command line parameters and fires up the GUI.
  */
 public class IrScrutinizer {
 
@@ -62,23 +62,6 @@ public class IrScrutinizer {
      * @param args the command line arguments.
      */
     public static void main(String[] args) {
-        if (args.length > 0 && args[0].equalsIgnoreCase("--irpmaster")) {
-            String appHome;
-            try {
-                appHome = findApplicationHome(null);
-                Props properties = new Props(appHome);
-                String[] newargs = new String[args.length + 1];
-                newargs[0] = "--config";
-                newargs[1] = properties.mkPathAbsolute(properties.getIrpProtocolsPath());
-                System.arraycopy(args, 1, newargs, 2, newargs.length - 2);
-                org.harctoolbox.irp.IrpTransmogrifier.main(newargs);
-                System.exit(IrpUtils.EXIT_SUCCESS); // just to be safe
-            } catch (URISyntaxException ex) {
-                System.err.println(ex.getMessage());
-                System.exit(IrpUtils.EXIT_USAGE_ERROR);
-            }
-        }
-
         argumentParser = new JCommander(commandLineArgs);
         argumentParser.setProgramName(Version.appName);
 
@@ -89,15 +72,13 @@ public class IrScrutinizer {
             usage(IrpUtils.EXIT_USAGE_ERROR);
         }
 
-//        if (commandLineArgs.irpmaster)
-//            usage(IrpUtils.EXIT_USAGE_ERROR);
-
         if (commandLineArgs.helpRequested)
             usage(IrpUtils.EXIT_SUCCESS);
 
         if (commandLineArgs.versionRequested) {
             System.out.println(Version.versionString);
-            System.out.println("JVM: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version") + " " + System.getProperty("os.name") + "-" + System.getProperty("os.arch"));
+            System.out.println("JVM: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version")
+                    + " " + System.getProperty("os.name") + "-" + System.getProperty("os.arch"));
             System.out.println();
             System.out.println(Version.licenseString);
             System.exit(IrpUtils.EXIT_SUCCESS);
@@ -199,10 +180,6 @@ public class IrScrutinizer {
 
         @Parameter(names = {"--nuke-properties"}, description = "Get rid of present properties file")
         private boolean nukeProperties = false;
-
-        // This option is sort of a dummy.
-//        @Parameter(names = {"--irpmaster"}, description = "Invoke IrpMaster on the rest of the parameters; must be first option.")
-//        private boolean irpmaster = false;
 
         @Parameter(names = {"-p", "--properties"}, description = "Pathname of properties file")
         private String propertiesFilename = null;
