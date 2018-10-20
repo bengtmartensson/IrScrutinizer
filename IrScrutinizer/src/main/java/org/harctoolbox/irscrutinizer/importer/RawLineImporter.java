@@ -26,10 +26,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.GirrException;
-import org.harctoolbox.harchardware.ir.InterpretStringHardware;
+import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.irp.IrpException;
+import org.harctoolbox.irscrutinizer.InterpretString;
 
 /**
  * This class does something interesting and useful. Or not...
@@ -66,11 +67,12 @@ public class RawLineImporter extends RemoteSetImporter implements IReaderImporte
                 continue;
 
             IrSignal irSignal = null;
-            //try {
-                irSignal = InterpretStringHardware.interpretString(line, getFallbackFrequency(), isInvokeRepeatFinder(), isInvokeAnalyzer());
-            //} catch (Exception ex) {
-            //    name = line;
-            //}
+            try {
+                irSignal = InterpretString.interpretString(line, getFallbackFrequency(), getDummyGap(),
+                        isInvokeRepeatFinder(), isInvokeCleaner(), getAbsoluteTolerance(), getRelativeTolerance(), getMinRepeatLastGap());
+            } catch (InvalidArgumentException ex) {
+                name = line;
+            }
 
             if (name != null && irSignal != null) {
                 Command command = new Command(uniqueName(name), null /*comment*/, irSignal);

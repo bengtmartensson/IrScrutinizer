@@ -19,9 +19,10 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 <!-- All relative file names are relative to IRSCRUTINIZERHOME = applicationHome -->
 <properties package="org.harctoolbox.irscrutinizer" useXml = "true" appName="Version.appName" home-environment-var="IRSCRUTINIZERHOME">
-    <import class="org.harctoolbox.ircore.IrCoreUtils"/>
     <import class="org.harctoolbox.harchardware.ir.IrTrans"/>
     <import class="org.harctoolbox.harchardware.ir.LircClient"/>
+    <import class="org.harctoolbox.ircore.IrCoreUtils"/>
+    <import class="org.harctoolbox.ircore.IrSequence"/>
     <property name="bounds" type="rectangle" default='null' doc='Bounds of IrScrutinizer window.'/>
     <property name="outputFormatIndex" type="int" default='"1"' />
     <property name="irWidgetCapturePortName" type="string" default='ifWindows("COM8","/dev/ttyUSB0")' doc='Name of device to use, e.g. COM8 or /dev/ttyUSB0.' />
@@ -61,7 +62,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="waveSampleSize" type="int" default='"8"' doc="Bit width in generated wave files."/>
     <property name="waveOmitTrailingGap" type="boolean" default='"48000"' doc="If true, omit the last silence from generated wave files."/>
 
-    <property name="fallbackFrequency" type="int" default='"38000"' doc='Fallback frequency, for use with demodulating sensors' />
+    <property name="fallbackFrequency" type="double" default='"38000"' doc='Fallback frequency, for use with demodulating sensors' />
     <property name="analyzerBase" type="int" default='"16"' doc='Number base for printing analyzer results' />
     <property name="ignoreEndingSilence" type="boolean" default='"false"' doc='If true, the last silence in the recorded signal will not be shown in plots'/>
     <property name="verbose" type="boolean" default='"false"' doc='If true, execute some commands more verbosely' />
@@ -157,6 +158,8 @@ this program. If not, see http://www.gnu.org/licenses/.
 
     <property name="absoluteTolerance" type="double" default='Double.toString(IrCoreUtils.DEFAULT_ABSOLUTE_TOLERANCE)' doc="Absolute tolerance for duration comparisons" />
     <property name="relativeTolerance" type="double" default='Double.toString(IrCoreUtils.DEFAULT_RELATIVE_TOLERANCE)' doc="Relative tolerance for duration comparisons" />
+    <property name="minRepeatLastGap"  type="double" default='Double.toString(IrCoreUtils.DEFAULT_MIN_REPEAT_LAST_GAP)' doc="Minumal value in micro seconds to be considered as ending a repeat" />
+    <property name="dummyGap"          type="double" default='Double.toString(IrSequence.DUMMYGAPDURATION)'            doc="Dummy gap added for sequences with an odd number of durations" />
     <property name="dontInquire4UnsavedParametricRemotes" type="boolean" default='"false"' doc="Skip acknowledge when exiting with unsaved changes in parameteric remotes."/>
     <property name="dontInquire4UnsavedRawRemotes" type="boolean" default='"false"' doc="Skip acknowledge when exiting with unsaved changes in raw remotes."/>
 </properties>

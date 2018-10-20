@@ -66,6 +66,8 @@ import javax.swing.text.Position;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.harctoolbox.analyze.Analyzer;
+import org.harctoolbox.analyze.Burst;
+import org.harctoolbox.analyze.NoDecoderMatchException;
 import org.harctoolbox.analyze.RepeatFinder;
 import org.harctoolbox.devslashlirc.LircHardware;
 import org.harctoolbox.girr.Command;
@@ -75,7 +77,6 @@ import org.harctoolbox.guicomponents.*;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.TimeoutException;
 import org.harctoolbox.harchardware.ir.*;
-import org.harctoolbox.ircore.InterpretString;
 import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.IrCoreUtils;
@@ -83,6 +84,7 @@ import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.ircore.Pronto;
 import org.harctoolbox.ircore.ThisCannotHappenException;
+import org.harctoolbox.irp.BitDirection;
 import org.harctoolbox.irp.Decoder;
 import org.harctoolbox.irp.IrpDatabase;
 import org.harctoolbox.irp.IrpException;
@@ -157,6 +159,18 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private AboutPopup aboutBox;
     private Component currentPane = null;
+
+    // Prefereces for the analyzer. Should these be made properties, or what?
+    private boolean analyzerEliminateConstantVars = false;
+    private double analyzerMaxRoundingError = Burst.Preferences.DEFAULT_MAX_ROUNDING_ERROR;
+    private double analyzerMaxUnits = Burst.Preferences.DEFAULT_MAX_UNITS;
+    private double analyzerMaxMicroSeconds = Burst.Preferences.DEFAULT_MAX_MICROSECONDS;
+    private String analyzerTimeBase = null;
+    private boolean analyzerLsb = false;
+    private boolean analyzerExtent = false;
+    private List<Integer> analyzerParameterWidths;
+    private int analyzerMaxParameterWidth = 64;
+    private boolean analyzerInvert = false;
 
     private class ScrutinizeIrCaller implements LookAndFeelManager.ILookAndFeelManagerCaller {
         @Override
@@ -927,9 +941,14 @@ public final class GuiMain extends javax.swing.JFrame {
         if (str.trim().isEmpty())
             return null;
 
-        return InterpretStringHardware.interpretString(str, getFrequency(),
-                properties.getInvokeRepeatFinder(), properties.getInvokeCleaner(),
-                properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+        try {
+            return InterpretString.interpretString(str, getFrequency(), properties.getDummyGap(),
+                    properties.getInvokeRepeatFinder(), properties.getInvokeCleaner(),
+                    properties.getAbsoluteTolerance(), properties.getRelativeTolerance(), properties.getMinRepeatLastGap());
+        } catch (InvalidArgumentException ex) {
+            guiUtils.error(ex);
+            return null;
+        }
     }
 
     private void loadProtocolsIni() throws IOException, java.text.ParseException {
@@ -1047,18 +1066,52 @@ public final class GuiMain extends javax.swing.JFrame {
         analyzerTextField.setText(null);
     }
 
-    private void setAnalyzeParameters(Analyzer analyzer) {
-        this.analyzerTextField.setText(analyzer != null ? analyzer.toString() : null);
+    private void setAnalyzeParameters(String line) {
+        analyzerTextField.setText(line);
     }
 
-    private void setAnalyzeParameters(ModulatedIrSequence seq) {
-//        Analyzer analyzer = ExchangeIR.newAnalyzer(seq);
-//        setAnalyzeParameters(analyzer);
+    private void setAnalyzeParameters(Protocol protocol) {
+        if (protocol == null)
+            clearAnalyzeParameters();
+        else {
+            Protocol actualProtocol = analyzerEliminateConstantVars ? protocol.substituteConstantVariables() : protocol;
+            setAnalyzeParameters(actualProtocol.toIrpString(properties.getAnalyzerBase()));
+        }
+    }
+
+    private void setAnalyzeParameters(Analyzer analyzer) {
+        Burst.Preferences burstPrefs = new Burst.Preferences(analyzerMaxRoundingError, analyzerMaxUnits, analyzerMaxMicroSeconds);
+        Analyzer.AnalyzerParams params = new Analyzer.AnalyzerParams(analyzer.getFrequency(), analyzerTimeBase,
+                analyzerLsb ? BitDirection.lsb : BitDirection.msb,
+                analyzerExtent, analyzerParameterWidths, analyzerMaxParameterWidth, analyzerInvert, burstPrefs);
+        List<Protocol> protocols = null;
+        try {
+            protocols = analyzer.searchBestProtocol(params, null /* commandAnalyze.decoder*/, false /*commandLineArgs.regexp*/);
+        } catch (NoDecoderMatchException ex) {
+            Logger.getLogger(GuiMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (protocols == null || protocols.isEmpty())
+            clearAnalyzeParameters();
+        else {
+            setAnalyzeParameters(protocols.get(0));
+        }
+    }
+
+    private void setAnalyzeParameters(ModulatedIrSequence irSequence) {
+        Analyzer analyzer = new Analyzer(irSequence, properties.getFallbackFrequency(), properties.getInvokeRepeatFinder(),
+                properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+        setAnalyzeParameters(analyzer);
     }
 
     private void setAnalyzeParameters(IrSignal irSignal) {
-//        Analyzer analyzer = ExchangeIR.newAnalyzer(irSignal);
-//        setAnalyzeParameters(analyzer);
+        Analyzer analyzer;
+        if (properties.getInvokeRepeatFinder()) {
+            ModulatedIrSequence irSequence = irSignal.toModulatedIrSequence();
+            setAnalyzeParameters(irSequence);
+        } else {
+            analyzer = new Analyzer(irSignal, properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+            setAnalyzeParameters(analyzer);
+        }
     }
 
     private int numberbaseIndex2numberbase(int index) {
@@ -1211,7 +1264,7 @@ public final class GuiMain extends javax.swing.JFrame {
             return Double.parseDouble(frequencyLabel.getText());
         } catch (NumberFormatException | NullPointerException ex) {
         }
-        int f = properties.getFallbackFrequency();
+        double f = properties.getFallbackFrequency();
         return f > 0 ? f : ModulatedIrSequence.DEFAULT_FREQUENCY;
     }
 
@@ -1258,11 +1311,9 @@ public final class GuiMain extends javax.swing.JFrame {
                 guiUtils.error("Nothing to scrutinize");
             else
                 scrutinizeIrSignal(irSignal);
-        } catch (Exception ex) {
-            guiUtils.error(ex);
-//        } catch (RuntimeException ex) {
-//            // ??? Can be many different causes
-//            guiUtils.error("Could not decode the signal: " + ex.getMessage());
+        } catch (RuntimeException ex) {
+            // ??? Can be many different causes
+            guiUtils.error("Could not decode the signal: " + ex.getMessage());
         }
     }
 
@@ -7072,7 +7123,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void fallbackFrequencyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fallbackFrequencyMenuItemActionPerformed
         try {
-            Integer t = guiUtils.getIntegerInput("Fallback frequency (for demodulating sensors) and for interpreting raw sequences, in Hz", properties.getFallbackFrequency());
+            Double t = guiUtils.getDoubleInput("Fallback frequency (for demodulating sensors) and for interpreting raw sequences, in Hz", properties.getFallbackFrequency());
             if (t != null)
                 properties.setFallbackFrequency(t);
         } catch (NumberFormatException ex) {
@@ -7604,12 +7655,12 @@ public final class GuiMain extends javax.swing.JFrame {
     private void rawFromClipboardMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawFromClipboardMenuItemActionPerformed
         String text = (new CopyClipboardText(null)).fromClipboard();
         try {
-            IrSignal irSignal = InterpretStringHardware.interpretString(text, ModulatedIrSequence.DEFAULT_FREQUENCY,
+            IrSignal irSignal = InterpretString.interpretString(text, properties.getFallbackFrequency(), properties.getDummyGap(),
                     properties.getInvokeRepeatFinder(), properties.getInvokeCleaner(),
-                    properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+                    properties.getAbsoluteTolerance(), properties.getRelativeTolerance(), properties.getMinRepeatLastGap());
             RawIrSignal rawIrSignal = new RawIrSignal(irSignal, "clipboard", "Signal read from clipboard", true);
             registerRawCommand(rawIrSignal);
-        } catch (Exception ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_rawFromClipboardMenuItemActionPerformed
@@ -7990,12 +8041,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private void generateExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateExportButtonActionPerformed
         try {
             saveSignals(irpMasterBean.getCommands());
-        } catch (ParseException | GirrException | IrCoreException | IrpException ex) {
+        } catch (IOException | TransformerException | ParseException | GirrException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
-        } catch (IOException ex) {
-            Logger.getLogger(GuiMain.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (TransformerException ex) {
-            Logger.getLogger(GuiMain.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_generateExportButtonActionPerformed
 

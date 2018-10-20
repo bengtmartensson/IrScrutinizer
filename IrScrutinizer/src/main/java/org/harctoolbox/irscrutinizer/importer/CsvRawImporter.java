@@ -32,12 +32,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.GirrException;
-import org.harctoolbox.harchardware.ir.InterpretStringHardware;
 import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.IrSignal;
-import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.irp.IrpException;
+import org.harctoolbox.irscrutinizer.InterpretString;
 
 /**
  * This class does something interesting and useful. Or not...
@@ -168,9 +167,9 @@ public class CsvRawImporter extends CsvImporter {
         }
         IrSignal irSignal;
         try {
-            irSignal = InterpretStringHardware.interpretString(code, ModulatedIrSequence.DEFAULT_FREQUENCY, isInvokeRepeatFinder(),
-                    isInvokeAnalyzer());
-        } catch (Exception ex) {
+            irSignal = InterpretString.interpretString(code, getFallbackFrequency(), getDummyGap(),
+                    isInvokeRepeatFinder(), isInvokeCleaner(), getAbsoluteTolerance(), getRelativeTolerance(), getMinRepeatLastGap());
+        } catch (InvalidArgumentException ex) {
             if (isVerbose())
                 System.err.println("Error parsing code in line " + lineNo + " (" + ex.getMessage() + ")");
             return null;

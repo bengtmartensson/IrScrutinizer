@@ -145,12 +145,10 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
 
     @SuppressWarnings("unchecked")
     private RemoteSet getRemoteSet(T importer) {
-        // FIXME
-//        return IRemoteSetImporter.class.isInstance(importer) ? ((IRemoteSetImporter)importer).getRemoteSet()
-//                : IModulatedIrSequenceImporter.class.isInstance(importer)
-//                ? new RemoteSet(importer.getFormatName() + " import", properties.getCreatingUser(), ((IModulatedIrSequenceImporter) importer).getModulatedIrSequence().toIrSignal(), "unnamed", null, "unknown")
-//                : null;
-return null;
+        return IRemoteSetImporter.class.isInstance(importer) ? ((IRemoteSetImporter)importer).getRemoteSet()
+                : IModulatedIrSequenceImporter.class.isInstance(importer)
+                ? new RemoteSet(importer.getFormatName() + " import", properties.getCreatingUser(), ((IModulatedIrSequenceImporter) importer).getModulatedIrSequence().toIrSignal(), "unnamed", null, "unknown")
+                : null;
     }
 
     @SuppressWarnings("unchecked")

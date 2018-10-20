@@ -87,6 +87,10 @@ public abstract class Importer {
         return properties != null && properties.getInvokeAnalyzer();
     }
 
+    protected boolean isInvokeCleaner() {
+        return properties != null && properties.getInvokeCleaner();
+    }
+
     protected boolean isVerbose() {
         return properties != null && properties.getVerbose();
     }
@@ -114,6 +118,22 @@ public abstract class Importer {
 
     protected double getEndingTimeout() {
         return properties.getCaptureEndingTimeout();
+    }
+
+    protected double getAbsoluteTolerance() {
+        return properties.getAbsoluteTolerance();
+    }
+
+    protected double getRelativeTolerance() {
+        return properties.getRelativeTolerance();
+    }
+
+    protected double getDummyGap() {
+        return properties.getDummyGap();
+    }
+
+    protected double getMinRepeatLastGap() {
+        return properties.getMinRepeatLastGap();
     }
 
     protected void prepareLoad(String origin) {
