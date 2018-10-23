@@ -936,19 +936,19 @@ public final class GuiMain extends javax.swing.JFrame {
         return exporter;
     }
 
-    private IrSignal getCapturedIrSignal() {
+    private IrSignal getCapturedIrSignal() throws InvalidArgumentException {
         String str = capturedDataTextArea.getText();
         if (str.trim().isEmpty())
             return null;
 
-        try {
+//        try {
             return InterpretString.interpretString(str, getFrequency(), properties.getDummyGap(),
                     properties.getInvokeRepeatFinder(), properties.getInvokeCleaner(),
                     properties.getAbsoluteTolerance(), properties.getRelativeTolerance(), properties.getMinRepeatLastGap());
-        } catch (InvalidArgumentException ex) {
-            guiUtils.error(ex);
-            return null;
-        }
+//        } catch (InvalidArgumentException ex) {
+//            guiUtils.error(ex);
+//            return null;
+//        }
     }
 
     private void loadProtocolsIni() throws IOException, java.text.ParseException {
@@ -1311,6 +1311,8 @@ public final class GuiMain extends javax.swing.JFrame {
                 guiUtils.error("Nothing to scrutinize");
             else
                 scrutinizeIrSignal(irSignal);
+        } catch (InvalidArgumentException ex) {
+            guiUtils.error(ex);
         } catch (RuntimeException ex) {
             // ??? Can be many different causes
             guiUtils.error("Could not decode the signal: " + ex.getMessage());
