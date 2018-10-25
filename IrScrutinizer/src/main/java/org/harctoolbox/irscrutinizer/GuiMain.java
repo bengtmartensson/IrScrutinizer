@@ -168,7 +168,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private String analyzerTimeBase = null;
     private boolean analyzerLsb = false;
     private boolean analyzerExtent = false;
-    private List<Integer> analyzerParameterWidths;
+    private List<Integer> analyzerParameterWidths = new ArrayList<>(0);
     private int analyzerMaxParameterWidth = 64;
     private boolean analyzerInvert = false;
 
@@ -524,11 +524,35 @@ public final class GuiMain extends javax.swing.JFrame {
         optionsMenu.add(new Separator());
 
         Command.setIrpMaster(irpDatabase);
+        ParametrizedIrSignal.setDecoder(decoder);
         ParametrizedIrSignal.setGenerateCcf(properties.getGenerateCcf());
         ParametrizedIrSignal.setGenerateRaw(properties.getGenerateRaw());
-        ParametrizedIrSignal.setDecoder(decoder);
+
+        properties.addGenerateCcfChangeListener((String name1, Object oldValue, Object newValue) -> {
+            ParametrizedIrSignal.setGenerateCcf((Boolean) newValue);
+        });
+        properties.addGenerateRawChangeListener((String name1, Object oldValue, Object newValue) -> {
+            ParametrizedIrSignal.setGenerateRaw((Boolean) newValue);
+        });
 
         RawIrSignal.setDecoder(decoder);
+        RawIrSignal.setInvokeAnalyzer(properties.getInvokeAnalyzer());
+        RawIrSignal.setInvokeDecoder(properties.getInvokeDecodeIr());
+        RawIrSignal.setAbsoluteTolerance(properties.getAbsoluteTolerance());
+        RawIrSignal.setRelativeTolerance(properties.getRelativeTolerance());
+
+        properties.addInvokeAnalyzerChangeListener((String name1, Object oldValue, Object newValue) -> {
+            RawIrSignal.setInvokeAnalyzer((Boolean) newValue);
+        });
+        properties.addInvokeDecodeIrChangeListener((String name1, Object oldValue, Object newValue) -> {
+            RawIrSignal.setInvokeDecoder((Boolean) newValue);
+        });
+        properties.addAbsoluteToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
+            RawIrSignal.setAbsoluteTolerance((Double) newValue);
+        });
+        properties.addRelativeToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
+            RawIrSignal.setRelativeTolerance((Double) newValue);
+        });
 
         sendingHardwareManager = new SendingHardwareManager(guiUtils, properties, sendingHardwareTabbedPane);
         properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
@@ -1088,7 +1112,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 analyzerExtent, analyzerParameterWidths, analyzerMaxParameterWidth, analyzerInvert, burstPrefs);
         List<Protocol> protocols = null;
         try {
-            protocols = analyzer.searchBestProtocol(params, null /* commandAnalyze.decoder*/, false /*commandLineArgs.regexp*/);
+            protocols = analyzer.searchBestProtocol(params);
         } catch (NoDecoderMatchException ex) {
             Logger.getLogger(GuiMain.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1499,11 +1523,11 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void registerRawCommands(Collection<Command> commands) throws IrpException, IrCoreException {
         for (Command command : commands)
-            registerRawCommand(new RawIrSignal(command, properties.getInvokeAnalyzer()));
+            registerRawCommand(new RawIrSignal(command));
     }
 
     private void registerRawCommand(Command command) throws IrpException, IrCoreException {
-        registerRawCommand(new RawIrSignal(command, properties.getInvokeAnalyzer()));
+        registerRawCommand(new RawIrSignal(command));
     }
 
     private void registerParameterCommand(Command command) throws IrpException, IrCoreException {
@@ -1512,7 +1536,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void registerRawSignal(IrSignal irSignal, String name, String comment) {
         if (irSignal != null) {
-            RawIrSignal cis = new RawIrSignal(irSignal, name, comment, properties.getInvokeAnalyzer());
+            RawIrSignal cis = new RawIrSignal(irSignal, name, comment);
             registerRawCommand(cis);
         }
     }
@@ -7205,7 +7229,7 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             IrSignal irSignal = Pronto.parse(testSignalCcf);
             if (rawPanel.isShowing()) {
-                RawIrSignal cir = new RawIrSignal(irSignal, "test_signal", "Generated signal (NEC1 12.34 56)", true);
+                RawIrSignal cir = new RawIrSignal(irSignal, "test_signal", "Generated signal (NEC1 12.34 56)");
                 registerRawCommand(cir);
             } else if (cookedPanel.isShowing()) {
                 ParametrizedIrSignal signal = new ParametrizedIrSignal(irSignal, "test_signal", "Generated signal NEC 12.34 56", false);
@@ -7662,7 +7686,7 @@ public final class GuiMain extends javax.swing.JFrame {
             IrSignal irSignal = InterpretString.interpretString(text, properties.getFallbackFrequency(), properties.getDummyGap(),
                     properties.getInvokeRepeatFinder(), properties.getInvokeCleaner(),
                     properties.getAbsoluteTolerance(), properties.getRelativeTolerance(), properties.getMinRepeatLastGap());
-            RawIrSignal rawIrSignal = new RawIrSignal(irSignal, "clipboard", "Signal read from clipboard", true);
+            RawIrSignal rawIrSignal = new RawIrSignal(irSignal, "clipboard", "Signal read from clipboard");
             registerRawCommand(rawIrSignal);
         } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
