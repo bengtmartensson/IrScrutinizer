@@ -528,6 +528,8 @@ public final class GuiMain extends javax.swing.JFrame {
         ParametrizedIrSignal.setGenerateRaw(properties.getGenerateRaw());
         ParametrizedIrSignal.setDecoder(decoder);
 
+        RawIrSignal.setDecoder(decoder);
+
         sendingHardwareManager = new SendingHardwareManager(guiUtils, properties, sendingHardwareTabbedPane);
         properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
             sendingHardwareManager.setVerbose((Boolean)newValue);
