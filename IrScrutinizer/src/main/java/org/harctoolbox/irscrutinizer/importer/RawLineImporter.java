@@ -66,12 +66,17 @@ public class RawLineImporter extends RemoteSetImporter implements IReaderImporte
             if (line.trim().isEmpty())
                 continue;
 
-            IrSignal irSignal = null;
+            IrSignal irSignal;
             try {
                 irSignal = InterpretString.interpretString(line, getFallbackFrequency(), getDummyGap(),
                         isInvokeRepeatFinder(), isInvokeCleaner(), getAbsoluteTolerance(), getRelativeTolerance(), getMinRepeatLastGap());
+                if (irSignal == null || (irSignal.getIntroLength() + irSignal.getRepeatLength() < 4)) {
+                    name = line;
+                    irSignal = null;
+                }
             } catch (InvalidArgumentException ex) {
                 name = line;
+                irSignal = null;
             }
 
             if (name != null && irSignal != null) {
