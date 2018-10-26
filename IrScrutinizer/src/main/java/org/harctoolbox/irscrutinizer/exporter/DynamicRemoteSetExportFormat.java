@@ -22,6 +22,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import javax.xml.transform.TransformerException;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrCoreUtils;
 import org.harctoolbox.ircore.XmlUtils;
 import org.harctoolbox.irp.IrpUtils;
 import org.w3c.dom.Document;
@@ -231,11 +233,9 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     }
 
     private void export(Document document, String fileName, String charsetName) throws IOException, TransformerException {
-        // FIXME
-//        XmlExporter xmlExporter = new XmlExporter(document);
-//        try (OutputStream out = IrCoreUtils.getPrintSteam(fileName)) {
-//            xmlExporter.printDOM(out, xslt, standardParameter(charsetName), binary, charsetName);
-//        }
+        try (OutputStream out = IrCoreUtils.getPrintSteam(fileName)) {
+            XmlUtils.printDOM(out, document, charsetName, xslt, standardParameter(charsetName), binary);
+        }
     }
 
     private Map<String, String> standardParameter(String charsetName) {

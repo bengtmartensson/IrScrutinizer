@@ -90,11 +90,10 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
     }
 
     void export(Document document, String fileName, String charsetName, int noRepeats) throws IOException, TransformerException {
-        //XmlExporter xmlExporter = new XmlExporter(document);
         try (OutputStream out = IrCoreUtils.getPrintSteam(fileName)) {
             Map<String, String> parameters = new HashMap<>(1);
             parameters.put("noRepeats", Integer.toString(noRepeats));
-            // FIXME xmlExporter.printDOM(out, xslt, parameters, binary, charsetName);
+            XmlUtils.printDOM(out, document, charsetName, xslt, parameters, binary);
         }
     }
 }
