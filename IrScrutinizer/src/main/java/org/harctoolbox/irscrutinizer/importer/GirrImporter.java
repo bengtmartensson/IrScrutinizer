@@ -32,8 +32,10 @@ import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.XmlUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * This class imports Girr files. Only Girr files having remotes as root element are presently supported.
@@ -106,17 +108,15 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
      */
     @Override
     public void load(InputStream inputStream, String origin, String charsetName /* ignored */) throws IOException, ParseException {
-//        try {
-//            loadSchema();
-//            Document thing = XmlUtils.openXmlStream(inputStream, validate ? schema : null, false, false);
-//            load(thing, origin);
-//        } catch (SAXParseException ex) {
-//            throw new ParseException(ex.getMessage(), ex.getLineNumber());
-//        } catch (SAXException ex) {
-//            throw new IOException(ex.getMessage());
-//        } catch (NotGirrRemoteSetException ex) {
-//            throw new IOException(ex.getMessage());
-//        }
+        try {
+            loadSchema();
+            Document thing = XmlUtils.openXmlStream(inputStream, validate ? schema : null, false, false);
+            load(thing, origin);
+        } catch (SAXParseException ex) {
+            throw new ParseException(ex.getMessage(), ex.getLineNumber());
+        } catch (NotGirrRemoteSetException | GirrException | SAXException ex) {
+            throw new IOException(ex.getMessage());
+        }
     }
 
     public void load(InputStream inputStream, String origin) throws IOException, ParseException {
@@ -126,14 +126,14 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
 
     @Override
     public void load(Reader reader, String origin) throws IOException, ParseException {
-//        try {
-//            loadSchema();
-//            load(XmlUtils.openXmlReader(reader, validate ? schema : null, false, false), origin);
-//        } catch (SAXParseException ex) {
-//            throw new ParseException(ex.getMessage(), ex.getLineNumber());
-//        } catch (SAXException | NotGirrRemoteSetException ex) {
-//            throw new IOException(ex.getMessage());
-//        }
+        try {
+            loadSchema();
+            load(XmlUtils.openXmlReader(reader, validate ? schema : null, false, false), origin);
+        } catch (SAXParseException ex) {
+            throw new ParseException(ex.getMessage(), ex.getLineNumber());
+        } catch (SAXException | NotGirrRemoteSetException | GirrException ex) {
+            throw new IOException(ex.getMessage());
+        }
     }
 
     /**
@@ -157,22 +157,22 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
     }
 
     private void loadRecursive(File fileOrDirectory, String origin) throws IOException {
-//        if (fileOrDirectory.isDirectory()) {
-//            File[] files = fileOrDirectory.listFiles();
-//            for (File file : files) {
-//                if (file.getName().endsWith(".jpg") || file.getName().endsWith(".png")
-//                        || file.getName().endsWith(".gif") || file.getName().endsWith(".html")) {
-//                    continue;
-//                }
-//                loadRecursive(file, file.getCanonicalPath());
-//            }
-//        } else {
-//            try {
-//                loadIncremental(XmlUtils.openXmlFile(fileOrDirectory, validate ? schema : null, true, true), origin);
-//            } catch (ParseException | SAXException ex) {
-//                Logger.getLogger(GirrImporter.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
+        if (fileOrDirectory.isDirectory()) {
+            File[] files = fileOrDirectory.listFiles();
+            for (File file : files) {
+                if (file.getName().endsWith(".jpg") || file.getName().endsWith(".png")
+                        || file.getName().endsWith(".gif") || file.getName().endsWith(".html")) {
+                    continue;
+                }
+                loadRecursive(file, file.getCanonicalPath());
+            }
+        } else {
+            try {
+                loadIncremental(XmlUtils.openXmlFile(fileOrDirectory, validate ? schema : null, true, true), origin);
+            } catch (ParseException | SAXException | NotGirrRemoteSetException | GirrException ex) {
+                throw new IOException(ex.getMessage());
+            }
+        }
     }
 
     @Override
