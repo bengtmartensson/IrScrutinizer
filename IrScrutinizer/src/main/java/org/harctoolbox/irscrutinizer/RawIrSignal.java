@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import org.harctoolbox.analyze.Analyzer;
 import org.harctoolbox.analyze.NoDecoderMatchException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.IrCoreUtils;
 import org.harctoolbox.ircore.IrSequence;
@@ -154,13 +155,13 @@ public class RawIrSignal extends NamedIrSignal {
         if (invokeDecoder)
             decodes = decoder.decode(irSignal);
         if (invokeAnalyzer) {
-            Analyzer analyzer = new Analyzer(irSignal, absoluteTolerance, relativeTolerance);
-            Analyzer.AnalyzerParams analyzerParams = new Analyzer.AnalyzerParams(irSignal.getFrequency(), timeBaseString, bitDirection, useExtents, parameterWidths, invert);
             try {
+                Analyzer analyzer = new Analyzer(irSignal, absoluteTolerance, relativeTolerance);
+                Analyzer.AnalyzerParams analyzerParams = new Analyzer.AnalyzerParams(irSignal.getFrequency(), timeBaseString, bitDirection, useExtents, parameterWidths, invert);
                 List<Protocol> list = analyzer.searchBestProtocol(analyzerParams);
                 if (!list.isEmpty())
                     analyzerString = list.get(0).toIrpString(analyzerRadix);
-            } catch (NoDecoderMatchException ex) {
+            } catch (NoDecoderMatchException | InvalidArgumentException ex) {
                 analyzerString = null;
             }
         }

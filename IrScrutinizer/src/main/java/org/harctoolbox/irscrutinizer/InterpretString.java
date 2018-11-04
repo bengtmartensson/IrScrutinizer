@@ -44,9 +44,10 @@ public class InterpretString {
      * @param relativeTolerance
      * @param invokeCleaner If the analyzer is invoked for cleaning the signals.
      * @return IrSignal signal constructed according to rules above.
+     * @throws org.harctoolbox.ircore.InvalidArgumentException
      */
     public static IrSignal interpretIrSequence(ModulatedIrSequence irSequence, boolean invokeRepeatFinder, boolean invokeCleaner,
-            double absoluteTolerance, double relativeTolerance) {
+            double absoluteTolerance, double relativeTolerance) throws InvalidArgumentException {
         if (invokeRepeatFinder) {
             RepeatFinder repeatFinder = new RepeatFinder(irSequence, absoluteTolerance, relativeTolerance);
             return invokeCleaner ? repeatFinder.toIrSignalClean(irSequence) : repeatFinder.toIrSignal(irSequence);

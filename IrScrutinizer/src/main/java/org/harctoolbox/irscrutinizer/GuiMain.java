@@ -273,7 +273,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 } else {
                     return oldhandler.importData(support);
                 }
-            } catch (UnsupportedFlavorException | IOException ex) {
+            } catch (UnsupportedFlavorException | IOException | InvalidArgumentException ex) {
                 guiUtils.error(ex);
                 return false;
             }
@@ -1123,13 +1123,13 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }
 
-    private void setAnalyzeParameters(ModulatedIrSequence irSequence) {
+    private void setAnalyzeParameters(ModulatedIrSequence irSequence) throws InvalidArgumentException {
         Analyzer analyzer = new Analyzer(irSequence, properties.getFallbackFrequency(), properties.getInvokeRepeatFinder(),
                 properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
         setAnalyzeParameters(analyzer);
     }
 
-    private void setAnalyzeParameters(IrSignal irSignal) {
+    private void setAnalyzeParameters(IrSignal irSignal) throws InvalidArgumentException {
         Analyzer analyzer;
         if (properties.getInvokeRepeatFinder()) {
             ModulatedIrSequence irSequence = irSignal.toModulatedIrSequence();
@@ -1147,7 +1147,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 : 16;
     }
 
-    public void scrutinizeIrSignal(IrSignal irSignal) {
+    public void scrutinizeIrSignal(IrSignal irSignal) throws InvalidArgumentException {
         if (irSignal.isEmpty()) {
             guiUtils.error("Not scrutinizing empty signal.");
             return;
@@ -1201,7 +1201,7 @@ public final class GuiMain extends javax.swing.JFrame {
 //        }
     }
 
-    private void processIr(ModulatedIrSequence modulatedIrSequence) {
+    private void processIr(ModulatedIrSequence modulatedIrSequence) throws InvalidArgumentException {
         if (modulatedIrSequence.isEmpty()) {
             guiUtils.error("Not showing empty sequence.");
             return;
@@ -1504,7 +1504,7 @@ public final class GuiMain extends javax.swing.JFrame {
         return null;
     }
 
-    public void importModulatedIrSequenceFile(File file) {
+    public void importModulatedIrSequenceFile(File file) throws InvalidArgumentException {
         ModulatedIrSequence sequence = importCommands(file, girrImporter);
         if (sequence == null || sequence.isEmpty())
             sequence = importCommands(file, ictImporter);
@@ -7412,13 +7412,16 @@ public final class GuiMain extends javax.swing.JFrame {
 
                 @Override
                 public void processSequence(ModulatedIrSequence sequence) {
-                    IrSignal irSignal = InterpretString.interpretIrSequence(sequence,
-                            properties.getInvokeRepeatFinder(),
-                            properties.getInvokeCleaner(), properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
-                    if (rawPanel.isVisible())
-                        registerRawSignal(irSignal, null, null);
-                    else
-                        registerParameterSignal(irSignal);
+                    try {
+                        IrSignal irSignal = InterpretString.interpretIrSequence(sequence,
+                                properties.getInvokeRepeatFinder(),
+                                properties.getInvokeCleaner(), properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+                        if (rawPanel.isVisible())
+                            registerRawSignal(irSignal, null, null);
+                        else
+                            registerParameterSignal(irSignal);
+                    } catch (InvalidArgumentException ex) {
+                    }
                 }
             });
             captureThread.start();
@@ -7449,10 +7452,13 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_resetRawTableColumnsMenuItemActionPerformed
 
     private void scrutinizeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scrutinizeMenuItemActionPerformed
-        RawIrSignal cir = rawTableModel.getCapturedIrSignal(rawTable.convertRowIndexToModel(rawTable.getSelectedRow()));
-        scrutinizeIrSignal(cir.getIrSignal());
-        //??? I do not like hard jumps like that, although logical
-        //topLevelTabbedPane.setSelectedIndex(0);
+        try {
+            RawIrSignal cir = rawTableModel.getCapturedIrSignal(rawTable.convertRowIndexToModel(rawTable.getSelectedRow()));
+            scrutinizeIrSignal(cir.getIrSignal());
+            //??? I do not like hard jumps like that, although logical
+            //topLevelTabbedPane.setSelectedIndex(0);
+        } catch (InvalidArgumentException ex) {
+            guiUtils.error(ex);        }
     }//GEN-LAST:event_scrutinizeMenuItemActionPerformed
 
     private void moveUpMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpMenuItem1ActionPerformed
@@ -9054,7 +9060,10 @@ public final class GuiMain extends javax.swing.JFrame {
 
                 @Override
                 public void processSequence(ModulatedIrSequence sequence) {
-                    processIr(sequence);
+                    try {
+                        processIr(sequence);
+                    } catch (InvalidArgumentException ex) {
+                    }
                 }
             });
             captureThread.start();
