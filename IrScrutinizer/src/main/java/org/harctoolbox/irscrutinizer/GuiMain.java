@@ -796,6 +796,8 @@ public final class GuiMain extends javax.swing.JFrame {
         for (String str : arguments) {
             try {
                 sum += importGirr(new File(str), false);
+            } catch (FileNotFoundException ex) {
+                guiUtils.error("File \"" + str + "\" not found, ignoring.");
             } catch (IOException | ParseException | InvalidArgumentException ex) {
                 guiUtils.error(ex);
             }
