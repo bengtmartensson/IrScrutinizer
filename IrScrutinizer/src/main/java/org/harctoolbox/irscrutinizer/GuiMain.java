@@ -8860,7 +8860,7 @@ public final class GuiMain extends javax.swing.JFrame {
           try {
             String body = String.format(
                     "# Enter message here%%0D%%0A%%0D%%0A%6$s%%0D%%0A%7$s%%0D%%0A"
-                    + "IrpTransmogrifier%%3D%1$s %%0D%%0AJava%%3D%2$s %3$s %%0D%%0AOperating system%%3D%4$s-%5$s LAF=%8$s",
+                    + "IrpTransmogrifier%%3D%1$s%%0D%%0AJava%%3D%2$s %3$s%%0D%%0AOperating system%%3D%4$s-%5$s%%0D%%0ALAF=%8$s",
                     org.harctoolbox.irp.Version.version,
                     System.getProperty("java.vendor"), System.getProperty("java.version"),
                     System.getProperty("os.name"), System.getProperty("os.arch"),
