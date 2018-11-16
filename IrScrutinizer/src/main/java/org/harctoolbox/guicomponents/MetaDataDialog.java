@@ -24,7 +24,7 @@ import org.harctoolbox.girr.Remote;
 
 public class MetaDataDialog extends javax.swing.JDialog {
 
-    private Remote.MetaData metaData;
+    private transient Remote.MetaData metaData;
 
     private MetaDataDialog(Remote.MetaData metaData, Frame parent) {
         super(parent, "Enter remote meta data", Dialog.ModalityType.DOCUMENT_MODAL);

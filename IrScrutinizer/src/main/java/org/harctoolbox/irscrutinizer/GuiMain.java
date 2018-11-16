@@ -107,8 +107,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private transient ControlTowerIrDatabase controlTowerIrDatabase = null;
     private Map<String, String> controlTowerCodesetTable = null;
     private transient IrdbImporter irdbImporter = null;
-    private IrpDatabase irpDatabase = null;
-    private Decoder decoder = null;
+    private transient IrpDatabase irpDatabase = null;
+    private transient Decoder decoder = null;
     private ProtocolsIni protocolsIni = null;
     private transient CcfImporter ccfImporter;
     private transient XcfImporter xcfImporter;
@@ -148,7 +148,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private transient SendingLircClient sendingLircClient;
     private transient CapturingHardwareManager capturingHardwareManager;
 
-    private Remote.MetaData metaData = new Remote.MetaData("unnamed");
+    private transient Remote.MetaData metaData = new Remote.MetaData("unnamed");
 
     private final static String feedbackMail = "feedback@harctoolbox.org";
     private final static String issuesUrl = "https://github.com/bengtmartensson/harctoolboxbundle/issues";
@@ -214,12 +214,13 @@ public final class GuiMain extends javax.swing.JFrame {
             try {
                 @SuppressWarnings("unchecked")
                 List<File> list = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
-                for (File file : list)
+                list.forEach((file) -> {
                     try {
                         importGirr(file, raw);
                     } catch (IOException | ParseException | InvalidArgumentException ex) {
                         guiUtils.error(ex);
                     }
+                });
             } catch (UnsupportedFlavorException | IOException e) {
                 return false;
             }
@@ -969,14 +970,9 @@ public final class GuiMain extends javax.swing.JFrame {
         if (str.trim().isEmpty())
             return null;
 
-//        try {
-            return InterpretString.interpretString(str, getFrequency(), properties.getDummyGap(),
-                    properties.getInvokeRepeatFinder(), properties.getInvokeCleaner(),
-                    properties.getAbsoluteTolerance(), properties.getRelativeTolerance(), properties.getMinRepeatLastGap());
-//        } catch (InvalidArgumentException ex) {
-//            guiUtils.error(ex);
-//            return null;
-//        }
+        return InterpretString.interpretString(str, getFrequency(), properties.getDummyGap(),
+                properties.getInvokeRepeatFinder(), properties.getInvokeCleaner(),
+                properties.getAbsoluteTolerance(), properties.getRelativeTolerance(), properties.getMinRepeatLastGap());
     }
 
     private void loadProtocolsIni() throws IOException, java.text.ParseException {
@@ -7323,7 +7319,7 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             ICommandExporter exporter = newExporter("ICT");
             saveSignal(getCapturedIrSignal(), exporter);
-        } catch (Exception ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_exportSignalIctMenuItemActionPerformed
@@ -7379,7 +7375,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void exportSignalGirrMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSignalGirrMenuItemActionPerformed
         try {
             saveSignal(getCapturedIrSignal(), newGirrExporter());
-        } catch (Exception ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_exportSignalGirrMenuItemActionPerformed
@@ -7980,7 +7976,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void exportSignalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSignalButtonActionPerformed
         try {
             saveSignal(getCapturedIrSignal());
-        } catch (Exception ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_exportSignalButtonActionPerformed
@@ -8058,7 +8054,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void signalSignalTextMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signalSignalTextMenuItemActionPerformed
         try {
             saveSignal(getCapturedIrSignal(), newTextExporter());
-        } catch (Exception ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_signalSignalTextMenuItemActionPerformed
@@ -8066,7 +8062,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void exportSignalWaveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSignalWaveMenuItemActionPerformed
         try {
             saveSignal(getCapturedIrSignal(), new WaveExporter(exportAudioParametersBean));
-        } catch (Exception ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_exportSignalWaveMenuItemActionPerformed
@@ -8215,8 +8211,9 @@ public final class GuiMain extends javax.swing.JFrame {
                 if (decodes.isEmpty())
                     guiUtils.message("No decodes.");
                 else
-                    for (Decoder.Decode decode : decodes.values())
+                    decodes.values().forEach((decode) -> {
                         guiUtils.message(decode.toString());
+                });
             } else
                 guiUtils.error("No signal received.");
         } catch (TimeoutException ex) {
@@ -8340,7 +8337,7 @@ public final class GuiMain extends javax.swing.JFrame {
         IrSignal irSignal;
         try {
             irSignal = getCapturedIrSignal();
-        } catch (Exception ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
             return;
         }
@@ -8361,7 +8358,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void signalExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signalExportButtonActionPerformed
         try {
             saveSignal(getCapturedIrSignal());
-        } catch (Exception ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_signalExportButtonActionPerformed

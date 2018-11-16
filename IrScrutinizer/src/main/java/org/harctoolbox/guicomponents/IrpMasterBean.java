@@ -65,10 +65,10 @@ public final class IrpMasterBean extends javax.swing.JPanel {
     public static final String PROP_T = "T";
     public static final String PROP_ADDITIONAL_PARAMS = "ADDITIONAL_PARAMS";
     private JFrame frame;
-    private IrpDatabase irpDatabase;
+    private transient IrpDatabase irpDatabase;
     private String protocolName;
     private GuiUtils guiUtils;
-    private ISignalNameFormatter signalNameFormatter;
+    private transient ISignalNameFormatter signalNameFormatter;
 
     // presently only used for the property change support
     private String D = invalidParameterString;

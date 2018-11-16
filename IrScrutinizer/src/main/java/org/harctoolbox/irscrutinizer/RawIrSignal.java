@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.harctoolbox.analyze.Analyzer;
 import org.harctoolbox.analyze.NoDecoderMatchException;
 import org.harctoolbox.girr.Command;
@@ -127,6 +125,7 @@ public class RawIrSignal extends NamedIrSignal {
     /**
      * @param aParameterWidths the parameterWidths to set
      */
+    @SuppressWarnings("AssignmentToCollectionOrArrayFieldFromParameter")
     public static void setParameterWidths(List<Integer> aParameterWidths) {
         parameterWidths = aParameterWidths;
     }

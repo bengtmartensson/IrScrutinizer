@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.harchardware.ir.GlobalCache;
 import org.harctoolbox.harchardware.ir.IrTransIRDB;
 import org.harctoolbox.harchardware.ir.LircClient;
@@ -38,13 +39,13 @@ import org.harctoolbox.irp.IrpException;
 
 public class GuiTester extends javax.swing.JFrame {
     private boolean verbose = true;
-    private final LookAndFeelManager lookAndFeelManager;
+    private transient final LookAndFeelManager lookAndFeelManager;
     private static final String helpText = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
 
     private GuiUtils guiUtils = new GuiUtils(this, "tester", 1000);
-    private IrTransIRDB irtrans;
-    private final GlobalCacheManagerMenu globalCacheManagerMenu;
-    private IrpDatabase irpMaster;
+    private transient IrTransIRDB irtrans;
+    private transient final GlobalCacheManagerMenu globalCacheManagerMenu;
+    private transient IrpDatabase irpDatabase;
 
     private class TestCaller implements LookAndFeelManager.ILookAndFeelManagerCaller {
         @Override
@@ -81,7 +82,7 @@ public class GuiTester extends javax.swing.JFrame {
      */
     public GuiTester() {
         try {
-            this.irpMaster = new IrpDatabase("../IrpMaster/data/IrpProtocols.ini");
+            this.irpDatabase = new IrpDatabase("../IrpMaster/data/IrpProtocols.ini");
         } catch (IOException ex) {
             guiUtils.error(ex);
         }
@@ -187,7 +188,7 @@ public class GuiTester extends javax.swing.JFrame {
         beaconPanel = new javax.swing.JPanel();
         amxBeaconListenerTree1 = new org.harctoolbox.guicomponents.AmxBeaconListenerPanel();
         jPanel3 = new javax.swing.JPanel();
-        irpMasterBean = new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpMaster, "rc5");
+        irpMasterBean = new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpDatabase, "rc5");
         jScrollPane2 = new javax.swing.JScrollPane();
         ccfTextArea = new javax.swing.JTextArea();
         jButton2 = new javax.swing.JButton();
@@ -720,7 +721,7 @@ public class GuiTester extends javax.swing.JFrame {
         //RandomValueSet.initRng();
         try {
             commands = irpMasterBean.getCommands();
-        } catch (Exception ex) {
+        } catch (ParseException | GirrException | IrCoreException | IrpException ex) {
             Logger.getLogger(GuiTester.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (commands != null)
