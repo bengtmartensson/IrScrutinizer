@@ -1132,12 +1132,12 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setAnalyzeParameters(IrSignal irSignal) throws InvalidArgumentException {
-        Analyzer analyzer;
-        if (properties.getInvokeRepeatFinder()) {
+        // Ignore repeatfinder request if irSignal already has repeat.
+        if (properties.getInvokeRepeatFinder() && irSignal.getRepeatLength() == 0) {
             ModulatedIrSequence irSequence = irSignal.toModulatedIrSequence();
             setAnalyzeParameters(irSequence);
         } else {
-            analyzer = new Analyzer(irSignal, properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+            Analyzer analyzer = new Analyzer(irSignal, properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
             setAnalyzeParameters(analyzer);
         }
     }
@@ -1150,7 +1150,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     public void scrutinizeIrSignal(IrSignal irSignal) throws InvalidArgumentException {
-        if (irSignal.isEmpty()) {
+        if (irSignal == null || irSignal.isEmpty()) {
             guiUtils.error("Not scrutinizing empty signal.");
             return;
         }
@@ -1335,10 +1335,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void reAnalyze() {
         try {
             IrSignal irSignal = getCapturedIrSignal();
-            if (irSignal == null)
-                guiUtils.error("Nothing to scrutinize");
-            else
-                scrutinizeIrSignal(irSignal);
+            scrutinizeIrSignal(irSignal);
         } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         } catch (RuntimeException ex) {
