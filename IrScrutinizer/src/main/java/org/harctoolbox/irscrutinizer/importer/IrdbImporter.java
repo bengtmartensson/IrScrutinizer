@@ -31,13 +31,16 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
+import org.harctoolbox.ircore.IrCoreUtils;
 
 public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter {
 
@@ -99,6 +102,18 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
             }
         }
         manufacturers = newManufacturers;
+    }
+
+    public static Map<String,Long> mkParameters(long D, long S, long F) {
+        Map<String, Long> result = new HashMap<>(3);
+        if (D != IrCoreUtils.INVALID)
+            result.put("D", D);
+        if (S != IrCoreUtils.INVALID)
+            result.put("S", S);
+        if (F != IrCoreUtils.INVALID)
+            result.put("F", F);
+
+        return result;
     }
 
     public static void main(String[] args) {
@@ -236,20 +251,20 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     }
 
     private Map<String, Command> load(Map<String, Long> commandMap, ProtocolDeviceSubdevice pds, String deviceType) {
-        Map<String,Command> cmds = new LinkedHashMap<>(16);
-//        for (Entry<String, Long> kvp : commandMap.entrySet()) {
-//            //ParametrizedIrSignal paramSig = new ParametrizedIrSignal(pds.getProtocol(), pds.getDevice(), pds.subdevice,
-//            //        kvp.getValue().longValue(), kvp.getKey(),
-//            //        "IRDB: " + manufacturer + "/" + deviceType + "/" + pds.toString());
-//            Map<String, Long> parameters = IrpUtils.mkParameters(pds.getDevice(), pds.subdevice, kvp.getValue());
-//            Command command = new Command(kvp.getKey(),
-//                    "IRDB: " + manufacturer + "/" + deviceType + "/" + pds.toString(),
-//                    pds.getProtocol(),
-//                    parameters);
-//            //commands.put(command.getName(), command);
-//            cmds.put(command.getName(), command);
-//            addCommand(command);
-//        }
+        Map<String, Command> cmds = new LinkedHashMap<>(16);
+        commandMap.entrySet().forEach((kvp) -> {
+            try {
+                Map<String, Long> parameters = mkParameters(pds.getDevice(), pds.subdevice, kvp.getValue());
+                Command command = new Command(kvp.getKey(),
+                        "IRDB: " + manufacturer + "/" + deviceType + "/" + pds.toString(),
+                        pds.getProtocol(),
+                        parameters);
+                cmds.put(command.getName(), command);
+                addCommand(command);
+            } catch (GirrException ex) {
+                System.err.println(ex);
+            }
+        });
         return cmds;
     }
 
