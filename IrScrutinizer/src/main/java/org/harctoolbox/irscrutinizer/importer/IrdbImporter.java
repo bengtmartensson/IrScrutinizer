@@ -45,7 +45,6 @@ import org.harctoolbox.ircore.IrCoreUtils;
 public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter {
 
     private final static Proxy proxy = Proxy.NO_PROXY;
-    private final static long invalid = -1L;
     private final static String irdbOriginName = "IRDB";
 
     private static ArrayList<String> manufacturers;
@@ -63,9 +62,9 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     }
     private static long parseLong(String str) {
         try {
-            return ((str == null) || str.isEmpty()) ? invalid : Long.parseLong(str);
+            return ((str == null) || str.isEmpty()) ? IrCoreUtils.INVALID : Long.parseLong(str);
         } catch (NumberFormatException e) { // Do not treat "None" explicitly
-            return invalid;
+            return IrCoreUtils.INVALID;
         }
     }
     public static String[] getManufacturers(boolean verbose) throws IOException {
@@ -132,7 +131,6 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         }
     }
 
-    //private boolean verbose = false;
     private String manufacturer;
     private RemoteSet remoteSet;
     private LinkedHashMap<String, Map<ProtocolDeviceSubdevice, Map<String, Long>>> deviceTypes;
@@ -140,7 +138,6 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     public IrdbImporter(String manufacturer, boolean verbose) throws IOException {
         super(irdbOriginName);
         this.manufacturer = manufacturer;
-        //this.verbose = verbose;
         deviceTypes = new LinkedHashMap<>(16);
         String path = String.format(urlFormat, URLEncoder.encode(manufacturer, "utf-8"), 1);
         for (int index = 1; index <= 100 && !path.isEmpty(); index++) {
@@ -173,6 +170,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
             }
         }
     }
+
     @Override
     public RemoteSet getRemoteSet() {
         return remoteSet;
@@ -182,10 +180,6 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     public String getFormatName() {
         return "IRDB";
     }
-
-//    public void setVerbose(boolean verbose) {
-//        this.verbose = verbose;
-//    }
 
     public Set<String> getDeviceTypes() {
         return deviceTypes.keySet();
@@ -274,14 +268,11 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     }
 
     public void load(String deviceType, String protocol, long device, long subdevice) {
-        //return getCommands(deviceType, new ProtocolDeviceSubdevice(protocol, device, subdevice));
         load(deviceType, new ProtocolDeviceSubdevice(protocol, device, subdevice));
     }
 
     public Command getCommand(String deviceType, String protocol, long device, long subdevice, String functionName) {
-        //HashMap<String, Long> map = getCommands(deviceType, protocol, device, subdevice);
         load(deviceType, new ProtocolDeviceSubdevice(protocol, device, subdevice));
-        //return commandIndex == null ? invalid : map.get(functionName);
         return getCommand(functionName);
     }
 
@@ -301,7 +292,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         }
 
         public ProtocolDeviceSubdevice(String protocol, long device) {
-            this(protocol, device, invalid);
+            this(protocol, device, IrCoreUtils.INVALID);
         }
 
         public ProtocolDeviceSubdevice(JsonObject json) {
@@ -343,7 +334,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         public String toString() {
             return "protocol=" + protocol
                     + ", device=" + Long.toString(device)
-                    + (subdevice == invalid ? "" : (", subdevice=" + Long.toString(subdevice)));
+                    + (subdevice == IrCoreUtils.INVALID ? "" : (", subdevice=" + Long.toString(subdevice)));
         }
     }
 }
