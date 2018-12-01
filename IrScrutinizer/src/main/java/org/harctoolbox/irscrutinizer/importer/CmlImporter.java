@@ -67,19 +67,19 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
     }
 
     @Override
-    public void load(Reader reader, String origin) throws IOException, ParseException {
+    public void load(Reader reader, String origin) {
         throw new UnsupportedOperationException("Not supported.");
     }
 
     @Override
-    public void load(File file, String origin, String charsetName) throws IOException, ParseException, InvalidArgumentException {
+    public void load(File file, String origin, String charsetName) throws IOException, InvalidArgumentException {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
             load(fileInputStream, origin, charsetName);
         }
     }
 
     @Override
-    public void load(InputStream reader, String origin, String charsetName) throws IOException, ParseException, InvalidArgumentException {
+    public void load(InputStream reader, String origin, String charsetName) throws IOException, InvalidArgumentException {
         charactersetName = charsetName;
         prepareLoad(origin);
         remoteSet = parseRemoteSet(reader, origin);
@@ -93,7 +93,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
             if (token == remoteToken)
                 break;
             if (token == 0)
-                return null;
+                throw new InvalidArgumentException("Erroneous CML file");
         }
         while (inputStream.available() > 0) {
             Remote remote = parseRemote(inputStream);
