@@ -386,126 +386,127 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
 
         @Override
         Command toCommand() throws InvalidArgumentException, GirrException {
-//            if (null == timing.type) {
-//                int[] times = new int[2 * data.length()];
-//                for (int i = 0; i < data.length(); i++) {
-//                    char ch = data.charAt(i);
-//                    int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
-//                    // FIXME
-////                    if (index >= timing.durations.length)
-////                        throw new InvllrpException("Undefined timing :" + ch);
-//                    times[2 * i] = timing.durations[index][0];
-//                    times[2 * i + 1] = timing.durations[index][1];
-//                }
-//                IrSignal irSignal = timing.repetitions <= 1
-//                        ? new IrSignal(times, times.length / 2, 0, 1000 * timing.frequency)
-//                        : new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
-//                return new Command(name, null, irSignal);
-//            } else
-//                switch (timing.type) {
-//                    case rc5: {
-//                        // {36k,msb,889}<1,-1|-1,1>((1:1,~F:1:6,T:1,D:5,F:6,^114m)+,T=1-T)[T@:0..1=0,D:0..31,F:0..127]
-//                        long payload = Long.parseLong(data, 2);
-//                        long F6 = (~(payload >> 12)) & 1;
-//                        long F = (F6 << 6) | (payload & 0x3f);
-//                        long D = (payload >> 6) & 0x1f;
-//                        long T = (payload >> 11) & 1;
-//                        Map<String, Long> parameters = new HashMap<>(4);
-//                        parameters.put("F", F);
-//                        parameters.put("D", D);
-//                        parameters.put("T", T);
-//                        return new Command(name, null, "RC5", parameters);
-//                    }
-//                    case rc6: {
-//                        // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
-//                        // http://www.irtrans.de/forum/viewtopic.php?f=18&t=99
-//                        if (!data.substring(0, 2).equals("S1"))
-//                            throw new org.harctoolbox.IrpMaster.ParseException();
-//                        int numberBits = data.length() - 7;
-//                        long payload = Long.parseLong(data.substring(2), 2);
-//                        long M = (payload >> (numberBits + 2)) & 7;
-//                        Map<String, Long> parameters = new HashMap<>(5);
-//                        long F = payload & 0xff;
-//                        long D = (payload >> 8) & 0xff;
-//                        parameters.put("D", D);
-//                        parameters.put("F", F);
-//                        String protocolName;
-//                        switch (numberBits) {
-//                            case 16: {
-//                                if (M != 0)
-//                                    throw new IrpMasterException("Unknown M = " + M + " in RC6-M-16");
-//
-//                                // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
-//                                protocolName = "RC6";
-//                            }
-//                            break;
-//                            case 20: {
-//                                if (M != 6)
-//                                    throw new IrpMasterException("Unknown M = " + M + " in RC6-M-20");
-//
-//                                // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,6:3,<-2,2|2,-2>(T:1),D:8,S:4,F:8,-100m)+,T=1-T)[D:0..255,S:0..15,F:0..255,T@:0..1=0]
-//                                long S = (payload >> 8) & 0x0f;
-//                                D = (payload >> 12) & 0xff;
-//                                parameters.put("S", S);
-//                                parameters.put("D", D);
-//                                protocolName = "RC6-6-20";
-//                            }
-//                            break;
-//                            case 24: {
-//                                if (M != 6)
-//                                    throw new IrpMasterException("Unknown M = " + M + " in RC6-M-24");
-//
-//                                // {36k,444,msb}<-1,1|1,-1>(6,-2,1:1,6:3,<-2,2|2,-2>(T:1),D:8,S:8,F:8,-100m/*???*/)+[D:0..255,S:0..255,F:0..255,T@:0..1=0]
-//                                long S = (payload >> 8) & 0xff;
-//                                D = (payload >> 16) & 0xff;
-//                                parameters.put("S", S);
-//                                parameters.put("D", D);
-//                                protocolName = "Replay";
-//                            }
-//                            break;
-//                            case 32: {
-//                                long OEM2 = (payload >> 16) & 0xff;
-//                                long OEM1 = (payload >> 24) & 0xff;
-//                                if (M == 6 && OEM1 == 128) {
-//                                    // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,6:3,-2,2,OEM1:8,S:8,T:1,D:7,F:8,^107m)+,T=1-T) {OEM1=128}[D:0..127,S:0..255,F:0..255,T@:0..1=0]
-//                                    long T = D >> 7;
-//                                    D &= 0x7f;
-//                                    parameters.put("T", T);
-//                                    parameters.put("S", OEM2);
-//                                    parameters.put("D", D);
-//                                    protocolName = "MCE";
-//                                } else {
-//                                    // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,M:3,<-2,2|2,-2>(T:1),OEM1:8,OEM2:8,D:8,F:8,^107m)+,T=1-T)[OEM1:0..255,OEM2:0..255,D:0..255,F:0..255,M:0..7,T@:0..1=0]
-//                                    parameters.put("OEM1", OEM1);
-//                                    parameters.put("OEM2", OEM2);
-//                                    parameters.put("M", M);
-//                                    protocolName = "RC6-M-32";
-//                                }
-//                            }
-//                            break;
-//                            default:
-//                                throw new IrpMasterException("Unimplemented RC6 bitlength :" + numberBits);
-//                        }
-//                        return new Command(name, null, protocolName, parameters);
-//                    }
-//                    default:
-//                        int[] times = new int[2 * data.length()];
-//                        for (int i = 0; i < data.length(); i++) {
-//                            char ch = data.charAt(i);
-//                            int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
-//                            if (index >= timing.durations.length)
-//                                throw new IrpMasterException("Undefined timing: " + ch);
-//                            times[2 * i] = timing.durations[index][0];
-//                            times[2 * i + 1] = timing.durations[index][1];
-//                        }
-//                        IrSignal irSignal = timing.repetitions <= 1
-//                                ? new IrSignal(times, times.length / 2, 0, 1000 * timing.frequency)
-//                                : new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
-//                        return new Command(name, null, irSignal);
-//                }
-return null;
+            if (null == timing.type) {
+                int[] times = new int[2 * data.length()];
+                for (int i = 0; i < data.length(); i++) {
+                    char ch = data.charAt(i);
+                    int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
+                    // FIXME
+//                    if (index >= timing.durations.length)
+//                        throw new InvllrpException("Undefined timing :" + ch);
+                    times[2 * i] = timing.durations[index][0];
+                    times[2 * i + 1] = timing.durations[index][1];
+                }
+                IrSignal irSignal = timing.repetitions <= 1
+                        ? new IrSignal(times, times.length, 0, 1000 * timing.frequency)
+                        : new IrSignal(times, 0, times.length, 1000 * timing.frequency);
+                return new Command(name, null, irSignal);
+            } else {
+                switch (timing.type) {
+                    case rc5: {
+                        // {36k,msb,889}<1,-1|-1,1>((1:1,~F:1:6,T:1,D:5,F:6,^114m)+,T=1-T)[T@:0..1=0,D:0..31,F:0..127]
+                        long payload = Long.parseLong(data, 2);
+                        long F6 = (~(payload >> 12)) & 1;
+                        long F = (F6 << 6) | (payload & 0x3f);
+                        long D = (payload >> 6) & 0x1f;
+                        long T = (payload >> 11) & 1;
+                        Map<String, Long> parameters = new HashMap<>(4);
+                        parameters.put("F", F);
+                        parameters.put("D", D);
+                        parameters.put("T", T);
+                        return new Command(name, null, "RC5", parameters);
+                    }
+                    case rc6: {
+                        // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
+                        // http://www.irtrans.de/forum/viewtopic.php?f=18&t=99
+                        if (!data.substring(0, 2).equals("S1"))
+                            throw new InvalidArgumentException();
+                        int numberBits = data.length() - 7;
+                        long payload = Long.parseLong(data.substring(2), 2);
+                        long M = (payload >> (numberBits + 2)) & 7;
+                        Map<String, Long> parameters = new HashMap<>(5);
+                        long F = payload & 0xff;
+                        long D = (payload >> 8) & 0xff;
+                        parameters.put("D", D);
+                        parameters.put("F", F);
+                        String protocolName;
+                        switch (numberBits) {
+                            case 16: {
+                                if (M != 0)
+                                    throw new InvalidArgumentException("Unknown M = " + M + " in RC6-M-16");
+
+                                // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
+                                protocolName = "RC6";
+                            }
+                            break;
+                            case 20: {
+                                if (M != 6)
+                                    throw new InvalidArgumentException("Unknown M = " + M + " in RC6-M-20");
+
+                                // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,6:3,<-2,2|2,-2>(T:1),D:8,S:4,F:8,-100m)+,T=1-T)[D:0..255,S:0..15,F:0..255,T@:0..1=0]
+                                long S = (payload >> 8) & 0x0f;
+                                D = (payload >> 12) & 0xff;
+                                parameters.put("S", S);
+                                parameters.put("D", D);
+                                protocolName = "RC6-6-20";
+                            }
+                            break;
+                            case 24: {
+                                if (M != 6)
+                                    throw new InvalidArgumentException("Unknown M = " + M + " in RC6-M-24");
+
+                                // {36k,444,msb}<-1,1|1,-1>(6,-2,1:1,6:3,<-2,2|2,-2>(T:1),D:8,S:8,F:8,-100m/*???*/)+[D:0..255,S:0..255,F:0..255,T@:0..1=0]
+                                long S = (payload >> 8) & 0xff;
+                                D = (payload >> 16) & 0xff;
+                                parameters.put("S", S);
+                                parameters.put("D", D);
+                                protocolName = "Replay";
+                            }
+                            break;
+                            case 32: {
+                                long OEM2 = (payload >> 16) & 0xff;
+                                long OEM1 = (payload >> 24) & 0xff;
+                                if (M == 6 && OEM1 == 128) {
+                                    // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,6:3,-2,2,OEM1:8,S:8,T:1,D:7,F:8,^107m)+,T=1-T) {OEM1=128}[D:0..127,S:0..255,F:0..255,T@:0..1=0]
+                                    long T = D >> 7;
+                                    D &= 0x7f;
+                                    parameters.put("T", T);
+                                    parameters.put("S", OEM2);
+                                    parameters.put("D", D);
+                                    protocolName = "MCE";
+                                } else {
+                                    // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,M:3,<-2,2|2,-2>(T:1),OEM1:8,OEM2:8,D:8,F:8,^107m)+,T=1-T)[OEM1:0..255,OEM2:0..255,D:0..255,F:0..255,M:0..7,T@:0..1=0]
+                                    parameters.put("OEM1", OEM1);
+                                    parameters.put("OEM2", OEM2);
+                                    parameters.put("M", M);
+                                    protocolName = "RC6-M-32";
+                                }
+                            }
+                            break;
+                            default:
+                                throw new InvalidArgumentException("Unimplemented RC6 bitlength :" + numberBits);
+                        }
+                        return new Command(name, null, protocolName, parameters);
+                    }
+                    default:
+                        int[] times = new int[2 * data.length()];
+                        for (int i = 0; i < data.length(); i++) {
+                            char ch = data.charAt(i);
+                            int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
+                            if (index >= timing.durations.length)
+                                throw new InvalidArgumentException("Undefined timing: " + ch);
+                            times[2 * i] = timing.durations[index][0];
+                            times[2 * i + 1] = timing.durations[index][1];
+                        }
+                        IrSignal irSignal = timing.repetitions <= 1
+                                ? new IrSignal(times, times.length, 0, 1000 * timing.frequency)
+                                : new IrSignal(times, 0, times.length, 1000 * timing.frequency);
+                        return new Command(name, null, irSignal);
+                }
+            }
         }
     }
+
     private static class IrTransCommandRaw extends IrTransCommand {
 
         private final int[] durations;
@@ -520,7 +521,7 @@ return null;
 
         @Override
         Command toCommand() throws InvalidArgumentException {
-            IrSignal irSignal = new IrSignal(durations, 0, durations.length / 2, 1000 * frequency);
+            IrSignal irSignal = new IrSignal(durations, 0, durations.length, 1000 * frequency);
             return new Command(name, null, irSignal);
         }
     }
