@@ -190,7 +190,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
             System.err.println(String.format("%s/%s: funny lengths (%d, %d), command ignored", remoteName, commandName, introLength, repeatLength));
             return null;
         }
-        IrSignal irSignal = new IrSignal(timingsMicroseconds, introLength/2, repeatLength/2, frequency);
+        IrSignal irSignal = new IrSignal(timingsMicroseconds, introLength, repeatLength, frequency);
         Command command = new Command(commandName, null, irSignal);
         return command;
     }
