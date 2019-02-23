@@ -1200,7 +1200,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void processIr(ModulatedIrSequence modulatedIrSequence) throws InvalidArgumentException {
-        if (modulatedIrSequence.isEmpty()) {
+        if (modulatedIrSequence == null || modulatedIrSequence.isEmpty()) {
             guiUtils.error("Not showing empty sequence.");
             return;
         }
