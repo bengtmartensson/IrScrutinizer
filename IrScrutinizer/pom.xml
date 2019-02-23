@@ -467,7 +467,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>icotool</executable> <!-- Fedora pkg: libicns-utils -->
+                            <executable>icotool</executable> <!-- Fedora pkg: icoutils -->
                             <workingDirectory>${project.build.directory}</workingDirectory>
                             <arguments>
                                 <argument>-o</argument>
