@@ -24,6 +24,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import org.harctoolbox.ircore.IrCoreUtils;
 import org.harctoolbox.ircore.ModulatedIrSequence;
+import org.harctoolbox.ircore.OddSequenceLengthException;
+import org.harctoolbox.ircore.ThisCannotHappenException;
 
 /**
  * This class imports Lirc's mode2 files.
@@ -77,12 +79,11 @@ public class Mode2Importer extends ReaderImporter implements IModulatedIrSequenc
             array[i] = duration;
             i++;
         }
-        //try {
-        //    sequence = new ModulatedIrSequence(array, getFallbackFrequency());
-        //} catch (OddSequenceLengthException ex) {
-        //    throw new ParseException(ex.getMessage(), lineNo);
-            // TODO: invoke logger
-        //}
+        try {
+            sequence = new ModulatedIrSequence(array, getFallbackFrequency());
+        } catch (OddSequenceLengthException ex) {
+            throw new ThisCannotHappenException(ex.getMessage());
+        }
     }
 
     @Override
