@@ -2536,8 +2536,8 @@
                               <Component id="scrutinizeRemoteHelpButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="rawCookedTabbedPane" min="-2" pref="367" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="rawCookedTabbedPane" pref="367" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="0" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>

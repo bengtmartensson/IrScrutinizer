@@ -3347,8 +3347,8 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(parametricOrRawExportButton)
                     .addComponent(scrutinizeRemoteHelpButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(rawCookedTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 367, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(rawCookedTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
 
         topLevelTabbedPane.addTab("Scrutinize remote", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/list.png")), remoteScrutinizerPanel); // NOI18N
