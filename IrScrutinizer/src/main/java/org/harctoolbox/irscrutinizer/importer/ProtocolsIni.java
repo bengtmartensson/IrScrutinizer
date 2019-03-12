@@ -130,7 +130,7 @@ public class ProtocolsIni implements Serializable {
 
         String[] params = str.split(",");
         for (int i = 0; i < params.length; i++) {
-            String in = params[i].split("=")[0];
+            String in = params[i].split("=")[0].split(":")[0];
             params[i] = translate(in);
         }
         return params;
