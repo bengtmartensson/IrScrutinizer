@@ -462,7 +462,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="setSMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Set S (subdevice)"/>
+                <Property name="text" type="java.lang.String" value="Set S (subdevice)..."/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setSMenuItemActionPerformed"/>
@@ -544,6 +544,15 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addMissingNamesMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="deleteDefaultedSignalsMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Delete default-named signals"/>
+                <Property name="toolTipText" type="java.lang.String" value="Delete signals which were added by &quot;Add missing Fs&quot; and not changed."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteDefaultedSignalsMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>

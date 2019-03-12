@@ -1842,6 +1842,7 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         addMissingFsMenuItem = new javax.swing.JMenuItem();
         addMissingNamesMenuItem = new javax.swing.JMenuItem();
+        deleteDefaultedSignalsMenuItem = new javax.swing.JMenuItem();
         rawTablePopupMenu = new javax.swing.JPopupMenu();
         rawSorterCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator25 = new javax.swing.JPopupMenu.Separator();
@@ -2688,7 +2689,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         parametrizedAdvancedMenu.add(setDMenuItem);
 
-        setSMenuItem.setText("Set S (subdevice)");
+        setSMenuItem.setText("Set S (subdevice)...");
         setSMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 setSMenuItemActionPerformed(evt);
@@ -2769,6 +2770,15 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         parametrizedAdvancedMenu.add(addMissingNamesMenuItem);
+
+        deleteDefaultedSignalsMenuItem.setText("Delete default-named signals");
+        deleteDefaultedSignalsMenuItem.setToolTipText("Delete signals which were added by \"Add missing Fs\" and not changed.");
+        deleteDefaultedSignalsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteDefaultedSignalsMenuItemActionPerformed(evt);
+            }
+        });
+        parametrizedAdvancedMenu.add(deleteDefaultedSignalsMenuItem);
 
         parameterTablePopupMenu.add(parametrizedAdvancedMenu);
 
@@ -9100,6 +9110,13 @@ public final class GuiMain extends javax.swing.JFrame {
             parameterTableModel.namesTransform(old, replacement);
     }//GEN-LAST:event_transformNameMenuItemActionPerformed
 
+    private void deleteDefaultedSignalsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteDefaultedSignalsMenuItemActionPerformed
+        boolean isOk = guiUtils.confirm("This will delete all signal with automatically generated names.\n"
+                + "The operation cannot be undone. Consider saving first.\n\nDo you want to continue?");
+        if (isOk)
+            parameterTableModel.deleteDefaultedSignals();
+    }//GEN-LAST:event_deleteDefaultedSignalsMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9189,6 +9206,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem debugTableRowMenuItem;
     private javax.swing.JMenuItem debugTableRowMenuItem1;
     private javax.swing.JTextField decodeIRTextField;
+    private javax.swing.JMenuItem deleteDefaultedSignalsMenuItem;
     private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JMenuItem deleteMenuItem1;
     private org.harctoolbox.guicomponents.DevLircBean devLircBean;

@@ -494,5 +494,15 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         public String getType() {
             return "parametrized";
         }
+
+        public void deleteDefaultedSignals() {
+            for (int row = getRowCount() - 1; row >= 0; row--) {
+                ParametrizedIrSignal pir = getParameterIrSignal(row);
+                String defaultName = DefaultSignalNameFormatter.formatName(pir.protocolName, pir.parameters);
+                if (pir.getName().equalsIgnoreCase(defaultName) && pir.getComment().isEmpty() && ! pir.getValidated())
+                    removeRow(row);
+            }
+            fireTableDataChanged();
+        }
     }
 }
