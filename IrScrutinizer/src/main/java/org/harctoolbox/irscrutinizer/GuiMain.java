@@ -1261,8 +1261,7 @@ public final class GuiMain extends javax.swing.JFrame {
             metaData = newMetaData;
         }
 
-        File file = null;
-        exporter.export(commands, source, title, metaData,
+        File file = exporter.export(commands, source, title, metaData,
                 properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
                 new File(properties.getExportDir()), properties.getExportCharsetName());
         return file;
