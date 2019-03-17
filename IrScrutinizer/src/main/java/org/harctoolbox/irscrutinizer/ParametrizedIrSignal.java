@@ -140,12 +140,14 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         String[] chunks = payload.split("\\s+");
         for (String chunk : chunks) {
             String[] kvp = chunk.split("=");
-            String name = kvp[0];
-            long value = Long.parseLong(kvp[1]);
-            if (name.equals("D") || name.equals("S") || name.equals("F") || name.equals("T"))
-                continue;
+            if (kvp.length == 2) { // Not perfect, should barf to the user.
+                String name = kvp[0];
+                long value = Long.parseLong(kvp[1]);
+                if (name.equals("D") || name.equals("S") || name.equals("F") || name.equals("T"))
+                    continue;
 
-            setParameter(name, value);
+                setParameter(name, value);
+            }
         }
     }
 
