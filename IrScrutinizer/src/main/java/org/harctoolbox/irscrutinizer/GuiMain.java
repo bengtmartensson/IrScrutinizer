@@ -4528,7 +4528,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addGap(0, 0, 0))
         );
 
-        importTabbedPane.addTab("Text", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/mimetypes/txt.png")), csvImportPanel); // NOI18N
+        importTabbedPane.addTab("Text/CSV", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/mimetypes/txt.png")), csvImportPanel); // NOI18N
 
         importWaveDivideCarrierCheckBox1.setSelected(properties.getImportWaveDivideCarrier());
         importWaveDivideCarrierCheckBox1.setText("Half carrier frequency");

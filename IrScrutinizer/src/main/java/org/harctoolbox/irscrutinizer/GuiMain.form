@@ -4128,8 +4128,8 @@
                     <Container class="javax.swing.JPanel" name="csvImportPanel">
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Text">
-                            <Property name="tabTitle" type="java.lang.String" value="Text"/>
+                          <JTabbedPaneConstraints tabName="Text/CSV">
+                            <Property name="tabTitle" type="java.lang.String" value="Text/CSV"/>
                             <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                               <Image iconType="3" name="/icons/Crystal-Clear/22x22/mimetypes/txt.png"/>
                             </Property>
