@@ -1099,7 +1099,10 @@ public final class GuiMain extends javax.swing.JFrame {
             clearAnalyzeParameters();
         else {
             Protocol actualProtocol = analyzerEliminateConstantVars ? protocol.substituteConstantVariables() : protocol;
-            setAnalyzeParameters(actualProtocol.toIrpString(properties.getAnalyzerBase()));
+            String line = actualProtocol.toIrpString(properties.getAnalyzerBase());
+            setAnalyzeParameters(line);
+            if (properties.getPrintAnalyzerIRPsToConsole())
+                guiUtils.message(line);
         }
     }
 
@@ -2252,6 +2255,7 @@ public final class GuiMain extends javax.swing.JFrame {
         repeatFinderCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         cleanerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         invokeAnalyzerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        printAnalyzeIRPsToConsoleCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         printDecodesToConsoleCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         parametrizedLearnIgnoreTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         irpProtocolsIniMenu = new javax.swing.JMenu();
@@ -6658,6 +6662,15 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         optionsMenu.add(invokeAnalyzerCheckBoxMenuItem);
 
+        printAnalyzeIRPsToConsoleCheckBoxMenuItem.setSelected(properties.getPrintAnalyzerIRPsToConsole());
+        printAnalyzeIRPsToConsoleCheckBoxMenuItem.setText("Print analyze-IRPs to console");
+        printAnalyzeIRPsToConsoleCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printAnalyzeIRPsToConsoleCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        optionsMenu.add(printAnalyzeIRPsToConsoleCheckBoxMenuItem);
+
         printDecodesToConsoleCheckBoxMenuItem.setSelected(properties.getPrintDecodesToConsole());
         printDecodesToConsoleCheckBoxMenuItem.setText("Print decodes to console");
         printDecodesToConsoleCheckBoxMenuItem.setToolTipText("If selected, all decodes are additionally printed to the console window.");
@@ -9116,6 +9129,10 @@ public final class GuiMain extends javax.swing.JFrame {
             parameterTableModel.deleteDefaultedSignals();
     }//GEN-LAST:event_deleteDefaultedSignalsMenuItemActionPerformed
 
+    private void printAnalyzeIRPsToConsoleCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printAnalyzeIRPsToConsoleCheckBoxMenuItemActionPerformed
+        properties.setPrintAnalyzerIRPsToConsole(printAnalyzeIRPsToConsoleCheckBoxMenuItem.isSelected());
+    }//GEN-LAST:event_printAnalyzeIRPsToConsoleCheckBoxMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9511,6 +9528,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem pasteToDataWindowMenuItem;
     private javax.swing.JScrollPane plotScrollPane;
     private javax.swing.JMenuItem plotterResetMenuItem;
+    private javax.swing.JCheckBoxMenuItem printAnalyzeIRPsToConsoleCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem printDecodesToConsoleCheckBoxMenuItem;
     private javax.swing.JPanel prontoClassicExportOptionsPanel;
     private javax.swing.JTextField prontoExportButtonHeightTextField;
