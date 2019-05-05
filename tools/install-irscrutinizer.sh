@@ -37,7 +37,7 @@ else
     exit 1
 fi
 
-# Check that we are in grouo "dialout", complain otherwise
+# Check that we are in group "dialout", complain otherwise
 id -Gn | grep -q dialout  || {
     if [ "$EUID" != "0" ]; then
         echo "Warning: current user $USER not in group dialout"
@@ -45,7 +45,7 @@ id -Gn | grep -q dialout  || {
     fi
 }
 
-# Check that we are in grouo "lock", complain otherwise
+# Check that we are in group "lock", complain otherwise
 id -Gn | grep -q lock  || {
     if [ "$EUID" != "0" ]; then
         echo "Warning: current user $USER not in group lock"
@@ -53,7 +53,7 @@ id -Gn | grep -q lock  || {
     fi
 }
 
-# Check that we are in grouo "lirc", complain otherwise
+# Check that we are in group "lirc", complain otherwise
 id -Gn | grep -q lirc  || {
     if [ "$EUID" != "0" ]; then
         echo "Warning: current user $USER not in group lirc"
