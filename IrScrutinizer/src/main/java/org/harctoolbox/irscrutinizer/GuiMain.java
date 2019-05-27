@@ -1068,7 +1068,15 @@ public final class GuiMain extends javax.swing.JFrame {
 //        DecodeIR decodeIr = DecodeIR.newDecodeIR(irSignal);
 //        if (decodeIr == null)
 //            throw new IOException("DecodeIR was not found");
-        Map<String, Decoder.Decode> decodes = decoder.decode(irSignal);
+        Map<String, Decoder.Decode> decodes = decoder.decode(irSignal, false, //strict
+                false, // allDecodes
+                true, // removeDefaultedParameters
+                false, // recursive
+                -1.0, // frequencyTolerance
+                null, // absoluteTolerance
+                null, // relativeTolerance
+                null //minimumLeadout
+        );
         StringBuilder decodeString = new StringBuilder(20);
         boolean first = true;
         for (Decoder.Decode decode : decodes.values()) {
