@@ -3,6 +3,38 @@ and Jirc.
 
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/harctoolboxbundle/issues
+==============================================================================
+Version 1.4.3, issued on 2019-06-12.
+
+This release is the "second final" 1.*.* release; based on IrpMaster
+as rendering engine and DecodeIR (as decoding engine). Further
+releases will be based on IrpTransmogrifier instead, and will be
+numbered 2.*.*. (see #212).
+
+The release contains a few rather important bug fixes, and implements
+HTTP proxy for http network acccess.
+
+Old MacOSes (<= 10.7 "Lion") appear not to be compatible with Java 8u162
+and later (see https://github.com/arduino/Arduino/issues/7945).
+(This is strictly speaking not an IrScrutinizer issue.)
+
+Documentation has not been updated ;-).
+
+Open issues in this release:
+  * MacOS 10.11.*: Crash in RXTX when closing serial USB device, #64.
+  * RXTX on Windows has problems with Arduino's LLC driver, #229.
+
+User visible changes:
+
+Functionality:
+ * Implemented HTTP proxy. Resolves #257.
+
+Bug fixes:
+ * Fixed NPE problem. Resolves #258.
+ * Removed unnecessary (and evil, see #255) null check.
+ * Remove completely false tooltip. Resolves #249.
+ * Fix bug preventing deleting several, non-consecutive line in the
+   remote editor with enabled sorter, #253.
 
 ==============================================================================
 Version 1.4.2, issued on 2018-09-01.
