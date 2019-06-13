@@ -67,7 +67,7 @@ install --mode=555 ${APPIMAGEKITDIR}/desktopintegration ${USR_BIN}/${MYPROG_LOWE
 # Bundle subset of Java
 wget -c https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.3%2B7_openj9-0.14.3/OpenJDK11U-jdk_x64_linux_openj9_11.0.3_7_openj9-0.14.3.tar.gz
 tar xf OpenJDK11U-jdk_x64_linux_openj9_11.0.3_7_openj9-0.14.3.tar.gz
-./jdk-11.0.3+7/bin/jlink' --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules java.base,java.datatransfer,java.desktop,java.logging,java.xml --output usr
+./jdk-11.0.3+7/bin/jlink --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules java.base,java.datatransfer,java.desktop,java.logging,java.xml --output usr
 cp -Rf usr ${APPDIR}/
 
 # Invoke the builder
