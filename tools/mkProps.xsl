@@ -377,7 +377,7 @@ public final class Props {
 <xsl:apply-templates select="@doc" mode="int-setter"/>
     public void set<xsl:apply-templates select="@name" mode="capitalize"/>(double n) {
         double oldValue = Double.parseDouble(props.getProperty("<xsl:value-of select="@name"/>"));
-        if (!IrpUtils.isEqual(n, oldValue, 0, 1E-12)) {
+        if (!IrCoreUtils.approximatelyEquals(n, oldValue, 0, 1E-12)) {
             props.setProperty("<xsl:value-of select="@name"/>", Double.toString(n));
             needSave = true;
             firePropertyChange("<xsl:value-of select="@name"/>", oldValue, n);

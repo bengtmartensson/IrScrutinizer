@@ -16,7 +16,7 @@
  */
 package org.harctoolbox.irscrutinizer.importer;
 
-import org.harctoolbox.IrpMaster.ModulatedIrSequence;
+import org.harctoolbox.ircore.ModulatedIrSequence;
 
 /**
  * This interface models a class that can import a single ModulatedIrSequence.

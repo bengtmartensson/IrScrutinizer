@@ -5,11 +5,12 @@ The "low-level" issues are kept as [harctoolbox issues](https://github.com/bengt
 
 ## Vocabulary
 * _IrScrutinizer_ denotes the interactive program, and the source packages `org.harctoolbox.irscrutinizer` and subordinate packages,
-* _IrpMaster_ denotes the IRP rendering engine irpmaster.jar, source package `org.harctoolbox.IrpMaster` and subordinate packages,
+* _IrpMaster_ denotes the IRP rendering engine irpmaster.jar, source package `org.harctoolbox.IrpMaster` and subordinate packages
+ (discontinued; not used in IrScrutinizer 2),
 * _IrpTransmogrifier_ is [this project](https://github.com/bengtmartensson/IrpTransmogrifier), intended to replace IrpMaster, DecodeIR, Analyzer, and much more,
 * _HarcHardware_ denotes a collection of "drivers" and other software that accesses hardware more or less directly,
   source package `org.harctoolbox.harchardware` and subordinate packages,
-* _harctoolboxbundle_ is a Github project containing the sources of IrScrutinizer, IrpMaster, HarcHardware and some the other packages.
+* _harctoolboxbundle_ is a Github project containing the sources of IrScrutinizer and the Crystal Icons.
 
 
 ## Demarkation (what _not_ to do (here!))
@@ -46,19 +47,10 @@ buttons on a physical remote.) This covers the issues
 [#48](https://github.com/bengtmartensson/harctoolboxbundle/issues/48).
 
 ## 3. Replace the repeatfinder and the analysis function.
-See [#21](https://github.com/bengtmartensson/harctoolboxbundle/issues/21) (DONE) and
-[#23](https://github.com/bengtmartensson/harctoolboxbundle/issues/23).
-The (third-party) code is unreliable and impossible to maintain.
-See [IrpTransmogrifier](https://github.com/bengtmartensson/IrpTransmogrifier),
-use case 5, which is intended to replace the analyzer.
+Done with IrScrutinizer 2, which uses the repeat finder and analyzer of IrpTransmogrifier.
 
 ## 4. Modernize the IRP engine, couple to the decoding, thus replacing DecodeIR.
-The decoding is unreliable, inflexible, completely decoupled with the IRP engine,
-and constitutes a completely unnecessary JNI-library
-(translating numbers to strings and numbers). See [IrpTransmogrifier](https://github.com/bengtmartensson/IrpTransmogrifier),
-which should basically replace IrpMaster.
-The decoding should be governed by the same data base (IrpProtocols.ini) that governs the generation,
-but using XML technologies instead of the primitive .ini format.
+Done with IrScrutinizer 2, which uses the decoder of IrpTransmogrifier.
 
 ## 5. Replace RXTX
 See [#20](https://github.com/bengtmartensson/harctoolboxbundle/issues/20).
@@ -83,7 +75,10 @@ To the extent possible, use [Girs as command language](http://www.harctoolbox.or
 of special hardware interfaces ([#24](https://github.com/bengtmartensson/harctoolboxbundle/issues/24)) (DONE).
 
 ## 9. Advanced command line support.
-Better to couple this to IrpTransmogrifier
+IrpTransmogrifier has a quite clean command line interface; should probably not touch or replace that.
+See https://github.com/bengtmartensson/harctoolboxbundle/issues/26#issuecomment-431651739 .
+
+Presently, import files in Girr format can be given on the command line.
 
 ## 10. Testing
 I strive to have [TestNG](http://testng.org) based Java testing, integrated in Maven and Netbeans.

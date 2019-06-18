@@ -29,20 +29,22 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
+import org.harctoolbox.ircore.IrCoreUtils;
 
 public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter {
 
-    private final static long invalid = -1L;
+    private final static long invalid = -1L; // FIXME
     private final static String irdbOriginName = "IRDB";
 
     private static ArrayList<String> manufacturers;
@@ -61,9 +63,9 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     }
     private static long parseLong(String str) {
         try {
-            return ((str == null) || str.isEmpty()) ? invalid : Long.parseLong(str);
+            return ((str == null) || str.isEmpty()) ? IrCoreUtils.INVALID : Long.parseLong(str);
         } catch (NumberFormatException e) { // Do not treat "None" explicitly
-            return invalid;
+            return IrCoreUtils.INVALID;
         }
     }
     public static String[] getManufacturers(boolean verbose) throws IOException {
@@ -78,7 +80,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
             System.err.print("Accessing " + url.toString() + " using proxy " + proxy + "...");
         URLConnection urlConnection = url.openConnection(proxy);
         InputStream stream = urlConnection.getInputStream();
-        return JsonObject.readFrom(new InputStreamReader(stream, IrpUtils.dumbCharset));
+        return JsonObject.readFrom(new InputStreamReader(stream, Charset.forName("US-ASCII")));
     }
 
     private static void setupManufacturers(boolean verbose) throws IOException {
@@ -102,6 +104,18 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         manufacturers = newManufacturers;
     }
 
+    public static Map<String,Long> mkParameters(long D, long S, long F) {
+        Map<String, Long> result = new HashMap<>(3);
+        if (D != IrCoreUtils.INVALID)
+            result.put("D", D);
+        if (S != IrCoreUtils.INVALID)
+            result.put("S", S);
+        if (F != IrCoreUtils.INVALID)
+            result.put("F", F);
+
+        return result;
+    }
+
     public static void main(String[] args) {
         try {
             String[] manufacturers = getManufacturers(true);
@@ -113,7 +127,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
                 for (ProtocolDeviceSubdevice pds : irdb.getProtocolDeviceSubdevice(type))
                     System.out.println(irdb.getCommands(type, pds));
             }
-        } catch (IOException | IrpMasterException ex) {
+        } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }
     }
@@ -130,7 +144,6 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     public IrdbImporter(String manufacturer, boolean verbose) throws IOException {
         super(irdbOriginName);
         this.manufacturer = manufacturer;
-        //this.verbose = verbose;
         deviceTypes = new LinkedHashMap<>(16);
         String path = String.format(urlFormat, URLEncoder.encode(manufacturer, "utf-8"), 1);
         for (int index = 1; index <= 100 && !path.isEmpty(); index++) {
@@ -174,10 +187,6 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         return "IRDB";
     }
 
-//    public void setVerbose(boolean verbose) {
-//        this.verbose = verbose;
-//    }
-
     public Set<String> getDeviceTypes() {
         return deviceTypes.keySet();
     }
@@ -187,7 +196,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         return map == null ? null : map.keySet();
     }
 
-    public void load(String deviceType, ProtocolDeviceSubdevice pds) throws IrpMasterException {
+    public void load(String deviceType, ProtocolDeviceSubdevice pds) {
         clearCommands();
         Map<ProtocolDeviceSubdevice, Map<String, Long>> map = deviceTypes.get(deviceType);
         if (map == null)
@@ -211,7 +220,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         remoteSet = new RemoteSet(getCreatingUser(), irdbOriginName, remote);
     }
 
-    public void load(String deviceType) throws IrpMasterException {
+    public void load(String deviceType) {
         clearCommands();
         Map<ProtocolDeviceSubdevice, Map<String, Long>> map = deviceTypes.get(deviceType);
         if (map == null)
@@ -241,38 +250,35 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         remoteSet = new RemoteSet(getCreatingUser(), irdbOriginName, remoteList);
     }
 
-    private Map<String, Command> load(Map<String, Long> commandMap, ProtocolDeviceSubdevice pds, String deviceType) throws IrpMasterException {
-        Map<String,Command> cmds = new LinkedHashMap<>(16);
-        for (Entry<String, Long> kvp : commandMap.entrySet()) {
-            //ParametrizedIrSignal paramSig = new ParametrizedIrSignal(pds.getProtocol(), pds.getDevice(), pds.subdevice,
-            //        kvp.getValue().longValue(), kvp.getKey(),
-            //        "IRDB: " + manufacturer + "/" + deviceType + "/" + pds.toString());
-            Map<String, Long> parameters = IrpUtils.mkParameters(pds.getDevice(), pds.subdevice, kvp.getValue());
-            Command command = new Command(kvp.getKey(),
-                    "IRDB: " + manufacturer + "/" + deviceType + "/" + pds.toString(),
-                    pds.getProtocol(),
-                    parameters);
-            //commands.put(command.getName(), command);
-            cmds.put(command.getName(), command);
-            addCommand(command);
-        }
+    private Map<String, Command> load(Map<String, Long> commandMap, ProtocolDeviceSubdevice pds, String deviceType) {
+        Map<String, Command> cmds = new LinkedHashMap<>(16);
+        commandMap.entrySet().forEach((kvp) -> {
+            try {
+                Map<String, Long> parameters = mkParameters(pds.getDevice(), pds.subdevice, kvp.getValue());
+                Command command = new Command(kvp.getKey(),
+                        "IRDB: " + manufacturer + "/" + deviceType + "/" + pds.toString(),
+                        pds.getProtocol(),
+                        parameters);
+                cmds.put(command.getName(), command);
+                addCommand(command);
+            } catch (GirrException ex) {
+                System.err.println(ex);
+            }
+        });
         return cmds;
     }
 
-    public ArrayList<Command> getCommands(String deviceType, ProtocolDeviceSubdevice pds) throws IrpMasterException {
+    public ArrayList<Command> getCommands(String deviceType, ProtocolDeviceSubdevice pds) {
         load(deviceType, pds);
         return getCommands();
     }
 
-    public void load(String deviceType, String protocol, long device, long subdevice) throws IrpMasterException {
-        //return getCommands(deviceType, new ProtocolDeviceSubdevice(protocol, device, subdevice));
+    public void load(String deviceType, String protocol, long device, long subdevice) {
         load(deviceType, new ProtocolDeviceSubdevice(protocol, device, subdevice));
     }
 
-    public Command getCommand(String deviceType, String protocol, long device, long subdevice, String functionName) throws IrpMasterException {
-        //HashMap<String, Long> map = getCommands(deviceType, protocol, device, subdevice);
+    public Command getCommand(String deviceType, String protocol, long device, long subdevice, String functionName) {
         load(deviceType, new ProtocolDeviceSubdevice(protocol, device, subdevice));
-        //return commandIndex == null ? invalid : map.get(functionName);
         return getCommand(functionName);
     }
 
@@ -292,7 +298,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         }
 
         public ProtocolDeviceSubdevice(String protocol, long device) {
-            this(protocol, device, invalid);
+            this(protocol, device, IrCoreUtils.INVALID);
         }
 
         public ProtocolDeviceSubdevice(JsonObject json) {
@@ -334,7 +340,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         public String toString() {
             return "protocol=" + protocol
                     + ", device=" + Long.toString(device)
-                    + (subdevice == invalid ? "" : (", subdevice=" + Long.toString(subdevice)));
+                    + (subdevice == IrCoreUtils.INVALID ? "" : (", subdevice=" + Long.toString(subdevice)));
         }
     }
 }

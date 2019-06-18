@@ -27,11 +27,11 @@ import java.text.ParseException;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.TransferHandler;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.guicomponents.CopyClipboardText;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.guicomponents.SelectFile;
+import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.irscrutinizer.Props;
 
 /**
@@ -135,7 +135,7 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
             }
             RemoteSet remoteSet = remoteSetImporterLoadFile(url);
             treeImporter.setRemoteSet(remoteSet);
-        } catch (IOException | ParseException | IrpMasterException | UnsupportedOperationException ex) {
+        } catch (IOException | ParseException | InvalidArgumentException | UnsupportedOperationException ex) {
             treeImporter.clear();
             guiUtils.error(ex);
         } finally {
@@ -152,7 +152,7 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
     }
 
     @SuppressWarnings("unchecked")
-    private RemoteSet remoteSetImporterLoadFile(String url) throws IOException, ParseException, IrpMasterException {
+    private RemoteSet remoteSetImporterLoadFile(String url) throws IOException, ParseException, InvalidArgumentException {
         if (IReaderImporter.class.isInstance(importer))
             ((IReaderImporter) importer).load(url, properties.getImportOpensZipFiles(), properties.getImportCharsetName());
         else
@@ -161,7 +161,7 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
     }
 
     @SuppressWarnings("unchecked")
-    private RemoteSet remoteSetImporterLoadClipboard() throws IOException, ParseException, IrpMasterException {
+    private RemoteSet remoteSetImporterLoadClipboard() throws IOException, ParseException, InvalidArgumentException {
         Cursor oldCursor = getCursor();
         try {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -343,7 +343,7 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
         try {
             RemoteSet remoteSet = remoteSetImporterLoadClipboard();
             treeImporter.setRemoteSet(remoteSet);
-        } catch (IOException | IrpMasterException | ParseException ex) {
+        } catch (IOException | InvalidArgumentException | ParseException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_loadClipboardButtonActionPerformed

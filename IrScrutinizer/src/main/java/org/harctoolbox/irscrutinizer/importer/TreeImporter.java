@@ -31,12 +31,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.irp.IrpException;
 import org.harctoolbox.irscrutinizer.GuiMain;
 import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 
@@ -165,7 +167,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         return n;
     }
 
-    private int importSelectedSignals(boolean raw) throws IrpMasterException {
+    private int importSelectedSignals(boolean raw) throws IrpException, IrCoreException {
         int count = 0;
         TreePath[] paths = tree.getSelectionPaths();
         checkGuiMain();
@@ -453,7 +455,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
         try {
             guiUtils.message(command.toPrintString());
-        } catch (IrpMasterException ex) {
+        } catch (IrpException | IrCoreException | GirrException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_printSignalMenuItemActionPerformed
@@ -466,7 +468,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         try {
             guiMain.scrutinizeIrSignal(command.toIrSignal());
             importJump(1, ImportType.signal);
-        } catch (IrpMasterException ex) {
+        } catch (IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_importSignalButtonActionPerformed
@@ -484,7 +486,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         try {
             int count = importSelectedSignals(false);
             importJump(count, ImportType.parametricRemote);
-        } catch (IrpMasterException ex) {
+        } catch (IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_importSelectionButtonActionPerformed
@@ -504,7 +506,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         checkGuiMain();
         try {
             guiMain.transmit(command);
-        } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException ex) {
+        } catch (IrpException | IrCoreException | IOException | HardwareUnavailableException | HarcHardwareException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_transmitSelectedButtonActionPerformed
@@ -526,7 +528,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         try {
             int count = importSelectedSignals(true);
             importJump(count, ImportType.rawRemote);
-        } catch (IrpMasterException ex) {
+        } catch (IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_importSelectionRawButtonActionPerformed
@@ -547,7 +549,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         checkGuiMain();
         try {
             guiMain.scrutinizeIrSignal(command.toIrSignal());
-        } catch (IrpMasterException ex) {
+        } catch (IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_scrutinizeSignalMenuItemActionPerformed

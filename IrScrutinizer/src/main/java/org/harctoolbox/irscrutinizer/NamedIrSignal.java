@@ -28,10 +28,12 @@ import java.util.Map;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.guicomponents.GuiUtils;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.irp.IrpException;
 
 /**
  *
@@ -244,7 +246,7 @@ public abstract class NamedIrSignal {
 
         public abstract String getType();
 
-        public abstract Command toCommand(int row) throws IrpMasterException;
+        public abstract Command toCommand(int row) throws GirrException;
 
         public Map<String, Command> getCommands() {
             Map<String, Command> commands = new LinkedHashMap<>(getRowCount());
@@ -252,7 +254,7 @@ public abstract class NamedIrSignal {
                 try {
                     Command command = toCommand(row);
                     commands.put(command.getName(), command);
-                } catch (IrpMasterException ex) {
+                } catch (GirrException ex) {
                         String commandName = (String) getValueAt(row, columnsFunc.getPosName());
                         String commandComment = (String) getValueAt(row, columnsFunc.getPosComment());
                         System.err.println("Warning: Signal named " + commandName + " ("
@@ -323,7 +325,7 @@ public abstract class NamedIrSignal {
             try {
                 IrSignal irSignal = command.toIrSignal();
                 return irSignal != null;
-            } catch (IrpMasterException ex) {
+            } catch (IrpException | IrCoreException ex) {
                 System.err.println(ex.getMessage());
                 return false;
             }

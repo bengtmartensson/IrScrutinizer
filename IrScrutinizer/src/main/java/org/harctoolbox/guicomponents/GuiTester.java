@@ -18,35 +18,34 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.guicomponents;
 
 import java.beans.PropertyChangeEvent;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.ParseException;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpMaster;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.Iterate.RandomValueSet;
-import org.harctoolbox.IrpMaster.ParseException;
-import org.harctoolbox.IrpMaster.UnassignedException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.harchardware.ir.GlobalCache;
 import org.harctoolbox.harchardware.ir.IrTransIRDB;
 import org.harctoolbox.harchardware.ir.LircClient;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.ircore.Pronto;
+import org.harctoolbox.irp.IrpDatabase;
+import org.harctoolbox.irp.IrpException;
 
 public class GuiTester extends javax.swing.JFrame {
     private boolean verbose = true;
-    private final LookAndFeelManager lookAndFeelManager;
+    private transient final LookAndFeelManager lookAndFeelManager;
     private static final String helpText = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
 
     private GuiUtils guiUtils = new GuiUtils(this, "tester", 1000);
-    private IrTransIRDB irtrans;
-    private final GlobalCacheManagerMenu globalCacheManagerMenu;
-    private IrpMaster irpMaster;
+    private transient IrTransIRDB irtrans;
+    private transient final GlobalCacheManagerMenu globalCacheManagerMenu;
+    private transient IrpDatabase irpDatabase;
 
     private class TestCaller implements LookAndFeelManager.ILookAndFeelManagerCaller {
         @Override
@@ -83,8 +82,8 @@ public class GuiTester extends javax.swing.JFrame {
      */
     public GuiTester() {
         try {
-            this.irpMaster = new IrpMaster("../IrpMaster/data/IrpProtocols.ini");
-        } catch (FileNotFoundException | IncompatibleArgumentException ex) {
+            this.irpDatabase = new IrpDatabase("../IrpMaster/data/IrpProtocols.ini");
+        } catch (IOException ex) {
             guiUtils.error(ex);
         }
         try {
@@ -189,7 +188,7 @@ public class GuiTester extends javax.swing.JFrame {
         beaconPanel = new javax.swing.JPanel();
         amxBeaconListenerTree1 = new org.harctoolbox.guicomponents.AmxBeaconListenerPanel();
         jPanel3 = new javax.swing.JPanel();
-        irpMasterBean = new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpMaster, "rc5", false);
+        irpMasterBean = new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpDatabase, "rc5");
         jScrollPane2 = new javax.swing.JScrollPane();
         ccfTextArea = new javax.swing.JTextArea();
         jButton2 = new javax.swing.JButton();
@@ -680,12 +679,8 @@ public class GuiTester extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         try {
             IrSignal irSignal = irpMasterBean.render();
-            ccfTextArea.setText(irSignal.ccfString());
-        } catch (UnassignedException ex) {
-            guiUtils.error(ex);
-        } catch (ParseException ex) {
-            guiUtils.error(ex);
-        } catch (IrpMasterException ex) {
+            ccfTextArea.setText(Pronto.toString(irSignal));
+        } catch (ParseException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -723,14 +718,10 @@ public class GuiTester extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         Map<String, Command> commands = null;
-        RandomValueSet.initRng();
+        //RandomValueSet.initRng();
         try {
             commands = irpMasterBean.getCommands();
-        } catch (UnassignedException ex) {
-            Logger.getLogger(GuiTester.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(GuiTester.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IrpMasterException ex) {
+        } catch (ParseException | GirrException | IrCoreException | IrpException ex) {
             Logger.getLogger(GuiTester.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (commands != null)

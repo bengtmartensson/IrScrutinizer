@@ -26,12 +26,12 @@ import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ir.ICapture;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.irscrutinizer.Props;
 
 /**
@@ -102,7 +102,7 @@ public class CapturingHardwareManager {
         return selected != null;
     }
 
-    public ModulatedIrSequence capture() throws IOException, HarcHardwareException, IrpMasterException {
+    public ModulatedIrSequence capture() throws IOException, HarcHardwareException, InvalidArgumentException {
         if (selected == null)
             throw new IllegalArgumentException("No transitting hardware selected.");
         return selected.capture();

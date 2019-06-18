@@ -17,12 +17,9 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.exporter;
 
-import java.util.Map;
-import org.harctoolbox.IrpMaster.DecodeIR;
-import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.Pronto;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.irp.ShortPronto;
 
 /**
  * This class formats an IrSignal as a short form CCF format, if possible.
@@ -34,22 +31,8 @@ public class ShortCcfFormatter implements Command.CommandTextFormat {
         return "short-ccf";
     }
 
-    private int getParameter(Map<String, Long> parameters, String name) {
-        return parameters.containsKey(name) ?parameters.get(name).intValue() : -1;
-    }
-
     @Override
     public String format(IrSignal irSignal, int count) {
-        DecodeIR.DecodedSignal[] decodes = DecodeIR.decode(irSignal);
-        if (decodes == null || decodes.length == 0)
-            return null;
-
-        Map<String, Long> parameters = decodes[0].getParameters();
-        try {
-            return Pronto.shortCCFString(decodes[0].getProtocol(),
-                    getParameter(parameters, "D"), getParameter(parameters, "S"), getParameter(parameters, "F"));
-        } catch (IncompatibleArgumentException ex) {
-            return null;
-        }
+        return ShortPronto.toString(irSignal, false);
     }
 }

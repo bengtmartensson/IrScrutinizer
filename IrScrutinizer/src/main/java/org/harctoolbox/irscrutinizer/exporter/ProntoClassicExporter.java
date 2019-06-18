@@ -34,10 +34,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.irp.IrpException;
 
 /**
  * This class does something interesting and useful. Or not...
@@ -85,12 +87,12 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
 
     @Override
     public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName /* ignored */)
-            throws IrpMasterException, IOException {
+            throws IOException, GirrException, IrpException, IrCoreException {
         setup(remoteSet);
         ccf.save(saveFile.getPath());
     }
 
-    private void setup(RemoteSet remoteSet) throws IrpMasterException {
+    private void setup(RemoteSet remoteSet) throws GirrException, IrpException, IrCoreException {
         if (prontoModel.getModel() != ProntoModel.CUSTOM) {
             screenWidth = prontoModel.getScreenSize().width;
             screenHeight = prontoModel.getScreenSize().height;
@@ -132,7 +134,7 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
                         b1.setLocation(new Point(x * buttonWidth + (x * hRest) / (columns - 1), y * buttonHeight + (y * vRest) / (rows - 1)));
                         b1.setSize(new Dimension(buttonWidth, buttonHeight));
                         panel.addButton(b1);
-                        String ccfstring = cmd.getCcf();
+                        String ccfstring = cmd.getProntoHex();
 
                         if ((prontoModel.getModel() == ProntoModel.CUSTOM) || (prontoModel.getCapability() & (1 << 18)) != 0)
                             ccfstring = "0000 0000 0000 " + ccfstring;

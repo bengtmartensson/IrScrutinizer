@@ -18,7 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.importer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -29,11 +28,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.XmlUtils;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.XmlUtils;
 import org.harctoolbox.irscrutinizer.Version;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -79,7 +79,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         return index;
     }
 
-    public static RemoteSet importXcf(String filename) throws IOException, SAXException, ParseException, IrpMasterException {
+    public static RemoteSet importXcf(String filename) throws IOException, SAXException, ParseException, InvalidArgumentException {
         XcfImporter importer = new XcfImporter();
         importer.load(new File(filename), DEFAULT_CHARSETNAME);
         return importer.getRemoteSet();
@@ -91,9 +91,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
             buttons.getRemotes().forEach((button) -> {
                 System.out.println(button.toString());
             });
-        } catch (SAXException ex) {
-            System.err.println(ex.getMessage());
-        } catch (IOException | IrpMasterException | ParseException ex) {
+        } catch (IOException | ParseException | InvalidArgumentException | SAXException ex) {
             System.err.println(ex.getMessage());
         }
     }
@@ -271,7 +269,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         try {
             return new Command(actionCodeName(action), null /*comment*/, ccf);
             //System.out.print(codeName);
-        } catch (IrpMasterException ex) {
+        } catch (GirrException ex) {
             return null;
         }
     }
@@ -337,7 +335,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
                 //commands.add(raw);
                 //commandIndex.put(raw.getName(), raw);
                 addCommand(raw);
-            } catch (IrpMasterException ex) {
+            } catch (GirrException ex) {
                 System.err.println(ex.getMessage());
             }
         }
@@ -388,7 +386,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         String ccf = childContent(element, "IrCode");
         try {
             return new Command(name, null /*comment*/, ccf);
-        } catch (IrpMasterException ex) {
+        } catch (GirrException ex) {
             return null;
         }
     }
@@ -414,7 +412,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
     }
 
     @Override
-    public void load(Reader reader, String originName) throws IOException, FileNotFoundException, ParseException {
+    public void load(Reader reader, String originName) throws IOException, ParseException, InvalidArgumentException {
         dumbLoad(reader, originName, DEFAULT_CHARSETNAME);
     }
 

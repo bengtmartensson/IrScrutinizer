@@ -31,12 +31,12 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
@@ -141,7 +141,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         connection.setRequestProperty("Accept", "application/json");
         //if (payload != null) {
             connection.setRequestProperty("Content-Type", "application/json; charset=US-ASCII");
-            connection.setRequestProperty("Content-Length", "" + Integer.toString(payload == null ? 0 : payload.getBytes(IrpUtils.dumbCharset).length));
+            connection.setRequestProperty("Content-Length", "" + Integer.toString(payload == null ? 0 : payload.getBytes(Charset.forName("US-ASCII")).length));
             connection.setRequestProperty("Content-Language", "en-US");
         //}
 
@@ -163,7 +163,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         }
 
         InputStream is = connection.getInputStream();
-        InputStreamReader isr = new InputStreamReader(is, IrpUtils.dumbCharset);
+        InputStreamReader isr = new InputStreamReader(is, Charset.forName("US-ASCII"));
         JsonObject response = JsonObject.readFrom(isr);
         connection.disconnect();
         return response;
@@ -217,7 +217,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
             System.err.println("Opening " + url + " using proxy " + proxy);
         URLConnection urlConnection = url.openConnection(proxy);
         InputStream is = urlConnection.getInputStream();
-        InputStreamReader isr = new InputStreamReader(is, IrpUtils.dumbCharset);
+        InputStreamReader isr = new InputStreamReader(is, Charset.forName("US-ASCII"));
         return isr;
     }
 

@@ -19,7 +19,6 @@ package org.harctoolbox.irscrutinizer;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.harctoolbox.IrpMaster.DecodeIR;
 import org.harctoolbox.guicomponents.GuiUtils;
 
 /**
@@ -29,7 +28,7 @@ import org.harctoolbox.guicomponents.GuiUtils;
 public final class AboutPopup extends javax.swing.JDialog {
 
     private GuiUtils guiUtils;
-    private String decodeIRVersion;
+    private String irpTransmogrifierVersion;
 
    /**
      * Creates the obligatory About popup.
@@ -43,12 +42,7 @@ public final class AboutPopup extends javax.swing.JDialog {
             throw new RuntimeException("Programming error");
 
         guiUtils = ((GuiMain) parent).getGuiUtils();
-        try {
-            decodeIRVersion = "DecodeIR version " + DecodeIR.getVersion();
-        } catch (UnsatisfiedLinkError ex) {
-            System.err.println(ex.getMessage());
-            decodeIRVersion = "DecodeIR not found.";
-        }
+        irpTransmogrifierVersion = "IrpTransmogrifier version " + org.harctoolbox.irp.Version.version;
         initComponents();
     }
 
@@ -94,7 +88,7 @@ public final class AboutPopup extends javax.swing.JDialog {
             }
         });
 
-        versionLabel.setText(Version.versionString + "; " + org.harctoolbox.IrpMaster.Version.versionString);
+        versionLabel.setText(Version.versionString);
 
         authorLabel.setFont(new java.awt.Font("Lucida Bright", 2, 14)); // NOI18N
         authorLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -119,7 +113,7 @@ public final class AboutPopup extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(licenseText);
 
-        versionLabel2.setText(decodeIRVersion);
+        versionLabel2.setText(irpTransmogrifierVersion);
 
         jLabel1.setText("Java: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version") + " " + System.getProperty("os.name") + "-" + System.getProperty("os.arch"));
 

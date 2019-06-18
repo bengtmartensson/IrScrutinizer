@@ -23,10 +23,12 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import javax.xml.transform.TransformerException;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.irp.IrpException;
 
 /**
  *
@@ -34,22 +36,24 @@ import org.harctoolbox.girr.RemoteSet;
 public interface IRemoteSetExporter extends ICommandExporter {
     public void export(RemoteSet remoteSet, String title, int count, boolean automaticFilenames,
             Component parent, File exportDir, String charsetName)
-            throws IOException, IrpMasterException, TransformerException;
+            throws IOException, TransformerException, IrCoreException, IrpException, GirrException;
 
-    public abstract void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName) throws IOException, IrpMasterException, TransformerException;
+    public abstract void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName)
+            throws IOException, TransformerException, GirrException, IrpException, IrCoreException;
 
-    public void export(Remote remote, String title, String source, int count, File saveFile, String charsetName) throws IrpMasterException, IOException, TransformerException;
+    public void export(Remote remote, String title, String source, int count, File saveFile, String charsetName)
+            throws IOException, TransformerException, IrCoreException, IrpException, GirrException;
 
     public void export(Map<String, Command> commands, String source, String title,
             Remote.MetaData metaData,
-            int count, File saveFile, String charsetName) throws IrpMasterException, IOException, TransformerException;
+            int count, File saveFile, String charsetName) throws IOException, TransformerException, GirrException, IrCoreException, IrpException;
 
     public File export(Map<String, Command> commands, String source, String title,
             Remote.MetaData metaData, int count, boolean automaticFilenames, Component parent, File exportDir, String charsetName)
-            throws IrpMasterException, IOException, TransformerException;
+            throws IOException, TransformerException, IrCoreException, IrpException, GirrException;
 
     public void export(Collection<Command> commands, String source, String title, int count, File saveFile, String charsetName)
-            throws IOException, IrpMasterException, TransformerException;
+            throws IOException, TransformerException, IrCoreException, IrpException, GirrException;
 
     public boolean supportsEmbeddedFormats();
 }

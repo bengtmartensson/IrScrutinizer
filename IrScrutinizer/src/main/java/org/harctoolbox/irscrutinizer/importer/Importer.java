@@ -22,9 +22,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.ModulatedIrSequence;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.ircore.ModulatedIrSequence;
+import org.harctoolbox.irp.IrpException;
 import org.harctoolbox.irscrutinizer.Props;
 
 /**
@@ -86,6 +87,10 @@ public abstract class Importer {
         return properties != null && properties.getInvokeAnalyzer();
     }
 
+    protected boolean isInvokeCleaner() {
+        return properties != null && properties.getInvokeCleaner();
+    }
+
     protected boolean isVerbose() {
         return properties != null && properties.getVerbose();
     }
@@ -113,6 +118,22 @@ public abstract class Importer {
 
     protected double getEndingTimeout() {
         return properties.getCaptureEndingTimeout();
+    }
+
+    protected double getAbsoluteTolerance() {
+        return properties.getAbsoluteTolerance();
+    }
+
+    protected double getRelativeTolerance() {
+        return properties.getRelativeTolerance();
+    }
+
+    protected double getDummyGap() {
+        return properties.getDummyGap();
+    }
+
+    protected double getMinRepeatLastGap() {
+        return properties.getMinRepeatLastGap();
     }
 
     protected void prepareLoad(String origin) {
@@ -158,14 +179,14 @@ public abstract class Importer {
         return commandIndex.get(name);
     }
 
-    public ModulatedIrSequence getConcatenatedCommands() throws IrpMasterException {
+    public ModulatedIrSequence getConcatenatedCommands() throws IrpException, IrCoreException {
         ModulatedIrSequence[] array = new ModulatedIrSequence[commands.size()];
         int index = 0;
         for (Command command : commands) {
             array[index] = command.toIrSignal().toModulatedIrSequence(1);
             index++;
         }
-        return new ModulatedIrSequence(array);
+        return ModulatedIrSequence.concatenate(array);
     }
 
     @SuppressWarnings("ReturnOfCollectionOrArrayField")

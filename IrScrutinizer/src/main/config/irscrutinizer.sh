@@ -18,10 +18,10 @@ JAVA=java
 #IRSCRUTINIZERHOME="$( dirname "${BASH_SOURCE[0]}" )"
 export IRSCRUTINIZERHOME="$(dirname -- "$(readlink -f -- "${0}")" )"
 
-if [ `basename "$0"` = "irpmaster" ] ; then
-    exec "${JAVA}" -splash: \
-         -jar "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
-         --irpmaster --config "${IRSCRUTINIZERHOME}/IrpProtocols.ini" "$@"
+if [ `basename "$0"` = "irptransmogrifier" ] ; then
+    exec "${JAVA}" \
+         -cp "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
+         org.harctoolbox.irp.IrpTransmogrifier "$@"
 fi
 
 # Path to DecodeIR and RXTX

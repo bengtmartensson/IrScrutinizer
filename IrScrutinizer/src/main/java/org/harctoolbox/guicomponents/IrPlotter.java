@@ -25,9 +25,9 @@ import java.io.IOException;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.ModulatedIrSequence;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.ircore.ModulatedIrSequence;
 
 // TODO: Generation of hardcopy, svg, postscript, etc.
 // TODO: Copy to clipboard.
@@ -152,7 +152,7 @@ public class IrPlotter extends HarcPanel {
      * @param irSequence
      */
     public void plot(ModulatedIrSequence irSequence) {
-        plot(irSequence, irSequence.getNumberBursts(), 0, 0);
+        plot(irSequence, irSequence.getLength()/2, 0, 0);
     }
 
     /**
@@ -160,7 +160,7 @@ public class IrPlotter extends HarcPanel {
      * @param irSignal
      */
     public void plot(IrSignal irSignal) {
-        plot(irSignal.toModulatedIrSequence(true, 1, true), irSignal.getIntroBursts(), irSignal.getRepeatBursts(), 1);
+        plot(irSignal.toModulatedIrSequence(true, 1, true), irSignal.getIntroLength() / 2, irSignal.getRepeatLength() / 2, 1);
     }
 
     /**
@@ -178,11 +178,11 @@ public class IrPlotter extends HarcPanel {
     /**
      * Shows the plot x-axis as a function of modulation periods, not as time. Not yet implemented.
      * @param val true for pulses, false for time.
-     * @throws IncompatibleArgumentException If pulses selected, but frequency is zero, making pulse time undefined.
+     * @throws org.harctoolbox.ircore.InvalidArgumentException If pulses selected, but frequency is zero, making pulse time undefined.
      */
-    public void setPulseAsTiming(boolean val) throws IncompatibleArgumentException {
+    public void setPulseAsTiming(boolean val) throws InvalidArgumentException {
         if (val && frequency <= 0)
-            throw new IncompatibleArgumentException("");
+            throw new InvalidArgumentException("");
         usePulseAsTiming = val;
     }
 

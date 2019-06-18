@@ -23,11 +23,9 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.transform.TransformerException;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.IrpUtils;
-import org.harctoolbox.IrpMaster.XmlUtils;
 import org.harctoolbox.girr.RemoteSet;
-import org.harctoolbox.girr.XmlExporter;
+import org.harctoolbox.ircore.IrCoreUtils;
+import org.harctoolbox.ircore.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -77,9 +75,9 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
 
     @Override
     public void export(RemoteSet remoteSet, String title, int noRepeats, File saveFile, String charsetName)
-            throws IrpMasterException, IOException, TransformerException {
+            throws IOException, TransformerException {
 
-        Document document = remoteSet.xmlExportDocument(title,
+        Document document = remoteSet.toDocument(title,
                 null,
                 null,
                 true, //fatRaw,
@@ -91,12 +89,11 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
         export(document, saveFile.getCanonicalPath(), charsetName, noRepeats);
     }
 
-    void export(Document document, String fileName, String charsetName, int noRepeats) throws IOException, IrpMasterException, TransformerException {
-        XmlExporter xmlExporter = new XmlExporter(document);
-        try (OutputStream out = IrpUtils.getPrintSteam(fileName)) {
+    void export(Document document, String fileName, String charsetName, int noRepeats) throws IOException, TransformerException {
+        try (OutputStream out = IrCoreUtils.getPrintSteam(fileName)) {
             Map<String, String> parameters = new HashMap<>(1);
             parameters.put("noRepeats", Integer.toString(noRepeats));
-            xmlExporter.printDOM(out, xslt, parameters, binary, charsetName);
+            XmlUtils.printDOM(out, document, charsetName, xslt, parameters, binary);
         }
     }
 }

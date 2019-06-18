@@ -1,7 +1,5 @@
-For using Arduino in IrScrutinizer, checkout
-https://github.com/bengtmartensson/AGirs, compile and flash the
-GirsLite sketch in src/GirsLite. For this, follow the instructions
-therein.
-
-Previous versions contained a directory IrScrutinizer/arduino. This
-has been deleted; is replaced by AGirs.
+For using Arduino in IrScrutinizer, see e.g. 
+http://www.harctoolbox.org/arduino_nano.html .
+For the firmware, use the Arduino libraries AGirs and InfraredArduino
+(available in the Arduino library manager), compile 
+and flash the AGirs "example" Girs.

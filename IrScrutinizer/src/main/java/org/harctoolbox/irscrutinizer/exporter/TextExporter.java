@@ -23,9 +23,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.RemoteSet;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.irp.IrpException;
 
 /**
  * This class does something interesting and useful. Or not...
@@ -75,7 +77,7 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
             printStream.close();
     }
 
-    public void export(String payload, File exportFile, String charsetName) throws IrpMasterException, FileNotFoundException, UnsupportedEncodingException {
+    public void export(String payload, File exportFile, String charsetName) throws FileNotFoundException, UnsupportedEncodingException {
         open(exportFile, charsetName);
         try {
             printStream.println(payload);
@@ -84,30 +86,30 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
         }
     }
 
-    public File export(String payload, boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IrpMasterException, IOException {
+    public File export(String payload, boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IOException {
         File file = exportFilename(automaticFilenames, parent, exportDir);
         export(payload, file, charsetName);
         return file;
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws IOException, IrpMasterException {
+    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName)
+            throws IOException, GirrException, IrCoreException, IrpException {
         open(file, charsetName);
         try {
-            for (Command command : remoteSet.getAllCommands()) {
+            for (Command command : remoteSet.getAllCommands())
                 printStream.println(formatCommand(command, count));
-            }
         } finally {
             close();
         }
     }
 
-    private String formatCommand(Command command, int count) throws IrpMasterException {
+    private String formatCommand(Command command, int count) throws GirrException, IrpException, IrCoreException {
         StringBuilder str = new StringBuilder(128);
         String linefeed = System.getProperty("line.separator", "\n");
         str.append(generateParameters ? command.nameProtocolParameterString() : command.getName()).append(linefeed);
         if (generateCcf) {
-            str.append(command.getCcf()).append(linefeed);
+            str.append(command.getProntoHex()).append(linefeed);
         }
         if (generateRaw) {
             str.append(command.getIntro()).append(linefeed);

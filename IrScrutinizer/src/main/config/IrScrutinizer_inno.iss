@@ -15,7 +15,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-VersionInfoCopyright=Copyright (C) 2014-2016 Bengt Martensson.
+VersionInfoCopyright=Copyright (C) 2014-2018 Bengt Martensson.
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
@@ -43,8 +43,8 @@ Name: modifypath; Description: &Add installation directory to path
 Source: "IrScrutinizer-jar-with-dependencies.jar"; DestName: "IrScrutinizer.jar"; DestDir: "{app}"; Flags: ignoreversion; AfterInstall: CreateWrapper
 Source: "..\..\native\Windows-x86\*"; DestDir: "{app}\Windows-x86"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\native\Windows-amd64\*"; DestDir: "{app}\Windows-amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "*.ini"; DestDir: "{app}"; Flags: ignoreversion
-Source: "maven-shared-archive-resources/*.ini"; DestDir: "{app}"; Flags: ignoreversion
+Source: "*.xml"; DestDir: "{app}"; Flags: ignoreversion
+;;;Source: "maven-shared-archive-resources/*.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "irscrutinizer.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "exportformats.d\*"; DestDir: "{app}\exportformats.d"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "contributed\import\*"; DestDir: "{app}\contributed\import"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -56,7 +56,7 @@ Source: "{#MyAppName}.ico";  DestDir: "{app}"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppName}.ico";
-;Name: "{group}\HTML-Doc\IrpMaster Documentation"; Filename: "{app}\doc\IrpMaster.html"
+Name: "{group}\HTML-Doc\Protocol Documentation"; Filename: "{app}\doc\IrpProtocols.html"
 Name: "{group}\HTML-Doc\IrScrutinizer Documentation"; Filename: "{app}\doc\IrScrutinizer.html"
 Name: "{group}\HTML-Doc\Release Notes"; Filename: "{app}\doc\IrScrutinizer.releasenotes.txt"
 Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
@@ -64,7 +64,7 @@ Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename: "{app}\{#MyAppName}.ico";
 
 [UninstallDelete]
-Type: files; Name: "{app}\irpmaster.bat"
+Type: files; Name: "{app}\IrpTransmogrifier.bat"
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, "&", "&&")}}"; Parameters: ; Flags: shellexec postinstall skipifsilent
@@ -94,11 +94,11 @@ procedure CreateWrapper;
 var
    wrapperFilename: String;
 begin
-   wrapperFilename := ExpandConstant('{app}') + '\IrpMaster.bat';
+   wrapperFilename := ExpandConstant('{app}') + '\IrpTransmogrifier.bat';
    SaveStringToFile(wrapperFilename, '@ECHO off' + #13#10, false);
    SaveStringToFile(wrapperFilename, 'set IRSCRUTINIZERHOME=' + ExpandConstant('{app}') + #13#10, true);
    SaveStringToFile(wrapperFilename, 'set JAVA=java' + #13#10, true);
-   SaveStringToFile(wrapperFilename, '"%JAVA%" -splash: "-Djava.library.path=%IRSCRUTINIZERHOME%\' + DllLibraryPath() + '" -jar "%IRSCRUTINIZERHOME%\IrScrutinizer.jar" --irpmaster -c "%IRSCRUTINIZERHOME%\IrpProtocols.ini" %*', true);
+   SaveStringToFile(wrapperFilename, '"%JAVA%"' + '" -cp "%IRSCRUTINIZERHOME%\IrScrutinizer.jar" org.harctoolbox.irp.IrpTransmogrifier', true);
 end;
 
 const

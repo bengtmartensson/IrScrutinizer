@@ -19,7 +19,7 @@ package org.harctoolbox.irscrutinizer.importer;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import org.harctoolbox.IrpMaster.IrpUtils;
+import org.harctoolbox.ircore.IrCoreUtils;
 
 /**
  * This class does something interesting and useful. Or not...
@@ -27,7 +27,7 @@ import org.harctoolbox.IrpMaster.IrpUtils;
  * Columns are numbered starting with 1.
  */
 public abstract class CsvImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
-    protected final static int invalid = (int) IrpUtils.invalid;
+    protected final static int invalid = (int) IrCoreUtils.INVALID;
     private final static String[][] separators = new String[][] {
         new String[] { ", (comma)", "," },
         new String[] { "; (semicolon)", ";" },

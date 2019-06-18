@@ -21,10 +21,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpMasterException;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.harctoolbox.girr.Command;
-import org.harctoolbox.harchardware.ir.InterpretStringHardware;
+import org.harctoolbox.girr.GirrException;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.irp.IrpException;
+import org.harctoolbox.irscrutinizer.InterpretString;
 
 /**
  * This class does something interesting and useful. Or not...
@@ -37,8 +43,8 @@ public class RawLineImporter extends RemoteSetImporter implements IReaderImporte
             rli.load(new File(args[0]), "WINDOWS-1252");
             for (Command command : rli.getCommands())
                 System.out.println(command.toPrintString());
-        } catch (IOException | IrpMasterException | java.text.ParseException ex) {
-            System.err.println(ex.getMessage());
+        } catch (IrpException | GirrException | IrCoreException | IOException | ParseException ex) {
+            Logger.getLogger(RawLineImporter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -60,11 +66,17 @@ public class RawLineImporter extends RemoteSetImporter implements IReaderImporte
             if (line.trim().isEmpty())
                 continue;
 
-            IrSignal irSignal = null;
+            IrSignal irSignal;
             try {
-                irSignal = InterpretStringHardware.interpretString(line, getFallbackFrequency(), isInvokeRepeatFinder(), isInvokeAnalyzer());
-            } catch (IrpMasterException ex) {
+                irSignal = InterpretString.interpretString(line, getFallbackFrequency(), getDummyGap(),
+                        isInvokeRepeatFinder(), isInvokeCleaner(), getAbsoluteTolerance(), getRelativeTolerance(), getMinRepeatLastGap());
+                if (irSignal == null || (irSignal.getIntroLength() + irSignal.getRepeatLength() < 4)) {
+                    name = line;
+                    irSignal = null;
+                }
+            } catch (InvalidArgumentException ex) {
                 name = line;
+                irSignal = null;
             }
 
             if (name != null && irSignal != null) {

@@ -20,18 +20,23 @@ package org.harctoolbox.irscrutinizer.importer;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.girr.Command;
-import org.harctoolbox.harchardware.ir.InterpretStringHardware;
+import org.harctoolbox.girr.GirrException;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.irp.IrpException;
+import org.harctoolbox.irscrutinizer.InterpretString;
 
 /**
  * This class does something interesting and useful. Or not...
@@ -41,7 +46,7 @@ import org.harctoolbox.harchardware.ir.InterpretStringHardware;
 public class CsvRawImporter extends CsvImporter {
 
     public static Collection<Command> process(File file, String separator, int nameColumn, boolean nameMultiColumn, int codeColumn, boolean includeTail,
-            boolean invokeAnalyzer, boolean invokeRepeatFinder, boolean verbose, String charsetName) throws IOException, ParseException, IrpMasterException {
+            boolean invokeAnalyzer, boolean invokeRepeatFinder, boolean verbose, String charsetName) throws IOException, ParseException, FileNotFoundException, InvalidArgumentException {
         CsvRawImporter csvImportRaw = new CsvRawImporter(separator, nameColumn, nameMultiColumn, codeColumn, includeTail);
         csvImportRaw.load(file, charsetName);
         return csvImportRaw.getCommands();
@@ -52,8 +57,8 @@ public class CsvRawImporter extends CsvImporter {
             Collection<Command> signals = process(new File(args[0]), " ", 3, false, 6, true, true, true, true, "WINDOWS-1252");
             for (Command signal : signals)
                 System.out.println(signal.toPrintString());
-        } catch (IOException | IrpMasterException | ParseException ex) {
-            System.err.println(ex.getMessage());
+        } catch (IrpException | GirrException | IrCoreException | IOException | ParseException ex) {
+            Logger.getLogger(CsvRawImporter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -91,7 +96,7 @@ public class CsvRawImporter extends CsvImporter {
     }
 
     @Override
-    public void load(File file, String origin, String charsetName) throws IOException, ParseException {
+    public void load(File file, String origin, String charsetName) throws IOException, ParseException, InvalidArgumentException {
         try (FileInputStream stream = new FileInputStream(file)) {
             load(stream, origin, charsetName);
         }
@@ -162,9 +167,9 @@ public class CsvRawImporter extends CsvImporter {
         }
         IrSignal irSignal;
         try {
-            irSignal = InterpretStringHardware.interpretString(code, IrpUtils.defaultFrequency, isInvokeRepeatFinder(),
-                    isInvokeAnalyzer());
-        } catch (IrpMasterException ex) {
+            irSignal = InterpretString.interpretString(code, getFallbackFrequency(), getDummyGap(),
+                    isInvokeRepeatFinder(), isInvokeCleaner(), getAbsoluteTolerance(), getRelativeTolerance(), getMinRepeatLastGap());
+        } catch (InvalidArgumentException ex) {
             if (isVerbose())
                 System.err.println("Error parsing code in line " + lineNo + " (" + ex.getMessage() + ")");
             return null;

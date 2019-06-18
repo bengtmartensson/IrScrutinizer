@@ -21,8 +21,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 import javax.swing.DefaultComboBoxModel;
-import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
@@ -410,7 +410,7 @@ public final class SerialPortBean extends javax.swing.JPanel {
     }//GEN-LAST:event_stopBitsComboBoxActionPerformed
 
     private void parityComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parityComboBoxActionPerformed
-        setParity(LocalSerialPort.Parity.valueOf(((String)parityComboBox.getSelectedItem()).toUpperCase(IrpUtils.dumbLocale)));
+        setParity(LocalSerialPort.Parity.valueOf(((String)parityComboBox.getSelectedItem()).toUpperCase(Locale.US)));
     }//GEN-LAST:event_parityComboBoxActionPerformed
 
     private void openToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openToggleButtonActionPerformed

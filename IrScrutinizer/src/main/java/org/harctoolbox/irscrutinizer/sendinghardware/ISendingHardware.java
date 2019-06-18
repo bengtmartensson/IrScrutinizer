@@ -19,13 +19,13 @@ package org.harctoolbox.irscrutinizer.sendinghardware;
 
 import java.io.IOException;
 import javax.swing.JPanel;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.ir.IRawIrSender;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 import org.harctoolbox.harchardware.ir.Transmitter;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 
 /**
@@ -48,7 +48,7 @@ public interface ISendingHardware <T extends IRawIrSender & IHarcHardware> {
 
     public boolean isValid();
 
-    public boolean sendIr(IrSignal irSignal, int count) throws IOException, IrpMasterException, NoSuchTransmitterException, HardwareUnavailableException, HarcHardwareException;
+    public boolean sendIr(IrSignal irSignal, int count) throws IOException, NoSuchTransmitterException, HardwareUnavailableException, HarcHardwareException, InvalidArgumentException;
 
     /**
      * This function (re-)initializes the hardware. The construction should not.

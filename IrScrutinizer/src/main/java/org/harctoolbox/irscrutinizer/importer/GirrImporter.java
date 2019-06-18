@@ -18,6 +18,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.importer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -27,9 +28,11 @@ import java.util.Collection;
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import org.harctoolbox.IrpMaster.XmlUtils;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.RemoteSet;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.XmlUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -77,14 +80,14 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
             schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(url);
     }
 
-    private void load(Document doc, String origin) throws ParseException, NotGirrRemoteSetException {
+    private void load(Document doc, String origin) throws ParseException, NotGirrRemoteSetException, GirrException {
         prepareLoad(origin);
         remoteSet = null;
         loadIncremental(doc, origin);
         setupCommands();
     }
 
-    private void loadIncremental(Document doc, String origin) throws ParseException, NotGirrRemoteSetException {
+    private void loadIncremental(Document doc, String origin) throws ParseException, NotGirrRemoteSetException, GirrException {
         if (!doc.getDocumentElement().getTagName().equals("remotes")) {
             throw new NotGirrRemoteSetException();
         }
@@ -107,12 +110,11 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
     public void load(InputStream inputStream, String origin, String charsetName /* ignored */) throws IOException, ParseException {
         try {
             loadSchema();
-            load(XmlUtils.openXmlStream(inputStream, validate ? schema : null, false, false), origin);
+            Document thing = XmlUtils.openXmlStream(inputStream, validate ? schema : null, false, false);
+            load(thing, origin);
         } catch (SAXParseException ex) {
             throw new ParseException(ex.getMessage(), ex.getLineNumber());
-        } catch (SAXException ex) {
-            throw new IOException(ex.getMessage());
-        } catch (NotGirrRemoteSetException ex) {
+        } catch (NotGirrRemoteSetException | GirrException | SAXException ex) {
             throw new IOException(ex.getMessage());
         }
     }
@@ -129,7 +131,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
             load(XmlUtils.openXmlReader(reader, validate ? schema : null, false, false), origin);
         } catch (SAXParseException ex) {
             throw new ParseException(ex.getMessage(), ex.getLineNumber());
-        } catch (SAXException | NotGirrRemoteSetException ex) {
+        } catch (SAXException | NotGirrRemoteSetException | GirrException ex) {
             throw new IOException(ex.getMessage());
         }
     }
@@ -167,7 +169,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
         } else {
             try {
                 loadIncremental(XmlUtils.openXmlFile(fileOrDirectory, validate ? schema : null, true, true), origin);
-            } catch (ParseException | SAXException | NotGirrRemoteSetException ex) {
+            } catch (ParseException | SAXException | NotGirrRemoteSetException | GirrException ex) {
                 throw new IOException(ex.getMessage());
             }
         }
@@ -188,7 +190,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
         return "Girr";
     }
 
-    public Collection<Command> getAllCommands(File file, String charsetName) throws ParseException, IOException {
+    public Collection<Command> getAllCommands(File file, String charsetName) throws ParseException, IOException, FileNotFoundException, InvalidArgumentException {
         possiblyZipLoad(file, charsetName);
         return remoteSet.getAllCommands();
     }

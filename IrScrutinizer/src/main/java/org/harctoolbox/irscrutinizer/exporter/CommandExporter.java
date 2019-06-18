@@ -21,8 +21,9 @@ import java.awt.Component;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.harctoolbox.IrpMaster.IrpMasterException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.irp.IrpException;
 
 /**
  * This class does something interesting and useful. Or not...
@@ -34,10 +35,10 @@ public abstract class CommandExporter extends Exporter {
     }
 
     public abstract void export(Command command, String source, String title, int repeatCount, File exportFile, String charsetName)
-            throws IrpMasterException, FileNotFoundException;
+            throws FileNotFoundException, IrpException, IrCoreException;
 
     public File export(Command command, String source, String title, int repeatCount,
-            boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IrpMasterException, IOException {
+            boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IOException, IrpException, IrCoreException {
         File file = exportFilename(automaticFilenames, parent, exportDir);
         export(command, source, title, repeatCount, file, charsetName);
         return file;

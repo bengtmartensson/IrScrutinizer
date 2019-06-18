@@ -26,12 +26,12 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.text.ParseException;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.swing.JFileChooser;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.guicomponents.SelectFile;
+import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.irscrutinizer.Version;
 
 /**
@@ -43,18 +43,18 @@ public abstract class FileImporter extends Importer {
         super();
     }
 
-    public abstract void load(File file, String origin, String charsetName) throws IOException, ParseException;
+    public abstract void load(File file, String origin, String charsetName) throws IOException, ParseException, InvalidArgumentException;
 
-    public final void load(File file, String charsetName) throws IOException, ParseException {
+    public final void load(File file, String charsetName) throws FileNotFoundException, IOException, ParseException, InvalidArgumentException {
         if (!file.exists())
-            throw new IOException("File does not exist.");
+            throw new FileNotFoundException();
         if (!file.isFile() && !canImportDirectories())
             throw new IOException("Not a normal file. Selected importer cannot import directories.");
 
         load(file, file.getPath(), charsetName);
     }
 
-    public boolean loadFileSelector(Component component, String title, String defaultDir, String charsetName) throws IOException, ParseException, IrpMasterException {
+    public boolean loadFileSelector(Component component, String title, String defaultDir, String charsetName) throws IOException, ParseException, FileNotFoundException, InvalidArgumentException {
         File file = SelectFile.selectFile(component, title, defaultDir, false, false,
             canImportDirectories() ? JFileChooser.FILES_AND_DIRECTORIES : JFileChooser.FILES_ONLY, getFileExtensions());
         if (file == null)
@@ -63,7 +63,7 @@ public abstract class FileImporter extends Importer {
         return true;
     }
 
-    protected void dumbLoad(Reader reader, String origin, String charsetName) throws FileNotFoundException, IOException, ParseException {
+    protected void dumbLoad(Reader reader, String origin, String charsetName) throws FileNotFoundException, IOException, ParseException, InvalidArgumentException {
         FileOutputStream out = null;
         try {
             File file = File.createTempFile(Version.appName + origin, null);
@@ -86,8 +86,8 @@ public abstract class FileImporter extends Importer {
     // and the caller has to take responsibility for somehow closing the zip file.
     // A reasonably clean solution would be to have a protected class for the zip file
     // -- just not worth it.
-    public void possiblyZipLoad(File file, String charsetName) throws ParseException, IOException {
-        if (file.getName().toLowerCase(IrpUtils.dumbLocale).endsWith(".zip")) {
+    public void possiblyZipLoad(File file, String charsetName) throws IOException, FileNotFoundException, ParseException, InvalidArgumentException {
+        if (file.getName().toLowerCase(Locale.US).endsWith(".zip")) {
             String extension = getFileExtensions()[0][1];
             File tmpFile = unzipFirstMatch(file, extension);
             boolean success;
@@ -116,7 +116,7 @@ public abstract class FileImporter extends Importer {
             entry = enumeration.nextElement();
             if (extension == null
                     || (index == 0 && !enumeration.hasMoreElements()) // first and only element
-                    || entry.getName().toLowerCase(IrpUtils.dumbLocale).endsWith(extension))
+                    || entry.getName().toLowerCase(Locale.US).endsWith(extension))
                 payload = entry.getName();
             index++;
         }

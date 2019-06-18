@@ -21,13 +21,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.harctoolbox.IrpMaster.DecodeIR;
-import org.harctoolbox.IrpMaster.DecodeIR.DecodeIrException;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpMaster;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.ircore.IrCoreUtils;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.irp.Decoder;
+import org.harctoolbox.irp.IrpException;
 
 /**
  *
@@ -36,7 +36,7 @@ import org.harctoolbox.girr.Command;
 public class ParametrizedIrSignal extends NamedIrSignal {
     private static boolean generateRaw = true;
     private static boolean generateCcf = true;
-    private static IrpMaster irpMaster = null;
+    private static Decoder decoder = null;
 
     /**
      * @param aGenerateRaw the generateRaw to set
@@ -54,10 +54,10 @@ public class ParametrizedIrSignal extends NamedIrSignal {
 
     /**
      *
-     * @param aIrpMaster
+     * @param aDecoder
      */
-    public static void setIrpMaster(IrpMaster aIrpMaster) {
-        irpMaster = aIrpMaster;
+    public static void setDecoder(Decoder aDecoder) {
+        decoder = aDecoder;
     }
 
     private static String formatMiscParams(Map<String, Long> params) {
@@ -78,7 +78,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
     private Map<String, Long>parameters;
     private String protocolName;
 
-    public ParametrizedIrSignal(Command command) throws IrpMasterException {
+    public ParametrizedIrSignal(Command command) throws IrpException, IrCoreException {
         super(command.getName(), command.getComment());
         this.protocolName = command.getProtocolName();
         this.parameters = command.getParameters();
@@ -100,31 +100,31 @@ public class ParametrizedIrSignal extends NamedIrSignal {
     }
 
     public ParametrizedIrSignal(String protocolName, long device, long function, String name, String comment) {
-        this(protocolName, device, IrpUtils.invalid, function, name, comment);
+        this(protocolName, device, IrCoreUtils.INVALID, function, name, comment);
     }
 
-    public ParametrizedIrSignal(DecodeIR.DecodedSignal decode, String name, String comment) {
-        this(decode.getProtocol(), decode.getParameters(), name, comment);
+    public ParametrizedIrSignal(Decoder.Decode decode, String name, String comment) {
+        this(decode.getName(), decode.getMap(), name, comment);
     }
 
-    public ParametrizedIrSignal(IrSignal irSignal, boolean ignoreT) throws DecodeIrException {
+    public ParametrizedIrSignal(IrSignal irSignal, boolean ignoreT) throws NoDecodeException {
         this(irSignal, "", "", ignoreT);
     }
 
-    public ParametrizedIrSignal(IrSignal irSignal, String name, String comment, boolean ignoreT) throws DecodeIrException {
+    public ParametrizedIrSignal(IrSignal irSignal, String name, String comment, boolean ignoreT) throws NoDecodeException {
         super(name, comment);
-        DecodeIR.DecodedSignal[] decodes = DecodeIR.decode(irSignal);
-        if (decodes.length == 0) {
+        Map<String, Decoder.Decode> decodes = decoder.decode(irSignal);
+        if (decodes.isEmpty()) {
             decrementCount();
-            throw new DecodeIR.DecodeIrException("No decode");
+            throw new NoDecodeException();
         }
-        DecodeIR.DecodedSignal decode = decodes[0];
-        if (decode.getProtocol().substring(0, 3).equalsIgnoreCase("gap")) {
-            decrementCount();
-            throw new DecodeIR.DecodeIrException("No sensible decode");
-        }
-        protocolName = decode.getProtocol();
-        parameters = decode.getParameters();
+        Decoder.Decode decode = decodes.values().iterator().next();
+//        if (decode.getProtocol().substring(0, 3).equalsIgnoreCase("gap")) {
+//            decrementCount();
+//            throw new DecodeIR.DecodeIrException("No sensible decode");
+//        }
+        protocolName = decode.getName();
+        parameters = decode.getMap();
         if (ignoreT && parameters.containsKey("T"))
             parameters.remove("T");
     }
@@ -161,15 +161,15 @@ public class ParametrizedIrSignal extends NamedIrSignal {
 
     public long getParameter(String param) {
         Long val = parameters.get(param);
-        return val != null ? val : IrpUtils.invalid;
+        return val != null ? val : IrCoreUtils.INVALID;
     }
 
     private void setParameter(String name, Object object) {
-        setParameter(name, object != null ? (Integer) object : IrpUtils.invalid);
+        setParameter(name, object != null ? (Integer) object : IrCoreUtils.INVALID);
     }
 
     public final void setParameter(String name, long value) {
-        if (value == IrpUtils.invalid)
+        if (value == IrCoreUtils.INVALID)
             parameters.remove(name);
         else
             parameters.put(name, value);
@@ -187,7 +187,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
     }
 
 
-    public Command toCommand() throws IrpMasterException {
+    public Command toCommand() throws GirrException {
         // Strip out parameter named "hex" before sending to IrpMaster
         // (not used by any current protocols, just causes noisy warnings).
         @SuppressWarnings("unchecked")
@@ -339,13 +339,13 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         public void setFToHex() {
             for (int row =  0; row < getRowCount(); row++) {
                 Long hex = getParameterIrSignal(row).getParameter("hex");
-                if (/*hex != null &&*/ hex != IrpUtils.invalid)
+                if (/*hex != null &&*/ hex != IrCoreUtils.INVALID)
                     setValueAt(hex.intValue(), row, ParameterIrSignalColumns.posF);
             }
             fireTableDataChanged();
         }
 
-        public ArrayList<Long> listF(Command reference) throws IrpMasterException {
+        public ArrayList<Long> listF(Command reference) throws IrpException, IrCoreException, GirrException {
             ArrayList<Long> list = new ArrayList<>(16);
             @SuppressWarnings("unchecked")
             Map<String, Long> params = new HashMap<>(reference.getParameters());
@@ -409,7 +409,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
                 return;
 
             for (int row = 0; row < getRowCount(); row++)
-                setValueAt(value != IrpUtils.invalid ? (int) value : null, row, colPos);
+                setValueAt(value != IrCoreUtils.INVALID ? (int) value : null, row, colPos);
 
             fireTableDataChanged();
         }
@@ -443,7 +443,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         }
 
         @Override
-        public Command toCommand(int row) throws IrpMasterException {
+        public Command toCommand(int row) throws GirrException {
             ParametrizedIrSignal pir = getParameterIrSignal(row);
             return pir.toCommand();
         }
@@ -495,6 +495,16 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         @Override
         public String getType() {
             return "parametrized";
+        }
+
+        public void deleteDefaultedSignals() {
+            for (int row = getRowCount() - 1; row >= 0; row--) {
+                ParametrizedIrSignal pir = getParameterIrSignal(row);
+                String defaultName = DefaultSignalNameFormatter.formatName(pir.protocolName, pir.parameters);
+                if (pir.getName().equalsIgnoreCase(defaultName) && pir.getComment().isEmpty() && ! pir.getValidated())
+                    removeRow(row);
+            }
+            fireTableDataChanged();
         }
     }
 }

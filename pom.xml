@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.harctoolbox</groupId>
     <artifactId>HarctoolboxBundle</artifactId>
-    <version>1.4.3</version>
+    <version>2.0.0</version>
     <name>HarctoolboxBundle</name>
     <packaging>pom</packaging>
     <licenses>
@@ -12,7 +12,7 @@
             <url>https://www.gnu.org/licenses/gpl.html</url>
         </license>
     </licenses>
-    <description>HarctoolboxBundle consists of IrScrutinizer bundled with its supporting libraries and programs.</description>
+    <description>HarctoolboxBundle consists of IrScrutinizer bundled with its icons.</description>
     <url>http://www.harctoolbox.org</url>
 
     <properties>

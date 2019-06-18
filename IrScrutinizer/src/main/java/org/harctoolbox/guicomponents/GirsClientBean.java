@@ -29,7 +29,6 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
-import org.harctoolbox.IrpMaster.IrpUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.comm.LocalSerialPortBuffered;
@@ -232,7 +231,7 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
     }
 
     private void setModules(List<String>modules) {
-        modulesTextField.setText(modules == null ? "" : IrpUtils.join(modules, " "));
+        modulesTextField.setText(modules == null ? "" : String.join(" ", modules));
     }
 
     @Override

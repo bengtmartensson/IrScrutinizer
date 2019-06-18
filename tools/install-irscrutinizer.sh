@@ -65,7 +65,7 @@ id -Gn | grep -q lirc  || {
 install -d ${MYPROG_HOME}
 install --mode=444 target/${MYPROG}-jar-with-dependencies.jar ${MYPROG_HOME}
 install --mode=444 target/${MYPROG}.png ${MYPROG_HOME}/${MYPROG_LOWER}.png
-install --mode=444 target/*.ini target/maven-shared-archive-resources/*.ini ${MYPROG_HOME}
+install --mode=444 target/*.xml target/*.ini ${MYPROG_HOME}
 install -d ${MYPROG_HOME}/exportformats.d
 install --mode=444 target/exportformats.d/* ${MYPROG_HOME}/exportformats.d
 install -d ${MYPROG_HOME}/contributed
@@ -78,15 +78,16 @@ install --mode=444 target/doc/README* target/doc/LICENSE* ${MYPROG_HOME}
 # Create trivial wrappers
 echo "#!/bin/sh"                                                        >  ${MYPROG_HOME}/${MYPROG_LOWER}.sh
 echo 'IRSCRUTINIZERHOME="$(dirname -- "$(readlink -f -- "${0}")" )"'    >> ${MYPROG_HOME}/${MYPROG_LOWER}.sh
-echo "java -Djava.library.path=${LIB} -jar "\${IRSCRUTINIZERHOME}/${MYPROG}-jar-with-dependencies.jar" --apphome \"\${IRSCRUTINIZERHOME}\" \"\$@\"" >> ${MYPROG_HOME}/${MYPROG_LOWER}.sh
-chmod +x ${MYPROG_HOME}/${MYPROG_LOWER}.sh
+echo "java -Djava.library.path=${LIB} -jar \"\${IRSCRUTINIZERHOME}/${MYPROG}-jar-with-dependencies.jar\" --apphome \"\${IRSCRUTINIZERHOME}\" \"\$@\"" >> ${MYPROG_HOME}/${MYPROG_LOWER}.sh
+chmod 555 ${MYPROG_HOME}/${MYPROG_LOWER}.sh
 mkdir -p ${PREFIX}/bin
 ln -sf ../share/${MYPROG_LOWER}/${MYPROG_LOWER}.sh ${PREFIX}/bin/${MYPROG_LOWER}
 
-echo "#!/bin/sh" > ${MYPROG_HOME}/irpmaster.sh
-echo "java -splash: -Djava.library.path=${LIB} -jar ${MYPROG_HOME}/${MYPROG}-jar-with-dependencies.jar --irpmaster -c ${MYPROG_HOME}/IrpProtocols.ini \"\$@\"" >> ${MYPROG_HOME}/irpmaster.sh
-chmod +x ${MYPROG_HOME}/irpmaster.sh
-ln -sf ../share/${MYPROG_LOWER}/irpmaster.sh ${PREFIX}/bin/irpmaster
+WRAPPER=${MYPROG_HOME}/irptransmogrifier.sh
+echo "#!/bin/sh" > ${WRAPPER}
+echo "java -cp \"${MYPROG_HOME}/${MYPROG}-jar-with-dependencies.jar\" org.harctoolbox.irp.IrpTransmogrifier \"\$@\"" >> ${WRAPPER}
+chmod 555 ${WRAPPER}
+ln -sf ../share/${MYPROG_LOWER}/irptransmogrifier.sh ${PREFIX}/bin/irptransmogrifier
 
 # Install documentation
 install -d ${PREFIX}/share/doc/${MYPROG_LOWER}
@@ -97,10 +98,6 @@ ln -sf ../doc/${MYPROG_LOWER} ${MYPROG_HOME}/doc
 install -d ${PREFIX}/share/xml/harctoolbox
 install --mode=444 ../schemas/*.xsd ${PREFIX}/share/xml/harctoolbox
 ln -sf ../xml/harctoolbox ${MYPROG_HOME}/schemas
-
-# Install DecodeIR
-install -d ${LIB}
-install --mode=444 ${FROMLIB}/libDecodeIR.* ${LIB}
 
 # Install devslashlirc
 if [ -e ${FROMLIB}/libdevslashlirc.so ] ; then

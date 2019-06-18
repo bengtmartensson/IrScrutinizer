@@ -22,9 +22,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.text.ParseException;
 import java.util.ArrayList;
-import org.harctoolbox.IrpMaster.IncompatibleArgumentException;
-import org.harctoolbox.IrpMaster.IrpUtils;
-import org.harctoolbox.IrpMaster.ModulatedIrSequence;
+import org.harctoolbox.ircore.IrCoreUtils;
+import org.harctoolbox.ircore.ModulatedIrSequence;
+import org.harctoolbox.ircore.OddSequenceLengthException;
+import org.harctoolbox.ircore.ThisCannotHappenException;
 
 /**
  * This class imports Lirc's mode2 files.
@@ -71,7 +72,7 @@ public class Mode2Importer extends ReaderImporter implements IModulatedIrSequenc
             lastWasPulse = isPulse;
         }
         if (data.size() % 2 != 0)
-            data.add((int)(IrpUtils.milliseconds2microseconds * getEndingTimeout()));
+            data.add((int)(IrCoreUtils.milliseconds2microseconds(getEndingTimeout())));
         int[] array = new int[data.size()];
         int i = 0;
         for (Integer duration : data) {
@@ -80,9 +81,8 @@ public class Mode2Importer extends ReaderImporter implements IModulatedIrSequenc
         }
         try {
             sequence = new ModulatedIrSequence(array, getFallbackFrequency());
-        } catch (IncompatibleArgumentException ex) {
-            throw new ParseException(ex.getMessage(), lineNo);
-            // TODO: invoke logger
+        } catch (OddSequenceLengthException ex) {
+            throw new ThisCannotHappenException(ex.getMessage());
         }
     }
 

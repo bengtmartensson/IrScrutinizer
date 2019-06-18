@@ -28,11 +28,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpMasterException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.irscrutinizer.Version;
 
 /**
@@ -52,10 +55,10 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         IrTransImporter importer = new IrTransImporter();
         try {
             importer.load(new File(args[0]));
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
         } catch (ParseException ex) {
             System.err.println(ex.getMessage() + ex.getErrorOffset());
+        } catch (InvalidArgumentException | IOException ex) {
+            Logger.getLogger(IrTransImporter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -76,7 +79,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
             try {
                 Command command = cmd.toCommand();
                 commands.put(command.getName(), command);
-            } catch (IrpMasterException ex) {
+            } catch (GirrException | InvalidArgumentException ex) {
                 System.err.println(cmd.name + " Unparsable signal: " + ex.getMessage());
             }
         });
@@ -312,7 +315,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                 remotes);
     }
 
-    public void load(File file) throws IOException, ParseException {
+    public void load(File file) throws IOException, ParseException, InvalidArgumentException {
         load(file, defaultCharsetName);
     }
 
@@ -367,7 +370,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
             this.name = name;
         }
 
-        abstract Command toCommand() throws IrpMasterException;
+        abstract Command toCommand() throws InvalidArgumentException, GirrException;
     }
 
     private static class IrTransCommandIndexed extends IrTransCommand {
@@ -382,22 +385,23 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         }
 
         @Override
-        Command toCommand() throws IrpMasterException {
+        Command toCommand() throws InvalidArgumentException, GirrException {
             if (null == timing.type) {
                 int[] times = new int[2 * data.length()];
                 for (int i = 0; i < data.length(); i++) {
                     char ch = data.charAt(i);
                     int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
-                    if (index >= timing.durations.length)
-                        throw new IrpMasterException("Undefined timing :" + ch);
+                    // FIXME
+//                    if (index >= timing.durations.length)
+//                        throw new InvllrpException("Undefined timing :" + ch);
                     times[2 * i] = timing.durations[index][0];
                     times[2 * i + 1] = timing.durations[index][1];
                 }
                 IrSignal irSignal = timing.repetitions <= 1
-                        ? new IrSignal(times, times.length / 2, 0, 1000 * timing.frequency)
-                        : new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
+                        ? new IrSignal(times, times.length, 0, 1000 * timing.frequency)
+                        : new IrSignal(times, 0, times.length, 1000 * timing.frequency);
                 return new Command(name, null, irSignal);
-            } else
+            } else {
                 switch (timing.type) {
                     case rc5: {
                         // {36k,msb,889}<1,-1|-1,1>((1:1,~F:1:6,T:1,D:5,F:6,^114m)+,T=1-T)[T@:0..1=0,D:0..31,F:0..127]
@@ -416,7 +420,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                         // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
                         // http://www.irtrans.de/forum/viewtopic.php?f=18&t=99
                         if (!data.substring(0, 2).equals("S1"))
-                            throw new org.harctoolbox.IrpMaster.ParseException();
+                            throw new InvalidArgumentException();
                         int numberBits = data.length() - 7;
                         long payload = Long.parseLong(data.substring(2), 2);
                         long M = (payload >> (numberBits + 2)) & 7;
@@ -429,7 +433,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                         switch (numberBits) {
                             case 16: {
                                 if (M != 0)
-                                    throw new IrpMasterException("Unknown M = " + M + " in RC6-M-16");
+                                    throw new InvalidArgumentException("Unknown M = " + M + " in RC6-M-16");
 
                                 // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)+,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
                                 protocolName = "RC6";
@@ -437,7 +441,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                             break;
                             case 20: {
                                 if (M != 6)
-                                    throw new IrpMasterException("Unknown M = " + M + " in RC6-M-20");
+                                    throw new InvalidArgumentException("Unknown M = " + M + " in RC6-M-20");
 
                                 // {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,6:3,<-2,2|2,-2>(T:1),D:8,S:4,F:8,-100m)+,T=1-T)[D:0..255,S:0..15,F:0..255,T@:0..1=0]
                                 long S = (payload >> 8) & 0x0f;
@@ -449,7 +453,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                             break;
                             case 24: {
                                 if (M != 6)
-                                    throw new IrpMasterException("Unknown M = " + M + " in RC6-M-24");
+                                    throw new InvalidArgumentException("Unknown M = " + M + " in RC6-M-24");
 
                                 // {36k,444,msb}<-1,1|1,-1>(6,-2,1:1,6:3,<-2,2|2,-2>(T:1),D:8,S:8,F:8,-100m/*???*/)+[D:0..255,S:0..255,F:0..255,T@:0..1=0]
                                 long S = (payload >> 8) & 0xff;
@@ -480,7 +484,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                             }
                             break;
                             default:
-                                throw new IrpMasterException("Unimplemented RC6 bitlength :" + numberBits);
+                                throw new InvalidArgumentException("Unimplemented RC6 bitlength :" + numberBits);
                         }
                         return new Command(name, null, protocolName, parameters);
                     }
@@ -490,17 +494,19 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
                             char ch = data.charAt(i);
                             int index = ch == 'S' ? 0 : (Character.digit(ch, Character.MAX_RADIX) + (timing.startBit ? 1 : 0));
                             if (index >= timing.durations.length)
-                                throw new IrpMasterException("Undefined timing: " + ch);
+                                throw new InvalidArgumentException("Undefined timing: " + ch);
                             times[2 * i] = timing.durations[index][0];
                             times[2 * i + 1] = timing.durations[index][1];
                         }
                         IrSignal irSignal = timing.repetitions <= 1
-                                ? new IrSignal(times, times.length / 2, 0, 1000 * timing.frequency)
-                                : new IrSignal(times, 0, times.length / 2, 1000 * timing.frequency);
+                                ? new IrSignal(times, times.length, 0, 1000 * timing.frequency)
+                                : new IrSignal(times, 0, times.length, 1000 * timing.frequency);
                         return new Command(name, null, irSignal);
                 }
+            }
         }
     }
+
     private static class IrTransCommandRaw extends IrTransCommand {
 
         private final int[] durations;
@@ -514,8 +520,8 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         }
 
         @Override
-        Command toCommand() {
-            IrSignal irSignal = new IrSignal(durations, 0, durations.length / 2, 1000 * frequency);
+        Command toCommand() throws InvalidArgumentException {
+            IrSignal irSignal = new IrSignal(durations, 0, durations.length, 1000 * frequency);
             return new Command(name, null, irSignal);
         }
     }
@@ -530,7 +536,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         }
 
         @Override
-        Command toCommand() throws IrpMasterException {
+        Command toCommand() throws GirrException {
             return new Command(name, null, ccf);
         }
     }

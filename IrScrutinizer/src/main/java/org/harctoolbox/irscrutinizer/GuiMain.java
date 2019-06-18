@@ -17,7 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer;
 
-import com.hifiremote.exchangeir.Analyzer;
 import com.neuron.app.tonto.ProntoModel;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -40,15 +39,18 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.comm.DriverGenUnix;
-import javax.swing.AbstractButton;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -65,15 +67,33 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import org.harctoolbox.IrpMaster.*;
-import org.harctoolbox.IrpMaster.DecodeIR.DecodeIrException;
+import org.harctoolbox.analyze.Analyzer;
+import org.harctoolbox.analyze.Burst;
+import org.harctoolbox.analyze.NoDecoderMatchException;
+import org.harctoolbox.analyze.RepeatFinder;
 import org.harctoolbox.devslashlirc.LircHardware;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.guicomponents.*;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.TimeoutException;
 import org.harctoolbox.harchardware.ir.*;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.ircore.IrCoreUtils;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.ircore.ModulatedIrSequence;
+import org.harctoolbox.ircore.Pronto;
+import org.harctoolbox.ircore.ThisCannotHappenException;
+import org.harctoolbox.irp.BitDirection;
+import org.harctoolbox.irp.Decoder;
+import org.harctoolbox.irp.IrpDatabase;
+import org.harctoolbox.irp.IrpException;
+import org.harctoolbox.irp.IrpParseException;
+import org.harctoolbox.irp.IrpUtils;
+import org.harctoolbox.irp.Protocol;
+import org.harctoolbox.irp.UnknownProtocolException;
 import org.harctoolbox.irscrutinizer.capturinghardware.*;
 import org.harctoolbox.irscrutinizer.exporter.*;
 import org.harctoolbox.irscrutinizer.importer.*;
@@ -89,7 +109,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private transient ControlTowerIrDatabase controlTowerIrDatabase = null;
     private Map<String, String> controlTowerCodesetTable = null;
     private transient IrdbImporter irdbImporter = null;
-    private IrpMaster irpMaster = null;
+    private transient IrpDatabase irpDatabase = null;
+    private transient Decoder decoder = null;
     private ProtocolsIni protocolsIni = null;
     private transient CcfImporter ccfImporter;
     private transient XcfImporter xcfImporter;
@@ -130,7 +151,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private transient SendingLircClient sendingLircClient;
     private transient CapturingHardwareManager capturingHardwareManager;
 
-    private Remote.MetaData metaData = new Remote.MetaData("unnamed");
+    private transient Remote.MetaData metaData = new Remote.MetaData("unnamed");
 
     private final static String feedbackMail = "feedback@harctoolbox.org";
     private final static String issuesUrl = "https://github.com/bengtmartensson/harctoolboxbundle/issues";
@@ -159,6 +180,18 @@ public final class GuiMain extends javax.swing.JFrame {
         GlobalCacheIrDatabase.setProxy(proxy);
         ReaderImporter.setProxy(proxy);
     }
+
+    // Prefereces for the analyzer. Should these be made properties, or what?
+    private boolean analyzerEliminateConstantVars = false;
+    private double analyzerMaxRoundingError = Burst.Preferences.DEFAULT_MAX_ROUNDING_ERROR;
+    private double analyzerMaxUnits = Burst.Preferences.DEFAULT_MAX_UNITS;
+    private double analyzerMaxMicroSeconds = Burst.Preferences.DEFAULT_MAX_MICROSECONDS;
+    private String analyzerTimeBase = null;
+    private boolean analyzerLsb = false;
+    private boolean analyzerExtent = false;
+    private List<Integer> analyzerParameterWidths = new ArrayList<>(0);
+    private int analyzerMaxParameterWidth = 64;
+    private boolean analyzerInvert = false;
 
     private class ScrutinizeIrCaller implements LookAndFeelManager.ILookAndFeelManagerCaller {
         @Override
@@ -202,12 +235,13 @@ public final class GuiMain extends javax.swing.JFrame {
             try {
                 @SuppressWarnings("unchecked")
                 List<File> list = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
-                for (File file : list)
+                list.forEach((file) -> {
                     try {
                         importGirr(file, raw);
-                    } catch (java.text.ParseException | IrpMasterException ex) {
+                    } catch (IOException | ParseException | InvalidArgumentException ex) {
                         guiUtils.error(ex);
                     }
+                });
             } catch (UnsupportedFlavorException | IOException e) {
                 return false;
             }
@@ -261,7 +295,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 } else {
                     return oldhandler.importData(support);
                 }
-            } catch (UnsupportedFlavorException | IOException ex) {
+            } catch (UnsupportedFlavorException | IOException | InvalidArgumentException ex) {
                 guiUtils.error(ex);
                 return false;
             }
@@ -316,19 +350,18 @@ public final class GuiMain extends javax.swing.JFrame {
      * @throws ParserConfigurationException
      * @throws SAXException
      * @throws IOException
-     * @throws IncompatibleArgumentException
      * @throws java.text.ParseException
-     * @throws URISyntaxException
+     * @throws org.harctoolbox.irp.IrpParseException
      */
-    @SuppressWarnings({"OverridableMethodCallInConstructor", "OverridableMethodCallInConstructor", "ResultOfObjectAllocationIgnored", "ResultOfObjectAllocationIgnored"})
+    //@SuppressWarnings({"OverridableMethodCallInConstructor", "OverridableMethodCallInConstructor", "ResultOfObjectAllocationIgnored", "ResultOfObjectAllocationIgnored"})
     public GuiMain(String applicationHome, String propsfilename, boolean verbose,
-            int userlevel, List<String> arguments)
-            throws ParserConfigurationException, SAXException, IOException, IncompatibleArgumentException, java.text.ParseException, URISyntaxException {
+            int userlevel, List<String> arguments) throws IOException, java.text.ParseException, ParserConfigurationException, SAXException, IrpParseException {
         this.applicationHome = applicationHome;
         System.setProperty("harctoolbox.jniLibsHome", applicationHome);
+
         // First try to load library from absolute path,
         try {
-            LircHardware.loadLibrary(LibraryLoader.fileName(applicationHome, LircHardware.libraryName));
+            LircHardware.loadLibrary(libraryFileName(applicationHome, LircHardware.libraryName));
         } catch (UnsatisfiedLinkError ex) {
         }
 
@@ -464,7 +497,8 @@ public final class GuiMain extends javax.swing.JFrame {
         RepeatFinder.setDefaultAbsoluteTolerance(properties.getAbsoluteTolerance());
         RepeatFinder.setDefaultRelativeTolerance(properties.getRelativeTolerance());
 
-        irpMaster = new IrpMaster(properties.mkPathAbsolute(properties.getIrpProtocolsIniPath())); // must come before initComponents
+        irpDatabase = new IrpDatabase(properties.mkPathAbsolute(properties.getIrpProtocolsPath())); // must come before initComponents
+        decoder = new Decoder(irpDatabase);
 
         loadExportFormats(); // must come before initComponents
 
@@ -513,10 +547,36 @@ public final class GuiMain extends javax.swing.JFrame {
         optionsMenu.add(this.exportFormatManager.getMenu(properties.getExportFormatName()));
         optionsMenu.add(new Separator());
 
-        Command.setIrpMaster(irpMaster);
+        Command.setIrpMaster(irpDatabase);
+        ParametrizedIrSignal.setDecoder(decoder);
         ParametrizedIrSignal.setGenerateCcf(properties.getGenerateCcf());
         ParametrizedIrSignal.setGenerateRaw(properties.getGenerateRaw());
-        ParametrizedIrSignal.setIrpMaster(irpMaster);
+
+        properties.addGenerateCcfChangeListener((String name1, Object oldValue, Object newValue) -> {
+            ParametrizedIrSignal.setGenerateCcf((Boolean) newValue);
+        });
+        properties.addGenerateRawChangeListener((String name1, Object oldValue, Object newValue) -> {
+            ParametrizedIrSignal.setGenerateRaw((Boolean) newValue);
+        });
+
+        RawIrSignal.setDecoder(decoder);
+        RawIrSignal.setInvokeAnalyzer(properties.getInvokeAnalyzer());
+        RawIrSignal.setInvokeDecoder(properties.getInvokeDecodeIr());
+        RawIrSignal.setAbsoluteTolerance(properties.getAbsoluteTolerance());
+        RawIrSignal.setRelativeTolerance(properties.getRelativeTolerance());
+
+        properties.addInvokeAnalyzerChangeListener((String name1, Object oldValue, Object newValue) -> {
+            RawIrSignal.setInvokeAnalyzer((Boolean) newValue);
+        });
+        properties.addInvokeDecodeIrChangeListener((String name1, Object oldValue, Object newValue) -> {
+            RawIrSignal.setInvokeDecoder((Boolean) newValue);
+        });
+        properties.addAbsoluteToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
+            RawIrSignal.setAbsoluteTolerance((Double) newValue);
+        });
+        properties.addRelativeToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
+            RawIrSignal.setRelativeTolerance((Double) newValue);
+        });
 
         sendingHardwareManager = new SendingHardwareManager(guiUtils, properties, sendingHardwareTabbedPane);
         properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
@@ -659,7 +719,10 @@ public final class GuiMain extends javax.swing.JFrame {
         });
 
         initializePlot();
-        super.setTitle(System.getenv("APPIMAGE") == null ? Version.versionString : Version.versionString + " AppImage");
+        String title = Version.appName + " (powered by IrpTransmogrifier) version " + Version.version;
+        if (System.getenv("APPIMAGE") != null)
+            title += " AppImage";
+        super.setTitle(title);
         setupAnalyzerMenu();
         updateOutputFormat(properties.getOutputFormatIndex());
 
@@ -688,7 +751,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 boolean leave = checkUnsavedStuff();
                 if (leave) {
                     killRunningCapture();
-                    System.exit(IrpUtils.exitSuccess);
+                    System.exit(IrpUtils.EXIT_SUCCESS);
                 }
             }
         });
@@ -714,7 +777,12 @@ public final class GuiMain extends javax.swing.JFrame {
         // see javax.comm.DriverGenUnix. This will fail, but that is no concern for us.
         // However, it writes an ugly stacktrace on stderr, which is scaring the user.
         // Therefore, redirect stderr to nirvana, and make that call now.
-        PrintStream nullPrintStream = new PrintStream(new ByteArrayOutputStream(), false, IrpUtils.dumbCharsetName);
+        PrintStream nullPrintStream;
+        try {
+            nullPrintStream = new PrintStream(new ByteArrayOutputStream(), false, "US-ASCII");
+        } catch (UnsupportedEncodingException ex) {
+            throw new ThisCannotHappenException();
+        }
         System.setErr(nullPrintStream);
         DriverGenUnix ignored = new DriverGenUnix();
 
@@ -734,12 +802,27 @@ public final class GuiMain extends javax.swing.JFrame {
         initialized = true;
     } // end of constructor
 
+    // Just snarfed from IrpMaster
+    private static File libraryFileName(String appHome, String libraryName) {
+        String subFolderName = (System.getProperty("os.name").startsWith("Windows")
+                ? "Windows"
+                : System.getProperty("os.name"))
+                + '-' + System.getProperty("os.arch").toLowerCase(Locale.US);
+        String stem = System.getProperty("harctoolbox.jniLibsHome") != null
+                ? System.getProperty("harctoolbox.jniLibsHome")
+                : appHome;
+        String mappedName = System.mapLibraryName(libraryName);
+        return new File(new File(stem, subFolderName), mappedName);
+    }
+
     private void processArguments(List<String> arguments) {
         int sum = 0;
         for (String str : arguments) {
             try {
                 sum += importGirr(new File(str), false);
-            } catch (java.text.ParseException | IrpMasterException | IOException ex) {
+            } catch (FileNotFoundException ex) {
+                guiUtils.error("File \"" + str + "\" not found, ignoring.");
+            } catch (IOException | ParseException | InvalidArgumentException ex) {
                 guiUtils.error(ex);
             }
         }
@@ -801,8 +884,8 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void cleanupForShutdown() {
         try {
-            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, IrpUtils.dumbCharsetName));
-            System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err), true, IrpUtils.dumbCharsetName));
+            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, "US-ASCII"));
+            System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err), true, "US-ASCII"));
         } catch (UnsupportedEncodingException ex) {
             throw new InternalError("This cannot happen");
         }
@@ -817,11 +900,11 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }
 
-    public int importGirr(File file, boolean raw, String charsetName) throws java.text.ParseException, IOException, IrpMasterException {
+    public int importGirr(File file, boolean raw, String charsetName) throws ParseException, InvalidArgumentException, IOException {
         return importCommands(girrImporter.getAllCommands(file, charsetName), raw);
     }
 
-    public int importGirr(File file, boolean raw) throws java.text.ParseException, IOException, IrpMasterException {
+    public int importGirr(File file, boolean raw) throws ParseException, InvalidArgumentException, IOException {
         return importGirr(file, raw, properties.getImportCharsetName());
     }
 
@@ -833,8 +916,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private Command.CommandTextFormat[] setupExtraTextFormats() {
         ArrayList<Command.CommandTextFormat> formats = new ArrayList<>(8);
-        if (properties.getExportGenerateUei())
-            formats.add(new UeiFormatter());
         if (properties.getExportGenerateShortCcf())
             formats.add(new ShortCcfFormatter());
         if (properties.getExportGenerateSendIr())
@@ -907,14 +988,14 @@ public final class GuiMain extends javax.swing.JFrame {
         return exporter;
     }
 
-    private IrSignal getCapturedIrSignal() throws ParseException, IncompatibleArgumentException, UnassignedException, DomainViolationException, InvalidRepeatException {
+    private IrSignal getCapturedIrSignal() throws InvalidArgumentException {
         String str = capturedDataTextArea.getText();
         if (str.trim().isEmpty())
             return null;
 
-        return InterpretStringHardware.interpretString(str, getFrequency(),
+        return InterpretString.interpretString(str, getFrequency(), properties.getDummyGap(),
                 properties.getInvokeRepeatFinder(), properties.getInvokeCleaner(),
-                properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+                properties.getAbsoluteTolerance(), properties.getRelativeTolerance(), properties.getMinRepeatLastGap());
     }
 
     private void loadProtocolsIni() throws IOException, java.text.ParseException {
@@ -937,7 +1018,7 @@ public final class GuiMain extends javax.swing.JFrame {
         endingLengthLabel.setText(null);
     }
 
-    private ModulatedIrSequence captureIrSequence() throws IOException, HarcHardwareException, IrpMasterException {
+    private ModulatedIrSequence captureIrSequence() throws IOException, HarcHardwareException, InvalidArgumentException {
         if (!capturingHardwareManager.isReady())
             return null;
 
@@ -970,10 +1051,10 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setRepeatParameters(RepeatFinder repeatFinder) {
-        setRepeatParameters(repeatFinder.getRepeatFinderData().getBeginLength()/2,
-                repeatFinder.getRepeatFinderData().getRepeatLength()/2,
+        setRepeatParameters(repeatFinder.getRepeatFinderData().getBeginLength(),
+                repeatFinder.getRepeatFinderData().getRepeatLength(),
                 repeatFinder.getRepeatFinderData().getNumberRepeats(),
-                repeatFinder.getRepeatFinderData().getEndingLength()/2);
+                repeatFinder.getRepeatFinderData().getEndingLength());
     }
 
     private void setFrequencyParameter(double frequency) {
@@ -984,58 +1065,111 @@ public final class GuiMain extends javax.swing.JFrame {
         setFrequencyParameter(irSignal.getFrequency());
     }
 
-    private String formatIrSignal(IrSignal irSignal, OutputTextFormat format) throws IncompatibleArgumentException {
-        return format == OutputTextFormat.ccf ? irSignal.ccfString()
-                    : irSignal.toPrintString(true, false, " ");
+    private String formatIrSignal(IrSignal irSignal, OutputTextFormat format) {
+        return format == OutputTextFormat.ccf ? Pronto.toString(irSignal)
+                    : irSignal.toString(true/*, false, " "*/);
     }
 
-    private String formatIrSignal(IrSignal irSignal, int formatIndex) throws IncompatibleArgumentException {
+    private String formatIrSignal(IrSignal irSignal, int formatIndex) {
         return formatIrSignal(irSignal, OutputTextFormat.newOutputTextFormat(formatIndex));
     }
 
-    private String formatIrSignal(IrSignal irSignal) throws IncompatibleArgumentException {
+    private String formatIrSignal(IrSignal irSignal) {
         return formatIrSignal(irSignal, properties.getOutputFormatIndex());
     }
 
     private void setCaptureWindow(IrSignal irSignal) {
         try {
             capturedDataTextArea.setText(formatIrSignal(irSignal, properties.getOutputFormatIndex()));
-        } catch (IncompatibleArgumentException ex) {
+        } catch (Exception ex) {
             guiUtils.error(ex);
             capturedDataTextArea.setText(null);
         }
     }
 
-    private void setDecodeIrParameters(IrSignal irSignal) throws IOException {
-        DecodeIR decodeIr = DecodeIR.newDecodeIR(irSignal);
-        if (decodeIr == null)
-            throw new IOException("DecodeIR was not found");
-        DecodeIR.DecodedSignal[] decodes = decodeIr.getDecodedSignals();
-        decodeIRTextField.setText(DecodeIR.DecodedSignal.toPrintString(decodes, true));
-        if (decodes.length > 1)
-            for (DecodeIR.DecodedSignal decode : decodes) {
-                guiUtils.message(decode.toString());
+    private void setDecodeIrParameters(IrSignal irSignal) {
+//        DecodeIR decodeIr = DecodeIR.newDecodeIR(irSignal);
+//        if (decodeIr == null)
+//            throw new IOException("DecodeIR was not found");
+        Map<String, Decoder.Decode> decodes = decoder.decode(irSignal, false, //strict
+                false, // allDecodes
+                true, // removeDefaultedParameters
+                false, // recursive
+                -1.0, // frequencyTolerance
+                null, // absoluteTolerance
+                null, // relativeTolerance
+                null //minimumLeadout
+        );
+        StringBuilder decodeString = new StringBuilder(20);
+        boolean first = true;
+        for (Decoder.Decode decode : decodes.values()) {
+            if (first) {
+                decodeString.append(decode);
+                if (decodes.size() == 2)
+                    decodeString.append(" + one more decode");
+                if (decodes.size() > 2)
+                    decodeString.append(" + ").append(Integer.toString(decodes.size() - 1)).append(" more decodes");
+                first = false;
             }
-        else if (properties.getPrintDecodesToConsole())
-            guiUtils.message(DecodeIR.DecodedSignal.toPrintString(decodes, false));
+            if (properties.getPrintDecodesToConsole())
+                guiUtils.message(decode.toString());
+        }
+        decodeIRTextField.setText(decodeString.toString());
     }
 
     private void clearAnalyzeParameters() {
         analyzerTextField.setText(null);
     }
 
+    private void setAnalyzeParameters(String line) {
+        analyzerTextField.setText(line);
+    }
+
+    private void setAnalyzeParameters(Protocol protocol) {
+        if (protocol == null)
+            clearAnalyzeParameters();
+        else {
+            Protocol actualProtocol = analyzerEliminateConstantVars ? protocol.substituteConstantVariables() : protocol;
+            String line = actualProtocol.toIrpString(properties.getAnalyzerBase());
+            setAnalyzeParameters(line);
+            if (properties.getPrintAnalyzerIRPsToConsole())
+                guiUtils.message(line);
+        }
+    }
+
     private void setAnalyzeParameters(Analyzer analyzer) {
-        this.analyzerTextField.setText(analyzer != null ? analyzer.toString() : null);
+        Burst.Preferences burstPrefs = new Burst.Preferences(analyzerMaxRoundingError, analyzerMaxUnits, analyzerMaxMicroSeconds);
+        Analyzer.AnalyzerParams params = new Analyzer.AnalyzerParams(analyzer.getFrequency(), analyzerTimeBase,
+                analyzerLsb ? BitDirection.lsb : BitDirection.msb,
+                analyzerExtent, analyzerParameterWidths, analyzerMaxParameterWidth, analyzerInvert, burstPrefs);
+        List<Protocol> protocols = null;
+        try {
+            protocols = analyzer.searchBestProtocol(params);
+        } catch (NoDecoderMatchException ex) {
+            Logger.getLogger(GuiMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (protocols == null || protocols.isEmpty())
+            clearAnalyzeParameters();
+        else {
+            setAnalyzeParameters(protocols.get(0));
+        }
     }
 
-    private void setAnalyzeParameters(ModulatedIrSequence seq) {
-        Analyzer analyzer = ExchangeIR.newAnalyzer(seq);
+    private void setAnalyzeParameters(ModulatedIrSequence irSequence) throws InvalidArgumentException {
+        Analyzer analyzer = new Analyzer(irSequence, properties.getFallbackFrequency(), properties.getInvokeRepeatFinder(),
+                properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
         setAnalyzeParameters(analyzer);
     }
 
-    private void setAnalyzeParameters(IrSignal irSignal) {
-        Analyzer analyzer = ExchangeIR.newAnalyzer(irSignal);
-        setAnalyzeParameters(analyzer);
+    private void setAnalyzeParameters(IrSignal irSignal) throws InvalidArgumentException {
+        // Ignore repeatfinder request if irSignal already has repeat.
+        if (properties.getInvokeRepeatFinder() && irSignal.getRepeatLength() == 0) {
+            ModulatedIrSequence irSequence = irSignal.toModulatedIrSequence();
+            setAnalyzeParameters(irSequence);
+        } else {
+            Analyzer analyzer = new Analyzer(irSignal, properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+            setAnalyzeParameters(analyzer);
+        }
     }
 
     private int numberbaseIndex2numberbase(int index) {
@@ -1045,8 +1179,8 @@ public final class GuiMain extends javax.swing.JFrame {
                 : 16;
     }
 
-    public void scrutinizeIrSignal(IrSignal irSignal) {
-        if (irSignal.isEmpty()) {
+    public void scrutinizeIrSignal(IrSignal irSignal) throws InvalidArgumentException {
+        if (irSignal == null || irSignal.isEmpty()) {
             guiUtils.error("Not scrutinizing empty signal.");
             return;
         }
@@ -1063,7 +1197,7 @@ public final class GuiMain extends javax.swing.JFrame {
             }
             answer = answer.trim();
             try {
-                if (answer.length() == Pronto.charsInDigit) {
+                if (answer.length() == Pronto.CHARS_IN_DIGIT) {
                     irSignal.replaceZeros(Integer.parseInt(answer, 16));
                 } else {
                     irSignal.replaceZeros(Double.parseDouble(answer));
@@ -1073,7 +1207,7 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         }
 
-        setRepeatParameters(irSignal.getIntroBursts(), irSignal.getRepeatBursts(), irSignal.getRepeatBursts() >  0 ? 1 : 0, irSignal.getEndingBursts());
+        setRepeatParameters(irSignal.getIntroLength(), irSignal.getRepeatLength(), irSignal.getRepeatLength() >  0 ? 1 : 0, irSignal.getEndingLength());
         //modulatedIrSequence = irSignal.toModulatedIrSequence(1);
 
         if (properties.getInvokeAnalyzer())
@@ -1083,7 +1217,7 @@ public final class GuiMain extends javax.swing.JFrame {
         displaySignal(irSignal);
     }
 
-    public void scrutinizeIrSignal(JTable table) throws IrpMasterException, ErroneousSelectionException {
+    public void scrutinizeIrSignal(JTable table) throws ErroneousSelectionException, GirrException, IrpException, IrCoreException {
         Command command = tableUtils.commandTableSelectedRow(table);
         scrutinizeIrSignal(command.toIrSignal());
     }
@@ -1092,15 +1226,15 @@ public final class GuiMain extends javax.swing.JFrame {
         setFrequencyParameter(irSignal);
         setCaptureWindow(irSignal);
         irPlotter.plot(irSignal);
-        try {
-            setDecodeIrParameters(irSignal);
-        } catch (IOException ex) {
-            guiUtils.warning("DecodeIR not found");
-        }
+//        try {
+        setDecodeIrParameters(irSignal);
+//        } catch (IOException ex) {
+//            guiUtils.warning("DecodeIR not found");
+//        }
     }
 
-    private void processIr(ModulatedIrSequence modulatedIrSequence) {
-        if (modulatedIrSequence.isEmpty()) {
+    private void processIr(ModulatedIrSequence modulatedIrSequence) throws InvalidArgumentException {
+        if (modulatedIrSequence == null || modulatedIrSequence.isEmpty()) {
             guiUtils.error("Not showing empty sequence.");
             return;
         }
@@ -1113,10 +1247,10 @@ public final class GuiMain extends javax.swing.JFrame {
         else
             clearAnalyzeParameters();
 
-        ModulatedIrSequence cleaned = properties.getInvokeCleaner()
+        ModulatedIrSequence cleaned = /*properties.getInvokeCleaner()
                 ? Cleaner.clean(modulatedIrSequence, (int) properties.getAbsoluteTolerance(), properties.getRelativeTolerance())
-                : modulatedIrSequence;
-        IrSignal irSignal = properties.getInvokeRepeatFinder() ? repeatFinder.getRepeatFinderData().chopIrSequence(cleaned) : cleaned.toIrSignal();
+                :*/ modulatedIrSequence;
+        IrSignal irSignal = properties.getInvokeRepeatFinder() ? repeatFinder.getRepeatFinderData().chopIrSequence(cleaned) : new IrSignal(cleaned);
         displaySignal(irSignal);
     }
 
@@ -1125,7 +1259,7 @@ public final class GuiMain extends javax.swing.JFrame {
             File file = saveCommands(parameterTableModel, Version.appName + " parametric export", exporter);
             if (file != null)
                 guiUtils.message("File " + file + " was successfully written.");
-        } catch (IrpMasterException | IOException | TransformerException ex) {
+        } catch (IOException | TransformerException | GirrException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1135,12 +1269,12 @@ public final class GuiMain extends javax.swing.JFrame {
             File file = saveCommands(rawTableModel, Version.appName + " raw export", exporter);
             if (file != null)
                 guiUtils.message("File " + file + " was successfully written.");
-        } catch (IrpMasterException | IllegalArgumentException | IOException | TransformerException ex) {
+        } catch (IOException | TransformerException | GirrException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
         }
     }
 
-    private File saveCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel, String title, RemoteSetExporter exporter) throws IrpMasterException, IOException, TransformerException {
+    private File saveCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel, String title, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
         Map<String, Command> commands = tableModel.getCommandsWithSanityCheck(guiUtils);
         if (commands == null)
             return null;
@@ -1151,7 +1285,8 @@ public final class GuiMain extends javax.swing.JFrame {
         return file;
     }
 
-    private File saveCommands(Map<String, Command> commands, String source, String title, RemoteSetExporter exporter) throws IrpMasterException, IOException, TransformerException {
+    private File saveCommands(Map<String, Command> commands, String source, String title, RemoteSetExporter exporter)
+            throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
         if (properties.getExportInquireDeviceData() && exporter.supportsMetaData()) {
             Remote.MetaData newMetaData = MetaDataDialog.inquireMetaData(metaData, this);
             if (newMetaData == null) // user bailed out
@@ -1166,7 +1301,7 @@ public final class GuiMain extends javax.swing.JFrame {
         return file;
     }
 
-    private File saveSignal(Command command, String title, ICommandExporter exporter) throws IOException, IrpMasterException, TransformerException {
+    private File saveSignal(Command command, String title, ICommandExporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
         return exporter.export(command, "IrScrutinizer captured signal", title,
                 properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
                 new File(properties.getExportDir()), properties.getExportCharsetName());
@@ -1176,7 +1311,7 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             File savedFile = saveSignal(tableUtils.commandTableSelectedRow(table), title, newExporter());
             guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
-        } catch (IrpMasterException | IOException | ErroneousSelectionException | TransformerException ex) {
+        } catch (IOException | TransformerException | GirrException | ErroneousSelectionException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1186,11 +1321,11 @@ public final class GuiMain extends javax.swing.JFrame {
             return Double.parseDouble(frequencyLabel.getText());
         } catch (NumberFormatException | NullPointerException ex) {
         }
-        int f = properties.getFallbackFrequency();
-        return f > 0 ? f : IrpUtils.defaultFrequency;
+        double f = properties.getFallbackFrequency();
+        return f > 0 ? f : ModulatedIrSequence.DEFAULT_FREQUENCY;
     }
 
-    private void saveSignals(Map<String, Command> commands) throws IOException, IrpMasterException, TransformerException {
+    private void saveSignals(Map<String, Command> commands) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
         if (commands.isEmpty())
             guiUtils.error("Nothing to export");
         else if (commands.size() == 1) {
@@ -1208,11 +1343,11 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }
 
-    private void saveSignal(IrSignal irSignal) throws IrpMasterException {
+    private void saveSignal(IrSignal irSignal) {
         saveSignal(irSignal, newExporter());
     }
 
-    private void saveSignal(IrSignal irSignal, ICommandExporter exporter) throws IrpMasterException {
+    private void saveSignal(IrSignal irSignal, ICommandExporter exporter) {
         try {
             if (irSignal == null) {
                 guiUtils.error("Not exporting empty signal.");
@@ -1222,19 +1357,15 @@ public final class GuiMain extends javax.swing.JFrame {
             File savedFile = saveSignal(command, "IrScrutinizer scrutinized signal", exporter);
             if (savedFile != null)
                 guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
-        } catch (ParseException | IncompatibleArgumentException | UnassignedException | DomainViolationException | InvalidRepeatException | IOException | TransformerException ex) {
-            guiUtils.error(ex);
+        } catch (IOException | TransformerException | GirrException | IrCoreException | IrpException ex) {
         }
     }
 
     private void reAnalyze() {
         try {
             IrSignal irSignal = getCapturedIrSignal();
-            if (irSignal == null)
-                guiUtils.error("Nothing to scrutinize");
-            else
-                scrutinizeIrSignal(irSignal);
-        } catch (DomainViolationException | ParseException | UnassignedException | InvalidRepeatException | IncompatibleArgumentException ex) {
+            scrutinizeIrSignal(irSignal);
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         } catch (RuntimeException ex) {
             // ??? Can be many different causes
@@ -1254,7 +1385,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     properties.getExportAutomaticFilenames(), this, new File(properties.getExportDir()),
                     properties.getExportCharsetName());
             guiUtils.message("File " + file.getPath() + " successfully written.");
-        } catch (IrpMasterException | IOException ex) {
+        } catch (IOException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1288,17 +1419,17 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setupAnalyzerMenu() {
-        for (Component component : analyzerBasisMenu.getMenuComponents()) {
-            int numberAtMenuItem = Integer.parseInt(((AbstractButton) component).getText());
-            if (numberAtMenuItem == properties.getAnalyzerBase()) {
-                ((AbstractButton) component).setSelected(true);
-                ExchangeIR.setAnalyzerBasis(numberAtMenuItem);
-            } else
-                ((AbstractButton) component).setSelected(false);
-        }
+//        for (Component component : analyzerBasisMenu.getMenuComponents()) {
+//            int numberAtMenuItem = Integer.parseInt(((AbstractButton) component).getText());
+//            if (numberAtMenuItem == properties.getAnalyzerBase()) {
+//                ((AbstractButton) component).setSelected(true);
+//                ExchangeIR.setAnalyzerBasis(numberAtMenuItem);
+//            } else
+//                ((AbstractButton) component).setSelected(false);
+//        }
     }
 
-    private void importSequence(ICommandImporter importer) throws IrpMasterException {
+    private void importSequence(ICommandImporter importer) throws IrpException, IrCoreException {
         Collection<Command> commands = importer.getCommands();
         if (commands.isEmpty()) {
             guiUtils.error("Import does not contain any signals; aborting.");
@@ -1318,7 +1449,7 @@ public final class GuiMain extends javax.swing.JFrame {
             try {
                 importCommand(command, raw);
                 count++;
-            } catch (IrpMasterException ex) {
+            } catch (IrpException | IrCoreException ex) {
                 if (observeErrors) {
                     guiUtils.error("Erroneous signal: " + ex.getMessage());
                     boolean ans = guiUtils.confirm("Continue import and ignore further erroneous signals?");
@@ -1332,7 +1463,7 @@ public final class GuiMain extends javax.swing.JFrame {
         return count;
     }
 
-    public void importCommand(Command command, boolean raw) throws IrpMasterException {
+    public void importCommand(Command command, boolean raw) throws IrpException, IrCoreException {
         if (command == null)
             return;
 
@@ -1348,7 +1479,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     properties.getDefaultImportDir(), properties.getImportCharsetName());
             if (status)
                 importSequence(importer);
-        } catch (IrpMasterException | java.text.ParseException | IOException ex) {
+        } catch (IOException | ParseException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1359,7 +1490,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     properties.getDefaultImportDir(), properties.getImportCharsetName());
             if (status)
                 processIr(importer.getModulatedIrSequence());
-        } catch (IOException | java.text.ParseException | IrpMasterException ex) {
+        } catch (IOException | ParseException | InvalidArgumentException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1376,7 +1507,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     properties.getDefaultImportDir(), properties.getImportCharsetName());
             if (status)
                 importCommands(importer.getCommands(), raw);
-        } catch (IrpMasterException | IOException | java.text.ParseException ex) {
+        } catch (IOException | ParseException | InvalidArgumentException ex) {
             guiUtils.error(ex);
         } finally {
             busyWindow.unBusy();
@@ -1387,7 +1518,7 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             importer.load(file, properties.getImportCharsetName());
             return importer.getModulatedIrSequence();
-        } catch (IOException | java.text.ParseException | IrpMasterException ex) {
+        } catch (IOException | ParseException | InvalidArgumentException ex) {
         }
         return null;
     }
@@ -1396,12 +1527,12 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             importer.load(file, properties.getImportCharsetName());
             return importer.getConcatenatedCommands();
-        } catch (IOException | java.text.ParseException | IrpMasterException ex) {
+        } catch (IOException | ParseException | IrCoreException | IrpException ex) {
         }
         return null;
     }
 
-    public void importModulatedIrSequenceFile(File file) {
+    public void importModulatedIrSequenceFile(File file) throws InvalidArgumentException {
         ModulatedIrSequence sequence = importCommands(file, girrImporter);
         if (sequence == null || sequence.isEmpty())
             sequence = importCommands(file, ictImporter);
@@ -1418,22 +1549,22 @@ public final class GuiMain extends javax.swing.JFrame {
             processIr(sequence);
     }
 
-    private void registerRawCommands(Collection<Command> commands) throws IrpMasterException {
+    private void registerRawCommands(Collection<Command> commands) throws IrpException, IrCoreException {
         for (Command command : commands)
-            registerRawCommand(new RawIrSignal(command, properties.getInvokeAnalyzer()));
+            registerRawCommand(new RawIrSignal(command));
     }
 
-    private void registerRawCommand(Command command) throws IrpMasterException {
-        registerRawCommand(new RawIrSignal(command, properties.getInvokeAnalyzer()));
+    private void registerRawCommand(Command command) throws IrpException, IrCoreException {
+        registerRawCommand(new RawIrSignal(command));
     }
 
-    private void registerParameterCommand(Command command) throws IrpMasterException {
+    private void registerParameterCommand(Command command) throws IrpException, IrCoreException {
         registerParameterSignal(new ParametrizedIrSignal(command));
     }
 
     private void registerRawSignal(IrSignal irSignal, String name, String comment) {
         if (irSignal != null) {
-            RawIrSignal cis = new RawIrSignal(irSignal, name, comment, properties.getInvokeAnalyzer());
+            RawIrSignal cis = new RawIrSignal(irSignal, name, comment);
             registerRawCommand(cis);
         }
     }
@@ -1447,13 +1578,13 @@ public final class GuiMain extends javax.swing.JFrame {
             try {
                 ParametrizedIrSignal pir = new ParametrizedIrSignal(irSignal, properties.getParametrizedLearnIgnoreT());
                 registerParameterSignal(pir);
-            } catch (DecodeIrException ex) {
+            } catch (NoDecodeException ex) {
                 guiUtils.message("Undecodable signal, ignored");
             }
         }
     }
 
-    private void registerParameterSignal(Collection<Command> commands) throws IrpMasterException {
+    private void registerParameterSignal(Collection<Command> commands) throws IrpException, IrCoreException {
         for (Command command : commands) {
             registerParameterSignal(new ParametrizedIrSignal(command));
         }
@@ -1515,7 +1646,7 @@ public final class GuiMain extends javax.swing.JFrame {
                         guiUtils.error("Selected capture device is no longer ready");
                         client.getButton().setSelected(false);
                     }
-                } catch (IOException | HarcHardwareException | IrpMasterException ex) {
+                } catch (IOException | HarcHardwareException | InvalidArgumentException ex) {
                     guiUtils.error(ex);
                     client.getButton().setSelected(false);
                 }
@@ -1538,13 +1669,13 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }
 
-    private void parameterTableAddMissingF() throws IrpMasterException, ErroneousSelectionException {
+    private void parameterTableAddMissingF() throws UnknownProtocolException, ErroneousSelectionException, GirrException, IrpException, IrCoreException {
         Command command = tableUtils.commandTableSelectedRow(parameterTable);
         if (command == null)
             throw new IllegalArgumentException("No command selected.");
         ArrayList<Long> presentFs = parameterTableModel.listF(command);
         String protocolName = command.getProtocolName();
-        Protocol protocol = irpMaster.newProtocol(protocolName);
+        Protocol protocol = irpDatabase.getProtocol(protocolName);
         for (Long F = protocol.getParameterMin("F"); F <= protocol.getParameterMax("F"); F++) {
             if (!presentFs.contains(F)) {
                 @SuppressWarnings("unchecked")
@@ -1571,15 +1702,15 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setIrTransIpName(irTransIp);
     }
 
-    public boolean transmit(IrSignal irSignal) throws NoSuchTransmitterException, IOException, IrpMasterException, HardwareUnavailableException, HarcHardwareException {
+    public boolean transmit(IrSignal irSignal) throws IOException, HardwareUnavailableException, HarcHardwareException, NoSuchTransmitterException, InvalidArgumentException {
         return sendingHardwareManager.sendIr(irSignal, Integer.parseInt((String)noTransmitsComboBox.getSelectedItem()));
     }
 
-    public boolean transmit(Command command) throws IrpMasterException, NoSuchTransmitterException, IOException, HardwareUnavailableException, HarcHardwareException {
+    public boolean transmit(Command command) throws IrpException, IrCoreException, IOException, HardwareUnavailableException, HarcHardwareException {
         return transmit(command.toIrSignal());
     }
 
-    private boolean transmit(JTable table) throws IrpMasterException, ErroneousSelectionException, IOException, HarcHardwareException, HardwareUnavailableException {
+    private boolean transmit(JTable table) throws ErroneousSelectionException, GirrException, IrpException, IrCoreException, IOException, HardwareUnavailableException, HarcHardwareException {
         Command command = tableUtils.commandTableSelectedRow(table);
         return transmit(command);
     }
@@ -1604,7 +1735,6 @@ public final class GuiMain extends javax.swing.JFrame {
         exportGenerateRawCheckBox.setEnabled(select);
         exportGenerateCcfCheckBox.setEnabled(select);
         exportGenerateShortCcfCheckBox.setEnabled(select);
-        exportGenerateUeiCheckBox.setEnabled(select);
         exportGenerateSendIrCheckBox.setEnabled(select);
     }
 
@@ -1660,7 +1790,7 @@ public final class GuiMain extends javax.swing.JFrame {
             exportFormatComboBox.setSelectedItem(properties.getExportFormatName());
             optionsMenu.remove(dynamicExportFormatsMenuPosition);
             optionsMenu.add(exportFormatManager.getMenu(properties.getExportFormatName()), dynamicExportFormatsMenuPosition);
-        } catch (IOException | SAXException | ParserConfigurationException ex) {
+        } catch (IOException | ParserConfigurationException | SAXException ex) {
             guiUtils.error(ex);
         }
     }
@@ -1745,6 +1875,7 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         addMissingFsMenuItem = new javax.swing.JMenuItem();
         addMissingNamesMenuItem = new javax.swing.JMenuItem();
+        deleteDefaultedSignalsMenuItem = new javax.swing.JMenuItem();
         rawTablePopupMenu = new javax.swing.JPopupMenu();
         rawSorterCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator25 = new javax.swing.JPopupMenu.Separator();
@@ -1822,7 +1953,7 @@ public final class GuiMain extends javax.swing.JFrame {
         generateExportButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         generateTextArea = new javax.swing.JTextArea();
-        irpMasterBean = new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpMaster, properties.getIrpMasterCurrentProtocol(), properties.getIrpMasterCurrentD(), properties.getIrpMasterCurrentS(), properties.getIrpMasterCurrentF(), properties.getIrpMasterCurrentT(), properties.getIrpMasterCurrentAdditionalParameters(), properties.getDisregardRepeatMins());
+        irpMasterBean = new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpDatabase, properties.getIrpMasterCurrentProtocol(), properties.getIrpMasterCurrentD(), properties.getIrpMasterCurrentS(), properties.getIrpMasterCurrentF(), properties.getIrpMasterCurrentT(), properties.getIrpMasterCurrentAdditionalParameters());
         generateButton = new javax.swing.JButton();
         generateHelpButton = new javax.swing.JButton();
         transferToParametricRemoteButton = new javax.swing.JButton();
@@ -1985,7 +2116,6 @@ public final class GuiMain extends javax.swing.JFrame {
         jLabel31 = new javax.swing.JLabel();
         exportProntoHelpButton = new javax.swing.JButton();
         exportParametricRemoteButton = new javax.swing.JButton();
-        exportGenerateUeiCheckBox = new javax.swing.JCheckBox();
         exportGenerateSendIrCheckBox = new javax.swing.JCheckBox();
         exportRepeatComboBox = new javax.swing.JComboBox<>();
         jLabel16 = new javax.swing.JLabel();
@@ -2156,6 +2286,7 @@ public final class GuiMain extends javax.swing.JFrame {
         repeatFinderCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         cleanerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         invokeAnalyzerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        printAnalyzeIRPsToConsoleCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         printDecodesToConsoleCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         parametrizedLearnIgnoreTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         proxyMenuItem = new javax.swing.JMenuItem();
@@ -2168,7 +2299,6 @@ public final class GuiMain extends javax.swing.JFrame {
         exportFormatsSelectMenuItem = new javax.swing.JMenuItem();
         exportFormatsReloadMenuItem = new javax.swing.JMenuItem();
         jSeparator20 = new javax.swing.JPopupMenu.Separator();
-        disregardRepeatMinsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         importOptionsMenu = new javax.swing.JMenu();
         importCharsetMenuItem = new javax.swing.JMenuItem();
         openZipFilesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -2594,7 +2724,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         parametrizedAdvancedMenu.add(setDMenuItem);
 
-        setSMenuItem.setText("Set S (subdevice)");
+        setSMenuItem.setText("Set S (subdevice)...");
         setSMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 setSMenuItemActionPerformed(evt);
@@ -2675,6 +2805,15 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         parametrizedAdvancedMenu.add(addMissingNamesMenuItem);
+
+        deleteDefaultedSignalsMenuItem.setText("Delete default-named signals");
+        deleteDefaultedSignalsMenuItem.setToolTipText("Delete signals which were added by \"Add missing Fs\" and not changed.");
+        deleteDefaultedSignalsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteDefaultedSignalsMenuItemActionPerformed(evt);
+            }
+        });
+        parametrizedAdvancedMenu.add(deleteDefaultedSignalsMenuItem);
 
         parameterTablePopupMenu.add(parametrizedAdvancedMenu);
 
@@ -2887,9 +3026,9 @@ public final class GuiMain extends javax.swing.JFrame {
 
         infoPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel3.setText("DecodeIR:");
+        jLabel3.setText("Decode:");
 
-        jLabel4.setText("AnalyzeIR:");
+        jLabel4.setText("IRP:");
 
         jLabel7.setText("Intro length:");
 
@@ -3253,8 +3392,8 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(parametricOrRawExportButton)
                     .addComponent(scrutinizeRemoteHelpButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(rawCookedTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 367, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(rawCookedTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
 
         topLevelTabbedPane.addTab("Scrutinize remote", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/list.png")), remoteScrutinizerPanel); // NOI18N
@@ -4424,7 +4563,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addGap(0, 0, 0))
         );
 
-        importTabbedPane.addTab("Text", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/mimetypes/txt.png")), csvImportPanel); // NOI18N
+        importTabbedPane.addTab("Text/CSV", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/mimetypes/txt.png")), csvImportPanel); // NOI18N
 
         importWaveDivideCarrierCheckBox1.setSelected(properties.getImportWaveDivideCarrier());
         importWaveDivideCarrierCheckBox1.setText("Half carrier frequency");
@@ -4958,14 +5097,6 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        exportGenerateUeiCheckBox.setSelected(properties.getExportGenerateUei());
-        exportGenerateUeiCheckBox.setText("UEI Learned");
-        exportGenerateUeiCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportGenerateUeiCheckBoxActionPerformed(evt);
-            }
-        });
-
         exportGenerateSendIrCheckBox.setSelected(properties.getExportGenerateSendIr());
         exportGenerateSendIrCheckBox.setText("sendir");
         exportGenerateSendIrCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -5043,7 +5174,6 @@ public final class GuiMain extends javax.swing.JFrame {
                                                 .addGap(36, 36, 36)
                                                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                     .addComponent(exportGenerateSendIrCheckBox)
-                                                    .addComponent(exportGenerateUeiCheckBox)
                                                     .addComponent(exportGenerateShortCcfCheckBox)))
                                             .addComponent(exportGenerateRawCheckBox)))
                                     .addGroup(exportPanelLayout.createSequentialGroup()
@@ -5056,7 +5186,7 @@ public final class GuiMain extends javax.swing.JFrame {
                                         .addComponent(exportRawRemoteButton1)
                                         .addGap(18, 18, 18)
                                         .addComponent(openLastFileButton)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)))
                         .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(exportPanelLayout.createSequentialGroup()
                                 .addComponent(exportDirSelectButton)
@@ -5080,8 +5210,7 @@ public final class GuiMain extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel8)
-                            .addComponent(exportGenerateParametersCheckBox)
-                            .addComponent(exportGenerateUeiCheckBox)))
+                            .addComponent(exportGenerateParametersCheckBox)))
                     .addComponent(exportHelpButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -5104,7 +5233,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(exportRawRemoteButton1)
                     .addComponent(openLastFileButton))
                 .addGap(23, 23, 23)
-                .addComponent(exportSpecificOptionsTabbedPane)
+                .addComponent(exportSpecificOptionsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
@@ -6564,6 +6693,15 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         optionsMenu.add(invokeAnalyzerCheckBoxMenuItem);
 
+        printAnalyzeIRPsToConsoleCheckBoxMenuItem.setSelected(properties.getPrintAnalyzerIRPsToConsole());
+        printAnalyzeIRPsToConsoleCheckBoxMenuItem.setText("Print analyze-IRPs to console");
+        printAnalyzeIRPsToConsoleCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printAnalyzeIRPsToConsoleCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        optionsMenu.add(printAnalyzeIRPsToConsoleCheckBoxMenuItem);
+
         printDecodesToConsoleCheckBoxMenuItem.setSelected(properties.getPrintDecodesToConsole());
         printDecodesToConsoleCheckBoxMenuItem.setText("Print decodes to console");
         printDecodesToConsoleCheckBoxMenuItem.setToolTipText("If selected, all decodes are additionally printed to the console window.");
@@ -6654,15 +6792,6 @@ public final class GuiMain extends javax.swing.JFrame {
         optionsMenu.add(exportFormatsMenu);
         optionsMenu.add(jSeparator20);
 
-        disregardRepeatMinsCheckBoxMenuItem.setSelected(properties.getDisregardRepeatMins());
-        disregardRepeatMinsCheckBoxMenuItem.setText("Disregard repeat mins");
-        disregardRepeatMinsCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                disregardRepeatMinsCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        optionsMenu.add(disregardRepeatMinsCheckBoxMenuItem);
-
         importOptionsMenu.setText("Import options");
 
         importCharsetMenuItem.setText("Character Set...");
@@ -6684,7 +6813,7 @@ public final class GuiMain extends javax.swing.JFrame {
         importOptionsMenu.add(openZipFilesCheckBoxMenuItem);
 
         invokeDecodeIrCheckBoxMenuItem.setSelected(properties.getInvokeDecodeIr());
-        invokeDecodeIrCheckBoxMenuItem.setText("Invoke DecodeIr");
+        invokeDecodeIrCheckBoxMenuItem.setText("Invoke Decoder");
         invokeDecodeIrCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 invokeDecodeIrCheckBoxMenuItemActionPerformed(evt);
@@ -6921,7 +7050,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         helpMenu.add(releaseNotesMenuItem);
 
-        protocolSpecMenuItem.setText("Protocol specs (DecodeIR)");
+        protocolSpecMenuItem.setText("Browse Protocols");
         protocolSpecMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 protocolSpecMenuItemActionPerformed(evt);
@@ -7007,8 +7136,8 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void protocolSpecMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolSpecMenuItemActionPerformed
         try {
-            guiUtils.browse(new URI(IrpUtils.decodeIrUrl));
-        } catch (URISyntaxException ex) {
+            guiUtils.browse(new File(properties.mkPathAbsolute(properties.getProtocolDocfilePath())));
+        } catch (MalformedURLException | URISyntaxException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_protocolSpecMenuItemActionPerformed
@@ -7017,7 +7146,7 @@ public final class GuiMain extends javax.swing.JFrame {
         boolean shouldQuit = checkUnsavedStuff();
         if (shouldQuit) {
             killRunningCapture();
-            System.exit(IrpUtils.exitSuccess);
+            System.exit(IrpUtils.EXIT_SUCCESS);
         }
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
@@ -7078,7 +7207,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void fallbackFrequencyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fallbackFrequencyMenuItemActionPerformed
         try {
-            Integer t = guiUtils.getIntegerInput("Fallback frequency (for demodulating sensors) and for interpreting raw sequences, in Hz", properties.getFallbackFrequency());
+            Double t = guiUtils.getDoubleInput("Fallback frequency (for demodulating sensors) and for interpreting raw sequences, in Hz", properties.getFallbackFrequency());
             if (t != null)
                 properties.setFallbackFrequency(t);
         } catch (NumberFormatException ex) {
@@ -7127,23 +7256,23 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_usePopupsForErrorsCheckBoxMenuItemActionPerformed
 
     private void analyzerBase2RadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_analyzerBase2RadioButtonMenuItemActionPerformed
-        properties.setAnalyzerBase(2);
-        ExchangeIR.setAnalyzerBasis(2);
+//        properties.setAnalyzerBase(2);
+//        ExchangeIR.setAnalyzerBasis(2);
     }//GEN-LAST:event_analyzerBase2RadioButtonMenuItemActionPerformed
 
     private void analyzerBase8RadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_analyzerBase8RadioButtonMenuItemActionPerformed
-        properties.setAnalyzerBase(8);
-        ExchangeIR.setAnalyzerBasis(8);
+//        properties.setAnalyzerBase(8);
+//        ExchangeIR.setAnalyzerBasis(8);
     }//GEN-LAST:event_analyzerBase8RadioButtonMenuItemActionPerformed
 
     private void analyzerBase10RadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_analyzerBase10RadioButtonMenuItemActionPerformed
-        properties.setAnalyzerBase(10);
-        ExchangeIR.setAnalyzerBasis(10);
+//        properties.setAnalyzerBase(10);
+//        ExchangeIR.setAnalyzerBasis(10);
     }//GEN-LAST:event_analyzerBase10RadioButtonMenuItemActionPerformed
 
     private void analyzerBase16RadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_analyzerBase16RadioButtonMenuItemActionPerformed
-        properties.setAnalyzerBase(16);
-        ExchangeIR.setAnalyzerBasis(16);
+//        properties.setAnalyzerBase(16);
+//        ExchangeIR.setAnalyzerBasis(16);
     }//GEN-LAST:event_analyzerBase16RadioButtonMenuItemActionPerformed
 
     private void ignoreEndingSilenceCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ignoreEndingSilenceCheckBoxMenuItemActionPerformed
@@ -7154,16 +7283,16 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void testSignalMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testSignalMenuItemActionPerformed
         try {
-            IrSignal irSignal = new IrSignal(testSignalCcf);
+            IrSignal irSignal = Pronto.parse(testSignalCcf);
             if (rawPanel.isShowing()) {
-                RawIrSignal cir = new RawIrSignal(irSignal, "test_signal", "Generated signal (NEC1 12.34 56)", true);
+                RawIrSignal cir = new RawIrSignal(irSignal, "test_signal", "Generated signal (NEC1 12.34 56)");
                 registerRawCommand(cir);
             } else if (cookedPanel.isShowing()) {
                 ParametrizedIrSignal signal = new ParametrizedIrSignal(irSignal, "test_signal", "Generated signal NEC 12.34 56", false);
                 registerParameterSignal(signal);
             } else
                 scrutinizeIrSignal(irSignal);
-        } catch (IrpMasterException ex) {
+        } catch (InvalidArgumentException | Pronto.NonProntoFormatException | NoDecodeException ex) {
             // this cannot happen
         }
     }//GEN-LAST:event_testSignalMenuItemActionPerformed
@@ -7251,7 +7380,7 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             ICommandExporter exporter = newExporter("ICT");
             saveSignal(getCapturedIrSignal(), exporter);
-        } catch (IrpMasterException ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_exportSignalIctMenuItemActionPerformed
@@ -7307,7 +7436,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void exportSignalGirrMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSignalGirrMenuItemActionPerformed
         try {
             saveSignal(getCapturedIrSignal(), newGirrExporter());
-        } catch (IrpMasterException ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_exportSignalGirrMenuItemActionPerformed
@@ -7339,13 +7468,16 @@ public final class GuiMain extends javax.swing.JFrame {
 
                 @Override
                 public void processSequence(ModulatedIrSequence sequence) {
-                    IrSignal irSignal = InterpretString.interpretIrSequence(sequence,
-                            properties.getInvokeRepeatFinder(),
-                            properties.getInvokeCleaner());
-                    if (rawPanel.isVisible())
-                        registerRawSignal(irSignal, null, null);
-                    else
-                        registerParameterSignal(irSignal);
+                    try {
+                        IrSignal irSignal = InterpretString.interpretIrSequence(sequence,
+                                properties.getInvokeRepeatFinder(),
+                                properties.getInvokeCleaner(), properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+                        if (rawPanel.isVisible())
+                            registerRawSignal(irSignal, null, null);
+                        else
+                            registerParameterSignal(irSignal);
+                    } catch (InvalidArgumentException ex) {
+                    }
                 }
             });
             captureThread.start();
@@ -7376,10 +7508,13 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_resetRawTableColumnsMenuItemActionPerformed
 
     private void scrutinizeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scrutinizeMenuItemActionPerformed
-        RawIrSignal cir = rawTableModel.getCapturedIrSignal(rawTable.convertRowIndexToModel(rawTable.getSelectedRow()));
-        scrutinizeIrSignal(cir.getIrSignal());
-        //??? I do not like hard jumps like that, although logical
-        //topLevelTabbedPane.setSelectedIndex(0);
+        try {
+            RawIrSignal cir = rawTableModel.getCapturedIrSignal(rawTable.convertRowIndexToModel(rawTable.getSelectedRow()));
+            scrutinizeIrSignal(cir.getIrSignal());
+            //??? I do not like hard jumps like that, although logical
+            //topLevelTabbedPane.setSelectedIndex(0);
+        } catch (InvalidArgumentException ex) {
+            guiUtils.error(ex);        }
     }//GEN-LAST:event_scrutinizeMenuItemActionPerformed
 
     private void moveUpMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpMenuItem1ActionPerformed
@@ -7515,7 +7650,7 @@ public final class GuiMain extends javax.swing.JFrame {
             String codeSet = (String) gcdbCodeSetComboBox.getSelectedItem();
             globalCacheIrDatabase.load(manufacturer, deviceType, codeSet);
             gcdbTreeImporter.setRemoteSet(globalCacheIrDatabase.getRemoteSet());
-        } catch (IOException ex) {
+        } catch (IOException | InvalidArgumentException ex) {
             guiUtils.error(ex);
         } finally {
             busyWindow.unBusy();
@@ -7573,7 +7708,7 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             irdbImporter.load(deviceType, pds);
             irdbTreeImporter.setRemoteSet(irdbImporter.getRemoteSet());
-        } catch (IrpMasterException ex) {
+        } catch (Exception ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_irdbImportButtonActionPerformed
@@ -7603,19 +7738,19 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_saveCookedMenuItemActionPerformed
 
     private void addEmptyParametrizedSignalMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addEmptyParametrizedSignalMenuItemActionPerformed
-        ParametrizedIrSignal signal = new ParametrizedIrSignal(null, IrpUtils.invalid, IrpUtils.invalid, IrpUtils.invalid, "empty_signal", null);
+        ParametrizedIrSignal signal = new ParametrizedIrSignal(null, IrCoreUtils.INVALID, IrCoreUtils.INVALID, IrCoreUtils.INVALID, "empty_signal", null);
         registerParameterSignal(signal);
     }//GEN-LAST:event_addEmptyParametrizedSignalMenuItemActionPerformed
 
     private void rawFromClipboardMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawFromClipboardMenuItemActionPerformed
         String text = (new CopyClipboardText(null)).fromClipboard();
         try {
-            IrSignal irSignal = InterpretStringHardware.interpretString(text, IrpUtils.defaultFrequency,
+            IrSignal irSignal = InterpretString.interpretString(text, properties.getFallbackFrequency(), properties.getDummyGap(),
                     properties.getInvokeRepeatFinder(), properties.getInvokeCleaner(),
-                    properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
-            RawIrSignal rawIrSignal = new RawIrSignal(irSignal, "clipboard", "Signal read from clipboard", true);
+                    properties.getAbsoluteTolerance(), properties.getRelativeTolerance(), properties.getMinRepeatLastGap());
+            RawIrSignal rawIrSignal = new RawIrSignal(irSignal, "clipboard", "Signal read from clipboard");
             registerRawCommand(rawIrSignal);
-        } catch (IrpMasterException ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_rawFromClipboardMenuItemActionPerformed
@@ -7640,7 +7775,7 @@ public final class GuiMain extends javax.swing.JFrame {
         String newProtocol = guiUtils.getInput("Enter new protocol", "Protocol request", "NEC1");
         if (newProtocol == null) // Cancel pressed
             return;
-        if (irpMaster.isKnown(newProtocol) ||
+        if (irpDatabase.isKnown(newProtocol) ||
             guiUtils.confirm("The protocol \"" + newProtocol + "\" is unknown. Proceed anyhow?")) {
             parameterTableModel.setProtocol(newProtocol);
             //parameterTableModel.fireTableDataChanged();
@@ -7681,7 +7816,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void girrWebSiteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_girrWebSiteButtonActionPerformed
         try {
-            guiUtils.browse(new URI(org.harctoolbox.girr.XmlExporter.girrHomePage));
+            guiUtils.browse(new URI(org.harctoolbox.girr.XmlExporter.GIRR_HOMEPAGE));
         } catch (URISyntaxException ex) {
             guiUtils.error(ex);
         }
@@ -7708,7 +7843,7 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             irdbImporter.load(deviceType);
             irdbTreeImporter.setRemoteSet(irdbImporter.getRemoteSet());
-        } catch (IrpMasterException ex) {
+        } catch (Exception ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_irdbImportAllButtonActionPerformed
@@ -7742,7 +7877,7 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             properties.setProtocolsIniPath(protocolsIniTextField.getText());
             loadProtocolsIni();
-        } catch (IOException | java.text.ParseException ex) {
+        } catch (IOException | ParseException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_protocolsIniTextFieldActionPerformed
@@ -7816,8 +7951,7 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             IrSignal irSignal = irpMasterBean.render();
             generateTextArea.setText(formatIrSignal(irSignal));
-        } catch (UnassignedException | UnknownProtocolException | IncompatibleArgumentException
-                | ParseException | DomainViolationException | InvalidRepeatException ex) {
+        } catch (ParseException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_generateButtonActionPerformed
@@ -7828,7 +7962,7 @@ public final class GuiMain extends javax.swing.JFrame {
             boolean success = transmit(irpMasterBean.render());
             if (!success)
                 guiUtils.error("Transmit failed.");
-        } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException ex) {
+        } catch (IOException | ParseException | HarcHardwareException | IrCoreException | IrpException | HardwareUnavailableException ex) {
             guiUtils.error(ex);
         } finally {
             busyWindow.unBusy();
@@ -7838,7 +7972,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void toScrutinizeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toScrutinizeButtonActionPerformed
         try {
             scrutinizeIrSignal(irpMasterBean.render());
-        } catch (IrpMasterException ex) {
+        } catch (ParseException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_toScrutinizeButtonActionPerformed
@@ -7848,7 +7982,7 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             Collection<Command> commands = irpMasterBean.getCommands().values();
             registerRawCommands(commands);
-        } catch (IrpMasterException ex) {
+        } catch (ParseException | GirrException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
         } finally {
             busyWindow.unBusy();
@@ -7900,14 +8034,10 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setExportGenerateCcf(exportGenerateCcfCheckBox.isSelected());
     }//GEN-LAST:event_exportGenerateCcfCheckBoxActionPerformed
 
-    private void exportGenerateUeiCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportGenerateUeiCheckBoxActionPerformed
-        properties.setExportGenerateUei(exportGenerateUeiCheckBox.isSelected());
-    }//GEN-LAST:event_exportGenerateUeiCheckBoxActionPerformed
-
     private void exportSignalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSignalButtonActionPerformed
         try {
             saveSignal(getCapturedIrSignal());
-        } catch (IrpMasterException ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_exportSignalButtonActionPerformed
@@ -7970,11 +8100,6 @@ public final class GuiMain extends javax.swing.JFrame {
         importRemoteByFileSelector(rmduImporter, false);
     }//GEN-LAST:event_importRmduMenuItem1ActionPerformed
 
-    private void disregardRepeatMinsCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disregardRepeatMinsCheckBoxMenuItemActionPerformed
-        properties.setDisregardRepeatMins(disregardRepeatMinsCheckBoxMenuItem.isSelected());
-        irpMasterBean.setDisregardRepeatMins(disregardRepeatMinsCheckBoxMenuItem.isSelected());
-    }//GEN-LAST:event_disregardRepeatMinsCheckBoxMenuItemActionPerformed
-
     private void openLastExportFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openLastExportFileMenuItemActionPerformed
         try {
             File file = Exporter.getLastSaveFileOrCopy();
@@ -7990,7 +8115,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void signalSignalTextMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signalSignalTextMenuItemActionPerformed
         try {
             saveSignal(getCapturedIrSignal(), newTextExporter());
-        } catch (IrpMasterException ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_signalSignalTextMenuItemActionPerformed
@@ -7998,7 +8123,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void exportSignalWaveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSignalWaveMenuItemActionPerformed
         try {
             saveSignal(getCapturedIrSignal(), new WaveExporter(exportAudioParametersBean));
-        } catch (IrpMasterException ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_exportSignalWaveMenuItemActionPerformed
@@ -8006,7 +8131,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void generateExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateExportButtonActionPerformed
         try {
             saveSignals(irpMasterBean.getCommands());
-        } catch (IrpMasterException | IOException | TransformerException ex) {
+        } catch (IOException | TransformerException | ParseException | GirrException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_generateExportButtonActionPerformed
@@ -8140,23 +8265,21 @@ public final class GuiMain extends javax.swing.JFrame {
             ModulatedIrSequence modulatedIrSequence = captureIrSequence();
 
             if (modulatedIrSequence != null) {
-                IrSignal signal = InterpretString.interpretIrSequence(modulatedIrSequence, true, true);
-                guiUtils.message(modulatedIrSequence.toPrintString(true));
-                guiUtils.message("f=" + (int) modulatedIrSequence.getFrequency());
-                DecodeIR.DecodedSignal[] decodes = DecodeIR.decode(signal);
-                if (decodes == null)
-                    guiUtils.error("DecodeIr not found.");
-                else if (decodes.length > 0) {
-                    for (DecodeIR.DecodedSignal decode : decodes) {
-                        guiUtils.message(decode.toString());
-                    }
-                } else
+                IrSignal signal = InterpretString.interpretIrSequence(modulatedIrSequence, true, true, properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+                guiUtils.message(modulatedIrSequence.toString(true));
+                guiUtils.message("f=" + Math.round(modulatedIrSequence.getFrequency()));
+                Map<String, Decoder.Decode> decodes = decoder.decode(signal);
+                if (decodes.isEmpty())
                     guiUtils.message("No decodes.");
+                else
+                    decodes.values().forEach((decode) -> {
+                        guiUtils.message(decode.toString());
+                });
             } else
                 guiUtils.error("No signal received.");
         } catch (TimeoutException ex) {
             guiUtils.error("Timeout capturing signal");
-        } catch (IOException | HarcHardwareException | IrpMasterException | NumberFormatException ex) {
+        } catch (IOException | HarcHardwareException | NumberFormatException | InvalidArgumentException ex) {
             guiUtils.error(ex);
         } finally {
             busyWindow.unBusy();
@@ -8182,17 +8305,17 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_pasteScrutinizeToDataWindowMenuItemActionPerformed
 
     private void irpProtocolsEditMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpProtocolsEditMenuItemActionPerformed
-        guiUtils.open(new File(properties.mkPathAbsolute(properties.getIrpProtocolsIniPath())));
+        guiUtils.open(new File(properties.mkPathAbsolute(properties.getIrpProtocolsPath())));
         guiUtils.warning("If editing the file, changes will not take effect before you save the file AND restart the program.");
     }//GEN-LAST:event_irpProtocolsEditMenuItemActionPerformed
 
     private void irpProtocolsSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpProtocolsSelectMenuItemActionPerformed
-        String oldDir = new File(properties.mkPathAbsolute(properties.getIrpProtocolsIniPath())).getParent();
-        File f = SelectFile.selectFile(this, "Select protocol file IrpProtocol.ini", oldDir, false, false, "Configuration files (*.ini)", "ini");
-        if (f == null || f.getAbsolutePath().equals(properties.mkPathAbsolute(properties.getIrpProtocolsIniPath())))
+        String oldDir = new File(properties.mkPathAbsolute(properties.getIrpProtocolsPath())).getParent();
+        File f = SelectFile.selectFile(this, "Select protocol file IrpProtocol.ini", oldDir, false, false, "XML files (*.xml)", "xml");
+        if (f == null || f.getAbsolutePath().equals(properties.mkPathAbsolute(properties.getIrpProtocolsPath())))
             return;
 
-        properties.setIrpProtocolsIniPath(f.getAbsolutePath());
+        properties.setIrpProtocolsPath(f.getAbsolutePath());
         guiUtils.warning("The program must be restarted for the changes to take effect.");
     }//GEN-LAST:event_irpProtocolsSelectMenuItemActionPerformed
 
@@ -8275,7 +8398,7 @@ public final class GuiMain extends javax.swing.JFrame {
         IrSignal irSignal;
         try {
             irSignal = getCapturedIrSignal();
-        } catch (IrpMasterException ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
             return;
         }
@@ -8286,7 +8409,7 @@ public final class GuiMain extends javax.swing.JFrame {
         BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             transmit(irSignal);
-        } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException ex) {
+        } catch (IOException | HarcHardwareException | InvalidArgumentException | HardwareUnavailableException ex) {
             guiUtils.error(ex);
         } finally {
             busyWindow.unBusy();
@@ -8296,7 +8419,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void signalExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signalExportButtonActionPerformed
         try {
             saveSignal(getCapturedIrSignal());
-        } catch (IrpMasterException ex) {
+        } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_signalExportButtonActionPerformed
@@ -8314,11 +8437,11 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             ModulatedIrSequence modulatedIrSequence = captureIrSequence();
 
-            if (modulatedIrSequence != null) {
+            if (modulatedIrSequence != null)
                 processIr(modulatedIrSequence);
-            } else
+            else
                 guiUtils.message("no signal received");
-        } catch (IOException | HarcHardwareException | IrpMasterException ex) {
+        } catch (IOException | HarcHardwareException | InvalidArgumentException ex) {
             guiUtils.error(ex);
         } finally {
             busyWindow.unBusy();
@@ -8345,7 +8468,7 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             Collection<Command> commands = irpMasterBean.getCommands().values();
             registerParameterSignal(commands);
-        } catch (IrpMasterException ex) {
+        } catch (ParseException | GirrException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
         } finally {
             busyWindow.unBusy();
@@ -8357,7 +8480,7 @@ public final class GuiMain extends javax.swing.JFrame {
             transmit(parameterTable);
         } catch (HardwareUnavailableException ex) {
             guiUtils.error("Transmitting hardware not selected or not ready.");
-        } catch (IrpMasterException | IOException | HarcHardwareException | ErroneousSelectionException ex) {
+        } catch (IOException | GirrException | ErroneousSelectionException | HarcHardwareException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_transmitMenuItemActionPerformed
@@ -8365,7 +8488,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void sendMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendMenuItemActionPerformed
         try {
             transmit(rawTable);
-        } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException | ErroneousSelectionException ex) {
+        } catch (GirrException | ErroneousSelectionException | IrpException | IrCoreException | IOException | HardwareUnavailableException | HarcHardwareException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_sendMenuItemActionPerformed
@@ -8383,7 +8506,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void addMissingFsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addMissingFsMenuItemActionPerformed
         try {
             parameterTableAddMissingF();
-        } catch (IrpMasterException | ErroneousSelectionException ex) {
+        } catch (GirrException | ErroneousSelectionException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_addMissingFsMenuItemActionPerformed
@@ -8533,7 +8656,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void scrutinizeParametricMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scrutinizeParametricMenuItemActionPerformed
         try {
             scrutinizeIrSignal(parameterTable);
-        } catch (IrpMasterException | ErroneousSelectionException ex) {
+        } catch (GirrException | ErroneousSelectionException | IrCoreException | IrpException ex) {
              guiUtils.error(ex);
         }
     }//GEN-LAST:event_scrutinizeParametricMenuItemActionPerformed
@@ -8621,7 +8744,7 @@ public final class GuiMain extends javax.swing.JFrame {
             table.setRowSelectionInterval(row, row);
             try {
                 transmit(table);
-            } catch (IrpMasterException | IOException | HardwareUnavailableException | HarcHardwareException | ErroneousSelectionException ex) {
+            } catch (IOException | GirrException | ErroneousSelectionException | HarcHardwareException | IrCoreException | IrpException | HardwareUnavailableException ex) {
                 guiUtils.error(ex);
             }
         } else {
@@ -8695,13 +8818,13 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_unsetTMenuItemActionPerformed
 
     private void debugCodeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugCodeMenuItemActionPerformed
-        try {
-            Integer t = guiUtils.getIntegerInput("Debug Code", Debug.getDebug());
-            if (t != null)
-                Debug.setDebug(t);
-        } catch (NumberFormatException ex) {
-            guiUtils.error("Invalid number: " + ex.getMessage());
-        }
+//        try {
+//            Integer t = guiUtils.getIntegerInput("Debug Code", Debug.getDebug());
+//            if (t != null)
+//                Debug.setDebug(t);
+//        } catch (NumberFormatException ex) {
+//            guiUtils.error("Invalid number: " + ex.getMessage());
+//        }
     }//GEN-LAST:event_debugCodeMenuItemActionPerformed
 
     private void sendingGirsClientHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingGirsClientHelpButtonActionPerformed
@@ -8792,8 +8915,8 @@ public final class GuiMain extends javax.swing.JFrame {
           try {
             String body = String.format(
                     "# Enter message here%%0D%%0A%%0D%%0A%6$s%%0D%%0A%7$s%%0D%%0A"
-                    + "DecodeIR%%3D%1$s %%0D%%0AJava%%3D%2$s %3$s %%0D%%0AOperating system%%3D%4$s-%5$s LAF=%8$s",
-                    DecodeIR.getVersion(),
+                    + "IrpTransmogrifier%%3D%1$s%%0D%%0AJava%%3D%2$s %3$s%%0D%%0AOperating system%%3D%4$s-%5$s%%0D%%0ALAF=%8$s",
+                    org.harctoolbox.irp.Version.version,
                     System.getProperty("java.vendor"), System.getProperty("java.version"),
                     System.getProperty("os.name"), System.getProperty("os.arch"),
                     Version.versionString, applicationHome,
@@ -8994,7 +9117,10 @@ public final class GuiMain extends javax.swing.JFrame {
 
                 @Override
                 public void processSequence(ModulatedIrSequence sequence) {
-                    processIr(sequence);
+                    try {
+                        processIr(sequence);
+                    } catch (InvalidArgumentException ex) {
+                    }
                 }
             });
             captureThread.start();
@@ -9039,6 +9165,17 @@ public final class GuiMain extends javax.swing.JFrame {
         ProxyConfigDialog.inquireProxyConfig(this, properties);
         setupProxy();
     }//GEN-LAST:event_proxyMenuItemActionPerformed
+
+    private void deleteDefaultedSignalsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteDefaultedSignalsMenuItemActionPerformed
+        boolean isOk = guiUtils.confirm("This will delete all signal with automatically generated names.\n"
+                + "The operation cannot be undone. Consider saving first.\n\nDo you want to continue?");
+        if (isOk)
+            parameterTableModel.deleteDefaultedSignals();
+    }//GEN-LAST:event_deleteDefaultedSignalsMenuItemActionPerformed
+
+    private void printAnalyzeIRPsToConsoleCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printAnalyzeIRPsToConsoleCheckBoxMenuItemActionPerformed
+        properties.setPrintAnalyzerIRPsToConsole(printAnalyzeIRPsToConsoleCheckBoxMenuItem.isSelected());
+    }//GEN-LAST:event_printAnalyzeIRPsToConsoleCheckBoxMenuItemActionPerformed
 
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -9129,12 +9266,12 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem debugTableRowMenuItem;
     private javax.swing.JMenuItem debugTableRowMenuItem1;
     private javax.swing.JTextField decodeIRTextField;
+    private javax.swing.JMenuItem deleteDefaultedSignalsMenuItem;
     private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JMenuItem deleteMenuItem1;
     private org.harctoolbox.guicomponents.DevLircBean devLircBean;
     private org.harctoolbox.guicomponents.CapturingSendingBean devLircCapturingSendingBean;
     private javax.swing.JPanel devLircPanel;
-    private javax.swing.JCheckBoxMenuItem disregardRepeatMinsCheckBoxMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JTextField editingTextField;
     private javax.swing.JLabel endingLengthLabel;
@@ -9156,7 +9293,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JCheckBox exportGenerateRawCheckBox;
     private javax.swing.JCheckBox exportGenerateSendIrCheckBox;
     private javax.swing.JCheckBox exportGenerateShortCcfCheckBox;
-    private javax.swing.JCheckBox exportGenerateUeiCheckBox;
     private javax.swing.JButton exportGirrHelpButton;
     private javax.swing.JButton exportHelpButton;
     private javax.swing.JMenu exportOptionsMenu;
@@ -9436,6 +9572,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem pasteToDataWindowMenuItem;
     private javax.swing.JScrollPane plotScrollPane;
     private javax.swing.JMenuItem plotterResetMenuItem;
+    private javax.swing.JCheckBoxMenuItem printAnalyzeIRPsToConsoleCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem printDecodesToConsoleCheckBoxMenuItem;
     private javax.swing.JPanel prontoClassicExportOptionsPanel;
     private javax.swing.JTextField prontoExportButtonHeightTextField;
