@@ -389,7 +389,8 @@ ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irpmaster
         wrapper does this.</p>
 
         <p>On Gnome-like desktops, by copying the file <code>girr.xml</code> to the system's data base of
-        known file types, <code>*.girr</code> files can be opened in IrScrutinizer by double click.
+        known file types (normally located in <code>/usr/local/share/applications</code>),
+        <code>*.girr</code> files can be opened in IrScrutinizer by double click.
         For this, follow <a href="https://developer.gnome.org/integration-guide/stable/mime.html.en">this
         description</a>.</p>
 

@@ -75,7 +75,10 @@ To the extent possible, use [Girs as command language](http://www.harctoolbox.or
 of special hardware interfaces ([#24](https://github.com/bengtmartensson/harctoolboxbundle/issues/24)) (DONE).
 
 ## 9. Advanced command line support.
-See [#26](https://github.com/bengtmartensson/harctoolboxbundle/issues/26).
+IrpTransmogrifier has a quite clean command line interface; should probably not touch or replace that.
+See https://github.com/bengtmartensson/harctoolboxbundle/issues/26#issuecomment-431651739 .
+
+Presently, import files in Girr format can be given on the command line.
 
 ## 10. Testing
 I strive to have [TestNG](http://testng.org) based Java testing, integrated in Maven and Netbeans.
