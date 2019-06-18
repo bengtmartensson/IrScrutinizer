@@ -44,7 +44,6 @@ import org.harctoolbox.ircore.IrCoreUtils;
 
 public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter {
 
-    private final static long invalid = -1L; // FIXME
     private final static String irdbOriginName = "IRDB";
 
     private static ArrayList<String> manufacturers;

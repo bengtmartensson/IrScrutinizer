@@ -10,7 +10,7 @@ See also the [project home page](http://www.harctoolbox.org).
 
 ## Copyright and License
 
-Copyright (c) Bengt Martenson 2010-2016.
+Copyright (c) Bengt Martenson 2010-2018.
 Licensed under the [GPL version 3](http://www.gnu.org/licenses/gpl.html) license or later.
 Some contained third-party components have different, but compatible, licenses. This is documented elsewhere.
 
@@ -47,8 +47,6 @@ dependencies available on www.harctoolbox.org. These are the
 github/sourceforge repositories, corresponding to the right tag or
 commit, but without any patches applies. These are:
 
-* [ExchangeIR](http://www.harctoolbox.org/downloads/exchangeir.tar.gz)
-* [DecodeIR](http://www.harctoolbox.org/downloads/decodeir.tar.gz)
 * [JCommander](http://www.harctoolbox.org/downloads/jcommander.tar.gz)
 * [Minimal-Json](http://www.harctoolbox.org/downloads/minimal-json.tar.gz)
 * [Tonto](http://www.harctoolbox.org/downloads/tonto.tar.gz)
