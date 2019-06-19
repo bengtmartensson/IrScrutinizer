@@ -62,7 +62,7 @@
     </fileSets>
     <files>
         <file>
-            <source>../Crystal-Clear-Icons/src/main/resources/icons/Crystal-Clear/64x64/apps/babelfish.png</source>
+            <source>${basedir}/src/main/resources/icons/Crystal-Clear/64x64/apps/babelfish.png</source>
             <outputDirectory/>
             <destName>irscrutinizer.png</destName>
         </file>

@@ -29,7 +29,6 @@
 
     <modules>
         <module>IrScrutinizer</module>
-        <module>Crystal-Clear-Icons</module>
     </modules>
 
     <build>

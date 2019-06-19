@@ -1,4 +1,6 @@
 This directory contains a subset of the Crystal icons, as distributed with Fedora 21.
+It is intended to be used with IrScrutinizer. As the collection is incomplete,
+usage in other projects are "on your own risk", and disencouraged.
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 This copyright and license notice covers the images in this directory.

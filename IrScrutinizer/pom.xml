@@ -455,7 +455,7 @@
                             <workingDirectory>${project.build.directory}</workingDirectory>
                             <arguments>
                                 <argument>--force</argument>
-                                <argument>../../Crystal-Clear-Icons/src/main/resources/icons/Crystal-Clear/64x64/apps/babelfish.png</argument>
+                                <argument>${basedir}/src/main/resources/icons/Crystal-Clear/64x64/apps/babelfish.png</argument>
                                 <argument>${project.artifactId}.png</argument>
                             </arguments>
                         </configuration>
@@ -576,11 +576,6 @@
             <groupId>com.mrallen</groupId>
             <artifactId>tonto</artifactId>
             <version>1.44</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>Crystal-Clear-Icons</artifactId>
-            <version>20070620</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
