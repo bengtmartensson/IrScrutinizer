@@ -36,7 +36,7 @@
             <lineEnding>keep</lineEnding>
         </fileSet>
         <fileSet>
-            <directory>../native</directory>
+            <directory>${basedir}/native</directory>
             <outputDirectory/>
             <includes>
                 <include>*/*</include>
@@ -67,7 +67,7 @@
             <destName>irscrutinizer.png</destName>
         </file>
         <file>
-            <source>../schemas/girr.xsd</source>
+            <source>${basedir}/schemas/girr.xsd</source>
             <outputDirectory>schemas</outputDirectory>
         </file>
         <!--file>

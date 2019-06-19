@@ -9,12 +9,6 @@
     <packaging>jar</packaging>
     <version>2.0.0-SNAPSHOT</version>
     <name>IrScrutinizer</name>
-    <parent>
-        <groupId>org.harctoolbox</groupId>
-        <artifactId>HarctoolboxBundle</artifactId>
-        <version>2.0.0</version>
-        <relativePath>..</relativePath>
-    </parent>
     <licenses>
         <license>
             <name>GPL 3+</name>
@@ -39,7 +33,7 @@
         <repository>
             <id>repos</id>
             <name>Repository</name>
-            <url>file:///${project.basedir}/../repos</url>
+            <url>file:///${project.basedir}/repos</url>
         </repository>
     </distributionManagement>
 
@@ -49,7 +43,7 @@
             <id>buildSetup.exe</id>
             <activation>
                 <file>
-                    <exists>${basedir}/../../Inno Setup 5/ISCC.exe</exists>
+                    <exists>${basedir}/../Inno Setup 5/ISCC.exe</exists>
                 </file>
             </activation>
             <build>
@@ -69,7 +63,7 @@
                                     <executable>/usr/bin/wine</executable>
                                     <workingDirectory>${project.build.directory}</workingDirectory>
                                     <arguments>
-                                        <argument>${basedir}/../../Inno Setup 5/ISCC.exe</argument>
+                                        <argument>${basedir}/../Inno Setup 5/ISCC.exe</argument>
                                         <argument>/Q</argument> <!-- quiet execution -->
                                         <argument>${project.artifactId}_inno.iss</argument>
                                     </arguments>
@@ -86,7 +80,7 @@
             <id>builAppImage</id>
             <activation>
                 <file>
-                    <exists>${basedir}/../appimagekit/AppImageAssistant</exists>
+                    <exists>${basedir}/appimagekit/AppImageAssistant</exists>
                 </file>
             </activation>
             <build>
@@ -103,12 +97,12 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>${basedir}/../tools/mkappimage.sh</executable>
+                                    <executable>${basedir}/tools/mkappimage.sh</executable>
                                     <workingDirectory>${basedir}</workingDirectory>
                                     <arguments>
                                         <argument>${project.name}</argument>
                                         <argument>${project.version}</argument>
-                                        <argument>${basedir}/../appimagekit</argument>
+                                        <argument>${basedir}/appimagekit</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -163,7 +157,7 @@
                             <includes>
                                 <include>Version.xml</include>
                             </includes>
-                            <stylesheet>../tools/mkVersion.xsl</stylesheet>
+                            <stylesheet>${basedir}/tools/mkVersion.xsl</stylesheet>
                             <parameters>
                                 <parameter>
                                     <name>version</name>
@@ -192,7 +186,7 @@
                             <includes>
                                 <include>Props.xml</include>
                             </includes>
-                            <stylesheet>../tools/mkProps.xsl</stylesheet>
+                            <stylesheet>${basedir}/tools/mkProps.xsl</stylesheet>
                             <fileMappers>
                                 <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
                                     <targetExtension>.java</targetExtension>
@@ -207,7 +201,7 @@
                             <includes>
                                 <include>${project.name}.xml</include>
                             </includes>
-                            <stylesheet>../tools/xdoc2html.xsl</stylesheet>
+                            <stylesheet>${basedir}/tools/xdoc2html.xsl</stylesheet>
                             <fileMappers>
                                 <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
                                     <targetExtension>.html</targetExtension>
@@ -216,11 +210,11 @@
                         </transformationSet>
                         <transformationSet>
                             <dir>src/main/xdocs</dir>
-                            <outputDir>${basedir}/..</outputDir>
+                            <outputDir>${basedir}.</outputDir>
                             <includes>
                                 <include>${project.name}.xml</include>
                             </includes>
-                            <stylesheet>../tools/generate-build.xsl</stylesheet>
+                            <stylesheet>${basedir}/tools/generate-build.xsl</stylesheet>
                             <fileMappers>
                                 <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
                                     <pattern>IrScrutinizer.xml</pattern>
@@ -243,7 +237,7 @@
                         </transformationSet>
                     </transformationSets>
                     <catalogs>
-                        <catalog>../schemas/catalog.xml</catalog>
+                        <catalog>${basedir}/schemas/catalog.xml</catalog>
                     </catalogs>
                 </configuration>
 
@@ -402,7 +396,7 @@
                             <outputDirectory>${basedir}/target/Linux-amd64</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../native/Linux-amd64</directory>
+                                    <directory>${basedir}/native/Linux-amd64</directory>
                                     <filtering>false</filtering>
                                 </resource>
                             </resources>
@@ -500,8 +494,8 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${project.build.directory}/../../tools/mkapp.sh</executable>
-                            <workingDirectory>${project.build.directory}/../..</workingDirectory>
+                            <executable>${basedir}/tools/mkapp.sh</executable>
+                            <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
                                 <argument>${project.artifactId}</argument>
                                 <argument>${project.version}</argument>
@@ -515,7 +509,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${project.basedir}/../tools/install-irscrutinizer.sh</executable>
+                            <executable>${basedir}/tools/install-irscrutinizer.sh</executable>
                             <workingDirectory>${project.basedir}</workingDirectory>
                             <arguments>
                                 <argument>${project.installpath}</argument>

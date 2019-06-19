@@ -41,8 +41,8 @@ Name: modifypath; Description: &Add installation directory to path
 
 [Files]
 Source: "IrScrutinizer-jar-with-dependencies.jar"; DestName: "IrScrutinizer.jar"; DestDir: "{app}"; Flags: ignoreversion; AfterInstall: CreateWrapper
-Source: "..\..\native\Windows-x86\*"; DestDir: "{app}\Windows-x86"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\..\native\Windows-amd64\*"; DestDir: "{app}\Windows-amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\native\Windows-x86\*"; DestDir: "{app}\Windows-x86"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\native\Windows-amd64\*"; DestDir: "{app}\Windows-amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "*.xml"; DestDir: "{app}"; Flags: ignoreversion
 ;;;Source: "maven-shared-archive-resources/*.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "irscrutinizer.bat"; DestDir: "{app}"; Flags: ignoreversion
@@ -50,7 +50,7 @@ Source: "exportformats.d\*"; DestDir: "{app}\exportformats.d"; Flags: ignorevers
 Source: "contributed\import\*"; DestDir: "{app}\contributed\import"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "generated-documents\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: isreadme
 Source: "doc\*.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\..\schemas\*.xsd"; DestDir: "{app}\schemas"
+Source: "..\schemas\*.xsd"; DestDir: "{app}\schemas"
 Source: "{#MyAppName}.ico";  DestDir: "{app}"
 ;Source: "..\..\IrpMaster\target\generated-documents\IrpMaster.html"; DestDir: "{app}\doc"
 
@@ -111,4 +111,4 @@ begin
    Result[0] := ExpandConstant('{app}');
  end;
 
-#include "..\..\tools\modpath.iss"
+#include "..\tools\modpath.iss"
