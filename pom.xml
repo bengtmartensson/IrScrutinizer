@@ -22,6 +22,7 @@
         <project.nameLowercase>irscrutinizer</project.nameLowercase>
         <project.icon>/usr/local/share/${project.nameLowercase}/${project.nameLowercase}.png</project.icon>
         <project.exepath>/usr/local/bin/${project.nameLowercase}</project.exepath>
+        <project.bundledjdk>${basedir}/OpenJDK11U-jdk_x64_linux_openj9_11.0.3_7_openj9-0.14.3.tar.gz</project.bundledjdk>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <IrpTransmogrifier.version>0.2.1dev</IrpTransmogrifier.version>
@@ -80,7 +81,7 @@
             <id>builAppImage</id>
             <activation>
                 <file>
-                    <exists>${basedir}/appimagekit/AppImageAssistant</exists>
+                    <exists>${project.bundledjdk}</exists>
                 </file>
             </activation>
             <build>
@@ -102,7 +103,7 @@
                                     <arguments>
                                         <argument>${project.name}</argument>
                                         <argument>${project.version}</argument>
-                                        <argument>${basedir}/appimagekit</argument>
+                                        <argument>${project.bundledjdk}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
