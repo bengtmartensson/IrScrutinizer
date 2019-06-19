@@ -42,7 +42,7 @@
                 </configuration>
             </plugin>
             <!-- Create source tarball from src/assembly/source.xml. -->
-            <plugin>
+            <!--plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.6</version>
@@ -50,7 +50,7 @@
                     <descriptors>
                         <descriptor>src/assembly/source.xml</descriptor>
                     </descriptors>
-                    <!-- get rid of pesky warnings on long file names -->
+                    <!- - get rid of pesky warnings on long file names - ->
                     <tarLongFileMode>gnu</tarLongFileMode>
                 </configuration>
                 <executions>
@@ -62,7 +62,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin-->
 
             <plugin>
                 <!-- Copy resources  in src/main/config to target dir. -->
