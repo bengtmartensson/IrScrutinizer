@@ -29,7 +29,7 @@ also available directly as [BUILD.md](https://github.com/bengtmartensson/harctoo
 
 ## Roadmap
 
-A roadmap for the future development is available [here](https://github.com/bengtmartensson/harctoolboxbundle/blob/master/doc/ROADMAP.md).
+A roadmap for the future development is available [in the ROADMAP](ROADMAP.md).
 
 ## Want to help?
 
@@ -39,14 +39,3 @@ also [issues marked "Help wanted"](https://github.com/bengtmartensson/harctoolbo
 can be found.
 
 Coding guidelines are found [here](CONTRIBUTING.md).
-
-## Dependencies backup
-
-"Inspired" by the recent Sourceforge outage, I decided to make the sources of the
-dependencies available on www.harctoolbox.org. These are the
-github/sourceforge repositories, corresponding to the right tag or
-commit, but without any patches applies. These are:
-
-* [JCommander](http://www.harctoolbox.org/downloads/jcommander.tar.gz)
-* [Minimal-Json](http://www.harctoolbox.org/downloads/minimal-json.tar.gz)
-* [Tonto](http://www.harctoolbox.org/downloads/tonto.tar.gz)
