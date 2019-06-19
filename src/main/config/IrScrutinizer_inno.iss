@@ -15,7 +15,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-VersionInfoCopyright=Copyright (C) 2014-2018 Bengt Martensson.
+VersionInfoCopyright=Copyright (C) 2014-2019 Bengt Martensson.
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
@@ -52,6 +52,7 @@ Source: "generated-documents\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: i
 Source: "doc\*.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\schemas\*.xsd"; DestDir: "{app}\schemas"
 Source: "{#MyAppName}.ico";  DestDir: "{app}"
+Source: "protocols.ini";  DestDir: "{app}"
 ;Source: "..\..\IrpMaster\target\generated-documents\IrpMaster.html"; DestDir: "{app}\doc"
 
 [Icons]
@@ -75,6 +76,21 @@ Root: HKCR; Subkey: "girrfile";                    ValueType: string; ValueName:
 Root: HKCR; Subkey: "girrfile\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\IrScrutinizer.ico";            Tasks: associateGirr
 ;;; Opens a pesky window :-(, but I do not know of a better solution. For example, writing the absolute pathname of javaw is not acceptable.
 Root: HKCR; Subkey: "girrfile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\irscrutinizer.bat"" ""%1"""; Tasks: associateGirr
+
+[Code]
+function JavaInstalled: boolean;
+begin
+  result := RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\JavaSoft\Java Runtime Environment') or
+            RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\JavaSoft\Java Development Kit')
+end;
+
+[Code]
+function InitializeSetup: boolean;
+begin
+  result := JavaInstalled;
+  if not result then
+    MsgBox('Please install Java before you install ' + ExpandConstant('{#MyAppName}') + '.', mbError, MB_OK);
+end;
 
 [Code]
 function DllLibraryPath(): String;

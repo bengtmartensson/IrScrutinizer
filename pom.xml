@@ -44,7 +44,7 @@
             <id>buildSetup.exe</id>
             <activation>
                 <file>
-                    <exists>${basedir}/../Inno Setup 5/ISCC.exe</exists>
+                    <exists>${basedir}/../Inno Setup 6/ISCC.exe</exists>
                 </file>
             </activation>
             <build>
