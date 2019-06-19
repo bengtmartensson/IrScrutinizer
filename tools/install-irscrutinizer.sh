@@ -4,7 +4,7 @@
 
 # This script should be run with the rights required to write
 # at the desired places. I.e. root a priori not necessary.
-# It should be run from the directory IrScrutinizer.
+# It should be run from the top level directory.
 
 MYPROG=IrScrutinizer
 
@@ -28,10 +28,10 @@ MYPROG_HOME=${PREFIX}/share/${MYPROG_LOWER}
 # Determine the LIB to use
 if [ $(uname -m) = 'x86_64' ] ; then
     LIB=${PREFIX}/lib64
-    FROMLIB=../native/Linux-amd64
+    FROMLIB=native/Linux-amd64
 elif [ $(uname -m) = 'x86' ] ; then
     LIB=${PREFIX}/lib
-    FROMLIB=../native/Linux-i386
+    FROMLIB=native/Linux-i386
 else
     echo "Not programmed for this machine ($(uname -m)) yet, please extend me."
     exit 1

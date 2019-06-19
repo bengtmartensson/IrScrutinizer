@@ -5,7 +5,7 @@
 # without requiring any other prerequisites than (Java) Xalan.
 # On Fedora, this is installed by
 #
-# sudo yum install xalan-j2
+# sudo dnf install xalan-j2
 
 # This script runs as such on Fedora 21. On other systems, the paths
 # and the jars may need some tweaking.
@@ -20,7 +20,7 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 ${JAVA} -cp ${XALAN_JAR}:${XALAN_SERIALIZER_JAR} org.apache.xalan.xslt.Process \
 	-XSL ${TOOLS}/xdoc2html.xsl \
-	-IN  ${TOOLS}/../IrScrutinizer/src/main/xdocs/IrScrutinizer.xml \
+	-IN  ${TOOLS}/../src/main/xdocs/IrScrutinizer.xml \
 	-OUT IrScrutinizer.html
 
 # Just for the fun of it. Do not worry if Firefox is not installed
