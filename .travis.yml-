@@ -18,8 +18,8 @@ script:
 - tools/build-tonto.sh -n
 - tools/build-appimagekit.sh
 - mvn install -DskipTests=true -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -B -V
-- ls -lh target IrScrutinizer/target
-- tools/upload.sh IrScrutinizer/target/IrScrutinizer-*-bin.zip IrScrutinizer/target/IrScrutinizer-*-app.zip IrScrutinizer/target/IrScrutinizer-*AppImage IrScrutinizer/target/IrScrutinizer-*-*.md5 IrScrutinizer/target/IrScrutinizer-*-*.sha1
+- ls -l --si target
+- tools/upload.sh target/IrScrutinizer-*-bin.zip target/IrScrutinizer-*-app.zip target/IrScrutinizer-*AppImage target/IrScrutinizer-*-*.md5 target/IrScrutinizer-*-*.sha1
 
 branches:
   except:
