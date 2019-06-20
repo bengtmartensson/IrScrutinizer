@@ -52,10 +52,6 @@
             <lineEnding>keep</lineEnding>
         </fileSet>
         <fileSet>
-            <directory>src/main/doc</directory>
-            <outputDirectory/>
-        </fileSet>
-        <fileSet>
             <directory>target/maven-shared-archive-resources</directory>
             <outputDirectory/>
         </fileSet>

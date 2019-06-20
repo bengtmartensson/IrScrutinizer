@@ -22,6 +22,7 @@
         <project.nameLowercase>irscrutinizer</project.nameLowercase>
         <project.icon>/usr/local/share/${project.nameLowercase}/${project.nameLowercase}.png</project.icon>
         <project.exepath>/usr/local/bin/${project.nameLowercase}</project.exepath>
+        <project.installpath>/usr/local</project.installpath>
         <bundledjdk_url_sans_file>https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.3%2B7_openj9-0.14.3/</bundledjdk_url_sans_file>
         <bundledjdk>OpenJDK11U-jdk_x64_linux_openj9_11.0.3_7_openj9-0.14.3.tar.gz</bundledjdk>
         <inno_path>${basedir}/../Inno Setup 6/ISCC.exe</inno_path>
@@ -255,36 +256,50 @@
             </plugin>
 
             <!-- Source and binary tarballs from src/assembly/* files. -->
+            <!-- Left on its own, this plugin makes first the *-bin.zip, then the fat jar.
+                 so no way that the latter can be included in the former. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>${project.groupId}.${project.nameLowercase}.${project.name}</mainClass>
-                        </manifest>
-                        <manifestEntries>
-                            <SplashScreen-Image>images/splash.png</SplashScreen-Image>
-                        </manifestEntries>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <finalName>${project.name}</finalName>
-                    <!--appendAssemblyId>true</appendAssemblyId-->
-                    <descriptors>
-                        <descriptor>src/assembly/target.xml</descriptor>
-                    </descriptors>
-                </configuration>
+                <version>3.1.1</version>
                 <executions>
                     <execution>
-                        <id>exec-bin</id>
+                        <!-- FIRST, make the fat jar, and NOT the *-bin.zip -->
+                        <id>make-fat-jar</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>${project.groupId}.${project.nameLowercase}.${project.name}</mainClass>
+                                </manifest>
+                                <manifestEntries>
+                                    <SplashScreen-Image>images/splash.png</SplashScreen-Image>
+                                </manifestEntries>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>${project.name}</finalName>
+                        </configuration>
                     </execution>
+                    <execution>
+                        <!-- THEN, the *-bin.zip, with no fat jar -->
+                        <id>make-bin-zip</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>${project.name}-${project.version}</finalName>
+                            <descriptors>
+                                <descriptor>src/assembly/target.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <!-- We do not need the *-src.zip -->
                     <!--execution>
                       <id>exec-src</id>
                       <configuration>
@@ -412,23 +427,9 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.4.0</version>
                 <executions>
-                    <execution> <!-- there must be a better way... -->
-                        <id>copy-binfile-with-version</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>cp</executable>
-                            <arguments>
-                                <argument>${basedir}/target/${project.artifactId}-bin.zip</argument>
-                                <argument>${basedir}/target/${project.artifactId}-${project.version}-bin.zip</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>sillify docs</id>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
@@ -443,7 +444,7 @@
                     </execution>
                     <execution>
                         <id>copy icon</id>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
@@ -459,7 +460,7 @@
                     </execution>
                     <execution>
                         <id>create-ico</id>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
