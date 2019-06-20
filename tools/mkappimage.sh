@@ -63,7 +63,7 @@ sed -e "s|Exec=.*|Exec=${MYPROG_LOWER}|" \
     -e "s|Name=.*|Name=${APPNAME}|" < target/${MYPROG_LOWER}.desktop > ${APPDIR}/${MYPROG_LOWER}.desktop
 chmod 444 ${APPDIR}/${MYPROG_LOWER}.desktop
 install -d ${USR}/share/metainfo
-install --mode=444 src/main/resources/${MYPROG_LOWER}.appdata.xml ${USR}/share/metainfo/${MYPROG_LOWER}.appdata.xml
+install --mode=444 src/main/config/${MYPROG_LOWER}.appdata.xml ${USR}/share/metainfo/${MYPROG_LOWER}.appdata.xml
 
 # Fill "usr/bin"
 install -d ${USR_BIN}
