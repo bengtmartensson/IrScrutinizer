@@ -1,7 +1,6 @@
 #!/bin/sh
 
-# This wrapper is used to start both IrScrutinizer and IrpMaster,
-# depending on what name it is called.
+# This wrapper is used to start IrScrutinizer.
 
 # Intended for Unix-like systems (like Linux and MacOsX).
 # May need to be locally adapted.
@@ -18,11 +17,14 @@ JAVA=java
 #IRSCRUTINIZERHOME="$( dirname "${BASH_SOURCE[0]}" )"
 export IRSCRUTINIZERHOME="$(dirname -- "$(readlink -f -- "${0}")" )"
 
-if [ `basename "$0"` = "irptransmogrifier" ] ; then
-    exec "${JAVA}" \
-         -cp "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
-         org.harctoolbox.irp.IrpTransmogrifier "$@"
-fi
+checkgroup()
+{
+    if grep $1 /etc/group > /dev/null ; then
+	if ! groups | grep $1 > /dev/null ; then
+            MESSAGE=${MESSAGE}$1,
+	fi
+    fi
+}
 
 # Path to DecodeIR and RXTX
 # If the code below does not work, just set LIBRARY_PATH to the directory
@@ -50,30 +52,19 @@ fi
 # Use if you need /dev/ttyACM* (IrToy, many Arduino types) and your rxtx does not support it
 #RXTX_SERIAL_PORTS=-Dgnu.io.rxtx.SerialPorts=/dev/ttyS0:/dev/ttyUSB0:/dev/ttyUSB1:/dev/ttyACM0:/dev/ttyACM1
 
-if grep dialout /etc/group > /dev/null ; then
-    if ! groups | grep dialout > /dev/null ; then
-        needs_dialout=t
-        MESSAGE="dialout"
-    fi
-fi
+# Check that the use is a member of some groups ...
+checkgroup dialout
+checkgroup lock
+checkgroup lirc
 
-if grep lock /etc/group > /dev/null ; then
-    if ! groups | grep lock > /dev/null ; then
-        needs_lock=t
-        MESSAGE="lock"
-    fi
-fi
-
-if [ "x$needs_dialout" != "x" -a "x$needs_lock" != "x" ] ; then
-    MESSAGE="dialout,lock"
-fi
-
-MESSAGEPRE="You are not a member of the group(s) "
-MESSAGETAIL=", so you will probably not have access to the USB serial devices.\nYou probably want to correct this. Otherwise, functionality will be limited.\n\nProceed anyhow?"
-
-if [ "x$MESSAGE" != "x" ] ; then
-    if ! "${JAVA}" ${LOAD_RXTX_PATH} ${RXTX_SERIAL_PORTS} -classpath "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
-           org.harctoolbox.guicomponents.StandalonePopupAnnoyer "${MESSAGEPRE}${MESSAGE}${MESSAGETAIL}" "$@" ; then
+# ... if not, barf, and potentially bail out.
+if [ "x${MESSAGE}" != "x" ] ; then
+     # Remove last , of $MESSAGE
+    MESSAGE=$(echo ${MESSAGE} | sed -e "s/,$//")
+    MESSAGEPRE="You are not a member of the group(s) "
+    MESSAGETAIL=", so you will probably not have access to some devices.\nYou probably want to correct this. Otherwise, functionality will be limited.\n\nDepending on your operating system, the command for fixing this may be \"sudo usermod -aG $MESSAGE $USER\".\n\nProceed anyhow?"
+    if ! "${JAVA}" -classpath "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
+        org.harctoolbox.guicomponents.StandalonePopupAnnoyer "${MESSAGEPRE}${MESSAGE}${MESSAGETAIL}" "$@" ; then
         exit 1
     fi
 fi
