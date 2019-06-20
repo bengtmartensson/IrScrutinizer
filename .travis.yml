@@ -19,7 +19,7 @@ script:
 - tools/get-jdk-tar.sh
 - mvn install -DskipTests=true -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -B -V
 - ls -l --si target
-- tools/upload.sh target/IrScrutinizer-*-bin.zip target/IrScrutinizer-*-app.zip target/IrScrutinizer-*AppImage target/IrScrutinizer-*-*.md5 target/IrScrutinizer-*-*.sha1
+- tools/upload.sh target/IrScrutinizer-*-bin.zip target/IrScrutinizer-*-app.zip target/IrScrutinizer-*AppImage* target/IrScrutinizer-*-*.md5 target/IrScrutinizer-*-*.sha1
 
 branches:
   except:
