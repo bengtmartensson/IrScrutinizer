@@ -23,6 +23,7 @@
         <project.icon>/usr/local/share/${project.nameLowercase}/${project.nameLowercase}.png</project.icon>
         <project.exepath>/usr/local/bin/${project.nameLowercase}</project.exepath>
         <bundledjdk>${basedir}/OpenJDK11U-jdk_x64_linux_openj9_11.0.3_7_openj9-0.14.3.tar.gz</bundledjdk>
+        <inno_path>${basedir}/../Inno Setup 6/ISCC.exe</inno_path>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <IrpTransmogrifier.version>0.2.1dev</IrpTransmogrifier.version>
@@ -44,7 +45,7 @@
             <id>buildSetup.exe</id>
             <activation>
                 <file>
-                    <exists>${basedir}/../Inno Setup 6/ISCC.exe</exists>
+                    <exists>${inno_path}</exists>
                 </file>
             </activation>
             <build>
@@ -64,7 +65,7 @@
                                     <executable>/usr/bin/wine</executable>
                                     <workingDirectory>${project.build.directory}</workingDirectory>
                                     <arguments>
-                                        <argument>${basedir}/../Inno Setup 5/ISCC.exe</argument>
+                                        <argument>${inno_path}</argument>
                                         <argument>/Q</argument> <!-- quiet execution -->
                                         <argument>${project.artifactId}_inno.iss</argument>
                                     </arguments>
