@@ -8,7 +8,7 @@ before_install:
 - sudo add-apt-repository ppa:dns/gnu -y
 - sudo apt-get update -qq
 install:
-- sudo apt-get install -y --force-yes autoconf dos2unix icoutils
+- sudo apt-get install -y --force-yes autoconf dos2unix icoutils xsltproc
 script:
 - tools/build-IrpTransmogrifier.sh
 - tools/build-Girr.sh
@@ -16,7 +16,7 @@ script:
 - tools/build-DevSlashLirc.sh
 - tools/build-HarcHardwareBundle.sh
 - tools/build-tonto.sh -n
-- tools/build-appimagekit.sh
+- tools/get-jdk-tar.sh
 - mvn install -DskipTests=true -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -B -V
 - ls -l --si target
 - tools/upload.sh target/IrScrutinizer-*-bin.zip target/IrScrutinizer-*-app.zip target/IrScrutinizer-*AppImage target/IrScrutinizer-*-*.md5 target/IrScrutinizer-*-*.sha1
