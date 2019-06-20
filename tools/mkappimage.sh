@@ -114,4 +114,4 @@ chmod 555 ${WRAPPER}
 # Invoke the builder
 #wget -c "https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage"
 #chmod +x ./appimagetool-x86_64.AppImage
-tools/appimagetool-x86_64.AppImage --no-appstream ${APPDIR} ${APPIMAGE} >/dev/null
+tools/appimagetool-x86_64.AppImage -g ${APPDIR} ${APPIMAGE}
