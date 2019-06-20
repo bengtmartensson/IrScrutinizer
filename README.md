@@ -2,6 +2,8 @@
 IrScrutinizer is a powerful program for capturing, generating,
 analyzing, importing, and exporting of infrared (IR) signals.
 
+![](screenshot.png)
+
 The GitHub project name (harctoolboxbundle) has historic reasons.
 
 Author: Bengt Martensson.
