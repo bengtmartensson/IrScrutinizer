@@ -3,13 +3,18 @@
 # Create a directory for AppImage, and call appimagetool.
 # Should be called from the IrScrutinizer top directory.
 
+if [ $# -lt 2 ] ; then
+    echo -e "Usage:\n$0 <appname> <version> [<JDK-file>]" >&2
+    exit 1
+fi
+
 if [ "`uname -m`" != "x86_64" ] ; then
-    echo "Presently, AppImages can only be built on x86_64, quitting."
-    exit 0
+    echo "Presently, AppImages can only be built on x86_64, quitting." >&2
+    exit 1
 fi
 
 APPNAME=$1
-VERSION=$2
+export VERSION=$2
 JAVA_TAR_GZ=$3
 
 MYPROG_LOWER=$(echo ${APPNAME} | tr A-Z a-z)
@@ -114,5 +119,9 @@ chmod 555 ${WRAPPER}
 # Invoke the builder
 #wget -c "https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage"
 #chmod +x ./appimagetool-x86_64.AppImage
-tools/appimagetool-x86_64.AppImage -g ${APPDIR} && ls -lh ${APPNAME}*.AppImage*
-mv ${APPNAME}*.AppImage* target/
+
+# Invocation of appstreamcli breaks on many systems, see
+# https://github.com/AppImage/AppImageKit/issues/856
+# Until that is fixed, must use --no-appstream
+
+tools/appimagetool-x86_64.AppImage --no-appstream ${APPDIR} ${APPIMAGE}
