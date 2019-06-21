@@ -29,6 +29,13 @@ The format of text files follows the requirement of portability:
 (e.g. <code>IrpProtocols.ini</code>)  should use CRLF, unless this creates other problems,
 * Otherwise LF.
 
+## Build process
+
+[Apache Maven](https://maven.apache.org] is used for builds.
+Normal builds must not require Internet access.
+All parameters (URLs, version numbers etc.) should be contained therein within /project/properties.
+(Other programs can then extract that information, see `tools/get-jdk-tar.sh` for an example.)
+
 ## GUI files
 Most (but not all) Java classes with GUI content are maintained with
 [Netbeans](http://www.netbeans.org). This is indicated by a <code>.form</code> file
