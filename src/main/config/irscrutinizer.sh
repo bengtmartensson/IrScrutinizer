@@ -26,6 +26,11 @@ checkgroup()
     fi
 }
 
+if [ $(basename "$0" ) = "irptransmogrifier" ] ; then
+    exec "${JAVA}" -nosplash -classpath "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
+    org.harctoolbox.irp.IrpTransmogrifier --apphome "${IRSCRUTINIZERHOME}" "$@"
+fi
+
 # Path to DecodeIR and RXTX
 # If the code below does not work, just set LIBRARY_PATH to the directory
 # containing the shared lib to use, like in the commented-out example lines.
@@ -69,4 +74,5 @@ if [ "x${MESSAGE}" != "x" ] ; then
     fi
 fi
 
-exec "${JAVA}" ${LOAD_RXTX_PATH} ${RXTX_SERIAL_PORTS} -jar "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" ${IRSCRUTINIZER} "$@"
+exec "${JAVA}" ${LOAD_RXTX_PATH} ${RXTX_SERIAL_PORTS} -jar "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
+    --apphome "${IRSCRUTINIZERHOME}" "$@"

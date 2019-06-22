@@ -20,9 +20,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.nameLowercase>irscrutinizer</project.nameLowercase>
-        <project.icon>/usr/local/share/${project.nameLowercase}/${project.nameLowercase}.png</project.icon>
-        <project.exepath>/usr/local/bin/${project.nameLowercase}</project.exepath>
-        <project.installpath>/usr/local</project.installpath>
+        <!--project.icon>/usr/local/share/${project.nameLowercase}/${project.nameLowercase}.png</project.icon-->
+        <!--project.exepath>/usr/local/bin/${project.nameLowercase}</project.exepath-->
+        <project.installdir>/usr/local/share/${project.nameLowercase}</project.installdir> <!-- Where mvn deploy unpacks the bin.zip -->
         <bundledjdk_url_sans_file>https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.3%2B7_openj9-0.14.3/</bundledjdk_url_sans_file>
         <bundledjdk>OpenJDK11U-jdk_x64_linux_openj9_11.0.3_7_openj9-0.14.3.tar.gz</bundledjdk>
         <inno_path>${basedir}/../Inno Setup 6/ISCC.exe</inno_path>
@@ -81,7 +81,7 @@
 
         <!-- Build AppImage, if possible -->
         <profile>
-            <id>builAppImage</id>
+            <id>buildAppImage</id>
             <activation>
                 <os>
                     <name>Linux</name>
@@ -488,6 +488,7 @@
                             <arguments>
                                 <argument>+x</argument>
                                 <argument>${project.nameLowercase}.sh</argument>
+                                <argument>setup-${project.nameLowercase}.sh</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -517,7 +518,7 @@
                             <executable>${basedir}/tools/install-irscrutinizer.sh</executable>
                             <workingDirectory>${project.basedir}</workingDirectory>
                             <arguments>
-                                <argument>${project.installpath}</argument>
+                                <argument>${project.installdir}</argument>
                             </arguments>
                         </configuration>
                     </execution>

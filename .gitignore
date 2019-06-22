@@ -13,3 +13,4 @@ appimagekit
 hs_err*.log
 graveyard
 junk
+OpenJDK11*.tar.gz
