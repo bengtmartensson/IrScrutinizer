@@ -54,11 +54,8 @@ install -d ${MYPROG_HOME}/schemas
 install --mode=444 schemas/*.xsd ${MYPROG_HOME}/schemas
 install -d ${MYPROG_HOME}/Linux-amd64
 install --mode=444 native/Linux-amd64/* ${MYPROG_HOME}/Linux-amd64
-install -d ${MYPROG_HOME}/contributed
-install --mode=444 target/contributed/* ${MYPROG_HOME}/contributed
-install -d ${MYPROG_HOME}/contributed/import
-install --mode=555 target/contributed/import/*.sh ${MYPROG_HOME}/contributed/import
-install --mode=444 target/contributed/import/*.xsl ${MYPROG_HOME}/contributed/import
+cp -a    target/contributed ${MYPROG_HOME}
+chmod +x ${MYPROG_HOME}/contributed/*/*.sh
 
 # Top level
 install --mode=555 ${APPRUN} ${APPDIR}
