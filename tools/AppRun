@@ -6,8 +6,8 @@
 SELF=$(readlink -f -- "$0")
 export APP_ROOT=$(dirname -- "${SELF}")
 
-export PATH="${APP_ROOT}/usr/bin/:${APP_ROOT}/usr/sbin/:${APP_ROOT}/usr/games/:${APP_ROOT}/bin/:${APP_ROOT}/sbin/${PATH:+:$PATH}"
-export LD_LIBRARY_PATH="${APP_ROOT}/usr/lib/:${APP_ROOT}/usr/lib/i386-linux-gnu/:${APP_ROOT}/usr/lib/x86_64-linux-gnu/:${APP_ROOT}/usr/lib32/:${APP_ROOT}/usr/lib64/:${APP_ROOT}/lib/:${APP_ROOT}/lib/i386-linux-gnu/:${APP_ROOT}/lib/x86_64-linux-gnu/:${APP_ROOT}/lib32/:${APP_ROOT}/lib64/${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export PATH="${APP_ROOT}/usr/bin/:${APP_ROOT}/usr/sbin/${PATH:+:$PATH}"
+export LD_LIBRARY_PATH=
 export PYTHONPATH="${APP_ROOT}/usr/share/pyshared/${PYTHONPATH:+:$PYTHONPATH}"
 export XDG_DATA_DIRS="${APP_ROOT}/usr/share/${XDG_DATA_DIRS:+:$XDG_DATA_DIRS}"
 export PERLLIB="${APP_ROOT}/usr/share/perl5/:${APP_ROOT}/usr/lib/perl5/${PERLLIB:+:$PERLLIB}"
