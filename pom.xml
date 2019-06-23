@@ -33,13 +33,6 @@
         <Jirc.version>2.0.0-SNAPSHOT</Jirc.version>
         <HarcHardware.version>2.0.0-SNAPSHOT</HarcHardware.version>
     </properties>
-    <distributionManagement>
-        <repository>
-            <id>repos</id>
-            <name>Repository</name>
-            <url>file:///${project.basedir}/repos</url>
-        </repository>
-    </distributionManagement>
 
     <profiles>
         <!-- Build the Windows setup.exe, if possible -->
@@ -505,20 +498,6 @@
                             <arguments>
                                 <argument>${project.artifactId}</argument>
                                 <argument>${project.version}</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>install-prog</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>${basedir}/tools/install-irscrutinizer.sh</executable>
-                            <workingDirectory>${project.basedir}</workingDirectory>
-                            <arguments>
-                                <argument>${project.installdir}</argument>
                             </arguments>
                         </configuration>
                     </execution>

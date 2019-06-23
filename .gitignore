@@ -1,16 +1,13 @@
 *~
 target
-dist
 .project
 .classpath
 nb-configuration.xml
 nbactions.xml
 .DS_Store
 ._.DS_Store
-repos
 nbactions-*.xml
-appimagekit
 hs_err*.log
 graveyard
 junk
-OpenJDK11*.tar.gz
+OpenJDK*.tar.gz
