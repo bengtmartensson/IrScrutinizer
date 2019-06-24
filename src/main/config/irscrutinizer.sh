@@ -27,8 +27,8 @@ checkgroup()
 }
 
 if [ $(basename "$0" ) = "irptransmogrifier" ] ; then
-    exec "${JAVA}" -nosplash -classpath "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
-    org.harctoolbox.irp.IrpTransmogrifier --apphome "${IRSCRUTINIZERHOME}" "$@"
+    exec "${JAVA}" -classpath "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
+    org.harctoolbox.irp.IrpTransmogrifier "$@"
 fi
 
 # Path to DecodeIR and RXTX
