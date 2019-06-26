@@ -61,7 +61,7 @@ public final class SerialPortSimpleBean extends javax.swing.JPanel implements IS
         listenable = false;
         DefaultComboBoxModel<String> model;
         try {
-            List<String> portList = LocalSerialPort.getSerialPortNames(true);
+            List<String> portList = LocalSerialPort.getSerialPortNames(true); // Loads librxtxSerial (first time)
             model = new DefaultComboBoxModel<>(portList.toArray(new String[portList.size()]));
         } catch (IOException | LinkageError ex) {
             model =  new DefaultComboBoxModel<>(new String[]{ initialPort != null ? initialPort : notInitialized });
