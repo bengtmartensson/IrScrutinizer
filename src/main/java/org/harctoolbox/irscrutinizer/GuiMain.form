@@ -2995,11 +2995,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          <Component id="importTabbedPane" max="32767" attributes="0"/>
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="importTabbedPane" alignment="1" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -3019,8 +3015,8 @@
                     <Container class="javax.swing.JPanel" name="gcdbPanel">
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="GlobalCache Database">
-                            <Property name="tabTitle" type="java.lang.String" value="GlobalCache Database"/>
+                          <JTabbedPaneConstraints tabName="GlobalCache DB (old)">
+                            <Property name="tabTitle" type="java.lang.String" value="GlobalCache DB (old)"/>
                           </JTabbedPaneConstraints>
                         </Constraint>
                       </Constraints>
@@ -3041,21 +3037,20 @@
                                   </Group>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" attributes="0">
-                                          <Component id="jLabel48" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace min="-2" pref="461" max="-2" attributes="0"/>
-                                      </Group>
                                       <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
-                                          <Component id="gcdbCodeSetComboBox" pref="339" max="32767" attributes="0"/>
+                                          <Component id="gcdbCodeSetComboBox" max="32767" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                           <Component id="gcdbImportButton" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace min="-2" pref="169" max="-2" attributes="0"/>
                                       </Group>
+                                      <Group type="102" attributes="0">
+                                          <Component id="jLabel48" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="461" max="-2" attributes="0"/>
+                                      </Group>
                                   </Group>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="gcdbTreeImporter" min="-2" pref="734" max="-2" attributes="0"/>
+                                  <Component id="gcdbTreeImporter" pref="728" max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" attributes="0">
                                           <EmptySpace pref="130" max="32767" attributes="0"/>
@@ -3092,13 +3087,13 @@
                                   </Group>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="gcdbTreeImporter" pref="0" max="32767" attributes="0"/>
+                                      <Component id="gcdbTreeImporter" pref="267" max="32767" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                                           <Component id="apiKeyButton" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="globalCacheDBBrowseButton" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace pref="164" max="32767" attributes="0"/>
+                                          <EmptySpace pref="148" max="32767" attributes="0"/>
                                           <Component id="importGlobalCacheHelpButton" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
@@ -3248,7 +3243,7 @@
                                           <EmptySpace min="-2" pref="461" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
-                                          <Component id="controlTowerCodeSetComboBox" pref="352" max="32767" attributes="0"/>
+                                          <Component id="controlTowerCodeSetComboBox" pref="317" max="32767" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                           <Component id="controlTowerImportButton" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace min="-2" pref="169" max="-2" attributes="0"/>
@@ -3256,13 +3251,13 @@
                                   </Group>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="controlTowerTreeImporter" min="-2" pref="734" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="controlTowerTreeImporter" pref="734" max="32767" attributes="0"/>
+                                  <EmptySpace min="-2" pref="111" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                       <Component id="importControlTowerHelpButton" linkSize="35" max="32767" attributes="0"/>
                                       <Component id="controlTowerBrowseButton" linkSize="35" pref="130" max="32767" attributes="0"/>
                                   </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -3275,16 +3270,16 @@
                                       <Component id="jLabel51" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel52" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="controlTowerManufacturerComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="controlTowerDeviceTypeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="controlTowerCodeSetComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="controlTowerImportButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="controlTowerManufacturerComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="controlTowerTreeImporter" alignment="0" pref="290" max="32767" attributes="0"/>
+                                      <Component id="controlTowerTreeImporter" alignment="0" pref="267" max="32767" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
                                           <Component id="controlTowerBrowseButton" linkSize="36" min="-2" max="-2" attributes="0"/>
@@ -3406,66 +3401,72 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="irdbManufacturerComboBox" pref="375" max="32767" attributes="0"/>
-                                      <Component id="jLabel45" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="irdbDeviceTypeComboBox" pref="369" max="32767" attributes="0"/>
-                                      <Component id="jLabel46" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" attributes="0">
-                                          <Component id="irdbCodeSetComboBox" pref="204" max="32767" attributes="0"/>
-                                          <EmptySpace max="32767" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="irdbManufacturerComboBox" min="-2" pref="201" max="-2" attributes="0"/>
+                                              <Component id="jLabel45" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="irdbDeviceTypeComboBox" min="-2" pref="245" max="-2" attributes="0"/>
+                                              <Component id="jLabel46" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="jLabel49" min="-2" max="-2" attributes="0"/>
+                                              <Component id="irdbCodeSetComboBox" min="-2" pref="354" max="-2" attributes="0"/>
+                                          </Group>
                                       </Group>
-                                      <Component id="jLabel49" min="-2" max="-2" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="irdbTreeImporter" max="32767" attributes="0"/>
+                                          <EmptySpace min="102" pref="102" max="-2" attributes="0"/>
+                                      </Group>
                                   </Group>
-                              </Group>
-                              <Group type="102" attributes="0">
-                                  <Component id="irdbTreeImporter" min="-2" pref="734" max="-2" attributes="0"/>
-                                  <EmptySpace pref="128" max="32767" attributes="0"/>
+                                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="importIrdbHelpButton" linkSize="33" alignment="1" min="-2" pref="110" max="-2" attributes="0"/>
                                       <Component id="irdbBrowseButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
                                       <Component id="irdbImportAllButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
                                       <Component id="irdbImportButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="jLabel45" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel46" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel49" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="irdbManufacturerComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="irdbDeviceTypeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="irdbCodeSetComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="irdbTreeImporter" pref="300" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
+                              <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace min="-2" pref="75" max="-2" attributes="0"/>
                                   <Component id="irdbImportButton" linkSize="34" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="irdbImportAllButton" linkSize="34" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="irdbBrowseButton" linkSize="34" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
+                                  <EmptySpace pref="99" max="32767" attributes="0"/>
                                   <Component id="importIrdbHelpButton" linkSize="34" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" attributes="0">
+                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="jLabel45" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel46" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel49" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="irdbDeviceTypeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="irdbCodeSetComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Component id="irdbManufacturerComboBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                                  <Component id="irdbTreeImporter" max="32767" attributes="0"/>
+                                  <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -3613,7 +3614,7 @@
                                   <Component id="importGirrSignalHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
-                              <Component id="girrFileImporterBean" alignment="0" pref="364" max="32767" attributes="0"/>
+                              <Component id="girrFileImporterBean" alignment="0" pref="338" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                       </Layout>
@@ -3666,7 +3667,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                                   <Component id="lircFileImporterBean" min="-2" pref="734" max="-2" attributes="0"/>
-                                  <EmptySpace pref="147" max="32767" attributes="0"/>
+                                  <EmptySpace pref="124" max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="importLircHelpButton" linkSize="29" alignment="1" min="-2" max="-2" attributes="0"/>
                                       <Component id="jButton20" linkSize="29" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -3677,7 +3678,7 @@
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lircFileImporterBean" alignment="1" pref="364" max="32767" attributes="0"/>
+                              <Component id="lircFileImporterBean" alignment="1" pref="338" max="32767" attributes="0"/>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
                                   <Component id="jButton20" min="-2" max="-2" attributes="0"/>
@@ -3739,7 +3740,7 @@
                                       <Group type="102" attributes="0">
                                           <Component id="jLabel29" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="protocolsIniTextField" pref="758" max="32767" attributes="0"/>
+                                          <Component id="protocolsIniTextField" pref="726" max="32767" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                           <Component id="selectProtocolIniButton" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -3769,7 +3770,7 @@
                                       <Group type="102" attributes="0">
                                           <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
                                           <Component id="webRmduButton" linkSize="31" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace pref="199" max="32767" attributes="0"/>
+                                          <EmptySpace pref="177" max="32767" attributes="0"/>
                                           <Component id="importRemoteMasterHelpButton" linkSize="31" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
@@ -3851,7 +3852,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                                   <Component id="irTransFileImporterBean" min="-2" pref="734" max="-2" attributes="0"/>
-                                  <EmptySpace pref="147" max="32767" attributes="0"/>
+                                  <EmptySpace pref="124" max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="importIrTransHelpButton" alignment="1" min="-2" max="-2" attributes="0"/>
                                       <Component id="irTransWebButton" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -3862,7 +3863,7 @@
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="irTransFileImporterBean" alignment="1" pref="364" max="32767" attributes="0"/>
+                              <Component id="irTransFileImporterBean" alignment="1" pref="338" max="32767" attributes="0"/>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
                                   <Component id="irTransWebButton" min="-2" max="-2" attributes="0"/>
@@ -3918,7 +3919,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="ccfFileImporterBean" min="-2" pref="734" max="-2" attributes="0"/>
-                                  <EmptySpace pref="170" max="32767" attributes="0"/>
+                                  <EmptySpace pref="149" max="32767" attributes="0"/>
                                   <Component id="importProntoClassicHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -3931,7 +3932,7 @@
                                   <Component id="importProntoClassicHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="ccfFileImporterBean" pref="364" max="32767" attributes="0"/>
+                              <Component id="ccfFileImporterBean" pref="338" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                       </Layout>
@@ -3969,7 +3970,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="xcfFileImporterBean" min="-2" pref="734" max="-2" attributes="0"/>
-                                  <EmptySpace pref="170" max="32767" attributes="0"/>
+                                  <EmptySpace pref="149" max="32767" attributes="0"/>
                                   <Component id="importProntoProfessionalHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -3982,7 +3983,7 @@
                                   <Component id="importProntoProfessionalHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="xcfFileImporterBean" pref="364" max="32767" attributes="0"/>
+                              <Component id="xcfFileImporterBean" pref="338" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                       </Layout>
@@ -4024,7 +4025,7 @@
                               <Group type="102" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="749" max="32767" attributes="0"/>
+                                  <EmptySpace pref="730" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="ictFileImporterBean" min="-2" pref="734" max="-2" attributes="0"/>
@@ -4040,7 +4041,7 @@
                                   <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                                   <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="ictFileImporterBean" pref="336" max="32767" attributes="0"/>
+                                  <Component id="ictFileImporterBean" pref="311" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
@@ -4090,7 +4091,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="jLabel17" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="749" max="32767" attributes="0"/>
+                                  <EmptySpace pref="730" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="mode2FileImporterBean" min="-2" pref="734" max="-2" attributes="0"/>
@@ -4106,7 +4107,7 @@
                                   <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                                   <Component id="jLabel17" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="mode2FileImporterBean" pref="336" max="32767" attributes="0"/>
+                                  <Component id="mode2FileImporterBean" pref="311" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
@@ -4218,7 +4219,7 @@
                                                   </Group>
                                               </Group>
                                           </Group>
-                                          <EmptySpace pref="162" max="32767" attributes="0"/>
+                                          <EmptySpace pref="144" max="32767" attributes="0"/>
                                           <Component id="importTextRawHelpButton" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
@@ -4244,7 +4245,7 @@
                                           </Group>
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Group type="102" attributes="0">
-                                                  <EmptySpace pref="236" max="32767" attributes="0"/>
+                                                  <EmptySpace pref="221" max="32767" attributes="0"/>
                                                   <Component id="importTextRawHelpButton" min="-2" max="-2" attributes="0"/>
                                                   <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                                               </Group>
@@ -4403,7 +4404,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="rawLineCsvFileImporterBean" min="-2" pref="734" max="-2" attributes="0"/>
-                                          <EmptySpace pref="162" max="32767" attributes="0"/>
+                                          <EmptySpace pref="144" max="32767" attributes="0"/>
                                           <Component id="importTextRawLineBasedHelpButton" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -4418,7 +4419,7 @@
                                       </Group>
                                       <Group type="102" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="rawLineCsvFileImporterBean" pref="316" max="32767" attributes="0"/>
+                                          <Component id="rawLineCsvFileImporterBean" pref="299" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                                 </DimensionLayout>
@@ -4513,7 +4514,7 @@
                                               </Group>
                                               <Group type="102" alignment="0" attributes="0">
                                                   <Component id="csvParametrizedFileImporterBean" min="-2" pref="734" max="-2" attributes="0"/>
-                                                  <EmptySpace pref="162" max="32767" attributes="0"/>
+                                                  <EmptySpace pref="144" max="32767" attributes="0"/>
                                                   <Component id="importTextParametrizedHelpButton" min="-2" max="-2" attributes="0"/>
                                               </Group>
                                           </Group>
@@ -4546,7 +4547,7 @@
                                           </Group>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="csvParametrizedFileImporterBean" pref="276" max="32767" attributes="0"/>
+                                              <Component id="csvParametrizedFileImporterBean" pref="260" max="32767" attributes="0"/>
                                               <Group type="102" alignment="1" attributes="0">
                                                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                                   <Component id="importTextParametrizedHelpButton" min="-2" max="-2" attributes="0"/>
@@ -4834,7 +4835,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" attributes="0">
                                           <Component id="waveFileImporterBean" min="-2" pref="734" max="-2" attributes="0"/>
-                                          <EmptySpace pref="170" max="32767" attributes="0"/>
+                                          <EmptySpace pref="149" max="32767" attributes="0"/>
                                           <Component id="importWaveHelpButton" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <Component id="importWaveDivideCarrierCheckBox1" min="-2" max="-2" attributes="0"/>
@@ -4852,7 +4853,7 @@
                                   <Component id="waveFileImporterBean" pref="0" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace pref="318" max="32767" attributes="0"/>
+                                  <EmptySpace pref="294" max="32767" attributes="0"/>
                                   <Component id="importWaveHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -4904,7 +4905,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="cmlFileImporterBean" min="-2" pref="734" max="-2" attributes="0"/>
-                                  <EmptySpace pref="170" max="32767" attributes="0"/>
+                                  <EmptySpace pref="149" max="32767" attributes="0"/>
                                   <Component id="importCmlHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -4917,7 +4918,7 @@
                                   <Component id="importCmlHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="cmlFileImporterBean" alignment="0" pref="364" max="32767" attributes="0"/>
+                              <Component id="cmlFileImporterBean" alignment="0" pref="338" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                       </Layout>
@@ -4955,7 +4956,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="commandFusionFileImporterBean" min="-2" pref="734" max="-2" attributes="0"/>
-                                  <EmptySpace pref="170" max="32767" attributes="0"/>
+                                  <EmptySpace pref="149" max="32767" attributes="0"/>
                                   <Component id="importCommandFusionHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -4968,7 +4969,7 @@
                                   <Component id="importCommandFusionHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="commandFusionFileImporterBean" alignment="0" pref="364" max="32767" attributes="0"/>
+                              <Component id="commandFusionFileImporterBean" alignment="0" pref="338" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                       </Layout>
