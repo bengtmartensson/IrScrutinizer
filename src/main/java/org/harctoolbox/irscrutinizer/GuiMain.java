@@ -6748,6 +6748,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         optionsMenu.add(parametrizedLearnIgnoreTCheckBoxMenuItem);
 
+        proxyMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/Network Connection Manager.png"))); // NOI18N
         proxyMenuItem.setText("Proxy Configuration ...");
         proxyMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -7067,6 +7068,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         helpMenu.add(homePageMenuItem);
 
+        releaseNotesMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/mimetypes/document.png"))); // NOI18N
         releaseNotesMenuItem.setMnemonic('R');
         releaseNotesMenuItem.setText("Release Notes");
         releaseNotesMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -7076,6 +7078,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         helpMenu.add(releaseNotesMenuItem);
 
+        protocolSpecMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/contents.png"))); // NOI18N
         protocolSpecMenuItem.setText("Browse Protocols");
         protocolSpecMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

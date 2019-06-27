@@ -1641,6 +1641,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="proxyMenuItem">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icons/Crystal-Clear/22x22/apps/Network Connection Manager.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Proxy Configuration ..."/>
               </Properties>
               <Events>
@@ -2041,6 +2044,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="releaseNotesMenuItem">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icons/Crystal-Clear/22x22/mimetypes/document.png"/>
+                </Property>
                 <Property name="mnemonic" type="int" value="82"/>
                 <Property name="text" type="java.lang.String" value="Release Notes"/>
               </Properties>
@@ -2050,6 +2056,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="protocolSpecMenuItem">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/contents.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Browse Protocols"/>
               </Properties>
               <Events>

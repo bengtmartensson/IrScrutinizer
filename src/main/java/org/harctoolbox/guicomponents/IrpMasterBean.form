@@ -150,7 +150,7 @@
     <Component class="javax.swing.JButton" name="protocolDocuButton">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/icons/Crystal-Clear/22x22/mimetypes/man.png"/>
+          <Image iconType="3" name="/icons/Crystal-Clear/22x22/mimetypes/info.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Docu"/>
         <Property name="toolTipText" type="java.lang.String" value="Display notes to the selected protocol"/>

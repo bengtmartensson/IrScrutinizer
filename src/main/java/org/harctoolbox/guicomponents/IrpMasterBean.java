@@ -298,7 +298,7 @@ public final class IrpMasterBean extends javax.swing.JPanel {
             }
         });
 
-        protocolDocuButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/mimetypes/man.png"))); // NOI18N
+        protocolDocuButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/mimetypes/info.png"))); // NOI18N
         protocolDocuButton.setText("Docu");
         protocolDocuButton.setToolTipText("Display notes to the selected protocol");
         protocolDocuButton.addActionListener(new java.awt.event.ActionListener() {
