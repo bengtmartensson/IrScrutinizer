@@ -118,6 +118,20 @@
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator9">
         </Component>
+        <MenuItem class="javax.swing.JMenuItem" name="undoDataMenuItem">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/undo.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Undo Scrutinize Data"/>
+            <Property name="toolTipText" type="java.lang.String" value="Undo last change to the scrutinize data."/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="undoDataMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator30">
+        </Component>
         <MenuItem class="javax.swing.JMenuItem" name="rawCodeSaveMenuItem">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -1223,6 +1237,22 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reAnalyzeMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="undoMenuItem">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+Z"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/undo.png"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="85"/>
+                <Property name="text" type="java.lang.String" value="Undo Scrutinize Data"/>
+                <Property name="toolTipText" type="java.lang.String" value="Undo last operation that changed the scrutinize data"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="undoMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="startCaptureMenuItem">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -2188,22 +2218,25 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JTextArea" name="capturedDataTextArea">
+                    <Component class="org.harctoolbox.guicomponents.UndoableJTextArea" name="capturedDataTextArea">
                       <Properties>
-                        <Property name="columns" type="int" value="20"/>
-                        <Property name="lineWrap" type="boolean" value="true"/>
-                        <Property name="toolTipText" type="java.lang.String" value="This is the data window, where the captured data goes. It may be edited. Press right mouse button for a menu."/>
-                        <Property name="wrapStyleWord" type="boolean" value="true"/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
                             <BevelBorder bevelType="1"/>
                           </Border>
                         </Property>
+                        <Property name="columns" type="int" value="20"/>
+                        <Property name="lineWrap" type="boolean" value="true"/>
+                        <Property name="toolTipText" type="java.lang.String" value="This is the data window, where the captured data goes. It may be edited. Press right mouse button for a menu."/>
+                        <Property name="wrapStyleWord" type="boolean" value="true"/>
                       </Properties>
                       <Events>
                         <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="capturedDataTextAreaMousePressed"/>
                         <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="capturedDataTextAreaMouseReleased"/>
                       </Events>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new UndoableJTextArea()"/>
+                      </AuxValues>
                     </Component>
                   </SubComponents>
                 </Container>

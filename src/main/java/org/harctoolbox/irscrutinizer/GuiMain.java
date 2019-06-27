@@ -1822,6 +1822,8 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator23 = new javax.swing.JPopupMenu.Separator();
         rawCodeAnalyzeMenuItem = new javax.swing.JMenuItem();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
+        undoDataMenuItem = new javax.swing.JMenuItem();
+        jSeparator30 = new javax.swing.JPopupMenu.Separator();
         rawCodeSaveMenuItem = new javax.swing.JMenuItem();
         importCaptureMenu = new javax.swing.JMenu();
         importSignalAsGirrMenuItem1 = new javax.swing.JMenuItem();
@@ -1909,7 +1911,7 @@ public final class GuiMain extends javax.swing.JFrame {
         topLevelTabbedPane = new javax.swing.JTabbedPane();
         signalScrutinizerPanel = new javax.swing.JPanel();
         capturedDataScrollPane = new javax.swing.JScrollPane();
-        capturedDataTextArea = new javax.swing.JTextArea();
+        capturedDataTextArea = new UndoableJTextArea();
         infoPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -2246,6 +2248,7 @@ public final class GuiMain extends javax.swing.JFrame {
         analysisToClipboardMenuItem = new javax.swing.JMenuItem();
         actionsMenu = new javax.swing.JMenu();
         reAnalyzeMenuItem = new javax.swing.JMenuItem();
+        undoMenuItem = new javax.swing.JMenuItem();
         startCaptureMenuItem = new javax.swing.JMenuItem();
         jMenuItem12 = new javax.swing.JMenuItem();
         testSignalMenuItem = new javax.swing.JMenuItem();
@@ -2424,6 +2427,17 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         CCFCodePopupMenu.add(rawCodeAnalyzeMenuItem);
         CCFCodePopupMenu.add(jSeparator9);
+
+        undoDataMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/undo.png"))); // NOI18N
+        undoDataMenuItem.setText("Undo Scrutinize Data");
+        undoDataMenuItem.setToolTipText("Undo last change to the scrutinize data.");
+        undoDataMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                undoDataMenuItemActionPerformed(evt);
+            }
+        });
+        CCFCodePopupMenu.add(undoDataMenuItem);
+        CCFCodePopupMenu.add(jSeparator30);
 
         rawCodeSaveMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/filesaveas.png"))); // NOI18N
         rawCodeSaveMenuItem.setText("Save as text...");
@@ -3009,11 +3023,11 @@ public final class GuiMain extends javax.swing.JFrame {
         signalScrutinizerPanel.setToolTipText("This panel is devoted to the use case of capturing and analyzing ONE infrared signal.");
         signalScrutinizerPanel.setPreferredSize(new java.awt.Dimension(1016, 300));
 
+        capturedDataTextArea.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         capturedDataTextArea.setColumns(20);
         capturedDataTextArea.setLineWrap(true);
         capturedDataTextArea.setToolTipText("This is the data window, where the captured data goes. It may be edited. Press right mouse button for a menu.");
         capturedDataTextArea.setWrapStyleWord(true);
-        capturedDataTextArea.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         capturedDataTextArea.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 capturedDataTextAreaMousePressed(evt);
@@ -6415,6 +6429,18 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         actionsMenu.add(reAnalyzeMenuItem);
 
+        undoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
+        undoMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/undo.png"))); // NOI18N
+        undoMenuItem.setMnemonic('U');
+        undoMenuItem.setText("Undo Scrutinize Data");
+        undoMenuItem.setToolTipText("Undo last operation that changed the scrutinize data");
+        undoMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                undoMenuItemActionPerformed(evt);
+            }
+        });
+        actionsMenu.add(undoMenuItem);
+
         startCaptureMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_record.png"))); // NOI18N
         startCaptureMenuItem.setText("Start capture");
         startCaptureMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -9177,6 +9203,18 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setPrintAnalyzerIRPsToConsole(printAnalyzeIRPsToConsoleCheckBoxMenuItem.isSelected());
     }//GEN-LAST:event_printAnalyzeIRPsToConsoleCheckBoxMenuItemActionPerformed
 
+    private void undoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoMenuItemActionPerformed
+        try {
+            capturedDataTextArea.undo();
+        } catch (UndoableJTextArea.UndoHistoryEmptyException ex) {
+            guiUtils.error("No (further) undo informationm");
+        }
+    }//GEN-LAST:event_undoMenuItemActionPerformed
+
+    private void undoDataMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoDataMenuItemActionPerformed
+        undoMenuItemActionPerformed(evt);
+    }//GEN-LAST:event_undoDataMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9208,7 +9246,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel captureLircMode2Panel;
     private javax.swing.JButton captureTestButton;
     private javax.swing.JScrollPane capturedDataScrollPane;
-    private javax.swing.JTextArea capturedDataTextArea;
+    private org.harctoolbox.guicomponents.UndoableJTextArea capturedDataTextArea;
     private javax.swing.JButton capturingCommandFusionHardwareHelpButton;
     private javax.swing.JButton capturingDevLircHardwareHelpButton;
     private javax.swing.JButton capturingGirsHardwareHelpButton;
@@ -9513,6 +9551,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator28;
     private javax.swing.JPopupMenu.Separator jSeparator29;
     private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JPopupMenu.Separator jSeparator30;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
@@ -9696,6 +9735,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton transmitSignalButton;
     private javax.swing.JButton transmitSignalButton1;
     private javax.swing.JMenuItem tutorialMenuItem;
+    private javax.swing.JMenuItem undoDataMenuItem;
+    private javax.swing.JMenuItem undoMenuItem;
     private javax.swing.JMenuItem unsetTMenuItem;
     private javax.swing.JCheckBoxMenuItem usePopupsForErrorsCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem usePopupsForHelpCheckBoxMenuItem;
