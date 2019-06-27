@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013 Bengt Martensson.
+Copyright (C) 2013, 2019 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,16 +17,21 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer;
 
-public enum OutputTextFormat {
-    raw,
-    ccf;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.ircore.Pronto;
 
-    public String displayName() {
-        return this == raw ? "Raw (recommended)"
-                : "CCF (\"hex\", \"Pronto\")";
+public enum OutputTextFormat {
+    prontoHex,
+    rawWithSigns,
+    rawWithoutSigns;
+
+    public String formatIrSignal(IrSignal irSignal) {
+        return this == prontoHex ? Pronto.toString(irSignal)
+             : this == rawWithSigns ? irSignal.toString(true)
+             : irSignal.toString(false);
     }
 
     public static OutputTextFormat newOutputTextFormat(int n) {
-        return n == 0 ? raw : ccf;
+        return OutputTextFormat.values()[n];
     }
 }

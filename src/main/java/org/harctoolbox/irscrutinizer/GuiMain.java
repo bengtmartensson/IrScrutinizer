@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013, 2014, 2015, 2017, 2018 Bengt Martensson.
+Copyright (C) 2013, 2014, 2015, 2017, 2018, 2019 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1065,13 +1065,8 @@ public final class GuiMain extends javax.swing.JFrame {
         setFrequencyParameter(irSignal.getFrequency());
     }
 
-    private String formatIrSignal(IrSignal irSignal, OutputTextFormat format) {
-        return format == OutputTextFormat.ccf ? Pronto.toString(irSignal)
-                    : irSignal.toString(true/*, false, " "*/);
-    }
-
     private String formatIrSignal(IrSignal irSignal, int formatIndex) {
-        return formatIrSignal(irSignal, OutputTextFormat.newOutputTextFormat(formatIndex));
+        return OutputTextFormat.newOutputTextFormat(formatIndex).formatIrSignal(irSignal);
     }
 
     private String formatIrSignal(IrSignal irSignal) {
@@ -1392,6 +1387,10 @@ public final class GuiMain extends javax.swing.JFrame {
 
     GuiUtils getGuiUtils() {
         return guiUtils;
+    }
+
+    private void updateOutputFormat(OutputTextFormat format) {
+        updateOutputFormat(format.ordinal());
     }
 
     private void updateOutputFormat(int format) {
@@ -2261,8 +2260,9 @@ public final class GuiMain extends javax.swing.JFrame {
         optionsMenu = new javax.swing.JMenu();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         outputFormatMenu = new javax.swing.JMenu();
-        rawRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         ccfRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        rawRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        rawWithoutSignsRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         analyzerBasisMenu = new javax.swing.JMenu();
         analyzerBase2RadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         analyzerBase8RadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -6519,8 +6519,18 @@ public final class GuiMain extends javax.swing.JFrame {
 
         outputFormatMenu.setText("Output Text Format");
 
+        ccfRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_MASK));
+        ccfRadioButtonMenuItem.setSelected(true);
+        ccfRadioButtonMenuItem.setText("Pronto Hex");
+        ccfRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ccfRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        outputFormatMenu.add(ccfRadioButtonMenuItem);
+
         rawRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
-        rawRadioButtonMenuItem.setText("Raw");
+        rawRadioButtonMenuItem.setText("Raw (with signs)");
         rawRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rawRadioButtonMenuItemActionPerformed(evt);
@@ -6528,15 +6538,14 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         outputFormatMenu.add(rawRadioButtonMenuItem);
 
-        ccfRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_MASK));
-        ccfRadioButtonMenuItem.setSelected(true);
-        ccfRadioButtonMenuItem.setText("Pronto Hex (\"CCF\")");
-        ccfRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        rawWithoutSignsRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.SHIFT_MASK));
+        rawWithoutSignsRadioButtonMenuItem.setText("Raw (without signs)");
+        rawWithoutSignsRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ccfRadioButtonMenuItemActionPerformed(evt);
+                rawWithoutSignsRadioButtonMenuItemActionPerformed(evt);
             }
         });
-        outputFormatMenu.add(ccfRadioButtonMenuItem);
+        outputFormatMenu.add(rawWithoutSignsRadioButtonMenuItem);
 
         optionsMenu.add(outputFormatMenu);
 
@@ -7185,11 +7194,11 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_verboseCheckBoxMenuItemActionPerformed
 
     private void rawRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawRadioButtonMenuItemActionPerformed
-        updateOutputFormat(0);
+        updateOutputFormat(OutputTextFormat.rawWithSigns);
     }//GEN-LAST:event_rawRadioButtonMenuItemActionPerformed
 
     private void ccfRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ccfRadioButtonMenuItemActionPerformed
-        updateOutputFormat(1);
+        updateOutputFormat(OutputTextFormat.prontoHex);
     }//GEN-LAST:event_ccfRadioButtonMenuItemActionPerformed
 
     private void checkUpToDateMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkUpToDateMenuItemActionPerformed
@@ -9218,6 +9227,10 @@ public final class GuiMain extends javax.swing.JFrame {
         undoMenuItemActionPerformed(evt);
     }//GEN-LAST:event_undoDataMenuItemActionPerformed
 
+    private void rawWithoutSignsRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawWithoutSignsRadioButtonMenuItemActionPerformed
+         updateOutputFormat(OutputTextFormat.rawWithoutSigns);
+    }//GEN-LAST:event_rawWithoutSignsRadioButtonMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9650,6 +9663,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JTable rawTable;
     private javax.swing.JPopupMenu rawTablePopupMenu;
     private javax.swing.JScrollPane rawTableScrollPane;
+    private javax.swing.JRadioButtonMenuItem rawWithoutSignsRadioButtonMenuItem;
     private javax.swing.JMenuItem reAnalyzeMenuItem;
     private javax.swing.JCheckBoxMenuItem rejectLircCodeImports;
     private javax.swing.JMenuItem relativeToleranceMenuItem;
