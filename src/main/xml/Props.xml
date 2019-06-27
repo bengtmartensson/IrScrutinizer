@@ -21,7 +21,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 <properties package="org.harctoolbox.irscrutinizer" useXml = "true" appName="Version.appName" home-environment-var="IRSCRUTINIZERHOME">
     <import class="org.harctoolbox.harchardware.ir.IrTrans"/>
     <import class="org.harctoolbox.harchardware.ir.LircClient"/>
-    <property name="proxyHostName" type="string" default='null' doc='Hostname of WEB proxy.' />
+    <property name="proxyHostName" type="string" default='""' doc='Hostname of WEB proxy.' />
     <property name="proxyPort" type="int" default='"8080"' doc='Port number of WEB proxy.' />
     <import class="org.harctoolbox.ircore.IrCoreUtils"/>
     <import class="org.harctoolbox.ircore.IrSequence"/>
