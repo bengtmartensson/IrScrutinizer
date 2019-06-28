@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Create a directory for AppImage, and call appimagetool.
+# Create a directory for AppImage, populate it, and call appimagetool.
 # Should be called from the IrScrutinizer top directory.
 
 if [ $# -lt 2 ] ; then
@@ -77,6 +77,23 @@ cat > ${WRAPPER} <<EOF
 unset XDG_DATA_DIRS
 IRSCRUTINIZERHOME=\${APP_ROOT}/usr/share/${MYPROG_LOWER}
 
+transmogrify()
+{
+    exec "${JAVA_PATH}java" -classpath "\${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
+        ${JAVA_QUICKSTART} org.harctoolbox.irp.IrpTransmogrifier "\$@"
+}
+
+# If basename \$0 equals "irptransmogrifier" invoke that program instead.
+if [ "\$(basename \$0)" == "irptransmogrifier" ] ; then
+    transmogrify "\$@"
+fi
+
+# If \$1 equals "irptransmogrifier" invoke that program instead.
+if [ "\$1" == "irptransmogrifier" ] ; then
+    shift
+    transmogrify "\$@"
+fi
+
 checkgroup()
 {
     if grep \$1 /etc/group > /dev/null ; then
@@ -108,10 +125,12 @@ cd \${IRSCRUTINIZERHOME}
 # Since the lock directory is sometimes different from /var/lock,
 # we prefer the system's rxtx (if existing) over our own,
 # which is why we put our own last in the path.
-"${JAVA_PATH}java" -Djava.library.path=/usr/lib64/rxtx:/usr/lib64:/usr/lib/rxtx:/usr/lib:\${IRSCRUTINIZERHOME}/Linux-amd64 ${JAVA_QUICKSTART} -jar \${IRSCRUTINIZERHOME}/${APPNAME}-jar-with-dependencies.jar "\$@"
+exec "${JAVA_PATH}java" -Djava.library.path=/usr/lib64/rxtx:/usr/lib64:/usr/lib/rxtx:/usr/lib:\${IRSCRUTINIZERHOME}/Linux-amd64 \
+     ${JAVA_QUICKSTART} -jar \${IRSCRUTINIZERHOME}/${APPNAME}-jar-with-dependencies.jar "\$@"
 EOF
 
 chmod 555 ${WRAPPER}
+ln -s ${MYPROG_LOWER} ${USR_BIN}/irptransmogrifier
 
 # Invoke the builder
 #wget -c "https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage"
@@ -121,4 +140,4 @@ chmod 555 ${WRAPPER}
 # https://github.com/AppImage/AppImageKit/issues/856
 # Until that is fixed, must use --no-appstream
 
-tools/appimagetool-x86_64.AppImage --no-appstream ${APPDIR} ${APPIMAGE}
+tools/appimagetool-x86_64.AppImage --no-appstream ${APPDIR} ${APPIMAGE} > /dev/null

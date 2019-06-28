@@ -14,5 +14,20 @@ export PERLLIB="${APP_ROOT}/usr/share/perl5/:${APP_ROOT}/usr/lib/perl5/${PERLLIB
 export GSETTINGS_SCHEMA_DIR="${APP_ROOT}/usr/share/glib-2.0/schemas/${GSETTINGS_SCHEMA_DIR:+:$GSETTINGS_SCHEMA_DIR}"
 export QT_PLUGIN_PATH="${APP_ROOT}/usr/lib/qt4/plugins/:${APP_ROOT}/usr/lib/i386-linux-gnu/qt4/plugins/:${APP_ROOT}/usr/lib/x86_64-linux-gnu/qt4/plugins/:${APP_ROOT}/usr/lib32/qt4/plugins/:${APP_ROOT}/usr/lib64/qt4/plugins/:${APP_ROOT}/usr/lib/qt5/plugins/:${APP_ROOT}/usr/lib/i386-linux-gnu/qt5/plugins/:${APP_ROOT}/usr/lib/x86_64-linux-gnu/qt5/plugins/:${APP_ROOT}/usr/lib32/qt5/plugins/:${APP_ROOT}/usr/lib64/qt5/plugins/${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
 
-EXEC=$(grep -e '^Exec=.*' "${APP_ROOT}"/*.desktop | head -n 1 | cut -d "=" -f 2 | cut -d " " -f 1)
-exec "${EXEC}" "$@"
+if [ ! -z $APPIMAGE ] ; then
+    PROG_NAME=$(basename "$ARGV0")
+else
+    PROG_NAME=$(basename "$0")
+fi
+
+# If this called with a name that does not end with AppImage,
+# consider that as a command to be invoked, otherwise extract from desktop file.
+case ${PROG_NAME} in
+    *AppImage)
+        EXEC=$(grep -e '^Exec=.*' "${APP_ROOT}"/*.desktop | head -n 1 | cut -d "=" -f 2 | cut -d " " -f 1)
+        exec "${EXEC}" "$@"
+        ;;
+    *)
+        exec "${PROG_NAME}" "$@"
+        ;;
+esac
