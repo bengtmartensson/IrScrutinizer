@@ -54,6 +54,6 @@ public final class Version {
     private Version() {
     }
 }
-    </xsl:template>
+</xsl:template>
 
 </xsl:stylesheet>
