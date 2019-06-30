@@ -38,4 +38,4 @@ rm -f ${REPODIR}/irscrutinizer.bat ${REPODIR}/irscrutinizer.desktop
 rm -f ${REPODIR}/*_install.txt
 rm -rf ${REPODIR}/Linux* ${REPODIR}/Windows*
 
-(cd ${WORKDIR}; zip -q -r ${TARGETDIR}/${APPNAME}-${VERSION}-app.zip ${APPNAME}-${VERSION})
+(cd ${WORKDIR}; zip -q -r ${TARGETDIR}/${APPNAME}-${VERSION}-macOS.zip ${APPNAME}-${VERSION})
