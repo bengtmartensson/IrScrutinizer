@@ -1,15 +1,23 @@
-<!--
-   Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
-  -->
+<!-- Public identifier: "-//harctoolbox.org//properties//en" -->
 
-<!-- DTD for properties -->
+<!ELEMENT properties (property|import)*>
+<!ATTLIST properties
+    version CDATA #IMPLIED
+    home-environment-var NMTOKEN #REQUIRED
+    appName NMTOKEN #REQUIRED
+    useXml (true|false) "true"
+    package NMTOKEN #REQUIRED
+  >
 
-<!ELEMENT properties ( comment?, entry* ) >
+<!ELEMENT import EMPTY>
+<!ATTLIST import
+    class NMTOKEN #REQUIRED
+  >
 
-<!ATTLIST properties version CDATA #FIXED "1.0">
-
-<!ELEMENT comment (#PCDATA) >
-
-<!ELEMENT entry (#PCDATA) >
-
-<!ATTLIST entry key CDATA #REQUIRED>
+<!ELEMENT property EMPTY>
+<!ATTLIST property
+    doc CDATA #IMPLIED
+    default CDATA #REQUIRED
+    type (int|string|boolean|rectangle|double) #REQUIRED
+    name NMTOKEN #REQUIRED
+  >
