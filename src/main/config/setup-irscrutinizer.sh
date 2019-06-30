@@ -8,6 +8,9 @@
 # It should be run with the rights required to write
 # at the desired places. I.e. root a priori not necessary.
 
+# Just for this file, do not affect installed wrappers.
+JAVA=java
+
 mklink()
 {
     if ln -sf ${IRSCRUTINIZERHOME}/${MYPROG_LOWER}.sh   ${PREFIX}/bin/${1} >/dev/null 2>&1 ; then
@@ -45,6 +48,18 @@ mklink irptransmogrifier
 #install -d ${PREFIX}/share/xml/harctoolbox
 #install --mode=444 ../schemas/*.xsd ${PREFIX}/share/xml/harctoolbox
 #ln -sf ../xml/harctoolbox ${IRSCRUTINIZERHOME}/schemas
+
+# Find best librxtxSerial.so, and make librxtxSerial.so a link to it.
+if [ "$(arch)" = "x86_64" ] ; then
+    cd ${IRSCRUTINIZERHOME}/Linux-amd64
+    for solib in librxtxSerial-var-lock*.so ; do
+        ${JAVA} -cp ${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar org.harctoolbox.harchardware.comm.TestRxtx ${solib} 2>&1 | grep "No permission to create lock file."
+	if [ $? -ne 0 ] ; then
+	    ln -sf ${solib} librxtxSerial.so
+	    break
+	fi
+    done
+fi
 
 # Install desktop file
 install -d ${PREFIX}/share/applications

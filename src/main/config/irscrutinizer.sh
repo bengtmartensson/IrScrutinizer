@@ -43,13 +43,13 @@ fi
 #fi
 
 # Use a system supplied librxtxSerial.so if present.
-# Fedora: dnf install rxtx
+# Fedora: dnf install rxtx (presently broken: https://bugzilla.redhat.com/show_bug.cgi?id=1645856 )
 # Ubunto >= 16: apt-get install librxtx-java
 if [ -f /usr/lib64/rxtx/librxtxSerial.so ] ; then
-    LOAD_RXTX_PATH=-Djava.library.path=/usr/lib64/rxtx
+    LOAD_RXTX_PATH=-Djava.library.path=/usr/local/lib:/usr/lib64/rxtx
 fi
 if [ -f /usr/lib/rxtx/librxtxSerial.so ] ; then
-    LOAD_RXTX_PATH=-Djava.library.path=/usr/lib/rxtx
+    LOAD_RXTX_PATH=-Djava.library.path=/usr/local/lib:/usr/lib/rxtx
 fi
 #LIBRARY_PATH=${RXTXLIB_PATH}${IRSCRUTINIZERHOME}/`uname -s`-${ARCH}
 #LIBRARY_PATH=/usr/lib64/rxtx
