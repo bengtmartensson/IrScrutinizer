@@ -1109,7 +1109,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="resetPropertiesMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Reset properties"/>
+                <Property name="text" type="java.lang.String" value="Set properties to default"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resetPropertiesMenuItemActionPerformed"/>
@@ -1355,6 +1355,7 @@
             <Menu class="javax.swing.JMenu" name="outputFormatMenu">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Output Text Format"/>
+                <Property name="toolTipText" type="java.lang.String" value="The text format for writing IR signals in the data window."/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JRadioButtonMenuItem" name="ccfRadioButtonMenuItem">
@@ -1395,13 +1396,17 @@
             </Menu>
             <Menu class="javax.swing.JMenu" name="analyzerBasisMenu">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Preferred Number Basis"/>
+                <Property name="text" type="java.lang.String" value="Analyzer Number Basis"/>
+                <Property name="toolTipText" type="java.lang.String" value="Radix for the analyzer to print the parameters."/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JRadioButtonMenuItem" name="analyzerBase2RadioButtonMenuItem">
                   <Properties>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="analyzerBaseButtonGroup"/>
+                    </Property>
+                    <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="properties.getAnalyzerBase() == 2" type="code"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="2"/>
                   </Properties>
@@ -1414,6 +1419,9 @@
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="analyzerBaseButtonGroup"/>
                     </Property>
+                    <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="properties.getAnalyzerBase() == 8" type="code"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="8"/>
                   </Properties>
                   <Events>
@@ -1424,6 +1432,9 @@
                   <Properties>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="analyzerBaseButtonGroup"/>
+                    </Property>
+                    <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="properties.getAnalyzerBase() == 10" type="code"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="10"/>
                   </Properties>
@@ -1436,7 +1447,9 @@
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="analyzerBaseButtonGroup"/>
                     </Property>
-                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="properties.getAnalyzerBase() == 16" type="code"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="16"/>
                   </Properties>
                   <Events>
@@ -1495,6 +1508,7 @@
                   <Image iconType="3" name="/icons/Crystal-Clear/22x22/apps/xclock.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Timeouts"/>
+                <Property name="toolTipText" type="java.lang.String" value="Configure different timeout values."/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="startTimeoutMenuItem">
@@ -2072,7 +2086,7 @@
                 </Property>
                 <Property name="mnemonic" type="int" value="65"/>
                 <Property name="text" type="java.lang.String" value="About..."/>
-                <Property name="toolTipText" type="java.lang.String" value="Starts About popup"/>
+                <Property name="toolTipText" type="java.lang.String" value="The obligatory About popup"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="aboutMenuItemActionPerformed"/>
@@ -2088,6 +2102,7 @@
                 </Property>
                 <Property name="mnemonic" type="int" value="68"/>
                 <Property name="text" type="java.lang.String" value="Program Documentation"/>
+                <Property name="toolTipText" type="java.lang.String" value="Show program reference documentation."/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mainDocuMenuItemActionPerformed"/>
@@ -2172,7 +2187,7 @@
                   <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/mail_generic2.png"/>
                 </Property>
                 <Property name="mnemonic" type="int" value="72"/>
-                <Property name="text" type="java.lang.String" value="Send feedback"/>
+                <Property name="text" type="java.lang.String" value="Send feedback with Email"/>
                 <Property name="toolTipText" type="java.lang.String" value="Start the mail program for sendiing feedback."/>
               </Properties>
               <Events>
@@ -6773,7 +6788,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="irWidgetSerialPortSimpleBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="261" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
@@ -6828,7 +6843,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="globalCacheCaptureSelector" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="225" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
@@ -6871,11 +6886,12 @@
                     <Container class="javax.swing.JPanel" name="captureLircMode2Panel">
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="LIRC Mode 2">
+                          <JTabbedPaneConstraints tabName="LIRC Mode 2" toolTip="">
                             <Property name="tabTitle" type="java.lang.String" value="LIRC Mode 2"/>
                             <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                               <Image iconType="3" name="/icons/lirc/favicon-2.png"/>
                             </Property>
+                            <Property name="tabToolTip" type="java.lang.String" value=""/>
                           </JTabbedPaneConstraints>
                         </Constraint>
                       </Constraints>
@@ -6891,15 +6907,19 @@
                                           <Component id="capturingMode2HardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="102" attributes="0">
+                                          <Component id="startMode2Button" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Component id="stopMode2Button" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace min="200" pref="611" max="32767" attributes="0"/>
+                                      </Group>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="mode2TabbedPane" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Group type="102" alignment="0" attributes="0">
-                                                  <Component id="startMode2Button" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="stopMode2Button" min="-2" max="-2" attributes="0"/>
-                                              </Group>
-                                              <Component id="mode2TabbedPane" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel24" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel32" min="-2" max="-2" attributes="0"/>
                                           </Group>
-                                          <EmptySpace min="0" pref="200" max="32767" attributes="0"/>
+                                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
@@ -6909,8 +6929,18 @@
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="mode2TabbedPane" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" attributes="0">
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="mode2TabbedPane" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
+                                          <Component id="jLabel24" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="jLabel32" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" attributes="0">
                                           <EmptySpace max="32767" attributes="0"/>
@@ -6923,7 +6953,7 @@
                                               <Component id="startMode2Button" alignment="3" min="-2" max="-2" attributes="0"/>
                                               <Component id="stopMode2Button" alignment="3" min="-2" max="-2" attributes="0"/>
                                           </Group>
-                                          <EmptySpace max="32767" attributes="0"/>
+                                          <EmptySpace pref="35" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -7054,6 +7084,16 @@
                             </Container>
                           </SubComponents>
                         </Container>
+                        <Component class="javax.swing.JLabel" name="jLabel24">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="Consider using"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="jLabel32">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="/dev/lirc instead!"/>
+                          </Properties>
+                        </Component>
                       </SubComponents>
                     </Container>
                     <Container class="javax.swing.JPanel" name="captureDevLircPanel">
@@ -7072,7 +7112,7 @@
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace pref="763" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                                   <Component id="capturingDevLircHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -7130,7 +7170,7 @@
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace pref="763" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                                   <Component id="capturingIrToyHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -7185,7 +7225,7 @@
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace pref="763" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                                   <Component id="capturingGirsHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -7240,7 +7280,7 @@
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace pref="763" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                                   <Component id="capturingCommandFusionHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>

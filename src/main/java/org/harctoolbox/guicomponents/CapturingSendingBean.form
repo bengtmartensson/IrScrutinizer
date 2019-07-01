@@ -45,7 +45,7 @@
                   <Component id="openedLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="configureOpenButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="29" max="32767" attributes="0"/>
+              <EmptySpace pref="22" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -53,6 +53,9 @@
   <SubComponents>
     <Component class="javax.swing.JButton" name="configureOpenButton">
       <Properties>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/goto.png"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="Jump to Configure/Open"/>
         <Property name="toolTipText" type="java.lang.String" value="Press to jump to the panel for configuring and opening."/>
         <Property name="enabled" type="boolean" value="false"/>

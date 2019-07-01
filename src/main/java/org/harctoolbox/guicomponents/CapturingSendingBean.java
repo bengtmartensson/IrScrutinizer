@@ -67,6 +67,7 @@ public final class CapturingSendingBean extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
 
+        configureOpenButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/goto.png"))); // NOI18N
         configureOpenButton.setText("Jump to Configure/Open");
         configureOpenButton.setToolTipText("Press to jump to the panel for configuring and opening.");
         configureOpenButton.setEnabled(false);
@@ -111,7 +112,7 @@ public final class CapturingSendingBean extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(openedLabel)
                     .addComponent(configureOpenButton))
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
