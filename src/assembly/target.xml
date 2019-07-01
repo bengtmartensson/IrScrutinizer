@@ -74,9 +74,10 @@
             <source>target/generated-documents/IrScrutinizer.html</source>
             <outputDirectory>doc</outputDirectory>
         </file>
-        <!--file>
-            <source>../IrpMaster/target/generated-documents/IrpMaster.html</source>
+        <file>
+            <source>${basedir}/target/doc/IrpProtocols.html</source>
             <outputDirectory>doc</outputDirectory>
-        </file-->
+        </file>
+        <!-- TODO: IrpTransmogrifier.html -->
     </files>
 </assembly>
