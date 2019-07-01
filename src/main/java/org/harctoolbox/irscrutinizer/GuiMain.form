@@ -1551,6 +1551,71 @@
                 </MenuItem>
               </SubComponents>
             </Menu>
+            <Menu class="javax.swing.JMenu" name="protocolParametersMenu">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icons/Crystal-Clear/22x22/apps/package_settings.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Protocol Parameters"/>
+                <Property name="toolTipText" type="java.lang.String" value="Parameters for IrpTransmogrifier (see IrpTransmogrifier for documentation)."/>
+              </Properties>
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="absToleranceMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Absolute tolerance (ms)"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Absolute tolerance for duration comparisons"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="absToleranceMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="relToleranceMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Relative tolerance (1)"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Relative tolerance for duration comparisons"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="relToleranceMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="frequencyToleranceMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Frequency tolerance (Hz)"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Absolute tolerance for frequency comparisons"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="frequencyToleranceMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="minLeadoutMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Min. Leadout (ms)"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Threshold value for lead-out in microseconds."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="minLeadoutMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="minRepeatGapMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Min. Repeatgap (ms)"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Minumal value in micro seconds to be considered as ending a repeat."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="minRepeatGapMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="dummyGapMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Dummy Gap (ms)"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Dummy gap added for sequences with an odd number of durations."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dummyGapMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
             <MenuItem class="javax.swing.JMenuItem" name="fallbackFrequencyMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Fallback Frequency..."/>

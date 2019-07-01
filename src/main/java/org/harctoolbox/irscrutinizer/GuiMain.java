@@ -1086,14 +1086,15 @@ public final class GuiMain extends javax.swing.JFrame {
 //        DecodeIR decodeIr = DecodeIR.newDecodeIR(irSignal);
 //        if (decodeIr == null)
 //            throw new IOException("DecodeIR was not found");
-        Map<String, Decoder.Decode> decodes = decoder.decode(irSignal, false, //strict
+        Map<String, Decoder.Decode> decodes = decoder.decode(irSignal,
+                false, //strict
                 false, // allDecodes
                 true, // removeDefaultedParameters
                 false, // recursive
-                -1.0, // frequencyTolerance
-                null, // absoluteTolerance
-                null, // relativeTolerance
-                null //minimumLeadout
+                properties.getFrequencyTolerance(),
+                properties.getAbsoluteTolerance(),
+                properties.getRelativeTolerance(),
+                properties.getMinLeadOut() //minimumLeadout
         );
         StringBuilder decodeString = new StringBuilder(20);
         boolean first = true;
@@ -2283,6 +2284,13 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator26 = new javax.swing.JPopupMenu.Separator();
         globalCacheTimeoutMenuItem = new javax.swing.JMenuItem();
         lircTimeoutMenuItem = new javax.swing.JMenuItem();
+        protocolParametersMenu = new javax.swing.JMenu();
+        absToleranceMenuItem = new javax.swing.JMenuItem();
+        relToleranceMenuItem = new javax.swing.JMenuItem();
+        frequencyToleranceMenuItem = new javax.swing.JMenuItem();
+        minLeadoutMenuItem = new javax.swing.JMenuItem();
+        minRepeatGapMenuItem = new javax.swing.JMenuItem();
+        dummyGapMenuItem = new javax.swing.JMenuItem();
         fallbackFrequencyMenuItem = new javax.swing.JMenuItem();
         verboseCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ignoreEndingSilenceCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -6674,6 +6682,66 @@ public final class GuiMain extends javax.swing.JFrame {
 
         optionsMenu.add(timeoutMenu);
 
+        protocolParametersMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/package_settings.png"))); // NOI18N
+        protocolParametersMenu.setText("Protocol Parameters");
+        protocolParametersMenu.setToolTipText("Parameters for IrpTransmogrifier (see IrpTransmogrifier for documentation).");
+
+        absToleranceMenuItem.setText("Absolute tolerance (ms)");
+        absToleranceMenuItem.setToolTipText("Absolute tolerance for duration comparisons");
+        absToleranceMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                absToleranceMenuItemActionPerformed(evt);
+            }
+        });
+        protocolParametersMenu.add(absToleranceMenuItem);
+
+        relToleranceMenuItem.setText("Relative tolerance (1)");
+        relToleranceMenuItem.setToolTipText("Relative tolerance for duration comparisons");
+        relToleranceMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                relToleranceMenuItemActionPerformed(evt);
+            }
+        });
+        protocolParametersMenu.add(relToleranceMenuItem);
+
+        frequencyToleranceMenuItem.setText("Frequency tolerance (Hz)");
+        frequencyToleranceMenuItem.setToolTipText("Absolute tolerance for frequency comparisons");
+        frequencyToleranceMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                frequencyToleranceMenuItemActionPerformed(evt);
+            }
+        });
+        protocolParametersMenu.add(frequencyToleranceMenuItem);
+
+        minLeadoutMenuItem.setText("Min. Leadout (ms)");
+        minLeadoutMenuItem.setToolTipText("Threshold value for lead-out in microseconds.");
+        minLeadoutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minLeadoutMenuItemActionPerformed(evt);
+            }
+        });
+        protocolParametersMenu.add(minLeadoutMenuItem);
+
+        minRepeatGapMenuItem.setText("Min. Repeatgap (ms)");
+        minRepeatGapMenuItem.setToolTipText("Minumal value in micro seconds to be considered as ending a repeat.");
+        minRepeatGapMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minRepeatGapMenuItemActionPerformed(evt);
+            }
+        });
+        protocolParametersMenu.add(minRepeatGapMenuItem);
+
+        dummyGapMenuItem.setText("Dummy Gap (ms)");
+        dummyGapMenuItem.setToolTipText("Dummy gap added for sequences with an odd number of durations.");
+        dummyGapMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dummyGapMenuItemActionPerformed(evt);
+            }
+        });
+        protocolParametersMenu.add(dummyGapMenuItem);
+
+        optionsMenu.add(protocolParametersMenu);
+
         fallbackFrequencyMenuItem.setText("Fallback Frequency...");
         fallbackFrequencyMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -9231,10 +9299,71 @@ public final class GuiMain extends javax.swing.JFrame {
          updateOutputFormat(OutputTextFormat.rawWithoutSigns);
     }//GEN-LAST:event_rawWithoutSignsRadioButtonMenuItemActionPerformed
 
+    private void absToleranceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_absToleranceMenuItemActionPerformed
+        try {
+            Double t = guiUtils.getDoubleInput("Absolute tolerance for duration comparisons (ms).", properties.getAbsoluteTolerance());
+            if (t != null)
+                properties.setAbsoluteTolerance(t);
+        } catch (NumberFormatException ex) {
+            guiUtils.error("Invalid number: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_absToleranceMenuItemActionPerformed
+
+    private void relToleranceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relToleranceMenuItemActionPerformed
+        try {
+            Double t = guiUtils.getDoubleInput("Relative tolerance for duration comparisons (between 0.0 and 1.0).", properties.getRelativeTolerance());
+            if (t != null)
+                properties.setRelativeTolerance(t);
+        } catch (NumberFormatException ex) {
+            guiUtils.error("Invalid number: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_relToleranceMenuItemActionPerformed
+
+    private void frequencyToleranceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_frequencyToleranceMenuItemActionPerformed
+        try {
+            Double t = guiUtils.getDoubleInput("Absolute tolerance for frequency comparisons (Hz).", properties.getFrequencyTolerance());
+            if (t != null)
+                properties.setFrequencyTolerance(t);
+        } catch (NumberFormatException ex) {
+            guiUtils.error("Invalid number: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_frequencyToleranceMenuItemActionPerformed
+
+    private void minLeadoutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minLeadoutMenuItemActionPerformed
+        try {
+            Double t = guiUtils.getDoubleInput("Threshold value for lead-out (ms).", properties.getMinLeadOut());
+            if (t != null)
+                properties.setMinLeadOut(t);
+        } catch (NumberFormatException ex) {
+            guiUtils.error("Invalid number: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_minLeadoutMenuItemActionPerformed
+
+    private void minRepeatGapMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minRepeatGapMenuItemActionPerformed
+        try {
+            Double t = guiUtils.getDoubleInput("Minumal value in micro seconds to be considered as ending a repeat.", properties.getMinRepeatLastGap());
+            if (t != null)
+                properties.setMinRepeatLastGap(t);
+        } catch (NumberFormatException ex) {
+            guiUtils.error("Invalid number: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_minRepeatGapMenuItemActionPerformed
+
+    private void dummyGapMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dummyGapMenuItemActionPerformed
+        try {
+            Double t = guiUtils.getDoubleInput("Dummy gap added for sequences with an odd number of durations (ms).", properties.getDummyGap());
+            if (t != null)
+                properties.setDummyGap(t);
+        } catch (NumberFormatException ex) {
+            guiUtils.error("Invalid number: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_dummyGapMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
     private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JMenuItem absToleranceMenuItem;
     private javax.swing.JMenuItem absoluteToleranceMenuItem;
     private javax.swing.JMenu actionsMenu;
     private javax.swing.JMenuItem addEmptyParametrizedSignalMenuItem;
@@ -9326,6 +9455,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.guicomponents.DevLircBean devLircBean;
     private org.harctoolbox.guicomponents.CapturingSendingBean devLircCapturingSendingBean;
     private javax.swing.JPanel devLircPanel;
+    private javax.swing.JMenuItem dummyGapMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JTextField editingTextField;
     private javax.swing.JLabel endingLengthLabel;
@@ -9374,6 +9504,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem fallbackFrequencyMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JLabel frequencyLabel;
+    private javax.swing.JMenuItem frequencyToleranceMenuItem;
     private javax.swing.JComboBox<String> gcdbCodeSetComboBox;
     private javax.swing.JComboBox<String> gcdbDeviceTypeComboBox;
     private javax.swing.JButton gcdbImportButton;
@@ -9587,6 +9718,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu loadMenu;
     private javax.swing.JMenuItem mainDocuMenuItem;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem minLeadoutMenuItem;
+    private javax.swing.JMenuItem minRepeatGapMenuItem;
     private javax.swing.JLabel mode2CommandLabel;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<Mode2Importer> mode2FileImporterBean;
     private javax.swing.JPanel mode2ImportPanel;
@@ -9636,6 +9769,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JTextField prontoExportScreenWidthTextField;
     private javax.swing.JComboBox<String> prontoModelComboBox;
     private javax.swing.JComboBox<String> protocolColumnComboBox;
+    private javax.swing.JMenu protocolParametersMenu;
     private javax.swing.JMenuItem protocolSpecMenuItem;
     private javax.swing.JTextField protocolsIniTextField;
     private javax.swing.JMenuItem proxyMenuItem;
@@ -9666,6 +9800,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JRadioButtonMenuItem rawWithoutSignsRadioButtonMenuItem;
     private javax.swing.JMenuItem reAnalyzeMenuItem;
     private javax.swing.JCheckBoxMenuItem rejectLircCodeImports;
+    private javax.swing.JMenuItem relToleranceMenuItem;
     private javax.swing.JMenuItem relativeToleranceMenuItem;
     private javax.swing.JMenuItem releaseNotesMenuItem;
     private javax.swing.JPanel remoteScrutinizerPanel;

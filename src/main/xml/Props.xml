@@ -159,10 +159,13 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="prontoButtonSizeX" type="int" default='"80"' doc="Pronto screen width" />
     <property name="prontoButtonSizeY" type="int" default='"30"' doc="Pronto screen height" />
 
-    <property name="absoluteTolerance" type="double" default='Double.toString(IrCoreUtils.DEFAULT_ABSOLUTE_TOLERANCE)' doc="Absolute tolerance for duration comparisons" />
-    <property name="relativeTolerance" type="double" default='Double.toString(IrCoreUtils.DEFAULT_RELATIVE_TOLERANCE)' doc="Relative tolerance for duration comparisons" />
-    <property name="minRepeatLastGap"  type="double" default='Double.toString(IrCoreUtils.DEFAULT_MIN_REPEAT_LAST_GAP)' doc="Minumal value in micro seconds to be considered as ending a repeat" />
-    <property name="dummyGap"          type="double" default='Double.toString(IrSequence.DUMMYGAPDURATION)'            doc="Dummy gap added for sequences with an odd number of durations" />
+    <property name="absoluteTolerance"  type="double" default='Double.toString(IrCoreUtils.DEFAULT_ABSOLUTE_TOLERANCE)' doc="Absolute tolerance for duration comparisons (ms)." />
+    <property name="relativeTolerance"  type="double" default='Double.toString(IrCoreUtils.DEFAULT_RELATIVE_TOLERANCE)' doc="Relative tolerance for duration comparisons (ms)." />
+    <property name="frequencyTolerance" type="double" default='Double.toString(IrCoreUtils.DEFAULT_FREQUENCY_TOLERANCE)' doc="Absolute tolerance for frequency comparisons (Hz)." />
+    <property name="minLeadOut"         type="double" default='Double.toString(IrCoreUtils.DEFAULT_MINIMUM_LEADOUT)'    doc="Threshold value for lead-out (ms)." />
+    <property name="minRepeatLastGap"   type="double" default='Double.toString(IrCoreUtils.DEFAULT_MIN_REPEAT_LAST_GAP)' doc="Minumal value in micro seconds to be considered as ending a repeat." />
+    <property name="dummyGap"           type="double" default='Double.toString(IrSequence.DUMMYGAPDURATION)'            doc="Dummy gap added for sequences with an odd number of durations (ms)." />
+
     <property name="dontInquire4UnsavedParametricRemotes" type="boolean" default='"false"' doc="Skip acknowledge when exiting with unsaved changes in parameteric remotes."/>
     <property name="dontInquire4UnsavedRawRemotes" type="boolean" default='"false"' doc="Skip acknowledge when exiting with unsaved changes in raw remotes."/>
 </properties>
