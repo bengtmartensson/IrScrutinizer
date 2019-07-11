@@ -1,8 +1,48 @@
-Release notes for IrScrutinizer, including IrpMaster, Girr, HardHardware,
-and Jirc.
+Release notes for IrScrutinizer, including IrpMaster/IrpTransmogrifier,
+Girr, HardHardware, DevSlashLirc, and Jirc.
 
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/harctoolboxbundle/issues
+==============================================================================
+Version 2.0.0 NOT YET OFFICIALLY RELEASED (but RSN...)
+
+This release replaces the libraries DecodeIR (by John Fine),
+ExchangeIR (by Graham Dixon), and IrpMaster (by myself) by
+IrpTransmogrifier. This achieves synchronization between rendering and
+decoding of IR signals: The same data base is used, and a protocol that can
+be rendered can also (with very few exceptions) be decoded too.
+(Milestone 2; #212, #280, #251, #23).
+UEI learned as IR signal format has been eliminated (#217).
+
+On all versions but the Macintosh, also IrpTransmogrifier as command line
+program will be available (Command name: irptransmogrifier).
+
+Associated user visible changes:
+
+* A number of new protocol parameters  (Options -> Protocol Parameters -> *),
+(#277). See IrpTransmogrifier for their semantic.
+* Link to DecodeIR documentation has been replaced by a browse function of the
+available functions
+
+Other user visible changes have been kept to a minimum. Functionally significant
+will instead appear in future versions.
+
+However, there are some other user changes/improvements:
+
+* Undo function for the data window of "Scrutinize signal",
+(Actions -> Undo Scrutinize data; Ctrl-Z);  #275
+* Some more icons
+* New output text format: raw without signs.  #250.
+* Improved setup script setup-irscrutinizer.sh in the generic binary
+distribution, for Linux-like operating system.
+* Improved Linux x64 appimage, now containing its own Java JVM. (#279,
+thanx Simon Peters, "probono"). Also allows IrpTransmogrifier to be called as
+a command line program (#285).
+* Windows installer now checks for the existence of Java (#278).
+* Misc GUI tweaks (#274, #268)
+* New output text format: raw without signs (#250).
+* Improved parsing of IrSignals given as inputs. (#233)
+
 ==============================================================================
 Version 1.4.3, issued on 2019-06-12.
 
