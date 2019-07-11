@@ -161,13 +161,17 @@ public class UndoableJTextArea extends JTextArea {
         }
 
         private void saveIfDifferent(String text) {
-            if ((list.isEmpty() || ! last().equals(text)) && text != null && ! text.isEmpty())
+            if (list.isEmpty() || ! last().equals(text))
                 save(text);
         }
 
         private void save(String t) {
-            list.add(t);
-            logger.log(Level.FINE, "Added: {0}", t);
+            if (t == null || t.isEmpty())
+                logger.log(Level.FINE, "Refused to added null/empty entry");
+            else {
+                list.add(t);
+                logger.log(Level.FINE, "Added: {0}", t);
+            }
         }
 
         private String last() {
