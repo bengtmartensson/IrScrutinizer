@@ -1783,6 +1783,20 @@ public final class GuiMain extends javax.swing.JFrame {
         return mode2TabbedPane.getSelectedIndex() == 0;
     }
 
+    private boolean checkChangeExportDirectory(File fileName) {
+        try {
+            File dir = fileName.getCanonicalFile();
+            if (dir.isDirectory() && dir.canWrite()) {
+                properties.setExportDir(exportDirectoryTextField.getText());
+                return true;
+            } else
+                guiUtils.error(exportDirectoryTextField.getText() + " is not an existing and writable directory.");
+        } catch (IOException ex) {
+            guiUtils.error(ex);
+        }
+        return false;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -8074,16 +8088,14 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_transferToRawRemoteButtonActionPerformed
 
     private void exportDirectoryTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportDirectoryTextFieldActionPerformed
-        properties.setExportDir(exportDirectoryTextField.getText());
+        checkChangeExportDirectory(new File(exportDirectoryTextField.getText()));
     }//GEN-LAST:event_exportDirectoryTextFieldActionPerformed
 
     private void exportDirSelectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportDirSelectButtonActionPerformed
         File file = SelectFile.selectFile(this, "Select directory for export files", properties.getExportDir(),
                 false, false, JFileChooser.DIRECTORIES_ONLY, (String[][]) null);
-        if (file != null) {
+        if (file != null && checkChangeExportDirectory(file))
             exportDirectoryTextField.setText(file.getPath());
-            properties.setExportDir(file.getPath());
-        }
     }//GEN-LAST:event_exportDirSelectButtonActionPerformed
 
     private void exportDirOpenButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportDirOpenButtonActionPerformed
