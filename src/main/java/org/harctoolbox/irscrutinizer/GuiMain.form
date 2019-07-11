@@ -1926,30 +1926,6 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rejectLircCodeImportsActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <Menu class="javax.swing.JMenu" name="toleranceMenu">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Tolerances"/>
-                  </Properties>
-                  <SubComponents>
-                    <MenuItem class="javax.swing.JMenuItem" name="absoluteToleranceMenuItem">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Absolute..."/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="absoluteToleranceMenuItemActionPerformed"/>
-                      </Events>
-                    </MenuItem>
-                    <MenuItem class="javax.swing.JMenuItem" name="relativeToleranceMenuItem">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Relative..."/>
-                        <Property name="toolTipText" type="java.lang.String" value="Relative tolerance (between 0 and 1) for durations comparisions"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="relativeToleranceMenuItemActionPerformed"/>
-                      </Events>
-                    </MenuItem>
-                  </SubComponents>
-                </Menu>
               </SubComponents>
             </Menu>
             <Menu class="javax.swing.JMenu" name="exportOptionsMenu">

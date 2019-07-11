@@ -568,6 +568,8 @@ public final class GuiMain extends javax.swing.JFrame {
         RawIrSignal.setInvokeDecoder(properties.getInvokeDecodeIr());
         RawIrSignal.setAbsoluteTolerance(properties.getAbsoluteTolerance());
         RawIrSignal.setRelativeTolerance(properties.getRelativeTolerance());
+        RepeatFinder.setDefaultAbsoluteTolerance(properties.getAbsoluteTolerance());
+        RepeatFinder.setDefaultRelativeTolerance(properties.getRelativeTolerance());
 
         properties.addInvokeAnalyzerChangeListener((String name1, Object oldValue, Object newValue) -> {
             RawIrSignal.setInvokeAnalyzer((Boolean) newValue);
@@ -577,9 +579,11 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         properties.addAbsoluteToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
             RawIrSignal.setAbsoluteTolerance((Double) newValue);
+            RepeatFinder.setDefaultAbsoluteTolerance((Double) newValue);
         });
         properties.addRelativeToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
             RawIrSignal.setRelativeTolerance((Double) newValue);
+            RepeatFinder.setDefaultRelativeTolerance((Double) newValue);
         });
 
         sendingHardwareManager = new SendingHardwareManager(guiUtils, properties, sendingHardwareTabbedPane);
@@ -2302,9 +2306,6 @@ public final class GuiMain extends javax.swing.JFrame {
         girrValidateCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         girrSchemaLocationMenuItem = new javax.swing.JMenuItem();
         rejectLircCodeImports = new javax.swing.JCheckBoxMenuItem();
-        toleranceMenu = new javax.swing.JMenu();
-        absoluteToleranceMenuItem = new javax.swing.JMenuItem();
-        relativeToleranceMenuItem = new javax.swing.JMenuItem();
         exportOptionsMenu = new javax.swing.JMenu();
         exportCharsetMenuItem = new javax.swing.JMenuItem();
         creatingUserMenuItem = new javax.swing.JMenuItem();
@@ -6981,27 +6982,6 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         importOptionsMenu.add(rejectLircCodeImports);
 
-        toleranceMenu.setText("Tolerances");
-
-        absoluteToleranceMenuItem.setText("Absolute...");
-        absoluteToleranceMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                absoluteToleranceMenuItemActionPerformed(evt);
-            }
-        });
-        toleranceMenu.add(absoluteToleranceMenuItem);
-
-        relativeToleranceMenuItem.setText("Relative...");
-        relativeToleranceMenuItem.setToolTipText("Relative tolerance (between 0 and 1) for durations comparisions");
-        relativeToleranceMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                relativeToleranceMenuItemActionPerformed(evt);
-            }
-        });
-        toleranceMenu.add(relativeToleranceMenuItem);
-
-        importOptionsMenu.add(toleranceMenu);
-
         optionsMenu.add(importOptionsMenu);
 
         exportOptionsMenu.setText("Export options");
@@ -9030,30 +9010,6 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setInvokeCleaner(cleanerCheckBoxMenuItem.isSelected());
     }//GEN-LAST:event_cleanerCheckBoxMenuItemActionPerformed
 
-    private void relativeToleranceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relativeToleranceMenuItemActionPerformed
-        try {
-            Double t = guiUtils.getDoubleInput("Relative tolerance (a number between 0 and 1) for duration comparision", properties.getRelativeTolerance());
-            if (t != null) {
-                properties.setRelativeTolerance(t);
-                RepeatFinder.setDefaultRelativeTolerance(t);
-            }
-        } catch (NumberFormatException ex) {
-            guiUtils.error("Invalid number: " + ex.getMessage());
-        }
-    }//GEN-LAST:event_relativeToleranceMenuItemActionPerformed
-
-    private void absoluteToleranceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_absoluteToleranceMenuItemActionPerformed
-        try {
-            Double t = guiUtils.getDoubleInput("Absolute tolerance in micro seconds for duration comparision", properties.getAbsoluteTolerance());
-            if (t != null) {
-                properties.setAbsoluteTolerance(t);
-                RepeatFinder.setDefaultAbsoluteTolerance(t);
-            }
-        } catch (NumberFormatException ex) {
-            guiUtils.error("Invalid number: " + ex.getMessage());
-        }
-    }//GEN-LAST:event_absoluteToleranceMenuItemActionPerformed
-
     private void capturingDevLircHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingDevLircHardwareHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.capturingDevLircHelp);
     }//GEN-LAST:event_capturingDevLircHardwareHelpButtonActionPerformed
@@ -9355,7 +9311,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPopupMenu CCFCodePopupMenu;
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuItem absToleranceMenuItem;
-    private javax.swing.JMenuItem absoluteToleranceMenuItem;
     private javax.swing.JMenu actionsMenu;
     private javax.swing.JMenuItem addEmptyParametrizedSignalMenuItem;
     private javax.swing.JMenuItem addMissingFsMenuItem;
@@ -9794,7 +9749,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem reAnalyzeMenuItem;
     private javax.swing.JCheckBoxMenuItem rejectLircCodeImports;
     private javax.swing.JMenuItem relToleranceMenuItem;
-    private javax.swing.JMenuItem relativeToleranceMenuItem;
     private javax.swing.JMenuItem releaseNotesMenuItem;
     private javax.swing.JPanel remoteScrutinizerPanel;
     private javax.swing.JMenuItem removeUnusedMenuItem1;
@@ -9863,7 +9817,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem timeFrequencyCalcMenuItem;
     private javax.swing.JMenu timeoutMenu;
     private javax.swing.JButton toScrutinizeButton;
-    private javax.swing.JMenu toleranceMenu;
     private javax.swing.JMenu toolsMenu;
     private javax.swing.JSplitPane topLevelSplitPane;
     private javax.swing.JTabbedPane topLevelTabbedPane;
