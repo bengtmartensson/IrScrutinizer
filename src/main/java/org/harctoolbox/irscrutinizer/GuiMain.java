@@ -1155,7 +1155,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setAnalyzeParameters(ModulatedIrSequence irSequence) throws InvalidArgumentException {
-        Analyzer analyzer = new Analyzer(irSequence, properties.getFallbackFrequency(), properties.getInvokeRepeatFinder(),
+        Analyzer analyzer = new Analyzer(irSequence, irSequence.getFrequency(), properties.getInvokeRepeatFinder(),
                 properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
         setAnalyzeParameters(analyzer);
     }
