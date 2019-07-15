@@ -2493,7 +2493,7 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel1">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Frequency"/>
+                        <Property name="text" type="java.lang.String" value="Frequency:"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="frequencyLabel">

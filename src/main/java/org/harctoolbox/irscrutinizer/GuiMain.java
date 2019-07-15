@@ -3074,7 +3074,7 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Frequency");
+        jLabel1.setText("Frequency:");
 
         frequencyLabel.setText("-");
 
