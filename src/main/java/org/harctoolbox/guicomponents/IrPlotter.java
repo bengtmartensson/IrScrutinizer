@@ -85,7 +85,7 @@ public class IrPlotter extends HarcPanel {
 
     private boolean usePulseAsTiming = false;
     private boolean ignoreLast = false;
-    private double frequency;
+    private Double frequency;
 
     private boolean useMilliSeconds = false;
 
@@ -126,7 +126,7 @@ public class IrPlotter extends HarcPanel {
      * @param repeatBursts
      */
     @SuppressWarnings("AssignmentToCollectionOrArrayFieldFromParameter")
-    private void plot(int[] irdata, int noIntroBursts, int noRepeatBursts, int noRepeats, double frequency) {
+    private void plot(int[] irdata, int noIntroBursts, int noRepeatBursts, int noRepeats, Double frequency) {
         this.noIntroBursts = noIntroBursts;
         this.noRepeatBursts = noRepeatBursts;
         this.noRepeats = noRepeats;

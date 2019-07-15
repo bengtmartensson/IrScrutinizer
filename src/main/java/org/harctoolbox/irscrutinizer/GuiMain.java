@@ -1063,8 +1063,8 @@ public final class GuiMain extends javax.swing.JFrame {
                 repeatFinder.getRepeatFinderData().getEndingLength());
     }
 
-    private void setFrequencyParameter(double frequency) {
-        frequencyLabel.setText(Long.toString(Math.round(frequency)));
+    private void setFrequencyParameter(Double frequency) {
+        frequencyLabel.setText(frequency != null ? Long.toString(Math.round(frequency)) : "");
     }
 
     private void setFrequencyParameter(IrSignal irSignal) {
