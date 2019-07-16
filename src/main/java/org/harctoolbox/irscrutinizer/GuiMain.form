@@ -1991,6 +1991,15 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="debugCodeMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="debugDecodeProtocolRegexpMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Debug Decode Protocol Regexp"/>
+                    <Property name="toolTipText" type="java.lang.String" value="For debugging only"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="debugDecodeProtocolRegexpMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
               </SubComponents>
             </Menu>
           </SubComponents>

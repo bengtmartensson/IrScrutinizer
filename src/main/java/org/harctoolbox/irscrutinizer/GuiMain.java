@@ -2328,6 +2328,7 @@ public final class GuiMain extends javax.swing.JFrame {
         debugMenu = new javax.swing.JMenu();
         offerStackTraceCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         debugCodeMenuItem = new javax.swing.JMenuItem();
+        debugDecodeProtocolRegexpMenuItem = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         hexCalcMenuItem = new javax.swing.JMenuItem();
         timeFrequencyCalcMenuItem = new javax.swing.JMenuItem();
@@ -7050,6 +7051,15 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         debugMenu.add(debugCodeMenuItem);
 
+        debugDecodeProtocolRegexpMenuItem.setText("Debug Decode Protocol Regexp");
+        debugDecodeProtocolRegexpMenuItem.setToolTipText("For debugging only");
+        debugDecodeProtocolRegexpMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                debugDecodeProtocolRegexpMenuItemActionPerformed(evt);
+            }
+        });
+        debugMenu.add(debugDecodeProtocolRegexpMenuItem);
+
         optionsMenu.add(debugMenu);
 
         menuBar.add(optionsMenu);
@@ -8913,7 +8923,9 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_unsetTMenuItemActionPerformed
 
     private void debugCodeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugCodeMenuItemActionPerformed
-        // TODO
+        String s = guiUtils.getInput("TODO", "Not yet implemented", "");
+//        if (s != null)
+//            ....
     }//GEN-LAST:event_debugCodeMenuItemActionPerformed
 
     private void sendingGirsClientHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingGirsClientHelpButtonActionPerformed
@@ -9318,6 +9330,12 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_dummyGapMenuItemActionPerformed
 
+    private void debugDecodeProtocolRegexpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugDecodeProtocolRegexpMenuItemActionPerformed
+        String s = guiUtils.getInput("Regular exporession (lowercase) for protocol name", "Debug info", Decoder.getDebugProtocolRegExp());
+        if (s != null)
+            Decoder.setDebugProtocolRegExp(s.isEmpty() ? null : s);
+    }//GEN-LAST:event_debugDecodeProtocolRegexpMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9403,6 +9421,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> csvRawSeparatorComboBox;
     private javax.swing.JComboBox<String> dColumnComboBox;
     private javax.swing.JMenuItem debugCodeMenuItem;
+    private javax.swing.JMenuItem debugDecodeProtocolRegexpMenuItem;
     private javax.swing.JMenu debugMenu;
     private javax.swing.JMenuItem debugTableRowMenuItem;
     private javax.swing.JMenuItem debugTableRowMenuItem1;
