@@ -152,7 +152,7 @@ public class RawIrSignal extends NamedIrSignal {
     private void setIrSignal(IrSignal irSignal) {
         this.irSignal = irSignal;
         if (invokeDecoder)
-            decodes = decoder.decode(irSignal);
+            decodes = decoder.decodeIrSignal(irSignal);
         if (invokeAnalyzer) {
             try {
                 Analyzer analyzer = new Analyzer(irSignal, absoluteTolerance, relativeTolerance);

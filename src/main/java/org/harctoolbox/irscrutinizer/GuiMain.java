@@ -1089,8 +1089,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setDecodeIrParameters(IrSignal irSignal) {
-        Map<String, Decoder.Decode> decodes = decoder.decode(irSignal,
-                decodeStrict,
+        Decoder.DecoderParameters decoderParams = new Decoder.DecoderParameters(decodeStrict,
                 decodeAllDecodes,
                 decodeRemoveDefaultedParameters,
                 decodeRecursive,
@@ -1099,20 +1098,46 @@ public final class GuiMain extends javax.swing.JFrame {
                 properties.getRelativeTolerance(),
                 properties.getMinLeadOut()
         );
-        StringBuilder decodeString = new StringBuilder(20);
-        boolean first = true;
-        for (Decoder.Decode decode : decodes.values()) {
-            if (first) {
-                decodeString.append(decode);
-                if (decodes.size() == 2)
-                    decodeString.append(" + one more decode");
-                if (decodes.size() > 2)
-                    decodeString.append(" + ").append(Integer.toString(decodes.size() - 1)).append(" more decodes");
-                first = false;
-            }
+        Collection<Decoder.Decode> decodes = irSignal.introOnly() || irSignal.repeatOnly()
+                ? decodeIrSequence(irSignal.toModulatedIrSequence(), decoderParams)
+                : decodeIrSignal(irSignal, decoderParams);
+        setDecodeResult(decodes);
+    }
+
+    private Collection<Decoder.Decode> decodeIrSequence(ModulatedIrSequence irSequence, Decoder.DecoderParameters decoderParams) {
+        Decoder.DecodeTree decodeTree = decoder.decode(irSequence, decoderParams);
+        List<Decoder.Decode> decodes = new ArrayList<>(4);
+        for (Decoder.TrunkDecodeTree decode : decodeTree)
+            decodes.add(decode.getTrunk());
+        return decodes;
+    }
+
+    private Collection<Decoder.Decode> decodeIrSignal(IrSignal irSignal, Decoder.DecoderParameters decoderParams) {
+        Map<String, Decoder.Decode> decodes = decoder.decodeIrSignal(irSignal, decoderParams);
+        return decodes.values();
+    }
+
+    private void setDecodeResult(Collection<Decoder.Decode> decodes) {
+        if (decodes.isEmpty()) {
+            decodeIRTextField.setText("");
+            return;
+        }
+
+        int index = 0;
+        StringBuilder decodeString = new StringBuilder(40);
+        for (Decoder.Decode decode : decodes) {
+            if (index == 0)
+                decodeString.append(decode.toString());
             if (properties.getPrintDecodesToConsole())
                 guiUtils.message(decode.toString());
+            index++;
         }
+
+        if (index == 2)
+            decodeString.append(" + one more decode");
+        else if (index > 2)
+            decodeString.append(" + ").append(Integer.toString(decodes.size() - 1)).append(" more decodes");
+
         decodeIRTextField.setText(decodeString.toString());
     }
 
@@ -8373,7 +8398,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 IrSignal signal = InterpretString.interpretIrSequence(modulatedIrSequence, true, true, properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
                 guiUtils.message(modulatedIrSequence.toString(true));
                 guiUtils.message("f=" + Math.round(modulatedIrSequence.getFrequency()));
-                Map<String, Decoder.Decode> decodes = decoder.decode(signal);
+                Map<String, Decoder.Decode> decodes = decoder.decodeIrSignal(signal);
                 if (decodes.isEmpty())
                     guiUtils.message("No decodes.");
                 else

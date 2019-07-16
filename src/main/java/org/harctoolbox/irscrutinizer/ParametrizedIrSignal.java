@@ -113,7 +113,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
 
     public ParametrizedIrSignal(IrSignal irSignal, String name, String comment, boolean ignoreT) throws NoDecodeException {
         super(name, comment);
-        Map<String, Decoder.Decode> decodes = decoder.decode(irSignal);
+        Map<String, Decoder.Decode> decodes = decoder.decodeIrSignal(irSignal);
         if (decodes.isEmpty()) {
             decrementCount();
             throw new NoDecodeException();
