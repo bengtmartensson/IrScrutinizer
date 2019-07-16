@@ -8949,8 +8949,8 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void debugCodeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugCodeMenuItemActionPerformed
         String s = guiUtils.getInput("TODO", "Not yet implemented", "");
-//        if (s != null)
-//            ....
+        if (s != null)
+            ;
     }//GEN-LAST:event_debugCodeMenuItemActionPerformed
 
     private void sendingGirsClientHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingGirsClientHelpButtonActionPerformed
