@@ -206,6 +206,7 @@ static void sendRc5(unsigned D, unsigned F, unsigned times) {
         </xsl:if>
         <xsl:if test=". &lt;= 65535">
             <xsl:value-of select="."/>
+            <xsl:text>U</xsl:text>
         </xsl:if>
     </xsl:template>
 
