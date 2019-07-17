@@ -49,6 +49,8 @@ format, having the said sequence as its intro, and empty repeat.
             <xsl:apply-templates select="girr:intro/*"/>
             <xsl:call-template name="girr:repeat"/>
             <xsl:apply-templates select="girr:ending/*"/>
+            <xsl:text>
+</xsl:text>
         </xsl:template>
 
         <xsl:template name="girr:repeat">
@@ -57,8 +59,8 @@ format, having the said sequence as its intro, and empty repeat.
                 <xsl:call-template name="girr:repeat">
                     <xsl:with-param name="n" select="$n - 1"/>
                 </xsl:call-template>
-            </xsl:if>
             <xsl:apply-templates select="girr:repeat/*"/>
+            </xsl:if>
         </xsl:template>
 
         <xsl:template match="girr:flash|girr:gap">
