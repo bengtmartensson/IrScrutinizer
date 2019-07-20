@@ -17,11 +17,18 @@ Some contained third-party components have different, but compatible, licenses. 
 
 ## Status
 
-Although the program is to be considered as well tested, the current
-project organization has been reworked recently, and is in the state
-of rapid development. Previous versions are available on the
-[download page](http://www.harctoolbox.org/downloads/index.html) and/or
-[here](https://github.com/bengtmartensson/harctoolboxbundle/releases).
+At the time of this writing, the 2.0.0 version is rapidly approaching its official release.
+Previous versions are available [here](https://github.com/bengtmartensson/harctoolboxbundle/releases).
+Very old versions can be found [here](http://www.harctoolbox.org/downloads/index.html).
+
+## Documentation
+The reference manual is included in the distributions.
+It can be read online [here](http://www.harctoolbox.org/IrScrutinizer.html).
+
+A tutorial can be found [here](http://www.hifi-remote.com/wiki/index.php?title=IrScrutinizer_Guide).
+
+API documentation is found [here](https://bengtmartensson.github.io/harctoolboxbundle/)
+(development version only).
 
 ## Installation
 
@@ -41,3 +48,12 @@ also [issues marked "Help wanted"](https://github.com/bengtmartensson/harctoolbo
 can be found.
 
 Coding guidelines are found [here](CONTRIBUTING.md).
+
+## Support
+
+No official support forum exists. Therefore, support questions (not just suggestions and bug reports)
+posted as [isssues](https://github.com/bengtmartensson/harctoolboxbundle/issues) are welcome.
+
+I also participate in the [JP1 forum](http://www.hifi-remote.com/forums/), see e.g.
+[this thread](http://www.hifi-remote.com/forums/viewtopic.php?t=14986)) and
+[Remote Central](http://www.remotecentral.com/cgi-bin/mboard/forums.cgi) and will answer questions there.

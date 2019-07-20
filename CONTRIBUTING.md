@@ -31,7 +31,7 @@ The format of text files follows the requirement of portability:
 
 ## Build process
 
-[Apache Maven](https://maven.apache.org] is used for builds.
+[Apache Maven](https://maven.apache.org) is used for builds.
 Normal builds must not require Internet access.
 All parameters (URLs, version numbers etc.) should be contained therein within /project/properties.
 (Other programs can then extract that information, see `tools/get-jdk-tar.sh` for an example.)

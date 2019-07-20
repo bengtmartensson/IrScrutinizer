@@ -7,10 +7,10 @@ The "low-level" issues are kept as [harctoolbox issues](https://github.com/bengt
 * _IrScrutinizer_ denotes the interactive program, and the source packages `org.harctoolbox.irscrutinizer` and subordinate packages,
 * _IrpMaster_ denotes the IRP rendering engine irpmaster.jar, source package `org.harctoolbox.IrpMaster` and subordinate packages
  (discontinued; not used in IrScrutinizer 2),
-* _IrpTransmogrifier_ is [this project](https://github.com/bengtmartensson/IrpTransmogrifier), intended to replace IrpMaster, DecodeIR, Analyzer, and much more,
+* _IrpTransmogrifier_ is [this project](https://github.com/bengtmartensson/IrpTransmogrifier), that has replaced IrpMaster, DecodeIR, Analyzer, and much more,
 * _HarcHardware_ denotes a collection of "drivers" and other software that accesses hardware more or less directly,
   source package `org.harctoolbox.harchardware` and subordinate packages,
-* _harctoolboxbundle_ is a Github project containing the sources of IrScrutinizer and the Crystal Icons.
+* _harctoolboxbundle_ is a Github project containing IrScrutinizer.
 
 
 ## Demarkation (what _not_ to do (here!))
@@ -27,7 +27,7 @@ The current panes "Scrutinize signal", "Scrutinize remote/parameteric", "Scrutin
 should instead be sub-panes of a "desktop pane", where they can be individually positioned, resized, minimized, maximized etc.
 Also, there should then be the possibility of instantiating these "subtools" more than once, to the extent it makes sense.
 They should also communicate, so that it can be possible  to right click on a signal in a table or tree,
-selecting "scrutinize this", and a new "scerutinizer signal" internal frame comes up.
+selecting "scrutinize this", and a new "scrutinizer signal" internal frame comes up.
 There may possibly also be more subtools, cf. [issue #74](https://github.com/bengtmartensson/harctoolboxbundle/issues/74).
 (Cf. [this remark from the manual](http://www.harctoolbox.org/IrScrutinizer.html#The+pane+interface+sucks.).)
 Here is an example of programming [internal frames in Java Swing](https://docs.oracle.com/javase/tutorial/uiswing/components/internalframe.html).
@@ -46,12 +46,6 @@ buttons on a physical remote.) This covers the issues
 [#52](https://github.com/bengtmartensson/harctoolboxbundle/issues/52),
 [#48](https://github.com/bengtmartensson/harctoolboxbundle/issues/48).
 
-## 3. Replace the repeatfinder and the analysis function.
-Done with IrScrutinizer 2, which uses the repeat finder and analyzer of IrpTransmogrifier.
-
-## 4. Modernize the IRP engine, couple to the decoding, thus replacing DecodeIR.
-Done with IrScrutinizer 2, which uses the decoder of IrpTransmogrifier.
-
 ## 5. Replace RXTX
 See [#20](https://github.com/bengtmartensson/harctoolboxbundle/issues/20).
 
@@ -67,21 +61,26 @@ misc systems ([#68](https://github.com/bengtmartensson/harctoolboxbundle/issues/
 Any way to build inno setups in Travis?
 
 ## 8. Hardware support
-Have send- and capturing co-exist better [#54](https://github.com/bengtmartensson/harctoolboxbundle/issues/54) (DONE).
-New devices:
-[#53](https://github.com/bengtmartensson/harctoolboxbundle/issues/53). On Linux, possibly support reading from and writing to
-[/dev/lirc0](http://lirc.org/html/lirc.html)? (DONE, [#122](https://github.com/bengtmartensson/harctoolboxbundle/issues/122))
-To the extent possible, use [Girs as command language](http://www.harctoolbox.org/Girs.html) instead
-of special hardware interfaces ([#24](https://github.com/bengtmartensson/harctoolboxbundle/issues/24)) (DONE).
+Have send- and capturing co-exist better;
+[#54](https://github.com/bengtmartensson/harctoolboxbundle/issues/54)
+did not turn out to be a very good solution, new try: [#281](https://github.com/bengtmartensson/harctoolboxbundle/issues/281).
+New devices, see [HarcHardware](https://github.com/bengtmartensson/HarcHardwareBundle/issues?q=is%3Aopen+is%3Aissue+label%3A%22new+hardware+support%22)
 
 ## 9. Advanced command line support.
-IrpTransmogrifier has a quite clean command line interface; should probably not touch or replace that.
-See https://github.com/bengtmartensson/harctoolboxbundle/issues/26#issuecomment-431651739 .
-
+IrpTransmogrifier has a quite clean and powerful command line interface; should probably not touch or replace that.
 Presently, import files in Girr format can be given on the command line.
+Should incorporate hardware support, see [#11 of HarcHardware](https://github.com/bengtmartensson/HarcHardwareBundle/issues/11).
+Should allow for some use cases, that naturally leads themselvs for non-interactive
+exection, see [this discussion](https://github.com/bengtmartensson/harctoolboxbundle/issues/26#issuecomment-431651739).
+Still, a finished concept is missing.
 
 ## 10. Testing
 I strive to have [TestNG](http://testng.org) based Java testing, integrated in Maven and Netbeans.
+
+## 11. Bulk analyze functions
+Should the functions of IrpTransmogrifier-GUI, in particular for bulk analyze of a set of functions, of
+[IrpTransmogrifier-GUI](https://github.com/bengtmartensson/IrpTransmogrifier-GUI)
+be integrated, or should it be a separate tool?
 
 ## -1. Internationalization
 This is not at all an important issue for me, at least not for the moment.
