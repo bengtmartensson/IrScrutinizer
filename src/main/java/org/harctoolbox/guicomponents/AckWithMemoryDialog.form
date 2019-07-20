@@ -134,7 +134,7 @@
     <Component class="javax.swing.JLabel" name="icon">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/error.png"/>
+          <Image iconType="3" name="/icons/Crystal-Clear/48x48/apps/error.png"/>
         </Property>
       </Properties>
     </Component>

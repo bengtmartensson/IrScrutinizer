@@ -77,7 +77,7 @@ public final class CapturingSendingBean extends javax.swing.JPanel {
             }
         });
 
-        openedLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/connect_established.png"))); // NOI18N
+        openedLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/connect_established.png"))); // NOI18N
         openedLabel.setText("Device Opened");
         openedLabel.setEnabled(false);
 

@@ -103,7 +103,7 @@ public final class AckWithMemoryDialog extends javax.swing.JDialog {
 
         label.setText(message);
 
-        icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/error.png"))); // NOI18N
+        icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/48x48/apps/error.png"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
