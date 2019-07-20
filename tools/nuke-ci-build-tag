@@ -1,4 +1,0 @@
-#!/bin/sh
-
-git tag -d ci-build
-git push origin :refs/tags/ci-build
