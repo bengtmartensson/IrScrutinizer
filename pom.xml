@@ -208,7 +208,7 @@
                         </transformationSet>
                         <transformationSet>
                             <dir>src/main/xdocs</dir>
-                            <outputDir>${basedir}.</outputDir>
+                            <outputDir>${basedir}</outputDir>
                             <includes>
                                 <include>${project.name}.xml</include>
                             </includes>
