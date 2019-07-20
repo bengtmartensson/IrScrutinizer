@@ -1,0 +1,7 @@
+org.harctoolbox.guicomponents
+org.harctoolbox.irscrutinizer
+org.harctoolbox.irscrutinizer.capturinghardware
+org.harctoolbox.irscrutinizer.exporter
+org.harctoolbox.irscrutinizer.importer
+org.harctoolbox.irscrutinizer.sendinghardware
+org.harctoolbox.valuesets
