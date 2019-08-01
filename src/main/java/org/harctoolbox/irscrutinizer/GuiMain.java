@@ -1381,12 +1381,16 @@ public final class GuiMain extends javax.swing.JFrame {
     private void reAnalyze() {
         try {
             IrSignal irSignal = getCapturedIrSignal();
-            scrutinizeIrSignal(irSignal);
+            if (irSignal != null)
+                scrutinizeIrSignal(irSignal);
+            else
+                // Do not include the input text in the error message; it will make a popup unreadable.
+                guiUtils.error("Could not parse the text in capture data window as IR signal.");
         } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
         } catch (RuntimeException ex) {
             // ??? Can be many different causes
-            guiUtils.error("Could not decode the signal: " + ex.getMessage());
+            guiUtils.error("Unspecified error: \"" + ex.getMessage() + "\", please report.");
         }
     }
 
