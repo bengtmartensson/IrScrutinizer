@@ -67,6 +67,7 @@ public final class IrpMasterBean extends javax.swing.JPanel {
     private JFrame frame;
     private transient IrpDatabase irpDatabase;
     private String protocolName;
+    private Protocol protocol;
     private GuiUtils guiUtils;
     private transient ISignalNameFormatter signalNameFormatter;
 
@@ -141,7 +142,7 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         return protocolList;
     }
 
-    private void checkParam(Protocol protocol, JTextField textField, JLabel label, String parameterName, String oldValueStr) {
+    private void checkParam(JTextField textField, JLabel label, String parameterName, String oldValueStr) {
         if (protocol.hasParameter(parameterName)) {
             // TODO: check validity
             textField.setEnabled(true);
@@ -155,7 +156,7 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         }
     }
 
-    private void checkParam(Protocol protocol, JComboBox comboBox, JLabel label, String parameterName, String initalValue) {
+    private void checkParam(JComboBox comboBox, JLabel label, String parameterName, String initalValue) {
         if (protocol.hasParameter(parameterName))
             comboBox.setSelectedItem(initalValue);
         else
@@ -168,12 +169,12 @@ public final class IrpMasterBean extends javax.swing.JPanel {
     private void setupProtocol(String protocolName, String initialD, String initialS, String initialF,
             String initalT, String initialAdditionalParameters)
             throws UnknownProtocolException, UnsupportedRepeatException, NameUnassignedException, InvalidNameException, IrpInvalidArgumentException {
-        Protocol protocol = irpDatabase.getProtocol(protocolName);
+        protocol = irpDatabase.getProtocol(protocolName);
 
-        checkParam(protocol, dTextField, dLabel, "D", initialD);
-        checkParam(protocol, sTextField, sLabel, "S", initialS);
-        checkParam(protocol, fTextField, fLabel, "F", initialF);
-        checkParam(protocol, toggleComboBox, tLabel, "T", initalT);
+        checkParam(dTextField, dLabel, "D", initialD);
+        checkParam(sTextField, sLabel, "S", initialS);
+        checkParam(fTextField, fLabel, "F", initialF);
+        checkParam(toggleComboBox, tLabel, "T", initalT);
 
         additionalParametersTextField.setText(initialAdditionalParameters);
         additionalParametersLabel.setEnabled(protocol.hasNonStandardParameters());
@@ -193,19 +194,18 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         return it.hasNext() ? it.next() : null;
     }
 
-    private void processParameter(Map<String, String> parameters, Protocol protocol, String name, JTextField textField) {
+    private void processParameter(Map<String, String> parameters, String name, JTextField textField) {
         if (protocol.hasParameter(name)
                 && !(protocol.getParameterDefault(name) != null && textField.getText().trim().isEmpty()))
             parameters.put(name, textField.getText());
     }
 
     public InputVariableSetValues getIntervalParameters() throws UnknownProtocolException, NameUnassignedException, InvalidArgumentException, UnsupportedRepeatException, InvalidNameException, IrpInvalidArgumentException, ParseException {
-        Protocol protocol = irpDatabase.getProtocol(protocolName);
         Map<String, String> parameters = new LinkedHashMap<>(4);
 
-        processParameter(parameters, protocol, "D", dTextField);
-        processParameter(parameters, protocol, "S", sTextField);
-        processParameter(parameters, protocol, "F", fTextField);
+        processParameter(parameters, "D", dTextField);
+        processParameter(parameters, "S", sTextField);
+        processParameter(parameters, "F", fTextField);
         String toggle = (String) toggleComboBox.getModel().getSelectedItem();
         if (!toggle.equals("-"))
             parameters.put("T", toggle);
@@ -224,7 +224,6 @@ public final class IrpMasterBean extends javax.swing.JPanel {
 
     public IrSignal render() throws IrpException, IrCoreException, ParseException {
         Map<String, Long> parameters = getParameters();
-        Protocol protocol = irpDatabase.getProtocol(protocolName);
         IrSignal irSignal = protocol.toIrSignal(parameters);
         return irSignal;
     }
