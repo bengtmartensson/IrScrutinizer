@@ -156,6 +156,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private final static String feedbackMail = "feedback@harctoolbox.org";
     private final static String issuesUrl = "https://github.com/bengtmartensson/harctoolboxbundle/issues";
     private final static String gitUrl = "https://github.com/bengtmartensson/harctoolboxbundle/";
+    private final static String downloadsUrl = "https://github.com/bengtmartensson/harctoolboxbundle/releases";
     private final static int importSequenceAskThreshold = 3;
     private final static int maxCharsInGuiMessages = 150;
     private final static int transmitSignalMouseButton = 2;
@@ -2371,6 +2372,7 @@ public final class GuiMain extends javax.swing.JFrame {
         homePageMenuItem = new javax.swing.JMenuItem();
         releaseNotesMenuItem = new javax.swing.JMenuItem();
         protocolSpecMenuItem = new javax.swing.JMenuItem();
+        downloadsMenuItem = new javax.swing.JMenuItem();
         gitMenuItem = new javax.swing.JMenuItem();
         homePageMenuItem1 = new javax.swing.JMenuItem();
         homePageMenuItem2 = new javax.swing.JMenuItem();
@@ -7201,6 +7203,15 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         helpMenu.add(protocolSpecMenuItem);
 
+        downloadsMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/warehause.png"))); // NOI18N
+        downloadsMenuItem.setText("Browse Releases");
+        downloadsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downloadsMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(downloadsMenuItem);
+
         gitMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/github/GitHub-Mark-24px.png"))); // NOI18N
         gitMenuItem.setText("Browse Sources on GitHub");
         gitMenuItem.setToolTipText("Direct the browser to the Github source repository.");
@@ -9365,6 +9376,14 @@ public final class GuiMain extends javax.swing.JFrame {
             Decoder.setDebugProtocolRegExp(s.isEmpty() ? null : s);
     }//GEN-LAST:event_debugDecodeProtocolRegexpMenuItemActionPerformed
 
+    private void downloadsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadsMenuItemActionPerformed
+        try {
+            guiUtils.browse(new URI(downloadsUrl));
+        } catch (URISyntaxException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_downloadsMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9461,6 +9480,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.guicomponents.DevLircBean devLircBean;
     private org.harctoolbox.guicomponents.CapturingSendingBean devLircCapturingSendingBean;
     private javax.swing.JPanel devLircPanel;
+    private javax.swing.JMenuItem downloadsMenuItem;
     private javax.swing.JMenuItem dummyGapMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JTextField editingTextField;
