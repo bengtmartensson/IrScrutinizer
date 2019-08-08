@@ -200,6 +200,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private boolean decodeAllDecodes = false;
     private boolean decodeRemoveDefaultedParameters = true;
     private boolean decodeRecursive = false;
+    private boolean decodeOverride = false;
 
     private class ScrutinizeIrCaller implements LookAndFeelManager.ILookAndFeelManagerCaller {
         @Override
@@ -1097,7 +1098,8 @@ public final class GuiMain extends javax.swing.JFrame {
                 properties.getFrequencyTolerance(),
                 properties.getAbsoluteTolerance(),
                 properties.getRelativeTolerance(),
-                properties.getMinLeadOut()
+                properties.getMinLeadOut(),
+                decodeOverride
         );
         Collection<Decoder.Decode> decodes = irSignal.introOnly() || irSignal.repeatOnly()
                 ? decodeIrSequence(irSignal.toModulatedIrSequence(), decoderParams)
