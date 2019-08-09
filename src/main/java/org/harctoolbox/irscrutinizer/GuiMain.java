@@ -111,6 +111,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private transient IrdbImporter irdbImporter = null;
     private transient IrpDatabase irpDatabase = null;
     private transient Decoder decoder = null;
+    private Decoder.DecoderParameters decoderParameters = null;
     private ProtocolsIni protocolsIni = null;
     private transient CcfImporter ccfImporter;
     private transient XcfImporter xcfImporter;
@@ -507,6 +508,29 @@ public final class GuiMain extends javax.swing.JFrame {
 
         irpDatabase = new IrpDatabase(properties.mkPathAbsolute(properties.getIrpProtocolsPath())); // must come before initComponents
         decoder = new Decoder(irpDatabase);
+        decoderParameters = new Decoder.DecoderParameters(decodeStrict,
+                decodeAllDecodes,
+                decodeRemoveDefaultedParameters,
+                decodeRecursive,
+                properties.getFrequencyTolerance(),
+                properties.getAbsoluteTolerance(),
+                properties.getRelativeTolerance(),
+                properties.getMinLeadOut(),
+                decodeOverride
+        );
+        Command.setDecoderParameters(decoderParameters);
+        properties.addFrequencyToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
+            decoderParameters.setFrequencyTolerance((Double) newValue);
+        });
+        properties.addAbsoluteToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
+            decoderParameters.setAbsoluteTolerance((Double) newValue);
+        });
+        properties.addRelativeToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
+            decoderParameters.setRelativeTolerance((Double) newValue);
+        });
+        properties.addMinLeadOutChangeListener((String name1, Object oldValue, Object newValue) -> {
+            decoderParameters.setMinimumLeadout((Double) newValue);
+        });
 
         loadExportFormats(); // must come before initComponents
 
@@ -1091,32 +1115,22 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setDecodeIrParameters(IrSignal irSignal) {
-        Decoder.DecoderParameters decoderParams = new Decoder.DecoderParameters(decodeStrict,
-                decodeAllDecodes,
-                decodeRemoveDefaultedParameters,
-                decodeRecursive,
-                properties.getFrequencyTolerance(),
-                properties.getAbsoluteTolerance(),
-                properties.getRelativeTolerance(),
-                properties.getMinLeadOut(),
-                decodeOverride
-        );
         Collection<Decoder.Decode> decodes = irSignal.introOnly() || irSignal.repeatOnly()
-                ? decodeIrSequence(irSignal.toModulatedIrSequence(), decoderParams)
-                : decodeIrSignal(irSignal, decoderParams);
+                ? decodeIrSequence(irSignal.toModulatedIrSequence())
+                : decodeIrSignal(irSignal);
         setDecodeResult(decodes);
     }
 
-    private Collection<Decoder.Decode> decodeIrSequence(ModulatedIrSequence irSequence, Decoder.DecoderParameters decoderParams) {
-        Decoder.DecodeTree decodeTree = decoder.decode(irSequence, decoderParams);
+    private Collection<Decoder.Decode> decodeIrSequence(ModulatedIrSequence irSequence) {
+        Decoder.DecodeTree decodeTree = decoder.decode(irSequence, decoderParameters);
         List<Decoder.Decode> decodes = new ArrayList<>(4);
         for (Decoder.TrunkDecodeTree decode : decodeTree)
             decodes.add(decode.getTrunk());
         return decodes;
     }
 
-    private Collection<Decoder.Decode> decodeIrSignal(IrSignal irSignal, Decoder.DecoderParameters decoderParams) {
-        Map<String, Decoder.Decode> decodes = decoder.decodeIrSignal(irSignal, decoderParams);
+    private Collection<Decoder.Decode> decodeIrSignal(IrSignal irSignal) {
+        Map<String, Decoder.Decode> decodes = decoder.decodeIrSignal(irSignal, decoderParameters);
         return decodes.values();
     }
 
@@ -8415,7 +8429,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 IrSignal signal = InterpretString.interpretIrSequence(modulatedIrSequence, true, true, properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
                 guiUtils.message(modulatedIrSequence.toString(true));
                 guiUtils.message("f=" + Math.round(modulatedIrSequence.getFrequency()));
-                Map<String, Decoder.Decode> decodes = decoder.decodeIrSignal(signal);
+                Map<String, Decoder.Decode> decodes = decoder.decodeIrSignal(signal, decoderParameters);
                 if (decodes.isEmpty())
                     guiUtils.message("No decodes.");
                 else
