@@ -50,6 +50,7 @@ Source: "exportformats.d\*"; DestDir: "{app}\exportformats.d"; Flags: ignorevers
 Source: "contributed\import\*"; DestDir: "{app}\contributed\import"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "generated-documents\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: isreadme
 Source: "doc\*.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "doc\*.html"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\schemas\*.xsd"; DestDir: "{app}\schemas"
 Source: "{#MyAppName}.ico";  DestDir: "{app}"
 Source: "protocols.ini";  DestDir: "{app}"
@@ -114,7 +115,7 @@ begin
    SaveStringToFile(wrapperFilename, '@ECHO off' + #13#10, false);
    SaveStringToFile(wrapperFilename, 'set IRSCRUTINIZERHOME=' + ExpandConstant('{app}') + #13#10, true);
    SaveStringToFile(wrapperFilename, 'set JAVA=java' + #13#10, true);
-   SaveStringToFile(wrapperFilename, '"%JAVA%"' + '" -cp "%IRSCRUTINIZERHOME%\IrScrutinizer.jar" org.harctoolbox.irp.IrpTransmogrifier', true);
+   SaveStringToFile(wrapperFilename, '"%JAVA%"' + ' -cp "%IRSCRUTINIZERHOME%\IrScrutinizer.jar" org.harctoolbox.irp.IrpTransmogrifier %1 %2 %3 %4 %5 %6 %7 %8 %9', true);
 end;
 
 const

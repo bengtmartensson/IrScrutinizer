@@ -2,7 +2,7 @@ Welcome to IrScrutinizer, a program for capturing, generating,
 analyzing, importing, and exporting of IR signals.
 
 Select the option "Add installation directory to path" to be able to
-call the command line program IrpMaster directly from a command window.
+call the command line program IrpTransmogrifier directly from a command window.
 
 Installing this program requires administrator right only of writing
 to directories that require such rights. No registry entries are made
