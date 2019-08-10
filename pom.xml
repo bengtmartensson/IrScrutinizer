@@ -30,7 +30,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <IrpTransmogrifier.version>1.0.1-SNAPSHOT</IrpTransmogrifier.version>
-        <Girr.version>2.0.0</Girr.version>
+        <Girr.version>2.0.1</Girr.version>
         <Jirc.version>2.0.0</Jirc.version>
         <HarcHardware.version>2.0.0</HarcHardware.version>
     </properties>
@@ -521,7 +521,7 @@
                             <directory>${project.build.directory}</directory>
                             <includes>
                                 <include>${project.artifactId}-${project.version}.exe</include>
-                                <include>*.AppImage*</include>
+                                <include>*.AppImage</include>
                                 <include>*.zip</include>
                             </includes>
                         </fileSet>
