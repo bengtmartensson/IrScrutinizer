@@ -29,10 +29,10 @@
         <inno_path>${basedir}/../Inno Setup 6/ISCC.exe</inno_path>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <IrpTransmogrifier.version>1.0.1-SNAPSHOT</IrpTransmogrifier.version>
+        <IrpTransmogrifier.version>1.0.1</IrpTransmogrifier.version>
         <Girr.version>2.0.1</Girr.version>
-        <Jirc.version>2.0.0</Jirc.version>
-        <HarcHardware.version>2.0.0</HarcHardware.version>
+        <Jirc.version>2.0.1</Jirc.version>
+        <HarcHardware.version>2.0.1</HarcHardware.version>
     </properties>
 
     <profiles>
