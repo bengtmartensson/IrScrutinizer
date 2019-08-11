@@ -1,0 +1,777 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="glossary2html.xsl"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>Glossary and terms</title>
+  </header>
+<body>
+      <table>
+      <caption>Revision history</caption>
+	<tr>
+	  <th>Date</th><th>Description</th>
+	</tr>
+	<tr>
+	  <td>2013-12-01</td>
+	  <td>Initial version.</td>
+	</tr>
+	<tr>
+	  <td>2013-12-20</td>
+	  <td>More stuff added.</td>
+	</tr>
+	<tr>
+	  <td>2014-02-02</td>
+	  <td>Even more stuff added.</td>
+	</tr>
+	<tr>
+	  <td>2014-09-18</td>
+	  <td>Yet more stuff added.</td>
+	</tr>
+        <tr>
+	  <td>2016-01-08</td>
+	  <td>Substantial improvements and extensions.</td>
+	</tr>
+        <tr>
+	  <td>2016-04-29</td>
+	  <td>Some more entries.</td>
+	</tr>
+        <tr>
+	  <td>2017-03-19</td>
+	  <td>Some more entries.</td>
+	</tr>
+        <tr>
+	  <td>2019-08-03</td>
+	  <td>Minor updates, triggered by IrpTransmogrifier.</td>
+	</tr>
+      </table>
+<section>
+<title>Glossary</title>
+<p>Here we explain and define some of the used terms. In most cases (but not
+all!), this correspond to established usage in the Internet, e.g. in the JP1
+forum.  It should also be pointed out that in some cases, in particular when
+comparing programs by others to my own, the assessment should be considered as
+subjective.</p>
+
+<p>Substantial program/program packages are written capitalized, (not
+uppercase), in some case in CamelCase, and in Roman typeface, like a
+proper noun. "Small" programs are written as
+<code>code</code>. For example, we write "Lirc", not "LIRC", or
+<code>lirc</code>; and <code>irsend</code>.</p>
+ <!--xi:include href="glossary.xi"/-->
+      <dl>
+
+<dt id="AMXBeacon">AMX Beacon</dt>
+<dd>A daemon program implemented in some networked components. It is
+used for periodically announce their existence, and some of their
+properties.</dd>
+
+<dt id="AnalysIR">AnalysIR</dt>
+<dd>Commercial infrared analyzer and decoder program for Windows.
+    By its makers characterized as    "... the  leading  tool  available  for  analysing,  decoding  and
+reverse engineering infrared remote control protocols". <a href="http://www.analysir.com">Web site.</a>
+</dd>
+
+<dt id="Analyzer">Analyzer</dt>
+<dd>
+    We use the word "analyzer" for a program that takes one or more IR signals/sequences as input,
+    and from them computes one (or several alternative) IRP-Forms
+    (with parameter values) that is compatible with the data, i.e. that could have generated the given data.
+    <a href="#IrpTransmogrifier">IrpTransmogrifier</a> contains another implementation,
+    used in the current version of <a href="#IrScrutinizer">IrScrutinizer</a>.
+</dd>
+
+<dt id="ANTLR">ANTLR</dt>
+<dd>
+"A powerful parser generator for reading, processing, executing, or translating structured text or binary files. ...
+From a grammar, ANTLR generates a parser that can build and walk parse trees."
+    <a href="https://www.antlr.org/">Website</a>, see also <a href="https://github.com/antlr/antlr4/blob/4.7.2/doc/index.md">documentation site</a>.
+</dd>
+
+<dt id="Arduino">Arduino</dt>
+<dd>A single-board micro-controller, based upon a 8-bit Atmel AVR
+micro-controller, or a 32-bit Atmel ARM. <a
+href="http://www.arduino.cc">Official site</a>. Can be used for
+implementing sending and/or capturing of infrared signals with
+additional hardware attached to its IO-pins, see for example <a href="arduino_nano.html">this project</a>.</dd>
+
+<dt id="BracketedRawFormat">Bracketed raw format</dt>
+<dd>Simple text format for formatting of a raw IR signal, introduced by <a href="#IrpTransmogrifier">IrpTransmogrifier</a>.
+Intro-, repeat, and (optionally) ending sequences are enclosed by brackets ("[]", sometimes called "square brackets"
+or "square parenthesis"). Signs ("+" for flashes, "-" for gaps), as well as interleaved commands or semicolons,
+are accepted, and ignored (even if they are not in correct order). Optionally, the beginning sequence can be preceeded by
+<code>Freq=</code><em>frequency_in_Hz</em><code>Hz</code>
+giving the modulation frequency. If not explicitly given,
+a default value (dependent on the reading program) is assumed. Example (an RC5-signal): <code>Freq=36000Hz[][+889,-889,+1778,-889,+889,-889,+889,-889,+889,-889,+889,-889,+889,-889,+889,-889,+889,-889,+889,-889,+889,-889,+889,-889,+889,-90886][]</code>.
+</dd>
+
+<dt id="Capturing">Capturing (sometimes "learning")</dt>
+<dd>The process of recording an unknown physical <a href="#IrSequence">IR
+sequence</a> as a sequence of
+on- and off-durations, preferably together with a measure of its
+<a href="#ModulationFrequency">modulation frequency</a>.
+See <a href="#NonDemodulatingIrReceiver">(Non-demodulating) IR receiver</a>. Cf. <a
+href="#ReceivingIrSignals">receiving IR signals</a>.</dd>
+
+<dt id="CCF">CCF (text signal format)</dt>
+<dd>Synonym for the <a href="#ProntoHex">Pronto Hex</a> format.
+Not to be confused with the <a
+href="#ccfFileFormat">ccf file format</a> of the Pronto Classic
+remotes!</dd>
+
+<dt id="ccfFileFormat">ccf file format</dt>
+<dd>Not to be confused with the <a href="#CCF">CCF text signal format</a>!
+Configuration file format for the Pronto Classic. File extension is
+<code>ccf</code>. Can be edited by the <a href="#ProntoEdit">ProntoEdit</a>
+program. Has been completely reverse engineered, and the open-source program <a
+href="#Tonto">Tonto</a> is able both to interactively edit them, as well as
+non-interactively through an API. <a href="#IrScrutinizer">IrScrutinizer</a>
+can import and export ccf files, using the said API.</dd>
+
+<dt id="CleansedSignal">Cleansed signal</dt>
+<dd>Given a captured <a href="#DirtySignal">dirty signal</a>, numerically "close" duration values are lumped into one single value.
+Often combined with a <a href="#RepeatFinder">repeat finder</a>.</dd>
+
+<dt id="CML">CML</dt>
+<dd>Proprietary binary format by <a href="http://www.rticorp.com/">RTI</a> for their IR database files.
+Has been reverse engineered; IrScrutinizer can import it.
+One well known CML file is the
+<a href="http://files.remotecentral.com/collection/66-1/index.html">Mega List Database</a>,
+which is a huge database of IR codes maintaned by Glackowitz from the
+<a href="http://www.remotecentral.com/">Remote Central Forums</a>.</dd>
+
+<dt id="Command">Command</dt>
+<dd>Here, an <a href="#IrSignal">IR signal</a> with a name, like "Play".</dd>
+
+<dt id="CIR">Consumer IR (CIR)</dt>
+<dd>Consumer IR deals with IR control of various devices. <a
+href="http://en.wikipedia.org/wiki/Consumer_IR">Wikipedia
+article</a>. Not to be confused with <a
+href="#IRDA">IRDA</a>. Typically uses wave lengths of 940&ndash;950nm.</dd>
+
+<dt id="CSV">CVS (comma separated values)</dt>
+<dd>Primitive data base format, one record consisting of one line, the entries
+separated from one another by a comma (,) (or sometimes another
+character). One possible file extension <code>csv</code>. Can be read
+directly by  spreadsheet programs.</dd>
+
+<dt id="Decode">Decode (noun)</dt>
+<dd>Given an <a href="#IrSequence">IrSequence</a> or an <a
+href="#IrSignal">IrSignal</a>, a <em>decode</em> is a <a href="#IrProtocol">protocol</a>,
+together with parameter values, that are compatible with the given
+IrSequence/IrSignal, i.e. could have generated the original signal. Note that the
+determination is governed by numerical uncertainties, so that small deviations
+from the perfect signal are accepted. Furthermore, one signal/sequence may have
+none, one, or more valid decodes.</dd>
+
+<dt id="DecodeIR">DecodeIR</dt>
+<dd>Library for the <a href="#Decode">decoding</a> of
+IrSequences. Originally written by John Fine, extended by others; used
+by many widely spread programs as a shared library, often using <a
+href="#JNI">JNI</a>. The current version is 2.45. License: public domain.<a
+href="http://www.hifi-remote.com/forums/dload.php?action=file&amp;file_id=13104">Binaries for Windows, Linux, and Mac</a>,
+<a
+href="https://sourceforge.net/p/controlremote/code/HEAD/tree/trunk/decodeir/">source
+code at SourceForge</a>.
+Now superseded by <a href="#IrpTransmogrifier">IrpTransmogrifier</a>.
+</dd>
+
+<dt id="DemodulatingIrReceiver">Demodulating IR Receiver</dt>
+<dd>An integrated circuit that receives a <a
+href="#ModulationFrequency">modulated IR signal</a> and recovers the original
+signal with the modulation removed.  The modulation frequency of the signal
+must "match" the frequency of the demodulator. Receiver chips are typically marked TSMP<em>XXYY</em>,
+where <em>XX</em> (two or three digits) denotes a vendor specific type, and <em>YY</em>
+the modulation frequency in kHz.
+(<a href="http://www.vishay.com/docs/82460/tsop45.pdf">Data sheet</a> for a typical
+product.)
+Not suited for <a href="#Capturing">capturing</a> of unknown
+signals, since it removes the modulation frequency without identifying it.</dd>
+
+<dt id="DeviceNumber">Device Number</dt>
+<dd>See <a href="#ProtocolParameters">protocol parameters</a>. Denoted
+by D in <a href="#IrpNotation">IRP protocols</a>.</dd>
+
+<dt id="DeviceType">Device Type</dt>
+<dd>Class of components, like TV, VCR, Satellite receiver, etc.</dd>
+
+<dt id="DirtySignal">Dirty Signal/Sequence</dt>
+<dd>
+    A physically measured signal or sequence containing random measurement errors, "dirt".
+    Such a signal/sequence contains several numbers that are close, but not equal.
+</dd>
+
+<dt id="Duration">Duration</dt>
+<dd>A duration is either a <a href="#Gap">gap</a> or a <a href="#Flash">flash</a>.</dd>
+
+<dt id="DutyCycle">Duty Cycle</dt>
+<dd>The percentage of the time the the modulation pulse is on. Typically
+slightly less than 50%.</dd>
+
+<dt id="EndingSequence">Ending sequence</dt>
+<dd>See <a href="#IrSignal">IrSignal</a>.</dd>
+
+<dt id="Eventghost">Eventghost</dt>
+<dd>"EventGhost is an advanced, easy to use and extensible automation
+tool for MS Windows. It can use different input devices like infrared
+or wireless remote controls to trigger macros, that on their part
+control a computer and its attached hardware." Licensed under GPL2.<a
+href="http://www.eventghost.net">Home page for Eventghost</a>.</dd>
+
+<dt id="ExchangeIr">ExchangeIR</dt>
+<dd>Library for IR signal analysis and exchange by Graham Dixon. Licensed under the <a
+href="#GPL3">GPL3 license</a>. For the present project,
+the interesting parts are the <a href="#Analyzer">Analyzer</a>, the <a
+href="#RepeatFinder">repeat finder</a>, and functions for the <a href="#UEILearnedFormat">UEI
+learned format</a>. These parts  has been
+translated to Java by myself: <a href="javadoc/exchangeir/index.html">API
+documentation</a>, <a
+href="http://sourceforge.net/p/controlremote/code/HEAD/tree/trunk/exchangeir/">source</a>.</dd>
+
+<dt id="Executor">Executor</dt>
+<dd>An embedded "program" for the <a href="#Generating">rendering</a> and transmission of one
+or several <a href="#IrProtocol">protocols</a>. One executor can manage several protocols; also,
+for one protocol there may be several alternative executors. An executer has its own parametrization,
+more-or-less similar to the parametrization of the protocol. Used in <a href="#Jp1Remote">JP1 Remotes</a>
+and <a href="#RemoteMaster">RemoteMaster</a>.
+</dd>
+
+<dt id="Flash">Flash (or "mark", "on-period")</dt>
+<dd>Period of time when the IR light is "on", or flashed with the selected
+<a href="#ModulationFrequency">modulation frequency</a>. See <a href="#IrSequence">IrSequence</a>.</dd>
+
+<dt id="functionNumber">Function Number</dt>
+<dd>See <a href="#ProtocolParameters">protocol parameters</a>. In IRP protocols, denoted by F.
+In the <a href="#JP1">JP1 community</a>, often the synonym <a href="#OBC">OBC</a> is used.</dd>
+
+<dt id="Gap">Gap (or "space", "off-period",  "Pause")</dt>
+<dd>Period of time when the IR light is off. See <a href="#IrSequence">IrSequence</a>.</dd>
+
+<dt id="Generating">Generating, sometimes called rendering</dt>
+<dd>The process of evaluating an <a href="#IrProtocol">IrProtocol</a> for a
+particular parameter value, rendering an <a
+href="#IrSignal">IrSignal</a>. Commonly used rendering programs/engines are the
+older <a
+href="#MakeHex">MakeHex</a>, <a href="#IrpMaster">IrpMaster</a>
+(included in versions 1 of <a href="IrScrutinizer.html">IrScrutinizer</a>,
+and the more modern and capable <a href="#IrpTransmogrifier">IrpTransmogrifier</a>
+(included in the current versions of IrScrutinizer).</dd>
+
+<dt id="Girr">Girr (Generic IR Remote)</dt>
+<dd>A general <a href="#XML">XML</a>-based exchange formats for IR
+Signals. Really a container format that can contain any of the <a
+href="#ProntoHex">Pronto Hex</a>, <a href="#RawIrSignal">raw format</a>, <a
+href="#IrProtocol">protocol/parameter</a> format, as well as other text formats
+like <a href="#sendir">Global Caché sendir</a>. For a full description, see <a href="Girr.html">the full documentation</a>.</dd>
+
+<dt id="GlobalCache">Global Caché</dt>
+<dd>Manufacturer of IR sending hardware, in some cases with learning and/or receiving possibilities.
+    <a href="http://www.globalcache.com/">Web site</a>.
+    Supported in <a href="#IrScrutinizer">IrScrutinizer</a>.
+</dd>
+
+<dt id="GPL3">GPL3 license</dt>
+<dd>The current version of the <a href="http://www.gnu.org/licenses/">GNU
+General Public License</a>. Used by my software projects (with some
+exceptions), and many so-called open-source software projects. The basic idea
+is the licensee is allowed to use, enhance etc. the software (also in a
+commerical product and context), but is not allowed to turn it, or a derived product, into non-free software.</dd>
+
+<dt id="IR">IR (Infrared light)</dt>
+<dd>According to <a href="http://en.wikipedia.org/wiki/Infrared">Wikipedia</a>,
+infrared light are light (electromagnetic radiation) of wavelength between
+700nm and 1mm. For control of consumer electronics (CIR), according to
+<a href="http://en.wikipedia.org/wiki/Consumer_IR">Wikipedia</a>, wavelengths
+around 870 nm and 930-950 nm (latter preferred), in comparison to IrDA
+(850-900nm) are used. Almost always generated by an <a
+href="#IRLed">IR LED</a>.<!-- Dave Houston: CIR: 940nm -->
+      </dd>
+
+<dt id="IRDA">IrDA</dt>
+<dd><a href="http://en.wikipedia.org/wiki/Infrared_Data_Association">IrDA</a> is a
+method for data exchange between PCs and portable devices. It is no longer to
+be considered as state-or-the-art, and has been almost completely replaced by
+Bluetooth and WiFi. Many devices with IrDA hardware is still around, but it is,
+with few exceptions, unsuitable for <a href="#CIR">consumer IR</a>.</dd>
+
+
+<dt id="IrLed">IR LED (light emitting diode)</dt>
+<dd>Semiconductor component capable of sending light with the desired IR
+wavelength. A typical representative is the <a
+				href="http://catalog.osram-os.com/catalogue/catalogue.do?act=showBookmark&amp;favOid=00000007000243890001003a">Osram
+SFH 4512</a>.</dd>
+
+
+<dt id="IrProtocol">(IR) Protocol</dt>
+<dd>An algorithm for turning a number of parameters into an <a
+href="#IrSignal">IR signal</a>. It defines the necessary parameters and their
+allowed values. By convention, the most frequently changing parameter
+is called "F" (function number). Almost all protocols have a "device number"
+called "D". Many protocols have a "sub-device" number, called "S". A few
+protocols have a <a href="#Toggle">toggle</a> parameter, in general called "T",
+and being <a href="#PersistantParameter">persistent</a>. A protocol may also
+have other parameters, with "arbitrary" names.</dd>
+
+
+<dt id="IrMaster">IrMaster</dt>
+<dd>A program for generating, analyzing, importing, and exporting of infrared
+signals. Now discontinued, replaced by <a href="#IrScrutinizer">IrScrutinizer</a>.</dd>
+
+<dt id="IrpMaster">IrpMaster</dt>
+<dd>A program and API library for <a href="#Generate">rendering</a> <a
+href="#IrpNotation">IRP protocols</a> version 2. See <a
+href="IrpMaster.html">its documentation</a>. Comes with a powerful (but
+slightly hard to use) command line interface. For GUI usage, see <a
+href="#IrMaster">IrMaster</a> and <a
+href="#IrScrutinizer">IrScrutinizer</a>. Note that the word "IrpMaster"
+sometimes refers to the command line program, sometimes to the rendering
+engine contained in IrMaster and IrScrutinizer.
+Now discontinued and obsolete; replaced by <a href="#IrpTransmogrifier">IrpTransmogrifier</a>.
+</dd>
+
+<dt id="IrpNotation">IRP Notation</dt>
+<dd>Compact, slightly cryptical, notation for defining an <a
+href="#IrProtocol">IrProtocol</a>. <a
+href="http://www.hifi-remote.com/wiki/index.php?title=IRP_Notation">Specification</a>.</dd>
+
+<dt id="IrpTransmogrifier">IrpTransmogrifier</dt>
+<dd>
+    Library and command line program for the IRP notation protocols,
+    with rendering, code generation, and recognition applications. <a href="IrpTransmogrifier.html">Reference manual</a>.
+    Effectively replaces <a href="#IrpMaster">IrpMaster</a>, <a href="#DecodeIR">DecodeIR"</a>, and <a href="#ExchangeIr">ExchangeIR</a>.
+</dd>
+
+<dt id="IrScope">IrScope</dt>
+<dd>Program that accompanies the <a href="#IrWidget">IrWidget</a>, also by Kevin
+Timmerman. Originally a support to the IrWidget, was further developed (in
+particular through Graham Dixon) to a fairly general and capable IR analyzing
+program, supporting also <a href="#DecodeIR">DecodeIR</a> and <a
+href="#ExchangeIr">ExchangeIR</a>. The program was a major inspiration source
+for  <a href="#IrScrutinizer">IrScrutinizer</a>.</dd>
+
+<dt id="IrScrutinizer">IrScrutinizer</dt>
+<dd>
+    IrScrutinizer is a powerful program for capturing, generating, analyzing,
+importing, and exporting of infrared signals. <a href="IrScrutinizer.html">Reference manual</a>.</dd>
+
+	<dt id="IrSequence">IR Sequence</dt>
+	<dd>Sequence of time durations, in general in expressed microseconds, together with a <a href="#ModulationFrequency">modulation frequency</a>. The even numbered entries
+normally denote times when the IR light is on (modulated), called <a
+href="#Flash">"flashes"</a> or "marks", the other denote off-periods <a
+href="#Gap">"gaps"</a> or "spaces". They always start with a flash, and end with a gap.
+        Sometimes the flashes are written with a leading "+"-, and the gaps with a leading "-"-sign.
+This has only a decorative purpose; all involved numbers are still positive.</dd>
+
+	<dt id="IrSignal">IR Signal</dt>
+	<dd>Consists of three <a href="#IrSequence">IR sequences</a>, called
+<ol>
+	    <li><em>start sequence</em> (or "intro", or
+"beginning sequence"), sent exactly once at the beginning of the transmission
+of the IR signal,</li>
+	    <li><em>repeat  sequence</em>, sent "while the
+button is held down", i.e. zero or more times during the transmission
+of the IR signal (although some protocols may require at least one copy to be transmitted),</li>
+	    <li><em>ending sequence</em>, sent exactly once at
+the end of the transmission of the IR signal, "when the button has been
+released". Only present in a few protocols.</li>
+	  </ol>
+Any of these can be empty, but not both the intro and the repeat. A
+non-empty ending sequence is only meaningful with a non-empty repeat.
+</dd>
+
+<dt id="IrToy">IrToy</dt>
+<dd>An "open hardware" project by
+Dangerous Prototypes, see the <a
+href="http://dangerousprototypes.com/docs/USB_Infrared_Toy">product
+page</a>. Consists of a microprocessor PIC18F2550, a <a href="#DemodulatingIrReceiver">demodulating IR-receiver</a>,
+a <a href="#NonDemodulatingIrReceiver">non-demodulating IR-receiver</a>, an <a href="#IrLed">IR-LED</a>, and a USB-connector. Thus, is usable
+both for learning, including frequency measurements, receiving demodulated
+R-signals, and sending IR signals. Supported by IrScrutinizer.</dd>
+
+<dt id="IrTrans">IrTrans</dt>
+<dd>A <a href="http://www.irtrans.com">series of IR products</a> from the firm
+with the same name. IrScrutinizer and IrMaster support the Ethernet models
+(preferably with the "IR data base"), for sending only.</dd>
+
+<dt id="IrWidget">IrWidget</dt>
+<dd>An "open hardeware" project by Kevin Timmerman. <a
+href="http://www.compendiumarcana.com/irwidget/">Project page</a>. That page
+presents many different versions, but the most spread version
+(<a href="http://www.hifi-remote.com/forums/viewtopic.php?t=16285">commercially available</a>  by Tommy Tyler) consists of
+a micro processor PIC12F629, a non-demodulating sensor (QSE15x), and a USB serial
+FTDI interface. Supported by Kevin's <a href="#IrScope">IrScope</a>, as well as
+IrScrutinizer.</dd>
+
+<dt id="JNI">Java Native Interface (JNI)</dt>
+<dd>A technique for having a Java program calling a native shared library (DLL
+in Windows, "Shared object" (<code>.so</code>) in other operating systems). See
+the <a href="http://en.wikipedia.org/wiki/JNI">Wikipedia article</a>.</dd>
+
+<dt id="JP1">JP1</dt>
+<dd>Community for customizing <a href="#Jp1Remote">JP1 Remotes</a>.
+<a href="http://www.hifi-remote.com/forums">Forum</a>.</dd>
+
+<dt id="Jp1Remote">JP1 Remote</dt>
+<dd>Customer remotes manufactured by Universal Electronics Inc., manufactured by many different
+names, like One for all etc. Has been reverse engineered by the <a href="#JP1">JP1 community</a>.
+Can be programmed through a connector, called (after the PCB label) JP1.
+The main tool for this is <a href="#RemoteMaster">RemoteMaster</a>.
+</dd>
+
+<dt id="JSON">JSON</dt>
+<dd>A standard for using human readable text to transfer structured
+data, as an alternative to XML. See the <a
+href="http://en.wikipedia.org/wiki/Json">Wikipedia article</a>.</dd>
+
+<dt id="LIRC">Lirc</dt>
+<dd>An open source project for sending and receiving IR signals from Linux. <a
+href="http://www.lirc.org">Official web site</a>. First release in May
+1996, current version is 0.9.4(pre1), released in January 2016. IrScrutinizer supports
+sending through a LIRC server, patched with the <a
+    href="lirc_ccf.html">CCF patch</a>, and can also import and export files in <code>lircd.conf</code> format.</dd>
+
+<dt id="Lircd">Lircd</dt>
+<dd>The main daemon of the <a href="#LIRC">Lirc project</a>. Accepts
+commands on a Unix domain socket, as well as on a TCP socket, by
+default 8765. Accepts commands to send IR signals in <a
+href="#RemoteCommandFormat">Remote/Command format</a> only. For a
+complete list or commands implemented, see the <a
+href="http://lirc.org/html/irsend.html">man page of
+<code>irsend</code></a>, a progam that implements a simple client for
+the Lircd server daemon.
+</dd>
+
+<dt id="lircd.conf">lircd.conf</dt>
+<dd>
+    The main Lirc configuration file; a data base of <a href="#Remote">remotes</a> and its contained <a href="#Command">commands</a>.
+    Typically residing in <code> /etc/lirc/lircd.conf</code>. Also used to denote the file format.
+    The files in the Lirc data base are in this format. Although its syntax and semantics
+    <a href="http://lirc.org/html/lircd.conf.html">is documentated</a>, should not be
+    considered a viable exchange format. Can be imported by IrScrutinizer &mdash; since it contains a substantial abount
+    of <a href="#Lircd">Lircd</a>, translated to Java.
+</dd>
+
+<dt id="MakeHex">MakeHex</dt>
+<dd>A predecessor to IrpMaster. Adheres to an earlier version ("Version 1") of the <a href="#IrpNotation">IRP Notation</a>. For the original C++ program by John Fine, neither a GUI nor a command line
+interface are present; the parameters are given to the program by editing the
+data base files. A Java translation (by myself) exists, which has a command line interface, <a
+href="http://sourceforge.net/p/controlremote/code/HEAD/tree/trunk/makehex/">available
+here</a>.</dd>
+
+<dt id="Mode2">Mode2</dt>
+<dd>
+    <ol>
+        <li>A simple test format consisting of interleaved <a href="#Flash">"on-</a> (<code>pulse</code>) and <a href="#Gap">off-durations</a> (<code>space</code>).</li>
+        <li>A simple <a href="http://www.lirc.org/html/mode2.html">program</a> contained in Lirc, printing the mode2 text format of received IR sequences to standard output.</li>
+        <li>In Lirc, notation for drivers/plugins capable of generating/evaluating data containing timing information.</li>
+    </ol>
+    </dd>
+
+<dt id="ModulationFrequency">Modulation frequency</dt>
+<dd>During the "on" periods, the IR light is not just constantly on, but
+"flashed" on and off at a frequency called the modulation frequency, typically
+between 36kHz to 40kHz, in some cases higher (up to 56kHz), or much higher
+(455kHz, Bang &amp; Olufsen equipment). This reduces noise sensitivity and
+power consumption, and also allows higher currents through the IR LED (that
+thus does not have to be able to survive the high current continuously). Also
+see <a href="#DutyCycle">Duty cycle</a>.</dd>
+
+<dt id="NonDemodulatingIrReceiver">(Non-demodulating) IR receiver</dt>
+<dd>IR receiver that outputs the received IR signal essentially as received,
+i.e. without removing a <a href="#ModulationFrequency">modulation</a>.
+Preferred sensor component
+is a chip with pre-amplifier like TSMP58000,
+at least for "moderate" modulation frequencies (&lt; 60kHz).</dd>
+
+<dt id="OBC">Original Button Code</dt>
+<dd>Acronym for "Original Button Code", a synonym for <a href="#functionNumber">function number</a> used in the <a href="#JP1">JP1 community</a>.
+</dd>
+
+<dt id="ParametricIRSignal">Parametric IR signal</dt>
+<dd>An Ir Signal given as a protocol and a parameter assignment to its
+parameters. Of course, a <a href="#Generate">renderer</a> may compute the
+numerical IR Sequences, but these are <em>considered</em> secondary, it is
+<em>defined</em> by its protocol and parameters values.</dd>
+
+
+<dt id="PCF">PCF</dt>
+<dd>IR signal format, not to be confused with the <a href="#PCF">pcf file
+format</a> of the Pronto NG remotes! This is a proprietary and encrypted form of IR signals. As far as I am aware, it is presently not known how to decode this representation.</dd>
+
+<dt id="pcfFileFormat">pcf file format</dt>
+<dd>Like the <a href="#xcfFormat">xcf format</a>, this is a <a href="#ZIP">ZIP</a>
+file containing an <a href="#XML">XML</a> file with the real payload, and a
+number of icon files. Unfortunately, the enclosed IR signals are in the <a
+href="#PCF">PCF</a> format, thus possible to decrypt only by the ProntoEditNG program.</dd>
+
+<dt id="PersistantVariable">Persistent variable</dt>
+<dd>A <em>persistent variable</em> in an <a href="#IrProtocol">IR protocol</a> may, but
+need not, be given a value before <a href="#Generating">generating</a>. If  not,
+it retains its value from previous invocation, or, for the first invocation,
+has a default value.</dd>
+
+<dt id="ProntoHex">Pronto Hex</dt>
+<dd>IR signal format.  Often called "CCF", "hex", or "Pronto". Consist of a
+sequence of four-digit hexadecimal numbers. For
+the interpretation, see <a href="#ProntoSemantics">the Appendix</a>. It is a
+very popular format, e.g. for textual the exchange in Internet forums.</dd>
+
+<dt id="ProntoClassic">Pronto Classic</dt>
+<dd>Legendary Family of advanced touch-screen remote controls. Manufactured by Philips between 1998 and 2004. Consists of the models TS1000,
+        TSU2000,
+        TSU6000,
+        RC5000,
+        RC5000i,
+        RC5200,
+        RC9200,
+        RU890,
+        RU940,
+        RU970,
+        USR5,
+        RAV2K,
+        RAV2KZ1. Configurable/programmable by a GUI program "ProntoEdit", as well as
+the open-source program <a href="#Tonto">Tonto</a>. </dd>
+
+<dt id="ProntoEdit">ProntoEdit</dt>
+<dd>Windows program for programming the Pronto remotes. Exists in different
+versions for different Pronto series. From its owner Philips now discontinued,
+but available for download at <a
+href="http://files.remotecentral.com/prontopro/index.html">RemoteCentral</a>.</dd>
+
+<dt id="ProntoFrequencyCode">Pronto frequency code</dt>
+<dd>The second number in the CCF representation. For <em>f</em> in Hertz, this is the
+four-digit hexadecimal number given as 1000000/(<em>f</em>*0.241246). It can be
+conveniently computed by the Time/Frequency Calculator in IrScrutinizer,
+available under the Tools menu.</dd>
+
+<dt id="ProntoNG">Pronto NG (New Generaton)</dt>
+<dd>Later generation of Pronto touch screen programmable remotes. Uses the <a
+href="#pcfFormat">pcf format</a> as their configurations. Can be read by ProntoEditNG.</dd>
+
+<dt id="ProntoProfessional">Pronto Professional (<code>*.xcf</code> configuration files)</dt>
+<dd>Later generation of Pronto touch screen programmable remotes. Uses the <a
+href="#xcfFormat">xcf format</a> as their configurations. Consists of the
+models TSU9800, TSU9600, TSW9500, TSU9400, TSU9300, TSU9200, TSU9500 (Philips) and
+RC9001 (Marantz). Discontinued in 2010.</dd>
+
+<dt id="ProtocolParameters">Protocol Parameters</dt>
+<dd>See <a href="#IrProtocol">IR Protocol</a>.</dd>
+
+<dt id="protocols.ini">protocols.ini</dt>
+<dd>Data base file for <a href="#RemoteMaster">RemoteMaster</a>. Despite the name,
+it does not descibe <a href="#IrProtocol">protocols</a> in our sense, but rather <a href="#Executor">executors</a>
+their properties and parametrization.
+</dd>
+
+<dt id="Properties">properties (of an interactive program)</dt>
+<dd>The part of the program's state saved between sessions for each user; saved
+to disk.</dd>
+
+<dt id="RawIrSignal">Raw IR sequence/signal</dt>
+<dd>A raw Ir Sequence is a sequence of (in general) measured on-off
+durations. It may or may not have one or many <a href="#Decode">decodes</a>, but
+these are <em>considered</em> to be secondary; its is <em>defined</em> by its numeric
+time durations. Often written with signs: a "+" indicates a <a
+href="#Flash">flash</a>, a "-" indicates a <a href="#Gap">gap</a>.
+A text format expressing the durations in microseconds is called "raw format",
+even if the signal as such is parametric.
+</dd>
+
+<dt id="ReceivingIrSignals">Receiving IR signals (deployment)</dt>
+<dd>The use case of receiving an a priori partially known (typically through
+its <a href="#IrProtocol">protocol</a>, in particular, the <a href="#ModulationFrequency">modulation frequency</a>) signal, identifying it completely
+(typically its parameters <a href="#ProtocolParameters">protocol
+parameters</a>), and possibly initiating an action.
+Cf. the other use case <a href="#Capturing">capturing</a>.</dd>
+
+<dt id="RepeatFinder">Repeat finder</dt>
+<dd>
+    A repeat finder is a program that, when fed with an <a href="#IrSequence">IrSequence</a>,
+    tries to identify a repeating subsequence in it, and returns an <a href="#IrSignal">IrSignal</a>
+    containing intro-, repeat-, and ending sequence, compatible with the given input data.
+    The library <a href="#ExchangeIr">ExchangeIr</a> contains a repeat finder,
+    which was used in <a href="#IrScrutinizer">IrScrutinizer</a> versions up to and including version 1.2.
+    <a href="#IrpTransmogrifier">IrpTransmogrifier</a> also contains a repeat finder,
+    which is used in the current version of IrScrutinizer.
+</dd>
+
+<dt id="RepeatSequence">Repeat sequence</dt>
+<dd>See <a href="#IrSignal">IrSignal</a>.</dd>
+
+ <dt id="Remote">Remote</dt>
+ <dd>
+     <ol>
+         <li>A collection of <a href="#Command">commands</a> with unique names.</li>
+         <li>A piece of hardware with buttons etc.</li>
+     </ol>
+ </dd>
+
+<dt id="RemoteCommandFormat">Remote/Command format</dt>
+<dd>Given appropriate data base entries, the name of a remote (or
+device) together with the name of a command, can identify a command
+uniquely.</dd>
+
+<dt id="RemoteMaster">RemoteMaster</dt>
+<dd>Powerful open-source tool for the programming of <a href="#Jp1Remote">JP1 remotes</a>.
+see <a href="http://www.hifi-remote.com/wiki/index.php?title=Remote_Master_Manual">Manual</a>.
+</dd>
+
+<dt id="rmdu">RMDU file</dt>
+<dd>Configuration file for <a href="#RemoteMaster">RemoteMaster</a>, describing the configuration
+of a (universal) remote for a particular device. Contains parametrized commands, unfortunatelly not
+in the <a href="#IrProtocol">protocol/parameter form</a>, but parametrized by an <a href="#Executor">executor</a>
+and <em>its</em> parameters. In some cases, IrScrutinizer can import these files.
+</dd>
+
+<dt id="Scrutinize">scrutinize</dt>
+<dd>"To examine in detail with careful or critical attention."</dd>
+
+<dt id="sendir">sendir (Global Caché) format</dt>
+<dd>Text format used by <a href="#GlobalCache">Global Caché</a> devices for expressing an <a href="">IR signal</a>,
+together with some additional information (number of sends, <a href="#Transmitter">transmitter</a>). IrScrutinizer can translate to and from this format.</dd>
+
+<dt id="StartSequence">Start sequence</dt>
+<dd>See <a href="#IrSignal">IrSignal</a>.</dd>
+
+<dt id="StringTemplate">StringTemplate</dt>
+<dd>
+"A Java template engine ... for generating source code, web pages, emails, or any other formatted text output.
+StringTemplate is particularly good at code generators, multiple site skins, and internationalization / localization."
+<a href="https://www.stringtemplate.org/">Website</a>,
+see also <a href="https://github.com/antlr/stringtemplate4/blob/master/doc/index.md">Github documentation</a>.
+</dd>
+
+<dt id="subdeviceNumber">Sub device Number</dt>
+<dd>See <a href="#ProtocolParameters">protocol parameters</a>. In IRP protocols, denoted by S.</dd>
+
+<dt id="TSV">TVS (tab separated values)</dt>
+<dd>Like <a href="#CSV">CSV</a> but using a tab character (ASCII character
+9). File extension <code>.tsv</code>, or other.</dd>
+
+
+
+<dt id="toggle">Toggle</dt>
+<dd><a href="#PersistantVariable">Persistent variable</a> in an <a
+href="#IrProtocol">IrProtocol</a>, in general alternating between 0 and 1, between
+different invocations. I.e., if the first invocation has the toggle value 0,
+all even invocations will have the value 1 of the toggle, all even the value 0,
+independent of the number of repeat sequences. Also see <a href="#ProtocolParameters">protocol parameters</a>.</dd>
+
+
+<dt id="Tonto">Tonto</dt>
+<dd>An open source re-implementation of <a
+href="#ProntoEdit">ProntoEdit</a> for the <a
+href="#ProntoClassic">Pronto Classic</a>, as well as an Java API library
+for reading and manipulating <a href="#ccfFileFormat">CCF
+files</a>. Author is Stuart Allen. <!--a href="http://mrallen.com/tonto">Home
+site</a--> <a href="https://github.com/stewartoallen/tonto">Sources at Github</a>.
+#</dd>
+
+<dt id="Transmitter">Transmitter</dt>
+<dd>Some IR senders have more than  one sending channel, called
+transmitter, allowing for example to control different equipment
+independently, even if they are using the same commands. These are
+called transmitters. Note that by definition, every IR sender has at
+least one transmitter, but only in the case of multiple transmitters,
+a selection is meaningful.</dd>
+
+<dt id="Transmogrify">Transmogrify (verb)</dt>
+<dt>"To change or alter greatly and often with grotesque or humorous effect"</dt>
+
+<dt id="UEILearnedFormat">UEI learned format</dt>
+<dd>Proprietary internal format for a single IR signal from <a href="http://www.uei.com/">Universal Electronics Inc.</a>
+By convention formatted as a sequence of two-digit hexadecimal numbers.
+Has been reverse engineered in <a href="#ExchangeIr">ExchangeIR</a>.
+Supported in previous versions of IrScrutinizer, but not in the current.
+(<a href="http://www.hifi-remote.com/forums/viewtopic.php?p=129608#129608">Ratinale</a>.)
+</dd>
+
+<dt id="wave">wave file format</dt>
+<dd>An <a href="#IrSequence">IR sequence</a> rendered with halfed <a
+href="#ModulationFrequency">modulation frequency</a>, as a sequences of
+equdistant samples (in general with sample frequency 44.1kHz or 48kHz)
+considered as an audio signal. It is supposed to be "playbacked" through an
+audio system connected to a pair of IR LEDs connected in anti-parallel, which
+will again double the carrier frequency. IrScrutinizer supports both the
+generation of wave files, as well as its import and analysis.</dd>
+
+<dt id="WinLirc">WinLirc</dt>
+<dd>According to its <a href="http://winlirc.sourceforge.net/">its web
+site</a>, it "...is the Windows equivalent of <a
+href="#LIRC">LIRC</a>". It is not a port of LIRC, nor does it share
+any code with LIRC. Appears currently not to be maintained (early 2017).
+Statements on Lirc in these pages are not necessarily true for WinLirc.</dd>
+
+<dt id="xcfFormat">xcf configuration file</dt>
+<dd>Configuration file format for the <a href="#ProntoProfessional">Pronto
+Professional</a> line of remotes. Consists of a <a href="#ZIP">ZIP</a> file
+containing one configuration file in XML-format, as well as a number of
+supplementary icon images. The XML file is very easy to understand (for programmers!), and
+can contain IR signals in different formats, like <a href="#CCF">CCF format</a>
+(usable!) and <a href="#PCF">PCF format</a> (encrypted, thus not usable).</dd>
+
+<dt id="XML">XML</dt>
+<dd>Here, a data base file in certain text file format.</dd>
+
+<dt id="XMLSchema">XML Schema</dt>
+<dd>XML Schema (also called XSD, for "Xml Schema Language") is an XML language
+for describing the syntax of XML documents. See the <a
+href="http://en.wikipedia.org/wiki/XML_Schema_%28W3C%29">Wikipedia article</a>.</dd>
+
+<dt id="XSLT">XSLT (Extensible Stylesheet Language Transformations)</dt>
+<dd>XSLT is an XML language for transforming XML documents into other XML
+documents, HTML-pages, or plain text. See the <a
+href="http://en.wikipedia.org/wiki/Xslt">Wikipedia article</a>. The programs
+here use only XSLT version 1.0.</dd>
+      </dl>
+    </section>
+<section id="ProntoSemantics"><title>Appendix. Semantics of the Pronto HEX (CCF) format.</title>
+<note>There are a few very old guides to the format circulating on the internet.
+    These were written in the previous century, as the subject was not very well understood.
+    Although likely very valuable at the time they were written, however, now they
+    are basicall completely unsuitable. Please do not read, and in particular, do not recommend to others. This appendix
+    contains all needed to know &mdash; at least in 2016.</note>
+<p>An IR signal in Pronto CCF form consists of a number of 4-digit
+hexadecimal numbers. For example:</p>
+<p><code>0000 006C 0022 0002 015B 00AD 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 06FB 015B 0057 0016 0E6C</code></p>
+<p>The first number, here 0000, denotes the type of the signal. 0000
+denotes a <a href="#RawIrSignal">raw IR signal</a> with <a href="#ModulationFrequency">modulation</a>,
+while 0100 denotes a non-modulated raw IR signal. There are also a
+small number of other allowed values, denoting signals in <a
+href="#IrProtocol">protocol/parameter
+form</a>, notably 5000 for RC5-protocols, 6000 for RC6-protocols, and 900A
+for NEC1-protocols. </p>
+
+<p>The second number, here 006C, denotes a frequency code. For the
+frequency <em>f</em> in Hertz,
+this is the number 1000000/(<em>f</em>*0.241246) expressed as a
+four-digit hexadecimal
+number. In the example, 006C corresponds to 1000000/(0x006c *
+0.241246) = 38381 Hertz. (It can be
+conveniently computed by the Time/Frequency Calculator in <a
+href="#IrScrutinizer">IrScrutinizer</a>,
+available under the Tools menu.)</p>
+
+<p>The third and the forth number denote the number of <em>pairs</em>
+(= twice the number of <a href="#Duration">durations</a>)
+in the <a href="#StartSequence">start-</a> and the <a
+href="#RepeatSequence">repeat sequence</a> respectively. In the
+example, there are 0x0022 = 34 starting pairs, and 2 repeat pairs.</p>
+
+<p>Next the start- and the repeat-sequences follow; their length being
+given by the third and the forth number, as per above. The
+numbers therein are all time durations, the ones with odd numbers
+    <a href="#Flash">on-periods</a>, the other ones <a href="#Gap">off-periods</a>. These are all expressed as
+multiples of the period time; the inverse value of the
+frequency given as the second number. For this reason, "frequency"
+must be a non-zero number also for the non-modulated case, denoted by
+the first number being 0100. In the example,
+the fifth number 0x015B denotes an on-period of
+0x015B*<em>periodtime</em> = 347/<em>f</em> = 347/38381 = 0.009041 seconds = 9.041 microseconds.</p>
+
+<p>In particular, all sequences start with an on-period and end with
+an off-period.</p>
+
+<p>In the Pronto representation, there is no way to express an <a href="#EndingSequence">ending sequence</a>.</p>
+</section>
+  </body>
+</document>

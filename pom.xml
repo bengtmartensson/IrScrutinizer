@@ -117,7 +117,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-remote-resources-plugin</artifactId>
-                <version>1.5</version>
+                <version>1.6.0</version>
                 <configuration>
                     <resourceBundles>
                         <resourceBundle>${project.groupId}:IrpTransmogrifier:${IrpTransmogrifier.version}</resourceBundle>
@@ -199,6 +199,20 @@
                             </outputDir>
                             <includes>
                                 <include>${project.name}.xml</include>
+                                <include>Glossary.xml</include>
+                            </includes>
+                            <stylesheet>${basedir}/tools/xdoc2html.xsl</stylesheet>
+                            <fileMappers>
+                                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+                                    <targetExtension>.html</targetExtension>
+                                </fileMapper>
+                            </fileMappers>
+                        </transformationSet>
+                        <transformationSet>
+                            <dir>${basedir}/target/maven-shared-archive-resources</dir>
+                            <outputDir>${project.build.directory}/generated-documents</outputDir>
+                            <includes>
+                                <include>IrpTransmogrifier.xml</include>
                             </includes>
                             <stylesheet>${basedir}/tools/xdoc2html.xsl</stylesheet>
                             <fileMappers>
