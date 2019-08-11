@@ -4,7 +4,8 @@ Girr, HardHardware, DevSlashLirc, and Jirc.
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/harctoolboxbundle/issues
 ==============================================================================
-Version 2.0.0 NOT YET OFFICIALLY RELEASED (but RSN...)
+Version 2.0.1. Released 2019-08-11.
+(There was never a version 2.0.1.)
 
 This release replaces the libraries DecodeIR (by John Fine),
 ExchangeIR (by Graham Dixon), and IrpMaster (by myself) by
@@ -16,6 +17,12 @@ UEI learned as IR signal format has been eliminated (#217).
 
 On all versions but the Macintosh, also IrpTransmogrifier as command line
 program will be available (Command name: irptransmogrifier).
+
+Documentation has not been updated ;-).
+
+Open issues in this release:
+  * MacOS 10.11.*: Crash in RXTX when closing serial USB device, #64.
+  * RXTX on Windows has problems with Arduino's LLC driver, #229.
 
 Associated user visible changes:
 
@@ -31,7 +38,7 @@ However, there are some other user changes/improvements:
 
 * Undo function for the data window of "Scrutinize signal",
 (Actions -> Undo Scrutinize data; Ctrl-Z);  #275
-* Some more icons
+* Some more icons.
 * New output text format: raw without signs.  #250.
 * Improved setup script setup-irscrutinizer.sh in the generic binary
 distribution, for Linux-like operating system.
@@ -42,6 +49,21 @@ a command line program (#285).
 * Misc GUI tweaks (#274, #268)
 * New output text format: raw without signs (#250).
 * Improved parsing of IrSignals given as inputs. (#233)
+* Prohibit (?) the user from selecting a non-existing export directory. (#288)
+* Alternative version of librxtxSerial.so, using /var/lock/lockdev instead
+  of /var/lock. (#263)
+* New export format BracketedRaw. (#307)
+* User's decoding parameters no longer overwrite protocol specific values. (#308)
+* New help menu entry: Browse releases. (#309)
+* Include IrpTransmogrifier.html and Glossary.html, from GUI callable. (#311)
+* Minor doc updates (not complete).
+
+Minor bugfixes:
+
+* Export format "Pronto Hex Oneshot" bugfix. (#296)
+* Fixed bug with export format name containing "/" on Windows (#290)
+* Issue with decoding signals without repeat. (#295)
+* Analyzer on Scrutinize signal falsely gets fallback frequency. (#289)
 
 ==============================================================================
 Version 1.4.3, issued on 2019-06-12.

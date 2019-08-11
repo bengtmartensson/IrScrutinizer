@@ -65,8 +65,8 @@ not to hold the author responsible.</warning>
 	  <td>Version for release 1.4. Misc. minor improvements.</td>
 	</tr>
         <tr>
-	  <td>2019-07-20</td>
-	  <td>Version for release 2.0.0.</td>
+	  <td>2019-08-09</td>
+	  <td>Version for release 2.0.0. Not complete...</td>
 	</tr>
       </table>
 
@@ -86,7 +86,7 @@ well as the Internet IR Databases by Global Caché and by IRDB. Imported signals
 can be decoded, analyzed, edited, and visualized. A collection of
 IR signal can thus be assembled and edited, and finally exported in one of the
 many supported formats.  In addition, the program contains the powerful
-IrpMaster IR-renderer, which means that almost all IR protocols known to the
+IrpTransmogrifier IR-renderer, which means that almost all IR protocols known to the
 Internet community can be generated.</p>
 
 <p>Written in Java (with the exception of three native libraries), most of the
@@ -263,7 +263,7 @@ parameters.</dd>
     <title>Download</title>
     <p>The latest official release is always <a href="https://github.com/bengtmartensson/harctoolboxbundle/releases/latest">available here</a>.</p>
 <p>In addition, there are <a href="https://github.com/bengtmartensson/harctoolboxbundle/releases/tag/ci-build">continuous integration builds</a>,
-    at least most of the time. These are build from a snapshot of the current sources. Because of this, they are more likely to contain bugs,
+    at least most of the time. These are build from a snapshot of the current sources. Because of this, they are more likely to be unstable, contain bugs,
     or even to be outright useless.
     </p>
 </section>
@@ -272,19 +272,19 @@ parameters.</dd>
 <p>IrScrutinizer, and all but two of its third-party additions, are written in Java,
 which means that it should run on every computer with a modern Java installed;
 Windows, Linux (including Raspberry Pi), Macintosh, etc. Java 8 or later is required. The
-exception are DecodeIR and the native part of RXTX, which are written in C++
-and C respectively, and invoked as shared library
-    (<code>.dll</code> in Windows, <code>.so</code> in Linux, <code>.jnilib</code> or <code>.dylib</code> in Mac OS X).
+exception is the native part of RXTX, which are written in C , and invoked as shared library
+    (<code>.dll</code> in Windows, <code>.so</code> in Linux, <code>.jnilib</code> in Mac OS X).
     For Linux, there is also the <em>DevSlashLirc</em> library.
-    If DecodeIR, RXTX, or DevSlashLirc are
+    If DecodeIR or DevSlashLirc are
 not available on for a particular platform it is not a major problem, as most parts of IrScrutinizer will
-work fine without it; just the DecodeIR-related functions, the serial
+work fine without it; just the serial
 hardware access, or the access to certain hardware will be unavailable.</p>
 
 <p>In all versions, IrScrutinizer behave civilized, in that the installation
 directory is not written to, and thus can be read-only as soon as the installation has taken place.
 </p>
-<p>As of version 1.3, there are six different way of installing the program, described next.</p>
+
+    <p>There are five different way of installing the program, described next.</p>
 </section>
 <section><title>Windows</title>
 <p>First make sure that the current Java is installed.</p>
@@ -295,17 +295,19 @@ directory you like; suggested is <code>C:\Program Files\IrScrutinizer</code>,
 unless you can not install with administrator rights. Unless
 reason to do so, create the start menu folder, and the desktop
 icon. If administrator rights are present, the recommended installation location is in a subdirectory of <code>Program Files</code>.
-If not, installing is still possibly, using any installation directory writeable by the current user.
+If not, installing is still possibly, using any installation directory writable by the current user.
 IrScrutinizer can now be started from <code>Start -> IrScrutinizer ->
 IrScrutinizer</code>, or from the desktop icon.</p>
 
 <p>If desired, the installer will associate <code>.girr</code> files with the program, allowing them to
 be opened by double clicking them.</p>
 
-<p>The installer will also install the command line program <a href="IrpMaster.html">IrpMaster</a>,
-which can be called as <code>irpmaster</code> from a so-called DOS box.</p>
+<p>The installer will also install the command line program <a href="IrpTransmogrifier.html">IrpTransmogrifier</a>,
+which can be called as <code>irptransmogrifier</code> from a so-called DOS box.</p>
 
-<p>To uninstall, select the uninstall option from the Start menu. Very pedantic
+<p>To uninstall, select the uninstall option from the Start menu. If that is missing,
+    use the operating system program management for de-installing.
+    Very pedantic
 people may like to delete the properties file too, see <a href="#Properties">properties</a>.</p>
 </section>
 
@@ -313,30 +315,18 @@ people may like to delete the properties file too, see <a href="#Properties">pro
     <title>AppImage for 64-bit Linux</title>
     <p>An <a href="http://appimage.org/">AppImage</a> is a distribution consisting of
     one large monolithic executable application that is downloaded, made executable, and run, without any
-    installation in classic sense. At this moment, only 64-bit x86 Linux is supported, but it is believed
-to run on all modern, 64-bit x86 Linux distrubutions. Just download
-    <a href="https://github.com/bengtmartensson/harctoolboxbundle/releases/latest">IrScrutinizer-x86_64.AppImage</a>,
-    make executable, and double click (alternativelly, start from the command line).
-    Possibly contrary to the AppImage philosophy, this appimage does not come with its own Java,
-    but requires it to be installed separatly. (Otherwise it would have been 10 times larger.)</p>
+    installation in the classical sense. At this moment, only 64-bit x86 Linux is supported. It is believed
+to run on all modern, 64-bit x86 Linux distrubutions. Just download,
+    make executable, and double click (or start from the command line).
+    As opposed to the other distributions, it comes with its own Java.</p>
 
-    <section>
-        <title>Serial device access</title>
-        <p>To access serial devices, including "serial" devices connected over USB, most current Linuxes
-            require the current user to be a member of the group <code>dialout</code>, in some cases (e.g. Fedora) also
-            the group <code>lock</code>. To grant user <code>$USER</code> this membership, typically a
-            command like
-            <code>sudo usermod -aG dialout $USER</code>, and/or <code>sudo usermod -aG lock $USER</code> is used.
-        </p>
-        <p>Do not run this program as root.</p>
-    </section>
 </section>
       <section>
 	<title>Mac OS X app</title>
         <p>As opposed to Linux and Windows, the "JDK" (Java Development Kit) needs to be installed on MacOS X, not just "Java" (JRE).</p>
 <p>Download the  <a
     href="http://www.harctoolbox.org/downloads/IrScrutinizer-app.zip">compressed app</a>.
-    Uncompress it by double clicking. Opening it will show an app, and a few documention files.
+    Uncompress it by double clicking. Opening it will show an app, and a few documentation files.
     The app can just be dragged to the desktop, to the tray, to "Applications" or any other location the user prefers.
     IrScrutinizer now behaves like any other app in Mac OS X.</p>
 
@@ -346,8 +336,8 @@ to run on all modern, 64-bit x86 Linux distrubutions. Just download
     A mounted disk image "IrScrutinizer" will appear on the desktop. Then proceed as above.)</p-->
 
     <p>To unistall, just move the app to the trash.</p>
-    <p>The command line program <a href="IrpMaster.html">IrpMaster</a> is not supported in this mode.
-    (For this, the <a href="#Generic+Binary">generic binary</a> distribution has to be used.)    </p>
+    <p>The command line program <a href="IrpTransmogrifier.html">IrpTransmogrifier</a> is not supported in this mode.
+    (For this, the <a href="#Generic+Binary">generic binary</a> distribution has to be used.)</p>
       </section>
 
 <section><title>Generic Binary</title>
@@ -357,38 +347,44 @@ operating systems Linux (x64-32, x86-64, armv7), Windows (x86, 32 and 64 bits), 
 shared libraries may be compiled with moderate effort.)</p>
 
 <p>The generic binary distribution can be used whenever using the
-rpm/setup.exe/app installation is not possible, not up-to-date, or not desired.</p>
+setup.exe/app installation is not possible, not up-to-date, or not desired.</p>
 
-<p>First make sure that the current Java is installed.</p>
+<p>First make sure that the current Java (at least version 8) is installed.</p>
 
 <p>To install, unpack in an empty directory of your choice, suggested is
-    <code>/usr/local/irscrutinizer</code>. Inspect the wrapper <code>irscrutinizer.sh</code>, and
+    <code>/usr/local/share/irscrutinizer</code>.
+    There are a few additional steps, which the script <code>setup-irscrutinizer.sh</code>
+    can take care of. If this is not desired, or does not work,
+    these steps will be described next.</p>
+
+    <p>Inspect the wrapper <code>irscrutinizer.sh</code>, and
     make changes if necessary.</p>
 
 <p>It is recommended to make links from a directory in the path to the
 wrapper script, e.g.</p>
 <source>
-ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irscrutinizer
-ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irpmaster
+ln -s /usr/local/share/irscrutinizer/irscrutinizer.sh /usr/local/bin/irscrutinizer
+ln -s /usr/local/share/irscrutinizer/irscrutinizer.sh /usr/local/bin/irptransmogrifier
 </source>
-<p>If your system natively supports the RXTX, you should preferably use that. See
+<p>If your system comes with a natively and working RXTX, you should preferably use that. However, Fedora currently
+    <a href="https://bugzilla.redhat.com/show_bug.cgi?id=1645856">ships with unusable RXTX</a>. See
     the comments in the wrapper <code>irscrutinizer.sh</code>.</p>
 
-    <p>The JNI libraries <code>libDecodeIR.so</code>/<code>DecodeIR.dll</code>/<code>libDecodeIR.jnilib</code> are contained in the
-    distribution and should be found by the program in the installed location.</p>
+    <!--p>The JNI libraries <code>libDecodeIR.so</code>/<code>DecodeIR.dll</code>/<code>libDecodeIR.jnilib</code> are contained in the
+    distribution and should be found by the program in the installed location.</p-->
 
     <p>The desktop file <code>irscrutinizer.desktop</code> should, if desired, be
     installed in <code>/usr/local/share/applications</code> alternatively
     <code>~/.local/share/applications</code>.</p>
 
     <p>The program can now be started either as a desktop program, or by typing <code>irscrutinizer</code> on the command line.
-    Also the command line program <a href="IrpMaster.html">IrpMaster</a> can be started
-    by the command <code>irpmaster</code>. It is also possible to start the program by double clicking
+    Also the command line program <a href="IrpTransmogrifier.html">IrpTransmogrifier</a> can be started
+    by the command <code>irptransmogrifier</code>. It is also possible to start the program by double clicking
     on the jar file. In case this brings up the archive manager, the desktop needs to be taught
     to open executable jar files with the "java" application. For this, select a jar file the file browser,
     select the properties, and select "java" as the application to "open with". (The details might vary.)</p>
 
-    <p>On Linux, it is general necessary to check, and possibly fix, the
+    <p>On Linux, it is general necessary to check, and possibly fix, theå
         <a href="#Serial+device+access">access to the serial devices</a>. The previously mentioned
         wrapper does this.</p>
 
@@ -401,7 +397,7 @@ ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irpmaster
 <p>To uninstall, just delete the files. Some may like to delete the <a href="#Properties">properties file</a> too.</p>
 </section>
 
-<section>
+<!--section>
     <title>Fedora Linux</title>
     <p>Fedora rpm packages are
         available for the now obsolete version 1.1.3.</p>
@@ -412,14 +408,29 @@ ln -s /usr/local/irscrutinizer/irscrutinizer.sh /usr/local/bin/irpmaster
         <p>Unfortunatelly, the packaging contains a few semi-serious problems. These are reported,
             but stay unfixed (since over a year).
             Fedora users are recommended instead to use AppImage or the generic binary package.</p>
-</section>
+</section-->
 
 <section>
     <title>Source distribution</title>
-    <p>Compiling the sources is covered in the <a href="#Appendix.+Building+from+sources">Appendix</a>.
-    This allows to install the different components in a way compliant with e.g. the installation by the Gnu Autotools,
-    normally in subdirectories of <code>/usr/local</code>.</p>
+    <p>Compiling the sources is covered in the <a href="#building-from-sources">Appendix</a>.
+    This generates the generic binary distribution file, which is installed as described above.
+    Alternatively, it can be installed with the command</p>
+    <source>
+        make -f tool/Makefile install
+    </source>
+    <p>
+    possibly with <code>sudo</code> or as root.</p>
 </section>
+<section>
+        <title>Linux/Unix Serial device access</title>
+        <p>To access serial devices, including "serial" devices connected over USB, most current Linuxes
+            require the current user to be a member of the group <code>dialout</code>, in some cases (e.g. Fedora) also
+            the group <code>lock</code>. To grant user <code>$USER</code> this membership, typically a
+            command like
+            <code>sudo usermod -aG dialout $USER</code>, and/or <code>sudo usermod -aG lock $USER</code> is used.
+        </p>
+        <p>Do not run this program as root.</p>
+    </section>
 </section>
 
 <section>
@@ -525,13 +536,13 @@ program, or by selecting Options -> Export formats database -> Reload.</p>
     <title>Properties</title>
 <p>Under Windows, the properties are stored in
 <code><![CDATA[%LOCALAPPDATA%\IrScrutinizer\IrScrutinizer.properties.xml]]></code> using Windows
-Vista and later (on my Windows 7 system, this is <code>%HOME%\AppData\Local\IrScrutinizer\IrScrutinizer.properties.xml</code>), otherwise in
+Vista and later (typically <code>%HOME%\AppData\Local\IrScrutinizer\IrScrutinizer.properties.xml</code>), otherwise in
 <code>%APPDATA%\IrScrutinizer\IrScrutinizer.properties.xml</code>. Using other operating
 systems, it is stored according to the <a href="https://specifications.freedesktop.org/basedir-spec/latest/index.html">FreeDesktop specification</a>.
 Per default, this is <code>$HOME/.config/IrScrutinizer/properties.xml</code>. It is
 not deleted by  un-install. (If weird problems appear, for example after an update, try
 deleting this file. For this, there is a command line option <code>--nuke-properties</code> that can be used to
-conveniently delete the present property file, without knowing its exact name.)
+conveniently delete the present property file, without remembering its exact name.)
 </p>
       </section>
 <section>
@@ -1394,14 +1405,13 @@ in the distributed jar file.</p-->
 
 <p>For automating tasks, or for integrating in build processes or Makefiles or
 the like, it
-is probably a better idea to use IrpMaster instead, which has a
-reasonably complete <a href="IrpMaster.html#Command+line+usage">command line interface</a>.</p>
+is probably a better idea to use IrpTransmogrifier instead, which has a
+reasonably complete <a href="IrpTransmogrifier.html#Usage+of+the+program+from+the+command+line">command line interface</a>.</p>
 
-<p>IrpMaster as command line program can be invoked with the AppImage installation by giving <code>--irpmaster</code>
-as the <em>first</em> argument to the program; all of the rest will be handled over to IrpMaster.
-However, the <code>--config</code> is not needed, it is generated automatically.</p>
+<p>IrpTransmogrifier as command line program can be invoked with the AppImage installation by
+calling it using the name <code>irptransmogrifier</code> (through copying or linking).</p>
 
-<p>The MacOS App does not support calling IrpMaster; install the generic binary version if needed.</p>
+<p>The MacOS App does not support calling IrpTransmogrifier; install the generic binary version if needed.</p>
 
 <p>The program delivers well defined and sensible exit codes.</p>
     </section>
@@ -1424,7 +1434,7 @@ However, the <code>--config</code> is not needed, it is generated automatically.
 
 <section><title>Does IrScrutinizer completely replaces IrMaster?</title>
 <p>Almost. Using <a href='IrMaster.html#The+"IR+Protocols"+pane'>MakeHex as
-renderer</a> (or more correctly, its Java version) instead of IrpMaster is not
+renderer</a> (or more correctly, its Java version) is not
 implemented. (The practical usage of this feature is probably <em>very</em>
 limited, and IrMaster is still available, should it ever be needed.) The
 <a href='IrMaster.html#The+"War+Dialer"+pane'>"war dialer"</a> is also not
@@ -1571,7 +1581,7 @@ necessary adaptations.
     <title>Appendix. Building from sources</title>
     <p>"IrScrutinizer" is one subproject (corresponding to a Java <em>package</em>) within <a href="http://harctoolbox.org">harctoolbox.org</a>.
     It depends on several other subprojects within harctoolbox. The project <code>harctoolboxbundle</code> consists
-    of these subproject bundled together, with some dependent third-party components added.</p>
+    of this subproject.</p>
 
     <p>The released versions are found on the <a href="https://github.com/bengtmartensson/harctoolboxbundle/releases">download page</a>.
     The development sources are maintained on <a href="https://github.com/bengtmartensson/harctoolboxbundle">my GitHub repository</a>.
@@ -1705,13 +1715,19 @@ described
 <source>
     $ java -jar target/IrScrutinizer-jar-with-dependencies.jar
 </source>
+<p>or, if the shared libraries are required, with <em>path-to-shared-libraries</em> denoting the path to a directory containing
+the shared libraries.</p>
+<source>
+    $ java -Djava.library.path=<em>path-to-shared-libraries</em> -jar target/IrScrutinizer-jar-with-dependencies.jar
+</source>
+
 <p>IrScrutinizer can also be started by double clicking the mentioned jar file,
     provided that the desktop has been configured to start executable jar with "java".</p>
 </section>
 
 <section>
     <title>Installation</title>
-<p>For reasons unclear to me, Maven does not support something like <code>make install</code> for installing a
+<p>Maven does not support something like <code>make install</code> for deployment installing a
 recently build program on the local host.
 Instead, the supplied <code>tools/Makefile</code> can
 install the program to normal Linux locations (in the Makefile <code>INSTALLDIR</code>),</p>
@@ -1719,7 +1735,7 @@ install the program to normal Linux locations (in the Makefile <code>INSTALLDIR<
         sudo make -f tools/Makefile install
     </source>
 <p>Equivalently, the just created generic-binary package
-<code>IrScrutinizer/target/IrScrutinizer-*-bin.zip</code>) can be installed using <a href="#Generic+Binary">these instuctions</a>.</p>
+<code>IrScrutinizer/target/IrScrutinizer-*-bin.zip</code>) can be installed using <a href="#Generic+Binary">these instructions</a>.</p>
 </section>
 
 </section>

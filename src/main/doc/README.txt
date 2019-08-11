@@ -11,12 +11,12 @@ hierarchies), as well as the Internet IR Databases by Global Caché and
 by IRDB. Imported signals can be decoded, analyzed, edited, and
 plotted. A collection of IR signal can thus be assembled and edited,
 and finally exported in one of the many supported formats.  In
-addition, the program contains the powerful IrpMaster IR-renderer,
+addition, the program contains the powerful IrpTransmogrifier IR-renderer,
 which means that almost all IR protocols known to the Internet
 community can be generated.
 
-Written in Java (with the exception of two (on Linux three) native libraries),
+Written in Java (with the exception of one (on Linux two) native libraries),
 most of the functionality of the program is available on every Java platform.
-The native libraries (DecodeIR and RXTX) are presently available for
-32- and 64-bit versions of Windows, Linux (x86 and amd-64), and
+The native library (RXTX) is presently available for
+32- and 64-bit versions of Windows, Linux (x86, amd-64, and arm), and
 MacOsX, and can with moderate effort be compiled for other platforms.

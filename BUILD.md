@@ -4,7 +4,7 @@
 
 "IrScrutinizer" is one subproject (corresponding to a Java _package_) within [harctoolbox.org](http://harctoolbox.org).
     It depends on several other subprojects within harctoolbox. The project `harctoolboxbundle` consists
-    of these subproject bundled together, with some dependent third-party components added.
+    of this subproject.
 
 The released versions are found on the [download page](https://github.com/bengtmartensson/harctoolboxbundle/releases).
     The development sources are maintained on [my GitHub repository](https://github.com/bengtmartensson/harctoolboxbundle).
@@ -125,11 +125,18 @@ For testing purposes, the programs can be invoked from their different target di
     
     $ java -jar target/IrScrutinizer-jar-with-dependencies.jar
 
+or, if the shared libraries are required, with _path-to-shared-libraries_ denoting the path to a directory containing
+the shared libraries.
+
+
+    
+    $ java -Djava.library.path=_path-to-shared-libraries_ -jar target/IrScrutinizer-jar-with-dependencies.jar
+
 IrScrutinizer can also be started by double clicking the mentioned jar file,
     provided that the desktop has been configured to start executable jar with "java".
 
 ## Installation
-For reasons unclear to me, Maven does not support something like `make install` for installing a
+Maven does not support something like `make install` for deployment installing a
 recently build program on the local host.
 Instead, the supplied `tools/Makefile` can
 install the program to normal Linux locations (in the Makefile `INSTALLDIR`),
@@ -139,5 +146,5 @@ install the program to normal Linux locations (in the Makefile `INSTALLDIR`),
         sudo make -f tools/Makefile install
     
 Equivalently, the just created generic-binary package
-`IrScrutinizer/target/IrScrutinizer-*-bin.zip`) can be installed using [these instuctions](http://harctoolbox.org/IrScrutinizer.html#Generic+Binary).
+`IrScrutinizer/target/IrScrutinizer-*-bin.zip`) can be installed using [these instructions](http://harctoolbox.org/IrScrutinizer.html#Generic+Binary).
 
