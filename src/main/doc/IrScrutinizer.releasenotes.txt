@@ -5,7 +5,7 @@ The notation #n refers to issues number n at
 https://github.com/bengtmartensson/harctoolboxbundle/issues
 ==============================================================================
 Version 2.0.1. Released 2019-08-11.
-(There was never a version 2.0.1.)
+(There was never a version 2.0.0.)
 
 This release replaces the libraries DecodeIR (by John Fine),
 ExchangeIR (by Graham Dixon), and IrpMaster (by myself) by
