@@ -41,6 +41,7 @@ public abstract class CommandExporter extends Exporter {
             boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IOException, IrpException, IrCoreException {
         File file = exportFilename(automaticFilenames, parent, exportDir);
         export(command, source, title, repeatCount, file, charsetName);
+        possiblyMakeExecutable(file);
         return file;
     }
 

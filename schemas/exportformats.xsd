@@ -76,6 +76,11 @@
                     <xs:documentation>True if the format support remote meta data (not necessarily all).</xs:documentation>
                 </xs:annotation>
             </xs:attribute>
+            <xs:attribute name="executable" type="xs:boolean" default="false">
+                <xs:annotation>
+                    <xs:documentation>True if the generated export file should be executable.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
         </xs:complexType>
     </xs:element>
 

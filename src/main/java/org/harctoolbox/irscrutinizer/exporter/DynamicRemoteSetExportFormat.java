@@ -183,6 +183,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         this.simpleSequence = Boolean.parseBoolean(el.getAttribute("simpleSequence"));
         this.binary = Boolean.parseBoolean(el.getAttribute("binary"));
         this.metadata = Boolean.parseBoolean(el.getAttribute("metadata"));
+        setExecutable(Boolean.parseBoolean(el.getAttribute("executable")));
 
         xslt = XmlUtils.newDocument(true);
         Node stylesheet = el.getElementsByTagNameNS("http://www.w3.org/1999/XSL/Transform", "stylesheet").item(0);

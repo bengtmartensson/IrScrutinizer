@@ -103,6 +103,7 @@ public abstract class RemoteSetExporter extends Exporter {
                 null //HashMap<String,Long>parameters
                 );
         export(remote, title, source, repeatCount, file, charsetName);
+        possiblyMakeExecutable(file);
         return file;
     }
 

@@ -48,6 +48,7 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
         this.extension = el.getAttribute("extension");
         this.simpleSequence = Boolean.parseBoolean(el.getAttribute("simpleSequence"));
         this.binary = Boolean.parseBoolean(el.getAttribute("binary"));
+        setExecutable(Boolean.parseBoolean(el.getAttribute("executable")));
         xslt = XmlUtils.newDocument(true);
         Node stylesheet = el.getElementsByTagName("xsl:stylesheet").item(0);
         xslt.appendChild(xslt.importNode(stylesheet, true));

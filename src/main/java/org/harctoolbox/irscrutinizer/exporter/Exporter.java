@@ -82,8 +82,21 @@ public abstract class Exporter {
         lastSaveFile = theLastSaveFile;
     }
 
+    private boolean executable;
+
     protected Exporter() {
+        executable = false;
     }
+
+    protected void possiblyMakeExecutable(File file) {
+        if (executable)
+            file.setExecutable(true, false);
+    }
+
+    protected void setExecutable(boolean executable) {
+        this.executable = executable;
+    }
+
     public String getDateFormatString() {
         return dateFormatString;
     }
