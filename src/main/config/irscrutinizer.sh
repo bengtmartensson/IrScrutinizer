@@ -10,7 +10,7 @@
 
 # Set to the preferred Java VM, with or without directory.
 #JAVA=/opt/jdk1.7.0_65/bin/java
-JAVA=java
+JAVA=${JAVA:-java}
 
 # Where the programs are installed, adjust if required
 #IRSCRUTINIZERHOME=/usr/local/irscrutinizer
