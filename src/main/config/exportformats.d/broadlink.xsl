@@ -9,9 +9,14 @@
          </xsl:call-template>
          </xsl:if>
          <xsl:if test="position()=last()">
-             <xsl:text>000D05</xsl:text>
+             <xsl:if test="number(../../@frequency)&gt;0">
+                 <xsl:text>000D05</xsl:text>
+             </xsl:if>
+             <xsl:if test="number(../../@frequency)=0">
+                 <xsl:text>00018100000000</xsl:text>
+             </xsl:if>
          </xsl:if>
-     </xsl:template>
+    </xsl:template>
 
     <xsl:template name="broadlink-number">
         <xsl:param name="value"/>
