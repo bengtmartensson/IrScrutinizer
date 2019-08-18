@@ -55,26 +55,29 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     private static final CommandLineArgs commandLineArgs = new CommandLineArgs();
 
     static Map<String, IExporterFactory> parseExportFormats(GuiUtils guiUtils, File file) throws ParserConfigurationException, SAXException, IOException {
-        if (file.isDirectory()) {
-            Map<String, IExporterFactory> result = new HashMap<>(32);
-            File[] files = file.listFiles((File dir, String name) -> name.endsWith(".xml"));
-            for (File f : files) {
-                try {
-                    Map<String, IExporterFactory> map = parseExportFormats(guiUtils, f); // allow hierarchies
-                    map.entrySet().forEach((kvp) -> {
-                        putWithCheck(guiUtils, result, kvp.getKey(), kvp.getValue());
-                    });
-                } catch (ParserConfigurationException | SAXException | IOException ex) {
-                    String message = "Export formats file \"" + f.getPath() + "\" could not be read, ignoring it. " + ex.getLocalizedMessage();
-                    if (guiUtils != null)
-                        guiUtils.warning(message);
-                    else
-                        System.err.println(message);
-                }
+        return file.isDirectory()
+                ? parseExportFormatsDirectory(guiUtils, file)
+                : parseExportFormatsFile(guiUtils, file);
+    }
+
+    static Map<String, IExporterFactory> parseExportFormatsDirectory(GuiUtils guiUtils, File file) throws ParserConfigurationException, SAXException, IOException {
+        Map<String, IExporterFactory> result = new HashMap<>(32);
+        File[] files = file.listFiles((File dir, String name) -> name.endsWith(".xml"));
+        for (File f : files) {
+            try {
+                Map<String, IExporterFactory> map = parseExportFormats(guiUtils, f); // allow hierarchies
+                map.entrySet().forEach((kvp) -> {
+                    putWithCheck(guiUtils, result, kvp.getKey(), kvp.getValue());
+                });
+            } catch (ParserConfigurationException | SAXException | IOException ex) {
+                String message = "Export formats file \"" + f.getPath() + "\" could not be read, ignoring it. " + ex.getLocalizedMessage();
+                if (guiUtils != null)
+                    guiUtils.warning(message);
+                else
+                    System.err.println(message);
             }
-            return result;
-        } else
-            return parseExportFormatsFile(guiUtils, file);
+        }
+        return result;
     }
 
     private static Map<String, IExporterFactory> parseExportFormatsFile(GuiUtils guiUtils, File file) throws ParserConfigurationException, SAXException, IOException {
