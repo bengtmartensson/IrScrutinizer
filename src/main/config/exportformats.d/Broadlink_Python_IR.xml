@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (C) 2017 Bengt Martensson
+Copyright (C) 2017, 2019 Bengt Martensson
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,13 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <exportformats:exportformat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
                             xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
-                            name="Broadlink Python IR" extension="py" multiSignal="true" simpleSequence="false">
+                            name="Broadlink Python IR" extension="py" multiSignal="true" simpleSequence="false" executable="true">
 <!-- Limitations: just takes all commands, ignoring its enclosing remotes and command sets. -->
 <xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:java="http://xml.apache.org/xalan/java"
                 xmlns:cidentifierfactory="http://xml.apache.org/xalan/java/org.harctoolbox.irscrutinizer.exporter.CIdentifierFactory"
                 version="1.0">
+    <xsl:import href="hex_utils.xsl"/>
+    <xsl:import href="base64.xsl"/>
+    <xsl:import href="broadlink.xsl"/>
     <xsl:output method="text" />
+
     <xsl:template match="/girr:remotes">
         <xsl:text><![CDATA[#! /usr/bin/env python
 
@@ -40,31 +44,44 @@ import broadlink
 IR_TOKEN = 0x26
 RF_433_TOKEN = 0xB2
 RF_315_TOKEN = 0xD7
+TICK = 1000000 / 32768
+TOKEN_POS = 0
+INTRO = 1
+REPEAT = 2
+ENDING = 3
 
 commands = {
 ]]></xsl:text>
-<xsl:apply-templates select="girr:remote//girr:command"/>
+<xsl:apply-templates select=".//girr:command"/>
 <xsl:text><![CDATA[}
 
 
 def get_command_data(command_name, count):
     cmd = commands[command_name]
     buffer = bytearray()
-    buffer.append(cmd[0])
-    repeat_only = len(cmd[1]) == 0 and len(cmd[3]) == 0
+    buffer.append(cmd[TOKEN_POS])
+    repeat_only = len(cmd[INTRO]) == 0 and len(cmd[ENDING]) == 0
     buffer.append(count - 1 if repeat_only else 0)
-    seq = cmd[2] if repeat_only else mk_sequence(cmd, count)
+    seq = cmd[REPEAT] if repeat_only else mk_sequence(cmd, count)
     buffer.append(len(seq) % 256)
-    buffer.append(len(seq) / 256)
-    return buffer + seq
+    buffer.append(len(seq) // 256)
+    i = 0
+    for d in seq:
+        t = round(d / TICK) if i < len(seq) - 1 else 0x0d05
+        if t > 255:
+            buffer.append(0)
+            buffer.append(t // 256)
+        buffer.append(t % 256)
+        i = i + 1
+    return buffer
 
 
 def mk_sequence(cmd, count):
-    no_repeats = count if len(cmd[1]) == 0 else count - 1
-    data = cmd[1]
+    no_repeats = count if len(cmd[INTRO]) == 0 else count - 1
+    data = cmd[INTRO]
     for i in range(0, no_repeats):
-        data = data + cmd[2]
-    return data + cmd[3]
+        data = data + cmd[REPEAT]
+    return data + cmd[ENDING]
 
 
 def auto_int(x):
@@ -99,15 +116,20 @@ if __name__ == "__main__":
     </xsl:template>
 
     <xsl:template match="girr:command">
-        <xsl:text>    # Command #</xsl:text>
+        <xsl:text>
+    &apos;</xsl:text>
+        <xsl:value-of select="@name"/>
+        <xsl:text>&apos;: [
+        # Command #</xsl:text>
         <xsl:value-of select="position()"/>
         <xsl:text>: </xsl:text>
         <xsl:value-of select="@name"/>
         <xsl:text>; </xsl:text>
         <xsl:apply-templates select="girr:parameters"/>
-        <xsl:text>
-</xsl:text>
         <xsl:apply-templates select="girr:raw[1]"/>
+        <xsl:apply-templates select="girr:raw[1]" mode="broadlink"/>
+        <xsl:text>    ],
+</xsl:text>
     </xsl:template>
 
     <xsl:template match="girr:parameters">
@@ -125,73 +147,82 @@ if __name__ == "__main__":
     </xsl:template>
 
     <xsl:template match="girr:raw">
-        <xsl:text>    &apos;</xsl:text>
-        <xsl:value-of select="../@name"/>
-        <xsl:text>&apos;: [
+        <xsl:text>
         IR_TOKEN,
 </xsl:text>
         <xsl:apply-templates select="girr:intro"/>
         <xsl:if test="not(girr:intro)">
-            <xsl:text>        bytearray(),
+            <xsl:text>        [],
 </xsl:text>
         </xsl:if>
         <xsl:apply-templates select="girr:repeat"/>
         <xsl:if test="not(girr:repeat)">
-            <xsl:text>        bytearray(),
+            <xsl:text>        [],
 </xsl:text>
         </xsl:if>
         <xsl:apply-templates select="girr:ending"/>
         <xsl:if test="not(girr:ending)">
-            <xsl:text>        bytearray()
+            <xsl:text>        [],
 </xsl:text>
         </xsl:if>
-            <xsl:text>    ],
+
+    </xsl:template>
+
+    <xsl:template match="girr:raw" mode="broadlink">
+        <xsl:call-template name="binary">
+            <xsl:with-param name="hex">
+                <xsl:text>26</xsl:text>
+                <xsl:call-template name="four-hex-digits">
+                    <xsl:with-param name="value" select="count(*/*)"/>
+                </xsl:call-template>
+                <xsl:text>00</xsl:text>
+                <xsl:apply-templates select="*/*" mode="broadlink"/>
+            </xsl:with-param>
+        </xsl:call-template>
+    </xsl:template>
+
+    <xsl:template name="binary">
+        <xsl:param name="hex"/>
+        <xsl:text>        </xsl:text>
+        <xsl:call-template name="bytearray-fromhex">
+            <xsl:with-param name="data" select="$hex"/>
+        </xsl:call-template>
+        <xsl:text>,
+        &apos;</xsl:text>
+        <xsl:call-template name="base64">
+            <xsl:with-param name="data" select="$hex"/>
+        </xsl:call-template>
+        <xsl:text>&apos;
 </xsl:text>
     </xsl:template>
 
-    <xsl:template match="girr:intro|girr:repeat|girr:ending">
-        <xsl:text>        bytearray.fromhex(&apos;</xsl:text>
-        <!--xsl:text>26004800</xsl:text-->
+    <xsl:template name="bytearray-fromhex">
+        <xsl:param name="data"/>
+        <xsl:text>bytearray.fromhex(&apos;</xsl:text>
+        <xsl:value-of select="$data"/>
+        <xsl:text>&apos;)</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:intro|girr:repeat">
+        <xsl:text>        [</xsl:text>
         <xsl:apply-templates select="*"/>
-        <xsl:text>&apos;),
+        <xsl:text>],
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:ending">
+        <xsl:text>        [</xsl:text>
+        <xsl:apply-templates select="*"/>
+        <xsl:text>],
 </xsl:text>
     </xsl:template>
 
     <xsl:template match="girr:flash|girr:gap">
-        <xsl:call-template name="broadlink-number">
-            <xsl:with-param name="value" select="round(number(.) div 32.84)"/>
-        </xsl:call-template>
-    </xsl:template>
-
-    <xsl:template name="broadlink-number">
-        <xsl:param name="value"/>
-        <xsl:if test="$value &gt; 255">
-            <xsl:text>00</xsl:text>
-            <xsl:call-template name="broadlink-number">
-                <xsl:with-param name="value" select="floor($value div 256)"/>
-            </xsl:call-template>
+        <xsl:value-of select="text()"/>
+        <xsl:if test="position()!=last()">
+            <xsl:text>,</xsl:text>
         </xsl:if>
-        <xsl:call-template name="two-hex-digits">
-            <xsl:with-param name="value" select="$value mod 256"/>
-        </xsl:call-template>
-    </xsl:template>
-
-    <xsl:template name="two-hex-digits">
-        <xsl:param name="value"/>
-        <xsl:call-template name="hex-digit">
-            <xsl:with-param name="value" select="floor($value div 16)"/>
-        </xsl:call-template>
-        <xsl:call-template name="hex-digit">
-            <xsl:with-param name="value" select="$value mod 16"/>
-        </xsl:call-template>
-    </xsl:template>
-
-    <xsl:variable name="hex-chars">0123456789ABCDEF</xsl:variable>
-
-    <xsl:template name="hex-digit">
-        <xsl:param name="value"/>
-        <xsl:value-of select="substring($hex-chars, $value + 1, 1)"/>
-    </xsl:template>
+     </xsl:template>
 
 </xsl:stylesheet>
 </exportformats:exportformat>
