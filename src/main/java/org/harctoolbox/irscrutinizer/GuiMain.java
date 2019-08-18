@@ -1010,8 +1010,8 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private ICommandExporter newExporter(String formatName) {
         ICommandExporter exporter = exportFormatManager.get(formatName).newExporter();
-        // Not really clean...
-        if (formatName.equals("Girr") && !properties.getExportGenerateParameters()
+        boolean supportsEmbedded = IRemoteSetExporter.class.isInstance(exporter) && ((IRemoteSetExporter) exporter).supportsEmbeddedFormats();
+        if (supportsEmbedded && !properties.getExportGenerateParameters()
                 && !properties.getExportGenerateCcf() && !properties.getExportGenerateRaw()) {
             boolean answer = guiUtils.confirm("All of \"Parameters\", \"Raw\", and \"Pronto Hex\" deselected in the export. Continue?");
             if (!answer)
