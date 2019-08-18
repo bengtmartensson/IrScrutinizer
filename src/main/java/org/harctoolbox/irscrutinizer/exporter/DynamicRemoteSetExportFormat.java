@@ -87,11 +87,12 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
 
         Map<String, IExporterFactory> result = new HashMap<>(32);
         NodeList nl = doc.getElementsByTagNameNS(exportFormatNamespace, "exportformat");
+        String documentURI = doc.getDocumentURI();
         for (int i = 0; i < nl.getLength(); i++) {
             final Element el = (Element) nl.item(i);
             final ICommandExporter ef = (el.getAttribute("multiSignal").equals("true"))
-                    ? new DynamicRemoteSetExportFormat(el)
-                    : new DynamicCommandExportFormat(el);
+                    ? new DynamicRemoteSetExportFormat(el, documentURI)
+                    : new DynamicCommandExportFormat(el, documentURI);
 
             putWithCheck(guiUtils, result, ef.getFormatName(), () -> ef);
         }
@@ -176,7 +177,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     private final boolean metadata;
     private final Document xslt;
 
-    private DynamicRemoteSetExportFormat(Element el) {
+    private DynamicRemoteSetExportFormat(Element el, String documentURI) {
         super();
         this.formatName = el.getAttribute("name");
         this.extension = el.getAttribute("extension");
@@ -186,6 +187,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         setExecutable(Boolean.parseBoolean(el.getAttribute("executable")));
 
         xslt = XmlUtils.newDocument(true);
+        xslt.setDocumentURI(documentURI);
         Node stylesheet = el.getElementsByTagNameNS("http://www.w3.org/1999/XSL/Transform", "stylesheet").item(0);
         xslt.appendChild(xslt.importNode(stylesheet, true));
     }

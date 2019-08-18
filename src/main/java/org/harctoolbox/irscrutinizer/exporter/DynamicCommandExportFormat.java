@@ -42,7 +42,7 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
     private final Document xslt;
 
 
-    public DynamicCommandExportFormat(Element el) {
+    public DynamicCommandExportFormat(Element el, String documentURI) {
         super();
         this.formatName = el.getAttribute("name");
         this.extension = el.getAttribute("extension");
@@ -50,6 +50,7 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
         this.binary = Boolean.parseBoolean(el.getAttribute("binary"));
         setExecutable(Boolean.parseBoolean(el.getAttribute("executable")));
         xslt = XmlUtils.newDocument(true);
+        xslt.setDocumentURI(documentURI);
         Node stylesheet = el.getElementsByTagName("xsl:stylesheet").item(0);
         xslt.appendChild(xslt.importNode(stylesheet, true));
     }
