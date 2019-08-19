@@ -2050,9 +2050,6 @@ public final class GuiMain extends javax.swing.JFrame {
         lircFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, lircImporter);
         importLircHelpButton = new javax.swing.JButton();
         rmduImportPanel = new javax.swing.JPanel();
-        protocolsIniTextField = new javax.swing.JTextField();
-        jLabel29 = new javax.swing.JLabel();
-        selectProtocolIniButton = new javax.swing.JButton();
         webRmduButton = new javax.swing.JButton();
         rmduImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, rmduImporter);
         importRemoteMasterHelpButton = new javax.swing.JButton();
@@ -4054,22 +4051,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
         importTabbedPane.addTab("LIRC", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-0.png")), lircImportPanel); // NOI18N
 
-        protocolsIniTextField.setText(properties.getProtocolsIniPath());
-        protocolsIniTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                protocolsIniTextFieldActionPerformed(evt);
-            }
-        });
-
-        jLabel29.setText("Path/URL to protocols.ini");
-
-        selectProtocolIniButton.setText("...");
-        selectProtocolIniButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectProtocolIniButtonActionPerformed(evt);
-            }
-        });
-
         webRmduButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/jp1/favicon-2.png"))); // NOI18N
         webRmduButton.setText("Web site");
         webRmduButton.addActionListener(new java.awt.event.ActionListener() {
@@ -4091,19 +4072,11 @@ public final class GuiMain extends javax.swing.JFrame {
         rmduImportPanelLayout.setHorizontalGroup(
             rmduImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rmduImportPanelLayout.createSequentialGroup()
+                .addComponent(rmduImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, Short.MAX_VALUE)
                 .addGroup(rmduImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(rmduImportPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel29)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(protocolsIniTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 726, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(selectProtocolIniButton))
-                    .addGroup(rmduImportPanelLayout.createSequentialGroup()
-                        .addComponent(rmduImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(rmduImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(importRemoteMasterHelpButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(webRmduButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addComponent(importRemoteMasterHelpButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(webRmduButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -4113,15 +4086,11 @@ public final class GuiMain extends javax.swing.JFrame {
             rmduImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rmduImportPanelLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addGroup(rmduImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(protocolsIniTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(selectProtocolIniButton)
-                    .addComponent(jLabel29))
                 .addGroup(rmduImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(rmduImportPanelLayout.createSequentialGroup()
                         .addGap(56, 56, 56)
                         .addComponent(webRmduButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 177, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 206, Short.MAX_VALUE)
                         .addComponent(importRemoteMasterHelpButton)
                         .addContainerGap())
                     .addComponent(rmduImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
@@ -8058,24 +8027,6 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_webRmduButtonActionPerformed
 
-    private void selectProtocolIniButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectProtocolIniButtonActionPerformed
-        File file = SelectFile.selectFile(this, "Select protocols.ini file",
-            applicationHome, false, false, "Configuration files (*.ini)", "ini");
-        if (file != null) {
-            protocolsIniTextField.setText(file.getPath());
-            protocolsIniTextFieldActionPerformed(evt);
-        }
-    }//GEN-LAST:event_selectProtocolIniButtonActionPerformed
-
-    private void protocolsIniTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolsIniTextFieldActionPerformed
-        try {
-            properties.setProtocolsIniPath(protocolsIniTextField.getText());
-            loadProtocolsIni();
-        } catch (IOException | ParseException ex) {
-            guiUtils.error(ex);
-        }
-    }//GEN-LAST:event_protocolsIniTextFieldActionPerformed
-
     private void jumpToLastPanelMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jumpToLastPanelMenuItemActionPerformed
         selectLastPane();
     }//GEN-LAST:event_jumpToLastPanelMenuItemActionPerformed
@@ -9744,7 +9695,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
-    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
@@ -9868,7 +9818,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> protocolColumnComboBox;
     private javax.swing.JMenu protocolParametersMenu;
     private javax.swing.JMenuItem protocolSpecMenuItem;
-    private javax.swing.JTextField protocolsIniTextField;
     private javax.swing.JMenuItem proxyMenuItem;
     private javax.swing.JMenuItem rawCodeAnalyzeMenuItem;
     private javax.swing.JMenuItem rawCodeClearMenuItem;
@@ -9925,7 +9874,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem scrutinizeParametricMenuItem;
     private javax.swing.JButton scrutinizeRemoteHelpButton;
     private javax.swing.JButton scrutinizeSignalHelpButton;
-    private javax.swing.JButton selectProtocolIniButton;
     private javax.swing.JMenuItem sendMenuItem;
     private javax.swing.JButton sendingAudioHelpButton;
     private javax.swing.JButton sendingCommandFusionHelpButton;
