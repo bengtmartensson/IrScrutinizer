@@ -51,7 +51,7 @@ install --mode=444 target/exportformats.d/* ${MYPROG_HOME}/exportformats.d
 install -d ${MYPROG_HOME}/doc
 install --mode=444 target/doc/* ${MYPROG_HOME}/doc
 install -d ${MYPROG_HOME}/schemas
-install --mode=444 schemas/*.xsd ${MYPROG_HOME}/schemas
+install --mode=444 target/*.xsd ${MYPROG_HOME}/schemas
 install -d ${MYPROG_HOME}/Linux-amd64
 install --mode=444 native/Linux-amd64/* ${MYPROG_HOME}/Linux-amd64
 cp -a    target/contributed ${MYPROG_HOME}

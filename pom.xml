@@ -30,7 +30,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <IrpTransmogrifier.version>1.1.0-SNAPSHOT</IrpTransmogrifier.version>
-        <Girr.version>2.0.1</Girr.version>
+        <Girr.version>2.1.0-SNAPSHOT</Girr.version>
         <Jirc.version>2.0.1</Jirc.version>
         <HarcHardware.version>2.0.1</HarcHardware.version>
     </properties>
@@ -249,9 +249,10 @@
                             </fileMappers>
                         </transformationSet>
                     </transformationSets>
-                    <catalogs>
-                        <catalog>${basedir}/schemas/catalog.xml</catalog>
-                    </catalogs>
+                    <!-- Uncomment to use a local copy -->
+                    <!--catalogs>
+                        <catalog>../HarcSchemas/catalog.xml</catalog>
+                    </catalogs-->
                 </configuration>
 
                 <!-- Use xalan instead of builtin parser which doesn't really work -->
@@ -370,9 +371,11 @@
                                 </resource>
                                 <resource>
                                     <directory>target/maven-shared-archive-resources</directory>
-                                    <include>IrpProtocols.xml</include>
-                                    <include>girr.xml</include>
-                                    <filtering>false</filtering>
+                                    <include>*</include>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/schemas</directory>
+                                    <include>*.xsd</include>
                                 </resource>
                             </resources>
                         </configuration>

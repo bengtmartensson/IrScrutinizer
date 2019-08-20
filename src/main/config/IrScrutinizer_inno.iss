@@ -51,7 +51,7 @@ Source: "contributed\import\*"; DestDir: "{app}\contributed\import"; Flags: igno
 Source: "generated-documents\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: isreadme
 Source: "doc\*.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "doc\*.html"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\schemas\*.xsd"; DestDir: "{app}\schemas"
+Source: "*.xsd"; DestDir: "{app}\schemas"
 Source: "{#MyAppName}.ico";  DestDir: "{app}"
 Source: "protocols.ini";  DestDir: "{app}"
 ;Source: "..\..\IrpMaster\target\generated-documents\IrpMaster.html"; DestDir: "{app}\doc"

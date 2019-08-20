@@ -5,8 +5,6 @@
                               http://maven.apache.org/xsd/assembly-1.1.2.xsd">
     <id>bin</id>
     <formats>
-        <!--format>tar.gz</format-->
-        <!--format>tar.bz2</format-->
         <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
@@ -28,7 +26,9 @@
                 <include>contributed/*</include>
                 <include>contributed/*/*</include>
                 <include>exportformats.d/*</include>
-                <include>*.xml</include>
+                <include>girr.xml</include>
+                <include>irscrutinizer.appdata.xml</include>
+                <include>IrpProtocols.xml</include>
                 <include>*.desktop</include>
                 <include>*.sh</include>
                 <include>*.bat</include>
@@ -54,12 +54,31 @@
         <fileSet>
             <directory>target/maven-shared-archive-resources</directory>
             <outputDirectory/>
+            <includes>
+                <include>*.xsl</include>
+            </includes>
         </fileSet>
         <fileSet>
             <directory>target/generated-documents</directory>
             <outputDirectory>doc</outputDirectory>
             <includes>
                 <include>*.html</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>target/maven-shared-archive-resources</directory>
+            <outputDirectory>doc</outputDirectory>
+            <includes>
+                <include>IrpTransmogrifier.xml</include>
+                <include>IrpScrutinizer.xml</include>
+                <include>Girr.xml</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>target</directory>
+            <outputDirectory>schemas</outputDirectory>
+            <includes>
+                <include>*.xsd</include>
             </includes>
         </fileSet>
     </fileSets>
@@ -69,14 +88,6 @@
             <outputDirectory/>
             <destName>irscrutinizer.png</destName>
         </file>
-        <file>
-            <source>${basedir}/schemas/girr.xsd</source>
-            <outputDirectory>schemas</outputDirectory>
-        </file>
-        <!--file>
-            <source>../Girr/src/main/resources/girr.xml</source>
-            <outputDirectory>.</outputDirectory>
-        </file-->
         <file>
             <source>${basedir}/target/doc/IrpProtocols.html</source>
             <outputDirectory>doc</outputDirectory>
