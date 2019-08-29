@@ -440,24 +440,6 @@
             <Property name="text" type="java.lang.String" value="Advanced"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="setFFromHexMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Set F = hex"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setFFromHexMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="nukeHexMenuItem">
-              <Properties>
-                <Property name="mnemonic" type="int" value="68"/>
-                <Property name="text" type="java.lang.String" value="Remove &quot;hex&quot;"/>
-                <Property name="toolTipText" type="java.lang.String" value="Delete all the &quot;hex&quot; parameters, these stem from RMDU import."/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nukeHexMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="setProtocolMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Set protocol..."/>

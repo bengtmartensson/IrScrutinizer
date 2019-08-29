@@ -1906,8 +1906,6 @@ public final class GuiMain extends javax.swing.JFrame {
         hideUninterestingColumnsMenuItem = new javax.swing.JMenuItem();
         clearParametrizedCommentMenuItem = new javax.swing.JMenuItem();
         parametrizedAdvancedMenu = new javax.swing.JMenu();
-        setFFromHexMenuItem = new javax.swing.JMenuItem();
-        nukeHexMenuItem = new javax.swing.JMenuItem();
         setProtocolMenuItem = new javax.swing.JMenuItem();
         setDMenuItem = new javax.swing.JMenuItem();
         setSMenuItem = new javax.swing.JMenuItem();
@@ -2760,24 +2758,6 @@ public final class GuiMain extends javax.swing.JFrame {
         parameterTablePopupMenu.add(clearParametrizedCommentMenuItem);
 
         parametrizedAdvancedMenu.setText("Advanced");
-
-        setFFromHexMenuItem.setText("Set F = hex");
-        setFFromHexMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setFFromHexMenuItemActionPerformed(evt);
-            }
-        });
-        parametrizedAdvancedMenu.add(setFFromHexMenuItem);
-
-        nukeHexMenuItem.setMnemonic('D');
-        nukeHexMenuItem.setText("Remove \"hex\"");
-        nukeHexMenuItem.setToolTipText("Delete all the \"hex\" parameters, these stem from RMDU import.");
-        nukeHexMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nukeHexMenuItemActionPerformed(evt);
-            }
-        });
-        parametrizedAdvancedMenu.add(nukeHexMenuItem);
 
         setProtocolMenuItem.setText("Set protocol...");
         setProtocolMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -7932,10 +7912,6 @@ public final class GuiMain extends javax.swing.JFrame {
         importRemoteByFileSelector(xcfImporter, true);
     }//GEN-LAST:event_importRmduMenuItemActionPerformed
 
-    private void setFFromHexMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setFFromHexMenuItemActionPerformed
-        parameterTableModel.setFToHex();
-    }//GEN-LAST:event_setFFromHexMenuItemActionPerformed
-
     private void setProtocolMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setProtocolMenuItemActionPerformed
         String newProtocol = guiUtils.getInput("Enter new protocol", "Protocol request", "NEC1");
         if (newProtocol == null) // Cancel pressed
@@ -7945,11 +7921,6 @@ public final class GuiMain extends javax.swing.JFrame {
             parameterTableModel.setProtocol(newProtocol);
         }
     }//GEN-LAST:event_setProtocolMenuItemActionPerformed
-
-    private void nukeHexMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nukeHexMenuItemActionPerformed
-        parameterTableModel.nukeHex();
-        parameterTable.repaint();
-    }//GEN-LAST:event_nukeHexMenuItemActionPerformed
 
     private void setDMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setDMenuItemActionPerformed
         setParameter("D");
@@ -9779,7 +9750,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem moveUpMenuItem1;
     private javax.swing.JLabel noRepsLabel;
     private javax.swing.JComboBox<String> noTransmitsComboBox;
-    private javax.swing.JMenuItem nukeHexMenuItem;
     private javax.swing.JCheckBoxMenuItem offerStackTraceCheckBoxMenuItem;
     private javax.swing.JMenuItem openLastExportFileMenuItem;
     private javax.swing.JButton openLastFileButton;
@@ -9893,7 +9863,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel sendirExportOptionsPanel;
     private javax.swing.JComboBox<String> sendirModuleComboBox;
     private javax.swing.JMenuItem setDMenuItem;
-    private javax.swing.JMenuItem setFFromHexMenuItem;
     private javax.swing.JMenuItem setFMenuItem;
     private javax.swing.JMenuItem setMiscParamsMenuItem;
     private javax.swing.JMenuItem setProtocolMenuItem;

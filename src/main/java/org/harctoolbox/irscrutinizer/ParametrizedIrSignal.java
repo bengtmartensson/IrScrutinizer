@@ -151,10 +151,6 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         }
     }
 
-    public void nukeHex() {
-        parameters.remove("hex");
-    }
-
     public String getProtocol() {
         return protocolName;
     }
@@ -188,13 +184,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
 
 
     public Command toCommand() throws GirrException {
-        // Strip out parameter named "hex" before sending to IrpMaster
-        // (not used by any current protocols, just causes noisy warnings).
-        @SuppressWarnings("unchecked")
-        Map<String,Long> localParameters = new HashMap<>(parameters);
-        localParameters.remove("hex");
-        Command command = new Command(getName(), getComment(), protocolName, localParameters);
-        return command;
+        return new Command(getName(), getComment(), protocolName, parameters);
     }
 
     private String dummyName() {
@@ -336,15 +326,6 @@ public class ParametrizedIrSignal extends NamedIrSignal {
             super.addSignal(signal);
         }
 
-        public void setFToHex() {
-            for (int row =  0; row < getRowCount(); row++) {
-                Long hex = getParameterIrSignal(row).getParameter("hex");
-                if (/*hex != null &&*/ hex != IrCoreUtils.INVALID)
-                    setValueAt(hex.intValue(), row, ParameterIrSignalColumns.posF);
-            }
-            fireTableDataChanged();
-        }
-
         public ArrayList<Long> listF(Command reference) throws IrpException, IrCoreException, GirrException {
             ArrayList<Long> list = new ArrayList<>(16);
             @SuppressWarnings("unchecked")
@@ -430,16 +411,6 @@ public class ParametrizedIrSignal extends NamedIrSignal {
 
         public void unsetParameter(String name) {
             unsetParameter(colPos(name));
-        }
-
-        public void nukeHex() {
-            for (int row =  0; row < getRowCount(); row++) {
-                ParametrizedIrSignal pir = getParameterIrSignal(row);
-                pir.nukeHex();
-                setValueAt(pir.formatMiscParameters(), row, ParameterIrSignalColumns.posMiscParameters);
-
-                //setValueAt((int)value, row, colPos);
-            }
         }
 
         @Override
