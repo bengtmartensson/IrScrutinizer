@@ -18,16 +18,24 @@ package org.harctoolbox.irscrutinizer.importer;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.ircore.IrCoreUtils;
 import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.ircore.ModulatedIrSequence;
+import org.harctoolbox.irp.IrpException;
+import org.harctoolbox.irscrutinizer.InterpretString;
 
 /**
  * This class allows for the creation of rendered IR signals in the ICT Format, used by the IRScope.
@@ -46,10 +54,33 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
         return imp.getCommands();
     }
 
-    public static Collection<Command> importer(BufferedReader reader) throws IOException {
+    public static Collection<Command> importer(BufferedReader reader, String orig) throws IOException, InvalidArgumentException {
         IctImporter imp = new IctImporter();
-        imp.load(reader, null);
+        imp.load(reader, orig);
         return imp.getCommands();
+    }
+
+    public static void main(String[] args) {
+        for (String s : args) {
+            try {
+                Collection<Command> cmds = parse(s);
+                for (Command cmd : cmds) {
+                    System.out.println(cmd.getName());
+                    System.out.println(cmd.toIrSignal());
+                    System.out.println();
+                }
+            } catch (IOException | IrCoreException | IrpException ex) {
+                Logger.getLogger(IctImporter.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private static Collection<Command> parse(String s) throws FileNotFoundException, IOException, InvalidArgumentException {
+        Collection<Command> cmds;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(IrCoreUtils.getInputSteam(s), IrCoreUtils.DEFAULT_CHARSET))) {
+            cmds = importer(reader, s);
+        }
+        return cmds;
     }
 
     private int lineNumber;
@@ -70,7 +101,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
 
     @Override
     @SuppressWarnings("empty-statement")
-    public void load(Reader reader, String origin) throws IOException {
+    public void load(Reader reader, String origin) throws IOException, InvalidArgumentException {
         prepareLoad(origin);
         hasComplainedAboutMissingFrequency = false;
         BufferedReader bufferedReader = new BufferedReader(reader);
@@ -139,7 +170,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
         setupRemoteSet();
     }
 
-    private void processSignal(ArrayList<Integer> data, String name, String origin) {
+    private void processSignal(ArrayList<Integer> data, String name, String origin) throws InvalidArgumentException {
         if (data.isEmpty())
             return;
 
@@ -157,7 +188,8 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
             frequency = (int) ModulatedIrSequence.DEFAULT_FREQUENCY;
             System.err.println("Warning: carrier_frequency missing, assuming " + frequency);
         }
-        IrSignal irSignal = null;// FIXME InterpretString.interpretIrSequence(dataArray, frequency, isInvokeRepeatFinder(), isInvokeAnalyzer());
+        ModulatedIrSequence seq = new ModulatedIrSequence(dataArray, (double) frequency);
+        IrSignal irSignal = InterpretString.interpretIrSequence(seq, isInvokeRepeatFinder(), isInvokeCleaner(), getAbsoluteTolerance(), getRelativeTolerance());
         Command command = new Command(uniqueName(name), origin == null ? "ICT import" : ("ICT import from " + origin), irSignal);
         addCommand(command);
     }

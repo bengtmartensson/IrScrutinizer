@@ -112,28 +112,28 @@ public abstract class Importer {
     /**
      * @return the fallbackFrequency
      */
-    protected double getFallbackFrequency() {
-        return properties.getFallbackFrequency();
+    protected Double getFallbackFrequency() {
+        return properties != null ? properties.getFallbackFrequency() : null;
     }
 
-    protected double getEndingTimeout() {
-        return properties.getCaptureEndingTimeout();
+    protected int getEndingTimeout() {
+        return properties != null ? properties.getCaptureEndingTimeout() : null;
     }
 
-    protected double getAbsoluteTolerance() {
-        return properties.getAbsoluteTolerance();
+    protected Double getAbsoluteTolerance() {
+        return properties != null ? properties.getAbsoluteTolerance() : null;
     }
 
-    protected double getRelativeTolerance() {
-        return properties.getRelativeTolerance();
+    protected Double getRelativeTolerance() {
+        return properties != null ? properties.getRelativeTolerance() : null;
     }
 
-    protected double getDummyGap() {
-        return properties.getDummyGap();
+    protected Double getDummyGap() {
+        return properties != null ? properties.getDummyGap() : null;
     }
 
-    protected double getMinRepeatLastGap() {
-        return properties.getMinRepeatLastGap();
+    protected Double getMinRepeatLastGap() {
+        return properties != null ? properties.getMinRepeatLastGap() : null;
     }
 
     protected void prepareLoad(String origin) {
