@@ -1834,15 +1834,15 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openZipFilesCheckBoxMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="invokeDecodeIrCheckBoxMenuItem">
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="invokeDecoderCheckBoxMenuItem">
                   <Properties>
                     <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="properties.getInvokeDecodeIr()" type="code"/>
+                      <Connection code="properties.getInvokeDecoder()" type="code"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Invoke Decoder"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="invokeDecodeIrCheckBoxMenuItemActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="invokeDecoderCheckBoxMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="generateRawCheckBoxMenuItem">

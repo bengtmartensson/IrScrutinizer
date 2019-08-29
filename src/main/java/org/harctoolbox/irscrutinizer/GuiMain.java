@@ -591,7 +591,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
         RawIrSignal.setDecoder(decoder);
         RawIrSignal.setInvokeAnalyzer(properties.getInvokeAnalyzer());
-        RawIrSignal.setInvokeDecoder(properties.getInvokeDecodeIr());
+        RawIrSignal.setInvokeDecoder(properties.getInvokeDecoder());
         RawIrSignal.setAbsoluteTolerance(properties.getAbsoluteTolerance());
         RawIrSignal.setRelativeTolerance(properties.getRelativeTolerance());
         RepeatFinder.setDefaultAbsoluteTolerance(properties.getAbsoluteTolerance());
@@ -600,7 +600,7 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.addInvokeAnalyzerChangeListener((String name1, Object oldValue, Object newValue) -> {
             RawIrSignal.setInvokeAnalyzer((Boolean) newValue);
         });
-        properties.addInvokeDecodeIrChangeListener((String name1, Object oldValue, Object newValue) -> {
+        properties.addInvokeDecoderChangeListener((String name1, Object oldValue, Object newValue) -> {
             RawIrSignal.setInvokeDecoder((Boolean) newValue);
         });
         properties.addAbsoluteToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
@@ -2354,7 +2354,7 @@ public final class GuiMain extends javax.swing.JFrame {
         importOptionsMenu = new javax.swing.JMenu();
         importCharsetMenuItem = new javax.swing.JMenuItem();
         openZipFilesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        invokeDecodeIrCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        invokeDecoderCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         generateRawCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         generateCcfCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         translateProntoFontCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -6938,14 +6938,14 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         importOptionsMenu.add(openZipFilesCheckBoxMenuItem);
 
-        invokeDecodeIrCheckBoxMenuItem.setSelected(properties.getInvokeDecodeIr());
-        invokeDecodeIrCheckBoxMenuItem.setText("Invoke Decoder");
-        invokeDecodeIrCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        invokeDecoderCheckBoxMenuItem.setSelected(properties.getInvokeDecoder());
+        invokeDecoderCheckBoxMenuItem.setText("Invoke Decoder");
+        invokeDecoderCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                invokeDecodeIrCheckBoxMenuItemActionPerformed(evt);
+                invokeDecoderCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        importOptionsMenu.add(invokeDecodeIrCheckBoxMenuItem);
+        importOptionsMenu.add(invokeDecoderCheckBoxMenuItem);
 
         generateRawCheckBoxMenuItem.setSelected(properties.getGenerateRaw());
         generateRawCheckBoxMenuItem.setText("Generate Raw");
@@ -7956,9 +7956,9 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_girrWebSiteButtonActionPerformed
 
-    private void invokeDecodeIrCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invokeDecodeIrCheckBoxMenuItemActionPerformed
-        properties.setInvokeDecodeIr(invokeDecodeIrCheckBoxMenuItem.isSelected());
-    }//GEN-LAST:event_invokeDecodeIrCheckBoxMenuItemActionPerformed
+    private void invokeDecoderCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invokeDecoderCheckBoxMenuItemActionPerformed
+        properties.setInvokeDecoder(invokeDecoderCheckBoxMenuItem.isSelected());
+    }//GEN-LAST:event_invokeDecoderCheckBoxMenuItemActionPerformed
 
     private void generateRawCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateRawCheckBoxMenuItemActionPerformed
         properties.setGenerateRaw(generateRawCheckBoxMenuItem.isSelected());
@@ -9617,7 +9617,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem inquiryDeviceDataCheckBoxMenuItem;
     private javax.swing.JLabel introLengthLabel;
     private javax.swing.JCheckBoxMenuItem invokeAnalyzerCheckBoxMenuItem;
-    private javax.swing.JCheckBoxMenuItem invokeDecodeIrCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem invokeDecoderCheckBoxMenuItem;
     private org.harctoolbox.guicomponents.IrPlotter irPlotter;
     private javax.swing.JPanel irToyPanel;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean irToySerialPortBean;

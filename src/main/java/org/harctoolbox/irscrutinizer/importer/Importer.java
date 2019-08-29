@@ -69,8 +69,8 @@ public abstract class Importer {
     /**
      * @return the invokeDecodeIr
      */
-    protected boolean isInvokeDecodeIr() {
-        return properties != null  && properties.getInvokeDecodeIr();
+    protected boolean isInvokeDecoder() {
+        return properties != null  && properties.getInvokeDecoder();
     }
 
     /**
