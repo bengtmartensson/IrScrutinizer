@@ -4,6 +4,26 @@ Girr, HardHardware, DevSlashLirc, and Jirc.
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/harctoolboxbundle/issues
 ==============================================================================
+Version 2.1.0, released 2019-08-31
+
+This version uses IrpTransmogrifier 1.1.0. This contains some improvements
+and some semi-important bug fixes, see its own release notes. Other changes:
+
+* IrSignal in raw format was written in non-parsable format, IrpTransmogrifier #115,
+* Fixed non-working ICT importer, #318,
+* Parametric Remote editor: remove "hex" related functions. #316
+* New export format Homeass-Broadlink. #312
+* Removal of no-owned Schemas and DTDs, #299.
+* Update RemoteMaster's protocols.ini to current version, from RemoteMaster v2.08 build 7
+* Remotemaster input pane: Remove path to protocols.ini, #300
+* Broadlink export: rewritten (#315), supports RF-433MHz commands #208.
+* *ix wrapper: Do not override JAVA if already set.
+* XSLT Export formats: fix non-working xsl:include/import. #314
+* An exportformat can now create executable export files, #313.
+* IrpMasterBean: Make toggling protocol really toggle in subsequent "generate"s
+  (provided "-" is selected for toggle value). Resolves #305.
+
+==============================================================================
 Version 2.0.1. Released 2019-08-11.
 (There was never a version 2.0.0.)
 
