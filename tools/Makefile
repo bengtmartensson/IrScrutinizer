@@ -31,8 +31,17 @@ gh-pages: target/site/apidocs/index.html
 	( cd ${GH_PAGES};  \
 	cp -r ../target/site/apidocs/* . ; \
 	git add * ; \
-	git commit -a -m "Update of API documentation" )
-	echo Now perform \"git push\" from ${GH_PAGES}
+	git commit -a -m "Update of API documentation" ; \
+	git push )
+
+tag:
+	git checkout master
+	git status
+	git tag -a Version-$(VERSION) -m "Tagging Version-$(VERSION)"
+	git push origin Version-$(VERSION)
+
+upload-version:
+	curl --netrc -T target/IrScrutinizer.version ftp://bengt-martensson.de/harctoolbox/downloads/IrScrutinizer.version
 
 # Only for Unix-like systems
 install: $(IRP_TRANSMOGRIFIER_JAR) | $(INSTALLDIR)
