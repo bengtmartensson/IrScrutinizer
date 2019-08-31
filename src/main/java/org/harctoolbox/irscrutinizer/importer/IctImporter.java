@@ -43,6 +43,8 @@ import org.harctoolbox.irscrutinizer.InterpretString;
  */
 public class IctImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
 
+    private static final Logger logger = Logger.getLogger(IctImporter.class.getName());
+
     private static final int invalid = -1;
     private static final int lengthInsertedGap = 100000;
     private static final int IRSCOPE_ENDING_GAP = -500000;
@@ -158,14 +160,14 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
             else if (chunks[0].startsWith("#"))
                 ; // Comment, ignore
             else
-                System.err.println("Warning: Ignored line: " + lineNumber);
+                logger.log(Level.FINEST, "Ignored line: {0}", lineNumber);
         }
         processSignal(data, name, origin);
         if (noSamples != sampleCount) {
             if (sampleCount == -1)
-                System.err.println("Warning: sample_count missing (" + noSamples + " samples found)");
+                logger.log(Level.WARNING, "sample_count missing ({0} samples found)", noSamples);
             else
-                System.err.println("Warning: sample_count erroneous (expected " + sampleCount + ", found " + noSamples + ")");
+                logger.log(Level.WARNING, "sample_count erroneous (expected {0}, found {1})", new Object[]{sampleCount, noSamples});
         }
         setupRemoteSet();
     }
@@ -175,7 +177,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
             return;
 
         if (data.size() % 2 == 1) {
-            System.err.println("Warning: Last sample was pulse, appending a " + lengthInsertedGap + " microsecond gap");
+            logger.log(Level.WARNING, "Last sample was pulse, appending a {0} microsecond gap", lengthInsertedGap);
             data.add(lengthInsertedGap);
         }
         int[] dataArray = new int[data.size()];
@@ -186,7 +188,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
         if (frequency < 0 && hasComplainedAboutMissingFrequency) {
             hasComplainedAboutMissingFrequency = true;
             frequency = (int) ModulatedIrSequence.DEFAULT_FREQUENCY;
-            System.err.println("Warning: carrier_frequency missing, assuming " + frequency);
+            logger.log(Level.WARNING, "Carrier_frequency missing, assuming " + frequency);
         }
         ModulatedIrSequence seq = new ModulatedIrSequence(dataArray, (double) frequency);
         IrSignal irSignal = InterpretString.interpretIrSequence(seq, isInvokeRepeatFinder(), isInvokeCleaner(), getAbsoluteTolerance(), getRelativeTolerance());
