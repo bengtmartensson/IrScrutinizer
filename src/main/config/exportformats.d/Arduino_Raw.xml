@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //            http://z3t0.github.io/Arduino-IRremote/
 // * IRLib    https://github.com/cyborg5/IRLib
 // * Infrared4Arduino https://github.com/bengtmartensson/Infrared4Arduino,
-//                    http://www.harctoolbox.org/Infrared4Arduino.html (planned)
+//                    http://www.harctoolbox.org/Infrared4Arduino.html
 
 // For problems, bugs, and suggestions, please open an issue at
 // https://github.com/bengtmartensson/harctoolboxbundle/issues
