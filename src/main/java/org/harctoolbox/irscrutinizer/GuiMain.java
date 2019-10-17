@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -69,6 +70,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.harctoolbox.analyze.Analyzer;
 import org.harctoolbox.analyze.Burst;
+import org.harctoolbox.analyze.Cleaner;
 import org.harctoolbox.analyze.NoDecoderMatchException;
 import org.harctoolbox.analyze.RepeatFinder;
 import org.harctoolbox.devslashlirc.LircHardware;
@@ -164,6 +166,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private AboutPopup aboutBox;
     private Component currentPane = null;
+    private boolean ignoreLeadingGarbage = false;
 
     private Proxy mkProxy() {
         return mkProxy(properties.getProxyHostName(), properties.getProxyPort());
@@ -516,9 +519,12 @@ public final class GuiMain extends javax.swing.JFrame {
                 properties.getAbsoluteTolerance(),
                 properties.getRelativeTolerance(),
                 properties.getMinLeadOut(),
-                decodeOverride
+                decodeOverride,
+                ignoreLeadingGarbage
         );
         Command.setDecoderParameters(decoderParameters);
+        RawIrSignal.setDecoderParameters(decoderParameters);
+        ParametrizedIrSignal.setDecoderParameters(decoderParameters);
         properties.addFrequencyToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
             decoderParameters.setFrequencyTolerance((Double) newValue);
         });
@@ -1115,7 +1121,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setDecodeIrParameters(IrSignal irSignal) {
-        Collection<Decoder.Decode> decodes = irSignal.introOnly() || irSignal.repeatOnly()
+        Iterable<Decoder.Decode> decodes = irSignal.introOnly() || irSignal.repeatOnly()
                 ? decodeIrSequence(irSignal.toModulatedIrSequence())
                 : decodeIrSignal(irSignal);
         setDecodeResult(decodes);
@@ -1129,13 +1135,14 @@ public final class GuiMain extends javax.swing.JFrame {
         return decodes;
     }
 
-    private Collection<Decoder.Decode> decodeIrSignal(IrSignal irSignal) {
-        Map<String, Decoder.Decode> decodes = decoder.decodeIrSignal(irSignal, decoderParameters);
-        return decodes.values();
+    private Iterable<Decoder.Decode> decodeIrSignal(IrSignal irSignal) {
+        Decoder.SimpleDecodesSet decodes = decoder.decodeIrSignal(irSignal, decoderParameters);
+        return decodes;
     }
 
-    private void setDecodeResult(Collection<Decoder.Decode> decodes) {
-        if (decodes.isEmpty()) {
+    private void setDecodeResult(Iterable<Decoder.Decode> decodes) {
+        Iterator<Decoder.Decode> iterator = decodes.iterator();
+        if (!iterator.hasNext()) {
             decodeIRTextField.setText("");
             return;
         }
@@ -1153,7 +1160,7 @@ public final class GuiMain extends javax.swing.JFrame {
         if (index == 2)
             decodeString.append(" + one more decode");
         else if (index > 2)
-            decodeString.append(" + ").append(Integer.toString(decodes.size() - 1)).append(" more decodes");
+            decodeString.append(" + ").append(Integer.toString(index - 1)).append(" more decodes");
 
         decodeIRTextField.setText(decodeString.toString());
     }
@@ -1275,16 +1282,22 @@ public final class GuiMain extends javax.swing.JFrame {
             return;
         }
 
-        RepeatFinder repeatFinder = new RepeatFinder(modulatedIrSequence);
-        setRepeatParameters(repeatFinder);
+        ModulatedIrSequence possiblyCleaned = properties.getInvokeCleaner()
+                ? Cleaner.clean(modulatedIrSequence, properties.getAbsoluteTolerance(), properties.getRelativeTolerance())
+                : modulatedIrSequence;
 
         if (properties.getInvokeAnalyzer())
             setAnalyzeParameters(modulatedIrSequence);
         else
             clearAnalyzeParameters();
 
-        ModulatedIrSequence cleaned = modulatedIrSequence;
-        IrSignal irSignal = properties.getInvokeRepeatFinder() ? repeatFinder.getRepeatFinderData().chopIrSequence(cleaned) : new IrSignal(cleaned);
+        IrSignal irSignal;
+        if (properties.getInvokeRepeatFinder()) {
+            RepeatFinder repeatFinder = new RepeatFinder(modulatedIrSequence);
+            setRepeatParameters(repeatFinder);
+            irSignal = repeatFinder.getRepeatFinderData().chopIrSequence(possiblyCleaned);
+        } else
+            irSignal = new IrSignal(possiblyCleaned);
         displaySignal(irSignal);
     }
 
@@ -1600,8 +1613,26 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }
 
+    private void registerRawSignal(ModulatedIrSequence irSequence, String name, String comment) {
+        if (irSequence != null) {
+            RawIrSignal cis = new RawIrSignal(irSequence, name, comment);
+            registerRawCommand(cis);
+        }
+    }
+
     private void registerRawCommand(RawIrSignal cir) {
         rawTableModel.addSignal(cir);
+    }
+
+    private void registerParameterSignal(ModulatedIrSequence irSequence) {
+        if (irSequence != null) {
+            try {
+                ParametrizedIrSignal pir = new ParametrizedIrSignal(irSequence, properties.getParametrizedLearnIgnoreT());
+                registerParameterSignal(pir);
+            } catch (NoDecodeException ex) {
+                guiUtils.message("Undecodable signal, ignored");
+            }
+        }
     }
 
     private void registerParameterSignal(IrSignal irSignal) {
@@ -7614,13 +7645,23 @@ public final class GuiMain extends javax.swing.JFrame {
                 @Override
                 public void processSequence(ModulatedIrSequence sequence) {
                     try {
-                        IrSignal irSignal = InterpretString.interpretIrSequence(sequence,
-                                properties.getInvokeRepeatFinder(),
-                                properties.getInvokeCleaner(), properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
-                        if (rawPanel.isVisible())
-                            registerRawSignal(irSignal, null, null);
-                        else
-                            registerParameterSignal(irSignal);
+                        if (properties.getInvokeRepeatFinder()) {
+                            IrSignal irSignal = InterpretString.interpretIrSequence(sequence,
+                                    properties.getInvokeRepeatFinder(),
+                                    properties.getInvokeCleaner(), properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+                            if (rawPanel.isVisible())
+                                registerRawSignal(irSignal, null, null);
+                            else
+                                registerParameterSignal(irSignal);
+                        } else {
+                            ModulatedIrSequence modulatedIrSequence = properties.getInvokeCleaner()
+                                    ? Cleaner.clean(sequence, properties.getAbsoluteTolerance(), properties.getRelativeTolerance()) : sequence;
+                            if (rawPanel.isVisible())
+                                registerRawSignal(modulatedIrSequence, null, null);
+                            else
+                                registerParameterSignal(modulatedIrSequence);
+
+                        }
                     } catch (InvalidArgumentException ex) {
                     }
                 }
@@ -8377,19 +8418,22 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             ModulatedIrSequence modulatedIrSequence = captureIrSequence();
 
-            if (modulatedIrSequence != null) {
-                IrSignal signal = InterpretString.interpretIrSequence(modulatedIrSequence, true, true, properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
-                guiUtils.message(modulatedIrSequence.toString(true));
-                guiUtils.message("f=" + Math.round(modulatedIrSequence.getFrequency()));
-                Map<String, Decoder.Decode> decodes = decoder.decodeIrSignal(signal, decoderParameters);
-                if (decodes.isEmpty())
-                    guiUtils.message("No decodes.");
-                else
-                    decodes.values().forEach((decode) -> {
-                        guiUtils.message(decode.toString());
-                });
-            } else
+            if (modulatedIrSequence == null) {
                 guiUtils.error("No signal received.");
+                return;
+            }
+
+            IrSignal signal = InterpretString.interpretIrSequence(modulatedIrSequence, true/*properties.getInvokeRepeatFinder()*/,
+                    true /*properties.getInvokeCleaner()*/, properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+            guiUtils.message(modulatedIrSequence.toString(true));
+            guiUtils.message("f=" + Math.round(modulatedIrSequence.getFrequency()));
+            Decoder.SimpleDecodesSet decodes = decoder.decodeIrSignal(signal, decoderParameters);
+            if (decodes.isEmpty())
+                guiUtils.message("No decodes.");
+            else
+                decodes.forEach((decode) -> {
+                    guiUtils.message(decode.toString());
+                });
         } catch (TimeoutException ex) {
             guiUtils.error("Timeout capturing signal");
         } catch (IOException | HarcHardwareException | NumberFormatException | InvalidArgumentException ex) {

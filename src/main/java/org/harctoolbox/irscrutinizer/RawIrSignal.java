@@ -18,9 +18,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.StringJoiner;
 import org.harctoolbox.analyze.Analyzer;
 import org.harctoolbox.analyze.NoDecoderMatchException;
@@ -30,6 +28,7 @@ import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.IrCoreUtils;
 import org.harctoolbox.ircore.IrSequence;
 import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.ircore.OddSequenceLengthException;
 import org.harctoolbox.irp.BitDirection;
 import org.harctoolbox.irp.Decoder;
@@ -48,6 +47,7 @@ public class RawIrSignal extends NamedIrSignal {
     //private static boolean generateCcf = true;
     private static boolean invokeDecoder = true;
     private static boolean invokeAnalyzer = true;
+    private static Decoder.DecoderParameters decoderParameters = null;
 
     // These are parameters for the analyzer. TODO: Should probably be more dynamic.
     private static int analyzerRadix = 16;
@@ -66,12 +66,9 @@ public class RawIrSignal extends NamedIrSignal {
         decoder = aDecoder;
     }
 
-//    /**
-//     * @param aGenerateCcf the generateCcf to set
-//     */
-//    public static void setGenerateCcf(boolean aGenerateCcf) {
-//        generateCcf = aGenerateCcf;
-//    }
+    public static void setDecoderParameters(Decoder.DecoderParameters params) {
+        decoderParameters = params;
+    }
 
     /**
      * @param aInvokeDecoder the invokeDecoder to set
@@ -138,21 +135,28 @@ public class RawIrSignal extends NamedIrSignal {
 
     private IrSignal irSignal = null;
     private String analyzerString = null;
-    private Map<String, Decoder.Decode> decodes = new HashMap<>(0);
+    private Decoder.SimpleDecodesSet decodes;
 
     public RawIrSignal(IrSignal irSignal, String name, String comment) {
         super(name, comment);
+        decodes = null;
         setIrSignal(irSignal);
+    }
+
+    public RawIrSignal(ModulatedIrSequence irSequence, String name, String comment) {
+        super(name, comment);
+        decodes = null;
+        setIrSignal(irSequence);
     }
 
     public RawIrSignal(Command command) throws IrpException, IrCoreException {
         this(command.toIrSignal(), command.getName(), command.getComment());
+        decodes = null;
     }
 
-    private void setIrSignal(IrSignal irSignal) {
+    private void setIrSignal(IrSignal irSignal, Decoder.SimpleDecodesSet decodes) {
         this.irSignal = irSignal;
-        if (invokeDecoder)
-            decodes = decoder.decodeIrSignal(irSignal);
+        this.decodes = decodes;
         if (invokeAnalyzer) {
             try {
                 Analyzer analyzer = new Analyzer(irSignal, absoluteTolerance, relativeTolerance);
@@ -166,6 +170,14 @@ public class RawIrSignal extends NamedIrSignal {
         }
     }
 
+    private void setIrSignal(IrSignal irSignal) {
+        setIrSignal(irSignal, invokeDecoder ? decoder.decodeIrSignal(irSignal, decoderParameters) : null);
+    }
+
+    private void setIrSignal(ModulatedIrSequence irSequence) {
+        setIrSignal(new IrSignal(irSequence), invokeDecoder ?  new Decoder.SimpleDecodesSet(decoder.decode(irSequence, decoderParameters)) : null);
+    }
+
     public Command toCommand() {
         Command command = new Command(getName(), getComment(), irSignal);
         return command;
@@ -177,7 +189,7 @@ public class RawIrSignal extends NamedIrSignal {
 
     public String getDecodeString() {
         StringJoiner stringJoiner = new StringJoiner("; ");
-        decodes.values().forEach((dec) -> {
+        decodes.forEach((dec) -> {
             stringJoiner.add(dec.toString());
         });
         return stringJoiner.toString();

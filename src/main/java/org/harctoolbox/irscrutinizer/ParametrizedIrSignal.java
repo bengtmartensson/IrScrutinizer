@@ -26,6 +26,7 @@ import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.IrCoreUtils;
 import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.irp.Decoder;
 import org.harctoolbox.irp.IrpException;
 
@@ -37,6 +38,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
     private static boolean generateRaw = true;
     private static boolean generateCcf = true;
     private static Decoder decoder = null;
+    private static Decoder.DecoderParameters decoderParameters = null;
 
     /**
      * @param aGenerateRaw the generateRaw to set
@@ -58,6 +60,10 @@ public class ParametrizedIrSignal extends NamedIrSignal {
      */
     public static void setDecoder(Decoder aDecoder) {
         decoder = aDecoder;
+    }
+
+    public static void setDecoderParameters(Decoder.DecoderParameters params) {
+        decoderParameters = params;
     }
 
     private static String formatMiscParams(Map<String, Long> params) {
@@ -111,18 +117,25 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         this(irSignal, "", "", ignoreT);
     }
 
+    public ParametrizedIrSignal(ModulatedIrSequence irSequence, boolean ignoreT) throws NoDecodeException {
+        this(irSequence, "", "", ignoreT);
+    }
+
     public ParametrizedIrSignal(IrSignal irSignal, String name, String comment, boolean ignoreT) throws NoDecodeException {
+        this(decoder.decodeIrSignal(irSignal, decoderParameters), name, comment, ignoreT);
+    }
+
+    public ParametrizedIrSignal(ModulatedIrSequence irSequence, String name, String comment, boolean ignoreT) throws NoDecodeException {
+        this(new Decoder.SimpleDecodesSet(decoder.decode(irSequence, decoderParameters)), name, comment, ignoreT);
+    }
+
+    public ParametrizedIrSignal(Decoder.SimpleDecodesSet decodes, String name, String comment, boolean ignoreT) throws NoDecodeException {
         super(name, comment);
-        Map<String, Decoder.Decode> decodes = decoder.decodeIrSignal(irSignal);
         if (decodes.isEmpty()) {
             decrementCount();
             throw new NoDecodeException();
         }
-        Decoder.Decode decode = decodes.values().iterator().next();
-//        if (decode.getProtocol().substring(0, 3).equalsIgnoreCase("gap")) {
-//            decrementCount();
-//            throw new DecodeIR.DecodeIrException("No sensible decode");
-//        }
+        Decoder.Decode decode = decodes.first();
         protocolName = decode.getName();
         parameters = decode.getMap();
         if (ignoreT && parameters.containsKey("T"))
