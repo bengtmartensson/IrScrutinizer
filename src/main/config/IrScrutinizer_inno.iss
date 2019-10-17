@@ -78,20 +78,20 @@ Root: HKCR; Subkey: "girrfile\DefaultIcon";        ValueType: string; ValueName:
 ;;; Opens a pesky window :-(, but I do not know of a better solution. For example, writing the absolute pathname of javaw is not acceptable.
 Root: HKCR; Subkey: "girrfile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\irscrutinizer.bat"" ""%1"""; Tasks: associateGirr
 
-[Code]
-function JavaInstalled: boolean;
-begin
-  result := RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\JavaSoft\Java Runtime Environment') or
-            RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\JavaSoft\Java Development Kit')
-end;
+;[Code]
+;function JavaInstalled: boolean;
+;begin
+;  result := RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\JavaSoft\Java Runtime Environment') or
+;            RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\JavaSoft\Java Development Kit')
+;end;
 
-[Code]
-function InitializeSetup: boolean;
-begin
-  result := JavaInstalled;
-  if not result then
-    MsgBox('Please install Java before you install ' + ExpandConstant('{#MyAppName}') + '.', mbError, MB_OK);
-end;
+;[Code]
+;function InitializeSetup: boolean;
+;begin
+;  result := JavaInstalled;
+;  if not result then
+;    MsgBox('Please install Java before you install ' + ExpandConstant('{#MyAppName}') + '.', mbError, MB_OK);
+;end;
 
 [Code]
 function DllLibraryPath(): String;
