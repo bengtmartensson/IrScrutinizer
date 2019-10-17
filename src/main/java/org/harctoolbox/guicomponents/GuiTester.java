@@ -36,6 +36,7 @@ import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.ircore.Pronto;
 import org.harctoolbox.irp.IrpDatabase;
 import org.harctoolbox.irp.IrpException;
+import org.harctoolbox.irp.IrpParseException;
 
 public class GuiTester extends javax.swing.JFrame {
     private boolean verbose = true;
@@ -82,8 +83,8 @@ public class GuiTester extends javax.swing.JFrame {
      */
     public GuiTester() {
         try {
-            this.irpDatabase = new IrpDatabase("../IrpMaster/data/IrpProtocols.ini");
-        } catch (IOException ex) {
+            this.irpDatabase = new IrpDatabase((String) null);
+        } catch (IOException | IrpParseException ex) {
             guiUtils.error(ex);
         }
         try {
