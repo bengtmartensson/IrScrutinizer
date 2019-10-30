@@ -88,6 +88,8 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         super(command.getName(), command.getComment());
         this.protocolName = command.getProtocolName();
         this.parameters = command.getParameters();
+        if (parameters == null)
+            parameters = new HashMap<>(3);
     }
 
     public ParametrizedIrSignal(String protocolName, Map<String, Long>parameters, String name, String comment) {
