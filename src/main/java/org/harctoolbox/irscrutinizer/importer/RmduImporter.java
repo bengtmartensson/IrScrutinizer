@@ -56,6 +56,7 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
     private final static String separator = "=";
     private static JCommander argumentParser;
     private static CommandLineArgs commandLineArgs = new CommandLineArgs();
+
     private static void usage(int exitcode) {
         StringBuilder str = new StringBuilder(256);
         argumentParser.usage(str);
@@ -63,15 +64,17 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
         (exitcode == IrpUtils.EXIT_SUCCESS ? System.out : System.err).println(str);
         doExit(exitcode);
     }
+
     private static void doExit(int exitcode) {
         System.exit(exitcode);
     }
+
     /**
      * @param args
      */
     public static void main(String[] args) {
         argumentParser = new JCommander(commandLineArgs);
-        argumentParser.setProgramName("Lirc2Xml");
+        //argumentParser.setProgramName("Lirc2Xml");
 
         try {
             argumentParser.parse(args);
@@ -298,18 +301,22 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
 
         @Parameter(names = {"-d", "--debug"}, description = "Debug")
         int debug = 0;
+
         @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
         boolean helpRequested = false;
+
         @Parameter(names = {"-i", "--inifile"}, description = "Path to protocols.ini")
         String inifile = null;
+
         @Parameter(names = {"-o", "--outfile"}, description = "Output filename")
         String outputfile = null;
-        //@Parameter(names = {"-s", "--schemalocation"}, description = "Create schema location attribute")
-        //boolean createSchemaLocation = false;
+
         @Parameter(names = {"-v", "--version"}, description = "Display version information")
         boolean versionRequested;
+
         @Parameter(names = {"-x", "--xslt"}, description = "Link to XSLT stylesheet")
         String stylesheetUrl = null;
+
         @Parameter(description = "[configfile]")
         ArrayList<String> configfile = new ArrayList<>(2);
     }
