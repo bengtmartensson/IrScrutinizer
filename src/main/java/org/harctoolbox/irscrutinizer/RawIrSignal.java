@@ -135,23 +135,20 @@ public class RawIrSignal extends NamedIrSignal {
 
     private IrSignal irSignal = null;
     private String analyzerString = null;
-    private Decoder.SimpleDecodesSet decodes;
+    private Decoder.SimpleDecodesSet decodes = null; // null: no decoding attempted; isEmpty: tried decoding, but no decode found
 
     public RawIrSignal(IrSignal irSignal, String name, String comment) {
         super(name, comment);
-        decodes = null;
         setIrSignal(irSignal);
     }
 
     public RawIrSignal(ModulatedIrSequence irSequence, String name, String comment) {
         super(name, comment);
-        decodes = null;
         setIrSignal(irSequence);
     }
 
     public RawIrSignal(Command command) throws IrpException, IrCoreException {
         this(command.toIrSignal(), command.getName(), command.getComment());
-        decodes = null;
     }
 
     private void setIrSignal(IrSignal irSignal, Decoder.SimpleDecodesSet decodes) {
@@ -188,6 +185,9 @@ public class RawIrSignal extends NamedIrSignal {
     }
 
     public String getDecodeString() {
+        if (decodes == null)
+            return "";
+
         StringJoiner stringJoiner = new StringJoiner("; ");
         decodes.forEach((dec) -> {
             stringJoiner.add(dec.toString());
