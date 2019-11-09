@@ -58,7 +58,10 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>/usr/bin/wine</executable>
+                                    <environmentVariables>
+                                        <WINEDEBUG>-all</WINEDEBUG> <!-- Turns of pesky debugging output from wine -->
+                                    </environmentVariables>
+                                    <executable>/usr/bin/wineconsole</executable>
                                     <workingDirectory>${project.build.directory}</workingDirectory>
                                     <arguments>
                                         <argument>${inno_path}</argument>
