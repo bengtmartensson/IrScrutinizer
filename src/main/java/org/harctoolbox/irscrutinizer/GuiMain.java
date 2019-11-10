@@ -3154,7 +3154,7 @@ public final class GuiMain extends javax.swing.JFrame {
         analyzerTextField.setComponentPopupMenu(copyPopupMenu);
 
         decodeIRTextField.setEditable(false);
-        decodeIRTextField.setToolTipText("Result from DecodeIR.");
+        decodeIRTextField.setToolTipText("Result from decoding.");
         decodeIRTextField.setComponentPopupMenu(copyPopupMenu);
 
         transmitSignalButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/1rightarrow.png"))); // NOI18N
