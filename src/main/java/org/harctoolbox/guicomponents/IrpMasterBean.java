@@ -449,11 +449,15 @@ public final class IrpMasterBean extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void protocolDocuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolDocuButtonActionPerformed
-        //String protocolName = (String) protocolComboBox.getModel().getSelectedItem();
         StringBuilder str = new StringBuilder(irpDatabase.getIrp(protocolName)).append("\n\n");
-        if (irpDatabase.getDocumentation(protocolName) != null)
-                str.append(irpDatabase.getDocumentation(protocolName));
-        HelpPopup.newHelpPopup(frame, str.toString());
+        try {
+            String docu = irpDatabase.getDocumentation(protocolName);
+            if (docu != null)
+                str.append(docu);
+            HelpPopup.newHelpPopup(frame, str.toString());
+        } catch (UnknownProtocolException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_protocolDocuButtonActionPerformed
 
     private void protocolComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolComboBoxActionPerformed
