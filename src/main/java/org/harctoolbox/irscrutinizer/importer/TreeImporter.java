@@ -36,6 +36,7 @@ import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.guicomponents.GuiUtils;
+import org.harctoolbox.guicomponents.NoSelectionException;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.irp.IrpException;
@@ -167,9 +168,11 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         return n;
     }
 
-    private int importSelectedSignals(boolean raw) throws IrpException, IrCoreException {
+    private int importSelectedSignals(boolean raw) throws IrpException, IrCoreException, NoSelectionException {
         int count = 0;
         TreePath[] paths = tree.getSelectionPaths();
+        if (paths == null)
+            throw new NoSelectionException();
         checkGuiMain();
         for (TreePath path : paths) {
             Object thing = ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
@@ -486,7 +489,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         try {
             int count = importSelectedSignals(false);
             importJump(count, ImportType.parametricRemote);
-        } catch (IrpException | IrCoreException ex) {
+        } catch (IrpException | IrCoreException | NoSelectionException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_importSelectionButtonActionPerformed
@@ -528,7 +531,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         try {
             int count = importSelectedSignals(true);
             importJump(count, ImportType.rawRemote);
-        } catch (IrpException | IrCoreException ex) {
+        } catch (IrpException | IrCoreException | NoSelectionException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_importSelectionRawButtonActionPerformed
