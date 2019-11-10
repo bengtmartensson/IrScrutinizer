@@ -1445,6 +1445,10 @@ public final class GuiMain extends javax.swing.JFrame {
         return guiUtils;
     }
 
+    IrpDatabase getIrpDatabase() {
+        return this.irpDatabase;
+    }
+
     private void updateOutputFormat(OutputTextFormat format) {
         updateOutputFormat(format.ordinal());
     }

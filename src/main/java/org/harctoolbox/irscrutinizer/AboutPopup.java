@@ -41,8 +41,10 @@ public final class AboutPopup extends javax.swing.JDialog {
         if (!(parent instanceof GuiMain))
             throw new RuntimeException("Programming error");
 
-        guiUtils = ((GuiMain) parent).getGuiUtils();
-        irpTransmogrifierVersion = "IrpTransmogrifier version " + org.harctoolbox.irp.Version.version;
+        GuiMain guiMain = (GuiMain) parent;
+        guiUtils = guiMain.getGuiUtils();
+        irpTransmogrifierVersion = "IrpTransmogrifier version " + org.harctoolbox.irp.Version.version
+                + "; Database version " + guiMain.getIrpDatabase().getVersion();
         initComponents();
     }
 
