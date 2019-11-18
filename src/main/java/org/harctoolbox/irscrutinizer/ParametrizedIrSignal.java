@@ -17,6 +17,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -157,9 +158,9 @@ public class ParametrizedIrSignal extends NamedIrSignal {
             String[] kvp = chunk.split("=");
             if (kvp.length == 2) { // Not perfect, should barf to the user.
                 String name = kvp[0];
-                long value = Long.parseLong(kvp[1]);
                 if (name.equals("D") || name.equals("S") || name.equals("F") || name.equals("T"))
                     continue;
+                long value = IrCoreUtils.parseLong(kvp[1]);
 
                 setParameter(name, value);
             }
