@@ -1334,6 +1334,9 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private File saveCommands(Map<String, Command> commands, String source, String title, RemoteSetExporter exporter)
             throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+        if (! checkChangeExportDirectory(new File(exportDirectoryTextField.getText())))
+            return null;
+
         if (properties.getExportInquireDeviceData() && exporter.supportsMetaData()) {
             Remote.MetaData newMetaData = MetaDataDialog.inquireMetaData(metaData, this);
             if (newMetaData == null) // user bailed out
@@ -1349,6 +1352,9 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private File saveSignal(Command command, String title, ICommandExporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+        if (!checkChangeExportDirectory(new File(exportDirectoryTextField.getText())))
+            return null;
+
         return exporter.export(command, "IrScrutinizer captured signal", title,
                 properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
                 new File(properties.getExportDir()), properties.getExportCharsetName());
