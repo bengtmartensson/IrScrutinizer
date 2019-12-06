@@ -2434,7 +2434,6 @@ public final class GuiMain extends javax.swing.JFrame {
         downloadsMenuItem = new javax.swing.JMenuItem();
         gitMenuItem = new javax.swing.JMenuItem();
         issuesMenuItem = new javax.swing.JMenuItem();
-        feedbackMenuItem = new javax.swing.JMenuItem();
 
         rawCodeClearMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/eraser.png"))); // NOI18N
         rawCodeClearMenuItem.setText("Clear");
@@ -7269,17 +7268,6 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         helpMenu.add(issuesMenuItem);
 
-        feedbackMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mail_generic2.png"))); // NOI18N
-        feedbackMenuItem.setMnemonic('H');
-        feedbackMenuItem.setText("Send feedback with Email");
-        feedbackMenuItem.setToolTipText("Start the mail program for sendiing feedback.");
-        feedbackMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                feedbackMenuItemActionPerformed(evt);
-            }
-        });
-        helpMenu.add(feedbackMenuItem);
-
         menuBar.add(helpMenu);
 
         setJMenuBar(menuBar);
@@ -9074,24 +9062,6 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_issuesMenuItemActionPerformed
 
-    private void feedbackMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_feedbackMenuItemActionPerformed
-          try {
-            String body = String.format(
-                    "# Enter message here%%0D%%0A%%0D%%0A%6$s%%0D%%0A%7$s%%0D%%0A"
-                    + "IrpTransmogrifier%%3D%1$s%%0D%%0AJava%%3D%2$s %3$s%%0D%%0AOperating system%%3D%4$s-%5$s%%0D%%0ALAF=%8$s",
-                    org.harctoolbox.irp.Version.version,
-                    System.getProperty("java.vendor"), System.getProperty("java.version"),
-                    System.getProperty("os.name"), System.getProperty("os.arch"),
-                    Version.versionString, applicationHome,
-                    lookAndFeelManager.getCurrentLAFClassName()
-            ).replace(" ", "%20").replace("\\", "%5C");
-            String subject = ("Feedback to " + Version.versionString).replace(" ", "%20");
-            guiUtils.mail(feedbackMail, subject, body);
-        } catch (URISyntaxException | IOException ex) {
-            guiUtils.error(ex);
-        }
-    }//GEN-LAST:event_feedbackMenuItemActionPerformed
-
     private void cleanerCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanerCheckBoxMenuItemActionPerformed
         properties.setInvokeCleaner(cleanerCheckBoxMenuItem.isSelected());
     }//GEN-LAST:event_cleanerCheckBoxMenuItemActionPerformed
@@ -9566,7 +9536,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton exportWaveHelpButton;
     private javax.swing.JComboBox<String> fColumnComboBox;
     private javax.swing.JMenuItem fallbackFrequencyMenuItem;
-    private javax.swing.JMenuItem feedbackMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JLabel frequencyLabel;
     private javax.swing.JMenuItem frequencyToleranceMenuItem;
