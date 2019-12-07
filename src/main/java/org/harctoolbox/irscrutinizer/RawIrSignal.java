@@ -343,7 +343,7 @@ public class RawIrSignal extends NamedIrSignal {
                 cir.getAnalyzerString(),
                 cir.getValidated(),
                 cir.getComment(),
-                irSignal.getFrequency(),
+                Math.round(irSignal.getFrequency()),
                 cir, // Analyze
                 null
             };
