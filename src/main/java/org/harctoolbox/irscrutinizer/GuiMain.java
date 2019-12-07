@@ -7970,11 +7970,16 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void rawFromClipboardMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawFromClipboardMenuItemActionPerformed
         String text = (new CopyClipboardText(null)).fromClipboard();
+        if (text == null || text.trim().isEmpty()) {
+            guiUtils.error("Clipboard is empty");
+            return;
+        }
+
         try {
             IrSignal irSignal = InterpretString.interpretString(text, properties.getFallbackFrequency(), properties.getDummyGap(),
                     properties.getInvokeRepeatFinder(), properties.getInvokeCleaner(),
                     properties.getAbsoluteTolerance(), properties.getRelativeTolerance(), properties.getMinRepeatLastGap());
-            RawIrSignal rawIrSignal = new RawIrSignal(irSignal, "clipboard", "Signal read from clipboard");
+            RawIrSignal rawIrSignal = new RawIrSignal(irSignal, "clipboard", "from clipboard");
             registerRawCommand(rawIrSignal);
         } catch (InvalidArgumentException ex) {
             guiUtils.error(ex);
