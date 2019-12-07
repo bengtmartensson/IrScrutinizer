@@ -40,6 +40,16 @@
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
         </Component>
+        <MenuItem class="javax.swing.JMenuItem" name="clearMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Clear"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator3">
+        </Component>
         <MenuItem class="javax.swing.JMenuItem" name="importAllMenuItem">
           <Properties>
             <Property name="mnemonic" type="int" value="65"/>

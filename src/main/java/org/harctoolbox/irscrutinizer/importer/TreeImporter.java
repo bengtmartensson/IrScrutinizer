@@ -107,6 +107,11 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
             clear(); // Leaving old content can be confusing
             return;
         }
+        try {
+            remoteSet.checkForParameters();
+        } catch (IrpException | IrCoreException ex) {
+            guiUtils.warning(ex.getMessage());
+        }
         this.remoteSet = remoteSet;
         DefaultTreeModel treeModel = newTreeModel();
         tree.setModel(treeModel);
@@ -132,6 +137,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
         scrutinizeSignalMenuItem.setEnabled(val);
         printSignalMenuItem.setEnabled(val);
+        clearMenuItem.setEnabled(val);
         importAllMenuItem.setEnabled(val && enableImportAll());
         importSelectionMenuItem.setEnabled(val);
         transmitSignalMenuItem.setEnabled(val);
@@ -264,6 +270,8 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         printSignalMenuItem = new javax.swing.JMenuItem();
         transmitSignalMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        clearMenuItem = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
         importAllMenuItem = new javax.swing.JMenuItem();
         importSelectionMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
@@ -308,6 +316,15 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         });
         popupMenu.add(transmitSignalMenuItem);
         popupMenu.add(jSeparator1);
+
+        clearMenuItem.setText("Clear");
+        clearMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearMenuItemActionPerformed(evt);
+            }
+        });
+        popupMenu.add(clearMenuItem);
+        popupMenu.add(jSeparator3);
 
         importAllMenuItem.setMnemonic('A');
         importAllMenuItem.setText("Import all");
@@ -557,7 +574,12 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         }
     }//GEN-LAST:event_scrutinizeSignalMenuItemActionPerformed
 
+    private void clearMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearMenuItemActionPerformed
+        clear();
+    }//GEN-LAST:event_clearMenuItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem clearMenuItem;
     private javax.swing.JButton importAllButton;
     private javax.swing.JMenuItem importAllMenuItem;
     private javax.swing.JButton importAllRawButton;
@@ -570,6 +592,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu popupMenu;
     private javax.swing.JMenuItem printSignalMenuItem;
     private javax.swing.JMenuItem scrutinizeSignalMenuItem;
