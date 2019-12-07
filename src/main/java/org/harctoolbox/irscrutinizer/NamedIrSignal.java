@@ -310,10 +310,6 @@ public abstract class NamedIrSignal {
                 System.err.println("Command with empty name.");
                 return false;
             }
-            if (name.contains(" ")) {
-                System.err.println("Command named \"" + name + "\" contains space.");
-                return false;
-            }
             return true;
         }
 
