@@ -135,13 +135,14 @@ public final class GuiMain extends javax.swing.JFrame {
     private final transient TableUtils tableUtils;
     private Proxy proxy = Proxy.NO_PROXY;
 
-    private final String testSignalCcf = // NEC1 12.34 56
+    private final static String testSignalCcf = // NEC1 12.34 56
             "0000 006C 0022 0002 015B 00AD 0016 0016 0016 0016 0016 0041 0016 0041 "
             + "0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0016 "
             + "0016 0016 0016 0016 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 "
             + "0016 0016 0016 0041 0016 0041 0016 0041 0016 0016 0016 0016 0016 0041 "
             + "0016 0041 0016 0041 0016 0016 0016 0016 0016 0016 0016 0041 0016 0041 "
             + "0016 06A4 015B 0057 0016 0E6C";
+    private final static IrSignal testSignal;
 
     private final RawIrSignal.RawTableColumnModel rawTableColumnModel;
     private final ParametrizedIrSignal.ParameterIrSignalTableColumnModel parameterTableColumnModel;
@@ -347,6 +348,14 @@ public final class GuiMain extends javax.swing.JFrame {
                     guiUtils.error("Can't remove text from source.");
                 }
             }
+        }
+    }
+
+    static {
+        try {
+            testSignal = Pronto.parse(testSignalCcf);
+        } catch (Pronto.NonProntoFormatException | InvalidArgumentException ex) {
+            throw new ThisCannotHappenException(ex);
         }
     }
 
@@ -1905,6 +1914,8 @@ public final class GuiMain extends javax.swing.JFrame {
         rawCodePasteAnalyzeMenuItem = new javax.swing.JMenuItem();
         rawCodeSelectAllMenuItem = new javax.swing.JMenuItem();
         jSeparator23 = new javax.swing.JPopupMenu.Separator();
+        rawAddTestSignalMenuItem = new javax.swing.JMenuItem();
+        jSeparator36 = new javax.swing.JPopupMenu.Separator();
         rawCodeAnalyzeMenuItem = new javax.swing.JMenuItem();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
         undoDataMenuItem = new javax.swing.JMenuItem();
@@ -1927,6 +1938,7 @@ public final class GuiMain extends javax.swing.JFrame {
         moveDownMenuItem1 = new javax.swing.JMenuItem();
         jSeparator17 = new javax.swing.JPopupMenu.Separator();
         addEmptyParametrizedSignalMenuItem = new javax.swing.JMenuItem();
+        addParametrizedTestSignalMenuItem = new javax.swing.JMenuItem();
         jSeparator13 = new javax.swing.JPopupMenu.Separator();
         scrutinizeParametricMenuItem = new javax.swing.JMenuItem();
         transmitMenuItem = new javax.swing.JMenuItem();
@@ -1967,6 +1979,8 @@ public final class GuiMain extends javax.swing.JFrame {
         moveUpMenuItem = new javax.swing.JMenuItem();
         moveDownMenuItem = new javax.swing.JMenuItem();
         jSeparator11 = new javax.swing.JPopupMenu.Separator();
+        addEmptyRawMenuItem = new javax.swing.JMenuItem();
+        addRawTestSignalMenuItem = new javax.swing.JMenuItem();
         rawFromClipboardMenuItem = new javax.swing.JMenuItem();
         jSeparator18 = new javax.swing.JPopupMenu.Separator();
         scrutinizeMenuItem = new javax.swing.JMenuItem();
@@ -2513,6 +2527,15 @@ public final class GuiMain extends javax.swing.JFrame {
         CCFCodePopupMenu.add(rawCodeSelectAllMenuItem);
         CCFCodePopupMenu.add(jSeparator23);
 
+        rawAddTestSignalMenuItem.setText("Enter test signal (NEC1 12.34 56)");
+        rawAddTestSignalMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rawAddTestSignalMenuItemActionPerformed(evt);
+            }
+        });
+        CCFCodePopupMenu.add(rawAddTestSignalMenuItem);
+        CCFCodePopupMenu.add(jSeparator36);
+
         rawCodeAnalyzeMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/gear.png"))); // NOI18N
         rawCodeAnalyzeMenuItem.setText("Scrutinize");
         rawCodeAnalyzeMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -2660,6 +2683,14 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         parameterTablePopupMenu.add(addEmptyParametrizedSignalMenuItem);
+
+        addParametrizedTestSignalMenuItem.setText("Add Test Signal (NEC1 12.34 56)");
+        addParametrizedTestSignalMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addParametrizedTestSignalMenuItemActionPerformed(evt);
+            }
+        });
+        parameterTablePopupMenu.add(addParametrizedTestSignalMenuItem);
         parameterTablePopupMenu.add(jSeparator13);
 
         scrutinizeParametricMenuItem.setText("Scrutinize selected");
@@ -2940,6 +2971,24 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         rawTablePopupMenu.add(moveDownMenuItem);
         rawTablePopupMenu.add(jSeparator11);
+
+        addEmptyRawMenuItem.setText("Add Empty Signal");
+        addEmptyRawMenuItem.setToolTipText("Add an empty row");
+        addEmptyRawMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addEmptyRawMenuItemActionPerformed(evt);
+            }
+        });
+        rawTablePopupMenu.add(addEmptyRawMenuItem);
+
+        addRawTestSignalMenuItem.setText("Add Test Signal (NEC1 12.34 56)");
+        addRawTestSignalMenuItem.setToolTipText("Add a standard signal");
+        addRawTestSignalMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addRawTestSignalMenuItemActionPerformed(evt);
+            }
+        });
+        rawTablePopupMenu.add(addRawTestSignalMenuItem);
 
         rawFromClipboardMenuItem.setText("Import signal from clipboard");
         rawFromClipboardMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -7456,19 +7505,12 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_ignoreEndingSilenceCheckBoxMenuItemActionPerformed
 
     private void testSignalMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testSignalMenuItemActionPerformed
-        try {
-            IrSignal irSignal = Pronto.parse(testSignalCcf);
-            if (rawPanel.isShowing()) {
-                RawIrSignal cir = new RawIrSignal(irSignal, "test_signal", "Generated signal (NEC1 12.34 56)");
-                registerRawCommand(cir);
-            } else if (cookedPanel.isShowing()) {
-                ParametrizedIrSignal signal = new ParametrizedIrSignal(irSignal, "test_signal", "Generated signal NEC 12.34 56", false);
-                registerParameterSignal(signal);
-            } else
-                scrutinizeIrSignal(irSignal);
-        } catch (InvalidArgumentException | Pronto.NonProntoFormatException | NoDecodeException ex) {
-            throw new ThisCannotHappenException();
-        }
+        if (rawPanel.isShowing())
+            addRawTestSignalMenuItemActionPerformed(evt);
+        else if (cookedPanel.isShowing())
+            addParametrizedTestSignalMenuItemActionPerformed(evt);
+        else
+            rawAddTestSignalMenuItemActionPerformed(evt);
     }//GEN-LAST:event_testSignalMenuItemActionPerformed
 
     private void copyConsoleToClipboardMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyConsoleToClipboardMenuItemActionPerformed
@@ -7922,7 +7964,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_saveCookedMenuItemActionPerformed
 
     private void addEmptyParametrizedSignalMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addEmptyParametrizedSignalMenuItemActionPerformed
-        ParametrizedIrSignal signal = new ParametrizedIrSignal(null, IrCoreUtils.INVALID, IrCoreUtils.INVALID, IrCoreUtils.INVALID, "empty_signal", null);
+        ParametrizedIrSignal signal = new ParametrizedIrSignal();
         registerParameterSignal(signal);
     }//GEN-LAST:event_addEmptyParametrizedSignalMenuItemActionPerformed
 
@@ -9392,6 +9434,33 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_glossaryMenuItemActionPerformed
 
+    private void rawAddTestSignalMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawAddTestSignalMenuItemActionPerformed
+        try {
+            scrutinizeIrSignal(testSignal);
+        } catch (InvalidArgumentException ex) {
+            throw new ThisCannotHappenException();
+        }
+    }//GEN-LAST:event_rawAddTestSignalMenuItemActionPerformed
+
+    private void addRawTestSignalMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addRawTestSignalMenuItemActionPerformed
+        RawIrSignal cir = new RawIrSignal(testSignal, "test", "Generated signal (NEC1 12.34 56)");
+        registerRawCommand(cir);
+    }//GEN-LAST:event_addRawTestSignalMenuItemActionPerformed
+
+    private void addParametrizedTestSignalMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addParametrizedTestSignalMenuItemActionPerformed
+        try {
+            ParametrizedIrSignal signal = new ParametrizedIrSignal(testSignal, "test", "", false);
+            registerParameterSignal(signal);
+        } catch (NoDecodeException ex) {
+            throw new ThisCannotHappenException();
+        }
+    }//GEN-LAST:event_addParametrizedTestSignalMenuItemActionPerformed
+
+    private void addEmptyRawMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addEmptyRawMenuItemActionPerformed
+        RawIrSignal signal = new RawIrSignal();
+        registerRawCommand(signal);
+    }//GEN-LAST:event_addEmptyRawMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9399,9 +9468,12 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem absToleranceMenuItem;
     private javax.swing.JMenu actionsMenu;
     private javax.swing.JMenuItem addEmptyParametrizedSignalMenuItem;
+    private javax.swing.JMenuItem addEmptyRawMenuItem;
     private javax.swing.JMenuItem addMissingFsMenuItem;
     private javax.swing.JMenuItem addMissingNamesMenuItem;
     private javax.swing.JMenuItem addNamePrefixMenuItem;
+    private javax.swing.JMenuItem addParametrizedTestSignalMenuItem;
+    private javax.swing.JMenuItem addRawTestSignalMenuItem;
     private javax.swing.JMenuItem analysisToClipboardMenuItem;
     private javax.swing.JRadioButtonMenuItem analyzerBase10RadioButtonMenuItem;
     private javax.swing.JRadioButtonMenuItem analyzerBase16RadioButtonMenuItem;
@@ -9740,6 +9812,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator33;
     private javax.swing.JPopupMenu.Separator jSeparator34;
     private javax.swing.JPopupMenu.Separator jSeparator35;
+    private javax.swing.JPopupMenu.Separator jSeparator36;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
@@ -9812,6 +9885,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu protocolParametersMenu;
     private javax.swing.JMenuItem protocolSpecMenuItem;
     private javax.swing.JMenuItem proxyMenuItem;
+    private javax.swing.JMenuItem rawAddTestSignalMenuItem;
     private javax.swing.JMenuItem rawCodeAnalyzeMenuItem;
     private javax.swing.JMenuItem rawCodeClearMenuItem;
     private javax.swing.JComboBox<String> rawCodeColumnComboBox1;

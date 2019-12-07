@@ -151,6 +151,10 @@ public class RawIrSignal extends NamedIrSignal {
         this(command.toIrSignal(), command.getName(), command.getComment());
     }
 
+    public RawIrSignal() {
+        this(new IrSignal(), "", "");
+    }
+
     private void setIrSignal(IrSignal irSignal, Decoder.SimpleDecodesSet decodes) {
         this.irSignal = irSignal;
         this.decodes = decodes;
@@ -159,7 +163,7 @@ public class RawIrSignal extends NamedIrSignal {
                 Analyzer analyzer = new Analyzer(irSignal, absoluteTolerance, relativeTolerance);
                 Analyzer.AnalyzerParams analyzerParams = new Analyzer.AnalyzerParams(irSignal.getFrequency(), timeBaseString, bitDirection, useExtents, parameterWidths, invert);
                 List<Protocol> list = analyzer.searchBestProtocol(analyzerParams);
-                if (!list.isEmpty())
+                if (!list.isEmpty() && list.get(0) != null)
                     analyzerString = list.get(0).toIrpString(analyzerRadix);
             } catch (NoDecoderMatchException | InvalidArgumentException ex) {
                 analyzerString = null;

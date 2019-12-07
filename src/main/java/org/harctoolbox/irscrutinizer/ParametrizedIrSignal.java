@@ -145,6 +145,10 @@ public class ParametrizedIrSignal extends NamedIrSignal {
             parameters.remove("T");
     }
 
+    ParametrizedIrSignal() {
+        this(null, new HashMap<>(0), null, null);
+    }
+
     public void digestMiscParameters(String payload) {
         if (payload == null || payload.trim().isEmpty())
             return;
