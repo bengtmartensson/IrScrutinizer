@@ -98,6 +98,14 @@ public class TableUtils {
             tableModel.removeRow(rows[i]);
     }
 
+    void duplicateTableSelectedRow(JTable table) throws ErroneousSelectionException, GirrException {
+        barfIfNotExactlyOneSelected(table);
+        int selectedRow = table.getSelectedRow();
+        int modelRow = table.convertRowIndexToModel(selectedRow);
+        NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
+        tableModel.duplicate(modelRow);
+    }
+
     void printTableSelectedRow(JTable table) throws ErroneousSelectionException {
         barfIfNotExactlyOneSelected(table);
         int modelRow = table.convertRowIndexToModel(table.getSelectedRow());

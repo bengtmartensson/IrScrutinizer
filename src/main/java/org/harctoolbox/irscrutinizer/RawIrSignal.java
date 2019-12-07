@@ -142,6 +142,10 @@ public class RawIrSignal extends NamedIrSignal {
         setIrSignal(irSignal);
     }
 
+    public RawIrSignal(RawIrSignal old) {
+        this(old.getIrSignal(), old.getName(), old.getComment());
+    }
+
     public RawIrSignal(ModulatedIrSequence irSequence, String name, String comment) {
         super(name, comment);
         setIrSignal(irSequence);
@@ -373,6 +377,12 @@ public class RawIrSignal extends NamedIrSignal {
         public Command toCommand(int row) {
             RawIrSignal rir = getCapturedIrSignal(row);
             return rir.toCommand();
+        }
+
+        @Override
+        void duplicate(int modelRow) {
+            RawIrSignal raw = new RawIrSignal(getCapturedIrSignal(modelRow));
+            addSignal(raw);
         }
 
         @Override

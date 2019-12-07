@@ -99,6 +99,10 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         this.protocolName = protocolName;
     }
 
+    public ParametrizedIrSignal(ParametrizedIrSignal old) {
+        this(old.getProtocol(), old.parameters, old.getName(), old.getComment());
+    }
+
     public ParametrizedIrSignal(String protocolName, long device, long subdevice, long function, String name, String comment) {
         super(name, comment);
         parameters = new HashMap<>(3);
@@ -344,6 +348,12 @@ public class ParametrizedIrSignal extends NamedIrSignal {
 
         public void addSignal(ParametrizedIrSignal signal) {
             super.addSignal(signal);
+        }
+
+        @Override
+        void duplicate(int modelRow) {
+            ParametrizedIrSignal pir = new ParametrizedIrSignal(getParameterIrSignal(modelRow));
+            addSignal(pir);
         }
 
         public ArrayList<Long> listF(Command reference) throws IrpException, IrCoreException, GirrException {

@@ -1942,6 +1942,8 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator13 = new javax.swing.JPopupMenu.Separator();
         scrutinizeParametricMenuItem = new javax.swing.JMenuItem();
         transmitMenuItem = new javax.swing.JMenuItem();
+        jSeparator37 = new javax.swing.JPopupMenu.Separator();
+        duplicateParametricMenuItem = new javax.swing.JMenuItem();
         deleteMenuItem1 = new javax.swing.JMenuItem();
         saveSelectedCookedMenuItem = new javax.swing.JMenuItem();
         debugTableRowMenuItem1 = new javax.swing.JMenuItem();
@@ -1985,6 +1987,8 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator18 = new javax.swing.JPopupMenu.Separator();
         scrutinizeMenuItem = new javax.swing.JMenuItem();
         sendMenuItem = new javax.swing.JMenuItem();
+        jSeparator38 = new javax.swing.JPopupMenu.Separator();
+        duplicateRawMenuItem = new javax.swing.JMenuItem();
         deleteMenuItem = new javax.swing.JMenuItem();
         saveSelectedRawTableRowMenuItem = new javax.swing.JMenuItem();
         debugTableRowMenuItem = new javax.swing.JMenuItem();
@@ -2711,6 +2715,15 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         parameterTablePopupMenu.add(transmitMenuItem);
+        parameterTablePopupMenu.add(jSeparator37);
+
+        duplicateParametricMenuItem.setText("Duplicate selected");
+        duplicateParametricMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                duplicateParametricMenuItemActionPerformed(evt);
+            }
+        });
+        parameterTablePopupMenu.add(duplicateParametricMenuItem);
 
         deleteMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
         deleteMenuItem1.setText("Delete selected");
@@ -3016,6 +3029,15 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         rawTablePopupMenu.add(sendMenuItem);
+        rawTablePopupMenu.add(jSeparator38);
+
+        duplicateRawMenuItem.setText("Duplicate Selected");
+        duplicateRawMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                duplicateRawMenuItemActionPerformed(evt);
+            }
+        });
+        rawTablePopupMenu.add(duplicateRawMenuItem);
 
         deleteMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
         deleteMenuItem.setText("Delete selected");
@@ -9466,6 +9488,22 @@ public final class GuiMain extends javax.swing.JFrame {
         registerRawCommand(signal);
     }//GEN-LAST:event_addEmptyRawMenuItemActionPerformed
 
+    private void duplicateParametricMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_duplicateParametricMenuItemActionPerformed
+        try {
+            tableUtils.duplicateTableSelectedRow(parameterTable);
+        } catch (ErroneousSelectionException | GirrException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_duplicateParametricMenuItemActionPerformed
+
+    private void duplicateRawMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_duplicateRawMenuItemActionPerformed
+        try {
+            tableUtils.duplicateTableSelectedRow(rawTable);
+        } catch (ErroneousSelectionException | GirrException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_duplicateRawMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9567,6 +9605,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel devLircPanel;
     private javax.swing.JMenuItem downloadsMenuItem;
     private javax.swing.JMenuItem dummyGapMenuItem;
+    private javax.swing.JMenuItem duplicateParametricMenuItem;
+    private javax.swing.JMenuItem duplicateRawMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JTextField editingTextField;
     private javax.swing.JLabel endingLengthLabel;
@@ -9818,6 +9858,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator34;
     private javax.swing.JPopupMenu.Separator jSeparator35;
     private javax.swing.JPopupMenu.Separator jSeparator36;
+    private javax.swing.JPopupMenu.Separator jSeparator37;
+    private javax.swing.JPopupMenu.Separator jSeparator38;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;

@@ -481,5 +481,7 @@ public abstract class NamedIrSignal {
         boolean hasUnsavedChanges() {
             return unsavedChanges;
         }
+
+        abstract void duplicate(int modelRow);
     }
 }
