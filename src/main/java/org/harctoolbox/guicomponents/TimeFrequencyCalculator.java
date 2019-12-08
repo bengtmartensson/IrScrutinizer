@@ -41,6 +41,10 @@ public class TimeFrequencyCalculator extends HarcPanel {
 
     private final static int seconds2microseconds = 1000000;
 
+    public static void main(String args[]) {
+        HarcletFrame.run("TimeFrequencyCalculator", args);
+    }
+
     /**
      * Creates new form TimeFrequencyCalculator
      */

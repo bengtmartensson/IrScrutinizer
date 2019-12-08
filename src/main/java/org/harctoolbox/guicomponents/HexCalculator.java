@@ -36,6 +36,10 @@ public class HexCalculator extends HarcPanel {
 
     private static final String invalidString = "****";
 
+    public static void main(String args[]) {
+        HarcletFrame.run("HexCalculator", args);
+    }
+
     /**
      * Creates new form HexCalculator.
      */

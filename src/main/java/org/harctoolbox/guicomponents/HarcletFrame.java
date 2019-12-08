@@ -35,7 +35,6 @@ public class HarcletFrame extends javax.swing.JFrame {
         return harcletFrame;
     }
 
-
     private static void doExit(int exitcode) {
         System.exit(exitcode);
     }
@@ -46,7 +45,6 @@ public class HarcletFrame extends javax.swing.JFrame {
     public static void main(String args[]) {
         String lafName = null;
         String className = "TimeFrequencyCalculator";
-        HarcPanel panel = null;
 
         if (args.length == 1)
             className = args[0];
@@ -54,13 +52,31 @@ public class HarcletFrame extends javax.swing.JFrame {
             lafName = args[0];
             className = args[1];
         }
+        run(className, lafName);
+    }
 
+    /**
+     * Equivalent to run(className, null) if args is empty, otherwise run(className, args[0]).
+     * @param className
+     * @param args
+     */
+    public static void run(String className, String args[]) {
+        run(className, args.length == 0 ? null : args[0]);
+    }
 
+    /**
+     * Fires up an instance of the class given as argument.
+     * @param className Classname to be started. If it does not contain a period (.), "org.harctoolbox.guicomponents." is prepended.
+     * @param lafName Name of requested look-and-feel, or null.
+     */
+    public static void run(String className, String lafName) {
         /* Create and display the form */
         final String laf = lafName;
+        HarcPanel panel = null;
         //String packageName = Package.getPackage(laf)
+        String longClassName = className.contains(".") ? className : ("org.harctoolbox.guicomponents." + className);
         try {
-            Class<?> clazz = Class.forName("org.harctoolbox.guicomponents." + className);
+            Class<?> clazz = Class.forName(longClassName);
 
             Constructor<?> constructor = clazz.getConstructor((Class<?>[]) null);
 

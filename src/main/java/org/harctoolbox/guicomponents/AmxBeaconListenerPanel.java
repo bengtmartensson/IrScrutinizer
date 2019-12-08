@@ -36,6 +36,10 @@ public class AmxBeaconListenerPanel extends HarcPanel {
             + "License: GPL3.\n\n"
             + "Project home page: http://www.harctoolbox.org";
 
+    public static void main(String args[]) {
+        HarcletFrame.run("AmxBeaconListenerPanel", args);
+    }
+
     private final transient AmxBeaconListener listener;
 
     @Override
