@@ -31,6 +31,11 @@ if [ $(basename "$0" ) = "irptransmogrifier" ] ; then
     org.harctoolbox.irp.IrpTransmogrifier "$@"
 fi
 
+if [ $(basename "$0" ) != "irscrutinizer" ] ; then
+    exec "${JAVA}" -classpath "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
+    org.harctoolbox.guicomponents.$(basename "$0") "$@"
+fi
+
 # Path to DecodeIR and RXTX
 # If the code below does not work, just set LIBRARY_PATH to the directory
 # containing the shared lib to use, like in the commented-out example lines.

@@ -37,6 +37,9 @@ GIRR_XML=${PREFIX}/share/applications/girr.xml
 mkdir -p ${PREFIX}/bin
 mklink ${MYPROG_LOWER}
 mklink irptransmogrifier
+mklink AmxBeaconListenerPanel
+mklink HexCalculator
+mklink TimeFrequencyCalculator
 
 # Is it a good idea to install documentation and schemas as the commented-out
 # code once did? If anybody thinks so, please let me know!
