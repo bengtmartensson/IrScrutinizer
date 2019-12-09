@@ -26,6 +26,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <import class="org.harctoolbox.ircore.IrCoreUtils"/>
     <import class="org.harctoolbox.ircore.IrSequence"/>
     <property name="bounds" type="rectangle" default='null' doc='Bounds of IrScrutinizer window.'/>
+    <property name="fileselectordirs" type="string" default='""' doc='Serialized data from SelectFile.fileselectordirs'/>
     <property name="outputFormatIndex" type="int" default='"1"' />
     <property name="irWidgetCapturePortName" type="string" default='ifWindows("COM8","/dev/ttyUSB0")' doc='Name of device to use, e.g. COM8 or /dev/ttyUSB0.' />
     <property name="globalCacheCaptureIpName" type="string" default='""' doc="IP Name or Address of GlobalCache to use (capturing)."/>

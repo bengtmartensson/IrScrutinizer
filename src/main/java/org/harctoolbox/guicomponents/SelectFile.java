@@ -27,8 +27,23 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  *
  */
 public class SelectFile {
+    private static final int A_PRIORI_SIZE = 8;
 
-    private static final HashMap<String, String> filechooserdirs = new HashMap<>(4);
+    private static HashMap<String, String> filechooserdirs;
+
+    public static final String saveString() {
+        return SerializeString.serializeToString(filechooserdirs);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static final void restoreFromString(String string) {
+        try {
+            Object obj = SerializeString.unserializeFromString(string);
+            filechooserdirs = obj != null ? (HashMap<String, String>) obj : new HashMap<>(A_PRIORI_SIZE);
+        } catch (ClassNotFoundException ex) {
+            filechooserdirs = new HashMap<>(A_PRIORI_SIZE);
+        }
+    }
 
     /**
      * Version of the file selector with exactly one file extension.

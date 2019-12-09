@@ -547,6 +547,8 @@ public final class GuiMain extends javax.swing.JFrame {
             decoderParameters.setMinimumLeadout((Double) newValue);
         });
 
+        SelectFile.restoreFromString(properties.getFileselectordirs());
+
         loadExportFormats(); // must come before initComponents
 
         loadProtocolsIni();
@@ -939,6 +941,7 @@ public final class GuiMain extends javax.swing.JFrame {
         }
         capturingHardwareManager.close();
         sendingHardwareManager.close();
+        properties.setFileselectordirs(SelectFile.saveString());
         try {
             if (!properties.getWasReset())
                 properties.setBounds(getBounds());
