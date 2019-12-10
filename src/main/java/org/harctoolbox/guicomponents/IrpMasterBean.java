@@ -80,6 +80,10 @@ public final class IrpMasterBean extends javax.swing.JPanel {
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
+    private static String mkString(Long x) {
+        return x == null ? "" : Long.toString(x);
+    }
+
     public void setSignalNameFormatter(ISignalNameFormatter signalNameFormatter) {
         this.signalNameFormatter = signalNameFormatter;
     }
@@ -170,7 +174,17 @@ public final class IrpMasterBean extends javax.swing.JPanel {
             String initalT, String initialAdditionalParameters)
             throws UnknownProtocolException, UnsupportedRepeatException, NameUnassignedException, InvalidNameException, IrpInvalidArgumentException {
         protocol = irpDatabase.getProtocol(protocolName);
+        irpTextField.setText(irpDatabase.getIrp(protocolName));
+        setParameters(initialD, initialS, initialF, initalT, initialAdditionalParameters);
+    }
 
+    public void setParameters(Map<String, Long> parameters) {
+        setParameters(mkString(parameters.get("D")), mkString(parameters.get("S")),
+                mkString(parameters.get("F")), mkString(parameters.get("T")), formatMiscParams(parameters));
+    }
+
+    private void setParameters(String initialD, String initialS, String initialF,
+            String initalT, String initialAdditionalParameters) {
         checkParam(dTextField, dLabel, "D", initialD);
         checkParam(sTextField, sLabel, "S", initialS);
         checkParam(fTextField, fLabel, "F", initialF);
@@ -179,8 +193,21 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         additionalParametersTextField.setText(initialAdditionalParameters);
         additionalParametersLabel.setEnabled(protocol.hasNonStandardParameters());
         additionalParametersTextField.setEnabled(protocol.hasNonStandardParameters());
+    }
 
-        irpTextField.setText(irpDatabase.getIrp(protocolName));
+    private static String formatMiscParams(Map<String, Long> params) {
+        if (params == null)
+            return "";
+        StringBuilder str = new StringBuilder(16);
+        params.entrySet().forEach((kvp) -> {
+            String key = kvp.getKey();
+            if (!(key.equals("D") || key.equals("S") || key.equals("F") || key.equals("T"))) {
+                if (str.length() > 0)
+                    str.append(" ");
+                str.append(key).append("=").append(kvp.getValue());
+            }
+        });
+        return str.toString();
     }
 
     public String getSignalName(/*long fOverride*/) throws IrpException, IrCoreException, ParseException {
@@ -278,6 +305,7 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         fLabel = new javax.swing.JLabel();
         tLabel = new javax.swing.JLabel();
         additionalParametersLabel = new javax.swing.JLabel();
+        randomParametersButton = new javax.swing.JButton();
 
         protocolComboBox.setModel(new DefaultComboBoxModel(irpMasterProtocols()));
         protocolComboBox.setSelectedItem(protocolName);
@@ -380,6 +408,15 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         additionalParametersLabel.setText("Additional parameters");
         additionalParametersLabel.setEnabled(false);
 
+        randomParametersButton.setMnemonic('R');
+        randomParametersButton.setText("Random params");
+        randomParametersButton.setToolTipText("Assign random, but for the protocol valid, values to all parameters.");
+        randomParametersButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                randomParametersButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -416,6 +453,8 @@ public final class IrpMasterBean extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(additionalParametersTextField)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(randomParametersButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(protocolDocuButton)))))
                 .addContainerGap())
         );
@@ -441,11 +480,15 @@ public final class IrpMasterBean extends javax.swing.JPanel {
                     .addComponent(dTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(sTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(fTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(additionalParametersTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(additionalParametersTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(randomParametersButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(irpTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {protocolDocuButton, randomParametersButton});
+
     }// </editor-fold>//GEN-END:initComponents
 
     private void protocolDocuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolDocuButtonActionPerformed
@@ -521,6 +564,11 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         additionalParametersTextFieldActionPerformed(null);
     }//GEN-LAST:event_additionalParametersTextFieldFocusLost
 
+    private void randomParametersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomParametersButtonActionPerformed
+        Map<String, Long> params = protocol.randomParameters();
+        setParameters(params);
+    }//GEN-LAST:event_randomParametersButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel additionalParametersLabel;
     private javax.swing.JTextField additionalParametersTextField;
@@ -534,6 +582,7 @@ public final class IrpMasterBean extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JComboBox<String> protocolComboBox;
     private javax.swing.JButton protocolDocuButton;
+    private javax.swing.JButton randomParametersButton;
     private javax.swing.JLabel sLabel;
     private javax.swing.JTextField sTextField;
     private javax.swing.JLabel tLabel;
