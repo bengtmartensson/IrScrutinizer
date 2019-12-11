@@ -95,15 +95,17 @@
                   <Component id="additionalParametersLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="protocolComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="toggleComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="protocolDocuButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="dTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="sTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="fTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="additionalParametersTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="randomParametersButton" linkSize="2" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="protocolComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="toggleComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="protocolDocuButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="dTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="sTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="fTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="additionalParametersTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="irpTextField" min="-2" max="-2" attributes="0"/>
@@ -155,6 +157,7 @@
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/icons/Crystal-Clear/22x22/mimetypes/info.png"/>
         </Property>
+        <Property name="mnemonic" type="int" value="68"/>
         <Property name="text" type="java.lang.String" value="Docu"/>
         <Property name="toolTipText" type="java.lang.String" value="Display notes to the selected protocol"/>
       </Properties>
@@ -257,9 +260,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="randomParametersButton">
       <Properties>
-        <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="&apos;R&apos;" type="code"/>
-        </Property>
+        <Property name="mnemonic" type="int" value="82"/>
         <Property name="text" type="java.lang.String" value="Random params"/>
         <Property name="toolTipText" type="java.lang.String" value="Assign random, but for the protocol valid, values to all parameters."/>
       </Properties>
