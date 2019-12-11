@@ -11,8 +11,8 @@ before_install:
 install:
 - sudo apt-get install -y --force-yes autoconf dos2unix icoutils xsltproc
 script:
-#- tools/build-IrpTransmogrifier.sh
-#- tools/build-Girr.sh
+- tools/build-IrpTransmogrifier.sh
+- tools/build-Girr.sh
 #- tools/build-Jirc.sh
 #- tools/build-DevSlashLirc.sh
 - tools/build-HarcHardwareBundle.sh
