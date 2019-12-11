@@ -49,8 +49,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.comm.DriverGenUnix;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -1206,7 +1204,7 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             protocols = analyzer.searchBestProtocol(params);
         } catch (NoDecoderMatchException ex) {
-            Logger.getLogger(GuiMain.class.getName()).log(Level.SEVERE, null, ex);
+            guiUtils.error(ex);
         }
         if (protocols == null || protocols.isEmpty())
             clearAnalyzeParameters();
@@ -1313,35 +1311,31 @@ public final class GuiMain extends javax.swing.JFrame {
         displaySignal(irSignal);
     }
 
-    private void saveParametricSignals(RemoteSetExporter exporter) {
-        try {
-            File file = saveCommands(parameterTableModel, Version.appName + " parametric export", exporter);
-            if (file != null)
-                guiUtils.message("File " + file + " was successfully written.");
-        } catch (IOException | TransformerException | GirrException | IrCoreException | IrpException ex) {
-            guiUtils.error(ex);
-        }
+    private boolean autoOpen() {
+        return properties.getAutoOpenExports();
     }
 
-    private void saveRawSignals(RemoteSetExporter exporter) {
-        try {
-            File file = saveCommands(rawTableModel, Version.appName + " raw export", exporter);
-            if (file != null)
-                guiUtils.message("File " + file + " was successfully written.");
-        } catch (IOException | TransformerException | GirrException | IrCoreException | IrpException ex) {
-            guiUtils.error(ex);
-        }
+    private void saveParametricSignals(RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+        saveCommands(parameterTableModel, Version.appName + " parametric export", exporter);
     }
 
-    private File saveCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel, String title, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+    private void saveRawSignals(RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+        saveCommands(rawTableModel, Version.appName + " raw export", exporter);
+    }
+
+    private void saveCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel, String title, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
         Map<String, Command> commands = tableModel.getCommandsWithSanityCheck(guiUtils);
         if (commands == null)
-            return null;
+            return;
 
         File file = saveCommands(commands, "IrScrutinizer " + tableModel.getType() + " table", title, exporter);
         if (file != null)
             tableModel.clearUnsavedChanges();
-        return file;
+        if (file != null) {
+                guiUtils.message("File " + file + " was successfully written.");
+                if (autoOpen())
+                    guiUtils.open(file);
+        }
     }
 
     private File saveCommands(Map<String, Command> commands, String source, String title, RemoteSetExporter exporter)
@@ -1391,39 +1385,44 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void saveSignals(Map<String, Command> commands) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
-        if (commands.isEmpty())
+        if (commands.isEmpty()) {
             guiUtils.error("Nothing to export");
-        else if (commands.size() == 1) {
+            return;
+        }
+
+        File savedFile;
+        if (commands.size() == 1) {
             // exporting just a single command
-            File savedFile = saveSignal(commands.values().iterator().next(), "IrScrutinizer generated signal", newExporter());
+            savedFile = saveSignal(commands.values().iterator().next(), "IrScrutinizer generated signal", newExporter());
             if (savedFile != null)
                 guiUtils.message("File " + savedFile.getPath() + " successfully written with one signal.");
         } else {
             RemoteSetExporter exporter = newRemoteExporter();
             if (exporter == null)
                 return; // error has already been reported to the user.
-            File savedFile = saveCommands(commands, null, null, exporter);
+            savedFile = saveCommands(commands, null, null, exporter);
             if (savedFile != null)
                 guiUtils.message("File " + savedFile.getPath() + " successfully written with " + commands.size() + " signals.");
         }
+        if (autoOpen())
+            guiUtils.open(savedFile);
     }
 
-    private void saveSignal(IrSignal irSignal) {
+    private void saveSignal(IrSignal irSignal) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
         saveSignal(irSignal, newExporter());
     }
 
-    private void saveSignal(IrSignal irSignal, ICommandExporter exporter) {
-        try {
-            if (irSignal == null) {
-                guiUtils.error("Not exporting empty signal.");
-                return;
-            }
-            Command command = new Command("IrScrutinizer captured signal", null, irSignal);
-            File savedFile = saveSignal(command, "IrScrutinizer scrutinized signal", exporter);
-            if (savedFile != null)
-                guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
-        } catch (IOException | TransformerException | GirrException | IrCoreException | IrpException ex) {
+    private void saveSignal(IrSignal irSignal, ICommandExporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+        if (irSignal == null) {
+            guiUtils.error("Not exporting empty signal.");
+            return;
         }
+        Command command = new Command("IrScrutinizer captured signal", null, irSignal);
+        File savedFile = saveSignal(command, "IrScrutinizer scrutinized signal", exporter);
+        if (savedFile != null)
+            guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
+        if (autoOpen())
+            guiUtils.open(savedFile);
     }
 
     private void reAnalyze() {
@@ -2240,6 +2239,7 @@ public final class GuiMain extends javax.swing.JFrame {
         exportHelpButton = new javax.swing.JButton();
         exportRawRemoteButton1 = new javax.swing.JButton();
         exportGenerateShortCcfCheckBox = new javax.swing.JCheckBox();
+        autoOpenExportsCheckBox = new javax.swing.JCheckBox();
         sendingPanel = new javax.swing.JPanel();
         sendingHardwareTabbedPane = new javax.swing.JTabbedPane();
         globalCachePanel = new javax.swing.JPanel();
@@ -5262,7 +5262,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(jLabel31)
                     .addComponent(prontoExportButtonWidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(prontoExportButtonHeightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
                 .addComponent(exportProntoHelpButton)
                 .addContainerGap())
         );
@@ -5320,6 +5320,15 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
+        autoOpenExportsCheckBox.setSelected(properties.getAutoOpenExports());
+        autoOpenExportsCheckBox.setText("Auto open exports");
+        autoOpenExportsCheckBox.setToolTipText("Ir checked, exports will be automatically opened.");
+        autoOpenExportsCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoOpenExportsCheckBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout exportPanelLayout = new javax.swing.GroupLayout(exportPanel);
         exportPanel.setLayout(exportPanelLayout);
         exportPanelLayout.setHorizontalGroup(
@@ -5337,36 +5346,38 @@ public final class GuiMain extends javax.swing.JFrame {
                                 .addGap(12, 12, 12))
                             .addGroup(exportPanelLayout.createSequentialGroup()
                                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(automaticExportFilenamesCheckBox)
+                                    .addComponent(jLabel8)
+                                    .addComponent(exportFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(exportPanelLayout.createSequentialGroup()
+                                        .addComponent(jLabel16)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(exportRepeatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(27, 27, 27)
+                                .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(exportPanelLayout.createSequentialGroup()
                                         .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel8)
-                                            .addComponent(exportFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGroup(exportPanelLayout.createSequentialGroup()
-                                                .addComponent(jLabel16)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(exportRepeatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                        .addGap(27, 27, 27)
+                                            .addComponent(exportGenerateParametersCheckBox)
+                                            .addComponent(exportGenerateCcfCheckBox))
+                                        .addGap(36, 36, 36)
                                         .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(exportPanelLayout.createSequentialGroup()
-                                                .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addComponent(exportGenerateParametersCheckBox)
-                                                    .addComponent(exportGenerateCcfCheckBox))
-                                                .addGap(36, 36, 36)
-                                                .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addComponent(exportGenerateSendIrCheckBox)
-                                                    .addComponent(exportGenerateShortCcfCheckBox)))
-                                            .addComponent(exportGenerateRawCheckBox)))
-                                    .addGroup(exportPanelLayout.createSequentialGroup()
-                                        .addComponent(exportSignalButton)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(exportParametricRemoteButton)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(exportRawRemoteButton)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(exportRawRemoteButton1)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(openLastFileButton)))
+                                            .addComponent(exportGenerateSendIrCheckBox)
+                                            .addComponent(exportGenerateShortCcfCheckBox)))
+                                    .addComponent(exportGenerateRawCheckBox))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(autoOpenExportsCheckBox)
+                                    .addComponent(automaticExportFilenamesCheckBox))
+                                .addGap(76, 76, 76))
+                            .addGroup(exportPanelLayout.createSequentialGroup()
+                                .addComponent(exportSignalButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(exportParametricRemoteButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(exportRawRemoteButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(exportRawRemoteButton1)
+                                .addGap(18, 18, 18)
+                                .addComponent(openLastFileButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)))
                         .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(exportPanelLayout.createSequentialGroup()
@@ -5387,17 +5398,18 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(exportPanelLayout.createSequentialGroup()
-                        .addComponent(automaticExportFilenamesCheckBox)
+                        .addComponent(jLabel8)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel8)
-                            .addComponent(exportGenerateParametersCheckBox)))
+                            .addComponent(exportGenerateParametersCheckBox)
+                            .addComponent(exportFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(automaticExportFilenamesCheckBox)))
                     .addComponent(exportHelpButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exportFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(exportGenerateRawCheckBox)
-                    .addComponent(exportGenerateSendIrCheckBox))
+                    .addComponent(exportGenerateSendIrCheckBox)
+                    .addComponent(autoOpenExportsCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportGenerateShortCcfCheckBox)
@@ -5414,7 +5426,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(exportRawRemoteButton1)
                     .addComponent(openLastFileButton))
                 .addGap(23, 23, 23)
-                .addComponent(exportSpecificOptionsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                .addComponent(exportSpecificOptionsTabbedPane)
                 .addGap(0, 0, 0))
         );
 
@@ -7665,7 +7677,7 @@ public final class GuiMain extends javax.swing.JFrame {
         try {
             ICommandExporter exporter = newExporter("ICT");
             saveSignal(getCapturedIrSignal(), exporter);
-        } catch (InvalidArgumentException ex) {
+        } catch (IOException | TransformerException | IrpException | GirrException | IrCoreException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_exportSignalIctMenuItemActionPerformed
@@ -7721,7 +7733,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void exportSignalGirrMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSignalGirrMenuItemActionPerformed
         try {
             saveSignal(getCapturedIrSignal(), newGirrExporter());
-        } catch (InvalidArgumentException ex) {
+        } catch (IOException | TransformerException | IrpException | GirrException | IrCoreException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_exportSignalGirrMenuItemActionPerformed
@@ -7859,13 +7871,17 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void parametricOrRawExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parametricOrRawExportButtonActionPerformed
         RemoteSetExporter exporter = newRemoteExporter();
-        if (exporter != null) {
+        if (exporter == null)
+            // error has already been reported, nothing to do.
+            return;
+
+        try {
             if (rawCookedTabbedPane.getSelectedComponent() == this.cookedPanel)
                 saveParametricSignals(exporter);
             else
                 saveRawSignals(exporter);
-        } else {
-            // error has already been reported, nothing to do.
+        } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
+            guiUtils.error(ex);
         }
     }//GEN-LAST:event_parametricOrRawExportButtonActionPerformed
 
@@ -8013,7 +8029,11 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_importIctMenuItemActionPerformed
 
     private void exportParametricAsGirrMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportParametricAsGirrMenuItemActionPerformed
-        saveParametricSignals(newGirrExporter());
+        try {
+            saveParametricSignals(newGirrExporter());
+        } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_exportParametricAsGirrMenuItemActionPerformed
 
     private void saveSelectedCookedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSelectedCookedMenuItemActionPerformed
@@ -8025,11 +8045,19 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_saveSelectedRawTableRowMenuItemActionPerformed
 
     private void saveRawMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveRawMenuItemActionPerformed
-        saveRawSignals(newRemoteExporter());
+        try {
+            saveRawSignals(newRemoteExporter());
+        } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_saveRawMenuItemActionPerformed
 
     private void saveCookedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveCookedMenuItemActionPerformed
-        saveParametricSignals(newRemoteExporter());
+        try {
+            saveParametricSignals(newRemoteExporter());
+        } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_saveCookedMenuItemActionPerformed
 
     private void addEmptyParametrizedSignalMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addEmptyParametrizedSignalMenuItemActionPerformed
@@ -8056,7 +8084,11 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_rawFromClipboardMenuItemActionPerformed
 
     private void exportRawAsGirrMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRawAsGirrMenuItemActionPerformed
-        saveRawSignals(newGirrExporter());
+        try {
+            saveRawSignals(newGirrExporter());
+        } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_exportRawAsGirrMenuItemActionPerformed
 
     private void repeatFinderCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_repeatFinderCheckBoxMenuItemActionPerformed
@@ -8306,19 +8338,29 @@ public final class GuiMain extends javax.swing.JFrame {
     private void exportSignalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSignalButtonActionPerformed
         try {
             saveSignal(getCapturedIrSignal());
-        } catch (InvalidArgumentException ex) {
+        } catch (IOException | TransformerException | IrpException | GirrException | IrCoreException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_exportSignalButtonActionPerformed
 
     private void exportParametricRemoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportParametricRemoteButtonActionPerformed
         RemoteSetExporter exporter = newRemoteExporter();
-        if (exporter != null)
+        if (exporter == null)
+            return;
+
+        try {
             saveParametricSignals(exporter);
+        } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_exportParametricRemoteButtonActionPerformed
 
     private void exportRawRemoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRawRemoteButtonActionPerformed
-        saveRawSignals(newRemoteExporter());
+        try {
+            saveRawSignals(newRemoteExporter());
+        } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_exportRawRemoteButtonActionPerformed
 
     private void girrSchemaLinkCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_girrSchemaLinkCheckBoxActionPerformed
@@ -8384,7 +8426,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void signalSignalTextMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signalSignalTextMenuItemActionPerformed
         try {
             saveSignal(getCapturedIrSignal(), newTextExporter());
-        } catch (InvalidArgumentException ex) {
+        } catch (IOException | TransformerException | IrCoreException | IrpException | GirrException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_signalSignalTextMenuItemActionPerformed
@@ -8392,7 +8434,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void exportSignalWaveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSignalWaveMenuItemActionPerformed
         try {
             saveSignal(getCapturedIrSignal(), new WaveExporter(exportAudioParametersBean));
-        } catch (InvalidArgumentException ex) {
+        } catch (IOException | TransformerException | IrCoreException | IrpException | GirrException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_exportSignalWaveMenuItemActionPerformed
@@ -8417,11 +8459,19 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_prontoModelComboBoxActionPerformed
 
     private void exportParametricAsTextMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportParametricAsTextMenuItemActionPerformed
-        saveParametricSignals(newTextExporter());
+        try {
+            saveParametricSignals(newTextExporter());
+        } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_exportParametricAsTextMenuItemActionPerformed
 
     private void exportRawAsTextMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRawAsTextMenuItemActionPerformed
-        saveRawSignals(newTextExporter());
+        try {
+            saveRawSignals(newTextExporter());
+        } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_exportRawAsTextMenuItemActionPerformed
 
     private void exportRepeatComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRepeatComboBoxActionPerformed
@@ -8690,7 +8740,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void signalExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signalExportButtonActionPerformed
         try {
             saveSignal(getCapturedIrSignal());
-        } catch (InvalidArgumentException ex) {
+        } catch (IOException | TransformerException | IrCoreException | IrpException | GirrException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_signalExportButtonActionPerformed
@@ -9577,6 +9627,10 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_rawProtocolDocuMenuItemActionPerformed
 
+    private void autoOpenExportsCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoOpenExportsCheckBoxActionPerformed
+        properties.setAutoOpenExports(autoOpenExportsCheckBox.isSelected());
+    }//GEN-LAST:event_autoOpenExportsCheckBoxActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9600,6 +9654,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JTextField analyzerTextField;
     private javax.swing.JButton apiKeyButton;
     private javax.swing.JPanel audioPanel;
+    private javax.swing.JCheckBox autoOpenExportsCheckBox;
     private javax.swing.JCheckBox automaticExportFilenamesCheckBox;
     private javax.swing.JMenuItem beaconListenerMenuItem;
     private javax.swing.JPanel captureCommandFusionPanel;
