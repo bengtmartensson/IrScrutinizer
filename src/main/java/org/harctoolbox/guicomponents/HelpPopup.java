@@ -26,16 +26,18 @@ import java.awt.event.MouseEvent;
 public class HelpPopup extends javax.swing.JDialog {
     private final String payload;
 
-   /**
+    /**
      * Creates a help popup.
      *
      * @param parent Parent frame
      * @param helpText Text (one string, to be formatted to many lines) containing the messages.
+     * @param title
      */
-    public HelpPopup(java.awt.Frame parent, String helpText) {
+    public HelpPopup(java.awt.Frame parent, String helpText, String title) {
         super(parent, false /*modal*/);
         payload = helpText;
         initComponents();
+        setTitle(title);
         // show the start of the text
         this.helpText.setCaretPosition(0);
     }
@@ -102,7 +104,11 @@ public class HelpPopup extends javax.swing.JDialog {
     }//GEN-LAST:event_formMouseClicked
 
     public static HelpPopup newHelpPopup(java.awt.Frame parent, String helpText) {
-        HelpPopup helpBox = new HelpPopup(parent, helpText);
+        return newHelpPopup(parent, helpText, "Help");
+    }
+
+    public static HelpPopup newHelpPopup(java.awt.Frame parent, String helpText, String title) {
+        HelpPopup helpBox = new HelpPopup(parent, helpText, title);
         // Try to align just to the right of the parent
         Rectangle parentCoords = parent.getBounds();
         Rectangle myCoords = helpBox.getBounds();
@@ -120,7 +126,7 @@ public class HelpPopup extends javax.swing.JDialog {
     */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> {
-            HelpPopup dialog = new HelpPopup(new javax.swing.JFrame(), "The best defense against logic is ignorance.");
+            HelpPopup dialog = new HelpPopup(new javax.swing.JFrame(), "The best defense against logic is ignorance.", "Helpful help");
             dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 
                 @Override
