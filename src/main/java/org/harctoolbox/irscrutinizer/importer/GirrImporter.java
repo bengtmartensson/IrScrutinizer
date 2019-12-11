@@ -25,6 +25,8 @@ import java.io.Reader;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -43,6 +45,8 @@ import org.xml.sax.SAXParseException;
  */
 public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
     public static final String homeUrl = "http://www.harctoolbox.org/girr";
+
+    private static final Logger logger = Logger.getLogger(GirrImporter.class.getName());
 
     private transient Schema schema;
     private URL url;
@@ -92,7 +96,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
             throw new NotGirrRemoteSetException();
         }
         RemoteSet rs = new RemoteSet(doc);
-        if (remoteSet == null)
+        if (remoteSet == null || remoteSet.isEmpty())
             remoteSet = rs;
         else
             remoteSet.append(rs);
@@ -167,7 +171,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
             try {
                 loadIncremental(XmlUtils.openXmlFile(fileOrDirectory, validate ? schema : null, true, true), origin);
             } catch (ParseException | SAXException | NotGirrRemoteSetException | GirrException ex) {
-                throw new IOException(ex.getMessage());
+                logger.log(Level.WARNING, "{0} in file {1}", new Object[]{ex.getMessage(), origin});
             }
         }
     }
