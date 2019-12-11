@@ -20,9 +20,7 @@ package org.harctoolbox.irscrutinizer.importer;
 import java.awt.Component;
 import java.awt.Container;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
 import javax.swing.JTree;
 import javax.swing.event.TreeExpansionEvent;
@@ -99,10 +97,11 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
             tree.setComponentPopupMenu(null);
             tree.setToolTipText(null);
         }
+        enableStuff(false);
     }
 
     public void setRemoteSet(RemoteSet remoteSet) {
-        if (remoteSet == null || remoteSet.getRemotes().isEmpty()) {
+        if (remoteSet == null || remoteSet.isEmpty()) {
             guiUtils.error("No remotes in import, aborting.");
             clear(); // Leaving old content can be confusing
             return;
@@ -112,7 +111,12 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         } catch (IrpException | IrCoreException ex) {
             guiUtils.warning(ex.getMessage());
         }
+        remoteSet.sort(new Remote.CompareNameCaseInsensitive());
         this.remoteSet = remoteSet;
+        updateTreeModel();
+    }
+
+    private void updateTreeModel() {
         DefaultTreeModel treeModel = newTreeModel();
         tree.setModel(treeModel);
         tree.expandRow(1);
@@ -121,7 +125,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
     public void clear() {
         this.remoteSet = null;
-        DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode("Remotes not yet loaded"));
+        DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode("No remotes loaded"));
         tree.setModel(treeModel);
         enableStuff(false);
     }
@@ -137,6 +141,8 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
         scrutinizeSignalMenuItem.setEnabled(val);
         printSignalMenuItem.setEnabled(val);
+        sortAllMenuItem.setEnabled(val);
+        sortSelectedMenuItem.setEnabled(val);
         clearMenuItem.setEnabled(val);
         importAllMenuItem.setEnabled(val && enableImportAll());
         importSelectionMenuItem.setEnabled(val);
@@ -157,7 +163,6 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
     private DefaultTreeModel newTreeModel() {
         root = new DefaultMutableTreeNode("Remotes");
-        remoteSet.sort(new Remote.CompareNameCaseInsensitive());
         Collection<Remote> remotes = remoteSet.getRemotes();
         remotes.forEach((remote) -> {
             root.add(newRemoteNode(remote));
@@ -269,6 +274,9 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         printSignalMenuItem = new javax.swing.JMenuItem();
         transmitSignalMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        sortSelectedMenuItem = new javax.swing.JMenuItem();
+        sortAllMenuItem = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
         clearMenuItem = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         importAllMenuItem = new javax.swing.JMenuItem();
@@ -316,6 +324,25 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         popupMenu.add(transmitSignalMenuItem);
         popupMenu.add(jSeparator1);
 
+        sortSelectedMenuItem.setText("Sort selected");
+        sortSelectedMenuItem.setToolTipText("Sort the commands in the selected remotes (NOT undoable).");
+        sortSelectedMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sortSelectedMenuItemActionPerformed(evt);
+            }
+        });
+        popupMenu.add(sortSelectedMenuItem);
+
+        sortAllMenuItem.setText("Sort all");
+        sortAllMenuItem.setToolTipText("Sort the commands in all remotes (NOT undoable).");
+        sortAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sortAllMenuItemActionPerformed(evt);
+            }
+        });
+        popupMenu.add(sortAllMenuItem);
+        popupMenu.add(jSeparator4);
+
         clearMenuItem.setText("Clear");
         clearMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -362,13 +389,12 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         });
         popupMenu.add(importSelectionRawMenuItem);
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Remotes not yet loaded");
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("No remotes loaded");
         tree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         tree.setToolTipText("Select with left, right for popup menu.");
         tree.setComponentPopupMenu(popupMenu);
         jScrollPane1.setViewportView(tree);
 
-        importSignalButton.setMnemonic('S');
         importSignalButton.setText("Import signal");
         importSignalButton.setToolTipText("Transfers the (single!) selected signal to \"Scrutinize signal\"");
         importSignalButton.setEnabled(false);
@@ -398,7 +424,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
             }
         });
 
-        transmitSelectedButton.setMnemonic('T');
+        transmitSelectedButton.setMnemonic('S');
         transmitSelectedButton.setText("Transmit selected");
         transmitSelectedButton.setToolTipText("Send the single selected signal with selected hardware.");
         transmitSelectedButton.setEnabled(false);
@@ -577,6 +603,34 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         clear();
     }//GEN-LAST:event_clearMenuItemActionPerformed
 
+    private void sortAllMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortAllMenuItemActionPerformed
+        for (Remote remote : remoteSet)
+            remote.sort(new Command.CompareNameCaseInsensitive());
+        updateTreeModel();
+    }//GEN-LAST:event_sortAllMenuItemActionPerformed
+
+    private void sortSelectedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortSelectedMenuItemActionPerformed
+        TreePath[] paths = tree.getSelectionPaths();
+        if (paths == null) {
+            guiUtils.error("No selection");
+            return;
+        }
+        checkGuiMain();
+        boolean hasAnnoyed = false;
+        for (TreePath path : paths) {
+            Object thing = ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
+            if (Remote.class.isInstance(thing)) {
+                ((Remote) thing).sort(new Command.CompareNameCaseInsensitive());
+            } else {
+                if (!hasAnnoyed) {
+                    guiUtils.warning("Only remotes can be sorted; selected commands ignored.");
+                    hasAnnoyed = true;
+                }
+            }
+        }
+        updateTreeModel();
+    }//GEN-LAST:event_sortSelectedMenuItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem clearMenuItem;
     private javax.swing.JButton importAllButton;
@@ -592,9 +646,12 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu popupMenu;
     private javax.swing.JMenuItem printSignalMenuItem;
     private javax.swing.JMenuItem scrutinizeSignalMenuItem;
+    private javax.swing.JMenuItem sortAllMenuItem;
+    private javax.swing.JMenuItem sortSelectedMenuItem;
     private javax.swing.JButton transmitSelectedButton;
     private javax.swing.JMenuItem transmitSignalMenuItem;
     private javax.swing.JTree tree;

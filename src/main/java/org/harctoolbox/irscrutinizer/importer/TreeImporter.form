@@ -40,6 +40,26 @@
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
         </Component>
+        <MenuItem class="javax.swing.JMenuItem" name="sortSelectedMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Sort selected"/>
+            <Property name="toolTipText" type="java.lang.String" value="Sort the commands in the selected remotes (NOT undoable)."/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sortSelectedMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="sortAllMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Sort all"/>
+            <Property name="toolTipText" type="java.lang.String" value="Sort the commands in all remotes (NOT undoable)."/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sortAllMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
+        </Component>
         <MenuItem class="javax.swing.JMenuItem" name="clearMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" value="Clear"/>
@@ -160,7 +180,7 @@
         <Component class="javax.swing.JTree" name="tree">
           <Properties>
             <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.editors2.TreeModelEditor">
-              <TreeModel code="Remotes not yet loaded"/>
+              <TreeModel code="No remotes loaded"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Select with left, right for popup menu."/>
             <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
@@ -172,7 +192,6 @@
     </Container>
     <Component class="javax.swing.JButton" name="importSignalButton">
       <Properties>
-        <Property name="mnemonic" type="int" value="83"/>
         <Property name="text" type="java.lang.String" value="Import signal"/>
         <Property name="toolTipText" type="java.lang.String" value="Transfers the (single!) selected signal to &quot;Scrutinize signal&quot;"/>
         <Property name="enabled" type="boolean" value="false"/>
@@ -205,7 +224,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="transmitSelectedButton">
       <Properties>
-        <Property name="mnemonic" type="int" value="84"/>
+        <Property name="mnemonic" type="int" value="83"/>
         <Property name="text" type="java.lang.String" value="Transmit selected"/>
         <Property name="toolTipText" type="java.lang.String" value="Send the single selected signal with selected hardware."/>
         <Property name="enabled" type="boolean" value="false"/>
