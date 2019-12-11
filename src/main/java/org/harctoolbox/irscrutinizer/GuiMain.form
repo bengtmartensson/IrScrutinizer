@@ -126,6 +126,18 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rawCodeAnalyzeMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="scrutinizeSignalProtocolDocuMenuItem">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/info.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Docu for protocol"/>
+            <Property name="toolTipText" type="java.lang.String" value="Create a popup containing documentation for the current protocol."/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="scrutinizeSignalProtocolDocuMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator9">
         </Component>
         <MenuItem class="javax.swing.JMenuItem" name="undoDataMenuItem">
@@ -326,6 +338,15 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="transmitMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="protocolDocuMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Protocol documentation for selected"/>
+            <Property name="toolTipText" type="java.lang.String" value="Generate a popup containing protocol documentation for selected signal."/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="protocolDocuMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator37">
@@ -678,6 +699,16 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sendMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="rawProtocolDocuMenuItem">
+          <Properties>
+            <Property name="mnemonic" type="int" value="67"/>
+            <Property name="text" type="java.lang.String" value="Protocol documentation for selected"/>
+            <Property name="toolTipText" type="java.lang.String" value="Create popup containg documentation for the protocol of the selected signal."/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rawProtocolDocuMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator38">

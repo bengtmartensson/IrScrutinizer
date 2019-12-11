@@ -499,7 +499,7 @@ public final class IrpMasterBean extends javax.swing.JPanel {
             String docu = irpDatabase.getDocumentation(protocolName);
             if (docu != null)
                 str.append(docu);
-            HelpPopup.newHelpPopup(frame, str.toString());
+            HelpPopup.newHelpPopup(frame, str.toString(), protocolName);
         } catch (UnknownProtocolException ex) {
             guiUtils.error(ex);
         }

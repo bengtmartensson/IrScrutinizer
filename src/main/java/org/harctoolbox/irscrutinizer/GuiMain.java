@@ -1896,6 +1896,18 @@ public final class GuiMain extends javax.swing.JFrame {
         return false;
     }
 
+    private void protocolDocuPopup(java.awt.Frame frame, Command command) throws IrpException, IrCoreException {
+        protocolDocuPopup(frame, command.getProtocolName());
+    }
+
+    private void protocolDocuPopup(java.awt.Frame frame, String protocolName) throws UnknownProtocolException {
+        String docu = irpDatabase.getDocumentation(protocolName); // throws UnknownProtocolException
+        StringBuilder str = new StringBuilder(irpDatabase.getIrp(protocolName)).append("\n\n");
+        if (docu != null)
+            str.append(docu);
+        HelpPopup.newHelpPopup(this, str.toString(), protocolName);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1920,6 +1932,7 @@ public final class GuiMain extends javax.swing.JFrame {
         rawAddTestSignalMenuItem = new javax.swing.JMenuItem();
         jSeparator36 = new javax.swing.JPopupMenu.Separator();
         rawCodeAnalyzeMenuItem = new javax.swing.JMenuItem();
+        scrutinizeSignalProtocolDocuMenuItem = new javax.swing.JMenuItem();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
         undoDataMenuItem = new javax.swing.JMenuItem();
         jSeparator30 = new javax.swing.JPopupMenu.Separator();
@@ -1945,6 +1958,7 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator13 = new javax.swing.JPopupMenu.Separator();
         scrutinizeParametricMenuItem = new javax.swing.JMenuItem();
         transmitMenuItem = new javax.swing.JMenuItem();
+        protocolDocuMenuItem = new javax.swing.JMenuItem();
         jSeparator37 = new javax.swing.JPopupMenu.Separator();
         duplicateParametricMenuItem = new javax.swing.JMenuItem();
         deleteMenuItem1 = new javax.swing.JMenuItem();
@@ -1990,6 +2004,7 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator18 = new javax.swing.JPopupMenu.Separator();
         scrutinizeMenuItem = new javax.swing.JMenuItem();
         sendMenuItem = new javax.swing.JMenuItem();
+        rawProtocolDocuMenuItem = new javax.swing.JMenuItem();
         jSeparator38 = new javax.swing.JPopupMenu.Separator();
         duplicateRawMenuItem = new javax.swing.JMenuItem();
         deleteMenuItem = new javax.swing.JMenuItem();
@@ -2551,6 +2566,16 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         CCFCodePopupMenu.add(rawCodeAnalyzeMenuItem);
+
+        scrutinizeSignalProtocolDocuMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/info.png"))); // NOI18N
+        scrutinizeSignalProtocolDocuMenuItem.setText("Docu for protocol");
+        scrutinizeSignalProtocolDocuMenuItem.setToolTipText("Create a popup containing documentation for the current protocol.");
+        scrutinizeSignalProtocolDocuMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                scrutinizeSignalProtocolDocuMenuItemActionPerformed(evt);
+            }
+        });
+        CCFCodePopupMenu.add(scrutinizeSignalProtocolDocuMenuItem);
         CCFCodePopupMenu.add(jSeparator9);
 
         undoDataMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/undo.png"))); // NOI18N
@@ -2718,6 +2743,15 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         parameterTablePopupMenu.add(transmitMenuItem);
+
+        protocolDocuMenuItem.setText("Protocol documentation for selected");
+        protocolDocuMenuItem.setToolTipText("Generate a popup containing protocol documentation for selected signal.");
+        protocolDocuMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                protocolDocuMenuItemActionPerformed(evt);
+            }
+        });
+        parameterTablePopupMenu.add(protocolDocuMenuItem);
         parameterTablePopupMenu.add(jSeparator37);
 
         duplicateParametricMenuItem.setText("Duplicate selected");
@@ -3032,6 +3066,16 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         rawTablePopupMenu.add(sendMenuItem);
+
+        rawProtocolDocuMenuItem.setMnemonic('C');
+        rawProtocolDocuMenuItem.setText("Protocol documentation for selected");
+        rawProtocolDocuMenuItem.setToolTipText("Create popup containg documentation for the protocol of the selected signal.");
+        rawProtocolDocuMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rawProtocolDocuMenuItemActionPerformed(evt);
+            }
+        });
+        rawTablePopupMenu.add(rawProtocolDocuMenuItem);
         rawTablePopupMenu.add(jSeparator38);
 
         duplicateRawMenuItem.setText("Duplicate Selected");
@@ -9507,6 +9551,32 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_duplicateRawMenuItemActionPerformed
 
+    private void protocolDocuMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolDocuMenuItemActionPerformed
+        try {
+            protocolDocuPopup(this, tableUtils.commandTableSelectedRow(parameterTable));
+        } catch (ErroneousSelectionException | GirrException | IrpException | IrCoreException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_protocolDocuMenuItemActionPerformed
+
+    private void scrutinizeSignalProtocolDocuMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scrutinizeSignalProtocolDocuMenuItemActionPerformed
+        String str = decodeIRTextField.getText();
+        String[] arr = str.split(":");
+        try {
+            protocolDocuPopup(this, arr[0]);
+        } catch (UnknownProtocolException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_scrutinizeSignalProtocolDocuMenuItemActionPerformed
+
+    private void rawProtocolDocuMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawProtocolDocuMenuItemActionPerformed
+         try {
+            protocolDocuPopup(this, tableUtils.commandTableSelectedRow(rawTable));
+        } catch (ErroneousSelectionException | GirrException | IrpException | IrCoreException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_rawProtocolDocuMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9932,6 +10002,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JTextField prontoExportScreenWidthTextField;
     private javax.swing.JComboBox<String> prontoModelComboBox;
     private javax.swing.JComboBox<String> protocolColumnComboBox;
+    private javax.swing.JMenuItem protocolDocuMenuItem;
     private javax.swing.JMenu protocolParametersMenu;
     private javax.swing.JMenuItem protocolSpecMenuItem;
     private javax.swing.JMenuItem proxyMenuItem;
@@ -9955,6 +10026,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JCheckBox rawMultiColumnNameCheckBox;
     private javax.swing.JComboBox<String> rawNameColumnComboBox;
     private javax.swing.JPanel rawPanel;
+    private javax.swing.JMenuItem rawProtocolDocuMenuItem;
     private javax.swing.JRadioButtonMenuItem rawRadioButtonMenuItem;
     private javax.swing.JCheckBoxMenuItem rawSorterCheckBoxMenuItem;
     private javax.swing.JTable rawTable;
@@ -9991,6 +10063,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem scrutinizeParametricMenuItem;
     private javax.swing.JButton scrutinizeRemoteHelpButton;
     private javax.swing.JButton scrutinizeSignalHelpButton;
+    private javax.swing.JMenuItem scrutinizeSignalProtocolDocuMenuItem;
     private javax.swing.JMenuItem sendMenuItem;
     private javax.swing.JButton sendingAudioHelpButton;
     private javax.swing.JButton sendingCommandFusionHelpButton;
