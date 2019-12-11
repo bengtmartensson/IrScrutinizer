@@ -160,11 +160,8 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
         if (fileOrDirectory.isDirectory()) {
             File[] files = fileOrDirectory.listFiles();
             for (File file : files) {
-                if (file.getName().endsWith(".jpg") || file.getName().endsWith(".png")
-                        || file.getName().endsWith(".gif") || file.getName().endsWith(".html")) {
-                    continue;
-                }
-                loadRecursive(file, file.getCanonicalPath());
+                if (!ignored(file.getName()))
+                    loadRecursive(file, file.getCanonicalPath());
             }
         } else {
             try {

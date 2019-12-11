@@ -39,6 +39,16 @@ import org.harctoolbox.irscrutinizer.Version;
  */
 public abstract class FileImporter extends Importer {
 
+    private final static String[] IGNORED_FILE_EXTENSIONS = { ".jpg", ".jpeg",".png", ".gif", ".html", ".htm", ".DS_Store", "~" };
+
+    protected final static boolean ignored(String filename) {
+        for (String ext : IGNORED_FILE_EXTENSIONS) {
+            if (filename.endsWith(ext))
+                return true;
+        }
+        return false;
+    }
+
     protected FileImporter() {
         super();
     }
