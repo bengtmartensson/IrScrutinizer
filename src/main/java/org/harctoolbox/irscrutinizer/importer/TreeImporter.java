@@ -157,11 +157,10 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
     private DefaultTreeModel newTreeModel() {
         root = new DefaultMutableTreeNode("Remotes");
+        remoteSet.sort(new Remote.CompareNameCaseInsensitive());
         Collection<Remote> remotes = remoteSet.getRemotes();
-        ArrayList<Remote> remoteList = new ArrayList<>(remotes);
-        Collections.sort(remoteList, new Remote.CompareNameCaseInsensitive());
-        remoteList.stream().map((remote) -> newRemoteNode(remote)).forEachOrdered((node) -> {
-            root.add(node);
+        remotes.forEach((remote) -> {
+            root.add(newRemoteNode(remote));
         });
         return new DefaultTreeModel(root);
     }
