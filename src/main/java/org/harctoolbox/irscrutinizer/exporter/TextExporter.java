@@ -107,7 +107,13 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
     private String formatCommand(Command command, int count) throws GirrException, IrpException, IrCoreException {
         StringBuilder str = new StringBuilder(128);
         String linefeed = System.getProperty("line.separator", "\n");
-        str.append(generateParameters ? command.nameProtocolParameterString() : command.getName()).append(linefeed);
+        if (generateParameters) {
+            command.checkForParameters();
+            str.append(command.nameProtocolParameterString());
+        } else
+            str.append(command.getName());
+        str.append(linefeed);
+
         if (generateCcf) {
             str.append(command.getProntoHex()).append(linefeed);
         }

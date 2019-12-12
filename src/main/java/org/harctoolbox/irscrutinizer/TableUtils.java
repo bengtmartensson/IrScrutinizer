@@ -18,6 +18,8 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import org.harctoolbox.girr.Command;
@@ -51,8 +53,16 @@ public class TableUtils {
         barfIfNoneSelected(table);
     }
 
+    void barfIfNonconsecutiveSelection(JTable table) throws ErroneousSelectionException {
+        int[] a = table.getSelectedRows();
+        Arrays.sort(a); // not sure if this is needed
+        if (a[a.length - 1] - a[0] != a.length - 1)
+            throw new ErroneousSelectionException("Non-consecutive row selection");
+    }
+
     // Requires the row sorter to be disabled
-    public void tableMoveSelection(JTable table, boolean up) {
+    public void tableMoveSelection(JTable table, boolean up) throws ErroneousSelectionException {
+        barfIfNonconsecutiveSelection(table);
         int row = table.getSelectedRow();
         int lastRow = row + table.getSelectedRowCount() - 1;
 
@@ -106,21 +116,31 @@ public class TableUtils {
         tableModel.duplicate(modelRow);
     }
 
-    void printTableSelectedRow(JTable table) throws ErroneousSelectionException {
-        barfIfNotExactlyOneSelected(table);
-        int modelRow = table.convertRowIndexToModel(table.getSelectedRow());
+    void printTableSelectedRows(JTable table) {
         NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
-        String str = tableModel.toPrintString(modelRow);
-        guiUtils.message(str);
+        int[] selected = table.getSelectedRows();
+        for (int selectedRow : selected) {
+            int modelRow = table.convertRowIndexToModel(selectedRow);
+            String str = tableModel.toPrintString(modelRow);
+            guiUtils.message(str);
+        }
     }
 
     Command commandTableSelectedRow(JTable table) throws ErroneousSelectionException, GirrException {
         barfIfNotExactlyOneSelected(table);
-        int selectedRow = table.getSelectedRow();
-        int modelRow = table.convertRowIndexToModel(selectedRow);
-        NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
-        Command command = tableModel.toCommand(modelRow);
-        return command;
+        return commandTableSelected(table).values().iterator().next();
+    }
+
+    Map<String, Command> commandTableSelected(JTable table) throws GirrException {
+        int[] selected = table.getSelectedRows();
+        Map<String, Command> commands = new LinkedHashMap<>(selected.length);
+        for (int selectedRow : selected) {
+            int modelRow = table.convertRowIndexToModel(selectedRow);
+            NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
+            Command command = tableModel.toCommand(modelRow);
+            commands.put(command.getName(), command);
+        }
+        return commands;
     }
 
     void clearTableConfirm(JTable table) {

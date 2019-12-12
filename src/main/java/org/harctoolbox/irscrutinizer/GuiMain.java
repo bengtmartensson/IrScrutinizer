@@ -1315,32 +1315,39 @@ public final class GuiMain extends javax.swing.JFrame {
         return properties.getAutoOpenExports();
     }
 
-    private void saveParametricSignals(RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
-        saveCommands(parameterTableModel, Version.appName + " parametric export", exporter);
+    private String mkTitle(JTable table) {
+        return Version.appName + ((table == parameterTable) ? " parametric export" : " raw export");
     }
 
-    private void saveRawSignals(RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
-        saveCommands(rawTableModel, Version.appName + " raw export", exporter);
+    private void saveSelectedSignals(JTable table) throws GirrException, IOException, TransformerException, IrCoreException, IrpException {
+        saveCommands(tableUtils.commandTableSelected(table), mkTitle(table), newRemoteExporter());
     }
 
-    private void saveCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel, String title, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+    private void saveAllSignals(JTable table) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+        saveAllSignals(table, newRemoteExporter());
+    }
+
+    private void saveAllSignals(JTable table, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+        NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
+        saveCommands(tableModel, mkTitle(table), exporter);
+    }
+
+    private File saveCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel, String title, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
         Map<String, Command> commands = tableModel.getCommandsWithSanityCheck(guiUtils);
         if (commands == null)
-            return;
-
-        File file = saveCommands(commands, "IrScrutinizer " + tableModel.getType() + " table", title, exporter);
-        if (file != null)
-            tableModel.clearUnsavedChanges();
+            return null;
+        File file = saveCommandsWrite(commands, title, exporter);
         if (file != null) {
-                guiUtils.message("File " + file + " was successfully written.");
-                if (autoOpen())
-                    guiUtils.open(file);
+            tableModel.clearUnsavedChanges();
+            guiUtils.message("File " + file + " was successfully written.");
+            if (autoOpen())
+                guiUtils.open(file);
         }
+        return file;
     }
 
-    private File saveCommands(Map<String, Command> commands, String source, String title, RemoteSetExporter exporter)
-            throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
-        if (! checkChangeExportDirectory(new File(exportDirectoryTextField.getText())))
+    private File saveCommandsWrite(Map<String, Command> commands, String title, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+        if (!checkChangeExportDirectory(new File(exportDirectoryTextField.getText())))
             return null;
 
         if (properties.getExportInquireDeviceData() && exporter.supportsMetaData()) {
@@ -1351,61 +1358,35 @@ public final class GuiMain extends javax.swing.JFrame {
             metaData = newMetaData;
         }
 
-        File file = exporter.export(commands, source, title, metaData,
+        File file = exporter.export(commands, null, title, metaData,
                 properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
                 new File(properties.getExportDir()), properties.getExportCharsetName());
         return file;
     }
 
-    private File saveSignal(Command command, String title, ICommandExporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
-        if (!checkChangeExportDirectory(new File(exportDirectoryTextField.getText())))
-            return null;
-
-        return exporter.export(command, "IrScrutinizer captured signal", title,
-                properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
-                new File(properties.getExportDir()), properties.getExportCharsetName());
-    }
-
-    private void saveSelectedSignal(JTable table, String title) {
-        try {
-            File savedFile = saveSignal(tableUtils.commandTableSelectedRow(table), title, newExporter());
-            guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
-        } catch (IOException | TransformerException | GirrException | ErroneousSelectionException | IrCoreException | IrpException ex) {
-            guiUtils.error(ex);
-        }
-    }
-
-    private double getFrequency() {
-        try {
-            return Double.parseDouble(frequencyLabel.getText());
-        } catch (NumberFormatException | NullPointerException ex) {
-        }
-        double f = properties.getFallbackFrequency();
-        return f > 0 ? f : ModulatedIrSequence.DEFAULT_FREQUENCY;
-    }
-
-    private void saveSignals(Map<String, Command> commands) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+    private File saveCommands(Map<String, Command> commands, String title, RemoteSetExporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
         if (commands.isEmpty()) {
             guiUtils.error("Nothing to export");
-            return;
+            return null;
         }
 
         File savedFile;
         if (commands.size() == 1) {
             // exporting just a single command
-            savedFile = saveSignal(commands.values().iterator().next(), "IrScrutinizer generated signal", newExporter());
+            savedFile = saveSignalWrite(commands.values().iterator().next(), title, newExporter());
             if (savedFile != null)
                 guiUtils.message("File " + savedFile.getPath() + " successfully written with one signal.");
         } else {
-            RemoteSetExporter exporter = newRemoteExporter();
+            //RemoteSetExporter exporter = newRemoteExporter();
             if (exporter == null)
-                return; // error has already been reported to the user.
-            savedFile = saveCommands(commands, null, null, exporter);
+                return null; // error has already been reported to the user.
+            savedFile = saveCommandsWrite(commands, title, exporter);
             if (savedFile != null)
                 guiUtils.message("File " + savedFile.getPath() + " successfully written with " + commands.size() + " signals.");
         }
-        if (autoOpen())
+        if (savedFile != null && autoOpen())
             guiUtils.open(savedFile);
+        return savedFile;
     }
 
     private void saveSignal(IrSignal irSignal) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
@@ -1417,12 +1398,31 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.error("Not exporting empty signal.");
             return;
         }
-        Command command = new Command("IrScrutinizer captured signal", null, irSignal);
-        File savedFile = saveSignal(command, "IrScrutinizer scrutinized signal", exporter);
-        if (savedFile != null)
+        Command command = new Command("IrScrutinizer scrutinized signal", null, irSignal);
+        File savedFile = saveSignalWrite(command, "IrScrutinizer scrutinized signal", exporter);
+        if (savedFile != null) {
             guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
-        if (autoOpen())
-            guiUtils.open(savedFile);
+            if (autoOpen())
+                guiUtils.open(savedFile);
+        }
+    }
+
+    private File saveSignalWrite(Command command, String title, ICommandExporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+        if (!checkChangeExportDirectory(new File(exportDirectoryTextField.getText())))
+            return null;
+
+        return exporter.export(command, "IrScrutinizer captured signal", title,
+                properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
+                new File(properties.getExportDir()), properties.getExportCharsetName());
+    }
+
+    private double getFrequency() {
+        try {
+            return Double.parseDouble(frequencyLabel.getText());
+        } catch (NumberFormatException | NullPointerException ex) {
+        }
+        double f = properties.getFallbackFrequency();
+        return f > 0 ? f : ModulatedIrSequence.DEFAULT_FREQUENCY;
     }
 
     private void reAnalyze() {
@@ -1976,12 +1976,12 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator37 = new javax.swing.JPopupMenu.Separator();
         duplicateParametricMenuItem = new javax.swing.JMenuItem();
         deleteMenuItem1 = new javax.swing.JMenuItem();
-        saveSelectedCookedMenuItem = new javax.swing.JMenuItem();
-        debugTableRowMenuItem1 = new javax.swing.JMenuItem();
+        exportSelectedCookedMenuItem = new javax.swing.JMenuItem();
+        printTableRowMenuItem = new javax.swing.JMenuItem();
         jSeparator14 = new javax.swing.JPopupMenu.Separator();
         clearMenuItem1 = new javax.swing.JMenuItem();
         checkParametrizedSignalsMenuItem = new javax.swing.JMenuItem();
-        saveCookedMenuItem = new javax.swing.JMenuItem();
+        exportCookedMenuItem = new javax.swing.JMenuItem();
         jSeparator19 = new javax.swing.JPopupMenu.Separator();
         parametrizedCopyAllMenuItem = new javax.swing.JMenuItem();
         parametrizedCopySelectionMenuItem = new javax.swing.JMenuItem();
@@ -2023,7 +2023,7 @@ public final class GuiMain extends javax.swing.JFrame {
         duplicateRawMenuItem = new javax.swing.JMenuItem();
         deleteMenuItem = new javax.swing.JMenuItem();
         saveSelectedRawTableRowMenuItem = new javax.swing.JMenuItem();
-        debugTableRowMenuItem = new javax.swing.JMenuItem();
+        printRawTableRowMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
         clearMenuItem = new javax.swing.JMenuItem();
         checkRawCommandsMenuItem = new javax.swing.JMenuItem();
@@ -2786,22 +2786,22 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         parameterTablePopupMenu.add(deleteMenuItem1);
 
-        saveSelectedCookedMenuItem.setText("Export selected...");
-        saveSelectedCookedMenuItem.setToolTipText("Export the selected signal in selected format,");
-        saveSelectedCookedMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        exportSelectedCookedMenuItem.setText("Export selected");
+        exportSelectedCookedMenuItem.setToolTipText("Export the selected signal in selected format,");
+        exportSelectedCookedMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveSelectedCookedMenuItemActionPerformed(evt);
+                exportSelectedCookedMenuItemActionPerformed(evt);
             }
         });
-        parameterTablePopupMenu.add(saveSelectedCookedMenuItem);
+        parameterTablePopupMenu.add(exportSelectedCookedMenuItem);
 
-        debugTableRowMenuItem1.setText("Print selected to console");
-        debugTableRowMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        printTableRowMenuItem.setText("Print selected to console");
+        printTableRowMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                debugTableRowMenuItem1ActionPerformed(evt);
+                printTableRowMenuItemActionPerformed(evt);
             }
         });
-        parameterTablePopupMenu.add(debugTableRowMenuItem1);
+        parameterTablePopupMenu.add(printTableRowMenuItem);
         parameterTablePopupMenu.add(jSeparator14);
 
         clearMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, java.awt.event.InputEvent.CTRL_MASK));
@@ -2822,16 +2822,16 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         parameterTablePopupMenu.add(checkParametrizedSignalsMenuItem);
 
-        saveCookedMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, 0));
-        saveCookedMenuItem.setMnemonic('E');
-        saveCookedMenuItem.setText("Export");
-        saveCookedMenuItem.setToolTipText("Export in the selected format");
-        saveCookedMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        exportCookedMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, 0));
+        exportCookedMenuItem.setMnemonic('E');
+        exportCookedMenuItem.setText("Export");
+        exportCookedMenuItem.setToolTipText("Export in the selected format");
+        exportCookedMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveCookedMenuItemActionPerformed(evt);
+                exportCookedMenuItemActionPerformed(evt);
             }
         });
-        parameterTablePopupMenu.add(saveCookedMenuItem);
+        parameterTablePopupMenu.add(exportCookedMenuItem);
         parameterTablePopupMenu.add(jSeparator19);
 
         parametrizedCopyAllMenuItem.setText("Copy all to clipboard");
@@ -3119,13 +3119,13 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         rawTablePopupMenu.add(saveSelectedRawTableRowMenuItem);
 
-        debugTableRowMenuItem.setText("Print selected to console");
-        debugTableRowMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        printRawTableRowMenuItem.setText("Print selected to console");
+        printRawTableRowMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                debugTableRowMenuItemActionPerformed(evt);
+                printRawTableRowMenuItemActionPerformed(evt);
             }
         });
-        rawTablePopupMenu.add(debugTableRowMenuItem);
+        rawTablePopupMenu.add(printRawTableRowMenuItem);
         rawTablePopupMenu.add(jSeparator12);
 
         clearMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, java.awt.event.InputEvent.CTRL_MASK));
@@ -7738,11 +7738,19 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_clearMenuItemActionPerformed
 
     private void moveUpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpMenuItemActionPerformed
-       tableUtils.tableMoveSelection(rawTable, true);
+        try {
+            tableUtils.tableMoveSelection(rawTable, true);
+        } catch (ErroneousSelectionException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_moveUpMenuItemActionPerformed
 
     private void moveDownMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveDownMenuItemActionPerformed
-        tableUtils.tableMoveSelection(rawTable, false);
+        try {
+            tableUtils.tableMoveSelection(rawTable, false);
+        } catch (ErroneousSelectionException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_moveDownMenuItemActionPerformed
 
     private void exportSignalGirrMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSignalGirrMenuItemActionPerformed
@@ -7808,13 +7816,9 @@ public final class GuiMain extends javax.swing.JFrame {
         jumpToLastPanelMenuItem.setEnabled(! startStopToggleButton.isSelected());
     }//GEN-LAST:event_startStopToggleButtonActionPerformed
 
-    private void debugTableRowMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugTableRowMenuItemActionPerformed
-        try {
-            tableUtils.printTableSelectedRow(rawTable);
-        } catch (ErroneousSelectionException ex) {
-            guiUtils.error(ex);
-        }
-    }//GEN-LAST:event_debugTableRowMenuItemActionPerformed
+    private void printRawTableRowMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printRawTableRowMenuItemActionPerformed
+        tableUtils.printTableSelectedRows(rawTable);
+    }//GEN-LAST:event_printRawTableRowMenuItemActionPerformed
 
     private void hideColumnMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideColumnMenuItemActionPerformed
         int selectedColumn = rawTable.getSelectedColumn();
@@ -7840,11 +7844,19 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_scrutinizeMenuItemActionPerformed
 
     private void moveUpMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpMenuItem1ActionPerformed
-        tableUtils.tableMoveSelection(parameterTable, true);
+        try {
+            tableUtils.tableMoveSelection(parameterTable, true);
+        } catch (ErroneousSelectionException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_moveUpMenuItem1ActionPerformed
 
     private void moveDownMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveDownMenuItem1ActionPerformed
-        tableUtils.tableMoveSelection(parameterTable, false);
+        try {
+            tableUtils.tableMoveSelection(parameterTable, false);
+        } catch (ErroneousSelectionException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_moveDownMenuItem1ActionPerformed
 
     private void deleteMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMenuItem1ActionPerformed
@@ -7855,13 +7867,9 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_deleteMenuItem1ActionPerformed
 
-    private void debugTableRowMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugTableRowMenuItem1ActionPerformed
-        try {
-            tableUtils.printTableSelectedRow(parameterTable);
-        } catch (ErroneousSelectionException ex) {
-            guiUtils.error(ex);
-        }
-    }//GEN-LAST:event_debugTableRowMenuItem1ActionPerformed
+    private void printTableRowMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printTableRowMenuItemActionPerformed
+        tableUtils.printTableSelectedRows(parameterTable);
+    }//GEN-LAST:event_printTableRowMenuItemActionPerformed
 
     private void clearMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearMenuItem1ActionPerformed
         tableUtils.clearTableConfirm(parameterTable);
@@ -7885,16 +7893,8 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_beaconListenerMenuItemActionPerformed
 
     private void parametricOrRawExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parametricOrRawExportButtonActionPerformed
-        RemoteSetExporter exporter = newRemoteExporter();
-        if (exporter == null)
-            // error has already been reported, nothing to do.
-            return;
-
         try {
-            if (rawCookedTabbedPane.getSelectedComponent() == this.cookedPanel)
-                saveParametricSignals(exporter);
-            else
-                saveRawSignals(exporter);
+            saveAllSignals(rawCookedTabbedPane.getSelectedComponent() == this.cookedPanel ? parameterTable : rawTable);
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -8045,35 +8045,43 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void exportParametricAsGirrMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportParametricAsGirrMenuItemActionPerformed
         try {
-            saveParametricSignals(newGirrExporter());
+            saveAllSignals(parameterTable, newGirrExporter());
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_exportParametricAsGirrMenuItemActionPerformed
 
-    private void saveSelectedCookedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSelectedCookedMenuItemActionPerformed
-        saveSelectedSignal(parameterTable, "IrScrutinizer parametrized signal");
-    }//GEN-LAST:event_saveSelectedCookedMenuItemActionPerformed
+    private void exportSelectedCookedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSelectedCookedMenuItemActionPerformed
+        try {
+            saveSelectedSignals(parameterTable);
+        } catch (GirrException | IOException | TransformerException | IrpException | IrCoreException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_exportSelectedCookedMenuItemActionPerformed
 
     private void saveSelectedRawTableRowMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSelectedRawTableRowMenuItemActionPerformed
-        saveSelectedSignal(rawTable, "IrScrutinizer raw signal");
+        try {
+            saveSelectedSignals(rawTable);
+        } catch (GirrException | IOException | TransformerException | IrpException | IrCoreException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_saveSelectedRawTableRowMenuItemActionPerformed
 
     private void saveRawMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveRawMenuItemActionPerformed
         try {
-            saveRawSignals(newRemoteExporter());
+            saveAllSignals(rawTable);
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_saveRawMenuItemActionPerformed
 
-    private void saveCookedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveCookedMenuItemActionPerformed
+    private void exportCookedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportCookedMenuItemActionPerformed
         try {
-            saveParametricSignals(newRemoteExporter());
+            saveAllSignals(parameterTable);
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
-    }//GEN-LAST:event_saveCookedMenuItemActionPerformed
+    }//GEN-LAST:event_exportCookedMenuItemActionPerformed
 
     private void addEmptyParametrizedSignalMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addEmptyParametrizedSignalMenuItemActionPerformed
         ParametrizedIrSignal signal = new ParametrizedIrSignal();
@@ -8100,7 +8108,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void exportRawAsGirrMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRawAsGirrMenuItemActionPerformed
         try {
-            saveRawSignals(newGirrExporter());
+            saveAllSignals(rawTable, newGirrExporter());
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -8359,12 +8367,8 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_exportSignalButtonActionPerformed
 
     private void exportParametricRemoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportParametricRemoteButtonActionPerformed
-        RemoteSetExporter exporter = newRemoteExporter();
-        if (exporter == null)
-            return;
-
         try {
-            saveParametricSignals(exporter);
+            saveAllSignals(parameterTable);
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -8372,7 +8376,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void exportRawRemoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRawRemoteButtonActionPerformed
         try {
-            saveRawSignals(newRemoteExporter());
+            saveAllSignals(rawTable);
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -8456,7 +8460,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void generateExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateExportButtonActionPerformed
         try {
-            saveSignals(irpMasterBean.getCommands());
+            saveCommands(irpMasterBean.getCommands(), Version.appName + " generated signals", newRemoteExporter());
         } catch (IOException | TransformerException | ParseException | GirrException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
         }
@@ -8475,7 +8479,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void exportParametricAsTextMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportParametricAsTextMenuItemActionPerformed
         try {
-            saveParametricSignals(newTextExporter());
+            saveAllSignals(parameterTable, newTextExporter());
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -8483,7 +8487,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void exportRawAsTextMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRawAsTextMenuItemActionPerformed
         try {
-            saveRawSignals(newTextExporter());
+            saveAllSignals(rawTable, newTextExporter());
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -9737,8 +9741,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem debugCodeMenuItem;
     private javax.swing.JMenuItem debugDecodeProtocolRegexpMenuItem;
     private javax.swing.JMenu debugMenu;
-    private javax.swing.JMenuItem debugTableRowMenuItem;
-    private javax.swing.JMenuItem debugTableRowMenuItem1;
     private javax.swing.JTextField decodeIRTextField;
     private javax.swing.JMenuItem deleteDefaultedSignalsMenuItem;
     private javax.swing.JMenuItem deleteMenuItem;
@@ -9758,6 +9760,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.guicomponents.AudioParametersBean exportAudioParametersBean;
     private javax.swing.JMenu exportCapturedMenu;
     private javax.swing.JMenuItem exportCharsetMenuItem;
+    private javax.swing.JMenuItem exportCookedMenuItem;
     private javax.swing.JButton exportDirOpenButton;
     private javax.swing.JButton exportDirSelectButton;
     private javax.swing.JTextField exportDirectoryTextField;
@@ -9784,6 +9787,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton exportRawRemoteButton;
     private javax.swing.JButton exportRawRemoteButton1;
     private javax.swing.JComboBox<String> exportRepeatComboBox;
+    private javax.swing.JMenuItem exportSelectedCookedMenuItem;
     private javax.swing.JButton exportSendirHelpButton;
     private javax.swing.JButton exportSignalButton;
     private javax.swing.JMenuItem exportSignalGirrMenuItem;
@@ -10065,6 +10069,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem plotterResetMenuItem;
     private javax.swing.JCheckBoxMenuItem printAnalyzeIRPsToConsoleCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem printDecodesToConsoleCheckBoxMenuItem;
+    private javax.swing.JMenuItem printRawTableRowMenuItem;
+    private javax.swing.JMenuItem printTableRowMenuItem;
     private javax.swing.JPanel prontoClassicExportOptionsPanel;
     private javax.swing.JTextField prontoExportButtonHeightTextField;
     private javax.swing.JTextField prontoExportButtonWidthTextField;
@@ -10119,7 +10125,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> sColumnComboBox;
     private javax.swing.JMenu saveCapturedMenu;
     private javax.swing.JMenuItem saveConsoleTextAsMenuItem;
-    private javax.swing.JMenuItem saveCookedMenuItem;
     private javax.swing.JMenuItem saveDataTextAsMenuItem;
     private javax.swing.JMenu saveMenu;
     private javax.swing.JMenu saveParametrizedMenu;
@@ -10127,7 +10132,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem savePropertiesMenuItem;
     private javax.swing.JMenu saveRawMenu;
     private javax.swing.JMenuItem saveRawMenuItem;
-    private javax.swing.JMenuItem saveSelectedCookedMenuItem;
     private javax.swing.JMenuItem saveSelectedRawTableRowMenuItem;
     private javax.swing.JMenuItem scrutinizeMenuItem;
     private javax.swing.JMenuItem scrutinizeParametricMenuItem;
