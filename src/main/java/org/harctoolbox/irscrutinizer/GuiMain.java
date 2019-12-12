@@ -1881,18 +1881,33 @@ public final class GuiMain extends javax.swing.JFrame {
         return mode2TabbedPane.getSelectedIndex() == 0;
     }
 
-    private boolean checkChangeExportDirectory(File fileName) {
+    private boolean checkChangeExportDirectory(File dirName) {
+        // Don't care for checking writeability of dirName
+        File dir;
         try {
-            File dir = fileName.getCanonicalFile();
-            if (dir.isDirectory() && dir.canWrite()) {
-                properties.setExportDir(exportDirectoryTextField.getText());
-                return true;
-            } else
-                guiUtils.error(exportDirectoryTextField.getText() + " is not an existing and writable directory.");
+            dir = dirName.getCanonicalFile();
         } catch (IOException ex) {
+            // really unlikely
             guiUtils.error(ex);
+            return false;
         }
-        return false;
+        if (dir.isDirectory()) {
+            properties.setExportDir(exportDirectoryTextField.getText());
+            return true;
+        }
+
+        boolean create = guiUtils.confirm(exportDirectoryTextField.getText() + " does not exist. Create it?");
+        if (!create)
+            return false;
+
+        boolean status = dir.mkdirs();
+        if (!status) {
+            guiUtils.error("Failed to create " + dir);
+            return false;
+        }
+
+        properties.setExportDir(exportDirectoryTextField.getText());
+        return true;
     }
 
     private void protocolDocuPopup(java.awt.Frame frame, Command command) throws IrpException, IrCoreException {
