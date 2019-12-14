@@ -31,13 +31,11 @@ rm -rf ${APPDIR}
 
 # If possible, bundle a subset of Java
 if [ "x${JAVA_TAR_GZ}y" != "xy" -a -f "${JAVA_TAR_GZ}" ] ; then
-    #wget -c https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.3%2B7_openj9-0.14.3/OpenJDK11U-jdk_x64_linux_openj9_11.0.3_7_openj9-0.14.3.tar.gz
     tar xf ${JAVA_TAR_GZ}
     JAVA_ROOT=`echo jdk*`
     ${JAVA_ROOT}/bin/jlink --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ${JAVA_MODULES} --output ${USR}
     rm -rf ${JAVA_ROOT}
     JAVA_PATH=\${APP_ROOT}/usr/bin/
-    JAVA_QUICKSTART=-Xquickstart
 fi
 
 # Copy stuff to MYPROG_HOME
@@ -141,5 +139,5 @@ ln -s ${MYPROG_LOWER} ${USR_BIN}/irptransmogrifier
 # Invocation of appstreamcli breaks on many systems, see
 # https://github.com/AppImage/AppImageKit/issues/856
 # Until that is fixed, must use --no-appstream
-
+ARCH=x86_64; export ARCH
 tools/appimagetool-x86_64.AppImage --no-appstream ${APPDIR} ${APPIMAGE} > /dev/null
