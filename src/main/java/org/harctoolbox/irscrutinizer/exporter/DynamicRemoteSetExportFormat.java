@@ -114,10 +114,10 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     }
 
     private static void usage(int exitcode) {
-        StringBuilder str = new StringBuilder(128);
-        argumentParser.usage(str);
+        //StringBuilder str = new StringBuilder(128);
+        argumentParser.usage();
 
-        (exitcode == IrpUtils.EXIT_SUCCESS ? System.out : System.err).println(str);
+        //(exitcode == IrpUtils.EXIT_SUCCESS ? System.out : System.err).println(str);
         doExit(exitcode); // placifying FindBugs...
     }
 

@@ -31,8 +31,8 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <IrpTransmogrifier.version>1.2.4-SNAPSHOT</IrpTransmogrifier.version>
         <Girr.version>2.2.4-SNAPSHOT</Girr.version>
-        <Jirc.version>2.2.3</Jirc.version>
-        <HarcHardware.version>2.2.3</HarcHardware.version>
+        <Jirc.version>2.2.4-SNAPSHOT</Jirc.version>
+        <HarcHardware.version>2.2.4-SNAPSHOT</HarcHardware.version>
     </properties>
 
     <profiles>
@@ -577,17 +577,12 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>Girr</artifactId> <!-- Implicitly invokes IrpTransmogrifier -->
-            <version>${Girr.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>HarcHardware</artifactId> <!-- Implicit invokes DevSlashLirc -->
             <version>${HarcHardware.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>Jirc</artifactId>
+            <artifactId>Jirc</artifactId> <!-- Includes Girr, which includes IrpTransmogrifier -->
             <version>${Jirc.version}</version>
         </dependency>
         <dependency>
@@ -598,8 +593,14 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.8.1</version>
+            <version>7.0.0</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.beust</groupId>
+                    <artifactId>jcommander</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>

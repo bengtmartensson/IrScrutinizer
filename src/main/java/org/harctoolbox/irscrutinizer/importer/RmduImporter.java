@@ -58,10 +58,10 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
     private static CommandLineArgs commandLineArgs = new CommandLineArgs();
 
     private static void usage(int exitcode) {
-        StringBuilder str = new StringBuilder(256);
-        argumentParser.usage(str);
+        //StringBuilder str = new StringBuilder(256);
+        argumentParser.usage();
 
-        (exitcode == IrpUtils.EXIT_SUCCESS ? System.out : System.err).println(str);
+        //(exitcode == IrpUtils.EXIT_SUCCESS ? System.out : System.err).println(str);
         doExit(exitcode);
     }
 

@@ -1199,7 +1199,7 @@ public final class GuiMain extends javax.swing.JFrame {
         Burst.Preferences burstPrefs = new Burst.Preferences(analyzerMaxRoundingError, analyzerMaxUnits, analyzerMaxMicroSeconds);
         Analyzer.AnalyzerParams params = new Analyzer.AnalyzerParams(analyzer.getFrequency(), analyzerTimeBase,
                 analyzerLsb ? BitDirection.lsb : BitDirection.msb,
-                analyzerExtent, analyzerParameterWidths, analyzerMaxParameterWidth, analyzerInvert, burstPrefs);
+                analyzerExtent, analyzerParameterWidths, analyzerMaxParameterWidth, analyzerInvert, burstPrefs, new ArrayList<String>(0));
         List<Protocol> protocols = null;
         try {
             protocols = analyzer.searchBestProtocol(params);

@@ -48,7 +48,7 @@ public class IrScrutinizer {
 
     private static void usage(int exitcode) {
         StringBuilder str = new StringBuilder(256);
-        argumentParser.usage(str);
+        argumentParser.usage();
 
         (exitcode == IrpUtils.EXIT_SUCCESS ? System.out : System.err).println(str);
         doExit(exitcode); // placifying FindBugs...
