@@ -13,3 +13,5 @@ junk
 OpenJDK*.tar.gz
 OpenJDK*.zip
 gh-pages
+repo
+jre-x64-macOS.tar.gz
