@@ -1,9 +1,6 @@
 Welcome to IrScrutinizer, a program for capturing, generating,
 analyzing, importing, and exporting of IR signals.
 
-Select the option "Add installation directory to path" to be able to
-call the command line program IrpTransmogrifier directly from a command window.
-
 Installing this program requires administrator right only of writing
 to directories that require such rights. No registry entries are made
 or modified. Except for shortcuts and menu entries, nothing is
@@ -13,6 +10,15 @@ If the user is in the administrator group, installation will be made
 as administrator. Otherwise, the installer will run as normal
 user. In that case, be sure to select an installation directory that is
 writeable/creatable by the current user.
+
+This is a Java program, and can be installed either with or without
+its own Java virtual machine.
+Normally, the full installation should be performed, which installs
+its own (32-bit) Java. It is also possible to install the program for using the
+system's already installed Java. If in doubt, use the full installation!
+
+Select the option "Add installation directory to path" to be able to
+call the command line program IrpTransmogrifier directly from a command window.
 
 Warning: Sending undocumented IR commands to your equipment may damage
 or even destroy it. By using this program, you agree to take the

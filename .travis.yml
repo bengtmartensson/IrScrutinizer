@@ -17,7 +17,8 @@ script:
 #- tools/build-DevSlashLirc.sh
 - tools/build-HarcHardwareBundle.sh
 - tools/build-tonto.sh -n
-- tools/get-jdk-tar.sh
+- tools/get-jdk.sh linux
+- wget --quiet http://www.harctoolbox.org/downloads/jre-x64-macOS.tar.gz
 - mvn install -DskipTests=true -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -B -V
 - ls -l --si target
 - tools/upload.sh target/*.zip target/IrScrutinizer-*AppImage target/*AppImage.zsync target/*.md5 target/*.sha*

@@ -4,9 +4,9 @@
 DIR="$(dirname -- "$(readlink -f -- "${0}")" )"
 
 # Get the URL from XML
-URL="$(xsltproc ${DIR}/extract_jdk_url.xsl ${DIR}/../pom.xml)"
+URL="$(xsltproc --stringparam SYSTEM $1 ${DIR}/extract_jdk_url.xsl ${DIR}/../pom.xml)"
 
 # and get it
 echo -n "Downloading ${URL} ..."
-wget --quiet --continue ${URL}
+wget --quiet ${URL}
 echo " done"

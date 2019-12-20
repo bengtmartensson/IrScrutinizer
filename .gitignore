@@ -11,4 +11,5 @@ hs_err*.log
 graveyard
 junk
 OpenJDK*.tar.gz
+OpenJDK*.zip
 gh-pages

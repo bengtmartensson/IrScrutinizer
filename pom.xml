@@ -25,7 +25,9 @@
         <!--project.exepath>/usr/local/bin/${project.nameLowercase}</project.exepath-->
         <project.installdir>/usr/local/share/${project.nameLowercase}</project.installdir> <!-- Where mvn deploy unpacks the bin.zip -->
         <bundledjdk_url_sans_file>https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.5%2B10/</bundledjdk_url_sans_file>
-        <bundledjdk>OpenJDK11U-jdk_x64_linux_hotspot_11.0.5_10.tar.gz</bundledjdk>
+        <bundledjdk.linux>OpenJDK11U-jdk_x64_linux_hotspot_11.0.5_10.tar.gz</bundledjdk.linux>
+        <bundledjdk.windows>OpenJDK11U-jdk_x86-32_windows_hotspot_11.0.5_10.zip</bundledjdk.windows>
+        <bundledjdk.mac>OpenJDK11U-jdk_x64_mac_hotspot_11.0.5_10.tar.gz</bundledjdk.mac>
         <inno_path>${basedir}/../Inno Setup 6/ISCC.exe</inno_path>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -51,6 +53,21 @@
                         <artifactId>exec-maven-plugin</artifactId>
                         <version>1.6.0</version>
                         <executions>
+                            <execution>
+                                <id>create-windows-jre</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>../tools/mk-windows-jre.sh</executable>
+                                    <workingDirectory>${project.build.directory}</workingDirectory>
+                                    <arguments>
+                                        <argument>../${bundledjdk.windows}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+
                             <execution>
                                 <id>make-setup-exe</id>
                                 <phase>package</phase>
@@ -104,7 +121,7 @@
                                     <arguments>
                                         <argument>${project.name}</argument>
                                         <argument>${project.version}</argument>
-                                        <argument>${bundledjdk}</argument>
+                                        <argument>${bundledjdk.linux}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -487,6 +504,57 @@
                                 <argument>${project.artifactId}.ico</argument>
                                 <argument>-c</argument>
                                 <argument>${project.artifactId}.png</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>create-HexCalculator-ico</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>icotool</executable> <!-- Fedora pkg: icoutils -->
+                            <workingDirectory>${project.build.directory}</workingDirectory>
+                            <arguments>
+                                <argument>-o</argument>
+                                <argument>HexCalculator.ico</argument>
+                                <argument>-c</argument>
+                                <argument>../src/main/resources/icons/Crystal-Clear/22x22/apps/calc.png</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>create-TimeFrequencyCalculator-ico</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>icotool</executable> <!-- Fedora pkg: icoutils -->
+                            <workingDirectory>${project.build.directory}</workingDirectory>
+                            <arguments>
+                                <argument>-o</argument>
+                                <argument>TimeFrequencyCalculator.ico</argument>
+                                <argument>-c</argument>
+                                <argument>../src/main/resources/icons/Crystal-Clear/22x22/apps/xclock.png</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>create-AmxBeaconListener-ico</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>icotool</executable> <!-- Fedora pkg: icoutils -->
+                            <workingDirectory>${project.build.directory}</workingDirectory>
+                            <arguments>
+                                <argument>-o</argument>
+                                <argument>AmxBeaconListener.ico</argument>
+                                <argument>-c</argument>
+                                <argument>../src/main/resources/icons/Crystal-Clear/22x22/actions/find.png</argument>
                             </arguments>
                         </configuration>
                     </execution>

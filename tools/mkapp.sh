@@ -9,6 +9,7 @@ VERSION=$2
 
 TOPDIR=`pwd`
 TARGETDIR=${TOPDIR}/target
+JRE_DIR=${TARGETDIR}/jre-x64-macOS
 WORKDIR=${TARGETDIR}
 APPDIR=${WORKDIR}/${APPNAME}-${VERSION}
 REPODIR=${APPDIR}/${APPNAME}.app/Contents/Resources/Java/repo
@@ -32,9 +33,17 @@ cp ${TOPDIR}/src/main/resources/${APPNAME}.icns ${APPDIR}/${APPNAME}.app/Content
 cp -r "${TOPDIR}/native/Mac OS X-x86_64" ${REPODIR}
 cp -r "${TOPDIR}/native/Mac OS X-i386"   ${REPODIR}
 
+if [ -f ${TOPDIR}/jre-x64-macOS.tar.gz ] ; then
+    (cd ${TARGETDIR} ; tar zxf ${TOPDIR}/jre-x64-macOS.tar.gz )
+fi
+
+if [ -d ${JRE_DIR} ] ; then
+    cp -a ${JRE_DIR} ${REPODIR}
+fi
+
 # Delete some files that are not relevant in the MacOs environment
 rm -f ${REPODIR}/doc/INSTALL-binary* ${REPODIR}/INSTALL-binary*
-rm -f ${REPODIR}/irscrutinizer.bat ${REPODIR}/irscrutinizer.desktop
+rm -f ${REPODIR}/irscrutinizer.bat ${REPODIR}/irscrutinizer.desktop ${REPODIR}/setup-irscrutinizer.sh
 rm -f ${REPODIR}/*_install.txt
 rm -rf ${REPODIR}/Linux* ${REPODIR}/Windows*
 

@@ -6,8 +6,16 @@ HERE=$(cd "$(dirname "$0")"; pwd)
 
 RES="${HERE}/../Resources/Java/repo"
 
+# Our JVM, not known if it exists or not
+MYJAVA=${RES}/jre-x64-macOS/bin/java
+
 # Set to the preferred Java VM, >= ${maven.compiler.target} required.
-JAVA=$(which java)
+# If our own exists, use that, otherwise hope that it exists already
+if [ -f "${MYJAVA}" ] ; then
+    JAVA=${MYJAVA}
+else
+    JAVA=$(which java)
+fi
 
 # Cannot just give "$@" to the program, since double clicking stuffs junk in $@. Grrr...
 if [ -f "$JAVA" ] && [ -x "$JAVA" ] ; then

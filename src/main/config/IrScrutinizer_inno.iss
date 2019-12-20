@@ -2,7 +2,8 @@
 #define MyAppVersion "${project.version}"
 #define MyAppPublisher "Bengt Martensson"
 #define MyAppURL "${project.url}"
-#define MyAppExeName "${project.name}.jar"
+#define MyAppJarName "${project.name}.jar"
+#define JVMPath "{app}\jre-x86-windows\bin\javaw"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -34,6 +35,13 @@ ChangesAssociations="yes"
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
+[Types]
+Name: "with_jvm"; Description: "Full installation with Java"
+Name: "without_jvm"; Description: "Installation using already present Java"
+
+[Components]
+Name: "jvm"; Description: "Java Virtual Machine"; Types: with_jvm;
+
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 Name: associateGirr; Description: "Associate *.girr files with the program";
@@ -53,23 +61,34 @@ Source: "doc\*.txt"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs c
 Source: "doc\*.html"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "*.xsd"; DestDir: "{app}\schemas"
 Source: "{#MyAppName}.ico";  DestDir: "{app}"
+Source: "HexCalculator.ico"; DestDir: "{app}"
+Source: "TimeFrequencyCalculator.ico"; DestDir: "{app}"
+Source: "AmxBeaconListener.ico"; DestDir: "{app}"
 Source: "protocols.ini";  DestDir: "{app}"
+Source: "jre-x86-windows\*"; DestDir: "{app}\jre-x86-windows"; Components: jvm; Flags:  ignoreversion recursesubdirs createallsubdirs
 ;Source: "..\..\IrpMaster\target\generated-documents\IrpMaster.html"; DestDir: "{app}\doc"
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppName}.ico";
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppJarName}"; IconFilename: "{app}\{#MyAppName}.ico"; Components: not jvm
+Name: "{group}\{#MyAppName}"; Filename: "{#JVMPath}"; IconFilename: "{app}\{#MyAppName}.ico"; Parameters: "-jar ""{app}\{#MyAppJarName}"""; Components: jvm
+Name: "{group}\HexCalculator"; Filename: "{#JVMPath}"; IconFilename: "{app}\HexCalculator.ico"; Parameters: "-cp ""{app}\{#MyAppJarName}"" org.harctoolbox.guicomponents.HexCalculator"; Components: jvm
+Name: "{group}\TimeFrequencyCalculator"; Filename: "{#JVMPath}"; IconFilename: "{app}\TimeFrequencyCalculator.ico"; Parameters: "-cp ""{app}\{#MyAppJarName}"" org.harctoolbox.guicomponents.TimeFrequencyCalculator"; Components: jvm
+Name: "{group}\AmxBeaconListener"; Filename: "{#JVMPath}"; IconFilename: "{app}\AmxBeaconListener.ico"; Parameters: "-cp ""{app}\{#MyAppJarName}"" org.harctoolbox.guicomponents.AmxBeaconListenerPanel"; Components: jvm
 Name: "{group}\HTML-Doc\Protocol Documentation"; Filename: "{app}\doc\IrpProtocols.html"
 Name: "{group}\HTML-Doc\IrScrutinizer Documentation"; Filename: "{app}\doc\IrScrutinizer.html"
 Name: "{group}\HTML-Doc\Release Notes"; Filename: "{app}\doc\IrScrutinizer.releasenotes.txt"
 Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename: "{app}\{#MyAppName}.ico";
+
+Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppJarName}"; Tasks: desktopicon; IconFilename: "{app}\{#MyAppName}.ico"; Components: not jvm
+Name: "{commondesktop}\{#MyAppName}"; Filename: "{#JVMPath}";            Tasks: desktopicon; IconFilename: "{app}\{#MyAppName}.ico"; Parameters: "-jar ""{app}\{#MyAppJarName}"""; Components: jvm
 
 [UninstallDelete]
 Type: files; Name: "{app}\IrpTransmogrifier.bat"
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, "&", "&&")}}"; Parameters: ; Flags: shellexec postinstall skipifsilent
+Filename: "{app}\{#MyAppJarName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, "&", "&&")}}"; Parameters: ; Flags: shellexec postinstall skipifsilent; Components: not jvm
+Filename: "{#JVMPath}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, "&", "&&")}}"; Parameters: "-jar ""{app}\{#MyAppJarName}"""; Flags: postinstall skipifsilent; Components: jvm
 
 [Registry]
 Root: HKCR; Subkey: ".girr";                       ValueType: string; ValueName: ""; ValueData: "girrfile"; Flags: uninsdeletekey;  Tasks: associateGirr
