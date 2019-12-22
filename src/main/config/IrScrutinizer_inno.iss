@@ -133,7 +133,14 @@ begin
    wrapperFilename := ExpandConstant('{app}') + '\IrpTransmogrifier.bat';
    SaveStringToFile(wrapperFilename, '@ECHO off' + #13#10, false);
    SaveStringToFile(wrapperFilename, 'set IRSCRUTINIZERHOME=' + ExpandConstant('{app}') + #13#10, true);
-   SaveStringToFile(wrapperFilename, 'set JAVA=java' + #13#10, true);
+   if WizardSetupType(False) = 'with_jvm' then
+   begin
+      SaveStringToFile(wrapperFilename, 'set JAVA=' + ExpandConstant('{app}') + '\jre-x86-windows\bin\java' + #13#10, true);
+   end
+   else
+   begin
+      SaveStringToFile(wrapperFilename, 'set JAVA=java' + #13#10, true);
+   end;
    SaveStringToFile(wrapperFilename, '"%JAVA%"' + ' -cp "%IRSCRUTINIZERHOME%\IrScrutinizer.jar" org.harctoolbox.irp.IrpTransmogrifier %1 %2 %3 %4 %5 %6 %7 %8 %9', true);
 end;
 
