@@ -37,8 +37,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # Then open this file with RemoteMaster, and select a sensible executor
 # (called protocol in RemoteMaster).
 #
-# Original protocol: </xsl:text>
-        <xsl:value-of select="girr:commandSet[1]//girr:parameters/@protocol"/>
+# Original protocol(s): </xsl:text>
+        <xsl:apply-templates select="girr:commandSet//girr:parameters" mode="protocol"/>
         <xsl:text>
 #
 Description=</xsl:text>
@@ -46,8 +46,8 @@ Description=</xsl:text>
         <xsl:text>
 Notes=</xsl:text>
         <xsl:value-of select="@comment"/>
-        <xsl:text>\n\nOriginal protocol: </xsl:text>
-        <xsl:value-of select="girr:commandSet[1]//girr:parameters/@protocol"/>
+        <xsl:text>\n\nOriginal protocol(s): </xsl:text>
+        <xsl:apply-templates select="girr:commandSet//girr:parameters" mode="protocol"/>
         <xsl:text>
 Remote.name=URC-7781 One For All Digital 12
 Remote.signature=11311131
@@ -79,6 +79,13 @@ Function.</xsl:text>
         <xsl:text>
 </xsl:text>
 
+    </xsl:template>
+
+    <xsl:template match="girr:parameters[@protocol]" mode="protocol">
+        <xsl:if test="position() &gt; 1">
+            <xsl:text>, </xsl:text>
+        </xsl:if>
+        <xsl:value-of select="@protocol"/>
     </xsl:template>
 
     <xsl:template match="@comment">
