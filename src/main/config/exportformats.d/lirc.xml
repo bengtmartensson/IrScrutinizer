@@ -421,7 +421,7 @@ end remote
 
       <!-- ################## Protocol Aiwa2 ################ -->
       <!-- IRP: 
-            {38k,550}<1,-1|1,-3>(16,-8,D:8,S:5,~D:8,~S:5,F:8,~F:8,1,-42)*[D:0..255,S:0..31,F:0..255]
+            {38k,550}<1,-1|1,-3>(16,-8,D:8,S:5,~D:8,~S:5,F:8,~F:8,1,-42)* [D:0..255,S:0..31,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'aiwa2']">
          <xsl:text xml:space="preserve">begin remote
@@ -514,6 +514,57 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
+
+      <!-- ################## Protocol Akord ################ -->
+      <!-- IRP: 
+            {37.0k,477,msb}<1,-1|1,-2>(18,-8,D:8,S:8,F:8,~F:8,1,-40m,(18,-5,1,-78m)*)[D:0..255,S:0..255,F:0..255]
+         -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'akord']">
+         <xsl:text xml:space="preserve">begin remote
+# Protocol name: Akord
+	name		</xsl:text>
+         <xsl:value-of select="translate(../@name, ' ', '_')"/>
+         <xsl:text>
+	bits		32
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		477	477
+	one		477	954
+	header		8586	3816
+	ptrail		477
+	repeat		8586	2385
+	gap		40000
+	frequency	37000
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-akord">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="translate(@name, ' ', '_')"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), false(), $D, 8, 0, false(), false(), $S, 8, 0, false(), false(), $F, 8, 0, true(), false(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='akord']">
+         <xsl:call-template name="command-akord">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
       <!-- Protocol Amino omitted: Non-constant definitions not yet implemented -->
       <!-- Protocol Amino-56 omitted: Non-constant definitions not yet implemented -->
       <!-- Protocol Anthem omitted: Non-constant definitions not yet implemented -->
@@ -522,7 +573,7 @@ end remote
 
       <!-- ################## Protocol Archer ################ -->
       <!-- IRP: 
-            {0k,12}<1,-3.3m|1,-4.7m>(F:5,1,-9.7m)*[F:0..31]
+            {0k,12}<1,-3.3m|1,-4.7m>(F:5,1,-9.7m)* [F:0..31]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'archer']">
          <xsl:text xml:space="preserve">begin remote
@@ -616,7 +667,7 @@ end remote
 
       <!-- ################## Protocol Barco ################ -->
       <!-- IRP: 
-            {0k,10}<1,-5|1,-15>(1,-25,D:5,F:6,1,-25,1,-120m)*[D:0..31,F:0..63]
+            {0k,10}<1,-5|1,-15>(1,-25, D:5,F:6, 1,-25,1,-120m)*[D:0..31,F:0..63]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'barco']">
          <xsl:text xml:space="preserve">begin remote
@@ -663,7 +714,7 @@ end remote
 
       <!-- ################## Protocol Blaupunkt ################ -->
       <!-- IRP: 
-            {30.3k,512}<-1,1|1,-1>(1,-5,1023:10,-44,(1,-5,1:1,F:6,D:3,-236)+,1,-5,1023:10,-44)[F:0..63,D:0..7]
+            {30.3k,512}<-1,1|1,-1>(1,-5,1023:10, -44, (1,-5,1:1,F:6,D:3,-236)+ ,1,-5,1023:10,-44)[F:0..63,D:0..7]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'blaupunkt']">
          <xsl:text># Warning: Protocol contains repeat elements that cannot be expressed in Lirc
@@ -714,7 +765,7 @@ end remote
 
       <!-- ################## Protocol Blaupunkt_relaxed ################ -->
       <!-- IRP: 
-            {30.3k,512}<-1,1|1,-1>(1,-5,1023:10,-44,(1,-5,1:1,F:6,D:3,-236)*,1,-5,1023:10,-44)[F:0..63,D:0..7]
+            {30.3k,512}<-1,1|1,-1>(1,-5,1023:10, -44, (1,-5,1:1,F:6,D:3,-236)* ,1,-5,1023:10,-44)[F:0..63,D:0..7]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'blaupunkt_relaxed']">
          <xsl:text># Warning: Protocol contains repeat elements that cannot be expressed in Lirc
@@ -764,7 +815,7 @@ end remote
 
       <!-- ################## Protocol Bose ################ -->
       <!-- IRP: 
-            {38.0k,500,msb}<1,-1|1,-3>(2,-3,F:8,~F:8,1,-50m)*[F:0..255]
+            {38.0k,500,msb}<1,-1|1,-3>(2,-3,F:8,~F:8,1,-50m)* [F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'bose']">
          <xsl:text xml:space="preserve">begin remote
@@ -808,7 +859,7 @@ end remote
 
       <!-- ################## Protocol Bryston ################ -->
       <!-- IRP: 
-            {38.0k,315}<1,-6|6,-1>(D:10,F:8,-18m)*[D:0..1023,F:0..255]
+            {38.0k,315}<1,-6|6,-1>(D:10,F:8,-18m)* [D:0..1023,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'bryston']">
          <xsl:text xml:space="preserve">begin remote
@@ -896,7 +947,7 @@ end remote
 
       <!-- ################## Protocol Denon ################ -->
       <!-- IRP: 
-            {38k,264}<1,-3|1,-7>(D:5,F:8,0:2,1,-165,D:5,~F:8,3:2,1,-165)*[D:0..31,F:0..255]
+            {38k,264}<1,-3|1,-7>(D:5,F:8,0:2,1,-165,D:5,~F:8,3:2,1,-165)* [D:0..31,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'denon']">
          <xsl:text xml:space="preserve">begin remote
@@ -943,7 +994,7 @@ end remote
 
       <!-- ################## Protocol Denon{1} ################ -->
       <!-- IRP: 
-            {38k,264}<1,-3|1,-7>(D:5,F:8,0:2,1,-165)*[D:0..31,F:0..255]
+            {38k,264}<1,-3|1,-7>(D:5,F:8,0:2,1,-165)* [D:0..31,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'denon{1}']">
          <xsl:text xml:space="preserve">begin remote
@@ -989,7 +1040,7 @@ end remote
 
       <!-- ################## Protocol Denon{2} ################ -->
       <!-- IRP: 
-            {38k,264}<1,-3|1,-7>(D:5,~F:8,3:2,1,-165)*[D:0..31,F:0..255]
+            {38k,264}<1,-3|1,-7>(D:5,~F:8,3:2,1,-165)* [D:0..31,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'denon{2}']">
          <xsl:text xml:space="preserve">begin remote
@@ -1035,7 +1086,7 @@ end remote
 
       <!-- ################## Protocol Dgtec ################ -->
       <!-- IRP: 
-            {38k,560}<1,-1|1,-3>(16,-8,D:8,F:8,~F:8,1,^108m,(16,-4,1,^108m)*)[D:0..255,F:0..255]
+            {38k,560}<1,-1|1,-3>(16,-8,D:8,F:8,~F:8,1,^108m,(16,-4,1,^108m)*) [D:0..255,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'dgtec']">
          <xsl:text xml:space="preserve">begin remote
@@ -1083,7 +1134,8 @@ end remote
 
       <!-- ################## Protocol Digivision ################ -->
       <!-- IRP: 
-            {38.0k,182}<3,-3|3,-6>(20,-10,D:8,Dev2:8,Dev3:8,20,-10,F:8,~F:8,3,^108m,(20,-20,3,^108m)*)[D:0..255,Dev2:0..255,Dev3:0..255,F:0..255]
+            {38.0k,182}<3,-3|3,-6>(20,-10,D:8,Dev2:8,Dev3:8,20,-10,F:8,~F:8,3,^108m,(20,-20,3,^108m)*)
+[D:0..255,Dev2:0..255,Dev3:0..255,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'digivision']">
          <xsl:text xml:space="preserve">begin remote
@@ -1134,12 +1186,17 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol DirecTV omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol DirecTV_3_FG omitted: Non-constant definitions not yet implemented -->
+      <!-- Protocol DirecTV_3FG omitted: Non-constant definitions not yet implemented -->
+      <!-- Protocol DirecTV_P0 omitted: Non-constant definitions not yet implemented -->
+      <!-- Protocol DirecTV_P1 omitted: Non-constant definitions not yet implemented -->
+      <!-- Protocol DirecTV_P2 omitted: Non-constant definitions not yet implemented -->
+      <!-- Protocol DirecTV_P3 omitted: Non-constant definitions not yet implemented -->
+      <!-- Protocol DirecTV_P4 omitted: Non-constant definitions not yet implemented -->
+      <!-- Protocol DirecTV_P5 omitted: Non-constant definitions not yet implemented -->
 
       <!-- ################## Protocol Dish_Network ################ -->
       <!-- IRP: 
-            {57.6k,406}<1,-7|1,-4>(1,-15,(F:-6,S:5,D:5,1,-15)+)[F:0..63,S:0..31,D:0..31]
+            {57.6k,406}<1,-7|1,-4>(1,-15,(F:-6,S:5,D:5,1,-15)+) [F:0..63,S:0..31,D:0..31]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'dish_network']">
          <xsl:text># Warning: Protocol contains repeat elements that cannot be expressed in Lirc
@@ -1191,7 +1248,7 @@ end remote
 
       <!-- ################## Protocol Dishplayer ################ -->
       <!-- IRP: 
-            {38.4k,535,msb}<1,-5|1,-3>(1,-11,(F:6,S:5,D:2,1,-11)+)[F:0..63,S:0..31,D:0..3]
+            {38.4k,535,msb}<1,-5|1,-3>(1,-11,(F:6,S:5,D:2,1,-11)+) [F:0..63,S:0..31,D:0..3]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'dishplayer']">
          <xsl:text># Warning: Protocol contains repeat elements that cannot be expressed in Lirc
@@ -1243,7 +1300,8 @@ end remote
 
       <!-- ################## Protocol Dysan ################ -->
       <!-- IRP: 
-            {780,38k}<1,-1|1,-2>(3,-1,D:7,F:8,1,-104m)*[D:0..127,F:0..255]
+            {780,38k}<1,-1|1,-2>(3,-1,D:7,F:8,1,-104m)*
+            [D:0..127,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'dysan']">
          <xsl:text xml:space="preserve">begin remote
@@ -1290,7 +1348,7 @@ end remote
 
       <!-- ################## Protocol Elan ################ -->
       <!-- IRP: 
-            {0k,398,msb}<1,-1|1,-2>(3,-2,D:8,~D:8,2,-2,F:8,~F:8,1,^50m)*[D:0..255,F:0..255]
+            {0k,398,msb}<1,-1|1,-2>(3,-2,D:8,~D:8,2,-2,F:8,~F:8,1,^50m)* [D:0..255,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'elan']">
          <xsl:text xml:space="preserve">begin remote
@@ -1337,7 +1395,7 @@ end remote
 
       <!-- ################## Protocol Elunevision ################ -->
       <!-- IRP: 
-            {0k,358,msb}<1,-3|3,-1>(10,-3,D:24,F:8,-7)*{D=0xf48080}[F:0..255]
+            {0k,358,msb}<1,-3|3,-1>(10,-3,D:24,F:8,-7)*{D=0xf48080} [F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'elunevision']">
          <xsl:text xml:space="preserve">begin remote
@@ -1382,7 +1440,7 @@ end remote
 
       <!-- ################## Protocol Emerson ################ -->
       <!-- IRP: 
-            {36.7k,872}<1,-1|1,-3>(4,-4,D:6,F:6,~D:6,~F:6,1,-39)*[D:0..63,F:0..63]
+            {36.7k,872}<1,-1|1,-3>(4,-4,D:6,F:6,~D:6,~F:6,1,-39)* [D:0..63,F:0..63]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'emerson']">
          <xsl:text xml:space="preserve">begin remote
@@ -1430,7 +1488,8 @@ end remote
 
       <!-- ################## Protocol Epson ################ -->
       <!-- IRP: 
-            {38.4k,577}<2,-1|1,-2|1,-1|2,-2>((4,-1,D:8,T1:2,OBC:6,T2:2,S:8,1,-75m)*,(4,-1,D:8,~F1:2,OBC:6,~F2:2,S:8,1,-250m))[D:0..255,S:0..255,OBC:0..63,T1:0..3,T2:0..3,F1:0..3,F2:0..3]
+            {38.4k,577}<2,-1|1,-2|1,-1|2,-2>((4,-1,D:8,T1:2,OBC:6,T2:2,S:8,1,-75m)*,(4,-1,D:8,~F1:2,OBC:6,~F2:2,S:8,1,-250m))
+               [D:0..255,S:0..255,OBC:0..63,T1:0..3,T2:0..3,F1:0..3,F2:0..3]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'epson']">
          <xsl:text># Warning: Protocol contains ending that cannot be expressed in Lirc
@@ -1496,7 +1555,7 @@ end remote
 
       <!-- ################## Protocol F12 ################ -->
       <!-- IRP: 
-            {37.9k,422}<1,-3|3,-1>((D:3,S:1,F:8,-80)2,-128)*[D:0..7,S:0..1,F:0..255]
+            {37.9k,422}<1,-3|3,-1>((D:3,S:1,F:8,-80)2)*  [D:0..7,S:0..1,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'f12']">
          <xsl:text xml:space="preserve">begin remote
@@ -1510,7 +1569,7 @@ end remote
 	aeps		100
 	zero		422	1266
 	one		1266	422
-	gap		54016
+	gap		33760
 	frequency	37900
 	begin codes
 </xsl:text>
@@ -1544,7 +1603,7 @@ end remote
 
       <!-- ################## Protocol F12-0 ################ -->
       <!-- IRP: 
-            {37.9k,422}<1,-3|3,-1>(D:3,H:1,F:8,-34,D:3,H:1,F:8){H=0}[D:0..7,F:0..0xFF]
+            {37.9k,422}<1,-3|3,-1>(D:3,H:1,F:8,-34,D:3,H:1,F:8) {H=0} [D:0..7,F:0..0xFF]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'f12-0']">
          <xsl:text xml:space="preserve">begin remote
@@ -1590,7 +1649,7 @@ end remote
 
       <!-- ################## Protocol F12-1 ################ -->
       <!-- IRP: 
-            {37.9k,422}<1,-3|3,-1>(D:3,H:1,F:8,-34,D:3,H:1,F:8,-88,D:3,H:1,F:8,-34,D:3,H:1,F:8)*{H=1}[D:0..7,F:0..0xFF]
+            {37.9k,422}<1,-3|3,-1>(D:3,H:1,F:8,-34,D:3,H:1,F:8,-88,D:3,H:1,F:8,-34,D:3,H:1,F:8)* {H=1} [D:0..7,F:0..0xFF]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'f12-1']">
          <xsl:text xml:space="preserve">begin remote
@@ -1634,9 +1693,57 @@ end remote
          </xsl:call-template>
       </xsl:template>
 
+      <!-- ################## Protocol F12_relaxed ################ -->
+      <!-- IRP: 
+            {37.9k,422}<1,-3|3,-1>(D:3,S:1,F:8,-80)*  [D:0..7,S:0..1,F:0..255]
+         -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'f12_relaxed']">
+         <xsl:text xml:space="preserve">begin remote
+# Protocol name: F12_relaxed
+	name		</xsl:text>
+         <xsl:value-of select="translate(../@name, ' ', '_')"/>
+         <xsl:text>
+	bits		12
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		422	1266
+	one		1266	422
+	gap		33760
+	frequency	37900
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-f12_relaxed">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="translate(@name, ' ', '_')"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 3, 0, false(), true(), $S, 1, 0, false(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='f12_relaxed']">
+         <xsl:call-template name="command-f12_relaxed">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
       <!-- ################## Protocol F32 ################ -->
       <!-- IRP: 
-            {37.9k,422,msb}<1,-3|3,-1>(D:8,S:8,F:8,E:8,-100m)*[D:0..255,S:0..255,F:0..255,E:0..255]
+            {37.9k,422,msb}<1,-3|3,-1>(D:8,S:8,F:8,E:8,-100m)*  [D:0..255,S:0..255,F:0..255,E:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'f32']">
          <xsl:text xml:space="preserve">begin remote
@@ -1687,7 +1794,7 @@ end remote
 
       <!-- ################## Protocol Fujitsu ################ -->
       <!-- IRP: 
-            {37k,432}<1,-1|1,-3>(8,-4,20:8,99:8,0:4,E:4,D:8,S:8,F:8,1,-110)*[D:0..255,S:0..255=D,F:0..255,E:0..15=0]
+            {37k,432}<1,-1|1,-3>(8,-4,20:8,99:8,0:4,E:4,D:8,S:8,F:8,1,-110)* [D:0..255,S:0..255=D,F:0..255,E:0..15=0]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'fujitsu']">
          <xsl:text xml:space="preserve">begin remote
@@ -1753,7 +1860,7 @@ end remote
 
       <!-- ################## Protocol Fujitsu-56 ################ -->
       <!-- IRP: 
-            {37k,432}<1,-1|1,-3>(8,-4,20:8,99:8,0:4,E:4,D:8,S:8,X:8,F:8,1,-110)*[D:0..255,S:0..255=D,F:0..255,E:0..15=0,X:0..255=0]
+            {37k,432}<1,-1|1,-3>(8,-4,20:8,99:8,0:4,E:4,D:8,S:8,X:8,F:8,1,-110)* [D:0..255,S:0..255=D,F:0..255,E:0..15=0,X:0..255=0]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'fujitsu-56']">
          <xsl:text xml:space="preserve">begin remote
@@ -1823,13 +1930,13 @@ end remote
       <!-- Protocol Fujitsu_Aircon_old omitted: Non-constant definitions not yet implemented -->
       <!-- Protocol G.I.4DTV omitted: Non-constant definitions not yet implemented -->
 
-      <!-- ################## Protocol G.I.4DTVnoCheck ################ -->
+      <!-- ################## Protocol G.I.4DTV_relaxed ################ -->
       <!-- IRP: 
-            {37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*[D:0..3,F:0..63,C:0..15]
+            {37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*[D:0..3, F:0..63, C:0..15]
          -->
-      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'g.i.4dtvnocheck']">
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'g.i.4dtv_relaxed']">
          <xsl:text xml:space="preserve">begin remote
-# Protocol name: G.I.4DTVnoCheck
+# Protocol name: G.I.4DTV_relaxed
 	name		</xsl:text>
          <xsl:value-of select="translate(../@name, ' ', '_')"/>
          <xsl:text>
@@ -1850,7 +1957,7 @@ end remote
 end remote
 </xsl:text>
       </xsl:template>
-      <xsl:template name="command-g-i-4dtvnocheck">
+      <xsl:template name="command-g-i-4dtv_relaxed">
          <xsl:param name="D"/>
          <xsl:param name="F"/>
          <xsl:param name="C"/>
@@ -1862,8 +1969,8 @@ end remote
 </xsl:text>
       </xsl:template>
       <!-- Version without defaults -->
-      <xsl:template match="girr:command[girr:parameters/@protocol='g.i.4dtvnocheck']">
-         <xsl:call-template name="command-g-i-4dtvnocheck">
+      <xsl:template match="girr:command[girr:parameters/@protocol='g.i.4dtv_relaxed']">
+         <xsl:call-template name="command-g-i-4dtv_relaxed">
             <xsl:with-param name="D"
                             select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
             <xsl:with-param name="F"
@@ -1876,7 +1983,7 @@ end remote
 
       <!-- ################## Protocol GI RG ################ -->
       <!-- IRP: 
-            {37.3k,1000,msb}<1,-1|1,-3>(5,-3,F:6,S:2,D:8,1,-60)*[D:0..255,S:0..3,F:0..63]
+            {37.3k,1000, msb}<1,-1|1,-3>(5,-3,F:6,S:2,D:8,1,-60)*[D:0..255, S:0..3, F:0..63]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'gi rg']">
          <xsl:text xml:space="preserve">begin remote
@@ -1928,7 +2035,8 @@ end remote
 
       <!-- ################## Protocol GuangZhou ################ -->
       <!-- IRP: 
-            {38.0k,182}<3,-3|3,-6>(20,-10,T:2,D:6,F:8,S:8,20,-10,~T:2,D:6,~F:8,3,^108m,(20,-20,3,^108m)*){T=3}[D:0..63,F:0..255,S:0..255]
+            {38.0k,182}<3,-3|3,-6>(20,-10,T:2,D:6,F:8,S:8,20,-10,~T:2,D:6,~F:8,3,^108m,(20,-20,3,^108m)*){T=3}
+            [D:0..63,F:0..255,S:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'guangzhou']">
          <xsl:text xml:space="preserve">begin remote
@@ -1984,7 +2092,7 @@ end remote
 
       <!-- ################## Protocol InterVideo RC-201 ################ -->
       <!-- IRP: 
-            {38k,300}<1,-1|1,-3>(10,-5,0:1,F:6,768:10,1,-10m)*[F:0..63]
+            {38k,300}<1,-1|1,-3>(10,-5,0:1,F:6,768:10,1,-10m)* [F:0..63]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'intervideo rc-201']">
          <xsl:text xml:space="preserve">begin remote
@@ -2029,7 +2137,7 @@ end remote
 
       <!-- ################## Protocol Jerrold ################ -->
       <!-- IRP: 
-            {0k,44}<1,-7.5m|1,-11.5m>(F:5,1,-23.5m)*[F:0..31]
+            {0k,44}<1,-7.5m|1,-11.5m>(F:5,1,-23.5m)* [F:0..31]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'jerrold']">
          <xsl:text xml:space="preserve">begin remote
@@ -2072,7 +2180,7 @@ end remote
 
       <!-- ################## Protocol JVC ################ -->
       <!-- IRP: 
-            {37.9k,527,33%}<1,-1|1,-3>(16,-8,D:8,F:8,1,^59.08m,(D:8,F:8,1,^46.42m)*)[D:0..255,F:0..255]
+            {37.9k,527,33%}<1,-1|1,-3>(16,-8,D:8,F:8,1,^59.08m,(D:8,F:8,1,^46.42m)*) [D:0..255,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'jvc']">
          <xsl:text># Warning: Protocol contains repeat elements that cannot be expressed in Lirc
@@ -2121,9 +2229,46 @@ end remote
       <!-- Protocol JVC-48 omitted: Expressions as bitfields not implemented yet -->
       <!-- Protocol JVC-56 omitted: Expressions as bitfields not implemented yet -->
 
+      <!-- ################## Protocol JVC_alt ################ -->
+      <!-- IRP: 
+            {37.9k,527,33%}<1,-1|1,-3>(16,-8,(D:8,F:8,1,^46.42m)*) [D:0..255,F:0..255]
+         -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'jvc_alt']">
+         <xsl:text xml:space="preserve">begin remote
+# Protocol name: JVC_alt
+	name		</xsl:text>
+         <xsl:value-of select="translate(../@name, ' ', '_')"/>
+         <xsl:text>
+	bits		16
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		527	527
+	one		527	1581
+	header		8432	4216
+	gap		4216
+	frequency	37900
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-jvc_alt">
+         <xsl:param name="D"/>
+         <xsl:param name="F"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="translate(@name, ' ', '_')"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+
       <!-- ################## Protocol JVC{2} ################ -->
       <!-- IRP: 
-            {37.9k,527,33%}<1,-1|1,-3>(D:8,F:8,1,^46.42m)*[D:0..255,F:0..255]
+            {37.9k,527,33%}<1,-1|1,-3>(D:8,F:8,1,^46.42m)* [D:0..255,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'jvc{2}']">
          <xsl:text xml:space="preserve">begin remote
@@ -2220,7 +2365,7 @@ end remote
 
       <!-- ################## Protocol Konka ################ -->
       <!-- IRP: 
-            {38k,500,msb}<1,-3|1,-5>(6,-6,D:8,F:8,1,-8,1,-46)*[D:0..255,F:0..255]
+            {38k,500,msb}<1,-3|1,-5>(6,-6,D:8,F:8,1,-8,1,-46)* [D:0..255,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'konka']">
          <xsl:text xml:space="preserve">begin remote
@@ -2316,7 +2461,7 @@ end remote
 
       <!-- ################## Protocol Matsui ################ -->
       <!-- IRP: 
-            {38k,525}<1,-1|1,-3>(D:3,F:7,1,^30.5m)*[D:0..7,F:0..127]
+            {38k,525}<1,-1|1,-3>(D:3,F:7,1,^30.5m)* [D:0..7,F:0..127]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'matsui']">
          <xsl:text xml:space="preserve">begin remote
@@ -2364,7 +2509,8 @@ end remote
 
       <!-- ################## Protocol MCIR-2-mouse ################ -->
       <!-- IRP: 
-            {300,msb}<-1,1|1,-1>(9,8:8,C:5,y:7,x:7,R:1,L:1,F:5,-10.7m)*[C:0..31,L:0..1,R:0..1,x:0..127,y:0..127,F:0..31]
+            {300,msb}<-1,1|1,-1>(9,8:8,C:5,y:7,x:7,R:1,L:1,F:5,-10.7m)*
+[C:0..31,L:0..1,R:0..1,x:0..127,y:0..127,F:0..31]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'mcir-2-mouse']">
          <xsl:text xml:space="preserve">begin remote
@@ -2483,7 +2629,7 @@ end remote
 
       <!-- ################## Protocol Mitsubishi ################ -->
       <!-- IRP: 
-            {32.6k,300}<1,-3|1,-7>(D:8,F:8,1,-80)*[D:0..127,F:0..255]
+            {32.6k,300}<1,-3|1,-7>(D:8,F:8,1,-80)* [D:0..127,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'mitsubishi']">
          <xsl:text xml:space="preserve">begin remote
@@ -2530,7 +2676,7 @@ end remote
 
       <!-- ################## Protocol NEC ################ -->
       <!-- IRP: 
-            {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,1,^108m)[D:0..255,S:0..255=255-D,F:0..255]
+            {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,1,^108m) [D:0..255,S:0..255=255-D,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nec']">
          <xsl:text xml:space="preserve">begin remote
@@ -2588,11 +2734,77 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
+
+      <!-- ################## Protocol NEC-f16 ################ -->
+      <!-- IRP: 
+            {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,E:8,1,^108m) [D:0..255,S:0..255=255-D,F:0..255,E:0..255=255-F]
+         -->
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nec-f16']">
+         <xsl:text xml:space="preserve">begin remote
+# Protocol name: NEC-f16
+	name		</xsl:text>
+         <xsl:value-of select="translate(../@name, ' ', '_')"/>
+         <xsl:text>
+	bits		32
+	flags		SPACE_ENC|CONST_LENGTH
+	eps		30
+	aeps		100
+	zero		564	564
+	one		564	1692
+	header		9024	4512
+	ptrail		564
+	gap		108000
+	frequency	38400
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="//girr:command"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-nec-f16">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:param name="E"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="translate(@name, ' ', '_')"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $F, 8, 0, false(), true(), $E, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version with defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='nec-f16']">
+         <xsl:call-template name="command-nec-f16">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="(255)-(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E"
+                            select="(255)-(number(girr:parameters/girr:parameter[@name='F']/@value))"/>
+         </xsl:call-template>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[girr:parameters/@protocol='nec-f16' and girr:parameters/girr:parameter[@name='S'] and girr:parameters/girr:parameter[@name='E']]">
+         <xsl:call-template name="command-nec-f16">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E"
+                            select="number(girr:parameters/girr:parameter[@name='E']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
       <!-- Protocol NEC-Shirriff omitted: Variable number of bits -->
 
       <!-- ################## Protocol NEC-Shirriff-32 ################ -->
       <!-- IRP: 
-            {38.4k,msb,564}<1,-1|1,-3>(16,-8,data:32,1,-1)[data:0..UINT32_MAX]
+            {38.4k,msb,564}<1,-1|1,-3>(16,-8,data:32,1,-1) [data:0..UINT32_MAX]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nec-shirriff-32']">
          <xsl:text xml:space="preserve">begin remote
@@ -2636,7 +2848,7 @@ end remote
 
       <!-- ################## Protocol NEC1 ################ -->
       <!-- IRP: 
-            {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,1,^108m,(16,-4,1,^108m)*)[D:0..255,S:0..255=255-D,F:0..255]
+            {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,1,^108m,(16,-4,1,^108m)*) [D:0..255,S:0..255=255-D,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nec1']">
          <xsl:text xml:space="preserve">begin remote
@@ -2698,7 +2910,7 @@ end remote
 
       <!-- ################## Protocol NEC1-f16 ################ -->
       <!-- IRP: 
-            {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:16,1,^108m,(16,-4,1,^108m)*)[D:0..255,S:0..255=255-D,F:0..65535]
+            {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,E:8,1,^108m,(16,-4,1,^108m)*) [D:0..255,S:0..255=255-D,F:0..255,E:0..255=255-F]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nec1-f16']">
          <xsl:text xml:space="preserve">begin remote
@@ -2728,10 +2940,11 @@ end remote
          <xsl:param name="D"/>
          <xsl:param name="S"/>
          <xsl:param name="F"/>
+         <xsl:param name="E"/>
          <xsl:text xml:space="preserve">		</xsl:text>
          <xsl:value-of select="translate(@name, ' ', '_')"/>
          <xsl:text>	0x</xsl:text>
-         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $F, 16, 0)"/>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $F, 8, 0, false(), true(), $E, 8, 0)"/>
          <xsl:text xml:space="preserve">
 </xsl:text>
       </xsl:template>
@@ -2744,10 +2957,12 @@ end remote
                             select="(255)-(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
             <xsl:with-param name="F"
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E"
+                            select="(255)-(number(girr:parameters/girr:parameter[@name='F']/@value))"/>
          </xsl:call-template>
       </xsl:template>
       <!-- Version without defaults -->
-      <xsl:template match="girr:command[girr:parameters/@protocol='nec1-f16' and girr:parameters/girr:parameter[@name='S']]">
+      <xsl:template match="girr:command[girr:parameters/@protocol='nec1-f16' and girr:parameters/girr:parameter[@name='S'] and girr:parameters/girr:parameter[@name='E']]">
          <xsl:call-template name="command-nec1-f16">
             <xsl:with-param name="D"
                             select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
@@ -2755,12 +2970,14 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
             <xsl:with-param name="F"
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E"
+                            select="number(girr:parameters/girr:parameter[@name='E']/@value)"/>
          </xsl:call-template>
       </xsl:template>
 
       <!-- ################## Protocol NEC1-rnc ################ -->
       <!-- IRP: 
-            {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:4:4,~F:4,1,^108m,(16,-4,1,^108m)*)[D:0..255,S:0..255=255-D,F:0..255]
+            {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:4:4,~F:4,1,^108m,(16,-4,1,^108m)*) [D:0..255,S:0..255=255-D,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nec1-rnc']">
          <xsl:text xml:space="preserve">begin remote
@@ -2822,7 +3039,7 @@ end remote
 
       <!-- ################## Protocol NEC2 ################ -->
       <!-- IRP: 
-            {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,1,^108m)*[D:0..255,S:0..255=255-D,F:0..255]
+            {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,1,^108m)* [D:0..255,S:0..255=255-D,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nec2']">
          <xsl:text xml:space="preserve">begin remote
@@ -2883,7 +3100,7 @@ end remote
 
       <!-- ################## Protocol NEC2-f16 ################ -->
       <!-- IRP: 
-            {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:16,1,^108m)*[D:0..255,S:0..255=255-D,F:0..65535]
+            {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,E:8,1,^108m)* [D:0..255,S:0..255=255-D,F:0..255,E:0..255=255-F]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nec2-f16']">
          <xsl:text xml:space="preserve">begin remote
@@ -2912,10 +3129,11 @@ end remote
          <xsl:param name="D"/>
          <xsl:param name="S"/>
          <xsl:param name="F"/>
+         <xsl:param name="E"/>
          <xsl:text xml:space="preserve">		</xsl:text>
          <xsl:value-of select="translate(@name, ' ', '_')"/>
          <xsl:text>	0x</xsl:text>
-         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $F, 16, 0)"/>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 8, 0, false(), true(), $S, 8, 0, false(), true(), $F, 8, 0, false(), true(), $E, 8, 0)"/>
          <xsl:text xml:space="preserve">
 </xsl:text>
       </xsl:template>
@@ -2928,10 +3146,12 @@ end remote
                             select="(255)-(number(girr:parameters/girr:parameter[@name='D']/@value))"/>
             <xsl:with-param name="F"
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E"
+                            select="(255)-(number(girr:parameters/girr:parameter[@name='F']/@value))"/>
          </xsl:call-template>
       </xsl:template>
       <!-- Version without defaults -->
-      <xsl:template match="girr:command[girr:parameters/@protocol='nec2-f16' and girr:parameters/girr:parameter[@name='S']]">
+      <xsl:template match="girr:command[girr:parameters/@protocol='nec2-f16' and girr:parameters/girr:parameter[@name='S'] and girr:parameters/girr:parameter[@name='E']]">
          <xsl:call-template name="command-nec2-f16">
             <xsl:with-param name="D"
                             select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
@@ -2939,12 +3159,14 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
             <xsl:with-param name="F"
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E"
+                            select="number(girr:parameters/girr:parameter[@name='E']/@value)"/>
          </xsl:call-template>
       </xsl:template>
 
       <!-- ################## Protocol NECx1 ################ -->
       <!-- IRP: 
-            {38.4k,564}<1,-1|1,-3>(8,-8,D:8,S:8,F:8,~F:8,1,^108m,(8,-8,D:1,1,^108m)*)[D:0..255,S:0..255=255-D,F:0..255]
+            {38.4k,564}<1,-1|1,-3>(8,-8,D:8,S:8,F:8,~F:8,1,^108m,(8,-8,D:1,1,^108m)*) [D:0..255,S:0..255=255-D,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'necx1']">
          <xsl:text># Warning: Protocol contains repeat elements that cannot be expressed in Lirc
@@ -3018,7 +3240,7 @@ end remote
 
       <!-- ################## Protocol NECx2 ################ -->
       <!-- IRP: 
-            {38.4k,564}<1,-1|1,-3>(8,-8,D:8,S:8,F:8,~F:8,1,^108m)*[D:0..255,S:0..255=255-D,F:0..255]
+            {38.4k,564}<1,-1|1,-3>(8,-8,D:8,S:8,F:8,~F:8,1,^108m)* [D:0..255,S:0..255=255-D,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'necx2']">
          <xsl:text xml:space="preserve">begin remote
@@ -3079,7 +3301,7 @@ end remote
 
       <!-- ################## Protocol Nokia ################ -->
       <!-- IRP: 
-            {36k,1p,msb}<6,-10|6,-16|6,-22|6,-28>(15,-10,D:8,S:8,F:8,6,^100m)*[D:0..255,S:0..255,F:0..255]
+            {36k,1p,msb}<6,-10|6,-16|6,-22|6,-28>(15,-10,D:8,S:8,F:8,6,^100m)* [D:0..255,S:0..255,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nokia']">
          <xsl:text xml:space="preserve">begin remote
@@ -3180,7 +3402,7 @@ end remote
 
       <!-- ################## Protocol Nokia32 ################ -->
       <!-- IRP: 
-            {36k,1p,msb}<6,-10|6,-16|6,-22|6,-28>((15,-10,D:8,S:8,T:1,X:7,F:8,6,^100m)*,T=1-T)[D:0..255,S:0..255,F:0..255,T@:0..1=0,X:0..127]
+            {36k,1p,msb}<6,-10|6,-16|6,-22|6,-28>((15,-10,D:8,S:8,T:1,X:7,F:8,6,^100m)*,T=1-T) [D:0..255,S:0..255,F:0..255,T@:0..1=0,X:0..127]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nokia32']">
          <xsl:text xml:space="preserve">begin remote
@@ -3253,7 +3475,8 @@ end remote
 
       <!-- ################## Protocol Nova Pace ################ -->
       <!-- IRP: 
-            {38k,300,msb}<-1,1|1,-1>((1,-1,D:10,S:8,F:8,T:1,-1,1,-82m)*,T=1-T)[D:0..1023,S:0..255,F:0..255,T@:0..1=0]
+            {38k, 300, msb}<-1,1|1,-1>((1,-1,D:10, S:8, F:8, T:1, -1, 1,-82m)*,T=1-T)
+            [D:0..1023,S:0..255,F:0..255,T@:0..1=0]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nova pace']">
          <xsl:text xml:space="preserve">begin remote
@@ -3319,7 +3542,7 @@ end remote
 
       <!-- ################## Protocol NRC16 ################ -->
       <!-- IRP: 
-            {38k,500}<-1,1|1,-1>(1,-5,1:1,254:8,127:7,-15m,(1,-5,1:1,F:8,D:7,-110m)+,1,-5,1:1,254:8,127:7,-15m)[D:0..127,F:0..255]
+            {38k,500}<-1,1|1,-1>(1,-5,1:1,254:8,127:7,-15m,(1,-5,1:1,F:8,D:7,-110m)+,1,-5,1:1,254:8,127:7,-15m) [D:0..127,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nrc16']">
          <xsl:text># Warning: Protocol contains repeat elements that cannot be expressed in Lirc
@@ -3370,7 +3593,7 @@ end remote
 
       <!-- ################## Protocol NRC16-32 ################ -->
       <!-- IRP: 
-            {32k,500}<-1,1|1,-1>(1,-5,1:1,254:8,127:7,-15m,(1,-5,1:1,F:8,D:7,-110m)+,1,-5,1:1,254:8,127:7,-15m)[D:0..127,F:0..255]
+            {32k,500}<-1,1|1,-1>(1,-5,1:1,254:8,127:7,-15m,(1,-5,1:1,F:8,D:7,-110m)+,1,-5,1:1,254:8,127:7,-15m) [D:0..127,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nrc16-32']">
          <xsl:text># Warning: Protocol contains repeat elements that cannot be expressed in Lirc
@@ -3421,7 +3644,7 @@ end remote
 
       <!-- ################## Protocol NRC17 ################ -->
       <!-- IRP: 
-            {500,38k,25%}<-1,1|1,-1>(1,-5,1:1,254:8,255:8,-28,(1,-5,1:1,F:8,D:8,-220)*,1,-5,1:1,254:8,255:8,-200)[D:0..255,F:0..255]
+            {500,38k,25%}<-1,1|1,-1>(1,-5,1:1,254:8,255:8,-28, (1,-5,1:1,F:8,D:8,-220)*, 1,-5,1:1,254:8,255:8,-200)[D:0..255,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'nrc17']">
          <xsl:text># Warning: Protocol contains repeat elements that cannot be expressed in Lirc
@@ -3469,13 +3692,13 @@ end remote
          </xsl:call-template>
       </xsl:template>
 
-      <!-- ################## Protocol Ortek ################ -->
+      <!-- ################## Protocol Ortek_NEClike ################ -->
       <!-- IRP: 
             {40.0k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,F:4:4,~F:4,1,^108m,(16,-4,1,-3,1,^108m)*)[D:0..255,S:0..255,F:0..255]
          -->
-      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'ortek']">
+      <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'ortek_neclike']">
          <xsl:text xml:space="preserve">begin remote
-# Protocol name: Ortek
+# Protocol name: Ortek_NEClike
 	name		</xsl:text>
          <xsl:value-of select="translate(../@name, ' ', '_')"/>
          <xsl:text>
@@ -3497,7 +3720,7 @@ end remote
 end remote
 </xsl:text>
       </xsl:template>
-      <xsl:template name="command-ortek">
+      <xsl:template name="command-ortek_neclike">
          <xsl:param name="D"/>
          <xsl:param name="S"/>
          <xsl:param name="F"/>
@@ -3509,8 +3732,8 @@ end remote
 </xsl:text>
       </xsl:template>
       <!-- Version without defaults -->
-      <xsl:template match="girr:command[girr:parameters/@protocol='ortek']">
-         <xsl:call-template name="command-ortek">
+      <xsl:template match="girr:command[girr:parameters/@protocol='ortek_neclike']">
+         <xsl:call-template name="command-ortek_neclike">
             <xsl:with-param name="D"
                             select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
             <xsl:with-param name="S"
@@ -3520,10 +3743,11 @@ end remote
          </xsl:call-template>
       </xsl:template>
       <!-- Protocol OrtekMCE omitted: Non-constant definitions not yet implemented -->
+      <!-- Protocol OrtekMCE_relaxed omitted: Non-constant definitions not yet implemented -->
 
       <!-- ################## Protocol PaceMSS ################ -->
       <!-- IRP: 
-            {38k,630,msb}<1,-7|1,-11>(1,-5,1,-5,T:1,D:1,F:8,1,^120m)*[D:0..1,F:0..255,T:0..1]
+            {38k,630,msb}<1,-7|1,-11>(1,-5,1,-5,T:1,D:1,F:8,1,^120m)* [D:0..1,F:0..255,T:0..1]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'pacemss']">
          <xsl:text xml:space="preserve">begin remote
@@ -3576,7 +3800,7 @@ end remote
 
       <!-- ################## Protocol Panasonic_Old ################ -->
       <!-- IRP: 
-            {57.6k,833}<1,-1|1,-3>(4,-4,D:5,F:6,~D:5,~F:6,1,-44m)*[D:0..31,F:0..63]
+            {57.6k,833}<1,-1|1,-3>(4,-4,D:5,F:6,~D:5,~F:6,1,-44m)* [D:0..31,F:0..63]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'panasonic_old']">
          <xsl:text xml:space="preserve">begin remote
@@ -3756,7 +3980,7 @@ end remote
 
       <!-- ################## Protocol Pioneer ################ -->
       <!-- IRP: 
-            {40k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,1,^108m)*[D:0..255,S:0..255=255-D,F:0..255]
+            {40k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,1,^108m)* [D:0..255,S:0..255=255-D,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'pioneer']">
          <xsl:text xml:space="preserve">begin remote
@@ -3817,7 +4041,7 @@ end remote
 
       <!-- ################## Protocol Pioneer-Mix ################ -->
       <!-- IRP: 
-            {40k,564}<1,-1|1,-3>(16,-8,D0:8,~D0:8,F0:8,~F0:8,1,^108m,(16,-8,D:8,~D:8,F:8,~F:8,1,^108m)+)[D0:0..255,F0:0..255,D:0..255=D0,F:0..255=F0]
+            {40k,564}<1,-1|1,-3>(16,-8,D0:8,~D0:8,F0:8,~F0:8,1,^108m,(16,-8,D:8,~D:8,F:8,~F:8,1,^108m)+) [D0:0..255,F0:0..255,D:0..255=D0,F:0..255=F0]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'pioneer-mix']">
          <xsl:text># Warning: Protocol contains repeat elements that cannot be expressed in Lirc
@@ -4052,7 +4276,7 @@ end remote
 
       <!-- ################## Protocol RC5-7F ################ -->
       <!-- IRP: 
-            {36k,msb,889}<1,-1|-1,1>((1,~D:1:5,T:1,D:5,F:7,^114m)*,T=1-T)[D:0..63,F:0..127,T@:0..1=0]
+            {36k,msb,889}<1,-1|-1,1>((1, ~D:1:5,T:1,D:5,F:7,^114m)*,T=1-T) [D:0..63,F:0..127,T@:0..1=0]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'rc5-7f']">
          <xsl:text xml:space="preserve">begin remote
@@ -4112,7 +4336,7 @@ end remote
 
       <!-- ################## Protocol RC5-7F-57 ################ -->
       <!-- IRP: 
-            {57k,msb,889}<1,-1|-1,1>(1,~D:1:5,T:1,D:5,F:7,^114m)*[D:0..63,F:0..127,T@:0..1=0]
+            {57k,msb,889}<1,-1|-1,1>(1, ~D:1:5,T:1,D:5,F:7,^114m)*[D:0..63,F:0..127,T@:0..1=0]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'rc5-7f-57']">
          <xsl:text xml:space="preserve">begin remote
@@ -4172,7 +4396,7 @@ end remote
 
       <!-- ################## Protocol RC5x ################ -->
       <!-- IRP: 
-            {36k,msb,889}<1,-1|-1,1>((1,~S:1:6,T:1,D:5,-4,S:6,F:6,^114m)*,T=1-T)[D:0..31,S:0..127,F:0..63,T@:0..1=0]
+            {36k,msb,889}<1,-1|-1,1>((1,~S:1:6,T:1,D:5,-4,S:6,F:6,^114m)*,T=1-T) [D:0..31,S:0..127,F:0..63,T@:0..1=0]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'rc5x']">
          <xsl:text xml:space="preserve">begin remote
@@ -4237,7 +4461,7 @@ end remote
 
       <!-- ################## Protocol RC6 ################ -->
       <!-- IRP: 
-            {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)*,T=1-T)[D:0..255,F:0..255,T@:0..1=0]
+            {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,0:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)*,T=1-T) [D:0..255,F:0..255,T@:0..1=0]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'rc6']">
          <xsl:text xml:space="preserve">begin remote
@@ -4360,7 +4584,7 @@ end remote
 
       <!-- ################## Protocol RC6-M-16 ################ -->
       <!-- IRP: 
-            {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,M:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)*,T=1-T)[D:0..255,F:0..255,M:0..7,T@:0..1=0]
+            {36k,444,msb}<-1,1|1,-1>((6,-2,1:1,M:3,<-2,2|2,-2>(T:1),D:8,F:8,^107m)*,T=1-T) [D:0..255,F:0..255,M:0..7,T@:0..1=0]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'rc6-m-16']">
          <xsl:text xml:space="preserve">begin remote
@@ -4760,7 +4984,7 @@ end remote
 
       <!-- ################## Protocol RECS80 ################ -->
       <!-- IRP: 
-            {38k,158,msb}<1,-31|1,-47>(1:1,T:1,D:3,F:6,1,-45m)*{}[D:0..7,F:0..63,T@:0..1=0]
+            {38k,158,msb}<1,-31|1,-47>(1:1,T:1,D:3,F:6,1,-45m)* {}[D:0..7,F:0..63, T@:0..1=0]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'recs80']">
          <xsl:text xml:space="preserve">begin remote
@@ -4820,7 +5044,7 @@ end remote
 
       <!-- ################## Protocol RECS80-0045 ################ -->
       <!-- IRP: 
-            {38k,158,msb}<1,-31|1,-47>(1:1,T:1,D:3,F:6,1,-45m)*[D:0..7,F:0..63,T@:0..1=0]
+            {38k,158,msb}<1,-31|1,-47>(1:1,T:1,D:3,F:6,1,-45m)* [D:0..7,F:0..63, T@:0..1=0]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'recs80-0045']">
          <xsl:text xml:space="preserve">begin remote
@@ -4880,7 +5104,7 @@ end remote
 
       <!-- ################## Protocol RECS80-0068 ################ -->
       <!-- IRP: 
-            {33.3k,180,msb}<1,-31|1,-47>(1:1,T:1,D:3,F:6,1,^138m)*[D:0..7,F:0..63,T@:0..1=0]
+            {33.3k,180,msb}<1,-31|1,-47>(1:1,T:1,D:3,F:6,1,^138m)* [D:0..7,F:0..63, T@:0..1=0]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'recs80-0068']">
          <xsl:text xml:space="preserve">begin remote
@@ -4940,7 +5164,7 @@ end remote
 
       <!-- ################## Protocol RECS80-0090 ################ -->
       <!-- IRP: 
-            {0k,158,msb}<1,-31|1,-47>(1:1,T:1,D:3,F:6,1,^138m)*[D:0..7,F:0..63,T@:0..1=0]
+            {0k,158,msb}<1,-31|1,-47>(1:1,T:1,D:3,F:6,1,^138m)* [D:0..7,F:0..63, T@:0..1=0]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'recs80-0090']">
          <xsl:text xml:space="preserve">begin remote
@@ -5048,7 +5272,7 @@ end remote
 
       <!-- ################## Protocol Roku ################ -->
       <!-- IRP: 
-            {38.0k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:7,0:1,~F:7,1:1,1,^108m,(16,-8,D:8,S:8,F:7,1:1,~F:7,0:1,1,^108m)*)[D:0..255,S:0..255=255-D,F:0..127]
+            {38.0k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:7,0:1,~F:7,1:1,1,^108m, (16,-8,D:8,S:8,F:7,1:1,~F:7,0:1,1,^108m)*)[D:0..255,S:0..255=255-D,F:0..127]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'roku']">
          <xsl:text># Warning: Protocol contains repeat elements that cannot be expressed in Lirc
@@ -5125,7 +5349,7 @@ end remote
 
       <!-- ################## Protocol Sampo ################ -->
       <!-- IRP: 
-            {38.4k,833}<1,-1|1,-3>(4,-4,D:6,F:6,S:6,~F:6,1,-39)*[D:0..63,S:0..63,F:0..63]
+            {38.4k, 833}<1,-1|1,-3>(4,-4,D:6,F:6,S:6,~F:6,1,-39)*[D:0..63,S:0..63,F:0..63]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'sampo']">
          <xsl:text xml:space="preserve">begin remote
@@ -5754,6 +5978,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
+      <!-- Protocol SonyDSP omitted: Expressions as bitfields not implemented yet -->
+      <!-- Protocol SonyDSP_relaxed omitted: Expressions as bitfields not implemented yet -->
 
       <!-- ################## Protocol StreamZap ################ -->
       <!-- IRP: 
@@ -5855,7 +6081,7 @@ end remote
 
       <!-- ################## Protocol Sunfire ################ -->
       <!-- IRP: 
-            {38k,560,msb}<1,-1|3,-1>(16,-8,D:4,F:8,~D:4,~F:8,-32)*[D:0..15,F:0..255]
+            {38k,560,msb}<1,-1|3,-1>(16,-8, D:4,F:8,~D:4,~F:8, -32)*[D:0..15,F:0..255]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'sunfire']">
          <xsl:text xml:space="preserve">begin remote
@@ -6060,7 +6286,7 @@ end remote
 
       <!-- ################## Protocol Thomson7 ################ -->
       <!-- IRP: 
-            {33k,500}<1,-4|1,-9>((D:4,T:1,F:7,1,^80m)*,T=1-T)[D:0..15,F:0..127,T@:0..1=0]
+            {33k,500}<1,-4|1,-9>((D:4,T:1,F:7,1,^80m)*,T=1-T) [D:0..15,F:0..127,T@:0..1=0]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'thomson7']">
          <xsl:text xml:space="preserve">begin remote
@@ -6120,7 +6346,7 @@ end remote
 
       <!-- ################## Protocol Tivo ################ -->
       <!-- IRP: 
-            {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,U:4,~F:4:4,1,-78,(16,-4,1,-173)*)[D:133..133=133,S:48..48=48,F:0..255,U:0..15]
+            {38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,U:4,~F:4:4,1,-78,(16,-4,1,-173)*) [D:133..133=133,S:48..48=48,F:0..255,U:0..15]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'tivo']">
          <xsl:text xml:space="preserve">begin remote
@@ -6185,7 +6411,7 @@ end remote
 
       <!-- ################## Protocol Velleman ################ -->
       <!-- IRP: 
-            {38k,msb}<700,-5060|700,-7590>(1:1,T:1,D:3,F:6,700,-55m)*[D:0..7,F:0..63,T@:0..1=0]
+            {38k,msb}<700,-5060|700,-7590>(1:1,T:1,D:3,F:6,700,-55m)* [D:0..7,F:0..63,T@:0..1=0]
          -->
       <xsl:template match="girr:commandSet[girr:command/girr:parameters/@protocol = 'velleman']">
          <xsl:text xml:space="preserve">begin remote
@@ -6516,7 +6742,6 @@ end remote
       <!-- Protocol XMPff omitted: Non-constant definitions not yet implemented -->
       <!-- Protocol XMPff-1 omitted: Non-constant definitions not yet implemented -->
       <!-- Protocol XMPff-2 omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol XMPMeta omitted: Non-constant definitions not yet implemented -->
       <!-- Protocol Zaptor-36 omitted: Non-constant definitions not yet implemented -->
       <!-- Protocol Zaptor-56 omitted: Non-constant definitions not yet implemented -->
       <!-- Protocol Zenith omitted: Hierarchical BitspecIrStreams -->
