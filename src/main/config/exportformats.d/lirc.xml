@@ -88,7 +88,7 @@ end remote
          <xsl:text xml:space="preserve"> not renderable, skipped
 </xsl:text>
       </xsl:template>
-      <xsl:template match="girr:command[raw]">
+      <xsl:template match="girr:command[girr:raw]">
          <xsl:text>		name </xsl:text>
          <xsl:value-of select="translate(@name, ' ', '_')"/>
          <xsl:text xml:space="preserve">
