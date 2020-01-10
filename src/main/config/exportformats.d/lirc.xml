@@ -6,6 +6,9 @@
             Command- and remote names are required just to consist of
             non-whitespace characters. We therefore use translate(*, ' ', '_')
             instead of something more elaborate.
+
+            Generating program: IrpTransmogrifier version 1.2.4-SNAPSHOT
+            IRP database version: 2019-12-22
 -->
 <exportformats:exportformat xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
@@ -583,7 +586,7 @@ end remote
          <xsl:text>
 	bits		5
 	flags		SPACE_ENC
-	eps		30
+	eps		10
 	aeps		100
 	zero		12	3300
 	one		12	4700
@@ -678,7 +681,7 @@ end remote
 	bits		11
 	flags		SPACE_ENC
 	eps		30
-	aeps		100
+	aeps		60
 	zero		10	50
 	one		10	150
 	header		10	250
@@ -916,8 +919,8 @@ end remote
          <xsl:text>
 	bits		2
 	flags		SPACE_ENC
-	eps		30
-	aeps		100
+	eps		10
+	aeps		50
 	zero	
 	one	
 	frequency	33000
@@ -3311,7 +3314,7 @@ end remote
          <xsl:text>
 	bits		24
 	flags		RCMM|CONST_LENGTH
-	eps		30
+	eps		4
 	aeps		100
 	zero		168	280
 	one		168	448
@@ -3363,7 +3366,7 @@ end remote
          <xsl:text>
 	bits		12
 	flags		RCMM|CONST_LENGTH
-	eps		30
+	eps		4
 	aeps		100
 	zero		168	280
 	one		168	448
@@ -3412,8 +3415,8 @@ end remote
          <xsl:text>
 	bits		32
 	flags		RCMM|CONST_LENGTH
-	eps		30
-	aeps		100
+	eps		4
+	aeps		50
 	zero		168	280
 	one		168	448
 	two		168	616
@@ -4406,7 +4409,7 @@ end remote
          <xsl:text>
 	bits		19
 	flags		RC5|CONST_LENGTH
-	eps		30
+	eps		10
 	aeps		100
 	zero		889	889
 	one		889	889
@@ -4472,7 +4475,7 @@ end remote
 	bits		21
 	flags		RC5|CONST_LENGTH
 	eps		30
-	aeps		100
+	aeps		300
 	zero		444	444
 	one		444	444
 	header		2664	888
@@ -4531,7 +4534,7 @@ end remote
 	bits		25
 	flags		RC5
 	eps		30
-	aeps		100
+	aeps		300
 	zero		444	444
 	one		444	444
 	header		2664	888
@@ -4595,7 +4598,7 @@ end remote
 	bits		21
 	flags		RC5|CONST_LENGTH
 	eps		30
-	aeps		100
+	aeps		300
 	zero		444	444
 	one		444	444
 	header		2664	888
@@ -4659,7 +4662,7 @@ end remote
 	bits		33
 	flags		RC5
 	eps		30
-	aeps		100
+	aeps		300
 	zero		444	444
 	one		444	444
 	header		2664	888
@@ -4728,7 +4731,7 @@ end remote
 	bits		37
 	flags		RC5|CONST_LENGTH
 	eps		30
-	aeps		100
+	aeps		300
 	zero		444	444
 	one		444	444
 	header		2664	888
@@ -5509,7 +5512,7 @@ end remote
          <xsl:text>
 	bits		36
 	flags		SPACE_ENC|CONST_LENGTH
-	eps		30
+	eps		20
 	aeps		100
 	zero		560	560
 	one		560	1680
