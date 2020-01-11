@@ -32,6 +32,7 @@ import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.ircore.OddSequenceLengthException;
 import org.harctoolbox.irp.BitDirection;
 import org.harctoolbox.irp.Decoder;
+import org.harctoolbox.irp.ElementaryDecode;
 import org.harctoolbox.irp.IrpException;
 import org.harctoolbox.irp.Protocol;
 
@@ -135,7 +136,7 @@ public class RawIrSignal extends NamedIrSignal {
 
     private IrSignal irSignal = null;
     private String analyzerString = null;
-    private Decoder.SimpleDecodesSet decodes = null; // null: no decoding attempted; isEmpty: tried decoding, but no decode found
+    private Decoder.AbstractDecodesCollection<? extends ElementaryDecode> decodes = null; // null: no decoding attempted; isEmpty: tried decoding, but no decode found
 
     public RawIrSignal(IrSignal irSignal, String name, String comment) {
         super(name, comment);
@@ -159,7 +160,7 @@ public class RawIrSignal extends NamedIrSignal {
         this(new IrSignal(), "", "");
     }
 
-    private void setIrSignal(IrSignal irSignal, Decoder.SimpleDecodesSet decodes) {
+    private void setIrSignal(IrSignal irSignal, Decoder.AbstractDecodesCollection<? extends ElementaryDecode> decodes) {
         this.irSignal = irSignal;
         this.decodes = decodes;
         if (invokeAnalyzer) {
@@ -176,7 +177,7 @@ public class RawIrSignal extends NamedIrSignal {
     }
 
     private void setIrSignal(IrSignal irSignal) {
-        setIrSignal(irSignal, invokeDecoder ? decoder.decodeIrSignal(irSignal, decoderParameters) : null);
+        setIrSignal(irSignal, invokeDecoder ? decoder.decodeLoose(irSignal, decoderParameters) : null);
     }
 
     private void setIrSignal(ModulatedIrSequence irSequence) {
@@ -279,6 +280,8 @@ public class RawIrSignal extends NamedIrSignal {
         public static final int posRepetition = 3;
         public static final int posEnding = 4;
         public static final int posName = 5;
+        public static final int posDecode = 6;
+        public static final int posAnalyze = 7;
         public static final int posVerified = 8;
         public static final int posComment = 9;
         public static final int posFrequency = 10;
@@ -305,7 +308,7 @@ public class RawIrSignal extends NamedIrSignal {
 
         @Override
         public boolean isEditable(int i) {
-            return i > posEnding;
+            return i > posDate && i != posDecode && i != posAnalyze;
         }
 
         @Override
@@ -413,8 +416,10 @@ public class RawIrSignal extends NamedIrSignal {
                         rawIrSignal.setFrequency((Integer)getValueAt(row, column));
                         break;
                     default:
-                        throw new InternalError();
+                        return; // !!
                 }
+                setValueAt(rawIrSignal.getDecodeString(), row, CapturedIrSignalColumns.posDecode);
+                setValueAt(rawIrSignal.getAnalyzerString(), row, CapturedIrSignalColumns.posAnalyze);
             } catch (NumberFormatException ex) {
                 System.err.println(ex.getMessage()); // FIXME; (good for now)
             }
