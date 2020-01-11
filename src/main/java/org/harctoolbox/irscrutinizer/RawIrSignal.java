@@ -219,6 +219,7 @@ public class RawIrSignal extends NamedIrSignal {
     public void setIntroSequence(String str) {
         try {
             IrSignal sig = new IrSignal(new IrSequence(str), irSignal.getRepeatSequence(), irSignal.getEndingSequence(), irSignal.getFrequency(), irSignal.getDutyCycle());
+            setIrSignal(sig);
         } catch (OddSequenceLengthException | NumberFormatException ex) {
             // TODO
         }
