@@ -9094,7 +9094,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 column = table.convertColumnIndexToModel(column);
                 Object thing = table.getModel().getValueAt(row, column);
                 editingTextField.setText(thing != null ? thing.toString() : null);
-                editingTextField.setEditable(parameterTableModel.isCellEditable(row, column));
+                editingTextField.setEditable(table.getModel().isCellEditable(row, column));
                 //editingTextField.setEnabled(parameterTableModel.getColumnClass(column) != Boolean.class);
             }
         }
