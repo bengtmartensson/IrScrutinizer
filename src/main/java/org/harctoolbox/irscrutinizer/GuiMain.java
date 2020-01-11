@@ -88,6 +88,7 @@ import org.harctoolbox.ircore.Pronto;
 import org.harctoolbox.ircore.ThisCannotHappenException;
 import org.harctoolbox.irp.BitDirection;
 import org.harctoolbox.irp.Decoder;
+import org.harctoolbox.irp.ElementaryDecode;
 import org.harctoolbox.irp.IrpDatabase;
 import org.harctoolbox.irp.IrpException;
 import org.harctoolbox.irp.IrpParseException;
@@ -1131,9 +1132,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setDecodeIrParameters(IrSignal irSignal) {
-        Iterable<Decoder.Decode> decodes = irSignal.introOnly() || irSignal.repeatOnly()
-                ? decodeIrSequence(irSignal.toModulatedIrSequence())
-                : decodeIrSignal(irSignal);
+        Decoder.AbstractDecodesCollection<? extends ElementaryDecode> decodes = decoder.decodeLoose(irSignal, decoderParameters);
         setDecodeResult(decodes);
     }
 
@@ -1150,8 +1149,8 @@ public final class GuiMain extends javax.swing.JFrame {
         return decodes;
     }
 
-    private void setDecodeResult(Iterable<Decoder.Decode> decodes) {
-        Iterator<Decoder.Decode> iterator = decodes.iterator();
+    private void setDecodeResult(Decoder.AbstractDecodesCollection<? extends ElementaryDecode> decodes) {
+        Iterator<? extends ElementaryDecode> iterator = decodes.iterator();
         if (!iterator.hasNext()) {
             decodeIRTextField.setText("");
             return;
@@ -1159,7 +1158,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
         int index = 0;
         StringBuilder decodeString = new StringBuilder(40);
-        for (Decoder.Decode decode : decodes) {
+        for (ElementaryDecode decode : decodes) {
             if (index == 0)
                 decodeString.append(decode.toString());
             if (properties.getPrintDecodesToConsole())
