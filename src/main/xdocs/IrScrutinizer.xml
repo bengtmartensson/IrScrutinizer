@@ -188,7 +188,7 @@ License Version 1.0</a>.</p>
 to its web site copyright 1999 by Karsten Scheibler
 and Christoph Bartelmus (with contribution of may others), and is licensed
 under GPL2. The parts used here have been translated to Java by myself,
-available <a href="Jirc.html">here</a>.</p>
+available <a href="https://github.com/bengtmartensson/Jirc">here</a>.</p>
 
 
 <p>Tonto was written by Stewart Allen, and is licensed under the
@@ -762,7 +762,7 @@ IrScrutinizer. The importer is capable of importing directory hierarchies.</p>
 
 <section><title>Lirc</title>
 <p>The <a href="Glossary.html#Lirc">Lirc</a> import feature is based upon <a
-href="Jirc.html">Jirc</a>, which is basically a subset of Lirc translated into Java.
+href="https://github.com/bengtmartensson/Jirc">Jirc</a>, which is basically a subset of Lirc translated into Java.
 The Lirc importer can even import a file
 system hierarchy by selecting the top directory as File/URL. (Importing the
 entire lirc.org database with over 100000 commands takes around 1 minute and 1GB
