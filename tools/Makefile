@@ -9,6 +9,7 @@ MYDIR := $(dir $(firstword $(MAKEFILE_LIST)))
 TOP := $(realpath $(MYDIR)..)
 GH_PAGES := $(TOP)/gh-pages
 ORIGINURL := $(shell git remote get-url origin)
+PROJECT_NAME := IrScrutinizer
 
 VERSION=$(shell cat $(TOP)/target/$(MYPROG).version | cut  --delimiter=' ' -f 3)
 
@@ -21,6 +22,16 @@ $(IRSCRUTINIZER_JAR):
 
 apidoc javadoc: target/site/apidocs/index.html
 	$(BROWSE) $<
+
+version:
+	@echo $(VERSION)
+
+push:
+	git push
+
+setversion:
+	mvn versions:set -DnewVersion=$(NEWVERSION)
+	git commit -S -m "Set version to $(NEWVERSION)" pom.xml src/main/doc/$(PROJECT_NAME).releasenotes.txt
 
 target/site/apidocs/index.html:
 	mvn javadoc:javadoc
