@@ -15,7 +15,8 @@ script:
 #- tools/build-Girr.sh
 #- tools/build-Jirc.sh
 #- tools/build-DevSlashLirc.sh
-#- tools/build-HarcHardwareBundle.sh
+- tools/build-RXTX.sh
+- tools/build-HarcHardware.sh
 - tools/build-tonto.sh -n
 - tools/get-jdk.sh linux
 - wget --quiet http://www.harctoolbox.org/downloads/jre-x64-macOS.tar.gz
