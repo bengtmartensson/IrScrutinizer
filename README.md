@@ -4,8 +4,6 @@ analyzing, importing, and exporting of infrared (IR) signals.
 
 ![](screenshot.png)
 
-The GitHub project name (harctoolboxbundle) has historic reasons.
-
 Author: Bengt Martensson.
 See also the [project home page](http://www.harctoolbox.org).
 
@@ -15,11 +13,11 @@ Copyright (c) Bengt Martenson 2010-2019.
 Licensed under the [GPL version 3](http://www.gnu.org/licenses/gpl.html) license or later.
 Some contained third-party components have different, but compatible, licenses. This is documented elsewhere.
 
-## Status
+## Repository
 
-At the time of this writing, the 2.0.0 version is rapidly approaching its official release.
-Previous versions are available [here](https://github.com/bengtmartensson/harctoolboxbundle/releases).
-Very old versions can be found [here](http://www.harctoolbox.org/downloads/index.html).
+The GitHub repository name (harctoolboxbundle) is now misleading.
+It has historic reasons. Since it is widely spread, for example as a download address,
+I have decided not to change it.
 
 ## Documentation
 The reference manual is included in the distributions.
@@ -28,7 +26,7 @@ It can be read online [here](http://www.harctoolbox.org/IrScrutinizer.html).
 A tutorial can be found [here](http://www.hifi-remote.com/wiki/index.php?title=IrScrutinizer_Guide).
 
 API documentation is found [here](https://bengtmartensson.github.io/harctoolboxbundle/)
-(development version only).
+(current version only).
 
 ## Installation
 
