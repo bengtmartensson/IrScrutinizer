@@ -28,6 +28,7 @@ import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.ircore.IrSignalParser;
 import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.ircore.MultiParser;
+import org.harctoolbox.irp.ShortProntoParser;
 
 public class InterpretString {
 
@@ -60,6 +61,7 @@ public class InterpretString {
     public static IrSignal interpretString(String line, Double fallbackFrequency, Double dummyGap, boolean invokeRepeatFinder, boolean invokeCleaner, Double absoluteTolerance, Double relativeTolerance, Double minRepeatLastGap) throws InvalidArgumentException {
         List<IrSignalParser> parsers = MultiParser.ircoreParsersList(line);
         parsers.add(0, new GlobalCacheParser(line));
+        parsers.add(1, new ShortProntoParser(line));
         if (invokeRepeatFinder) {
             RepeatFinderParser parser = new RepeatFinderParser(parsers, line, absoluteTolerance, relativeTolerance, minRepeatLastGap);
             return invokeCleaner ? parser.toIrSignalClean(fallbackFrequency, dummyGap) : parser.toIrSignal(fallbackFrequency, dummyGap);
