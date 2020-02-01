@@ -74,7 +74,10 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
 
     @Override
     public String[][] getFileExtensions() {
-        return new String[][]{ new String[]{ "Pronto (classic) save files (*.ccf)", "ccf" }};
+        return new String[][]{
+            new String[]{ "Pronto (classic) save files (*.ccf)", "ccf"},
+            new String[]{ "Zip files (*.zip)", "zip"}
+        };
     }
 
     private Remote loadDevice(CCFDevice dev) {
