@@ -157,9 +157,9 @@ public final class GuiMain extends javax.swing.JFrame {
     private transient Remote.MetaData metaData = new Remote.MetaData("unnamed");
 
     private final static String feedbackMail = "feedback@harctoolbox.org";
-    private final static String issuesUrl = "https://github.com/bengtmartensson/harctoolboxbundle/issues";
-    private final static String gitUrl = "https://github.com/bengtmartensson/harctoolboxbundle/";
-    private final static String downloadsUrl = "https://github.com/bengtmartensson/harctoolboxbundle/releases";
+    private final static String issuesUrl = "https://github.com/bengtmartensson/IrScrutinizer/issues";
+    private final static String gitUrl = "https://github.com/bengtmartensson/IrScrutinizer/";
+    private final static String downloadsUrl = "https://github.com/bengtmartensson/IrScrutinizer/releases";
     private final static int importSequenceAskThreshold = 3;
     private final static int maxCharsInGuiMessages = 150;
     private final static int transmitSignalMouseButton = 2;

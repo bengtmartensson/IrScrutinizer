@@ -3,11 +3,11 @@
 # Building from sources
 
 "IrScrutinizer" is one subproject (corresponding to a Java _package_) within [harctoolbox.org](http://harctoolbox.org).
-    It depends on several other subprojects within harctoolbox. The project `harctoolboxbundle` consists
+    It depends on several other subprojects within harctoolbox. The repository `IrScrutinizer` consists
     of this subproject.
 
-The released versions are found on the [download page](https://github.com/bengtmartensson/harctoolboxbundle/releases).
-    The development sources are maintained on [my GitHub repository](https://github.com/bengtmartensson/harctoolboxbundle).
+The released versions are found on the [download page](https://github.com/bengtmartensson/IrScrutinizer/releases).
+    The development sources are maintained on [my GitHub repository](https://github.com/bengtmartensson/IrScrutinizer).
     Forking and pull requests are welcome!
 
 I go to great lengths ensuring that the program runs equally well on all supported platforms.

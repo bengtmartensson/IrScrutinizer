@@ -109,9 +109,9 @@ depict the current program completely accurately. They come from different
 versions of  the program, using different platforms (Linux and Windows), and
 using different "look and feels".</p>
 
-<p>Sources are hosted on <a href="https://github.com/bengtmartensson/harctoolboxbundle">Github</a>.
+<p>Sources are hosted on <a href="https://github.com/bengtmartensson/IrScrutinizer">Github</a>.
 Bugreports are enhancement requests are welcome (e.g. as
-<a href="https://github.com/bengtmartensson/harctoolboxbundle/issues">issues</a>),
+<a href="https://github.com/bengtmartensson/IrScrutinizer/issues">issues</a>),
 as is contributions (code, documentation, use cases, protocols etc.).
 </p>
 
@@ -261,8 +261,8 @@ parameters.</dd>
 <title>Installation</title>
 <section>
     <title>Download</title>
-    <p>The latest official release is always <a href="https://github.com/bengtmartensson/harctoolboxbundle/releases/latest">available here</a>.</p>
-<p>In addition, there are <a href="https://github.com/bengtmartensson/harctoolboxbundle/releases/tag/ci-build">continuous integration builds</a>,
+    <p>The latest official release is always <a href="https://github.com/bengtmartensson/IrScrutinizer/releases/latest">available here</a>.</p>
+<p>In addition, there are <a href="https://github.com/bengtmartensson/IrScrutinizer/releases/tag/ci-build">continuous integration builds</a>,
     at least most of the time. These are build from a snapshot of the current sources. Because of this, they are more likely to be unstable, contain bugs,
     or even to be outright useless.
     </p>
@@ -289,7 +289,7 @@ directory is not written to, and thus can be read-only as soon as the installati
 <section><title>Windows</title>
 <p>First make sure that the current Java is installed.</p>
 <p>Download the <a
-href="https://github.com/bengtmartensson/harctoolboxbundle/releases/latest">Window setup
+href="https://github.com/bengtmartensson/IrScrutinizer/releases/latest">Window setup
 file</a> and double click it. Select any installation
 directory you like; suggested is <code>C:\Program Files\IrScrutinizer</code>,
 unless you can not install with administrator rights. Unless
@@ -1580,11 +1580,11 @@ necessary adaptations.
 <section id="building-from-sources">
     <title>Appendix. Building from sources</title>
     <p>"IrScrutinizer" is one subproject (corresponding to a Java <em>package</em>) within <a href="http://harctoolbox.org">harctoolbox.org</a>.
-    It depends on several other subprojects within harctoolbox. The project <code>harctoolboxbundle</code> consists
+    It depends on several other subprojects within harctoolbox. The repository <code>IrScrutinizer</code> consists
     of this subproject.</p>
 
-    <p>The released versions are found on the <a href="https://github.com/bengtmartensson/harctoolboxbundle/releases">download page</a>.
-    The development sources are maintained on <a href="https://github.com/bengtmartensson/harctoolboxbundle">my GitHub repository</a>.
+    <p>The released versions are found on the <a href="https://github.com/bengtmartensson/IrScrutinizer/releases">download page</a>.
+    The development sources are maintained on <a href="https://github.com/bengtmartensson/IrScrutinizer">my GitHub repository</a>.
     Forking and pull requests are welcome!</p>
 
     <p>I go to great lengths ensuring that the program runs equally well on all supported platforms.
