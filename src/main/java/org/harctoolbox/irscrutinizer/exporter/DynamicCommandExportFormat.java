@@ -43,12 +43,11 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
 
 
     public DynamicCommandExportFormat(Element el, String documentURI) {
-        super();
+        super(Boolean.parseBoolean(el.getAttribute("executable")), el.getAttribute("encoding"));
         this.formatName = el.getAttribute("name");
         this.extension = el.getAttribute("extension");
         this.simpleSequence = Boolean.parseBoolean(el.getAttribute("simpleSequence"));
         this.binary = Boolean.parseBoolean(el.getAttribute("binary"));
-        setExecutable(Boolean.parseBoolean(el.getAttribute("executable")));
         xslt = XmlUtils.newDocument(true);
         xslt.setDocumentURI(documentURI);
         Node stylesheet = el.getElementsByTagName("xsl:stylesheet").item(0);
@@ -92,7 +91,7 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
     }
 
     void export(Document document, String fileName, String charsetName, int noRepeats) throws IOException, TransformerException {
-        try (OutputStream out = IrCoreUtils.getPrintSteam(fileName)) {
+        try (OutputStream out = IrCoreUtils.getPrintStream(fileName, charsetName)) {
             Map<String, String> parameters = new HashMap<>(1);
             parameters.put("noRepeats", Integer.toString(noRepeats));
             XmlUtils.printDOM(out, document, charsetName, xslt, parameters, binary);

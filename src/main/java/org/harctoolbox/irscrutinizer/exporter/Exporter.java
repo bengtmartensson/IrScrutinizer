@@ -82,10 +82,12 @@ public abstract class Exporter {
         lastSaveFile = theLastSaveFile;
     }
 
-    private boolean executable;
+    private final boolean executable;
+    private final String encoding;
 
-    protected Exporter() {
-        executable = false;
+    protected Exporter(boolean executable, String encoding) {
+        this.executable = executable;
+        this.encoding = encoding;
     }
 
     protected void possiblyMakeExecutable(File file) {
@@ -93,8 +95,8 @@ public abstract class Exporter {
             file.setExecutable(true, false);
     }
 
-    protected void setExecutable(boolean executable) {
-        this.executable = executable;
+    public String getEncoding() {
+        return encoding;
     }
 
     public String getDateFormatString() {

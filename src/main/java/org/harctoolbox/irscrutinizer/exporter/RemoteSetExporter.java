@@ -40,11 +40,19 @@ public abstract class RemoteSetExporter extends Exporter {
     protected String creatingUser;
 
     protected  RemoteSetExporter() {
-        this(System.getProperty("user.name", "unknown"));
+        this(false, null);
     }
 
-    protected RemoteSetExporter(String creatingUser) {
-        super();
+    protected  RemoteSetExporter(boolean executable, String encoding) {
+        this(System.getProperty("user.name", "unknown"), executable, encoding);
+    }
+
+    protected  RemoteSetExporter(String creatingUser) {
+        this(creatingUser, false, null);
+    }
+
+    protected RemoteSetExporter(String creatingUser, boolean executable, String encoding) {
+        super(executable, encoding);
         this.creatingUser = creatingUser;
     }
 

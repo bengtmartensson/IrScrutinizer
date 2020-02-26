@@ -181,13 +181,12 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     private final Document xslt;
 
     private DynamicRemoteSetExportFormat(Element el, String documentURI) {
-        super();
+        super(Boolean.parseBoolean(el.getAttribute("executable")), el.getAttribute("encoding"));
         this.formatName = el.getAttribute("name");
         this.extension = el.getAttribute("extension");
         this.simpleSequence = Boolean.parseBoolean(el.getAttribute("simpleSequence"));
         this.binary = Boolean.parseBoolean(el.getAttribute("binary"));
         this.metadata = Boolean.parseBoolean(el.getAttribute("metadata"));
-        setExecutable(Boolean.parseBoolean(el.getAttribute("executable")));
 
         xslt = XmlUtils.newDocument(true);
         xslt.setDocumentURI(documentURI);
@@ -221,11 +220,11 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName) throws IOException, TransformerException {
-        export(remoteSet, title, count, saveFile.getCanonicalPath(), charsetName);
+    public void export(RemoteSet remoteSet, String title, int count, File saveFile, String encoding) throws IOException, TransformerException {
+        export(remoteSet, title, count, saveFile.getCanonicalPath(), encoding);
     }
 
-    private void export(RemoteSet remoteSet, String title, int count, String fileName, String charsetName) throws IOException, TransformerException {
+    private void export(RemoteSet remoteSet, String title, int count, String fileName, String encoding) throws IOException, TransformerException {
         Document document = remoteSet.toDocument(title,
                 null,
                 null,
@@ -235,18 +234,19 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
                 true, //generateCcf,
                 true //generateParameters)
         );
-        export(document, fileName, charsetName);
+        export(document, fileName, encoding);
     }
 
-    private void export(Document document, String fileName, String charsetName) throws IOException, TransformerException {
-        try (OutputStream out = IrCoreUtils.getPrintSteam(fileName)) {
-            XmlUtils.printDOM(out, document, charsetName, xslt, standardParameter(charsetName), binary);
+    private void export(Document document, String fileName, String wantedEncoding) throws IOException, TransformerException {
+        String encoding = (getEncoding() == null || getEncoding().isEmpty()) ? wantedEncoding : getEncoding();
+        try (OutputStream out = IrCoreUtils.getPrintStream(fileName, encoding)) {
+            XmlUtils.printDOM(out, document, encoding, xslt, standardParameter(encoding), binary);
         }
     }
 
-    private Map<String, String> standardParameter(String charsetName) {
+    private Map<String, String> standardParameter(String encoding) {
         Map<String, String> parameters = new HashMap<>(8);
-        parameters.put("encoding", "'" + charsetName + "'");
+        parameters.put("encoding", "'" + encoding + "'");
         parameters.put("creatingUser", "'" + creatingUser + "'");
         parameters.put("creatingTool", "'" + org.harctoolbox.irscrutinizer.Version.versionString + "'");
         parameters.put("creatingDate", "'" + (new Date()).toString() + "'");

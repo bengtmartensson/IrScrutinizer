@@ -31,7 +31,11 @@ import org.harctoolbox.irp.IrpException;
 public abstract class CommandExporter extends Exporter {
 
     protected CommandExporter() {
-        super();
+        super(false, null);
+    }
+
+    protected CommandExporter(boolean executable, String encoding) {
+        super(executable, encoding);
     }
 
     public abstract void export(Command command, String source, String title, int repeatCount, File exportFile, String charsetName)
