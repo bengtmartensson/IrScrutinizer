@@ -19,13 +19,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <exportformats:exportformat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
                             xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
-                            name="RemoteMaster" extension="rmdu" multiSignal="true" simpleSequence="false">
+                            name="RemoteMaster" extension="rmdu" multiSignal="true" simpleSequence="false" metadata="true" encoding="us-ascii">
 <xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:java="http://xml.apache.org/xalan/java" version="1.0">
-    <xsl:output method="text" />
+    <xsl:output method="text" encoding="us-ascii"/>
 
     <xsl:template match="/">
         <xsl:apply-templates select="girr:remotes/girr:remote[1]"/> <!-- just consider the first remote -->
+    </xsl:template>
+
+    <xsl:variable name="protocols" select="//girr:parameters/@protocol" />
+    <xsl:key name="protocol" match="girr:parameters/@protocol" use="." />
+
+    <xsl:template name="unique-protocols">
+        <xsl:for-each select="$protocols">
+            <xsl:if test="generate-id() = generate-id($protocols[. = current()][1])">
+                <xsl:text> </xsl:text>
+                <xsl:value-of select="."/>
+            </xsl:if>
+        </xsl:for-each>
     </xsl:template>
 
     <xsl:template match="girr:remote">
@@ -37,18 +49,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # Then open this file with RemoteMaster, and select a sensible executor
 # (called protocol in RemoteMaster).
 #
-# Original protocol(s): </xsl:text>
-        <xsl:apply-templates select="girr:commandSet//girr:parameters" mode="protocol"/>
+# This file is strictly US-ASCII.
+#
+# Original protocol(s):</xsl:text>
+        <xsl:call-template name="unique-protocols"/>
         <xsl:text>
 #
 Description=</xsl:text>
-        <xsl:value-of select="@name"/>
-        <xsl:text>
-Notes=</xsl:text>
-        <xsl:value-of select="@comment"/>
-        <xsl:text>\n\nOriginal protocol(s): </xsl:text>
-        <xsl:apply-templates select="girr:commandSet//girr:parameters" mode="protocol"/>
-        <xsl:text>
+<xsl:if test="@name = ''">
+    <xsl:value-of select="@displayName"/>
+</xsl:if>
+<xsl:if test="@name != ''">
+    <xsl:value-of select="@name"/>
+</xsl:if>
+<xsl:text>
+Notes=\
+Creating tool: </xsl:text>
+<xsl:value-of select="$creatingTool"/>
+<xsl:text>\n\Creating user: </xsl:text>
+<xsl:value-of select="$creatingUser"/>
+<xsl:text>\n\
+Creating date: </xsl:text>
+<xsl:value-of select="$creatingDate"/>
+<xsl:text>\n\nManufacturer: </xsl:text>
+<xsl:value-of select="@manufacturer"/>
+<xsl:text>\nModel: </xsl:text>
+<xsl:value-of select="@model"/>
+<xsl:text>\nDevice Class: </xsl:text>
+<xsl:value-of select="@deviceClass"/>
+<xsl:text>\nRemotename: </xsl:text>
+<xsl:value-of select="@remoteName"/>
+<xsl:text>\n\nOriginal protocol(s):</xsl:text>
+<xsl:call-template name="unique-protocols"/>
+<xsl:text>
 Remote.name=URC-7781 One For All Digital 12
 Remote.signature=11311131
 DeviceType=Cable
@@ -79,13 +112,6 @@ Function.</xsl:text>
         <xsl:text>
 </xsl:text>
 
-    </xsl:template>
-
-    <xsl:template match="girr:parameters[@protocol]" mode="protocol">
-        <xsl:if test="position() &gt; 1">
-            <xsl:text>, </xsl:text>
-        </xsl:if>
-        <xsl:value-of select="@protocol"/>
     </xsl:template>
 
     <xsl:template match="@comment">
