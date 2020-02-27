@@ -4606,7 +4606,7 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        fColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "-1" }));
+        fColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
         fColumnComboBox.setSelectedItem(Integer.toString(properties.getFColumn()));
         fColumnComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -8258,8 +8258,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_parametrizedCsvSeparatorComboBoxActionPerformed
 
     private void fColumnComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fColumnComboBoxActionPerformed
-        int f = Integer.parseInt((String) fColumnComboBox.getSelectedItem());
-        properties.setFColumn(f);
+        properties.setFColumn(fColumnComboBox.getSelectedIndex());
     }//GEN-LAST:event_fColumnComboBoxActionPerformed
 
     private void girrSchemaLocationMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_girrSchemaLocationMenuItemActionPerformed

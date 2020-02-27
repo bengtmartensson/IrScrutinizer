@@ -159,9 +159,8 @@ public class CsvParametrizedImporter extends CsvImporter {
         String name = join(nameArray);
         Map<String, Long> parameters = new HashMap<>(3);
         long F = gobbleLong(chunks, fColumn, "F", nameColumn < fColumn ? offset : 0);
-        if (F == invalid)
-            return null;
-        parameters.put("F", F);
+        if (F != invalid)
+            parameters.put("F", F);
         long D = gobbleLong(chunks, dColumn, "D", nameColumn < dColumn ? offset : 0);
         if (D != invalid)
             parameters.put("D", D);
