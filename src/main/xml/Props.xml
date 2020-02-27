@@ -134,6 +134,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name='dColumn' type="int" default='"3"' doc='Column for D (device number) when parsing parametric files.'/>
     <property name='sColumn' type="int" default='"4"' doc='Column for S (subdevice number) when parsing parametric files.'/>
     <property name='fColumn' type="int" default='"5"' doc='Column for F (function number, OBC) when parsing parametric files.'/>
+    <property name='miscParametersColumn' type="int" default='"0"' doc='Column for Misc. Parameters when parsing parametric files.'/>
     <property name='parametricNumberBaseIndex' type="int" default='"2"' doc='Number base (index) for interpreting parametric files.'/>
     <property name="parametricSeparatorIndex" type="int" default='"0"' doc='Field separator for parsing parametric files.'/>
 

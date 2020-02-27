@@ -460,7 +460,8 @@ public final class GuiMain extends javax.swing.JFrame {
                 properties.getFColumn(),
                 properties.getDColumn(),
                 properties.getSColumn(),
-                properties.getProtocolColumn());
+                properties.getProtocolColumn(),
+                properties.getMiscParametersColumn());
 
         properties.addParametricSeparatorIndexChangeListener((String name1, Object oldValue, Object newValue) -> {
             csvParametrizedImporter.setSeparatorIndex((Integer) newValue);
@@ -2193,6 +2194,8 @@ public final class GuiMain extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
         parametrizedMultiColumnNameCheckBox = new javax.swing.JCheckBox();
+        miscParametersColumnComboBox = new javax.swing.JComboBox<>();
+        jLabel29 = new javax.swing.JLabel();
         waveImportPanel = new javax.swing.JPanel();
         waveFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, waveImporter);
         importWaveDivideCarrierCheckBox1 = new javax.swing.JCheckBox();
@@ -4651,7 +4654,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
         jLabel2.setText("Field separator");
 
-        jLabel23.setText("Number base");
+        jLabel23.setText("Radix");
 
         parametrizedMultiColumnNameCheckBox.setSelected(properties.getParametrizedNameMultiColumn());
         parametrizedMultiColumnNameCheckBox.setText("Multi col. name");
@@ -4661,57 +4664,66 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
+        miscParametersColumnComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
+        miscParametersColumnComboBox.setSelectedItem(Integer.toString(properties.getMiscParametersColumn()));
+        miscParametersColumnComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miscParametersColumnComboBoxActionPerformed(evt);
+            }
+        });
+
+        jLabel29.setText("Misc.");
+
         javax.swing.GroupLayout parametrizedCsvImportPanelLayout = new javax.swing.GroupLayout(parametrizedCsvImportPanel);
         parametrizedCsvImportPanel.setLayout(parametrizedCsvImportPanelLayout);
         parametrizedCsvImportPanelLayout.setHorizontalGroup(
             parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
-                                .addComponent(parametrizedNameColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(parametrizedMultiColumnNameCheckBox))
-                            .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(parametrizedNameColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
-                                .addComponent(protocolColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(dColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel20)))
-                        .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
-                                .addGap(19, 19, 19)
-                                .addComponent(jLabel21)
-                                .addGap(54, 54, 54)
-                                .addComponent(jLabel14))
-                            .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
-                                .addGap(12, 12, 12)
-                                .addComponent(sColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(fColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(jLabel2))
-                            .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(parametrizedCsvSeparatorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel23)
-                            .addComponent(parametrizedBaseComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(parametrizedMultiColumnNameCheckBox))
+                    .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
-                        .addComponent(csvParametrizedFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 144, Short.MAX_VALUE)
-                        .addComponent(importTextParametrizedHelpButton)))
+                        .addComponent(protocolColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(dColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel20)))
+                .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addComponent(jLabel21)
+                        .addGap(34, 34, 34)
+                        .addComponent(jLabel14)
+                        .addGap(46, 46, 46)
+                        .addComponent(jLabel29))
+                    .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(sColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(fColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(miscParametersColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(parametrizedCsvSeparatorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel23)
+                    .addComponent(parametrizedBaseComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(335, 335, 335))
+            .addGroup(parametrizedCsvImportPanelLayout.createSequentialGroup()
+                .addComponent(csvParametrizedFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(importTextParametrizedHelpButton)
                 .addContainerGap())
         );
         parametrizedCsvImportPanelLayout.setVerticalGroup(
@@ -4724,7 +4736,8 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(jLabel21)
                     .addComponent(jLabel14)
                     .addComponent(jLabel2)
-                    .addComponent(jLabel23))
+                    .addComponent(jLabel23)
+                    .addComponent(jLabel29))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(parametrizedNameColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -4734,10 +4747,11 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(fColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(parametrizedCsvSeparatorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(parametrizedMultiColumnNameCheckBox)
-                    .addComponent(parametrizedBaseComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(parametrizedBaseComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(miscParametersColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(csvParametrizedFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                    .addComponent(csvParametrizedFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, parametrizedCsvImportPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(importTextParametrizedHelpButton)
@@ -9648,6 +9662,10 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setAutoOpenExports(autoOpenExportsCheckBox.isSelected());
     }//GEN-LAST:event_autoOpenExportsCheckBoxActionPerformed
 
+    private void miscParametersColumnComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miscParametersColumnComboBoxActionPerformed
+        properties.setMiscParametersColumn(miscParametersColumnComboBox.getSelectedIndex());
+    }//GEN-LAST:event_miscParametersColumnComboBoxActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9951,6 +9969,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
@@ -10026,6 +10045,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem minLeadoutMenuItem;
     private javax.swing.JMenuItem minRepeatGapMenuItem;
+    private javax.swing.JComboBox<String> miscParametersColumnComboBox;
     private javax.swing.JLabel mode2CommandLabel;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<Mode2Importer> mode2FileImporterBean;
     private javax.swing.JPanel mode2ImportPanel;

@@ -29,10 +29,14 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrCoreUtils;
+import org.harctoolbox.irp.Expression;
+import org.harctoolbox.irp.NameEngine;
+import org.harctoolbox.irp.NameUnassignedException;
 
 /**
  * This class does something interesting and useful. Or not...
@@ -42,9 +46,9 @@ import org.harctoolbox.ircore.IrCoreUtils;
 public class CsvParametrizedImporter extends CsvImporter {
     public static Collection<Command> process(Reader reader,
             String separator, int nameColumn, boolean nameMultiColumn, String filename, boolean verbose, int base, int Fcolumn, int Dcolumn,
-            int Scolumn, int protocolColumn) throws IOException {
+            int Scolumn, int protocolColumn, int miscParametersColumn) throws IOException {
         CsvParametrizedImporter csvImportParametrized = new CsvParametrizedImporter(
-                separator, nameColumn, nameMultiColumn, verbose, base, Fcolumn, Dcolumn, Scolumn, protocolColumn);
+                separator, nameColumn, nameMultiColumn, verbose, base, Fcolumn, Dcolumn, Scolumn, protocolColumn, miscParametersColumn);
         csvImportParametrized.load(reader, filename);
         return csvImportParametrized.getCommands();
     }
@@ -52,7 +56,7 @@ public class CsvParametrizedImporter extends CsvImporter {
     public static void main(String[] args) {
         try {
             Reader r = new InputStreamReader(new FileInputStream(args[0]), Charset.forName("US-ASCII"));
-            Collection<Command> signals = process(r,",", 1, false, args[0], true, 10, 3, -1, -1, -1);
+            Collection<Command> signals = process(r,",", 1, false, args[0], true, 10, 3, -1, -1, -1, -1);
             signals.forEach((s) -> {
                 System.out.println(s.toString());
             });
@@ -65,22 +69,25 @@ public class CsvParametrizedImporter extends CsvImporter {
     private int fColumn;
     private int dColumn;
     private int sColumn;
+    private int miscParametersColumn = 4;
     private int protocolColumn;
+    private static final String protocolFallback = "NEC1"; // FIXME: make configurable!!
 
     public CsvParametrizedImporter(int separatorIndex, int nameColumn, boolean nameMultiColumn, boolean verbose, int base, int Fcolumn, int Dcolumn,
-            int Scolumn, int protocolColumn) {
+            int Scolumn, int protocolColumn, int miscParametersColumn) {
         this(CsvImporter.getSeparator(separatorIndex), nameColumn, nameMultiColumn, verbose, base, Fcolumn, Dcolumn,
-                Scolumn, protocolColumn);
+                Scolumn, protocolColumn, miscParametersColumn);
     }
 
     public CsvParametrizedImporter(String separator, int nameColumn, boolean nameMultiColumn, boolean verbose, int numberBase, int Fcolumn, int Dcolumn,
-            int Scolumn, int protocolColumn) {
+            int Scolumn, int protocolColumn, int miscParametersColumn) {
         super(separator, nameColumn, nameMultiColumn);
         this.numberBase = numberBase;
         this.fColumn = Fcolumn;
         this.dColumn = Dcolumn;
         this.sColumn = Scolumn;
         this.protocolColumn = protocolColumn;
+        this.miscParametersColumn = miscParametersColumn;
     }
 
     /**
@@ -142,7 +149,7 @@ public class CsvParametrizedImporter extends CsvImporter {
                 Command command = scrutinizeParameters(chunks, "Line " + lineNo + ", " + origin, rejectNumbers);
                 if (command != null)
                     addCommand(command);
-            } catch (GirrException ex) {
+            } catch (GirrException | NameUnassignedException | ParseCancellationException ex) {
                 if (isVerbose())
                     System.err.println("Errors parsing line " + lineNo + ": \"" + line + "\": " + ex.getMessage());
             }
@@ -151,7 +158,7 @@ public class CsvParametrizedImporter extends CsvImporter {
         setupRemoteSet();
     }
 
-    private Command scrutinizeParameters(String[] chunks, String sourceAsComment, boolean rejectNumbers) throws GirrException {
+    private Command scrutinizeParameters(String[] chunks, String sourceAsComment, boolean rejectNumbers) throws GirrException, NameUnassignedException {
         String[] nameArray = gobbleString(chunks, nameColumn, nameMultiColumn, numberBase, "-", rejectNumbers);
         if (nameArray == null || nameArray.length == 0)
             return null;
@@ -167,10 +174,25 @@ public class CsvParametrizedImporter extends CsvImporter {
         long S = gobbleLong(chunks, sColumn, "S", nameColumn < sColumn ? offset : 0);
         if (S != invalid)
             parameters.put("S", S);
+        NameEngine miscParameters = gobbleNameEngine(chunks, miscParametersColumn, nameColumn < miscParametersColumn ? offset : 0);
+        if (miscParameters != null)
+            for (Map.Entry<String, Expression> entry : miscParameters)
+                    parameters.put(entry.getKey(), entry.getValue().toLong());
 
-        String protocol = gobbleString(chunks, protocolColumn, "-", false, nameColumn < protocolColumn ? offset : 0);
-        //return new ParametrizedIrSignal(protocol, D, S, F, name, origin);
+        String protocol = gobbleString(chunks, protocolColumn, protocolFallback, false, nameColumn < protocolColumn ? offset : 0);
         return new Command(uniqueName(name), sourceAsComment, protocol, parameters);
+    }
+
+    private NameEngine gobbleNameEngine(String[] chunks, int column, int offset) {
+        if (column == 0)
+            return null;
+        int colIndex = column > 0 ? column - 1 + offset : chunks.length + column;
+
+        if (colIndex < chunks.length) {
+            String str = chunks[colIndex];
+            return NameEngine.parseLoose(str);
+        }
+        return null;
     }
 
     private long gobbleLong(String[] chunks, int column, String name, int offset) {
@@ -181,9 +203,7 @@ public class CsvParametrizedImporter extends CsvImporter {
         if (colIndex < chunks.length) {
             try {
                 String num = chunks[colIndex];
-                if (numberBase == 16 && num.startsWith("0x"))
-                    num = num.substring(2);
-                return Long.parseLong(num, numberBase);
+                return IrCoreUtils.parseLong(num, numberBase);
             } catch (NumberFormatException ex) {
                 if (isVerbose()) {
                     System.err.println("Errors parsing " + name + " (= " + chunks[colIndex] + ") in line " + lineNo);
