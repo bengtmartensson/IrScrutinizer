@@ -188,7 +188,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
         if (frequency < 0 && hasComplainedAboutMissingFrequency) {
             hasComplainedAboutMissingFrequency = true;
             frequency = (int) ModulatedIrSequence.DEFAULT_FREQUENCY;
-            logger.log(Level.WARNING, "Carrier_frequency missing, assuming " + frequency);
+            logger.log(Level.WARNING, "Carrier_frequency missing, assuming {0}", frequency);
         }
         ModulatedIrSequence seq = new ModulatedIrSequence(dataArray, (double) frequency);
         IrSignal irSignal = InterpretString.interpretIrSequence(seq, isInvokeRepeatFinder(), isInvokeCleaner(), getAbsoluteTolerance(), getRelativeTolerance());

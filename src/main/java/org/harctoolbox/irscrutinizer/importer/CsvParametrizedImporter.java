@@ -44,6 +44,9 @@ import org.harctoolbox.irp.NameUnassignedException;
  * Columns are numbered starting with 1.
  */
 public class CsvParametrizedImporter extends CsvImporter {
+
+    private static final String protocolFallback = "NEC1"; // FIXME: make configurable!!
+
     public static Collection<Command> process(Reader reader,
             String separator, int nameColumn, boolean nameMultiColumn, String filename, boolean verbose, int base, int Fcolumn, int Dcolumn,
             int Scolumn, int protocolColumn, int miscParametersColumn) throws IOException {
@@ -71,7 +74,6 @@ public class CsvParametrizedImporter extends CsvImporter {
     private int sColumn;
     private int miscParametersColumn = 4;
     private int protocolColumn;
-    private static final String protocolFallback = "NEC1"; // FIXME: make configurable!!
 
     public CsvParametrizedImporter(int separatorIndex, int nameColumn, boolean nameMultiColumn, boolean verbose, int base, int Fcolumn, int Dcolumn,
             int Scolumn, int protocolColumn, int miscParametersColumn) {

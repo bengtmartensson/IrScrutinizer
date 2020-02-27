@@ -17,7 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

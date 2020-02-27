@@ -156,7 +156,7 @@ public class UndoableJTextArea extends JTextArea {
             list.clear();
         }
 
-        private boolean isEmpty() {
+        public boolean isEmpty() {
             return list.isEmpty();
         }
 

@@ -33,6 +33,7 @@ public class HelpPopup extends javax.swing.JDialog {
      * @param helpText Text (one string, to be formatted to many lines) containing the messages.
      * @param title
      */
+    @SuppressWarnings("OverridableMethodCallInConstructor")
     public HelpPopup(java.awt.Frame parent, String helpText, String title) {
         super(parent, false /*modal*/);
         payload = helpText;
