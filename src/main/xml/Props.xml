@@ -157,6 +157,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="importWaveDivideCarrier" type="boolean" default='"true"' doc="If true (which is the normal case), it is assumed the actual frequency in the imported wave file is half of the actual modulation frequency"/>
     <property name="importOpensZipFiles" type="boolean" default='"false"' doc="If selected, the import facitilty will also open zip files."/>
     <property name="importPaneSelectedIndex" type="int" default='"2"' doc="Index of the selected pane in the importer"/>
+    <property name="parametrizedRawTabbedPaneSelectedIndex" type="int" default='"0"' doc="Index of the selected pane in the CSV importer"/>
     <property name="rejectLircCodeImports" type="boolean" default='"true"' doc="If true, Lirc files without timing information are rejected."/>
     <property name="prontoModelIndex" type="int" default='"4"' doc="Index of selected Pronto Classic model."/>
     <property name="prontoScreenSizeX" type="int" default='"240"' doc="Pronto screen width" />

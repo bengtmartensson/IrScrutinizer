@@ -567,6 +567,10 @@ public final class GuiMain extends javax.swing.JFrame {
             int index  = importTabbedPane.getSelectedIndex();
             properties.setImportPaneSelectedIndex(index);
         });
+        parametrizedRawTabbedPane.addChangeListener((javax.swing.event.ChangeEvent evt) -> {
+            int index  = parametrizedRawTabbedPane.getSelectedIndex();
+            properties.setParametrizedRawTabbedPaneSelectedIndex(index);
+        });
 
         // Scroll the tables to the last line
         parameterTable.addComponentListener(new ComponentAdapter() {
@@ -4515,7 +4519,7 @@ public final class GuiMain extends javax.swing.JFrame {
                         .addGroup(csvRawImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(csvRawSeparatorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel30))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 144, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 216, Short.MAX_VALUE)
                 .addComponent(importTextRawHelpButton)
                 .addContainerGap())
         );
@@ -4536,7 +4540,7 @@ public final class GuiMain extends javax.swing.JFrame {
                         .addComponent(csvRawSeparatorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(csvRawImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(csvRawImportPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 221, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 233, Short.MAX_VALUE)
                         .addComponent(importTextRawHelpButton)
                         .addGap(12, 12, 12))
                     .addGroup(csvRawImportPanelLayout.createSequentialGroup()
@@ -4560,7 +4564,7 @@ public final class GuiMain extends javax.swing.JFrame {
             rawLineCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rawLineCsvImportPanelLayout.createSequentialGroup()
                 .addComponent(rawLineCsvFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 144, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 216, Short.MAX_VALUE)
                 .addComponent(importTextRawLineBasedHelpButton)
                 .addContainerGap())
         );
@@ -4572,7 +4576,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(rawLineCsvImportPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(rawLineCsvFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE))
+                .addComponent(rawLineCsvFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE))
         );
 
         parametrizedRawTabbedPane.addTab("Raw, line-based", rawLineCsvImportPanel);
@@ -4759,6 +4763,8 @@ public final class GuiMain extends javax.swing.JFrame {
         );
 
         parametrizedRawTabbedPane.addTab("Parametrized", parametrizedCsvImportPanel);
+
+        parametrizedRawTabbedPane.setSelectedIndex(properties.getParametrizedRawTabbedPaneSelectedIndex());
 
         javax.swing.GroupLayout csvImportPanelLayout = new javax.swing.GroupLayout(csvImportPanel);
         csvImportPanel.setLayout(csvImportPanelLayout);

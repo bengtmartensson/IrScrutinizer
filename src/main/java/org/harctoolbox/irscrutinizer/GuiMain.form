@@ -4352,6 +4352,11 @@
                       </Layout>
                       <SubComponents>
                         <Container class="javax.swing.JTabbedPane" name="parametrizedRawTabbedPane">
+                          <Properties>
+                            <Property name="selectedIndex" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                              <Connection code="properties.getParametrizedRawTabbedPaneSelectedIndex()" type="code"/>
+                            </Property>
+                          </Properties>
 
                           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
                           <SubComponents>
@@ -4397,7 +4402,7 @@
                                                   </Group>
                                               </Group>
                                           </Group>
-                                          <EmptySpace pref="144" max="32767" attributes="0"/>
+                                          <EmptySpace pref="216" max="32767" attributes="0"/>
                                           <Component id="importTextRawHelpButton" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
@@ -4423,7 +4428,7 @@
                                           </Group>
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Group type="102" attributes="0">
-                                                  <EmptySpace pref="221" max="32767" attributes="0"/>
+                                                  <EmptySpace pref="233" max="32767" attributes="0"/>
                                                   <Component id="importTextRawHelpButton" min="-2" max="-2" attributes="0"/>
                                                   <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                                               </Group>
@@ -4582,7 +4587,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="rawLineCsvFileImporterBean" min="-2" pref="734" max="-2" attributes="0"/>
-                                          <EmptySpace pref="144" max="32767" attributes="0"/>
+                                          <EmptySpace pref="216" max="32767" attributes="0"/>
                                           <Component id="importTextRawLineBasedHelpButton" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -4597,7 +4602,7 @@
                                       </Group>
                                       <Group type="102" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="rawLineCsvFileImporterBean" pref="299" max="32767" attributes="0"/>
+                                          <Component id="rawLineCsvFileImporterBean" pref="311" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                                 </DimensionLayout>
