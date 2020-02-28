@@ -205,7 +205,7 @@ public class CsvParametrizedImporter extends CsvImporter {
         if (colIndex < chunks.length) {
             try {
                 String num = chunks[colIndex];
-                return IrCoreUtils.parseLong(num, numberBase);
+                return IrCoreUtils.parseLong(num.trim(), numberBase);
             } catch (NumberFormatException ex) {
                 if (isVerbose()) {
                     System.err.println("Errors parsing " + name + " (= " + chunks[colIndex] + ") in line " + lineNo);
