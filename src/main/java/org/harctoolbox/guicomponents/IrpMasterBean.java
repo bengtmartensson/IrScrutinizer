@@ -494,8 +494,8 @@ public final class IrpMasterBean extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void protocolDocuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolDocuButtonActionPerformed
-        StringBuilder str = new StringBuilder(irpDatabase.getIrp(protocolName)).append("\n\n");
         try {
+            StringBuilder str = new StringBuilder(irpDatabase.getIrp(protocolName)).append("\n\n");
             String docu = irpDatabase.getDocumentation(protocolName);
             if (docu != null)
                 str.append(docu);
