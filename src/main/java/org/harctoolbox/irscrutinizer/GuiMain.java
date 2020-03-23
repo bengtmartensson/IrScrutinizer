@@ -163,6 +163,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private final static int importSequenceAskThreshold = 3;
     private final static int maxCharsInGuiMessages = 150;
     private final static int transmitSignalMouseButton = 2;
+    private final static String UNIQUE_SEPARATOR = "#";
 
     private AboutPopup aboutBox;
     private Component currentPane = null;
@@ -1985,6 +1986,7 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator14 = new javax.swing.JPopupMenu.Separator();
         clearMenuItem1 = new javax.swing.JMenuItem();
         checkParametrizedSignalsMenuItem = new javax.swing.JMenuItem();
+        parameterUniquefyMenuItem = new javax.swing.JMenuItem();
         exportCookedMenuItem = new javax.swing.JMenuItem();
         jSeparator19 = new javax.swing.JPopupMenu.Separator();
         parametrizedCopyAllMenuItem = new javax.swing.JMenuItem();
@@ -2031,6 +2033,7 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
         clearMenuItem = new javax.swing.JMenuItem();
         checkRawCommandsMenuItem = new javax.swing.JMenuItem();
+        rawUniquefyMenuItem = new javax.swing.JMenuItem();
         saveRawMenuItem = new javax.swing.JMenuItem();
         jSeparator28 = new javax.swing.JPopupMenu.Separator();
         rawCopyAllMenuItem = new javax.swing.JMenuItem();
@@ -2828,6 +2831,14 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         parameterTablePopupMenu.add(checkParametrizedSignalsMenuItem);
 
+        parameterUniquefyMenuItem.setText("Make names unique");
+        parameterUniquefyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                parameterUniquefyMenuItemActionPerformed(evt);
+            }
+        });
+        parameterTablePopupMenu.add(parameterUniquefyMenuItem);
+
         exportCookedMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, 0));
         exportCookedMenuItem.setMnemonic('E');
         exportCookedMenuItem.setText("Export");
@@ -3151,6 +3162,14 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         rawTablePopupMenu.add(checkRawCommandsMenuItem);
+
+        rawUniquefyMenuItem.setText("Make names unique");
+        rawUniquefyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rawUniquefyMenuItemActionPerformed(evt);
+            }
+        });
+        rawTablePopupMenu.add(rawUniquefyMenuItem);
 
         saveRawMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, 0));
         saveRawMenuItem.setMnemonic('E');
@@ -4893,7 +4912,7 @@ public final class GuiMain extends javax.swing.JFrame {
         importPanelLayout.setHorizontalGroup(
             importPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, importPanelLayout.createSequentialGroup()
-                .addComponent(importTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 992, Short.MAX_VALUE)
+                .addComponent(importTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 992, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
         importPanelLayout.setVerticalGroup(
@@ -9672,6 +9691,14 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setMiscParametersColumn(miscParametersColumnComboBox.getSelectedIndex());
     }//GEN-LAST:event_miscParametersColumnComboBoxActionPerformed
 
+    private void rawUniquefyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawUniquefyMenuItemActionPerformed
+        rawTableModel.uniquifyNames(UNIQUE_SEPARATOR);
+    }//GEN-LAST:event_rawUniquefyMenuItemActionPerformed
+
+    private void parameterUniquefyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parameterUniquefyMenuItemActionPerformed
+        parameterTableModel.uniquifyNames(UNIQUE_SEPARATOR);
+    }//GEN-LAST:event_parameterUniquefyMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -10074,6 +10101,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JTable parameterTable;
     private javax.swing.JPopupMenu parameterTablePopupMenu;
     private javax.swing.JScrollPane parameterTableScrollPane;
+    private javax.swing.JMenuItem parameterUniquefyMenuItem;
     private javax.swing.JButton parametricOrRawExportButton;
     private javax.swing.JCheckBoxMenuItem parametricSorterCheckBoxMenuItem;
     private javax.swing.JMenu parametrizedAdvancedMenu;
@@ -10132,6 +10160,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JTable rawTable;
     private javax.swing.JPopupMenu rawTablePopupMenu;
     private javax.swing.JScrollPane rawTableScrollPane;
+    private javax.swing.JMenuItem rawUniquefyMenuItem;
     private javax.swing.JRadioButtonMenuItem rawWithoutSignsRadioButtonMenuItem;
     private javax.swing.JMenuItem reAnalyzeMenuItem;
     private javax.swing.JCheckBoxMenuItem rejectLircCodeImports;

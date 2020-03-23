@@ -33,6 +33,7 @@ import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.irp.IrpException;
+import org.harctoolbox.irscrutinizer.exporter.NameUniquefier;
 
 /**
  *
@@ -347,6 +348,17 @@ public abstract class NamedIrSignal {
                     allNames.add(name);
             }
             return duplicates;
+        }
+
+        public void uniquifyNames(String separator) {
+            NameUniquefier uniquefier = new NameUniquefier(separator);
+            for (int row = 0; row < getRowCount(); row++) {
+                String oldName = (String) getValueAt(row, columnsFunc.getPosName());
+                String newName = uniquefier.uniquefy(oldName);//oldName.replaceFirst(from, to);
+                if (!oldName.equals(newName))
+                    setValueAt(newName, row, columnsFunc.getPosName());
+            }
+            fireTableDataChanged();
         }
 
         public ArrayList<Integer> getUnusedColumns() {
