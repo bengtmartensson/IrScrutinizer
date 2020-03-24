@@ -451,6 +451,17 @@
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator27">
         </Component>
+        <MenuItem class="javax.swing.JMenuItem" name="parametrizedPasteColumnMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Paste in column"/>
+            <Property name="toolTipText" type="java.lang.String" value="Paste clipboard into column, starting with selected row"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="parametrizedPasteColumnMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator40">
+        </Component>
         <MenuItem class="javax.swing.JMenuItem" name="hideColumnMenuItem1">
           <Properties>
             <Property name="text" type="java.lang.String" value="Hide selected column"/>
@@ -816,6 +827,17 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rawCopySelectionMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator39">
+        </Component>
+        <MenuItem class="javax.swing.JMenuItem" name="rawPasteColumnMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Paste in column"/>
+            <Property name="toolTipText" type="java.lang.String" value="Paste clipboard into column, starting with selected row"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rawPasteColumnMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator29">

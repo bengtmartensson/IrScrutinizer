@@ -470,6 +470,23 @@ public abstract class NamedIrSignal {
             return columnsFunc.isEditable(columnIndex);
         }
 
+        void replaceColumnSubset(int row, int column, String[] arr) {
+            if (!columnsFunc.isEditable(column)) {
+                // FIXME
+                System.err.println("Column not editable");
+                return;
+            }
+
+            for (int i = 0; i < arr.length; i++) {
+                int targetRow = row + i;
+                if (targetRow >= getRowCount())
+                    break;
+                setValueAt(arr[i], targetRow, column);
+            }
+
+            fireTableDataChanged();
+        }
+
         /**
          * For debugging purposes only.
          * @param modelRow

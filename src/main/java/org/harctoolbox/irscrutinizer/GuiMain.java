@@ -1927,6 +1927,14 @@ public final class GuiMain extends javax.swing.JFrame {
         HelpPopup.newHelpPopup(this, str.toString(), protocolName);
     }
 
+    private void pasteColumnInTable(JTable rawTable, NamedIrSignal.LearnedIrSignalTableModel tableModel) {
+        String clip = (new CopyClipboardText(null)).fromClipboard();
+        String[] arr = clip.split("\r?\n");
+        int row = rawTable.getSelectedRow();
+        int column = rawTable.convertColumnIndexToModel(rawTable.getSelectedColumn());
+        tableModel.replaceColumnSubset(row, column, arr);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1992,6 +2000,8 @@ public final class GuiMain extends javax.swing.JFrame {
         parametrizedCopyAllMenuItem = new javax.swing.JMenuItem();
         parametrizedCopySelectionMenuItem = new javax.swing.JMenuItem();
         jSeparator27 = new javax.swing.JPopupMenu.Separator();
+        parametrizedPasteColumnMenuItem = new javax.swing.JMenuItem();
+        jSeparator40 = new javax.swing.JPopupMenu.Separator();
         hideColumnMenuItem1 = new javax.swing.JMenuItem();
         resetRawTableColumnsMenuItem1 = new javax.swing.JMenuItem();
         hideUnusedMenuItem = new javax.swing.JMenuItem();
@@ -2038,6 +2048,8 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator28 = new javax.swing.JPopupMenu.Separator();
         rawCopyAllMenuItem = new javax.swing.JMenuItem();
         rawCopySelectionMenuItem = new javax.swing.JMenuItem();
+        jSeparator39 = new javax.swing.JPopupMenu.Separator();
+        rawPasteColumnMenuItem = new javax.swing.JMenuItem();
         jSeparator29 = new javax.swing.JPopupMenu.Separator();
         hideColumnMenuItem = new javax.swing.JMenuItem();
         resetRawTableColumnsMenuItem = new javax.swing.JMenuItem();
@@ -2869,6 +2881,16 @@ public final class GuiMain extends javax.swing.JFrame {
         parameterTablePopupMenu.add(parametrizedCopySelectionMenuItem);
         parameterTablePopupMenu.add(jSeparator27);
 
+        parametrizedPasteColumnMenuItem.setText("Paste in column");
+        parametrizedPasteColumnMenuItem.setToolTipText("Paste clipboard into column, starting with selected row");
+        parametrizedPasteColumnMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                parametrizedPasteColumnMenuItemActionPerformed(evt);
+            }
+        });
+        parameterTablePopupMenu.add(parametrizedPasteColumnMenuItem);
+        parameterTablePopupMenu.add(jSeparator40);
+
         hideColumnMenuItem1.setText("Hide selected column");
         hideColumnMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -3198,6 +3220,16 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         rawTablePopupMenu.add(rawCopySelectionMenuItem);
+        rawTablePopupMenu.add(jSeparator39);
+
+        rawPasteColumnMenuItem.setText("Paste in column");
+        rawPasteColumnMenuItem.setToolTipText("Paste clipboard into column, starting with selected row");
+        rawPasteColumnMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rawPasteColumnMenuItemActionPerformed(evt);
+            }
+        });
+        rawTablePopupMenu.add(rawPasteColumnMenuItem);
         rawTablePopupMenu.add(jSeparator29);
 
         hideColumnMenuItem.setText("Hide selected column");
@@ -9699,6 +9731,22 @@ public final class GuiMain extends javax.swing.JFrame {
         parameterTableModel.uniquifyNames(UNIQUE_SEPARATOR);
     }//GEN-LAST:event_parameterUniquefyMenuItemActionPerformed
 
+    private void rawPasteColumnMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawPasteColumnMenuItemActionPerformed
+        if (properties.getSorterOnRawTable()) {
+            guiUtils.error("Column paste not possible with enabled sorter.");
+            return;
+        }
+        pasteColumnInTable(rawTable, rawTableModel);
+    }//GEN-LAST:event_rawPasteColumnMenuItemActionPerformed
+
+    private void parametrizedPasteColumnMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parametrizedPasteColumnMenuItemActionPerformed
+        if (properties.getSorterOnParametrizedTable()) {
+            guiUtils.error("Column paste not possible with enabled sorter.");
+            return;
+        }
+        pasteColumnInTable(parameterTable, parameterTableModel);
+    }//GEN-LAST:event_parametrizedPasteColumnMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -10057,7 +10105,9 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator36;
     private javax.swing.JPopupMenu.Separator jSeparator37;
     private javax.swing.JPopupMenu.Separator jSeparator38;
+    private javax.swing.JPopupMenu.Separator jSeparator39;
     private javax.swing.JPopupMenu.Separator jSeparator4;
+    private javax.swing.JPopupMenu.Separator jSeparator40;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
@@ -10113,6 +10163,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem parametrizedLearnIgnoreTCheckBoxMenuItem;
     private javax.swing.JCheckBox parametrizedMultiColumnNameCheckBox;
     private javax.swing.JComboBox<String> parametrizedNameColumnComboBox;
+    private javax.swing.JMenuItem parametrizedPasteColumnMenuItem;
     private javax.swing.JTabbedPane parametrizedRawTabbedPane;
     private javax.swing.JButton pasteAnalyzeButton;
     private javax.swing.JMenuItem pasteScrutinizeToDataWindowMenuItem;
@@ -10154,6 +10205,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JCheckBox rawMultiColumnNameCheckBox;
     private javax.swing.JComboBox<String> rawNameColumnComboBox;
     private javax.swing.JPanel rawPanel;
+    private javax.swing.JMenuItem rawPasteColumnMenuItem;
     private javax.swing.JMenuItem rawProtocolDocuMenuItem;
     private javax.swing.JRadioButtonMenuItem rawRadioButtonMenuItem;
     private javax.swing.JCheckBoxMenuItem rawSorterCheckBoxMenuItem;
