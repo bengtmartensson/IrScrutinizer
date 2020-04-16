@@ -148,7 +148,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="irpMasterCurrentT" type="string" default='"-"' doc='Selected T for generator.'/>
     <property name="irpMasterCurrentAdditionalParameters" type="string" default='""' doc='Selected \"Additional parameters\" for generator.'/>
     <property name="exportAutomaticFilenames" type="boolean" default='"true"' doc='Generate automatic file names for exports'/>
-    <property name="invokeAnalyzer" type="boolean" default='"false"' doc='If true, the analyzer is invoked on scrutineering and on imports.' />
+    <property name="invokeAnalyzer" type="boolean" default='"true"' doc='If true, the analyzer is invoked on scrutineering and on imports.' />
 
     <property name="girrFatRaw" type="boolean" default='"false"' />
     <property name="girrCreateSchemaLocation" type="boolean" default='"true"' />
