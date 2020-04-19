@@ -975,9 +975,7 @@ public final class GuiMain extends javax.swing.JFrame {
         if (properties.getExportGenerateShortCcf())
             formats.add(new ShortCcfFormatter());
         if (properties.getExportGenerateSendIr())
-            formats.add(new SendIrFormatter(properties.getExportSendIrModule(),
-                    properties.getExportSendIrConnector(),
-                    properties.getExportSendIrCompressed()));
+            formats.add(new SendIrFormatter());
         return formats.toArray(new Command.CommandTextFormat[formats.size()]);
     }
 
@@ -2251,13 +2249,6 @@ public final class GuiMain extends javax.swing.JFrame {
         waveExportOptionsPanel = new javax.swing.JPanel();
         exportAudioParametersBean = new org.harctoolbox.guicomponents.AudioParametersBean(properties);
         exportWaveHelpButton = new javax.swing.JButton();
-        sendirExportOptionsPanel = new javax.swing.JPanel();
-        sendirModuleComboBox = new javax.swing.JComboBox<>();
-        sendirConnectorComboBox = new javax.swing.JComboBox<>();
-        sendirCompressedCheckBox = new javax.swing.JCheckBox();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        exportSendirHelpButton = new javax.swing.JButton();
         prontoClassicExportOptionsPanel = new javax.swing.JPanel();
         prontoModelComboBox = new javax.swing.JComboBox<>();
         prontoExportScreenWidthTextField = new javax.swing.JTextField();
@@ -5169,83 +5160,6 @@ public final class GuiMain extends javax.swing.JFrame {
         );
 
         exportSpecificOptionsTabbedPane.addTab("Wave", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_audio.png")), waveExportOptionsPanel); // NOI18N
-
-        sendirModuleComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "4", "5" }));
-        sendirModuleComboBox.setSelectedItem(Integer.toString(properties.getExportSendIrModule()));
-        sendirModuleComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendirModuleComboBoxActionPerformed(evt);
-            }
-        });
-
-        sendirConnectorComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3" }));
-        sendirConnectorComboBox.setSelectedItem(Integer.toString(properties.getExportSendIrConnector()));
-        sendirConnectorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendirConnectorComboBoxActionPerformed(evt);
-            }
-        });
-
-        sendirCompressedCheckBox.setSelected(properties.getExportSendIrCompressed());
-        sendirCompressedCheckBox.setText("Compressed");
-        sendirCompressedCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendirCompressedCheckBoxActionPerformed(evt);
-            }
-        });
-
-        jLabel10.setText("Module");
-
-        jLabel12.setText("Connector");
-
-        exportSendirHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        exportSendirHelpButton.setText("Help");
-        exportSendirHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportSendirHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout sendirExportOptionsPanelLayout = new javax.swing.GroupLayout(sendirExportOptionsPanel);
-        sendirExportOptionsPanel.setLayout(sendirExportOptionsPanelLayout);
-        sendirExportOptionsPanelLayout.setHorizontalGroup(
-            sendirExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(sendirExportOptionsPanelLayout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addGroup(sendirExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sendirModuleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(sendirExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(sendirExportOptionsPanelLayout.createSequentialGroup()
-                        .addComponent(sendirConnectorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(sendirCompressedCheckBox))
-                    .addComponent(jLabel12))
-                .addContainerGap(709, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sendirExportOptionsPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(exportSendirHelpButton)
-                .addContainerGap())
-        );
-        sendirExportOptionsPanelLayout.setVerticalGroup(
-            sendirExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(sendirExportOptionsPanelLayout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addGroup(sendirExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(jLabel12))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(sendirExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(sendirModuleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sendirConnectorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sendirCompressedCheckBox))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(exportSendirHelpButton)
-                .addContainerGap())
-        );
-
-        exportSpecificOptionsTabbedPane.addTab("Sendir (GlobalCache)", sendirExportOptionsPanel);
 
         prontoModelComboBox.setModel(new DefaultComboBoxModel(prontoModelNames));
         prontoModelComboBox.setSelectedIndex(properties.getProntoModelIndex());
@@ -8571,18 +8485,6 @@ public final class GuiMain extends javax.swing.JFrame {
         exportRepeatComboBox.setEnabled(exportGenerateSendIrCheckBox.isSelected());
     }//GEN-LAST:event_exportGenerateSendIrCheckBoxActionPerformed
 
-    private void sendirCompressedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendirCompressedCheckBoxActionPerformed
-        properties.setExportSendIrCompressed(sendirCompressedCheckBox.isSelected());
-    }//GEN-LAST:event_sendirCompressedCheckBoxActionPerformed
-
-    private void sendirModuleComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendirModuleComboBoxActionPerformed
-        properties.setExportSendIrModule(Integer.parseInt((String)sendirModuleComboBox.getSelectedItem()));
-    }//GEN-LAST:event_sendirModuleComboBoxActionPerformed
-
-    private void sendirConnectorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendirConnectorComboBoxActionPerformed
-        properties.setExportSendIrConnector(Integer.parseInt((String) this.sendirConnectorComboBox.getSelectedItem()));
-    }//GEN-LAST:event_sendirConnectorComboBoxActionPerformed
-
     private void exportFormatComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportFormatComboBoxActionPerformed
         String formatName = (String) exportFormatComboBox.getSelectedItem();
         selectFormat(formatName);
@@ -9033,10 +8935,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private void exportWaveHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportWaveHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.exportWaveHelp);
     }//GEN-LAST:event_exportWaveHelpButtonActionPerformed
-
-    private void exportSendirHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSendirHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.exportSendirHelp);
-    }//GEN-LAST:event_exportSendirHelpButtonActionPerformed
 
     private void exportProntoHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProntoHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.exportProntoHelp);
@@ -9885,7 +9783,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton exportRawRemoteButton1;
     private javax.swing.JComboBox<String> exportRepeatComboBox;
     private javax.swing.JMenuItem exportSelectedCookedMenuItem;
-    private javax.swing.JButton exportSendirHelpButton;
     private javax.swing.JButton exportSignalButton;
     private javax.swing.JMenuItem exportSignalGirrMenuItem;
     private javax.swing.JMenuItem exportSignalGirrMenuItem1;
@@ -10030,9 +9927,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem issuesMenuItem;
     private javax.swing.JButton jButton20;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
@@ -10257,10 +10152,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton sendingLircHelpButton;
     private javax.swing.JPanel sendingPanel;
     private javax.swing.JMenuItem sendingTimeoutMenuItem;
-    private javax.swing.JCheckBox sendirCompressedCheckBox;
-    private javax.swing.JComboBox<String> sendirConnectorComboBox;
-    private javax.swing.JPanel sendirExportOptionsPanel;
-    private javax.swing.JComboBox<String> sendirModuleComboBox;
     private javax.swing.JMenuItem setDMenuItem;
     private javax.swing.JMenuItem setFMenuItem;
     private javax.swing.JMenuItem setMiscParamsMenuItem;

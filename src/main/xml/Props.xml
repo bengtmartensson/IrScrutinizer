@@ -109,9 +109,6 @@ this program. If not, see http://www.gnu.org/licenses/.
     <!--property name="exportGenerateUei" type="boolean" default='"false"' doc='Generate UEI learned format in exports.'/-->
     <property name="exportGenerateParameters" type="boolean" default='"false"' doc='Generate parameters and protocol name when exporting.'/>
     <property name="exportGenerateSendIr" type="boolean" default='"false"' doc='Generate GlobalCache sendir format in exports.'/>
-    <property name="exportSendIrModule" type="int" default='"1"' doc="Default module for sendir exports"/>
-    <property name="exportSendIrConnector" type="int" default='"1"' doc="Default connector for sendir exports"/>
-    <property name="exportSendIrCompressed" type="boolean" default='"false"' doc="Use compressed form in sendir exports?"/>
     <property name="exportNoRepeats" type="int" default='"1"' doc="Repeat count for export formats supporting it."/>
     <property name="exportInquireDeviceData" type='boolean' default='"true"' doc='If true, inquire for device type etc before exporting commands.'/>
     <property name="exportCharsetName" type="string" default='"WINDOWS-1252"' doc='Character set used for exports'/>

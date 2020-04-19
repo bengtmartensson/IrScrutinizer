@@ -962,14 +962,6 @@ can be selected.</p>
                 individual flashes and gaps are enclosed into own XML elements. This can be
                 advantageous if generating XML mainly for the purpose of transforming to other formats.</p>
         </section>
-        <section>
-            <title>The sendir sub-pane</title>
-            <p>The <a href="Glossary.html#sendir">Global Caché sendir</a> format is
-                optionally included within the Girr and the text format. It
-                requires a module number and a connector
-                number. Also, it is possible to generate the compressed form of sendir. This can be enabled by selecting
-                the <code>compressed</code> check-box.</p>
-        </section>
     </section>
 
     <section><title>ICT</title>
@@ -1046,8 +1038,6 @@ can be selected.</p>
 
     <section><title>Text</title>
     <p>The text format is essentially the Girr format stripped of the XML markup information.
-        <a href="#The+sendir+sub-pane">The sendir sub-pane</a> is used for selecting the parameters
-        of the optionally contained sendir format.
     </p>
     </section>
     <section><title>TV-B-Gone</title>

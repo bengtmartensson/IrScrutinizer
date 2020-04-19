@@ -333,12 +333,6 @@ class HelpTexts {
             = "Parameters for the generated Wave export (except for the number of repeats) can be selected here.";
 
     @SuppressWarnings("PackageVisibleField")
-    public static String exportSendirHelp
-            = "The Global Caché sendir format requires a module number and a connector "
-            + "number. Also, there is a compressed format, that can be enabled by selecting "
-            + "the compressed checkbox.";
-
-    @SuppressWarnings("PackageVisibleField")
     public static String exportProntoHelp
             = "A Pronto Classic export consists of a CCF file with the exported signals "
             + "associated to dummy buttons. The Pronto (Classic) model for which the export is "
