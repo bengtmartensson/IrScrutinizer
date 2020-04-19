@@ -217,12 +217,12 @@ public class ParametrizedIrSignal extends NamedIrSignal {
     private static class ParameterIrSignalColumns extends NamedIrSignal.AbstractColumnFunction /*implements IColumn*/ {
 
         private static final int[] widths = {
-            //0  1   2   3   4   5   6   7    8    9   10  11
-            15, 60, 60, 25, 25, 25, 25, 100, 25, 100, 200, 10
+            //0  1   2   3   4   5   6   7    8    9   10
+            15, 60, 60, 25, 25, 25, 25, 100, 100, 200, 10
         };
         private static final String[] columnNames = new String[]{
-            // 0      1        2        3    4    5    6       7            8         9         10       11
-            "#", "Date", "Protocol", "D", "S", "F", "T", "Misc. params", "Ver.", "Name", "Comment", "Signal"
+            // 0    1        2        3    4    5    6       7             8         9         10
+            "#", "Date", "Protocol", "D", "S", "F", "T", "Misc. params", "Name", "Comment", "Signal"
         };
         /*private static final Object[] dummyArray = new Object[]{
             //    0                 1       2        3    4      5    6     7     8       9        10     11
@@ -233,8 +233,8 @@ public class ParametrizedIrSignal extends NamedIrSignal {
             //  0              1             2            3              4              5
             //  0              1             2            3              4              5
             Integer.class, String.class, String.class, Integer.class, Integer.class, Integer.class,
-            //  6              7             8               9             10               11
-            Integer.class, String.class, Boolean.class, String.class, String.class, ParametrizedIrSignal.class
+            //  6              7             8               9             10
+            Integer.class, String.class, String.class, String.class, ParametrizedIrSignal.class
         };
 
         public final static int toIgnore = 1; // Never show the last entry to user, the ParametrizedIrSignal
@@ -247,9 +247,8 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         public final static int posF = 5;
         public final static int posT = 6;
         public final static int posMiscParameters = 7;
-        public final static int posVerified = 8;
-        public final static int posName = 9;
-        public final static int posComment = 10;
+        public final static int posName = 8;
+        public final static int posComment = 9;
         public final static int posParameterIrSignal = columnNames.length - 1;
 
         ParameterIrSignalColumns() {
@@ -290,11 +289,6 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         }
 
         @Override
-        public int getPosVerified() {
-            return posVerified;
-        }
-
-        @Override
         public boolean isEditable(int i) {
             return i != posNumber && i != posDate;
         }
@@ -315,10 +309,8 @@ public class ParametrizedIrSignal extends NamedIrSignal {
                         signal.getNumeral(), signal.getDate(), signal.protocolName, safeGet(signal.parameters, "D"),
                         //       4                                 5                                 6
                         safeGet(signal.parameters, "S"), safeGet(signal.parameters, "F"), safeGet(signal.parameters, "T"),
-                        //            7                           8
-                        formatMiscParams(signal.parameters), signal.getValidated(),
-                        //       9             10                11
-                        signal.getName(), signal.getComment(), signal
+                        //            7                           8                     9             10
+                        formatMiscParams(signal.parameters), signal.getName(), signal.getComment(), signal
                     };
         }
 
@@ -478,9 +470,6 @@ public class ParametrizedIrSignal extends NamedIrSignal {
                 case ParameterIrSignalColumns.posMiscParameters:
                     pir.digestMiscParameters((String) getValueAt(row, column));
                     break;
-                case ParameterIrSignalColumns.posVerified:
-                    pir.setValidated((Boolean)getValueAt(row, column));
-                    break;
                 case ParameterIrSignalColumns.posName:
                     pir.setName((String)getValueAt(row, column));
                     break;
@@ -501,7 +490,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
             for (int row = getRowCount() - 1; row >= 0; row--) {
                 ParametrizedIrSignal pir = getParameterIrSignal(row);
                 String defaultName = DefaultSignalNameFormatter.formatName(pir.protocolName, pir.parameters);
-                if (pir.getName().equalsIgnoreCase(defaultName) && pir.getComment().isEmpty() && ! pir.getValidated())
+                if (pir.getName().equalsIgnoreCase(defaultName) && pir.getComment().isEmpty())
                     removeRow(row);
             }
             fireTableDataChanged();

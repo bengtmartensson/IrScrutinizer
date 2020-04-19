@@ -1453,7 +1453,7 @@ Add missing F's, or from the Generate pane, using suitable parameter
 intervals (see <a href="#The+%22Generate%22+pane">this</a>), and transfer them using the "To parametric remote" button. Then
 test the candidate signals one at a time by transmit-ting them, using suitable
 sending hardware.
-The comment field, or the "verified" check-box, can be used for note taking.</p>
+The comment field can be used for note taking.</p>
 
 <p>A "war dialer" like in IrMaster may be implemented in a later version.
 </p>

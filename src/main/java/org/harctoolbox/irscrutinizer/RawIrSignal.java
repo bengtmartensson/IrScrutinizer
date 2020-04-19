@@ -265,13 +265,13 @@ public class RawIrSignal extends NamedIrSignal {
     private static class CapturedIrSignalColumns extends NamedIrSignal.AbstractColumnFunction {
 
         private static final int[] widths = {
-            10, 40, 75, 75, 75, 75, 75, 75, 10, 75, 40, 10
+            10, 40, 75, 75, 75, 75, 75, 75, 75, 40, 10
         };
         private static final String[] columnNames = new String[] {
-            "#", "Date", "Intro", "Repetition", "Ending", "Name", "Decode", "Analyze", "Ver.", "Comment", "Frequency", "C. IrSignal"
+            "#", "Date", "Intro", "Repetition", "Ending", "Name", "Decode", "Analyze", "Comment", "Frequency", "C. IrSignal"
         };
         private static final Class<?>[] classes = new Class<?>[] {
-            Integer.class, String.class, String.class, String.class, String.class, String.class, String.class, String.class, Boolean.class, String.class, Integer.class, RawIrSignal.class
+            Integer.class, String.class, String.class, String.class, String.class, String.class, String.class, String.class, String.class, Integer.class, RawIrSignal.class
         };
 
         public static final int posNumber = 0;
@@ -282,9 +282,8 @@ public class RawIrSignal extends NamedIrSignal {
         public static final int posName = 5;
         public static final int posDecode = 6;
         public static final int posAnalyze = 7;
-        public static final int posVerified = 8;
-        public static final int posComment = 9;
-        public static final int posFrequency = 10;
+        public static final int posComment = 8;
+        public static final int posFrequency = 9;
         public static final int posCapturedIrSignal = columnNames.length - 1;
 
         CapturedIrSignalColumns() {
@@ -322,11 +321,6 @@ public class RawIrSignal extends NamedIrSignal {
         }
 
         @Override
-        public int getPosVerified() {
-            return posVerified;
-        }
-
-        @Override
         public boolean uninterestingIfAllEqual(int column) {
             return super.uninterestingIfAllEqual(column) || column == posFrequency;
         }
@@ -349,7 +343,6 @@ public class RawIrSignal extends NamedIrSignal {
                 cir.getName(),
                 cir.getDecodeString(),
                 cir.getAnalyzerString(),
-                cir.getValidated(),
                 cir.getComment(),
                 Math.round(irSignal.getFrequency()),
                 cir, // Analyze
@@ -402,9 +395,6 @@ public class RawIrSignal extends NamedIrSignal {
                         break;
                     case CapturedIrSignalColumns.posEnding:
                         rawIrSignal.setEndingSequence((String) getValueAt(row, column));
-                        break;
-                    case CapturedIrSignalColumns.posVerified:
-                        rawIrSignal.setValidated((Boolean) getValueAt(row, column));
                         break;
                     case CapturedIrSignalColumns.posName:
                         rawIrSignal.setName((String) getValueAt(row, column));

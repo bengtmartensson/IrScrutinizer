@@ -52,7 +52,6 @@ public abstract class NamedIrSignal {
     }
 
     private final Date date;
-    private boolean validated;
     private String name; // non-null
     private String comment; // can be null
     private final int numeral;
@@ -62,7 +61,6 @@ public abstract class NamedIrSignal {
         date = new Date();
         this.name = name;
         this.comment = comment;
-        validated = false;
     }
 
     public int getNumeral() {
@@ -71,14 +69,6 @@ public abstract class NamedIrSignal {
 
     public String getDate() {
         return (new SimpleDateFormat("HH:mm:ss")).format(date);
-    }
-
-    public boolean getValidated() {
-        return validated;
-    }
-
-    public void setValidated(boolean validated) {
-        this.validated = validated;
     }
 
     public String getName() {
@@ -101,7 +91,6 @@ public abstract class NamedIrSignal {
         StringBuilder str = new StringBuilder(128);
         str.append(numeral).append(separator);
         str.append(name).append(separator);
-        str.append(validated ? "true" : "false");
         return str.toString();
     }
 
@@ -146,8 +135,6 @@ public abstract class NamedIrSignal {
 
         public abstract int getPosNumber();
 
-        public abstract int getPosVerified();
-
         public int noFields() {
             return columnNames.length - toIgnore;
         }
@@ -179,7 +166,7 @@ public abstract class NamedIrSignal {
         }
 
         public boolean uninterestingIfAllEqual(int column) {
-            return column == getPosComment() || column == getPosVerified();
+            return column == getPosComment();
         }
     }
 
