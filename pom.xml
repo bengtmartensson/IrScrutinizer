@@ -615,6 +615,7 @@
                                 <include>${project.artifactId}-${project.version}.exe</include>
                                 <include>*.AppImage</include>
                                 <include>*.zip</include>
+                                <include>*.dmg</include>
                             </includes>
                         </fileSet>
                     </fileSets>

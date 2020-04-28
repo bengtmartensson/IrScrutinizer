@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Create a MacOS app in the form of a zip file
+# Create a MacOS app in the form of a zip and dsg (uncompressed) file
 #
 #
 
@@ -47,4 +47,8 @@ rm -f ${REPODIR}/irscrutinizer.bat ${REPODIR}/irscrutinizer.desktop ${REPODIR}/s
 rm -f ${REPODIR}/*_install.txt
 rm -rf ${REPODIR}/Linux* ${REPODIR}/Windows*
 
+# Generate zipped version of directory with app.
 (cd ${WORKDIR}; zip -q -r ${TARGETDIR}/${APPNAME}-${VERSION}-macOS.zip ${APPNAME}-${VERSION})
+
+# Generate dmg image, uncompressed
+genisoimage  -V  ${APPNAME}-${VERSION} -D -R -apple -no-pad -o ${TARGETDIR}/${APPNAME}-${VERSION}-macOS.dmg ${TARGETDIR}/${APPNAME}-${VERSION}
