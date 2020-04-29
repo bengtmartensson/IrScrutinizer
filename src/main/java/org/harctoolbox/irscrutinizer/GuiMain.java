@@ -1350,8 +1350,9 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private File saveCommandsWrite(Map<String, Command> commands, String title, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
-        if (!checkChangeExportDirectory(new File(exportDirectoryTextField.getText())))
-            return null;
+        if (properties.getExportAutomaticFilenames())
+            if (!checkChangeExportDirectory(new File(exportDirectoryTextField.getText())))
+                return null;
 
         if (properties.getExportInquireDeviceData() && exporter.supportsMetaData()) {
             Remote.MetaData newMetaData = MetaDataDialog.inquireMetaData(metaData, this);
