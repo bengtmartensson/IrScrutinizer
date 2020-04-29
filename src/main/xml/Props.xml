@@ -73,7 +73,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="invokeRepeatFinder" type="boolean" default='"true"' doc="Determines if the repeatfinder is invoked on captures and clipboard."/>
     <property name="invokeCleaner" type="boolean" default='"true"' doc="Determines if the signal cleaner is invoked on captures and clipboard."/>
     <!--property name="disregardRepeatMins" type="boolean" default='"false"' doc='Value of the "disregard repeat mins" parameter. See IrpMaster documentation for the semantic.'/-->
-    <property name="exportDir" type="string" default='System.getProperty("java.io.tmpdir") + File.separator + "exports"' doc='Directory to which to write exports.'/>
+    <property name="exportDir" type="string" default='System.getProperty("user.home") + File.separator + "Documents" + File.separator + "IrScrutinizer"' doc='Directory to which to write exports.'/>
     <property name="defaultImportDir" type="string" default='"testfiles"' doc='Just the starting directory for file selectors.'/>
     <property name="exportFormatFilePath" type="string" default='"exportformats.d"' doc='File or directory containing export format descriptions.'/>
     <property name="exportFormatName" type="string" default='"Girr"' doc='Name of currenty selected export file format' />
