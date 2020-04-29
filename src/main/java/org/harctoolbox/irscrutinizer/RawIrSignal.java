@@ -268,7 +268,7 @@ public class RawIrSignal extends NamedIrSignal {
             10, 40, 75, 75, 75, 75, 75, 75, 75, 40, 10
         };
         private static final String[] columnNames = new String[] {
-            "#", "Date", "Intro", "Repetition", "Ending", "Name", "Decode", "Analyze", "Comment", "Frequency", "C. IrSignal"
+            "#", "Timestamp", "Intro", "Repetition", "Ending", "Name", "Decode", "Analyze", "Comment", "Frequency", "C. IrSignal"
         };
         private static final Class<?>[] classes = new Class<?>[] {
             Integer.class, String.class, String.class, String.class, String.class, String.class, String.class, String.class, String.class, Integer.class, RawIrSignal.class

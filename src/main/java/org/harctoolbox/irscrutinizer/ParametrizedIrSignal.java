@@ -222,7 +222,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         };
         private static final String[] columnNames = new String[]{
             // 0    1        2        3    4    5    6       7             8         9         10
-            "#", "Date", "Protocol", "D", "S", "F", "T", "Misc. params", "Name", "Comment", "Signal"
+            "#", "Timestamp", "Protocol", "D", "S", "F", "T", "Misc. params", "Name", "Comment", "Signal"
         };
         /*private static final Object[] dummyArray = new Object[]{
             //    0                 1       2        3    4      5    6     7     8       9        10     11
