@@ -2,11 +2,27 @@
 
 set +x # Do not leak information
 
+# Exit immediately if one of the files given as arguments is not there
+# because we don't want to delete the existing release if we don't have
+# the new files that should be uploaded 
+for file in "$@"
+do
+    if [ ! -e "$file" ]
+    then echo "$file is missing, giving up." >&2; exit 1
+    fi
+done
+
+if [ $# -eq 0 ]; then
+    echo "No artifacts to use for release, giving up."
+    exit 0
+fi
+DIR="$(dirname -- "$(readlink -f -- "${0}")" )"
+
 RELEASE_NAME="ci-build" # Do not use "latest" as it is reserved by GitHub
 
 if [ "$TRAVIS_EVENT_TYPE" == "pull_request" ] ; then
   echo "Release uploading disabled for pull requests, uploading to transfer.sh instead"
-  for FILE in $@ ; do
+    for FILE in "$@" ; do
     BASENAME="$(basename "${FILE}")"
     curl --upload-file $FILE https://transfer.sh/$BASENAME
     echo ""
@@ -57,7 +73,7 @@ if [ "$TRAVIS_COMMIT" != "$tag_sha" ] ; then
 
   echo "TRAVIS_COMMIT != tag_sha, hence deleting $RELEASE_NAME..."
 
-  if [ x"$release_id" != "x" ]; then
+  if [ ! -z "$release_id" ]; then
     delete_url="https://api.github.com/repos/$REPO_SLUG/releases/$release_id"
     echo "Delete the release..."
     echo "delete_url: $delete_url"
@@ -92,6 +108,7 @@ if [ "$TRAVIS_COMMIT" != "$tag_sha" ] ; then
    BODY="WARNING: This is a snapshot of the current development stand. "
    BODY+="It may have different issues, and possibly does not work at all. "
    BODY+="If this is not what you want, use the latest official release instead."
+#  BODY=$(<${DIR}/ci-build-body.md)
 
   release_infos=$(curl -H "Authorization: token ${GITHUB_TOKEN}" \
        --data '{"tag_name": "'"$RELEASE_NAME"'","target_commitish": "'"$TRAVIS_BRANCH"'","name": "'"Continuous build"'","body": "'"$BODY"'","draft": false,"prerelease": true}' "https://api.github.com/repos/$REPO_SLUG/releases")
@@ -110,7 +127,7 @@ fi # if [ "$TRAVIS_COMMIT" != "$tag_sha" ]
 
 echo "Upload binaries to the release..."
 
-for FILE in $@ ; do
+for FILE in "$@" ; do
   FULLNAME="${FILE}"
   BASENAME="$(basename "${FILE}")"
   curl -H "Authorization: token ${GITHUB_TOKEN}" \

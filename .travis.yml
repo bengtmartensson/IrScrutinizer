@@ -22,7 +22,7 @@ script:
 - wget --quiet http://www.harctoolbox.org/downloads/jre-x64-macOS.tar.gz
 - mvn install -DskipTests=true -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -B -V
 - ls -l --si target
-- tools/upload.sh target/*.zip target/*.dmg target/IrScrutinizer-*AppImage target/*AppImage.zsync target/*.md5 target/*.sha*
+- tools/upload.sh target/*.zip target/*.dmg target/IrScrutinizer-*AppImage target/*.md5 target/*.sha*
 
 branches:
   except:
