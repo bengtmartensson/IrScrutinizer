@@ -53,6 +53,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
     private boolean restrictedMode = false;
 
     private static final int maxRemotesForImportAll = 10;
+    private static final String EMPTY_MESSAGE = "--EMPTY--";
 
     @Override
     public void treeExpanded(TreeExpansionEvent event) {
@@ -125,7 +126,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
     public void clear() {
         this.remoteSet = null;
-        DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode("No remotes loaded"));
+        DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode(EMPTY_MESSAGE));
         tree.setModel(treeModel);
         enableStuff(false);
     }
@@ -393,8 +394,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         });
         popupMenu.add(importSelectionRawMenuItem);
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("No remotes loaded");
-        tree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        tree.setModel(new javax.swing.tree.DefaultTreeModel(new javax.swing.tree.DefaultMutableTreeNode(EMPTY_MESSAGE)));
         tree.setToolTipText("Select with left, right for popup menu.");
         tree.setComponentPopupMenu(popupMenu);
         jScrollPane1.setViewportView(tree);

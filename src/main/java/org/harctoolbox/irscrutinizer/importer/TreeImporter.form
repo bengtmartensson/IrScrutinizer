@@ -179,8 +179,8 @@
       <SubComponents>
         <Component class="javax.swing.JTree" name="tree">
           <Properties>
-            <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.editors2.TreeModelEditor">
-              <TreeModel code="No remotes loaded"/>
+            <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new javax.swing.tree.DefaultTreeModel(new javax.swing.tree.DefaultMutableTreeNode(EMPTY_MESSAGE))" type="code"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Select with left, right for popup menu."/>
             <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
