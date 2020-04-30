@@ -957,7 +957,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     public int importGirr(File file, boolean raw, String charsetName) throws ParseException, InvalidArgumentException, IOException {
-        return importCommands(girrImporter.getAllCommands(file, charsetName), raw);
+        return importCommands(girrImporter.getAllCommands(file, charsetName), girrImporter.getMetaData(), raw);
     }
 
     public int importGirr(File file, boolean raw) throws ParseException, InvalidArgumentException, IOException {
@@ -1511,7 +1511,9 @@ public final class GuiMain extends javax.swing.JFrame {
         processIr(Command.concatenateAsSequence(commands));
     }
 
-    public int importCommands(Collection<Command> commands, boolean raw) {
+    public int importCommands(Collection<Command> commands, Remote.MetaData metaData, boolean raw) {
+        if (metaData != null && !metaData.isEmpty())
+            this.metaData = metaData;
         boolean observeErrors = true;
         int count = 0;
         for (Command command : commands) {
@@ -1575,7 +1577,7 @@ public final class GuiMain extends javax.swing.JFrame {
             boolean status = importer.loadFileSelector(this, "Select file for signal import",
                     properties.getDefaultImportDir(), properties.getImportCharsetName());
             if (status)
-                importCommands(importer.getCommands(), raw);
+                importCommands(importer.getCommands(), importer.getMetaData(), raw);
         } catch (IOException | ParseException | InvalidArgumentException ex) {
             guiUtils.error(ex);
         } finally {

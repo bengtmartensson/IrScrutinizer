@@ -171,4 +171,9 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
     public String getFormatName() {
         return "Global Caché IR Database";
     }
+
+    @Override
+    public Remote.MetaData getMetaData() {
+        return remoteSet.getFirstMetaData();
+    }
 }

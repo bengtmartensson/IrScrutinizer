@@ -173,7 +173,7 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
     @Override
     public void load(Reader reader, String origin) throws IOException, ParseException {
         prepareLoad(origin);
-        parameters = new LinkedHashMap<>(8);
+        parameters = new LinkedHashMap<>(64);
         BufferedReader bufferedReader = new BufferedReader(reader);
         Map<Integer,Long> functionHex = new HashMap<>(8);
         Map<Integer,String> functionName = new HashMap<>(8);
@@ -265,7 +265,7 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
         Map<String, Map<String,String>> appParams = new HashMap<>(8);
         appParams.put("rmdu", parameters);
         Remote.MetaData metaData = new Remote.MetaData(IrCoreUtils.basename(origin),
-                null, // displayName
+                parameters.get("Description"), // displayName
                 null, // manufacturer,
                 null, // model,
                 parameters.get("DeviceType"), // deviceClass,

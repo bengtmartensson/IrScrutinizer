@@ -187,7 +187,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         for (TreePath path : paths) {
             Object thing = ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
             if (Remote.class.isInstance(thing)) {
-                guiMain.importCommands(((Remote) thing).getCommands().values(), raw);
+                guiMain.importCommands(((Remote) thing).getCommands().values(), getMetaData(), raw);
                 count += ((Remote) thing).getCommands().size();
             } else if (Command.class.isInstance(thing)) {
                 guiMain.importCommand((Command) thing, raw);
@@ -203,6 +203,10 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         boolean doJump = guiUtils.confirm("Import was successful with " + count + " signal(s). Jump to panel?");
         if (doJump)
             guiMain.selectImportPane(type);
+    }
+
+    private Remote.MetaData getMetaData() {
+        return remoteSet.getFirstMetaData();
     }
 
     private static class MyRenderer extends DefaultTreeCellRenderer /*implements TreeCellRenderer*/ {
@@ -520,7 +524,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
     private void importAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importAllButtonActionPerformed
         checkGuiMain();
-        int result = guiMain.importCommands(remoteSet.getAllCommands(), false);
+        int result = guiMain.importCommands(remoteSet.getAllCommands(), getMetaData(), false);
         if (result > 0)
             importJump(result, ImportType.parametricRemote);
         else
@@ -562,7 +566,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
     private void importAllRawButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importAllRawButtonActionPerformed
         checkGuiMain();
-        int result = guiMain.importCommands(remoteSet.getAllCommands(), true);
+        int result = guiMain.importCommands(remoteSet.getAllCommands(), getMetaData(), true);
         if (result > 0)
             importJump(result, ImportType.rawRemote);
         else

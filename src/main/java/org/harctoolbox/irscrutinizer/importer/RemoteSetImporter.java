@@ -40,6 +40,12 @@ public abstract class RemoteSetImporter extends ReaderImporter implements IRemot
         return remoteSet;
     }
 
+    @Override
+    // Default, dumb, implementation
+    public Remote.MetaData getMetaData() {
+        return new Remote.MetaData();
+    }
+
     protected Remote setupRemote() {
 
         Map<String, Map<String, String>> appParams = new HashMap<>(8);

@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
+import org.harctoolbox.ircore.ThisCannotHappenException;
 import org.harctoolbox.irscrutinizer.Props;
 
 public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteSetImporter {
@@ -363,6 +364,16 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
     public String getFormatName() {
         return "Global Caché Control Tower IR Database";
     }
+
+    /**
+     * Not called.
+     * @return Nuthin...
+     */
+    @Override
+    public Remote.MetaData getMetaData() {
+        throw new ThisCannotHappenException();
+    }
+
     public static class LoginException extends Exception {
         public LoginException(String message) {
             super(message);

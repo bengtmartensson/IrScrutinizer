@@ -205,7 +205,7 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         load(commandMap, pds, deviceType);
         Remote.MetaData metaData = new Remote.MetaData(manufacturer + "_" + deviceType + "_" + pds.toString(), //java.lang.String name,
                 null, // displayName
-                null, //java.lang.String manufacturer,
+                manufacturer, //java.lang.String manufacturer,
                 null, //java.lang.String model,
                 deviceType,//java.lang.String deviceClass,
                 null //java.lang.String remoteName,
@@ -279,6 +279,11 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
     public Command getCommand(String deviceType, String protocol, long device, long subdevice, String functionName) {
         load(deviceType, new ProtocolDeviceSubdevice(protocol, device, subdevice));
         return getCommand(functionName);
+    }
+
+    @Override
+    public Remote.MetaData getMetaData() {
+        return remoteSet.getFirstMetaData();
     }
 
     public static class ProtocolDeviceSubdevice {

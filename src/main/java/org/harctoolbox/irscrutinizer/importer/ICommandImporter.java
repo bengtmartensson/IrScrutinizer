@@ -18,6 +18,7 @@ package org.harctoolbox.irscrutinizer.importer;
 
 import java.util.Collection;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.Remote;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.irp.IrpException;
@@ -48,5 +49,11 @@ public interface ICommandImporter extends IImporter {
      * @return One of the Command-s in the collection with the correct name, or null if not found.
      */
     public Command getCommand(String name);
+
+    /**
+     * Returns MetaData in some sensible form.
+     * @return MetaData
+     */
+    public Remote.MetaData getMetaData();
 }
 
