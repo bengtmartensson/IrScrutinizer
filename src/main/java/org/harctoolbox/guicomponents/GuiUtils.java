@@ -172,7 +172,8 @@ public class GuiUtils implements Serializable {
         error(ex, ex.getMessage());
     }
 
-    public void error(Throwable ex, String message) {
+    public void error(Throwable ex, String msg) {
+        String message = msg.replaceFirst("^java.lang.RuntimeException: ", "");
         String errorMessage = ex instanceof ParseException
                 ? ex.getClass().getSimpleName() + " on line " + ((ParseException) ex).getErrorOffset() + ": " + message
                 : ex.getClass().getSimpleName() + ": " + message;
