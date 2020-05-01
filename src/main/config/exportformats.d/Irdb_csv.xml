@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2020 Bengt Martensson
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<exportformats:exportformat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                            xmlns:exportformats="http://www.harctoolbox.org/exportformats"
+                            xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
+                            name="IRDB CSV" extension="csv" multiSignal="true" simpleSequence="false">
+    <xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr"
+                    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+        <xsl:output method="text" />
+
+        <xsl:variable name="separator">
+            <xsl:text>,</xsl:text>
+        </xsl:variable>
+
+        <xsl:variable name="firstprotocol">
+            <xsl:value-of select="//girr:parameters/@protocol[1]"/>
+        </xsl:variable>
+
+        <xsl:template name="line">
+            <xsl:param name="functionname"/>
+            <xsl:param name="protocol"/>
+            <xsl:param name="D"/>
+            <xsl:param name="S"/>
+            <xsl:param name="F"/>
+            <xsl:value-of select="$functionname"/>
+            <xsl:value-of select="$separator"/>
+            <xsl:value-of select="$protocol"/>
+            <xsl:value-of select="$separator"/>
+            <xsl:value-of select="$D"/>
+            <xsl:value-of select="$separator"/>
+            <xsl:value-of select="$S"/>
+            <xsl:if test="not($S)">
+                <xsl:text>-1</xsl:text>
+            </xsl:if>
+            <xsl:value-of select="$separator"/>
+            <xsl:value-of select="$F"/>
+            <xsl:text>
+</xsl:text>
+        </xsl:template>
+
+        <xsl:template match="/">
+            <xsl:call-template name="line">
+                <xsl:with-param name="functionname">
+                    <xsl:text>functionname</xsl:text>
+                </xsl:with-param>
+                <xsl:with-param name="protocol">
+                    <xsl:text>protocol</xsl:text>
+                </xsl:with-param>
+                <xsl:with-param name="D">
+                    <xsl:text>device</xsl:text>
+                </xsl:with-param>
+                <xsl:with-param name="S">
+                    <xsl:text>subdevice</xsl:text>
+                </xsl:with-param>
+                <xsl:with-param name="F">
+                    <xsl:text>function</xsl:text>
+                </xsl:with-param>
+            </xsl:call-template>
+            <xsl:apply-templates select="//girr:command"/>
+        </xsl:template>
+
+        <xsl:template match="girr:command">
+            <xsl:apply-templates select="girr:parameters[not(@protocol=$firstprotocol)]" mode="nonunique"/>
+            <xsl:call-template name="line">
+                <xsl:with-param name="functionname" select="@name"/>
+                <xsl:with-param name="protocol" select="girr:parameters/@protocol"/>
+                <xsl:with-param name="D" select="girr:parameters/girr:parameter[@name='D']/@value"/>
+                <xsl:with-param name="S" select="girr:parameters/girr:parameter[@name='S']/@value"/>
+                <xsl:with-param name="F" select="girr:parameters/girr:parameter[@name='F']/@value"/>
+            </xsl:call-template>
+        </xsl:template>
+
+        <xsl:template match="girr:parameters" mode="nonunique">
+            <xsl:message terminate="yes">
+                <xsl:text>Several different protocols found. Cannot export to IRDB.</xsl:text>
+            </xsl:message>
+        </xsl:template>
+
+    </xsl:stylesheet>
+</exportformats:exportformat>
