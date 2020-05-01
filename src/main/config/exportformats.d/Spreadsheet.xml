@@ -24,35 +24,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
         <xsl:output method="text" />
 
+        <!-- Separator character, possibly make user settable? -->
+        <!--xsl:variable name="separator"><xsl:text>&#9;</xsl:text></xsl:variable-->
+        <xsl:variable name="separator"><xsl:text>;</xsl:text></xsl:variable>
+
         <xsl:template match="/">
-            <xsl:apply-templates select="girr:remotes/girr:remote/girr:commandSet/girr:command"/>
+            <xsl:apply-templates select="//girr:command"/>
         </xsl:template>
 
         <xsl:template match="girr:command">
             <xsl:value-of select="@name"/>
-            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="$separator"/>
             <xsl:value-of select="girr:parameters/@protocol"/>
-            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="$separator"/>
             <xsl:value-of select="girr:parameters/girr:parameter[@name='D']/@value"/>
-            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="$separator"/>
             <xsl:value-of select="girr:parameters/girr:parameter[@name='S']/@value"/>
-            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="$separator"/>
             <xsl:value-of select="girr:parameters/girr:parameter[@name='F']/@value"/>
-            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="$separator"/>
             <xsl:value-of select="girr:parameters/girr:parameter[@name='T']/@value"/>
-            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="$separator"/>
             <xsl:apply-templates select="girr:parameters/girr:parameter[not(@name='F' or @name='D' or @name='S' or @name='T')]"/>
-            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="$separator"/>
             <xsl:value-of select="girr:raw/@frequency"/>
-            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="$separator"/>
             <xsl:apply-templates select="girr:raw[1]/girr:intro[1]/*"/>
-            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="$separator"/>
             <xsl:apply-templates select="girr:raw[1]/girr:repeat[1]/*"/>
-            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="$separator"/>
             <xsl:apply-templates select="girr:raw[1]/girr:ending[1]/*"/>
-            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="$separator"/>
             <xsl:value-of select="girr:ccf"/>
-            <xsl:text>&#9;</xsl:text>
+            <xsl:value-of select="$separator"/>
             <xsl:value-of select="@comment"/>
             <xsl:text>
 </xsl:text>
