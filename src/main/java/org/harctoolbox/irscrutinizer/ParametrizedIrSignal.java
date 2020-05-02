@@ -87,6 +87,8 @@ public class ParametrizedIrSignal extends NamedIrSignal {
     public ParametrizedIrSignal(Command command) throws IrpException, IrCoreException {
         super(command.getName(), command.getComment());
         this.protocolName = command.getProtocolName();
+        if (protocolName == null)
+            throw new IrpException("Command \"" + command.getName() + "\" is not decodeable");
         this.parameters = command.getParameters();
         if (parameters == null)
             parameters = new HashMap<>(3);
