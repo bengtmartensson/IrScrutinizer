@@ -128,7 +128,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="378" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="360" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
@@ -203,8 +203,8 @@
     <Component class="javax.swing.JButton" name="importAllButton">
       <Properties>
         <Property name="mnemonic" type="int" value="65"/>
-        <Property name="text" type="java.lang.String" value="Import all"/>
-        <Property name="toolTipText" type="java.lang.String" value="Transfers all signals to either the raw or the parametric remote"/>
+        <Property name="text" type="java.lang.String" value="Import all/param"/>
+        <Property name="toolTipText" type="java.lang.String" value="Transfer all signals to Scrutinize remote/Parametric Remote"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
@@ -214,8 +214,8 @@
     <Component class="javax.swing.JButton" name="importSelectionButton">
       <Properties>
         <Property name="mnemonic" type="int" value="76"/>
-        <Property name="text" type="java.lang.String" value="Import selection"/>
-        <Property name="toolTipText" type="java.lang.String" value="Transfers the selected (remotes or commands) to either the raw or the parametrized remote."/>
+        <Property name="text" type="java.lang.String" value="Import select./param"/>
+        <Property name="toolTipText" type="java.lang.String" value="Transfer the selected (remotes or commands) to Scrutinize remote/Parametric remote"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
@@ -236,6 +236,7 @@
     <Component class="javax.swing.JButton" name="importAllRawButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Import all/raw"/>
+        <Property name="toolTipText" type="java.lang.String" value="Transfer all signals to Scrutinize remote/Raw Remote"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
@@ -245,6 +246,7 @@
     <Component class="javax.swing.JButton" name="importSelectionRawButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Import select./raw"/>
+        <Property name="toolTipText" type="java.lang.String" value="Transfer the selected (remotes or commands) to Scrutinize remote/Raw remote"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>

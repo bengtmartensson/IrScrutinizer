@@ -409,8 +409,8 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         });
 
         importAllButton.setMnemonic('A');
-        importAllButton.setText("Import all");
-        importAllButton.setToolTipText("Transfers all signals to either the raw or the parametric remote");
+        importAllButton.setText("Import all/param");
+        importAllButton.setToolTipText("Transfer all signals to Scrutinize remote/Parametric Remote");
         importAllButton.setEnabled(false);
         importAllButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -419,8 +419,8 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         });
 
         importSelectionButton.setMnemonic('L');
-        importSelectionButton.setText("Import selection");
-        importSelectionButton.setToolTipText("Transfers the selected (remotes or commands) to either the raw or the parametrized remote.");
+        importSelectionButton.setText("Import select./param");
+        importSelectionButton.setToolTipText("Transfer the selected (remotes or commands) to Scrutinize remote/Parametric remote");
         importSelectionButton.setEnabled(false);
         importSelectionButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -439,6 +439,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         });
 
         importAllRawButton.setText("Import all/raw");
+        importAllRawButton.setToolTipText("Transfer all signals to Scrutinize remote/Raw Remote");
         importAllRawButton.setEnabled(false);
         importAllRawButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -447,6 +448,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         });
 
         importSelectionRawButton.setText("Import select./raw");
+        importSelectionRawButton.setToolTipText("Transfer the selected (remotes or commands) to Scrutinize remote/Raw remote");
         importSelectionRawButton.setEnabled(false);
         importSelectionRawButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -460,7 +462,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(5, 5, 5)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
