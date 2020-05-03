@@ -167,7 +167,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private AboutPopup aboutBox;
     private Component currentPane = null;
-    private boolean ignoreLeadingGarbage = false;
 
     private Proxy mkProxy() {
         return mkProxy(properties.getProxyHostName(), properties.getProxyPort());
@@ -530,7 +529,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 properties.getRelativeTolerance(),
                 properties.getMinLeadOut(),
                 decodeOverride,
-                ignoreLeadingGarbage
+                properties.getIgnoreLeadingGarbage()
         );
         Command.setDecoderParameters(decoderParameters);
         RawIrSignal.setDecoderParameters(decoderParameters);
@@ -2448,6 +2447,7 @@ public final class GuiMain extends javax.swing.JFrame {
         printAnalyzeIRPsToConsoleCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         printDecodesToConsoleCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         parametrizedLearnIgnoreTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        ignoreLeadingGarbageCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         proxyMenuItem = new javax.swing.JMenuItem();
         irpProtocolsIniMenu = new javax.swing.JMenu();
         irpProtocolsEditMenuItem = new javax.swing.JMenuItem();
@@ -7019,6 +7019,16 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         optionsMenu.add(parametrizedLearnIgnoreTCheckBoxMenuItem);
 
+        ignoreLeadingGarbageCheckBoxMenuItem.setSelected(properties.getIgnoreLeadingGarbage());
+        ignoreLeadingGarbageCheckBoxMenuItem.setText("Ignore leading garbage on decode");
+        ignoreLeadingGarbageCheckBoxMenuItem.setToolTipText("Experimental!!");
+        ignoreLeadingGarbageCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ignoreLeadingGarbageCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        optionsMenu.add(ignoreLeadingGarbageCheckBoxMenuItem);
+
         proxyMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/Network Connection Manager.png"))); // NOI18N
         proxyMenuItem.setText("Proxy Configuration ...");
         proxyMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -9648,6 +9658,11 @@ public final class GuiMain extends javax.swing.JFrame {
         pasteColumnInTable(parameterTable, parameterTableModel);
     }//GEN-LAST:event_parametrizedPasteColumnMenuItemActionPerformed
 
+    private void ignoreLeadingGarbageCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ignoreLeadingGarbageCheckBoxMenuItemActionPerformed
+        properties.setIgnoreLeadingGarbage(ignoreLeadingGarbageCheckBoxMenuItem.isSelected());
+        decoderParameters.setIgnoreLeadingGarbage(ignoreLeadingGarbageCheckBoxMenuItem.isSelected());
+    }//GEN-LAST:event_ignoreLeadingGarbageCheckBoxMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9846,6 +9861,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<IctImporter> ictFileImporterBean;
     private javax.swing.JPanel ictImportPanel;
     private javax.swing.JCheckBoxMenuItem ignoreEndingSilenceCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem ignoreLeadingGarbageCheckBoxMenuItem;
     private javax.swing.JMenu importCaptureMenu;
     private javax.swing.JMenuItem importCcfMenuItem;
     private javax.swing.JMenuItem importCcfMenuItem1;

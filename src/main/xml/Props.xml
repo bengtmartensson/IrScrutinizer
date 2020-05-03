@@ -101,6 +101,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="printDecodesToConsole" type="boolean" default='"false"' doc='If true, print all decodes to the console, in addition to other outputs.'/>
     <property name="printAnalyzerIRPsToConsole" type="boolean" default='"false"' doc='If true, print all IRPs from the analyzer to the console, in addition to other outputs.'/>
     <property name="invokeDecoder" type="boolean" default='"true"' doc='Invoke decoder when importing, even when not required.'/>
+    <property name="ignoreLeadingGarbage" type="boolean" default='"false"' doc='Ignore garbage at beginning of IrSequence when decoding.'/>
     <property name="generateRaw" type="boolean" default='"false"' doc='Generate raw form when importing, even when not required.'/>
     <property name="generateCcf" type="boolean" default='"false"' doc='Generate CCF form when importing, even when not required.'/>
     <property name="exportGenerateRaw" type="boolean" default='"false"' doc='Generate raw form when exporting, even when not required.'/>
