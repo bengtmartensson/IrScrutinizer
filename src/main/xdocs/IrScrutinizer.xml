@@ -68,6 +68,10 @@ not to hold the author responsible.</warning>
 	  <td>2019-08-09</td>
 	  <td>Version for release 2.0.0. Not complete...</td>
 	</tr>
+        <tr>
+	  <td>2020-05-03</td>
+	  <td>Updated installation instructions.</td>
+	</tr>
       </table>
 
 <section>
@@ -270,12 +274,14 @@ parameters.</dd>
 <section>
 <title>General</title>
 <p>IrScrutinizer, and all but two of its third-party additions, are written in Java,
-which means that it should run on every computer with a modern Java installed;
-Windows, Linux (including Raspberry Pi), Macintosh, etc. Java 8 or later is required. The
-exception is the native part of RXTX, which are written in C , and invoked as shared library
+which means that it should run on almost all current computer;
+Windows, Linux (including Raspberry Pi), Macintosh, etc.
+Many of the installation options come with its own contained Java, for the other options,
+the Java runtime (presently version 8 or later) must be installed.
+The exception is the native part of RXTX, which are written in C , and invoked as shared library
     (<code>.dll</code> in Windows, <code>.so</code> in Linux, <code>.jnilib</code> in Mac OS X).
     For Linux, there is also the <em>DevSlashLirc</em> library.
-    If DecodeIR or DevSlashLirc are
+If the shared libraries are
 not available on for a particular platform it is not a major problem, as most parts of IrScrutinizer will
 work fine without it; just the serial
 hardware access, or the access to certain hardware will be unavailable.</p>
@@ -287,26 +293,29 @@ directory is not written to, and thus can be read-only as soon as the installati
     <p>There are five different way of installing the program, described next.</p>
 </section>
 <section><title>Windows</title>
-<p>First make sure that the current Java is installed.</p>
 <p>Download the <a
 href="https://github.com/bengtmartensson/IrScrutinizer/releases/latest">Window setup
 file</a> and double click it. Select any installation
-directory you like; suggested is <code>C:\Program Files\IrScrutinizer</code>,
-unless you can not install with administrator rights. Unless
-reason to do so, create the start menu folder, and the desktop
+directory you like; suggested is <code>C:\Program Files\IrScrutinizer</code>.
+Create the start menu folder, and the desktop
 icon. If administrator rights are present, the recommended installation location is in a subdirectory of <code>Program Files</code>.
-If not, installing is still possibly, using any installation directory writable by the current user.
+Otherwise the program can be installed in any directory writable by the current user.
+The setup comes with a Java runtime, but it is also possible to use a compatible, existing installation.
 IrScrutinizer can now be started from <code>Start -> IrScrutinizer ->
 IrScrutinizer</code>, or from the desktop icon.</p>
+
+<p>Sometimes Windows will refuse to install programs from sources that it does not consider as trustworthy.
+    It may then be necessary on Settings -> Apps &amp; features to select on "Choose where to get apps"
+    to something else than "The Microsoft store only".</p>
 
 <p>If desired, the installer will associate <code>.girr</code> files with the program, allowing them to
 be opened by double clicking them.</p>
 
 <p>The installer will also install the command line program <a href="IrpTransmogrifier.html">IrpTransmogrifier</a>,
-which can be called as <code>irptransmogrifier</code> from a so-called DOS box.</p>
+which can be called as <code>irptransmogrifier</code> from a command line window.</p>
 
-<p>To uninstall, select the uninstall option from the Start menu. If that is missing,
-    use the operating system program management for de-installing.
+<p>To uninstall, select the uninstall option from the Start menu, or (on Windows 10, right click Start -> IrScrutinizer -> IrScrutinizer and select Uninstall).
+Or use the operating system's program management for de-installing (Settings -> Apps and Features).
     Very pedantic
 people may like to delete the properties file too, see <a href="#Properties">properties</a>.</p>
 </section>
@@ -318,41 +327,48 @@ people may like to delete the properties file too, see <a href="#Properties">pro
     installation in the classical sense. At this moment, only 64-bit x86 Linux is supported. It is believed
 to run on all modern, 64-bit x86 Linux distrubutions. Just download,
     make executable, and double click (or start from the command line).
-    As opposed to the other distributions, it comes with its own Java.</p>
+It comes with its own Java runtime.</p>
+
+<p>To uninstall, just delete.</p>
 
 </section>
       <section>
 	<title>Mac OS X app</title>
-        <p>As opposed to Linux and Windows, the "JDK" (Java Development Kit) needs to be installed on MacOS X, not just "Java" (JRE).</p>
 <p>Download the  <a
-    href="http://www.harctoolbox.org/downloads/IrScrutinizer-app.zip">compressed app</a>.
-    Uncompress it by double clicking. Opening it will show an app, and a few documentation files.
+    href="https://github.com/bengtmartensson/IrScrutinizer/releases/latest/">disk image file</a> (*.dmg).
+    Mount it by double clicking.
+    A mounted disk image "IrScrutinizer" will then appear on the desktop.
+    Opening it will show an app, and a few documentation files.
     The app can just be dragged to the desktop, to the tray, to "Applications" or any other location the user prefers.
     IrScrutinizer now behaves like any other app in Mac OS X.</p>
 
-    <!--p>(The previous version was instead distrubuted as a <a
-    href="http://www.harctoolbox.org/downloads/IrScrutinizer.dmg.zip">compressed disk image</a>.
-    This should be uncompressed it by double clicking, and mounted by double clicking the resulting file.
-    A mounted disk image "IrScrutinizer" will appear on the desktop. Then proceed as above.)</p-->
+    <p>Sometimes the operating system will refuse to install or run programs from sources that it does not consider as trustworthy.
+    It may then be necessary on System Preferences -> Security &amp; privacy -> General to select on "Allow apps downloaded from"
+    to "Anywhere".</p>
 
-    <p>To unistall, just move the app to the trash.</p>
+    <p>To uninstall, just drag the program to the trash can.</p>
     <p>The command line program <a href="IrpTransmogrifier.html">IrpTransmogrifier</a> is not supported in this mode.
     (For this, the <a href="#Generic+Binary">generic binary</a> distribution has to be used.)</p>
       </section>
 
 <section><title>Generic Binary</title>
-<p>The generic binary version consists of all the java classes packed in one executable jar file,
+<p>The generic binary version consists of all the Java classes packed in one executable jar file,
 together with supporting files, like all the compiled shared libraries for the different
-operating systems Linux (x64-32, x86-64, armv7), Windows (x86, 32 and 64 bits), and Mac. It can be used on all those systems. (In other environments, the
+operating systems Linux (x64-32, x86-64, armv7), Windows (x86, 32 and 64 bits), and Macintosh.
+It can be used on all those systems. (In other environments, the
 shared libraries may be compiled with moderate effort.)</p>
 
-<p>The generic binary distribution can be used whenever using the
-setup.exe/app installation is not possible, not up-to-date, or not desired.</p>
+<p>The generic binary distribution also can be used whenever using the
+setup.exe/app installation is not possible, not up-to-date, or just not desired.
+It can also be used to update an existing installation on, e.g., Windows.</p>
 
-<p>First make sure that the current Java (at least version 8) is installed.</p>
+<p>First make sure that the Java runtime of correct version (currently version 8 or later) is installed.</p>
 
-<p>To install, unpack in an empty directory of your choice, suggested is
-    <code>/usr/local/share/irscrutinizer</code>.
+<p>To install, unpack in an empty directory of your choice; suggested (for Unix/Linux) is
+    <code>/usr/local/share/irscrutinizer</code>. On Windows, the program can be started by double clicking the .jar file.</p>
+
+    <p>The rest of this section applies to Unix/Linux.</p>
+<p>
     There are a few additional steps, which the script <code>setup-irscrutinizer.sh</code>
     can take care of. If this is not desired, or does not work,
     these steps will be described next.</p>
@@ -384,7 +400,7 @@ ln -s /usr/local/share/irscrutinizer/irscrutinizer.sh /usr/local/bin/irptransmog
     to open executable jar files with the "java" application. For this, select a jar file the file browser,
     select the properties, and select "java" as the application to "open with". (The details might vary.)</p>
 
-    <p>On Linux, it is general necessary to check, and possibly fix, theå
+    <p>On Linux, it is general necessary to check, and possibly fix, the
         <a href="#Serial+device+access">access to the serial devices</a>. The previously mentioned
         wrapper does this.</p>
 
@@ -429,7 +445,7 @@ ln -s /usr/local/share/irscrutinizer/irscrutinizer.sh /usr/local/bin/irptransmog
             command like
             <code>sudo usermod -aG dialout $USER</code>, and/or <code>sudo usermod -aG lock $USER</code> is used.
         </p>
-        <p>Do not run this program as root.</p>
+        <p>Do not run this program as root (except possibly for debugging device access).</p>
     </section>
 </section>
 
@@ -534,15 +550,17 @@ program, or by selecting Options -> Export formats database -> Reload.</p>
 </section>
 <section>
     <title>Properties</title>
-<p>Under Windows, the properties are stored in
-<code><![CDATA[%LOCALAPPDATA%\IrScrutinizer\IrScrutinizer.properties.xml]]></code> using Windows
-Vista and later (typically <code>%HOME%\AppData\Local\IrScrutinizer\IrScrutinizer.properties.xml</code>), otherwise in
-<code>%APPDATA%\IrScrutinizer\IrScrutinizer.properties.xml</code>. Using other operating
+<p>Under Windows, the persistent properties are stored in
+<code><![CDATA[%LOCALAPPDATA%\IrScrutinizer\IrScrutinizer.properties.xml]]></code>
+(typically <code>%HOME%\AppData\Local\IrScrutinizer\IrScrutinizer.properties.xml</code>).
+Using other operating
 systems, it is stored according to the <a href="https://specifications.freedesktop.org/basedir-spec/latest/index.html">FreeDesktop specification</a>.
 Per default, this is <code>$HOME/.config/IrScrutinizer/properties.xml</code>. It is
-not deleted by  un-install. (If weird problems appear, for example after an update, try
-deleting this file. For this, there is a command line option <code>--nuke-properties</code> that can be used to
-conveniently delete the present property file, without remembering its exact name.)
+not deleted by  un-install or by an update of the program.
+
+If weird problems appear, for example after an update, try
+deleting this file, from the GUI File -> Set properties to default. There is a command line option <code>--nuke-properties</code> that can be used to
+conveniently delete the present property file, without remembering its exact name.
 </p>
       </section>
 <section>
@@ -1665,7 +1683,7 @@ be used to run IrScrutinizer in the <code>IrScrutinizer/target</code> directory.
 be mounted on a Windows computer. Then, on the Windows computer, open
         the generated file <code>IrScrutinizer/target/IrScrutinizer_inno.iss</code> with
         the Inno installer, and start the compile. This will generate the desired file
-    <code>IrScutinizer-</code><em><code>version</code></em><code>.exe</code>.</p>
+    <code>IrScutinizer-</code><em>version</em><code>.exe</code>.</p>
     <p>Alternatively, the "compatibility layer capable of running
     Windows applications" software application <a
     href="https://www.winehq.org">Wine</a> (included in most Linux
@@ -1677,7 +1695,7 @@ be mounted on a Windows computer. Then, on the Windows computer, open
 <section>
     <title>Mac OS X app creation</title>
     <p>The Maven build creates a file
-<code>IrScrutinizer-</code><em><code>version</code></em><code>-macOS.zip</code>.
+<code>IrScrutinizer-</code><em>version</em><code>-macOS.dmg</code>.
 This file can be directly distributed to the users, to be installed according to
 <a href="#Mac+OS+X+app">these instructions</a>.</p>
 

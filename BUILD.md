@@ -99,7 +99,7 @@ Alternatively, the "compatibility layer capable of running
 
 ## Mac OS X app creation
 The Maven build creates a file
-`IrScrutinizer-`_version_`-macOS.zip`.
+`IrScrutinizer-`_version_`-macOS.dmg`.
 This file can be directly distributed to the users, to be installed according to
 [these instructions](http://harctoolbox.org/IrScrutinizer.html#Mac+OS+X+app).
 
