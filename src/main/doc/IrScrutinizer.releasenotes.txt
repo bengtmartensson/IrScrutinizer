@@ -4,10 +4,29 @@ Girr, HardHardware, DevSlashLirc, and Jirc.
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
-Version 2.?.?, released ??
+Version 2.2.6(?), released ??
 
-* Some menu text/tooltip text improvements.
-* Changed some menu entry texts, erroneously saying "ms" to "µs".
+* Several menu text/tooltip text improvements.
+* New user parameter ignoreLeadingGarbage. #377.
+* Import to param. remote now rejects undecodable signals. #376.
+* New export format irdb cvs. #374.
+* Exportformat Spreadsheet: small cleanup.
+* Changed empty TreeImporter text to "--EMPTY--" 
+* Importers now import also metadata, whenever possible. #352.
+* Do not check/create Export dir if automatic file names is not selected. #370.
+* Change initial export director to $HOME/Documents/IrScutinizer.
+* Rename column Date in Parametric/Raw Remote to Timestamp.
+* Create *.dmg install file for MacOS, replacing zipped app. #369.
+* New "contributed" wrappers for ghostscript.
+* Nuke sendir configuration panel. #323 (partially).
+* Remove "Ver." box in Parameteric/Raw remote. #367.
+* Property invokeAnalyzer changed default to true.
+* Remoteeditors: Implemented multi-row pasting in columns. #365.
+* Functions for making command names unique. #364.
+* Improvements to parameteric csv import. #362.
+* Minor improvements to RemoteMaster export.
+* Fixed decoding of "short Pronto". #358.
+* Some documentation update, in particular on installation.
 
 =============================================================================
 Version 2.2.4, released 2020-01-15.
