@@ -4,6 +4,11 @@ Girr, HardHardware, DevSlashLirc, and Jirc.
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
+Version 2.?.?, released ??
+
+* Changed some menu entry texts, erroneously saying "ms" to "µs".
+
+=============================================================================
 Version 2.2.4, released 2020-01-15.
 
 This version contains a few minor improvements, and several important bug fixes.

@@ -1683,7 +1683,7 @@
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="absToleranceMenuItem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Absolute tolerance (ms)"/>
+                    <Property name="text" type="java.lang.String" value="Absolute tolerance (&#xb5;s)"/>
                     <Property name="toolTipText" type="java.lang.String" value="Absolute tolerance for duration comparisons"/>
                   </Properties>
                   <Events>
@@ -1692,7 +1692,7 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="relToleranceMenuItem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Relative tolerance (1)"/>
+                    <Property name="text" type="java.lang.String" value="Relative tolerance (fraction &lt;1)"/>
                     <Property name="toolTipText" type="java.lang.String" value="Relative tolerance for duration comparisons"/>
                   </Properties>
                   <Events>
@@ -1710,7 +1710,7 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="minLeadoutMenuItem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Min. Leadout (ms)"/>
+                    <Property name="text" type="java.lang.String" value="Min. Leadout (&#xb5;s)"/>
                     <Property name="toolTipText" type="java.lang.String" value="Threshold value for lead-out in microseconds."/>
                   </Properties>
                   <Events>
@@ -1719,7 +1719,7 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="minRepeatGapMenuItem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Min. Repeatgap (ms)"/>
+                    <Property name="text" type="java.lang.String" value="Min. Repeatgap (&#xb5;s)"/>
                     <Property name="toolTipText" type="java.lang.String" value="Minumal value in micro seconds to be considered as ending a repeat."/>
                   </Properties>
                   <Events>
@@ -1728,7 +1728,7 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="dummyGapMenuItem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Dummy Gap (ms)"/>
+                    <Property name="text" type="java.lang.String" value="Dummy Gap (&#xb5;s)"/>
                     <Property name="toolTipText" type="java.lang.String" value="Dummy gap added for sequences with an odd number of durations."/>
                   </Properties>
                   <Events>

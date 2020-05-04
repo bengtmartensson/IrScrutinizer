@@ -6880,7 +6880,7 @@ public final class GuiMain extends javax.swing.JFrame {
         protocolParametersMenu.setText("Protocol Parameters");
         protocolParametersMenu.setToolTipText("Parameters for IrpTransmogrifier (see IrpTransmogrifier for documentation).");
 
-        absToleranceMenuItem.setText("Absolute tolerance (ms)");
+        absToleranceMenuItem.setText("Absolute tolerance (µs)");
         absToleranceMenuItem.setToolTipText("Absolute tolerance for duration comparisons");
         absToleranceMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -6889,7 +6889,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         protocolParametersMenu.add(absToleranceMenuItem);
 
-        relToleranceMenuItem.setText("Relative tolerance (1)");
+        relToleranceMenuItem.setText("Relative tolerance (fraction <1)");
         relToleranceMenuItem.setToolTipText("Relative tolerance for duration comparisons");
         relToleranceMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -6907,7 +6907,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         protocolParametersMenu.add(frequencyToleranceMenuItem);
 
-        minLeadoutMenuItem.setText("Min. Leadout (ms)");
+        minLeadoutMenuItem.setText("Min. Leadout (µs)");
         minLeadoutMenuItem.setToolTipText("Threshold value for lead-out in microseconds.");
         minLeadoutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -6916,7 +6916,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         protocolParametersMenu.add(minLeadoutMenuItem);
 
-        minRepeatGapMenuItem.setText("Min. Repeatgap (ms)");
+        minRepeatGapMenuItem.setText("Min. Repeatgap (µs)");
         minRepeatGapMenuItem.setToolTipText("Minumal value in micro seconds to be considered as ending a repeat.");
         minRepeatGapMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -6925,7 +6925,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         protocolParametersMenu.add(minRepeatGapMenuItem);
 
-        dummyGapMenuItem.setText("Dummy Gap (ms)");
+        dummyGapMenuItem.setText("Dummy Gap (µs)");
         dummyGapMenuItem.setToolTipText("Dummy gap added for sequences with an odd number of durations.");
         dummyGapMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
