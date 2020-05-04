@@ -323,8 +323,8 @@
         </Component>
         <MenuItem class="javax.swing.JMenuItem" name="scrutinizeParametricMenuItem">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Scrutinize selected"/>
-            <Property name="toolTipText" type="java.lang.String" value="Send the selected signal to Scrutinize signal, if possible."/>
+            <Property name="text" type="java.lang.String" value="Copy selected to &quot;Scrutinize Signal&quot;"/>
+            <Property name="toolTipText" type="java.lang.String" value="Copy the (single) selected signal to the Scrutinize signal pane."/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="scrutinizeParametricMenuItemActionPerformed"/>
@@ -704,7 +704,8 @@
         </Component>
         <MenuItem class="javax.swing.JMenuItem" name="scrutinizeMenuItem">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Scrutinize selected"/>
+            <Property name="text" type="java.lang.String" value="Copy selected to &quot;Scrutinize Signal&quot;"/>
+            <Property name="toolTipText" type="java.lang.String" value="Copy the (single) selected signal to the &quot;Scrutinize Signal&quot; pane."/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="scrutinizeMenuItemActionPerformed"/>
@@ -753,7 +754,7 @@
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="saveSelectedRawTableRowMenuItem">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Export selected..."/>
+            <Property name="text" type="java.lang.String" value="Export selected"/>
             <Property name="toolTipText" type="java.lang.String" value="Export selected signal to selected format."/>
           </Properties>
           <Events>

@@ -6,6 +6,7 @@ https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
 Version 2.?.?, released ??
 
+* Some menu text/tooltip text improvements.
 * Changed some menu entry texts, erroneously saying "ms" to "µs".
 
 =============================================================================

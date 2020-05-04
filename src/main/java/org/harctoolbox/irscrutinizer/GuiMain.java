@@ -2755,8 +2755,8 @@ public final class GuiMain extends javax.swing.JFrame {
         parameterTablePopupMenu.add(addParametrizedTestSignalMenuItem);
         parameterTablePopupMenu.add(jSeparator13);
 
-        scrutinizeParametricMenuItem.setText("Scrutinize selected");
-        scrutinizeParametricMenuItem.setToolTipText("Send the selected signal to Scrutinize signal, if possible.");
+        scrutinizeParametricMenuItem.setText("Copy selected to \"Scrutinize Signal\"");
+        scrutinizeParametricMenuItem.setToolTipText("Copy the (single) selected signal to the Scrutinize signal pane.");
         scrutinizeParametricMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 scrutinizeParametricMenuItemActionPerformed(evt);
@@ -3097,7 +3097,8 @@ public final class GuiMain extends javax.swing.JFrame {
         rawTablePopupMenu.add(rawFromClipboardMenuItem);
         rawTablePopupMenu.add(jSeparator18);
 
-        scrutinizeMenuItem.setText("Scrutinize selected");
+        scrutinizeMenuItem.setText("Copy selected to \"Scrutinize Signal\"");
+        scrutinizeMenuItem.setToolTipText("Copy the (single) selected signal to the \"Scrutinize Signal\" pane.");
         scrutinizeMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 scrutinizeMenuItemActionPerformed(evt);
@@ -3143,7 +3144,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         rawTablePopupMenu.add(deleteMenuItem);
 
-        saveSelectedRawTableRowMenuItem.setText("Export selected...");
+        saveSelectedRawTableRowMenuItem.setText("Export selected");
         saveSelectedRawTableRowMenuItem.setToolTipText("Export selected signal to selected format.");
         saveSelectedRawTableRowMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
