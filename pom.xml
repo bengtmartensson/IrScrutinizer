@@ -589,37 +589,27 @@
                             </arguments>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>net.nicoulaj.maven.plugins</groupId>
-                <artifactId>checksum-maven-plugin</artifactId>
-                <version>1.8</version>
-                <executions>
+
+                    <!-- compute checksums -->
+                    <!-- I know the checksum-maven-plugin, but it does not do what I want) -->
                     <execution>
+                        <id>mk-checksums</id>
+                        <phase>install</phase>
                         <goals>
-                            <goal>files</goal>
+                            <goal>exec</goal>
                         </goals>
+                        <configuration>
+                            <executable>${basedir}/tools/mkchecksums.sh</executable>
+                            <workingDirectory>${project.build.directory}</workingDirectory>
+                            <arguments>
+                                <argument>${project.artifactId}-${project.version}.exe</argument>
+                                <argument>${project.artifactId}-${project.version}-bin.zip</argument>
+                                <argument>${project.artifactId}-${project.version}-macOS.dmg</argument>
+                                <argument>${project.artifactId}-${project.version}-x86_64.AppImage</argument>
+                            </arguments>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <algorithms>
-                        <algorithm>MD5</algorithm>
-                        <algorithm>SHA-1</algorithm>
-                        <algorithm>SHA-512</algorithm>
-                    </algorithms>
-                    <fileSets>
-                        <fileSet>
-                            <directory>${project.build.directory}</directory>
-                            <includes>
-                                <include>${project.artifactId}-${project.version}.exe</include>
-                                <include>*.AppImage</include>
-                                <include>*.zip</include>
-                                <include>*.dmg</include>
-                            </includes>
-                        </fileSet>
-                    </fileSets>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>pl.project13.maven</groupId>
