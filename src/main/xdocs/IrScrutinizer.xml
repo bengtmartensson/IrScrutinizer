@@ -609,7 +609,7 @@ to fail.
 <title>The "Scrutinize remote" pane</title>
 <p>This panel is devoted to the capturing/import/editing of a collection of IR
 signals, called  "a remote" in the sequel. The panel contains two sub-panels:
-for <a href="Glossary.html#ParametricIRSignal">parametric signals</a> and for <a href="Glossary.html#RawIRSignal">non-parametric, "raw", signals</a>.</p>
+for <a href="Glossary.html#ParametricIRSignal">parametric signals</a> and for <a href="Glossary.html#RawIrSignal">non-parametric, "raw", signals</a>.</p>
 
 <p>A "parametric" signal is determined by its protocol name, and the values of
 the protocol's parameters. A "raw" signal is determined by its timing pattern,
