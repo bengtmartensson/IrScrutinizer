@@ -4,8 +4,11 @@ Girr, HardHardware, DevSlashLirc, and Jirc.
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
-Version 2.2.6(?), released ??
+Version 2.2.6, planned release June 2020
 
+* Lirc-export: More protocols to reject generating cooked Lirc exports. #363.
+* Fixed anchor problem in generated html-files, like IrScrutinizer.html. #371.
+* Reorganized checksums in distro. #381.
 * Several menu text/tooltip text improvements.
 * New user parameter ignoreLeadingGarbage. #377.
 * Import to param. remote now rejects undecodable signals. #376.
