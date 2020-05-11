@@ -114,7 +114,7 @@ public final class IrpMasterBean extends javax.swing.JPanel {
     }
 
     public IrpMasterBean(JFrame frame, GuiUtils guiUtils, IrpDatabase irpMaster, String intialProtocol) {
-        this(frame, guiUtils, irpMaster, intialProtocol, "0", invalidParameterString, "0", "-", "");
+        this(frame, guiUtils, irpMaster, intialProtocol, "0", invalidParameterString, "0", invalidParameterString, "");
     }
 
     public IrpMasterBean(JFrame frame, GuiUtils guiUtils, IrpDatabase irpDatabase, String intialProtocol,
@@ -188,7 +188,7 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         checkParam(dTextField, dLabel, "D", initialD);
         checkParam(sTextField, sLabel, "S", initialS);
         checkParam(fTextField, fLabel, "F", initialF);
-        checkParam(toggleComboBox, tLabel, "T", initalT);
+        checkParam(tTextField, tLabel, "T", initalT);
 
         additionalParametersTextField.setText(initialAdditionalParameters);
         additionalParametersLabel.setEnabled(protocol.hasNonStandardParameters());
@@ -233,9 +233,7 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         processParameter(parameters, "D", dTextField);
         processParameter(parameters, "S", sTextField);
         processParameter(parameters, "F", fTextField);
-        String toggle = (String) toggleComboBox.getModel().getSelectedItem();
-        if (!toggle.equals("-"))
-            parameters.put("T", toggle);
+        processParameter(parameters, "T", tTextField);
         String addParams = protocol.hasNonStandardParameters() ? additionalParametersTextField.getText() : null;
         if (addParams != null && !addParams.trim().isEmpty()) {
             String[] str = addParams.trim().split("[ \t]+");
@@ -292,7 +290,6 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         copyPastePopupMenu = new org.harctoolbox.guicomponents.CopyPastePopupMenu(true);
         copyPopupMenu = new org.harctoolbox.guicomponents.CopyPastePopupMenu();
         protocolComboBox = new javax.swing.JComboBox<>();
-        toggleComboBox = new javax.swing.JComboBox<>();
         protocolDocuButton = new javax.swing.JButton();
         dTextField = new javax.swing.JTextField();
         sTextField = new javax.swing.JTextField();
@@ -306,6 +303,9 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         tLabel = new javax.swing.JLabel();
         additionalParametersLabel = new javax.swing.JLabel();
         randomParametersButton = new javax.swing.JButton();
+        tTextField = new javax.swing.JTextField();
+
+        setPreferredSize(new java.awt.Dimension(725, 108));
 
         protocolComboBox.setModel(new DefaultComboBoxModel(irpMasterProtocols()));
         protocolComboBox.setSelectedItem(protocolName);
@@ -313,15 +313,6 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         protocolComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 protocolComboBoxActionPerformed(evt);
-            }
-        });
-
-        toggleComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-", "0", "1", "*" }));
-        toggleComboBox.setToolTipText("toggle code");
-        toggleComboBox.setEnabled(false);
-        toggleComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                toggleComboBoxActionPerformed(evt);
             }
         });
 
@@ -396,13 +387,17 @@ public final class IrpMasterBean extends javax.swing.JPanel {
 
         jLabel1.setText("Protocol");
 
+        dLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         dLabel.setText("D");
 
+        sLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         sLabel.setText("S");
         sLabel.setEnabled(false);
 
+        fLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         fLabel.setText("F");
 
+        tLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         tLabel.setText("T");
         tLabel.setEnabled(false);
 
@@ -415,6 +410,19 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         randomParametersButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 randomParametersButtonActionPerformed(evt);
+            }
+        });
+
+        tTextField.setToolTipText("toggle code");
+        tTextField.setComponentPopupMenu(copyPastePopupMenu);
+        tTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                tTextFieldFocusLost(evt);
+            }
+        });
+        tTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tTextFieldActionPerformed(evt);
             }
         });
 
@@ -431,21 +439,21 @@ public final class IrpMasterBean extends javax.swing.JPanel {
                             .addComponent(protocolComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(dTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dLabel))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(dTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                            .addComponent(dLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(sLabel)
-                            .addComponent(sTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(sTextField)
+                            .addComponent(sLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fLabel)
-                            .addComponent(fTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(fTextField)
+                            .addComponent(fLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(tLabel)
-                            .addComponent(toggleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(tTextField)
+                            .addComponent(tLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -478,12 +486,12 @@ public final class IrpMasterBean extends javax.swing.JPanel {
                     .addComponent(randomParametersButton)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(protocolComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(toggleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(protocolDocuButton)
                         .addComponent(dTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(sTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(fTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(additionalParametersTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(additionalParametersTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(tTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(irpTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -549,12 +557,6 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         fTextFieldActionPerformed(null);
     }//GEN-LAST:event_fTextFieldFocusLost
 
-    private void toggleComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleComboBoxActionPerformed
-        String oldT = T;
-        T = (String) toggleComboBox.getSelectedItem();
-        propertyChangeSupport.firePropertyChange(PROP_T, oldT, T);
-    }//GEN-LAST:event_toggleComboBoxActionPerformed
-
     private void additionalParametersTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_additionalParametersTextFieldActionPerformed
         String oldParams = additionalParameters;
         additionalParameters = additionalParametersTextField.getText().trim();
@@ -570,6 +572,17 @@ public final class IrpMasterBean extends javax.swing.JPanel {
         Map<String, Long> params = protocol.randomParameters();
         setParameters(params);
     }//GEN-LAST:event_randomParametersButtonActionPerformed
+
+    private void tTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tTextFieldFocusLost
+        tTextFieldActionPerformed(null);
+    }//GEN-LAST:event_tTextFieldFocusLost
+
+    private void tTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tTextFieldActionPerformed
+        String oldT = T;
+        T = tTextField.getText();
+        // TODO: Validity check?
+        propertyChangeSupport.firePropertyChange(PROP_T, oldT, T);
+    }//GEN-LAST:event_tTextFieldActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel additionalParametersLabel;
@@ -588,6 +601,6 @@ public final class IrpMasterBean extends javax.swing.JPanel {
     private javax.swing.JLabel sLabel;
     private javax.swing.JTextField sTextField;
     private javax.swing.JLabel tLabel;
-    private javax.swing.JComboBox<String> toggleComboBox;
+    private javax.swing.JTextField tTextField;
     // End of variables declaration//GEN-END:variables
 }
