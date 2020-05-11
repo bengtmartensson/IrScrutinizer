@@ -273,9 +273,6 @@
         </Component>
         <MenuItem class="javax.swing.JMenuItem" name="moveUpMenuItem1">
           <Properties>
-            <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-              <KeyStroke key="Ctrl+UP"/>
-            </Property>
             <Property name="mnemonic" type="int" value="85"/>
             <Property name="text" type="java.lang.String" value="Move Up"/>
             <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
@@ -288,9 +285,6 @@
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="moveDownMenuItem1">
           <Properties>
-            <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-              <KeyStroke key="Ctrl+DOWN"/>
-            </Property>
             <Property name="mnemonic" type="int" value="68"/>
             <Property name="text" type="java.lang.String" value="Move Down"/>
             <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
@@ -361,9 +355,6 @@
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="deleteMenuItem1">
           <Properties>
-            <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-              <KeyStroke key="DELETE"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="Delete selected"/>
           </Properties>
           <Events>
@@ -391,9 +382,6 @@
         </Component>
         <MenuItem class="javax.swing.JMenuItem" name="clearMenuItem1">
           <Properties>
-            <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-              <KeyStroke key="Ctrl+DELETE"/>
-            </Property>
             <Property name="mnemonic" type="int" value="67"/>
             <Property name="text" type="java.lang.String" value="Clear all"/>
           </Properties>
@@ -419,9 +407,6 @@
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="exportCookedMenuItem">
           <Properties>
-            <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-              <KeyStroke key="E"/>
-            </Property>
             <Property name="mnemonic" type="int" value="69"/>
             <Property name="text" type="java.lang.String" value="Export"/>
             <Property name="toolTipText" type="java.lang.String" value="Export in the selected format"/>
@@ -644,9 +629,6 @@
         </Component>
         <MenuItem class="javax.swing.JMenuItem" name="moveUpMenuItem">
           <Properties>
-            <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-              <KeyStroke key="Ctrl+UP"/>
-            </Property>
             <Property name="mnemonic" type="int" value="85"/>
             <Property name="text" type="java.lang.String" value="Move Up"/>
             <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
@@ -659,9 +641,6 @@
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="moveDownMenuItem">
           <Properties>
-            <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-              <KeyStroke key="Ctrl+DOWN"/>
-            </Property>
             <Property name="mnemonic" type="int" value="68"/>
             <Property name="text" type="java.lang.String" value="Move Down"/>
             <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
@@ -743,9 +722,6 @@
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="deleteMenuItem">
           <Properties>
-            <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-              <KeyStroke key="DELETE"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="Delete selected"/>
           </Properties>
           <Events>
@@ -773,9 +749,6 @@
         </Component>
         <MenuItem class="javax.swing.JMenuItem" name="clearMenuItem">
           <Properties>
-            <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-              <KeyStroke key="Ctrl+DELETE"/>
-            </Property>
             <Property name="mnemonic" type="int" value="67"/>
             <Property name="text" type="java.lang.String" value="Clear all"/>
           </Properties>
@@ -801,9 +774,6 @@
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="saveRawMenuItem">
           <Properties>
-            <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-              <KeyStroke key="E"/>
-            </Property>
             <Property name="mnemonic" type="int" value="69"/>
             <Property name="text" type="java.lang.String" value="Export"/>
           </Properties>
@@ -1414,9 +1384,6 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="clearSignalMenuItem">
               <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="DELETE"/>
-                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/eraser.png"/>
                 </Property>

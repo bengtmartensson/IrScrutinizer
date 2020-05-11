@@ -2715,7 +2715,6 @@ public final class GuiMain extends javax.swing.JFrame {
         parameterTablePopupMenu.add(parametricSorterCheckBoxMenuItem);
         parameterTablePopupMenu.add(jSeparator24);
 
-        moveUpMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, java.awt.event.InputEvent.CTRL_MASK));
         moveUpMenuItem1.setMnemonic('U');
         moveUpMenuItem1.setText("Move Up");
         moveUpMenuItem1.setEnabled(!properties.getSorterOnParametrizedTable());
@@ -2726,7 +2725,6 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         parameterTablePopupMenu.add(moveUpMenuItem1);
 
-        moveDownMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DOWN, java.awt.event.InputEvent.CTRL_MASK));
         moveDownMenuItem1.setMnemonic('D');
         moveDownMenuItem1.setText("Move Down");
         moveDownMenuItem1.setEnabled(!properties.getSorterOnParametrizedTable());
@@ -2792,7 +2790,6 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         parameterTablePopupMenu.add(duplicateParametricMenuItem);
 
-        deleteMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
         deleteMenuItem1.setText("Delete selected");
         deleteMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2819,7 +2816,6 @@ public final class GuiMain extends javax.swing.JFrame {
         parameterTablePopupMenu.add(printTableRowMenuItem);
         parameterTablePopupMenu.add(jSeparator14);
 
-        clearMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, java.awt.event.InputEvent.CTRL_MASK));
         clearMenuItem1.setMnemonic('C');
         clearMenuItem1.setText("Clear all");
         clearMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -2845,7 +2841,6 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         parameterTablePopupMenu.add(parameterUniquefyMenuItem);
 
-        exportCookedMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, 0));
         exportCookedMenuItem.setMnemonic('E');
         exportCookedMenuItem.setText("Export");
         exportCookedMenuItem.setToolTipText("Export in the selected format");
@@ -3047,7 +3042,6 @@ public final class GuiMain extends javax.swing.JFrame {
         rawTablePopupMenu.add(rawSorterCheckBoxMenuItem);
         rawTablePopupMenu.add(jSeparator25);
 
-        moveUpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, java.awt.event.InputEvent.CTRL_MASK));
         moveUpMenuItem.setMnemonic('U');
         moveUpMenuItem.setText("Move Up");
         moveUpMenuItem.setEnabled(!properties.getSorterOnRawTable());
@@ -3058,7 +3052,6 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         rawTablePopupMenu.add(moveUpMenuItem);
 
-        moveDownMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DOWN, java.awt.event.InputEvent.CTRL_MASK));
         moveDownMenuItem.setMnemonic('D');
         moveDownMenuItem.setText("Move Down");
         moveDownMenuItem.setEnabled(!properties.getSorterOnRawTable());
@@ -3135,7 +3128,6 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         rawTablePopupMenu.add(duplicateRawMenuItem);
 
-        deleteMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
         deleteMenuItem.setText("Delete selected");
         deleteMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -3162,7 +3154,6 @@ public final class GuiMain extends javax.swing.JFrame {
         rawTablePopupMenu.add(printRawTableRowMenuItem);
         rawTablePopupMenu.add(jSeparator12);
 
-        clearMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, java.awt.event.InputEvent.CTRL_MASK));
         clearMenuItem.setMnemonic('C');
         clearMenuItem.setText("Clear all");
         clearMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -3188,7 +3179,6 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         rawTablePopupMenu.add(rawUniquefyMenuItem);
 
-        saveRawMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, 0));
         saveRawMenuItem.setMnemonic('E');
         saveRawMenuItem.setText("Export");
         saveRawMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -6679,7 +6669,6 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         actionsMenu.add(clonePlotMenuItem);
 
-        clearSignalMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
         clearSignalMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/eraser.png"))); // NOI18N
         clearSignalMenuItem.setText("Clear signal");
         clearSignalMenuItem.addActionListener(new java.awt.event.ActionListener() {
