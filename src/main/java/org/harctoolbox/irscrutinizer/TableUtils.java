@@ -17,10 +17,19 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer;
 
+import java.awt.Event;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.GirrException;
@@ -36,6 +45,56 @@ public class TableUtils {
 
     TableUtils(GuiUtils guiUtils) {
         this.guiUtils = guiUtils;
+    }
+
+    public void fixKeyMappings(JTable table) {
+        addKey(table, "move up", KeyEvent.VK_UP, Event.CTRL_MASK, new AbstractAction("move up") {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    tableMoveSelection(table, true);
+                } catch (ErroneousSelectionException ex) {
+                    guiUtils.error(ex);
+                }
+            }
+        });
+
+        addKey(table, "move down", KeyEvent.VK_DOWN, Event.CTRL_MASK, new AbstractAction("move down") {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    tableMoveSelection(table, false);
+                } catch (ErroneousSelectionException ex) {
+                    guiUtils.error(ex);
+                }
+            }
+        });
+
+        addKey(table, "delete row", KeyEvent.VK_DELETE, Event.CTRL_MASK, new AbstractAction("delete row") {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    deleteTableSelectedRows(table);
+                } catch (ErroneousSelectionException ex) {
+                    guiUtils.error(ex);
+                }
+            }
+        });
+
+        addKey(table, "delete all", KeyEvent.VK_DELETE, Event.CTRL_MASK | Event.SHIFT_MASK, new AbstractAction("delete all") {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                clearTableConfirm(table);
+            }
+        });
+    }
+
+    private void addKey(JTable table, String name, int key, int mask, Action action) {
+        InputMap inputMap = table.getInputMap(JComponent.WHEN_FOCUSED);
+        ActionMap actionMap = table.getActionMap();
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(key, mask);
+        inputMap.put(keyStroke, name);
+        actionMap.put(name, action);
     }
 
     private void barfIfManySelected(JTable table) throws ErroneousSelectionException {

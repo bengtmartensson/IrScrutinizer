@@ -6,6 +6,8 @@ https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
 Version 2.2.6, planned release June 2020
 
+* Replace non-functional accelerators by keybindings in the tables. #373.
+* Generate pane: Replace the "T" combobox with normal text field. #372.
 * Lirc-export: More protocols to reject generating cooked Lirc exports. #363.
 * Fixed anchor problem in generated html-files, like IrScrutinizer.html. #371.
 * Reorganized checksums in distro. #381.

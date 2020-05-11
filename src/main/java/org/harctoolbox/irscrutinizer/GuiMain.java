@@ -555,6 +555,9 @@ public final class GuiMain extends javax.swing.JFrame {
 
         initComponents();
 
+        tableUtils.fixKeyMappings(parameterTable);
+        tableUtils.fixKeyMappings(rawTable);
+
         currentPane = topLevelTabbedPane.getSelectedComponent();
 
         cookedPanel.setTransferHandler(new GirrImporterBeanTransferHandler(false));

@@ -100,7 +100,12 @@ class HelpTexts {
             + "In both tables, the right mouse button opens a context menu containing a number of ways to manipulate the table, its view, or the data contained therein. By enabling the row selector, the rows can be sorted along any of the present columns.\n\n"
             + "To capture a number of IR signals, first configure the hardware using the capturing hardware pane. Next press the Capture button. The program will now run a separate capturing thread, so the user just have to press the buttons of the remote. The signals will be received, interpreted, decoded, and entered on subsequent lines in the selected table (raw or parameterized). The capture thread will continue until the captured button is pressed again. The user may mix captures with other activities, like entering information (name, comments,...) in the table.\n\n"
             + "The export button exports the content of the currently selected table (raw or parameterized) according to the currently selected export format.\n\n"
-            + "The menu entry Actions -> Enter test signal (or its accelerator, the F9 key) enters a test signal, either as parametric signal, or as a raw signal";
+            + "The menu entry Actions -> Enter test signal (or its accelerator, the F9 key) enters a test signal, either as parametric signal, or as a raw signal.\n\n"
+            + "Key bindings:\n"
+            + "* Ctrl-Up: Move selection up\n"
+            + "* Ctrl-Down: Move selection down\n"
+            + "* Ctrl-Delete: Delete selection\n"
+            + "* Ctrl-Shift-Delete: Delete all.";
 
     @SuppressWarnings("PackageVisibleField")
     public static String generateHelp
