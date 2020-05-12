@@ -87,6 +87,13 @@ public class TableUtils {
                 clearTableConfirm(table);
             }
         });
+
+        addKey(table, "clear selection", KeyEvent.VK_ESCAPE, 0, new AbstractAction("clear selection") {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                table.clearSelection();
+            }
+        });
     }
 
     private void addKey(JTable table, String name, int key, int mask, Action action) {

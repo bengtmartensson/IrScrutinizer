@@ -105,7 +105,8 @@ class HelpTexts {
             + "* Ctrl-Up: Move selection up\n"
             + "* Ctrl-Down: Move selection down\n"
             + "* Ctrl-Delete: Delete selection\n"
-            + "* Ctrl-Shift-Delete: Delete all.";
+            + "* Ctrl-Shift-Delete: Delete all\n"
+            + "* Escape: Inhibit selection.";
 
     @SuppressWarnings("PackageVisibleField")
     public static String generateHelp

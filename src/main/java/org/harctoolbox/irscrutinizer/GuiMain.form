@@ -378,6 +378,14 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="printTableRowMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="clearSelectionParametricMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Clear selection"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearSelectionParametricMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator14">
         </Component>
         <MenuItem class="javax.swing.JMenuItem" name="clearMenuItem1">
@@ -743,6 +751,14 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="printRawTableRowMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="clearSelectionRawMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Clear selection"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearSelectionRawMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator12">
