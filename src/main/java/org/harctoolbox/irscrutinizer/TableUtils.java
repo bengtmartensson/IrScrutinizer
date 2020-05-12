@@ -20,8 +20,11 @@ package org.harctoolbox.irscrutinizer;
 import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -197,12 +200,21 @@ public class TableUtils {
         return commandTableSelected(table).values().iterator().next();
     }
 
-    Map<String, Command> commandTableSelected(JTable table) throws GirrException {
+    public List<Integer> modelLinesSelected(JTable table) {
         int[] selected = table.getSelectedRows();
-        Map<String, Command> commands = new LinkedHashMap<>(selected.length);
+        List<Integer> result = new ArrayList<>(selected.length);
         for (int selectedRow : selected) {
             int modelRow = table.convertRowIndexToModel(selectedRow);
-            NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
+            result.add(modelRow);
+        }
+        return result;
+    }
+
+    public Map<String, Command> commandTableSelected(JTable table) throws GirrException {
+        List<Integer> modelRows = modelLinesSelected(table);
+        Map<String, Command> commands = new LinkedHashMap<>(modelRows.size());
+        NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
+        for (int modelRow : modelRows) {
             Command command = tableModel.toCommand(modelRow);
             commands.put(command.getName(), command);
         }

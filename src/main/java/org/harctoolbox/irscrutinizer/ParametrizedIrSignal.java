@@ -19,8 +19,10 @@ package org.harctoolbox.irscrutinizer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.IntStream;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.ircore.IrCoreException;
@@ -375,17 +377,17 @@ public class ParametrizedIrSignal extends NamedIrSignal {
             return list;
         }
 
-        public void setProtocol(String newProtocol) {
-            for (int row =  0; row < getRowCount(); row++) {
-                //ParametrizedIrSignal pir = getParameterIrSignal(row);
+        void setProtocol(String newProtocol, Iterable<Integer> rows) {
+            rows.forEach((row) -> {
                 setValueAt(newProtocol, row, ParameterIrSignalColumns.posProtocol);
-            }
+            });
             fireTableDataChanged();
         }
 
-        public void setMiscParameters(String value) {
-            for (int row =  0; row < getRowCount(); row++)
+        public void setMiscParameters(String value, Iterable<Integer> rows) {
+            rows.forEach((row) -> {
                 setValueAt(value, row, ParameterIrSignalColumns.posMiscParameters);
+            });
             fireTableDataChanged();
         }
 
@@ -408,32 +410,32 @@ public class ParametrizedIrSignal extends NamedIrSignal {
                     : -1;
         }
 
-        public void setParameter(int colPos, long value) {
+        public void setParameter(int colPos, long value, Iterable<Integer> rows) {
             if (colPos < 0)
                 return;
 
-            for (int row = 0; row < getRowCount(); row++)
+            rows.forEach((row) -> {
                 setValueAt(value != IrCoreUtils.INVALID ? (int) value : null, row, colPos);
-
+            });
             fireTableDataChanged();
         }
 
-        public void setParameter(String name, long value) {
-            setParameter(colPos(name), value);
+        public void setParameter(String name, long value, Iterable<Integer> rows) {
+            setParameter(colPos(name), value, rows);
         }
 
-        public void unsetParameter(int colPos) {
+        public void unsetParameter(int colPos, Iterable<Integer> rows) {
             if (colPos < 0)
                 return;
 
-            for (int row = 0; row < getRowCount(); row++)
+            rows.forEach((row) -> {
                 setValueAt(null, row, colPos);
-
+            });
             fireTableDataChanged();
         }
 
-        public void unsetParameter(String name) {
-            unsetParameter(colPos(name));
+        public void unsetParameter(String name, Iterable<Integer> rows) {
+            unsetParameter(colPos(name), rows);
         }
 
         @Override

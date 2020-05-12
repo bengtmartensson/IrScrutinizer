@@ -6,6 +6,10 @@ https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
 Version 2.2.6, planned release June 2020
 
+* Scrutinize remote: Commands in advanced menu should operate on selection. #368.
+* Scrutinize Remote/Raw: Possibility to copy commands to Parametric Remote. #380.
+* Change accelerator for exit from Escape to Ctrl-Q.
+* Scrutinize remote: Possibility to clear selection. #382.
 * Replace non-functional accelerators by keybindings in the tables. #373.
 * Generate pane: Replace the "T" combobox with normal text field. #372.
 * Lirc-export: More protocols to reject generating cooked Lirc exports. #363.

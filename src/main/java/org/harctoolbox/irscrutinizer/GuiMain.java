@@ -1779,9 +1779,14 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setParameter(String name) {
+        List<Integer> rows = tableUtils.modelLinesSelected(parameterTable);
+        if (rows.isEmpty()) {
+            guiUtils.error("Nothing selected");
+            return;
+        }
         Long answer = guiUtils.getLongInput("Enter new value for " + name, 0);
         if (answer != null)
-            parameterTableModel.setParameter(name, answer);
+            parameterTableModel.setParameter(name, answer, rows);
     }
 
     private void setupIrTrans() throws UnknownHostException, IOException {
@@ -1930,11 +1935,13 @@ public final class GuiMain extends javax.swing.JFrame {
         HelpPopup.newHelpPopup(this, str.toString(), protocolName);
     }
 
-    private void pasteColumnInTable(JTable rawTable, NamedIrSignal.LearnedIrSignalTableModel tableModel) {
+    private void pasteColumnInTable(JTable rawTable, NamedIrSignal.LearnedIrSignalTableModel tableModel) throws NoSelectionException {
         String clip = (new CopyClipboardText(null)).fromClipboard();
         String[] arr = clip.split("\r?\n");
         int row = rawTable.getSelectedRow();
         int column = rawTable.convertColumnIndexToModel(rawTable.getSelectedColumn());
+        if (row < 0 || column < 0)
+            throw new NoSelectionException("No target cell selected");
         tableModel.replaceColumnSubset(row, column, arr);
     }
 
@@ -8140,12 +8147,17 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_importRmduMenuItemActionPerformed
 
     private void setProtocolMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setProtocolMenuItemActionPerformed
+        List<Integer> rows = tableUtils.modelLinesSelected(parameterTable);
+        if (rows.isEmpty()) {
+            guiUtils.error("Nothing selected");
+            return;
+        }
         String newProtocol = guiUtils.getInput("Enter new protocol", "Protocol request", "NEC1");
         if (newProtocol == null) // Cancel pressed
             return;
-        if (irpDatabase.isKnown(newProtocol) ||
-            guiUtils.confirm("The protocol \"" + newProtocol + "\" is unknown. Proceed anyhow?")) {
-            parameterTableModel.setProtocol(newProtocol);
+        if (irpDatabase.isKnown(newProtocol)
+                || guiUtils.confirm("The protocol \"" + newProtocol + "\" is unknown. Proceed anyhow?")) {
+            parameterTableModel.setProtocol(newProtocol, rows);
         }
     }//GEN-LAST:event_setProtocolMenuItemActionPerformed
 
@@ -9064,8 +9076,13 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_offerStackTraceCheckBoxMenuItemActionPerformed
 
     private void setMiscParamsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setMiscParamsMenuItemActionPerformed
+        List<Integer> rows = tableUtils.modelLinesSelected(parameterTable);
+        if (rows.isEmpty()) {
+            guiUtils.error("Nothing selected");
+            return;
+        }
         String value = guiUtils.getInput("Enter \"Misc. Params\" as string", "Parameters entry", "X=0");
-        parameterTableModel.setMiscParameters(value);
+        parameterTableModel.setMiscParameters(value, rows);
     }//GEN-LAST:event_setMiscParamsMenuItemActionPerformed
 
     private void parametrizedMultiColumnNameCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parametrizedMultiColumnNameCheckBoxActionPerformed
@@ -9154,7 +9171,12 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_importSignalAsMode2MenuItem1importSignalAsWaveMenuItemActionPerformed
 
     private void unsetTMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unsetTMenuItemActionPerformed
-        parameterTableModel.unsetParameter("T");
+        List<Integer> rows = tableUtils.modelLinesSelected(parameterTable);
+        if (rows.isEmpty()) {
+            guiUtils.error("Nothing selected");
+            return;
+        }
+        parameterTableModel.unsetParameter("T", rows);
     }//GEN-LAST:event_unsetTMenuItemActionPerformed
 
     private void debugCodeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugCodeMenuItemActionPerformed
@@ -9441,18 +9463,28 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_addMissingNamesMenuItemActionPerformed
 
     private void addNamePrefixMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNamePrefixMenuItemActionPerformed
+        List<Integer> rows = tableUtils.modelLinesSelected(parameterTable);
+        if (rows.isEmpty()) {
+            guiUtils.error("Nothing selected");
+            return;
+        }
         String prefix = guiUtils.getInput("Enter desired prefix", "Prefix inquiry", "cmd_");
         if (prefix != null)
-            parameterTableModel.namesTransform("^", prefix);
+            parameterTableModel.namesTransform("^", prefix, rows);
     }//GEN-LAST:event_addNamePrefixMenuItemActionPerformed
 
     private void transformNameMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transformNameMenuItemActionPerformed
+        List<Integer> rows = tableUtils.modelLinesSelected(parameterTable);
+        if (rows.isEmpty()) {
+            guiUtils.error("Nothing selected");
+            return;
+        }
         String old = guiUtils.getInput("Enter string to be replaced (regular expression)", "String inquiry", "test");
         if (old == null)
             return;
         String replacement = guiUtils.getInput("Replace \"" + old + "\" by ...", "String inquiry", old);
         if (replacement != null)
-            parameterTableModel.namesTransform(old, replacement);
+            parameterTableModel.namesTransform(old, replacement, rows);
     }//GEN-LAST:event_transformNameMenuItemActionPerformed
 
     private void proxyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proxyMenuItemActionPerformed
@@ -9667,7 +9699,11 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.error("Column paste not possible with enabled sorter.");
             return;
         }
-        pasteColumnInTable(rawTable, rawTableModel);
+        try {
+            pasteColumnInTable(rawTable, rawTableModel);
+        } catch (NoSelectionException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_rawPasteColumnMenuItemActionPerformed
 
     private void parametrizedPasteColumnMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parametrizedPasteColumnMenuItemActionPerformed
@@ -9675,7 +9711,11 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.error("Column paste not possible with enabled sorter.");
             return;
         }
-        pasteColumnInTable(parameterTable, parameterTableModel);
+        try {
+            pasteColumnInTable(parameterTable, parameterTableModel);
+        } catch (NoSelectionException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_parametrizedPasteColumnMenuItemActionPerformed
 
     private void ignoreLeadingGarbageCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ignoreLeadingGarbageCheckBoxMenuItemActionPerformed
@@ -9694,8 +9734,10 @@ public final class GuiMain extends javax.swing.JFrame {
     private void copyToParametrizedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyToParametrizedMenuItemActionPerformed
         try {
             Map<String, Command> selected = tableUtils.commandTableSelected(rawTable);
-            if (selected.isEmpty())
+            if (selected.isEmpty()) {
                 guiUtils.error("Nothing selected");
+                return;
+            }
             importCommands(selected.values(), null, false);
         } catch (GirrException ex) {
             guiUtils.error(ex);

@@ -425,12 +425,12 @@ public abstract class NamedIrSignal {
             return ! (columnsFunc.uninterestingIfAllEqual(column) && isAllEqualColumn(column));
         }
 
-        public void namesTransform(String from, String to) {
-            for (int row = 0; row < getRowCount(); row++) {
+        public void namesTransform(String from, String to, Iterable<Integer> rows) {
+            rows.forEach((row) -> {
                 String oldName = (String) getValueAt(row, columnsFunc.getPosName());
                 String newName = oldName.replaceFirst(from, to);
                 setValueAt(newName, row, columnsFunc.getPosName());
-            }
+            });
             fireTableDataChanged();
         }
 
