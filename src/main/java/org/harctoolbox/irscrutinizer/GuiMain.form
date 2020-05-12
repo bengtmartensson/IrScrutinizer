@@ -753,6 +753,14 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="printRawTableRowMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="copyToParametrizedMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Copy selection to Parametric Remote"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="copyToParametrizedMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="clearSelectionRawMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" value="Clear selection"/>

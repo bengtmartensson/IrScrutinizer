@@ -2044,6 +2044,7 @@ public final class GuiMain extends javax.swing.JFrame {
         deleteMenuItem = new javax.swing.JMenuItem();
         saveSelectedRawTableRowMenuItem = new javax.swing.JMenuItem();
         printRawTableRowMenuItem = new javax.swing.JMenuItem();
+        copyToParametrizedMenuItem = new javax.swing.JMenuItem();
         clearSelectionRawMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
         clearMenuItem = new javax.swing.JMenuItem();
@@ -3165,6 +3166,14 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         rawTablePopupMenu.add(printRawTableRowMenuItem);
+
+        copyToParametrizedMenuItem.setText("Copy selection to Parametric Remote");
+        copyToParametrizedMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyToParametrizedMenuItemActionPerformed(evt);
+            }
+        });
+        rawTablePopupMenu.add(copyToParametrizedMenuItem);
 
         clearSelectionRawMenuItem.setText("Clear selection");
         clearSelectionRawMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -9682,6 +9691,17 @@ public final class GuiMain extends javax.swing.JFrame {
         rawTable.clearSelection();
     }//GEN-LAST:event_clearSelectionRawMenuItemActionPerformed
 
+    private void copyToParametrizedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyToParametrizedMenuItemActionPerformed
+        try {
+            Map<String, Command> selected = tableUtils.commandTableSelected(rawTable);
+            if (selected.isEmpty())
+                guiUtils.error("Nothing selected");
+            importCommands(selected.values(), null, false);
+        } catch (GirrException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_copyToParametrizedMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9765,6 +9785,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem copyDataToClipboardMenuItem;
     private org.harctoolbox.guicomponents.CopyPastePopupMenu copyPastePopupMenu;
     private org.harctoolbox.guicomponents.CopyPastePopupMenu copyPopupMenu;
+    private javax.swing.JMenuItem copyToParametrizedMenuItem;
     private javax.swing.JMenuItem creatingUserMenuItem;
     private javax.swing.JPanel csvImportPanel;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CsvParametrizedImporter> csvParametrizedFileImporterBean;
