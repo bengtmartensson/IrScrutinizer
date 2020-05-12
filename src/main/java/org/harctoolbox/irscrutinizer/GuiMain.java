@@ -6535,7 +6535,7 @@ public final class GuiMain extends javax.swing.JFrame {
         fileMenu.add(resetPropertiesMenuItem);
         fileMenu.add(jSeparator6);
 
-        exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0));
+        exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
         exitMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/stop.png"))); // NOI18N
         exitMenuItem.setMnemonic('X');
         exitMenuItem.setText("Exit");
