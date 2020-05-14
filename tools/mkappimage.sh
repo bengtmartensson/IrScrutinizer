@@ -139,5 +139,9 @@ ln -s ${MYPROG_LOWER} ${USR_BIN}/irptransmogrifier
 # Invocation of appstreamcli breaks on many systems, see
 # https://github.com/AppImage/AppImageKit/issues/856
 # Until that is fixed, must use --no-appstream
+
+# Signing does not work at Travis, since it does not have access to the private key,
+# but this is handled gracefully, so no need to handle special cases.
+
 ARCH=x86_64; export ARCH
-tools/appimagetool-x86_64.AppImage --no-appstream ${APPDIR} ${APPIMAGE} > /dev/null
+tools/appimagetool-x86_64.AppImage --sign --no-appstream ${APPDIR} ${APPIMAGE} > /dev/null
