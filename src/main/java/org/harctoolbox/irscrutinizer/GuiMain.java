@@ -1745,6 +1745,8 @@ public final class GuiMain extends javax.swing.JFrame {
             captureThread = null; // thread suicide
             startButton.setEnabled(true);
             enableRawCaptureOnly(false);
+            topLevelTabbedPane.setEnabled(true);
+            jumpToLastPanelMenuItem.setEnabled(true);
         }
 
         private void terminate() {
@@ -7835,9 +7837,9 @@ public final class GuiMain extends javax.swing.JFrame {
                 }
             });
             captureThread.start();
+            topLevelTabbedPane.setEnabled(false);
+            jumpToLastPanelMenuItem.setEnabled(false);
         }
-        topLevelTabbedPane.setEnabled(! startStopToggleButton.isSelected());
-        jumpToLastPanelMenuItem.setEnabled(! startStopToggleButton.isSelected());
     }//GEN-LAST:event_startStopToggleButtonActionPerformed
 
     private void printRawTableRowMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printRawTableRowMenuItemActionPerformed
@@ -9440,9 +9442,9 @@ public final class GuiMain extends javax.swing.JFrame {
                 }
             });
             captureThread.start();
+            topLevelTabbedPane.setEnabled(false);
+            jumpToLastPanelMenuItem.setEnabled(false);
         }
-        topLevelTabbedPane.setEnabled(! continuousCaptureButton.isSelected());
-        jumpToLastPanelMenuItem.setEnabled(! continuousCaptureButton.isSelected());
     }//GEN-LAST:event_continuousCaptureButtonActionPerformed
 
     private void checkTable(NamedIrSignal.LearnedIrSignalTableModel tableModel) {
