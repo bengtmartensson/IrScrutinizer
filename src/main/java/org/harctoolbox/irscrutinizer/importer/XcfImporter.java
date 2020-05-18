@@ -42,7 +42,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * Class for importing Pronto CCF files of the first generation.
+ * Class for importing Pronto XCF files, "Pronto Professional".
  */
 public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
@@ -116,9 +116,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
     public XcfImporter() {
         super();
     }
-    /**
-     * @param translateProntoFont the translateProntoFont to set
-     */
+
     public void setTranslateProntoFont(boolean translateProntoFont) {
         this.translateProntoFont = translateProntoFont;
     }
@@ -149,7 +147,6 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         moduleIndex = null;
         actionIndex = null;
 
-        // First read all the STRINGs into an index
         Element root = doc.getDocumentElement();
         String version = root.getAttribute("Version");
         if (version.charAt(0) == '5')
