@@ -42,4 +42,57 @@ and Christoph Bartelmus (with contribution of many others), and is licensed unde
 The parts used here have been translated to Java by Bengt Martensson.
 Tonto was written by Stewart Allen, and is licensed under the \"Artistic License\".
     </thirdPartyString>
+
+    <publicKey>&quot;-----BEGIN PGP PUBLIC KEY BLOCK-----\n&quot;
++ &quot;\n&quot;
++ &quot;mQINBF3Jjr0BEAC+72De/4DmXziFwuyog1+195J1EC4/lG8SUM1ftffxLIUQ16KV\n&quot;
++ &quot;GTT8LJoaUPxP72ZG1uCNppulmf6pPSv1JlXFqy8711lEAg5o4VcZ/DUiho3LZnKa\n&quot;
++ &quot;ft/XQ5sxqBm/8bnTb2x6+DTP+3RDi01ZO4tWKIl8F/8zy6cjpvYndI0uWVaMrMwG\n&quot;
++ &quot;OtOnPWEHA/6c96DYV/yVYErTW2iQwCYtDhg1zkqwcAeHIAqFResqBj6Lfi3hZgdP\n&quot;
++ &quot;+7r8ZMqhGqoX6OQIB4Q2tpvl6xfFWYtLKL1J/C8DOiswdGmhS8PWmUKSuoZm+cnJ\n&quot;
++ &quot;UifV0/rI9vSSByL3r4etLcNbVhFcKPLQkJ9Wlq7ykwtxq4Nu9IshUUa9bFU3m+sg\n&quot;
++ &quot;CzAf6/8MjmuRX6FbqeGGXUYhQkYeKXgWpFZXTcKsPZxcKCtdzhG/O4MiWJW0RLxe\n&quot;
++ &quot;P+dipHpBw3aGkLXUen8tqyx8VsXR34G0OcCCf6aKh/Y1n2moM3ZL24lM+2VSqu1o\n&quot;
++ &quot;7BvRsGtqhvLdrbo7G9GVKfpcaER+iIbQmBWj9OFdczxRU03PeQ2RlV6Y/I+koH2r\n&quot;
++ &quot;jDiIZ76/HkuUBhQb0aPheg2IzVu5ksa5SDdOSshsBOCfFJF632WXkbvm8cE9qc25\n&quot;
++ &quot;FOJNYFXxeGHR1Bxp+JUD6cwkaB7K/ducZ7avvj3xMMRZYZ0L61ZcZhMj6QARAQAB\n&quot;
++ &quot;tCtCZW5ndCBNYXJ0ZW5zc29uIDxiYXJmQGJlbmd0LW1hcnRlbnNzb24uZGU+iQJO\n&quot;
++ &quot;BBMBCAA4FiEEX0kst2vrLmscqmOj7h8X1Oz4r5wFAl3Jjr0CGwMFCwkIBwIGFQoJ\n&quot;
++ &quot;CAsCBBYCAwECHgECF4AACgkQ7h8X1Oz4r5zBRg/+JDljfkyfpvDBnAWQVlcWdEDt\n&quot;
++ &quot;vVU/GNOm2RbREKynYO60HUEnREV8u8od/wFF2MTZuONtyiSe+PkmWvw76HEPDhxl\n&quot;
++ &quot;t9WRLJ/qSrMAh9UpcJdlb0SdzpdGyz0lRQXOtwek2aJ+tlgtmaszepncxErqNEdu\n&quot;
++ &quot;Skr/p4u5maenhlTg5ueRC6GSMDU2hKVyWySyHNpbrha6TiNYxZHlPwdYglvZwX6z\n&quot;
++ &quot;lm28/lps5ITK86WAenYc526siVXB6gSRZeJUPIp83QsjCKJAtr23pkZI03BYXcAy\n&quot;
++ &quot;BI8wfR/rVZ/svCmg0dzxf911GreneGfpehyn/CIiWuWMS5VCBOhE0Vco2iiBniWw\n&quot;
++ &quot;YEOhvRhUHsY+dRGgGG1PX7yLsQjv/LThDTMoq1W7n10mgkE/67KVbAIe3tvhhNIW\n&quot;
++ &quot;dSEx7gCCUAX9a5jJZbRihLYrVq/PXQvUyujXtXNwHqFoitstkjoOjoVRC6hV/Wiq\n&quot;
++ &quot;5q7fFy4lVW9DeFv/DD6gdl+BL8eDJSmhNRksca5qGRhlBjZ3ehyIkEOfc5WJunGa\n&quot;
++ &quot;Q3N/4gSLK4rvqtWeC9sgnLK2gMvmD3ulmtua8+t9DsqcFW2KVkAFPS4DxPfwVqlh\n&quot;
++ &quot;025Zwb4Kvzg67ymXMxJcOUKyXbjycZNZ0rU5/wWXuBP1GpWdsFdBqq+PUjZ6Vz5W\n&quot;
++ &quot;dwM0NcdfQB9ZdWTjm6q5Ag0EXcmOvQEQAM7y/Pcm3kptjRIxfeqKgHA2zeaHXPPU\n&quot;
++ &quot;g5JSVE6LHPgujcMbmPd+xIXu1dyU1dPmoh6wtXyQ9qyIjXOngtUn33/nNRU3Ze5l\n&quot;
++ &quot;r7shZ1F5kpHT1+pw0WiwH7vYe7m5va51QfwMz0KVXQNByi+ja1VIQBzslNsoEcDL\n&quot;
++ &quot;nx7TPmafJu/t9GP3gF/EZlB40Wx/PkYY5EX8fbMRQr4x8cX8FlUKKWzwUDvRHFFi\n&quot;
++ &quot;1iUyNm7iPO5sTRjsgAvO6Bc0CcyKaQUOpxNaJRZifslHSgTy+CQ949yHMPKRQgbj\n&quot;
++ &quot;L99Lp2sVnMJ43eBcsKfDV+iphgKlKa8elU1x4UA5Jz+MKYJ03sFSW98Gts6Y3xR5\n&quot;
++ &quot;jFz23bU7g/OxqIHbjUucOENSppFPGJNC42KQfksFcGpRLcb6FNEd7aQZH5HP4WDm\n&quot;
++ &quot;Vfqdkgx26pbh7xbPjk9Wx5TSg52gQsuZ7LV4c4ydWJo9D7787uQPwPZWrEkpWooe\n&quot;
++ &quot;KFfT/aHSb8zCIUsEs6q9xNP8El6uSaQyW32cYsT7viGNZ8LGvlbO3MAgsxKVUcU0\n&quot;
++ &quot;wbsBXveXwQkwcXVYFFKT4npgd+Na8Xz0fKfu6+X46Yuz7iLmvstQLq+WVdWPayZV\n&quot;
++ &quot;wwfmiksQqSRuqJzgNdeNvNaBe8uOrYgvgvPQfReREt3/b3z9pXmvPANdcILzEYts\n&quot;
++ &quot;MbDzGy5a5WMLABEBAAGJAjYEGAEIACAWIQRfSSy3a+suaxyqY6PuHxfU7PivnAUC\n&quot;
++ &quot;XcmOvQIbDAAKCRDuHxfU7PivnJ81D/0cWd0CFeLkg1WnXsW1fzjlKDqmEBNe0vd+\n&quot;
++ &quot;XeveNQPhaSub0q/0BQy9/WBeYxwqV7Zl8z/b/m/Q8gLn6+MT6zSDhn5+l8ASxpMO\n&quot;
++ &quot;rVG85xLfjobdFMOP47EsQYIjW3XcYt9k/h/qwdYcA5hDlKX6zSZDSOmRbKHYh39M\n&quot;
++ &quot;vKRkTfNZtvcEMlKeFUafjOB3ERiRsKTZCRhlKMTpbWlx14yjdu6PZfgT9E9jGDao\n&quot;
++ &quot;EuAO2j4kIreUo585iGUrG80X9unZsfAvdj1QYvp6KC8YcBM0M93RceWU18Q1hLri\n&quot;
++ &quot;vHwOvPZvQ9kZnet1NqmKTcdPhH+m2b+hGbDSrXz3A9Cf8mtMHDQsZ8OIKgCqjmXZ\n&quot;
++ &quot;P+h+DQFODgUJbumXpe3NkEqbIPDRRJUiaEwyroCtMgWzZlR6ZgfNv9W6rfc6SKPB\n&quot;
++ &quot;4sS7hHNebSP/L3/clMHKEClW12NDb5/RkJVUMfZMyrUFqaSGFMrMaugh65HHtqGd\n&quot;
++ &quot;fOxNwUYS3tUdMAqaex7I+DZl3FyN8Uj2nHfFsJ05xrKIRFG/jMHIaTuOpn09ckws\n&quot;
++ &quot;YX3TFC8f0OvxfeHkzAhC49vHUVmoZ34YoG2iawSdwO6YHodriPv5sIu8rSZJhZAe\n&quot;
++ &quot;JQsJ7JXEBCsJGUaCpv3dABqHDDRJANJBNrkos1nHmMJgA/U31i5NCXsEqZDGstZ3\n&quot;
++ &quot;k05EhDb/LQ==\n&quot;
++ &quot;=EnLc\n&quot;
++ &quot;-----END PGP PUBLIC KEY BLOCK-----&quot;</publicKey>
 </version>

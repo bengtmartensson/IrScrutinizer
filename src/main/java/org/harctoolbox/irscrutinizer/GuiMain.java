@@ -2500,6 +2500,8 @@ public final class GuiMain extends javax.swing.JFrame {
         timeFrequencyCalcMenuItem = new javax.swing.JMenuItem();
         beaconListenerMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        publicKeyMenuItem = new javax.swing.JMenuItem();
+        jSeparator41 = new javax.swing.JPopupMenu.Separator();
         checkUpToDateMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -7312,6 +7314,18 @@ public final class GuiMain extends javax.swing.JFrame {
         toolsMenu.add(beaconListenerMenuItem);
         toolsMenu.add(jSeparator1);
 
+        publicKeyMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/password.png"))); // NOI18N
+        publicKeyMenuItem.setMnemonic('P');
+        publicKeyMenuItem.setText("Author's public PGP key");
+        publicKeyMenuItem.setToolTipText("Show the author's public PGP key.");
+        publicKeyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                publicKeyMenuItemActionPerformed(evt);
+            }
+        });
+        toolsMenu.add(publicKeyMenuItem);
+        toolsMenu.add(jSeparator41);
+
         checkUpToDateMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/agt_update-product.png"))); // NOI18N
         checkUpToDateMenuItem.setText("Check for Updates");
         checkUpToDateMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -9749,6 +9763,10 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_copyToParametrizedMenuItemActionPerformed
 
+    private void publicKeyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_publicKeyMenuItemActionPerformed
+        HelpPopup.newHelpPopup(this, Version.publicKey, "Author's public key");
+    }//GEN-LAST:event_publicKeyMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -10111,6 +10129,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator39;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator40;
+    private javax.swing.JPopupMenu.Separator jSeparator41;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
@@ -10188,6 +10207,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu protocolParametersMenu;
     private javax.swing.JMenuItem protocolSpecMenuItem;
     private javax.swing.JMenuItem proxyMenuItem;
+    private javax.swing.JMenuItem publicKeyMenuItem;
     private javax.swing.JMenuItem rawAddTestSignalMenuItem;
     private javax.swing.JMenuItem rawCodeAnalyzeMenuItem;
     private javax.swing.JMenuItem rawCodeClearMenuItem;
