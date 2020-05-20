@@ -18,6 +18,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.guicomponents;
 
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.MouseEvent;
 
 /**
@@ -34,11 +35,10 @@ public class HelpPopup extends javax.swing.JDialog {
      * @param title
      */
     @SuppressWarnings("OverridableMethodCallInConstructor")
-    public HelpPopup(java.awt.Frame parent, String helpText, String title) {
-        super(parent, false /*modal*/);
+    public HelpPopup(Window parent, String helpText, String title) {
+        super(parent, title);
         payload = helpText;
         initComponents();
-        setTitle(title);
         // show the start of the text
         this.helpText.setCaretPosition(0);
     }
@@ -104,11 +104,11 @@ public class HelpPopup extends javax.swing.JDialog {
             dispose();
     }//GEN-LAST:event_formMouseClicked
 
-    public static HelpPopup newHelpPopup(java.awt.Frame parent, String helpText) {
+    public static HelpPopup newHelpPopup(Window parent, String helpText) {
         return newHelpPopup(parent, helpText, "Help");
     }
 
-    public static HelpPopup newHelpPopup(java.awt.Frame parent, String helpText, String title) {
+    public static HelpPopup newHelpPopup(Window parent, String helpText, String title) {
         HelpPopup helpBox = new HelpPopup(parent, helpText, title);
         // Try to align just to the right of the parent
         Rectangle parentCoords = parent.getBounds();

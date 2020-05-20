@@ -401,11 +401,14 @@ public final class GuiMain extends javax.swing.JFrame {
         parameterTableColumnModel = new ParametrizedIrSignal.ParameterIrSignalTableColumnModel();
         rawTableColumnModel = new RawIrSignal.RawTableColumnModel();
 
-        guiUtils = new GuiUtils(this, Version.appName, maxCharsInGuiMessages);
-        guiUtils.setUsePopupsForErrors(false); // during initialization, popup errors might not work
-        guiUtils.setUsePopupsForHelp(properties.getUsePopupsForHelp());
-        guiUtils.setOfferStackTrace(properties.getOfferStackTrace());
-        guiUtils.setVerbose(properties.getVerbose());
+        GuiUtils.setProgramName(Version.appName);
+        GuiUtils.setMaxGuiMessageLength(maxCharsInGuiMessages);
+        GuiUtils.setUsePopupsForErrors(false); // during initialization, popup errors might not work
+        GuiUtils.setUsePopupsForHelp(properties.getUsePopupsForHelp());
+        GuiUtils.setOfferStackTrace(properties.getOfferStackTrace());
+        GuiUtils.setVerbose(properties.getVerbose());
+        guiUtils = new GuiUtils(this);
+
         tableUtils = new TableUtils(guiUtils);
 
         ProntoModel[] prontomodels = ProntoModel.getModels();

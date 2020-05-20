@@ -18,6 +18,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.guicomponents;
 
 import java.awt.Desktop;
+import java.awt.Window;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -31,12 +32,18 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import org.harctoolbox.ircore.IrCoreUtils;
 
 // Interfaces to Desktop
 public class GuiUtils implements Serializable {
+
+    private static int maxGuiMessageLength = 200;
+    private static boolean usePopupsForErrors = false;
+    private static boolean usePopupsForHelp = false;
+    private static boolean offerStackTrace = false;
+    private static String programName = "unknown";
+    private static boolean verbose = false;
 
     public static void fatal(Exception ex, int errorcode) {
         fatal(ex, errorcode, null);
@@ -65,45 +72,48 @@ public class GuiUtils implements Serializable {
         System.exit(errorcode);
     }
 
-    private static boolean confirm(JFrame frame, String message, int optionType) {
+    private static boolean confirm(Window frame, String message, int optionType) {
         return JOptionPane.showConfirmDialog(frame, message, "Confirmation requested", optionType) == JOptionPane.OK_OPTION;
     }
 
-    private static boolean confirm(JFrame frame, String message) {
+    private static boolean confirm(Window frame, String message) {
         return confirm(frame, message, JOptionPane.OK_CANCEL_OPTION);
     }
 
-    private final int maxGuiMessageLength;
-    private boolean usePopupsForErrors = false;
-    private boolean usePopupsForHelp = false;
-    private boolean offerStackTrace = false;
-    private final String programName;
-    private final JFrame frame;
-    private boolean verbose = false;
-
-    public GuiUtils(JFrame frame, String programName, int maxGuiMessageLength) {
-        this.maxGuiMessageLength = maxGuiMessageLength;
-        this.programName = programName;
-        this.frame = frame;
-    }
-
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
+    /**
+     * @param aMaxGuiMessageLength the maxGuiMessageLength to set
+     */
+    public static void setMaxGuiMessageLength(int aMaxGuiMessageLength) {
+        maxGuiMessageLength = aMaxGuiMessageLength;
     }
 
     /**
-     * @param offerStackTrace the offerStackTrace to set
+     * @param aProgramName the programName to set
      */
-    public void setOfferStackTrace(boolean offerStackTrace) {
-        this.offerStackTrace = offerStackTrace;
+    public static void setProgramName(String aProgramName) {
+        programName = aProgramName;
     }
 
-    public void setUsePopupsForErrors(boolean usePopupsForErrors) {
-        this.usePopupsForErrors = usePopupsForErrors;
+    public static void setVerbose(boolean newVerbose) {
+        verbose = newVerbose;
     }
 
-    public void setUsePopupsForHelp(boolean usePopupsForHelp) {
-        this.usePopupsForHelp = usePopupsForHelp;
+    public static void setOfferStackTrace(boolean newOfferStackTrace) {
+        offerStackTrace = newOfferStackTrace;
+    }
+
+    public static void setUsePopupsForErrors(boolean newUsePopupsForErrors) {
+        usePopupsForErrors = newUsePopupsForErrors;
+    }
+
+    public static void setUsePopupsForHelp(boolean newUsePopupsForHelp) {
+        usePopupsForHelp = newUsePopupsForHelp;
+    }
+
+    private final Window frame;
+
+    public GuiUtils(Window frame) {
+        this.frame = frame;
     }
 
     private String truncate(String message) {
