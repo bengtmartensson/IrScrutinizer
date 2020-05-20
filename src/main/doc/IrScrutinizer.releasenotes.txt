@@ -6,6 +6,7 @@ https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
 Version 2.2.6, planned release June 2020
 
+* The help popup now has a popup menu for copy, save, print.
 * Scrutinize remote: Commands in advanced menu now operates on selection. #368.
 * Scrutinize Remote/Raw: Possibility to copy commands to Parametric Remote. #380.
 * Change accelerator for exit from Escape to Ctrl-Q.
