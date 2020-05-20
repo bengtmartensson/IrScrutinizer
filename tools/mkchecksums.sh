@@ -12,4 +12,7 @@ for algo in ${ALGORITHMS} ; do
             ${algo}sum "$f" >> checksums.${algo}
         fi
     done
+    if gpg --clearsign -o checksums checksums.${algo} ; then
+	mv checksums checksums.${algo}
+    fi
 done
