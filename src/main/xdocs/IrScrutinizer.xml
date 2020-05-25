@@ -72,6 +72,10 @@ not to hold the author responsible.</warning>
 	  <td>2020-05-03</td>
 	  <td>Updated installation instructions.</td>
 	</tr>
+        <tr>
+	  <td>2020-05-20</td>
+	  <td>Minor updates for version 2.2.6.</td>
+	</tr>
       </table>
 
 <section>
@@ -134,29 +138,30 @@ called <a href="IrpMaster.html">IrpMaster</a>. It can also be invoked as a
 command line program. Then a program
 called <a href="IrMaster.html">IrMaster</a> was released, which among other things
 constitutes a user friendly GUI front end to IrpMaster. The present program,
-IrScrutinizer, is also based on IrpMaster, and adds functionality from
+IrScrutinizer, was also based on IrpMaster, and adds functionality from
 IrMaster, in particular the possibility to collect IR signals, a vastly
 improved import and export facility, and edit collections of IR commands.
 
-IrScrutizer almost completely replaces IrMaster.
+IrScrutizer <a href="http://localhost:8888/IrScrutinizer.html#Does+IrScrutinizer+completely+replaces+IrMaster%3F">almost</a> completely replaces IrMaster.
 The final version was released in Febrary 2014, slightly ironically called version
 1.0.0.  No further development is planned.</p>
+
+<p>The final version of IrScrutinizer is called 1.4.3, and is <a href="https://github.com/bengtmartensson/IrScrutinizer/releases/tag/Version-1.4.3">available here</a>.
+Since version 2.0.0, the newer IR engine <a href="IrpTransmogrifier.html">IrpTransmogrifier</a>
+has replaced IrpMaster, DecodeIR, and Analyzer.</p>
 </section>
 
 <section>
 <title>Copyright and License</title>
 <p>The program, as well as this document, is copyright by myself. My
-copyright does not extend to the embedded "components" Analyze,
-DecodeIR, and Jirc.  ExchangeIR was written by
-Graham Dixon and published under <a
- href="http://www.gnu.org/licenses/gpl.html">GPL3 license</a>. A subset has been translated to Java by Bengt Martensson.
-DecodeIR was originally written by John S. Fine, with later
-contributions from others.
-It is public domain software. IrpMaster is using ANTLR3.4 and depends on the run time functions of ANTLR3, which
+copyright does not extend to the embedded "components", like Jirc.
+IrpTransmogrifier is using ANTLR4 and depends on the run time functions of ANTLR4, which
 is <a href="http://www.antlr.org/license.html">free software with BSD license</a>.</p>
 <p>
-The "database file" IrpProtocols.ini is derived from <a
-href="http://www.hifi-remote.com/wiki/index.php?title=DecodeIR">DecodeIR.html</a>, thus I do not claim copyright.
+    The "database file" <code>IrpProtocols.xml</code> is derived from <a
+href="http://www.hifi-remote.com/wiki/index.php?title=DecodeIR">DecodeIR.html</a>,
+as well as many, many discussions with, and contributions from, members of the JP1 community,
+thus I do not claim copyright.
 </p>
 <p>The program uses <a
 href="http://jcommander.org">JCommander</a> by  Cédric Beust to parse the
@@ -194,21 +199,13 @@ and Christoph Bartelmus (with contribution of may others), and is licensed
 under GPL2. The parts used here have been translated to Java by myself,
 available <a href="https://github.com/bengtmartensson/Jirc">here</a>.</p>
 
-
-<p>Tonto was written by Stewart Allen, and is licensed under the
+<p>For Pronto Classic support, <a href="https://github.com/stewartoallen/tonto">Tonto</a> by Stewart Allen was used. It is licensed under the
 <a href="Tonto-license.txt">"Clarified Artistic License"</a>.</p>
 
-<p>The contained Arduino firmware contains code copyrighted by Michael Dreher
-(<a
-href="http://www.mikrocontroller.net/articles/High-Speed_capture_mit_ATmega_Timer">IrWidget</a>,
-GPL2 or later). Some code within that firmware is derived from <a href="https://github.com/z3t0/Arduino-IRremote">IRremote</a>,
-which was originally written by Ken Shirriff,
-and is licensed under the <a href="http://www.gnu.org/licenses/lgpl.html">LGPL license</a>.</p>
-
-<p>The program contains icons from Dangerous Prototypes
-and IrTrans. These are used exclusively in the context of these firms, and only
+<p>The program contains icons from <a href="http://dangerousprototypes.com/">Dangerous Prototypes</a>
+and <a href="http://irtrans.com">IrTrans</a>. These are used exclusively in the context of these firms, and only
 used to illustrate their products. The icons for JP1 and Lirc are also
-exclusively used to illustrate themselves.</p>
+exclusively used to illustrate the community, their products, and files.</p>
 
 <p>
 The program and its documentation are licensed under the <a
@@ -445,6 +442,8 @@ ln -s /usr/local/share/irscrutinizer/irscrutinizer.sh /usr/local/bin/irptransmog
             command like
             <code>sudo usermod -aG dialout $USER</code>, and/or <code>sudo usermod -aG lock $USER</code> is used.
         </p>
+        <p>It has been brought to my attention that <a href="https://www.archlinux.org/">Arch Linux</a> (and likely others)
+        still use the older name <code>uucp</code> for <code>dialout</code>.</p>
         <p>Do not run this program as root (except possibly for debugging device access).</p>
     </section>
 </section>
@@ -642,6 +641,7 @@ the capture button on the "Scrutinize signal" panel.) The user may mix captures
 with other activities, like entering information (name, comments,...) in the
 table.</p>
 
+<!-- TODO: There should be a section on using the editor as an "abstract remote" editor. -->
 <p>The export button exports the content of the currently selected table (raw
 or parameterized) according to the currently selected export format.</p>
 
@@ -650,6 +650,61 @@ import the contained signals.</p>
 
 <p>The menu entry Actions -> Enter test signal (or its accelerator, the F9
 key) enters a test signal, either as parametric signal, or as a raw signal.</p>
+<section>
+    <title>The parametric table columns</title>
+<dl>
+    <dt>#</dt>
+    <dd>A unique number assigned to the signal when creating. It is not editable and not exported.</dd>
+    <dt>Timestamp</dt>
+    <dd>A timestamp generated when the signal was entered or created. It is not editable and not exported.</dd>
+    <dt>Protocol</dt>
+    <dd>Name of the protocol. In the table, anything can be entered, however, to export, it has to match (case insensitively!) a known protocol.</dd>
+    <dt>D</dt>
+    <dd>The <code>D</code> parameter value, as defined in the protocol IRP.</dd>
+    <dt>S</dt>
+    <dd>The <code>S</code> parameter value, as defined in the protocol IRP.</dd>
+    <dt>F</dt>
+    <dd>The <code>F</code> parameter value, as defined in the protocol IRP.</dd>
+    <dt>T</dt>
+    <dd>The <code>T</code> parameter value, as defined in the protocol IRP.</dd>
+    <dt>Misc. params</dt>
+    <dd>All parameters not called <code>D</code>,  <code>S</code>,  <code>F</code>,  or <code>T</code>,
+    using syntax <em>name</em><code>=</code><em>value</em>,
+    for example <code>X=42 Y=73</code>. (Note that there are no spaces around the equal ("=") sign, but between the assignments.</dd>
+    <dt>Name</dt>
+    <dd>Name of the command. This is in principle arbitrary, however, to be able to constitute a meaningful export to a target device,
+        the names have to be unique.</dd>
+        <dt>Comment</dt>
+        <dd>A textual comment. In most export formats, it is transmitted to the export, and the target can treat it anyway it desires.</dd>
+</dl>
+</section>
+
+<section>
+    <title>The raw table columns</title>
+<dl>
+    <dt>#</dt>
+    <dd>A unique number assigned to the signal when creating. It is not editable and not exported.</dd>
+    <dt>Timestamp</dt>
+    <dd>A timestamp generated when the signal was entered or created. It is not editable and not exported.</dd>
+    <dt>Intro</dt>
+    <dd>The <a href="http://localhost:8888/Glossary.html#IrSignal">intro sequence</a> of the command.</dd>
+    <dt>Repeat</dt>
+    <dd>The <a href="http://localhost:8888/Glossary.html#IrSignal">repeat sequence</a> of the command.</dd>
+    <dt>Ending</dt>
+    <dd>The <a href="http://localhost:8888/Glossary.html#IrSignal">ending sequence</a> of the command.</dd>
+    <dt>Name</dt>
+    <dd>Name of the command. This is in principle arbitrary, however, to be able to constitute a meaningful export to a target device,
+        the names have to be unique.</dd>
+        <dt>Decode</dt>
+        <dd>The result of feeding the signal to the decoder. Not editable, not considered as authoritative information; serves only for information.</dd>
+        <dt>Analyze</dt>
+        <dd>The result of feeding the signal to the analyzer. Not editable, not considered as authoritative information; serves only for information.</dd>
+        <dt>Comment</dt>
+        <dd>A textual comment. In most export formats, it is transmitted to the export, and the target can treat it anyway it desires.</dd>
+        <dt>Frequency</dt>
+        <dd>Modulation frequency in Hz.</dd>
+</dl>
+</section>
 </section>
 <section>
 <title>The "Generate" pane</title>
@@ -660,14 +715,24 @@ command number or OBC, present in almost all protocols), as well as T, <a href="
 (in general 0 or 1, only in a few protocols). These number can be entered as
 decimal numbers, or, by prepending "0x", as hexadecimal numbers.</p>
 
+<p>In IrpTransmogrifier and its <a href="IrpTransmogrifier.html">documentation</a>,
+the word "render" is used instead of "generate".</p>
+
 <p>By pressing "Generate", the signal is computed, and the middle window is
 filled with a textual representation, in the form selected by Options -> Output
 Text Format.</p>
+
+<p>For protocols with a toggle, leaving it unassigned (<code>T</code> left empty)
+makes the rendering engine "toggle" in the sense that it changes its value on every invokation,
+in accordance with the IRP.
+The rendering engine is invoked not only by "Generate",
+but also by "Transmit", "Export", and the "To ..." buttons.</p>
 
 <p>The Export button initiates an export to a file format selected by the <a
 href="#The+Export+pane">Export pane</a>. The three lower buttons transfer the signal(s) to the
 scrutinize signal panel, the raw remote table, or the parameterized panel.</p>
 
+<!-- TODO: remove reference to not maintained documentation. -->
 <section><title>Accessing a number of different parameter values</title><p>
 For the export and the transfer to the "scrutinize remote" tables, not only a
 single parameter value can be selected, but whole sets. The complete syntax and
@@ -823,10 +888,6 @@ in particular by <a
 href="http://files.remotecentral.com/pronto/index.html">Remote
 Central</a>. IrScrutinizer can read in these files to its import tree, even
 preserving the Pronto "devices" as nodes in the tree.</p>
-
-<!--p>Unfortunately, the <a href="Glossary.html#Tonto">Tonto library</a> used
-produces the warning message <code>Error loading JComm JNI library</code>. This message
-should be ignored.</p-->
 	</section>
 
 <section><title>Pronto Prof. (XCF format)</title>
@@ -1185,7 +1246,7 @@ module is then accessed using the UDP text mode.</p>
     (These are identified by a version string like <code>V220</code> etc.)
     However, only version 2.2 has been exhaustively tested.</p>
 
-    <p>The ending timeout for receive is 1.4 seconds, and cannot be changed. This is not optimal for most IR signal capture use cases.</p>
+    <p>The ending timeout for receive is 1.7 seconds, and cannot be changed. This is not optimal for most IR signal capture use cases.</p>
 </section>
 <section>
 <title>The "CommandFusion" Pane</title>
@@ -1300,6 +1361,22 @@ possibility encounter long delays, or even to "hang" the program.</p>
 <p>After configuring and opening the capturing hardware, the "Test" button can be
 used for testing the configuration without switching pane.</p>
 
+<section>
+    <title>Capturing parameters</title>
+    <p>Capturing an IrSequence is governed by the parameters ...,
+        which can be accessed in the <code>Options -> Timeouts</code> submenu.
+        They all use the unit milli secconds. Unfortunately, not all hardware respect these parameters.
+    </p>
+    <dl>
+        <dt>beginTimeout</dt>
+        <dd>When capturing starts, this determines how long the capturer is waiting for the first flash. Default is 3000ms.</dd>
+        <dt>captureMaxSize</dt>
+        <dd>This is the maximal duration the capturing hardware will accept. Default is 1000.</dd>
+        <dt>endingTimeout</dt>
+        <dd>The silence period required at the end of an IrSequence. Default is 300ms.</dd>
+    </dl>
+</section>
+
 <section><title>IrWidget</title>
 <p>Plug the IrWidget it into the computer. Check that the operating system
 has assigned a port to it, and note which one it is. On Windows: open the
@@ -1346,6 +1423,8 @@ This makes IrScrutinizer a viable replacement of the
     </a> program.
 </p>
 
+<p>Since the /dev/lirc interface is much better and cleaner, the mode2-interface is scheduled for removal.</p>
+
 <section>
     <title>Standard input</title>
 <p>To use with standard input, the program can be started for example with a command like</p>
@@ -1381,6 +1460,10 @@ stops the sub-process.</p>
             <p>The device should be opened on the "Sending hw" pane, and if desired, selected here for capturing.</p>
 	</section>
       </section>
+<section>
+    <title>Key bindings and accelerators</title>
+    <p>TODO.</p>
+</section>
 </section>
 <section>
 <title>Command line arguments</title>
@@ -1406,11 +1489,6 @@ hardware printing some messages in the console.</p>
 
 <p>The option <code>--nuke-properties</code> makes the program delete the property file, and exit immediately.</p>
 
-<!--p>The second form invokes IrpMaster as a the command line program  on the rest
-of the arguments. It is a convenience feature for just having one user entry
-point
-in the distributed jar file.</p-->
-
 <p>For automating tasks, or for integrating in build processes or Makefiles or
 the like, it
 is probably a better idea to use IrpTransmogrifier instead, which has a
@@ -1427,17 +1505,72 @@ calling it using the name <code>irptransmogrifier</code> (through copying or lin
 <section>
 <title>Questions and Answers</title>
 <section>
+    <title>How do I verify the integrity of my downloads?</title>
+    <p>
+        On the official download site, the checksums (using the <a href="https://en.wikipedia.org/wiki/MD5">MD5</a>,
+        <a href="https://en.wikipedia.org/wiki/SHA-1">SHA-1</a>, and <a href="https://en.wikipedia.org/wiki/SHA-2">SHA-512</a> algorithms)
+        are available in the files <code>checksums.md5</code>, <code>checksums.sha1</code>, and <code>checksums.sha512</code>.
+        With appropriate software, these can be used for validating the downloaded files.</p>
+
+        <p>To prevent from tampering of <em>both</em> the program files <em>and</em> the checksum files,
+        the checksum files are also PGP signed with the cryptograph key
+        for <code>Bengt Martensson &lt;barf@bengt-martensson.de&gt;"</code>,  finger print <code> 5F492CB76BEB2E6B1CAA63A3EE1F17D4ECF8AF9C</code>.
+           The full key can be downloaded <a href="http://harctoolbox.org/downloads/harctoolbox.gpg">here</a>,
+           or found in the program as <code>Tools -> Author&apos;s Public PGP key</code>.
+           (For practical reasons, the shapshot releases are, in general, not signed.)
+    </p>
+    <p>How to check these checksums and signatures differ between different programs and operating systems,
+        and is therefore not described here. However, searching on the Internet will yield many descriptions.</p>
+</section>
+
+<section>
+    <title>My virus program says that your program contains virus or malware.</title>
+    <p>My programs do not come with virus.
+        Downloading from un-official sites are discouraged, in particular if they do not keep the signed checksum files.
+        (Most likely, they do not.)</p>
+    <p>First check the integrity of the downloaded files as described in the previous question.
+    Assuming that the problem remains, this is a problem with your virus program,
+    and not with the present program, and it should be handled as such.
+    If it is a release version, please inform the author of the virus program, and/or create a white list.
+    What you do not need to do, is to tell me, or "the world". Remember, it is a problem with the virus program,
+    not with my software.
+    </p>
+</section>
+<section>
     <title>Can I run more than one instance simultaneously?</title>
     <p>
         Yes, you can fire up several instances, for example, one for sending
         and another for receiving the sent signals.
-        The only problem is that the properties is the same, so the instance
+        The only problem is that the properties are read from/written to the same file, so the instance
         that ends last will overwrite the properties of the first one.
-        This does not have to be a problem, however,
+        This does not have to be a problem. However,
         if this is an issue, you can start the program with the <code>--properties</code>
         <em>filename</em>, pointing to an alternative properties file. For example,
         with Windows, you can duplicate the icon, and edit the command line on one of those.
     </p>
+</section>
+
+<section>
+    <title>I miss DecodeIR!</title>
+    <p>Support for DecodeIR was <em>removed</em>, not just hidden and deprecated,
+        because keeping it would increase maintenance and installation effort substantially.
+        For accessing DecodeIR, it is recommended to install version 1.4.3
+    (which is the final release with DecodeIR) in parallel to the current one,
+    see the previous answer for details.</p>
+</section>
+
+<section>
+    <title>Firewall issues?</title>
+    <p>Except for the usual HTTP(S) ports, the program uses some TCP and UDP ports for communicating with some of the supported hardware.
+        These are:
+    </p>
+    <ul>
+        <li>For GlobalCache this is TCP port 4998. Its discovery beacon uses UDP port 9131.</li>
+        <li>Lirc uses a TCP port, per default 8765.</li>
+        <li>IrTrans uses a UDP port, per default 21000.</li>
+        <li>AGirs on an ethernet connected board uses a TCP port, per default 33333.</li>
+    </ul>
+    <p>TODO: describe configuration of firewall/packet filter on Windows and others. (Help welcome!)</p>
 </section>
 
 <section><title>Does IrScrutinizer completely replaces IrMaster?</title>
@@ -1653,8 +1786,9 @@ can be used to install  them in the local maven repository before building.</p>
 
     <section>
         <title>Tonto</title>
-        <p>If the system supports Tonto, use the system version. (On recent Fedora, use <code>sudo dnf install tonto</code>.)
-        Otherwise, it can be downloaded and installed by the script <code>tools/build-tonto.sh</code>.</p>
+        <p>
+        Tonto can be downloaded and installed by the script <code>tools/build-tonto.sh</code>.
+        (On recent Fedora, instead the command <code>sudo dnf install tonto</code> can be used.)</p>
 
         <p>Note that the shared library <code>libjnijcomm</code>,
         which is required by the program Tonto for communicating with a Pronto remote through a serial interface,
@@ -1747,39 +1881,5 @@ install the program to normal Linux locations (in the Makefile <code>INSTALLDIR<
 </section>
 
 </section>
-    <!--section>
-<title>References</title>
-<ol>
-  <li><a href="IrpMaster.html">IrpMaster</a>. Also a GPL3-project by
-myself. Much harder
-to read than the present document :-). See also <a
- href="http://www.hifi-remote.com/forums/viewtopic.php?t=13396">this
-discussion thread</a> in the JP1 forum.</li>
-  <li><a href="IrMaster.html">IpMaster</a>. Also a GPL3-project by
-myself. The precessor of the this program.  See also <a
- href="http://www.hifi-remote.com/forums/viewtopic.php?t=13655">this
-discussion thread</a> in the JP1 forum.</li>
-  <li>The <a href="http://www.harctoolbox.org">Harctoolbox project</a>,
-also a GPL3-project by myself.</li>
-	<li id="DecodeIRReference"><a
- href="http://www.hifi-remote.com/forums/dload.php?action=file&amp;file_id=9980">DecodeIR</a>. This
-shared library tries to identify protocol name and parameters of an IR signal
-in raw form. Thus, it is in a sense, it implements the "inverse mapping" of
-IrpMaster.</li>
-
- <li><a href="http://www.globalcache.com">GlobalCaché</a>,
-a manufacturer of Ethernet connected IR hardware. Note that I have only tried
-with the <a href="http://www.globalcache.com/products/gc-100/">GC-100
-series</a>, but the IR sending models of the<a
-href="http://www.globalcache.com/products/itach/models2/">iTach family</a> are
-believed to work too. (Feel free to send me one :-).)</li>
-  <li><a href="http://www.irtrans.com">IRTrans</a>, another
-manufacturer of Ethernet connected IR-hardware. The <a
- href="http://www.irtrans.com/en/shop/lan.php">"IRTrans Ethernet"
-module</a>, preferably with "IRDB Option" (internal flash memory), is
-directly supported by the current software.</li>
-  <li><a href="http://www.lirc.org">Lirc, Linux Infrared Remote Control.</a></li>
-</ol>
-    </section-->
   </body>
 </document>

@@ -60,8 +60,9 @@ Note that the system supplied RXTX jar on many system (e.g. Fedora 21) has some 
 Normally, these components are downloaded and installed automatically by maven.
 
 ### Tonto
-If the system supports Tonto, use the system version. (On recent Fedora, use `sudo dnf install tonto`.)
-        Otherwise, it can be downloaded and installed by the script `tools/build-tonto.sh`.
+
+        Tonto can be downloaded and installed by the script `tools/build-tonto.sh`.
+        (On recent Fedora, instead the command `sudo dnf install tonto` can be used.)
 
 Note that the shared library `libjnijcomm`,
         which is required by the program Tonto for communicating with a Pronto remote through a serial interface,
