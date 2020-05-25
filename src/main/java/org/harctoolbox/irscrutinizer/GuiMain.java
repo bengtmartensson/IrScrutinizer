@@ -6858,7 +6858,8 @@ public final class GuiMain extends javax.swing.JFrame {
         timeoutMenu.setText("Timeouts");
         timeoutMenu.setToolTipText("Configure different timeout values.");
 
-        startTimeoutMenuItem.setText("Start capture...");
+        startTimeoutMenuItem.setText("Start capture (beginTimeout) ...");
+        startTimeoutMenuItem.setToolTipText("Set the beginTimeout parameter. This determines how long the capturer waits for the signal to begin.");
         startTimeoutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 startTimeoutMenuItemActionPerformed(evt);
@@ -6866,7 +6867,8 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         timeoutMenu.add(startTimeoutMenuItem);
 
-        lengthMenuItem.setText("Max capture length...");
+        lengthMenuItem.setText("Max capture length (captureMaxSize)...");
+        lengthMenuItem.setToolTipText("Set the maximal number of durations the capturing device will accept.");
         lengthMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lengthMenuItemActionPerformed(evt);
@@ -6874,7 +6876,8 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         timeoutMenu.add(lengthMenuItem);
 
-        endingTimeoutMenuItem.setText("Ending silence...");
+        endingTimeoutMenuItem.setText("Ending silence (endingTimeout)...");
+        endingTimeoutMenuItem.setToolTipText("Sets the endingTimeout parameters. This determines the period of silence required to end an IrSequence.");
         endingTimeoutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 endingTimeoutMenuItemActionPerformed(evt);

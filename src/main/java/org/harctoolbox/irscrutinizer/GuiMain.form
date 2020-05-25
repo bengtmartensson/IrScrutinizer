@@ -1612,7 +1612,8 @@
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="startTimeoutMenuItem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Start capture..."/>
+                    <Property name="text" type="java.lang.String" value="Start capture (beginTimeout) ..."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Set the beginTimeout parameter. This determines how long the capturer waits for the signal to begin."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startTimeoutMenuItemActionPerformed"/>
@@ -1620,7 +1621,8 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="lengthMenuItem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Max capture length..."/>
+                    <Property name="text" type="java.lang.String" value="Max capture length (captureMaxSize)..."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Set the maximal number of durations the capturing device will accept."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="lengthMenuItemActionPerformed"/>
@@ -1628,7 +1630,8 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="endingTimeoutMenuItem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Ending silence..."/>
+                    <Property name="text" type="java.lang.String" value="Ending silence (endingTimeout)..."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Sets the endingTimeout parameters. This determines the period of silence required to end an IrSequence."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="endingTimeoutMenuItemActionPerformed"/>
