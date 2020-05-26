@@ -9,11 +9,11 @@ MYDIR := $(dir $(firstword $(MAKEFILE_LIST)))
 TOP := $(realpath $(MYDIR)..)
 GH_PAGES := $(TOP)/gh-pages
 ORIGINURL := $(shell git remote get-url origin)
-PROJECT_NAME := IrScrutinizer
+PROJECT_NAME := $(MYPROG)
 
 VERSION=$(shell cat $(TOP)/target/$(MYPROG).version | cut  --delimiter=' ' -f 3)
 
-IRSCRUTINIZER_JAR := target/IrScrutinizer-jar-with-dependencies.jar
+IRSCRUTINIZER_JAR := target/$(MYPROG)-jar-with-dependencies.jar
 
 default: $(IRSCRUTINIZER_JAR)
 
@@ -52,7 +52,17 @@ tag:
 	git push origin Version-$(VERSION)
 
 upload-version:
-	curl --netrc -T target/IrScrutinizer.version ftp://bengt-martensson.de/harctoolbox/downloads/IrScrutinizer.version
+	curl --netrc -T target/$(MYPROG).version ftp://bengt-martensson.de/harctoolbox/downloads/$(MYPROG).version
+
+upload-harctoolbox:
+	@(cd $(TOP)/../www.harctoolbox.org ; \
+	make clean ; \
+	make site ; \
+	cd build/site/en ; \
+	for file in $(MYPROG).html $(MYPROG).pdf $(MYPROG).releasenotes.txt wholesite.html wholesite.pdf ; do \
+	echo Uploading $$file... ; \
+		curl --netrc --upload-file $$file $(UPLOADDIR_DIR)/$$file;\
+	done )
 
 # Only for Unix-like systems
 install: $(IRP_TRANSMOGRIFIER_JAR) | $(INSTALLDIR)
@@ -64,6 +74,6 @@ $(INSTALLDIR):
 
 clean:
 	mvn clean
-	rm -rf $(GH_PAGES)
+	rm -rf $(GH_PAGES) pom.xml.versionsBackup
 
 .PHONY: clean

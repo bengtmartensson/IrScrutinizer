@@ -1,0 +1,25 @@
+Checklist for release (for maintainer)
+
+0. Check in good code ;-). Check that tests run ok, javadoc is ok.
+1. Update pom.xml and releasenotes, and checkin. Update versions of dependencies.
+    For this, can use
+   make setversion NEWVERSION=1.x.y.
+2.  Check installation on 
+   * gen binary + setup-irscrutinizer.sh
+   * AppImage
+   * Windows 64/32 bit
+   * Mac
+3. push, make sure Travis build is ok.
+4. make tag.
+5. mvn install
+6. Create release on GitHub, using just created tag. Upload
+*.bin.zip. *AppImage, *.dmg. *releasenotes.txt, checksums.*
+7. Delete CI build.
+8. make gh-pages.
+9. cd .../www.harctoolbox.org; make clean; make site.
+10 cd build/site/en/; make clean; make site
+11. Upload IrScrutinizer.version using make upload-version
+12. Upload IrScrutinizer.html IrScrutinizer.pdf IrScrutinizer.version
+IrpTransmogrifier.releasenotes.txt wholesite.html wholesite.pdf to harctoolbox.org.
+using make upload-harctoolbox.
+13. make clean.

@@ -7,7 +7,7 @@
     <groupId>org.harctoolbox</groupId>
     <artifactId>IrScrutinizer</artifactId>
     <packaging>jar</packaging>
-    <version>2.2.6-SNAPSHOT</version>
+    <version>2.2.6</version>
     <name>${project.artifactId}</name>
     <licenses>
         <license>
@@ -30,7 +30,7 @@
         <inno_path>${basedir}/Inno_Setup_6/ISCC.exe</inno_path>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <IrpTransmogrifier.version>1.2.6-SNAPSHOT</IrpTransmogrifier.version>
+        <IrpTransmogrifier.version>1.2.6</IrpTransmogrifier.version>
         <Girr.version>${project.version}</Girr.version>
         <Jirc.version>${project.version}</Jirc.version>
         <HarcHardware.version>${project.version}</HarcHardware.version>
