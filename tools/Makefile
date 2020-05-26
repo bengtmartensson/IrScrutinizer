@@ -10,7 +10,7 @@ TOP := $(realpath $(MYDIR)..)
 GH_PAGES := $(TOP)/gh-pages
 ORIGINURL := $(shell git remote get-url origin)
 PROJECT_NAME := $(MYPROG)
-
+UPLOADDIR_DIR := ftp://bengt-martensson.de/harctoolbox/
 VERSION=$(shell cat $(TOP)/target/$(MYPROG).version | cut  --delimiter=' ' -f 3)
 
 IRSCRUTINIZER_JAR := target/$(MYPROG)-jar-with-dependencies.jar
