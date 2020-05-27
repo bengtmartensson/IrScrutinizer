@@ -1,6 +1,7 @@
 Checklist for release (for maintainer)
 
 0. Check in good code ;-). Check that tests run ok, javadoc is ok.
+*. Update protocols.ini using make setup.ini.
 1. Update pom.xml and releasenotes, and checkin. Update versions of dependencies.
     For this, can use
    make setversion NEWVERSION=1.x.y.

@@ -7,6 +7,11 @@ The gaps in release number sequence are due to keeping version numbers
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
+Version 2.*.*, planned released 2020-12-31.
+
+* Updated protocols.ini to the version of RemoteMaster 2.10build9.
+
+==============================================================================
 Version 2.2.6, released 2020-05-25.
 
 * Uses IrpTransmogrifier 2.2.6, see IrpTransmogrifier.releasenotes.txt.
