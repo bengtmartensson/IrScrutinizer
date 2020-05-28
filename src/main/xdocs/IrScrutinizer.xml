@@ -142,7 +142,7 @@ IrScrutinizer, was also based on IrpMaster, and adds functionality from
 IrMaster, in particular the possibility to collect IR signals, a vastly
 improved import and export facility, and edit collections of IR commands.
 
-IrScrutizer <a href="http://localhost:8888/IrScrutinizer.html#Does+IrScrutinizer+completely+replaces+IrMaster%3F">almost</a> completely replaces IrMaster.
+IrScrutizer <a href="IrScrutinizer.html#Does+IrScrutinizer+completely+replaces+IrMaster%3F">almost</a> completely replaces IrMaster.
 The final version was released in Febrary 2014, slightly ironically called version
 1.0.0.  No further development is planned.</p>
 
@@ -687,11 +687,11 @@ key) enters a test signal, either as parametric signal, or as a raw signal.</p>
     <dt>Timestamp</dt>
     <dd>A timestamp generated when the signal was entered or created. It is not editable and not exported.</dd>
     <dt>Intro</dt>
-    <dd>The <a href="http://localhost:8888/Glossary.html#IrSignal">intro sequence</a> of the command.</dd>
+    <dd>The <a href="Glossary.html#IrSignal">intro sequence</a> of the command.</dd>
     <dt>Repeat</dt>
-    <dd>The <a href="http://localhost:8888/Glossary.html#IrSignal">repeat sequence</a> of the command.</dd>
+    <dd>The <a href="Glossary.html#IrSignal">repeat sequence</a> of the command.</dd>
     <dt>Ending</dt>
-    <dd>The <a href="http://localhost:8888/Glossary.html#IrSignal">ending sequence</a> of the command.</dd>
+    <dd>The <a href="Glossary.html#IrSignal">ending sequence</a> of the command.</dd>
     <dt>Name</dt>
     <dd>Name of the command. This is in principle arbitrary, however, to be able to constitute a meaningful export to a target device,
         the names have to be unique.</dd>
