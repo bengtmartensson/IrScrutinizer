@@ -24,3 +24,4 @@ Checklist for release (for maintainer)
 IrpTransmogrifier.releasenotes.txt wholesite.html wholesite.pdf to harctoolbox.org.
 using make upload-harctoolbox.
 13. make clean.
+*.  Update version number in pom.xml to *-SNAPSHOT to prevent checking in new versions with the same version.
