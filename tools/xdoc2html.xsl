@@ -137,4 +137,15 @@
         </dt>
     </xsl:template>
 
+    <xsl:template match="@href[not(starts-with(.,'http')
+                                or starts-with(.,'#')
+                                or starts-with(.,'IrScrutinizer')
+                                or starts-with(.,'IrpTransmogrifier')
+                                or starts-with(.,'Glossary'))]">
+        <xsl:attribute name="href">
+            <xsl:text>http://www.harctoolbox.org/</xsl:text>
+            <xsl:value-of select="."/>
+        </xsl:attribute>
+    </xsl:template>
+
 </xsl:stylesheet>
