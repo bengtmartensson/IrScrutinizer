@@ -51,6 +51,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="captureDevice" type="string" default='"LIRC Mode 2"' />
     <property name="sorterOnParametrizedTable" type="boolean" default='"false"' />
     <property name="sorterOnRawTable" type="boolean" default='"false"' />
+    <property name="removeDefaultedParameters" type="boolean" default='"true"' />
 
     <property name="selectedMainPaneIndex" type="int" default='"0"' doc='Index of selected pane.'/>
     <property name="selectedRemoteIndex" type="int" default='"0"' doc='Index of selected remote subpane.'/>

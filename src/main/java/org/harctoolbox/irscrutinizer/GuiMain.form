@@ -1447,6 +1447,7 @@
           <Properties>
             <Property name="mnemonic" type="int" value="79"/>
             <Property name="text" type="java.lang.String" value="Options"/>
+            <Property name="toolTipText" type="java.lang.String" value="If selected, decoded parameters having their default values are silently removed."/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator3">
@@ -1829,6 +1830,18 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="parametrizedLearnIgnoreTCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="removeDefaultedParametersCheckBoxMenuItem">
+              <Properties>
+                <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="properties.getRemoveDefaultedParameters()" type="code"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Remove defaulted parameters in decode"/>
+                <Property name="toolTipText" type="java.lang.String" value="If selected, decode parameters having their default values are silently removed."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeDefaultedParametersCheckBoxMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="ignoreLeadingGarbageCheckBoxMenuItem">

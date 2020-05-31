@@ -202,7 +202,6 @@ public final class GuiMain extends javax.swing.JFrame {
     // properties too. (See IrpTransmogrifier for the semantics.)
     private boolean decodeStrict = false;
     private boolean decodeAllDecodes = false;
-    private boolean decodeRemoveDefaultedParameters = true;
     private boolean decodeRecursive = false;
     private boolean decodeOverride = false;
 
@@ -525,7 +524,7 @@ public final class GuiMain extends javax.swing.JFrame {
         decoder = new Decoder(irpDatabase);
         decoderParameters = new Decoder.DecoderParameters(decodeStrict,
                 decodeAllDecodes,
-                decodeRemoveDefaultedParameters,
+                properties.getRemoveDefaultedParameters(),
                 decodeRecursive,
                 properties.getFrequencyTolerance(),
                 properties.getAbsoluteTolerance(),
@@ -548,6 +547,9 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         properties.addMinLeadOutChangeListener((String name1, Object oldValue, Object newValue) -> {
             decoderParameters.setMinimumLeadout((Double) newValue);
+        });
+        properties.addRemoveDefaultedParametersChangeListener((String name1, Object oldValue, Object newValue) -> {
+            decoderParameters.setRemoveDefaultedParameters((Boolean) newValue);
         });
 
         SelectFile.restoreFromString(properties.getFileselectordirs());
@@ -2465,6 +2467,7 @@ public final class GuiMain extends javax.swing.JFrame {
         printAnalyzeIRPsToConsoleCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         printDecodesToConsoleCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         parametrizedLearnIgnoreTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        removeDefaultedParametersCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ignoreLeadingGarbageCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         proxyMenuItem = new javax.swing.JMenuItem();
         irpProtocolsIniMenu = new javax.swing.JMenu();
@@ -6745,6 +6748,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
         optionsMenu.setMnemonic('O');
         optionsMenu.setText("Options");
+        optionsMenu.setToolTipText("If selected, decoded parameters having their default values are silently removed.");
         optionsMenu.add(jSeparator3);
 
         outputFormatMenu.setText("Output Text Format");
@@ -7055,6 +7059,16 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         optionsMenu.add(parametrizedLearnIgnoreTCheckBoxMenuItem);
+
+        removeDefaultedParametersCheckBoxMenuItem.setSelected(properties.getRemoveDefaultedParameters());
+        removeDefaultedParametersCheckBoxMenuItem.setText("Remove defaulted parameters in decode");
+        removeDefaultedParametersCheckBoxMenuItem.setToolTipText("If selected, decode parameters having their default values are silently removed.");
+        removeDefaultedParametersCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeDefaultedParametersCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        optionsMenu.add(removeDefaultedParametersCheckBoxMenuItem);
 
         ignoreLeadingGarbageCheckBoxMenuItem.setSelected(properties.getIgnoreLeadingGarbage());
         ignoreLeadingGarbageCheckBoxMenuItem.setText("Ignore leading garbage on decode");
@@ -9770,6 +9784,10 @@ public final class GuiMain extends javax.swing.JFrame {
         HelpPopup.newHelpPopup(this, Version.publicKey, "Author's public key");
     }//GEN-LAST:event_publicKeyMenuItemActionPerformed
 
+    private void removeDefaultedParametersCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeDefaultedParametersCheckBoxMenuItemActionPerformed
+        properties.setRemoveDefaultedParameters(removeDefaultedParametersCheckBoxMenuItem.isSelected());
+    }//GEN-LAST:event_removeDefaultedParametersCheckBoxMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -10245,6 +10263,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem relToleranceMenuItem;
     private javax.swing.JMenuItem releaseNotesMenuItem;
     private javax.swing.JPanel remoteScrutinizerPanel;
+    private javax.swing.JCheckBoxMenuItem removeDefaultedParametersCheckBoxMenuItem;
     private javax.swing.JMenuItem removeUnusedMenuItem1;
     private javax.swing.JLabel repLengthLabel;
     private javax.swing.JCheckBoxMenuItem repeatFinderCheckBoxMenuItem;
