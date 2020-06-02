@@ -606,7 +606,7 @@ public final class GuiMain extends javax.swing.JFrame {
         optionsMenu.add(this.exportFormatManager.getMenu(properties.getExportFormatName()));
         optionsMenu.add(new Separator());
 
-        Command.setIrpMaster(irpDatabase);
+        Command.setIrpDatabase(irpDatabase);
         ParametrizedIrSignal.setDecoder(decoder);
         ParametrizedIrSignal.setGenerateCcf(properties.getGenerateCcf());
         ParametrizedIrSignal.setGenerateRaw(properties.getGenerateRaw());
