@@ -87,17 +87,12 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
             usage(IrpUtils.EXIT_SUCCESS);
 
         if (commandLineArgs.versionRequested) {
-            //System.out.println("Lirc2Xml version " + TOOL_VERSION);
+            System.out.println(Version.versionString);
             System.out.println("JVM: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version") + " " + System.getProperty("os.name") + "-" + System.getProperty("os.arch"));
             System.exit(IrpUtils.EXIT_SUCCESS);
         }
 
         String configFilename = commandLineArgs.configfile.isEmpty() ? "STDIN" : commandLineArgs.configfile.get(0);
-        if (commandLineArgs.debug > 0) {
-            System.err.println("debug = " + commandLineArgs.debug);
-            System.err.println("outputfilename = " + commandLineArgs.outputfile);
-            System.err.println("configfile = " + configFilename);
-        }
 
         try {
             ProtocolsIni protocolsIni = commandLineArgs.inifile != null ? new ProtocolsIni(new File(commandLineArgs.inifile)) : null;
@@ -110,8 +105,12 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
             RemoteSet remoteSet = new RemoteSet(null,
                     configFilename, //String source,
                     rmdu.getRemote());
-            Document doc = remoteSet.toDocument("Rmdu import of " + IrCoreUtils.basename(configFilename), "xsl", commandLineArgs.stylesheetUrl, true, true, true, true, true);
-            XmlUtils.printDOM(new File(commandLineArgs.outputfile), doc);
+            Document doc = remoteSet.toDocument("Rmdu import of " + IrCoreUtils.basename(configFilename), "xsl", commandLineArgs.stylesheetUrl,
+                    commandLineArgs.fat, true, commandLineArgs.raw, commandLineArgs.pronto, true);
+            if (commandLineArgs.outputfile != null)
+                XmlUtils.printDOM(new File(commandLineArgs.outputfile), doc);
+            else
+                XmlUtils.printDOM(doc);
         } catch (InvalidArgumentException | IOException | ParseException ex) {
             Logger.getLogger(RmduImporter.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -253,8 +252,7 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
                 Command command = new Command(kvp.getValue(),
                         functionNotes.get(functionNo) != null ? functionNotes.get(functionNo) : "Function." + functionNo,
                         getParameters().get("Protocol.name"), // not completely right
-                        commandParameters);
-                //commands.put(command.getName(), command);
+                        commandParameters, false);
                 addCommand(command);
             } catch (GirrException ex) {
                 // just ignore the silly command
@@ -299,17 +297,23 @@ public class RmduImporter extends RemoteSetImporter implements IReaderImporter, 
 
     private final static class CommandLineArgs {
 
-        @Parameter(names = {"-d", "--debug"}, description = "Debug")
-        int debug = 0;
-
         @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
         boolean helpRequested = false;
+
+        @Parameter(names = {"-f", "--fat"}, description = "Generate Girr file with fat raw")
+        boolean fat = false;
 
         @Parameter(names = {"-i", "--inifile"}, description = "Path to protocols.ini")
         String inifile = null;
 
         @Parameter(names = {"-o", "--outfile"}, description = "Output filename")
         String outputfile = null;
+
+        @Parameter(names = {"-p", "--pronto"}, description = "Generate Pronto hex format")
+        boolean pronto = false;
+
+        @Parameter(names = {"-r", "--raw"}, description = "Generate raw format")
+        boolean raw = false;
 
         @Parameter(names = {"-v", "--version"}, description = "Display version information")
         boolean versionRequested;
