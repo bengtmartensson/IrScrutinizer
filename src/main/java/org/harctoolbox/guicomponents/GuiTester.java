@@ -37,6 +37,7 @@ import org.harctoolbox.ircore.Pronto;
 import org.harctoolbox.irp.IrpDatabase;
 import org.harctoolbox.irp.IrpException;
 import org.harctoolbox.irp.IrpParseException;
+import org.xml.sax.SAXException;
 
 public class GuiTester extends javax.swing.JFrame {
     private boolean verbose = true;
@@ -84,7 +85,7 @@ public class GuiTester extends javax.swing.JFrame {
     public GuiTester() {
         try {
             this.irpDatabase = new IrpDatabase((String) null);
-        } catch (IOException | IrpParseException ex) {
+        } catch (IOException | IrpParseException | SAXException ex) {
             guiUtils.error(ex);
         }
         try {
