@@ -9,6 +9,7 @@ https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
 Version 2.*.*, planned released 2020-12-31.
 
+* File -> Import -> Import as raw -> RMDU now invokes correct importer. #388.
 * RmduImporter: Better handling of not understood protocols/executors.
 * New user option; removeDefaultedParameters.
 * Updated protocols.ini to the version of RemoteMaster 2.10build9.
@@ -35,7 +36,7 @@ Version 2.2.6, released 2020-05-25.
 * Import to param. remote now rejects undecodable signals. #376.
 * New export format irdb cvs. #374.
 * Exportformat Spreadsheet: small cleanup.
-* Changed empty TreeImporter text to "--EMPTY--" 
+* Changed empty TreeImporter text to "--EMPTY--"
 * Importers now import also metadata, whenever possible. #352.
 * Do not check/create Export dir if automatic file names is not selected. #370.
 * Change initial export director to $HOME/Documents/IrScutinizer.

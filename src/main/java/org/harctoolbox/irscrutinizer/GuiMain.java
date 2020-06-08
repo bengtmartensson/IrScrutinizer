@@ -8179,7 +8179,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_repeatFinderCheckBoxMenuItemActionPerformed
 
     private void importRmduMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importRmduMenuItemActionPerformed
-        importRemoteByFileSelector(xcfImporter, true);
+        importRemoteByFileSelector(rmduImporter, true);
     }//GEN-LAST:event_importRmduMenuItemActionPerformed
 
     private void setProtocolMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setProtocolMenuItemActionPerformed
