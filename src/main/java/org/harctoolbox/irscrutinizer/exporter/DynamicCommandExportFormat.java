@@ -25,7 +25,7 @@ import java.util.Map;
 import javax.xml.transform.TransformerException;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.ircore.IrCoreUtils;
-import org.harctoolbox.ircore.XmlUtils;
+import org.harctoolbox.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
