@@ -19,10 +19,8 @@ package org.harctoolbox.irscrutinizer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.IntStream;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.ircore.IrCoreException;
@@ -236,9 +234,9 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         private static final Class<?>[] classes = new Class<?>[]{
             //  0              1             2            3              4              5
             //  0              1             2            3              4              5
-            Integer.class, String.class, String.class, Integer.class, Integer.class, Integer.class,
+            Integer.class, String.class, String.class, Long.class, Long.class, Long.class,
             //  6              7             8               9             10
-            Integer.class, String.class, String.class, String.class, ParametrizedIrSignal.class
+            Long.class, String.class, String.class, String.class, ParametrizedIrSignal.class
         };
 
         public final static int toIgnore = 1; // Never show the last entry to user, the ParametrizedIrSignal
@@ -318,9 +316,9 @@ public class ParametrizedIrSignal extends NamedIrSignal {
                     };
         }
 
-        private Integer safeGet(Map<String, Long>map, String key) {
+        private Long safeGet(Map<String, Long>map, String key) {
             return map == null ? null
-                    : map.get(key) == null ? null : map.get(key).intValue();
+                    : map.get(key) == null ? null : map.get(key);
         }
     }
 
