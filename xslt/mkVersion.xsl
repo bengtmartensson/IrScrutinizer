@@ -50,6 +50,10 @@ public final class Version {
     /** URL containing current official version. */
     public final static String currentVersionUrl = homepageUrl + "/downloads/" + appName + ".version";
 
+    /** Author&quot;s public PGP key. */
+    public final static String publicKey =
+<xsl:value-of select='publicKey/.'/>;
+
     public static void main(String[] args) {
         System.out.println(versionString);
     }
