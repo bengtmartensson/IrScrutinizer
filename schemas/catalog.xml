@@ -5,10 +5,10 @@
          prefer="public">
 
     <!-- Our own DTDs -->
-    <public publicId="-//harctoolbox.org//version//en" uri="./version.dtd"/>
-    <system systemId="http://www.harctoolbox.org/dtds/version.dtd" uri="./version.dtd"/>
-    <public publicId="-//harctoolbox.org//properties//en" uri="./properties.dtd"/>
-    <system systemId="http://www.harctoolbox.org/dtds/properties.dtd" uri="./properties.dtd"/>
+    <public publicId="-//harctoolbox.org//version//en" uri="../dtds/version.dtd"/>
+    <system systemId="http://www.harctoolbox.org/dtds/version.dtd" uri="../dtds/version.dtd"/>
+    <public publicId="-//harctoolbox.org//properties//en" uri="../dtds/properties.dtd"/>
+    <system systemId="http://www.harctoolbox.org/dtds/properties.dtd" uri="../dtds/properties.dtd"/>
 
     <!-- Our own schemas -->
     <system systemId="http://www.harctoolbox.org/schemas/exportformats.xsd" uri="./exportformats.xsd"/>
@@ -18,13 +18,13 @@
 
     <!-- Apache Forrest, used by the documentation files -->
     <!--public publicId="-//APACHE//DTD DocumentationV2.0//en" uri="./document-v20.dtd"/-->
-    <system systemId="http://forrest.apache.org/dtd/document-v20.dtd" uri="./document-v20.dtd"/>
+    <system systemId="http://forrest.apache.org/dtd/document-v20.dtd" uri="../dtds/document-v20.dtd"/>
 
     <!--public publicId="-//APACHE//ENTITIES Documentation V2.0//EN" uri="./document-v20.mod"/-->
-    <system systemId="http://forrest.apache.org/dtd/document-v20.mod" uri="./document-v20.mod"/>
+    <system systemId="http://forrest.apache.org/dtd/document-v20.mod" uri="../dtds/document-v20.mod"/>
 
     <!--public publicId="-//APACHE//ENTITIES Common Character Entity Sets V1.0//EN" uri="./common-charents-v10.mod"/-->
-    <system systemId="http://forrest.apache.org/dtd/common-charents-v10.mod" uri="./common-charents-v10.mod"/>
+    <system systemId="http://forrest.apache.org/dtd/common-charents-v10.mod" uri="../dtds/common-charents-v10.mod"/>
 
     <!-- The schema for this file -->
     <system systemId="http://www.oasis-open.org/committees/entity/release/1.1/catalog.xsd" uri="./catalog.xsd"/>
