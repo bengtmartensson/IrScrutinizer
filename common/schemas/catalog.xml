@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="urn:oasis:names:tc:entity:xmlns:xml:catalog http://www.oasis-open.org/committees/entity/release/1.1/catalog.xsd"
+         xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog"
+         prefer="public">
+
+    <!-- Our own DTDs -->
+    <public publicId="-//harctoolbox.org//version//en" uri="../dtds/version.dtd"/>
+    <system systemId="http://www.harctoolbox.org/dtds/version.dtd" uri="../dtds/version.dtd"/>
+    <public publicId="-//harctoolbox.org//properties//en" uri="../dtds/properties.dtd"/>
+    <system systemId="http://www.harctoolbox.org/dtds/properties.dtd" uri="../dtds/properties.dtd"/>
+
+    <!-- Our own schemas -->
+    <system systemId="http://www.harctoolbox.org/schemas/exportformats.xsd" uri="./exportformats.xsd"/>
+    <system systemId="http://www.harctoolbox.org/schemas/girr_ns.xsd" uri="./girr_ns.xsd"/>
+    <system systemId="http://www.harctoolbox.org/schemas/girr.xsd" uri="./girr.xsd"/>
+    <system systemId="http://www.harctoolbox.org/schemas/irp-protocols.xsd" uri="./irp-protocols.xsd"/>
+
+    <!-- Apache Forrest, used by the documentation files -->
+    <!--public publicId="-//APACHE//DTD DocumentationV2.0//en" uri="./document-v20.dtd"/-->
+    <system systemId="http://forrest.apache.org/dtd/document-v20.dtd" uri="../dtds/document-v20.dtd"/>
+
+    <!--public publicId="-//APACHE//ENTITIES Documentation V2.0//EN" uri="./document-v20.mod"/-->
+    <system systemId="http://forrest.apache.org/dtd/document-v20.mod" uri="../dtds/document-v20.mod"/>
+
+    <!--public publicId="-//APACHE//ENTITIES Common Character Entity Sets V1.0//EN" uri="./common-charents-v10.mod"/-->
+    <system systemId="http://forrest.apache.org/dtd/common-charents-v10.mod" uri="../dtds/common-charents-v10.mod"/>
+
+    <!-- The schema for this file -->
+    <system systemId="http://www.oasis-open.org/committees/entity/release/1.1/catalog.xsd" uri="./catalog.xsd"/>
+
+    <!-- W3C stuff -->
+    <system systemId="http://www.w3.org/2001/xml.xsd" uri="./xml.xsd"/>
+    <system systemId="http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd" uri="./xhtml1-strict.xsd"/>
+    <system systemId="https://www.w3.org/2001/XInclude/XInclude.xsd" uri="./XInclude.xsd"/>
+    <!--system systemId="https://www.w3.org/2007/schema-for-xslt20.xsd" uri="schema-for-xslt20.xsd" /-->
+
+</catalog>

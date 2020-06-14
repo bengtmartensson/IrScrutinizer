@@ -1,0 +1,23 @@
+<!-- Public identifier: "-//harctoolbox.org//properties//en" -->
+
+<!ELEMENT properties (property|import)*>
+<!ATTLIST properties
+    version CDATA #IMPLIED
+    home-environment-var NMTOKEN #REQUIRED
+    appName NMTOKEN #REQUIRED
+    useXml (true|false) "true"
+    package NMTOKEN #REQUIRED
+  >
+
+<!ELEMENT import EMPTY>
+<!ATTLIST import
+    class NMTOKEN #REQUIRED
+  >
+
+<!ELEMENT property EMPTY>
+<!ATTLIST property
+    doc CDATA #IMPLIED
+    default CDATA #REQUIRED
+    type (int|string|boolean|rectangle|double) #REQUIRED
+    name NMTOKEN #REQUIRED
+  >
