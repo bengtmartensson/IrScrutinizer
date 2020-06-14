@@ -2,11 +2,15 @@
 # is used. Instead, it invokes the program for tests and for transforming the
 # output, for example to the lirc.xml file.
 
+
+
 MYPROG := IrScrutinizer
-BROWSE := xdg-open
 INSTALLDIR := /usr/local/share/irscrutinizer
 MYDIR := $(dir $(firstword $(MAKEFILE_LIST)))
-TOP := $(realpath $(MYDIR)..)
+TOP := $(realpath $(MYDIR))
+
+include $(MYDIR)/common/makefiles/paths.mk
+
 GH_PAGES := $(TOP)/gh-pages
 ORIGINURL := $(shell git remote get-url origin)
 PROJECT_NAME := $(MYPROG)
