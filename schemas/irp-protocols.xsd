@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet href="xsd.xsl" type="text/xsl"?>
+<!-- Copying and distribution of this file, with or without modification,
+     are permitted in any medium without royalty provided the copyright
+     notice and this notice are preserved.  This file is offered as-is,
+     without any warranty.
+-->
+<xs:schema targetNamespace="http://www.harctoolbox.org/irp-protocols"
+           xmlns="http://www.harctoolbox.org/irp-protocols"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xml="http://www.w3.org/XML/1998/namespace"
+           xmlns:html="http://www.w3.org/1999/xhtml"
+           xmlns:xi="http://www.w3.org/2001/XInclude"
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:annotation>
+        <xs:documentation>
+            <html:div>
+                This document determines and documents the format of the protocol data base <html:code>IrpProtocols.xml</html:code> as used in
+                <html:a href="http://www.harctoolbox.org/IrpTransmogrifier.html">IrpTransmogrifier</html:a>,
+                (and possibly other programs).
+                It is maintained in the repository
+                <html:a href="https://github.com/bengtmartensson/IrpTransmogrifier">https://github.com/bengtmartensson/IrpTransmogrifier"</html:a>
+                with path <html:a href="https://raw.githubusercontent.com/bengtmartensson/IrpTransmogrifier/master/src/main/schemas/irp-protocols.xsd">
+                    main/schemas/irp-protocols.xsd</html:a>, and can be used with <html:code>schemaLocation</html:code>
+                    <html:a href="http://www.harctoolbox.org/schemas/irp-protocols.xsd">http://www.harctoolbox.org/schemas/irp-protocols.xsd</html:a>.
+            </html:div>
+        </xs:documentation>
+    </xs:annotation>
+
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+    <xs:import namespace="http://www.w3.org/1999/xhtml" schemaLocation="http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd"/>
+    <xs:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="https://www.w3.org/2001/XInclude/XInclude.xsd"/>
+
+    <xs:element name="protocols">
+        <xs:annotation>
+            <xs:documentation>Collection of IR protocols.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="adminData" minOccurs="0"/>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="xi:include"/>
+                    <xs:element ref="protocol"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attributeGroup ref="version"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="protocol">
+        <xs:annotation>
+            <xs:documentation>Describes one IR protocol in IRP form.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:choice>
+                    <xs:element ref="irp"/>
+                    <xs:element ref="documentation"/>
+                    <xs:element ref="parameter"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attributeGroup ref="name"/>
+            <xs:attributeGroup ref="c-name"/>
+            <xs:attributeGroup ref="usable"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="irp">
+        <xs:annotation>
+            <xs:documentation>Contains the IRP form of the protocol, as CDATA.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true"/>
+    </xs:element>
+
+    <xs:element name="documentation">
+        <xs:annotation>
+            <xs:documentation>Textual notes to the protocol, possibly using formatting in (X)HTML.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+            </xs:sequence>
+            <xs:attribute ref="xml:lang" default="en"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="parameter">
+        <xs:annotation>
+            <xs:documentation>A parameter has a name, given as attribute, and a type, which is either xml or text (default). If xml, arbitrary well-formed XML content can be contained. If text, the value is the CDATA content of the element. The semantic interpretation is determined by the reading program.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="name"/>
+            <xs:attribute name="type" type="parameterType" default="text"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:simpleType name="parameterType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="text"/>
+            <xs:enumeration value="xml"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:attributeGroup name="version">
+        <xs:annotation>
+            <xs:documentation>Version of the document, as attribute.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="version" type="xs:string">
+        </xs:attribute>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="name">
+        <xs:annotation>
+            <xs:documentation>Name of a protocol or parameter. May contain "funny" characters.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" use="required" type="xs:string">
+        </xs:attribute>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="c-name">
+        <xs:annotation>
+            <xs:documentation>Name of the protocol, as valid C identifier. Since a default C name can be computed, usage is discouraged.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="c-name" type="xs:string">
+        </xs:attribute>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="usable">
+        <xs:annotation>
+            <xs:documentation>Setting this to false "comments out" the protocol.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="usable" type="xs:boolean">
+        </xs:attribute>
+    </xs:attributeGroup>
+
+    <xs:element name="adminData">
+         <xs:annotation>
+            <xs:documentation>This element may optionally contain administrative data.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="creationData" minOccurs="0"/>
+                <xs:element ref="versioningData" minOccurs="0"/>
+                <xs:element ref="notes" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="uniqueLanguagesInNotesAdminData">
+            <xs:selector xpath="notes"/>
+            <xs:field xpath="@xml:lang"/>
+        </xs:unique>
+    </xs:element>
+
+    <xs:element name="creationData">
+        <xs:annotation>
+            <xs:documentation>Describes how, from what, and/or by whom the document was created.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:attribute name="creatingUser" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Name of creating user</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="source" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Source of the information, for example, another document that was converted to the present one.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="creationDate" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Date of creation, or last modification.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="tool" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Name of creating tool.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="toolVersion" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Version of creating tool.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="tool2" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Name of secondary creating tool, if applicable.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="tool2Version" type="xs:string" use="optional">
+            <xs:annotation>
+                    <xs:documentation>Version of secondary creating tool.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="versioningData">
+        <xs:annotation>
+            <xs:documentation>Versioning data; semantics is still to be determined.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true">
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="notes">
+        <xs:annotation>
+            <xs:documentation>Textual notes, possibly using formatting in (X)HTML.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+            </xs:sequence>
+            <xs:attribute ref="xml:lang" default="en"/>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>
