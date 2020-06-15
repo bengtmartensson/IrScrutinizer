@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet href="xsd.xsl" type="text/xsl"?>
+<!-- Copying and distribution of this file, with or without modification,
+     are permitted in any medium without royalty provided the copyright
+     notice and this notice are preserved.  This file is offered as-is,
+     without any warranty.
+-->
+<xs:schema
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xml="http://www.w3.org/XML/1998/namespace"
+           xmlns:html="http://www.w3.org/1999/xhtml"
+           xmlns:xi="http://www.w3.org/2001/XInclude"
+>
+    <xs:annotation>
+        <xs:documentation>
+            <html:div>
+                The Girr format
+                is documented at <html:a href="http://www.harctoolbox.org/Girr.html">www.harctoolbox.org/Girr.html</html:a>
+            </html:div>
+        </xs:documentation>
+    </xs:annotation>
+
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+    <xs:import namespace="http://www.w3.org/1999/xhtml" schemaLocation="http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd"/>
+    <xs:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="https://www.w3.org/2001/XInclude/XInclude.xsd"/>
+
+    <xs:simpleType name="masterEnum">
+        <xs:annotation>
+            <xs:documentation>Determines whether the raw representation, the ccf, or the protocol with parameters is the master of the data.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="raw"/>
+            <xs:enumeration value="ccf"/>
+            <xs:enumeration value="parameters"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="parameterValue">
+        <xs:annotation>
+            <xs:documentation>A parameter value, either a decimal, nonnegative number, or a hexadecimal number preceeded by 0x.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="0x[0-9A-Fa-f]+|[0-9]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ccfHexType">
+        <xs:annotation>
+            <xs:documentation>Data type describing a four-digit hexadecimal number.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:hexBinary">
+            <xs:length value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ccfString">
+        <xs:annotation>
+            <xs:documentation>Data type describing a Pronto Hex CCF string.</xs:documentation>
+        </xs:annotation>
+        <xs:list itemType="ccfHexType"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="between0and1">
+        <xs:annotation>
+            <xs:documentation>Number between 0 and 1.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:double">
+            <xs:minExclusive value="0.0"/>
+            <xs:maxExclusive value="1.0"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="remotes">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation>This element models a set of remotes. It may act as a data base for a program or device.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element ref="adminData" minOccurs="0"/>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="xi:include"/>
+                    <xs:element ref="remote"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attributeGroup ref="girrVersion"/>
+            <xs:attributeGroup ref="title"/>
+        </xs:complexType>
+        <xs:unique name="remoteNameUnique">
+            <xs:selector xpath="remote"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+    </xs:element>
+
+    <xs:attributeGroup name="title">
+        <xs:attribute name="title" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Textual title of the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="girrVersion">
+        <xs:attribute name="girrVersion" fixed="1.0" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Version of the Girr specification the document claims to follow.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="nameAttributes">
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>Name that is used to identify the element.
+                    Should therefore be unique in the context.
+                    Even though arbitrary strings are allowed, C-syntax type strings,
+                    in the English language, are recommended.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="displayName" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Name of the command as being displayed to the user.
+                    Special characters and non-english languages are here appropriate.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="comment" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Textual comment.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:attributeGroup>
+
+    <xs:element name="adminData">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="creationData" minOccurs="0"/>
+                <xs:element ref="versioningData" minOccurs="0"/>
+                <xs:element ref="notes" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="uniqueLanguagesInNotesAdminData">
+            <xs:selector xpath="notes"/>
+            <xs:field xpath="@xml:lang"/>
+        </xs:unique>
+    </xs:element>
+
+    <xs:element name="creationData">
+        <xs:annotation>
+            <xs:documentation>Describes how, from what, and by whom the document was created.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:attribute name="creatingUser" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Name of creating user</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="source" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Source of the information, for example, another document that was converted to the present one.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="creationDate" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Date of creation, or last modification.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="tool" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Name of creating tool.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="toolVersion" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Version of creating tool.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="tool2" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Name of secondary creating tool, if applicable.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="tool2Version" type="xs:string" use="optional">
+            <xs:annotation>
+                    <xs:documentation>Version of creating tool.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="versioningData">
+        <xs:annotation>
+            <xs:documentation>Versioning data; semanics is still to be determined.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true">
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="notes">
+        <xs:annotation>
+            <xs:documentation>Textual notes, possibly using formatting in HTML.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+            </xs:sequence>
+            <xs:attribute ref="xml:lang" default="en"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="remote">
+        <xs:annotation>
+            <xs:documentation>The element models an abstract remote, which is basically a collection of commands.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="adminData" minOccurs="0"/>
+                <xs:element ref="notes" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="applicationData"/>
+                    <xs:element ref="html:img"/>
+                </xs:choice>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="commandSet" maxOccurs="unbounded"/>
+                    <xs:element ref="xi:include"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attributeGroup ref="girrVersion"/>
+            <xs:attributeGroup ref="nameAttributes"/>
+            <xs:attribute name="manufacturer" type="xs:string"/>
+            <xs:attribute name="model" type="xs:string"/>
+            <xs:attribute name="deviceClass" type="xs:string"/>
+            <xs:attribute name="remoteName" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Name of captured remote control as a component. Normally different from the name.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attributeGroup ref="title"/>
+        </xs:complexType>
+        <xs:unique name="uniqueLangsInNotesInRemote">
+            <xs:selector xpath="notes"/>
+            <xs:field xpath="@xml:lang"/>
+        </xs:unique>
+        <xs:unique name="uniqueNamesInCommandSets">
+            <xs:selector xpath="commandSet"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+        <xs:unique name="uniqueApplicationsInApplicationData">
+            <xs:selector xpath="applicationData"/>
+            <xs:field xpath="@application"/>
+        </xs:unique>
+    </xs:element>
+
+    <xs:element name="applicationData">
+        <xs:annotation>
+            <xs:documentation>Data, only relevant for a particular application or domain, can be embedded here.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="notes" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="appParameter" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="application" use="required" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Name of application or domain the application data is intended for.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+        <xs:unique name="uniqueNamesInAppParameter">
+            <xs:selector xpath="appParameter"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+    </xs:element>
+
+    <xs:complexType name="value-name">
+        <xs:attributeGroup ref="nameAttributes"/>
+        <xs:attribute name="value" type="parameterValue" use="required">
+            <xs:annotation>
+                <xs:documentation>Numerical value for a parameter. Nonnegative integer with base 10.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="string-name">
+        <xs:attributeGroup ref="nameAttributes"/>
+        <xs:attribute name="value" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>String value for a parameter.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:element name="appParameter" type="string-name"/>
+    <xs:element name="parameter" type="value-name"/>
+
+    <xs:element name="commandSet">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="notes" minOccurs="0"/>
+                <xs:element ref="parameters" minOccurs="0"/>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="command"/>
+                    <xs:element ref="xi:include"/>
+                </xs:choice>
+            </xs:sequence>
+
+            <xs:attributeGroup ref="nameAttributes"/>
+        </xs:complexType>
+        <xs:unique name="uniqueLangInNotesInCommandSet">
+            <xs:selector xpath="notes"/>
+            <xs:field xpath="@xml:lang"/>
+        </xs:unique>
+        <xs:unique name="uniqueNamesInCommandSet">
+            <xs:selector xpath="command"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+    </xs:element>
+
+    <xs:element name="parameters">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="notes" minOccurs="0"/>
+                <xs:element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="protocol" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Protocol name as known to e.g. IrpMaster.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+        <xs:unique name="uniqueLangInNotesInParameters">
+            <xs:selector xpath="notes"/>
+            <xs:field xpath="@xml:lang"/>
+        </xs:unique>
+        <xs:unique name="uniqueNamesInParameters">
+            <xs:selector xpath="parameter"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+    </xs:element>
+
+    <xs:element name="command">
+        <xs:annotation>
+            <xs:documentation>A command is essentially an IR signal with a name.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence minOccurs="0">
+                <xs:element ref="notes" minOccurs="0"/>
+                <xs:element ref="parameters" minOccurs="0"/>
+                <xs:element ref="raw" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="ccf" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="format" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="F" type="parameterValue">
+                <xs:annotation>
+                    <xs:documentation>Value of the F parameter for the current command in the current protocol (if applicable).</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attributeGroup ref="nameAttributes"/>
+            <xs:attribute name="master" type="masterEnum" use="optional" default="raw"/>
+            <xs:attributeGroup ref="title"/>
+            <xs:attributeGroup ref="girrVersion"/>
+        </xs:complexType>
+        <xs:unique name="uniqueLangsInNotesInCommands">
+            <xs:selector xpath="notes"/>
+            <xs:field xpath="@xml:lang"/>
+        </xs:unique>
+        <xs:unique name="TInCcfUnique">
+            <xs:selector xpath="ccf"/>
+            <xs:field xpath="@T"/>
+        </xs:unique>
+        <xs:unique name="TInRawUnique">
+            <xs:selector xpath="raw"/>
+            <xs:field xpath="@T"/>
+        </xs:unique>
+    </xs:element>
+
+    <xs:element name="raw">
+        <xs:annotation>
+            <xs:documentation>Models a raw IR signal, with into, repeat, and ending sequence (any of these may be empty).</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="intro" minOccurs="0"/>
+                <xs:sequence minOccurs="0">
+                    <xs:element ref="repeat" minOccurs="1"/>
+                    <xs:element ref="ending" minOccurs="0"/>
+                </xs:sequence>
+            </xs:sequence>
+            <xs:attribute name="frequency" type="xs:nonNegativeInteger">
+                <xs:annotation>
+                    <xs:documentation>Carrier frequency in Hz.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="dutyCycle" type="between0and1">
+                <xs:annotation>
+                    <xs:documentation>Duty cycle of modulation signal, between 0 and 1.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute ref="T"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:attribute name="T" type="parameterValue" default="0">
+        <xs:annotation>
+            <xs:documentation>Toggle value, the "T" parameter in many protocols.</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+
+    <xs:complexType name="rawsequence" mixed="true">
+        <xs:annotation>
+            <xs:documentation>Models a raw IR sequence, defined by its durations.
+                This should be either a sequence of numbers, or alternating flash and gap elements.
+                Unfortunately, this cannot be described in XML Schemas :-(.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="flash"/>
+            <xs:element ref="gap"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="intro"  type="rawsequence"/>
+    <xs:element name="repeat" type="rawsequence"/>
+    <xs:element name="ending" type="rawsequence"/>
+
+    <xs:element name="ccf">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="ccfString">
+                    <xs:attribute ref="T"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="format">
+        <xs:complexType mixed="true">
+            <xs:attributeGroup ref="nameAttributes"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="flash" type="xs:nonNegativeInteger"/>
+    <xs:element name="gap" type="xs:nonNegativeInteger"/>
+
+</xs:schema>
