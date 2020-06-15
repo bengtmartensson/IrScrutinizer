@@ -49,11 +49,7 @@ public final class Version {
 
     /** URL containing current official version. */
     public final static String currentVersionUrl = homepageUrl + "/downloads/" + appName + ".version";
-
-    /** Author&quot;s public PGP key. */
-    public final static String publicKey =
-<xsl:value-of select='publicKey/.'/>;
-
+    <xsl:apply-templates select="publicKey"/>
     public static void main(String[] args) {
         System.out.println(versionString);
     }
@@ -61,6 +57,11 @@ public final class Version {
     private Version() {
     }
 }
-    </xsl:template>
+</xsl:template>
+
+    <xsl:template match="publicKey">
+    /** Author&quot;s public PGP key. */
+    public final static String publicKey = <xsl:value-of select='.'/>;
+</xsl:template>
 
 </xsl:stylesheet>
