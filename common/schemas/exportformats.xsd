@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet href="xsd.xsl" type="text/xsl"?>
+<!-- Copying and distribution of this file, with or without modification,
+     are permitted in any medium without royalty provided the copyright
+     notice and this notice are preserved.  This file is offered as-is,
+     without any warranty.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://www.harctoolbox.org/exportformats"
+           xmlns:xml="http://www.w3.org/XML/1998/namespace"
+           xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+           xmlns:xi="http://www.w3.org/2001/XInclude"
+           elementFormDefault="qualified" attributeFormDefault="unqualified"
+           targetNamespace="http://www.harctoolbox.org/exportformats">
+
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+    <xs:import namespace="http://www.w3.org/1999/XSL/Transform" schemaLocation="https://www.w3.org/2007/schema-for-xslt20.xsd"/>
+    <xs:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="https://www.w3.org/2001/XInclude/XInclude.xsd"/>
+
+    <xs:element name="exportformats">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation>This element contains a set of export formats.</xs:documentation>
+            </xs:annotation>
+            <xs:sequence maxOccurs="unbounded">
+                <xs:choice>
+                    <xs:element ref="exportformat"/>
+                    <xs:element ref="xi:include"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="exportformatNameUnique">
+            <xs:selector xpath="*"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+    </xs:element>
+
+    <xs:element name="exportformat">
+        <xs:annotation>
+            <xs:documentation>The element describes an export format.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice>
+                    <xs:element ref="xsl:stylesheet"/>
+                    <xs:element ref="xsl:transform"/>
+                    <xs:element ref="xi:include"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>Name of export format, as presented to the user.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="extension" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>File extension (not counting the ".") of the generated files.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="multiSignal" type="xs:boolean" default="true">
+                <xs:annotation>
+                    <xs:documentation>Does the format allow for more than one signal?</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="simpleSequence" type="xs:boolean" default="false">
+                <xs:annotation>
+                    <xs:documentation>If true, the format consists of IrSequences, not IrSignals.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="binary" type="xs:boolean" default="false">
+                <xs:annotation>
+                    <xs:documentation>True if the files are binary files.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="metadata" type="xs:boolean" default="false">
+                <xs:annotation>
+                    <xs:documentation>True if the format support remote meta data (not necessarily all).</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="executable" type="xs:boolean" default="false">
+                <xs:annotation>
+                    <xs:documentation>True if the generated export file should be executable.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="encoding" type="xs:string" default="">
+                <xs:annotation>
+                    <xs:documentation>If given, an export MUST be using this text encoding. Only used for formats that understand only one encoding.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>
