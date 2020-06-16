@@ -26,8 +26,12 @@ install:
 - wget --quiet http://www.harctoolbox.org/downloads/jre-x64-macOS.tar.gz
 
 #- tools/get-inno.sh
-#- mvn install -DskipTests=true -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -B -V
-after_success: ./common/scripts/upload.sh target/*-bin.zip target/*.dmg target/IrScrutinizer-*AppImage target/*.md5 target/*.sha*
+
+script:
+- mvn install -DskipTests=true -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -B -V
+
+after_success:
+- ./common/scripts/upload.sh target/*-bin.zip target/*.dmg target/IrScrutinizer-*AppImage target/*.md5 target/*.sha*
 
 branches:
   except:
