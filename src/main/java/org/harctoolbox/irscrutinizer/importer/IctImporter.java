@@ -18,9 +18,7 @@ package org.harctoolbox.irscrutinizer.importer;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
 import java.text.ParseException;
@@ -56,6 +54,10 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
         return imp.getCommands();
     }
 
+    public static Collection<Command> importer(File file) throws IOException, ParseException, InvalidArgumentException {
+        return importer(file, IrCoreUtils.EXTENDED_LATIN1_NAME);
+    }
+
     public static Collection<Command> importer(BufferedReader reader, String orig) throws IOException, InvalidArgumentException {
         IctImporter imp = new IctImporter();
         imp.load(reader, orig);
@@ -65,24 +67,16 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
     public static void main(String[] args) {
         for (String s : args) {
             try {
-                Collection<Command> cmds = parse(s);
+                Collection<Command> cmds = importer(new File(s));
                 for (Command cmd : cmds) {
                     System.out.println(cmd.getName());
                     System.out.println(cmd.toIrSignal());
                     System.out.println();
                 }
-            } catch (IOException | IrCoreException | IrpException ex) {
-                Logger.getLogger(IctImporter.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException | IrCoreException | IrpException | ParseException ex) {
+                logger.log(Level.SEVERE, null, ex);
             }
         }
-    }
-
-    private static Collection<Command> parse(String s) throws FileNotFoundException, IOException, InvalidArgumentException {
-        Collection<Command> cmds;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(IrCoreUtils.getInputSteam(s), IrCoreUtils.DEFAULT_CHARSET))) {
-            cmds = importer(reader, s);
-        }
-        return cmds;
     }
 
     private int lineNumber;
