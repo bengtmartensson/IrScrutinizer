@@ -17,7 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.capturinghardware;
 
-import gnu.io.NoSuchPortException;
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -26,6 +25,7 @@ import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.guicomponents.SerialPortSimpleBean;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
+import org.harctoolbox.harchardware.comm.NonExistingPortException;
 import org.harctoolbox.harchardware.ir.ICapture;
 import org.harctoolbox.harchardware.ir.IrSerial;
 import org.harctoolbox.irscrutinizer.Props;
@@ -111,7 +111,7 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
             guiUtils.error(ex);
         } catch (InvocationTargetException ex) {
             // Likely NoSuchPortException
-            if (NoSuchPortException.class.isInstance(ex.getCause()))
+            if (NonExistingPortException.class.isInstance(ex.getCause()))
                 throw new IOException("No such port: " + newPort);
             else
                 guiUtils.error(ex);

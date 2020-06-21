@@ -17,9 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.sendinghardware;
 
-import gnu.io.NoSuchPortException;
-import gnu.io.PortInUseException;
-import gnu.io.UnsupportedCommOperationException;
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import javax.swing.JPanel;
@@ -123,7 +120,7 @@ public class SendingGenericSerialPort extends SendingHardware<IrGenericSerial> i
             rawIrSender.setSeparator(genericSerialSenderBean.getSeparator());
             rawIrSender.setUseSigns(genericSerialSenderBean.getUseSigns());
             rawIrSender.setLineEnding(genericSerialSenderBean.getLineEnding());
-        } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException ex) {
+        } catch (IOException ex) {
             // Should not happen
             guiUtils.error(ex);
         }
