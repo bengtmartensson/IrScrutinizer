@@ -82,6 +82,7 @@
                 <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
             </xs:sequence>
             <xs:attribute ref="xml:lang" default="en"/>
+            <xs:attribute ref="xml:space" default="default"/>
         </xs:complexType>
     </xs:element>
 
