@@ -18,6 +18,7 @@
 package org.harctoolbox.irscrutinizer.exporter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,11 +43,15 @@ public class NameUniquefier {
     private final List<String> names;
 
     public NameUniquefier(String separator) {
+        this(new ArrayList<String>(0), separator);
+    }
+    
+    public NameUniquefier(Collection<String> oldNames, String separator) {
         this.separator = separator;
         pattern = Pattern.compile(separator + "\\d+$");
-        names = new ArrayList<>(INIT_CAPACITY);
+        names = new ArrayList<>(oldNames);
     }
-
+    
     public NameUniquefier() {
         this(DEFAULT_SEPARATOR);
     }

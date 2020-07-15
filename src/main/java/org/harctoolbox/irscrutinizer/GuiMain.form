@@ -689,6 +689,15 @@
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator18">
         </Component>
+        <MenuItem class="javax.swing.JMenuItem" name="rawChopMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Chop selected signals at long gaps"/>
+            <Property name="toolTipText" type="java.lang.String" value="Chop selected signals and enter the fragments as new signals"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rawChopMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="scrutinizeMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" value="Copy selected to &quot;Scrutinize Signal&quot;"/>

@@ -164,6 +164,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private final static int maxCharsInGuiMessages = 150;
     private final static int transmitSignalMouseButton = 2;
     private final static String UNIQUE_SEPARATOR = "#";
+    private final static int chopSize = 100;
 
     private AboutPopup aboutBox;
     private Component currentPane = null;
@@ -2050,6 +2051,7 @@ public final class GuiMain extends javax.swing.JFrame {
         addRawTestSignalMenuItem = new javax.swing.JMenuItem();
         rawFromClipboardMenuItem = new javax.swing.JMenuItem();
         jSeparator18 = new javax.swing.JPopupMenu.Separator();
+        rawChopMenuItem = new javax.swing.JMenuItem();
         scrutinizeMenuItem = new javax.swing.JMenuItem();
         sendMenuItem = new javax.swing.JMenuItem();
         rawProtocolDocuMenuItem = new javax.swing.JMenuItem();
@@ -3120,6 +3122,15 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         rawTablePopupMenu.add(rawFromClipboardMenuItem);
         rawTablePopupMenu.add(jSeparator18);
+
+        rawChopMenuItem.setText("Chop selected signals at long gaps");
+        rawChopMenuItem.setToolTipText("Chop selected signals and enter the fragments as new signals");
+        rawChopMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rawChopMenuItemActionPerformed(evt);
+            }
+        });
+        rawTablePopupMenu.add(rawChopMenuItem);
 
         scrutinizeMenuItem.setText("Copy selected to \"Scrutinize Signal\"");
         scrutinizeMenuItem.setToolTipText("Copy the (single) selected signal to the \"Scrutinize Signal\" pane.");
@@ -9788,6 +9799,20 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setRemoveDefaultedParameters(removeDefaultedParametersCheckBoxMenuItem.isSelected());
     }//GEN-LAST:event_removeDefaultedParametersCheckBoxMenuItemActionPerformed
 
+    private void rawChopMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawChopMenuItemActionPerformed
+        List<Integer> rows = tableUtils.modelLinesSelected(rawTable);
+        if (rows.isEmpty()) {
+            guiUtils.error("Nothing selected");
+            return;
+        }
+
+        try {
+            rawTableModel.chopSignals(rows, chopSize);
+        } catch (IrpException | IrCoreException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_rawChopMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -10230,6 +10255,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem proxyMenuItem;
     private javax.swing.JMenuItem publicKeyMenuItem;
     private javax.swing.JMenuItem rawAddTestSignalMenuItem;
+    private javax.swing.JMenuItem rawChopMenuItem;
     private javax.swing.JMenuItem rawCodeAnalyzeMenuItem;
     private javax.swing.JMenuItem rawCodeClearMenuItem;
     private javax.swing.JComboBox<String> rawCodeColumnComboBox1;

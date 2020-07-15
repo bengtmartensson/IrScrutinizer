@@ -35,6 +35,7 @@ import org.harctoolbox.irp.Decoder;
 import org.harctoolbox.irp.ElementaryDecode;
 import org.harctoolbox.irp.IrpException;
 import org.harctoolbox.irp.Protocol;
+import org.harctoolbox.irscrutinizer.exporter.NameUniquefier;
 
 /**
  * Note: Editing of the sequences is not implemented (yet).
@@ -424,6 +425,26 @@ public class RawIrSignal extends NamedIrSignal {
         @Override
         public String getType() {
             return "raw";
+        }
+
+        public void chopSignals(Iterable<Integer> rows, int chopSize) throws IrpException, IrCoreException {
+            NameUniquefier uniquefier = new NameUniquefier(this.getUniqueNames(), "_");
+
+            for (Integer row : rows) {
+                Command command = toCommand(row);
+                IrSignal irSignal = command.toIrSignal();
+                ModulatedIrSequence irSequence = irSignal.toModulatedIrSequence();
+                Double frequency = irSignal.getFrequency();
+                String stem = command.getName();
+                List<IrSequence> fragments = irSequence.chop(IrCoreUtils.milliseconds2microseconds(chopSize));
+                for (IrSequence fragment : fragments) {
+                    IrSignal miniSignal = new IrSignal(fragment, frequency, null);
+                    String newName = uniquefier.uniquefy(stem);
+                    RawIrSignal chopped = new RawIrSignal(miniSignal, newName, "Chopped from " + stem);
+                    this.addSignal(chopped);
+                }
+            }
+            fireTableDataChanged();
         }
     }
 }
