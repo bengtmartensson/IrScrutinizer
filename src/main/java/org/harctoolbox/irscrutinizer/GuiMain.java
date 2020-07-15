@@ -499,6 +499,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
 
         ictImporter = new IctImporter();
+        ictImporter.setChop(properties.getChopIctImports());
 
         girrImporter = new GirrImporter(properties.getGirrValidate(), new URL(properties.getGirrSchemaLocation()));
         properties.addGirrSchemaLocationChangeListener((String name1, Object oldValue, Object newValue) -> {
@@ -2195,8 +2196,8 @@ public final class GuiMain extends javax.swing.JFrame {
         importProntoProfessionalHelpButton = new javax.swing.JButton();
         ictImportPanel = new javax.swing.JPanel();
         ictFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, ictImporter);
-        jLabel15 = new javax.swing.JLabel();
         importIctHelpButton = new javax.swing.JButton();
+        chopIctImportCheckBox = new javax.swing.JCheckBox();
         mode2ImportPanel = new javax.swing.JPanel();
         mode2FileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, new Mode2Importer());
         jLabel17 = new javax.swing.JLabel();
@@ -4454,8 +4455,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
         importTabbedPane.addTab("Pronto Prof (.xcf)", xcfImportPanel);
 
-        jLabel15.setText("Note: invokeRepeatFinder is used.");
-
         importIctHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         importIctHelpButton.setText("Help");
         importIctHelpButton.addActionListener(new java.awt.event.ActionListener() {
@@ -4464,27 +4463,35 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
+        chopIctImportCheckBox.setSelected(properties.getChopIctImports());
+        chopIctImportCheckBox.setText("Chop long signals");
+        chopIctImportCheckBox.setToolTipText("If selected, the signals of an ICT imports are chopped according to the chopThreshold vaiable.");
+        chopIctImportCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chopIctImportCheckBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout ictImportPanelLayout = new javax.swing.GroupLayout(ictImportPanel);
         ictImportPanel.setLayout(ictImportPanelLayout);
         ictImportPanelLayout.setHorizontalGroup(
             ictImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ictImportPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel15)
-                .addContainerGap(730, Short.MAX_VALUE))
-            .addGroup(ictImportPanelLayout.createSequentialGroup()
                 .addComponent(ictFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
                 .addComponent(importIctHelpButton)
                 .addContainerGap())
+            .addGroup(ictImportPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chopIctImportCheckBox)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         ictImportPanelLayout.setVerticalGroup(
             ictImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ictImportPanelLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(jLabel15)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ictFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE))
+                .addComponent(chopIctImportCheckBox)
+                .addGap(4, 4, 4)
+                .addComponent(ictFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ictImportPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(importIctHelpButton)
@@ -9832,6 +9839,12 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_chopThresholdMenuItemActionPerformed
 
+    private void chopIctImportCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chopIctImportCheckBoxActionPerformed
+        boolean isSel = chopIctImportCheckBox.isSelected();
+        ictImporter.setChop(isSel);
+        properties.setChopIctImports(isSel);
+    }//GEN-LAST:event_chopIctImportCheckBoxActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9884,6 +9897,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem checkParametrizedSignalsMenuItem;
     private javax.swing.JMenuItem checkRawCommandsMenuItem;
     private javax.swing.JMenuItem checkUpToDateMenuItem;
+    private javax.swing.JCheckBox chopIctImportCheckBox;
     private javax.swing.JMenuItem chopThresholdMenuItem;
     private javax.swing.JCheckBoxMenuItem cleanerCheckBoxMenuItem;
     private javax.swing.JMenuItem clearConsoleMenuItem;
@@ -10122,7 +10136,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;

@@ -24,12 +24,14 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.IrCoreUtils;
+import org.harctoolbox.ircore.IrSequence;
 import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.irp.IrpException;
@@ -78,7 +80,8 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
             }
         }
     }
-
+    
+    private boolean chop = false;
     private int lineNumber;
     private int anonymousNumber;
     private int frequency = invalid;
@@ -93,6 +96,10 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
      *
      */
     public IctImporter() {
+    }
+    
+    public void setChop(boolean chop) {
+        this.chop = chop;
     }
 
     @Override
@@ -166,7 +173,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
         setupRemoteSet();
     }
 
-    private void processSignal(ArrayList<Integer> data, String name, String origin) throws InvalidArgumentException {
+    private void processSignal(List<Integer> data, String name, String origin) throws InvalidArgumentException {
         if (data.isEmpty())
             return;
 
@@ -174,20 +181,30 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
             logger.log(Level.WARNING, "Last sample was pulse, appending a {0} microsecond gap", lengthInsertedGap);
             data.add(lengthInsertedGap);
         }
-        int[] dataArray = new int[data.size()];
-        for (int i = 0; i < data.size(); i++) {
-            dataArray[i] = data.get(i);
-        }
+        IrSequence irSequence = new IrSequence(data);
 
         if (frequency < 0 && hasComplainedAboutMissingFrequency) {
             hasComplainedAboutMissingFrequency = true;
             frequency = (int) ModulatedIrSequence.DEFAULT_FREQUENCY;
             logger.log(Level.WARNING, "Carrier_frequency missing, assuming {0}", frequency);
         }
-        ModulatedIrSequence seq = new ModulatedIrSequence(dataArray, (double) frequency);
-        IrSignal irSignal = InterpretString.interpretIrSequence(seq, isInvokeRepeatFinder(), isInvokeCleaner(), getAbsoluteTolerance(), getRelativeTolerance());
-        Command command = new Command(uniqueName(name), origin == null ? "ICT import" : ("ICT import from " + origin), irSignal);
-        addCommand(command);
+        ModulatedIrSequence modulatedIrSequence = new ModulatedIrSequence(irSequence, (double) frequency);
+        List<ModulatedIrSequence> modulatedIrSequences;
+        if (chop) {
+            List<IrSequence> list = irSequence.chop(IrCoreUtils.milliseconds2microseconds(getChopThreshold()));
+            modulatedIrSequences = new ArrayList<>(list.size());
+            list.forEach((s) -> {
+                modulatedIrSequences.add(new ModulatedIrSequence(s, (double) frequency));
+            });
+        } else {
+            modulatedIrSequences = new ArrayList<>(1);
+            modulatedIrSequences.add(modulatedIrSequence);
+        }
+        for (ModulatedIrSequence s : modulatedIrSequences) {
+            IrSignal irSignal = InterpretString.interpretIrSequence(s, isInvokeRepeatFinder(), isInvokeCleaner(), getAbsoluteTolerance(), getRelativeTolerance());
+            Command command = new Command(uniqueName(name), origin == null ? "ICT import" : ("ICT import from " + origin), irSignal);
+            addCommand(command);
+        }
     }
 
     @Override

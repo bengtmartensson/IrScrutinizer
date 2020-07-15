@@ -135,6 +135,10 @@ public abstract class Importer {
     protected Double getMinRepeatLastGap() {
         return properties != null ? properties.getMinRepeatLastGap() : null;
     }
+    
+    protected Double getChopThreshold() {
+        return properties != null ? properties.getChopThreshold() : null;
+    }
 
     protected void prepareLoad(String origin) {
         this.origin = origin;
