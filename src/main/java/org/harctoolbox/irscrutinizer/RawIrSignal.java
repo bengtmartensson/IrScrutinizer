@@ -427,7 +427,7 @@ public class RawIrSignal extends NamedIrSignal {
             return "raw";
         }
 
-        public void chopSignals(Iterable<Integer> rows, int chopSize) throws IrpException, IrCoreException {
+        public void chopSignals(Iterable<Integer> rows, double chopSize) throws IrpException, IrCoreException {
             NameUniquefier uniquefier = new NameUniquefier(this.getUniqueNames(), "_");
 
             for (Integer row : rows) {

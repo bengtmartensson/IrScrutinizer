@@ -164,7 +164,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private final static int maxCharsInGuiMessages = 150;
     private final static int transmitSignalMouseButton = 2;
     private final static String UNIQUE_SEPARATOR = "#";
-    private final static int chopSize = 100;
+    public final static double chopThreshold = 100.0; // TODO should problably live somewhere else
 
     private AboutPopup aboutBox;
     private Component currentPane = null;
@@ -2460,6 +2460,7 @@ public final class GuiMain extends javax.swing.JFrame {
         minLeadoutMenuItem = new javax.swing.JMenuItem();
         minRepeatGapMenuItem = new javax.swing.JMenuItem();
         dummyGapMenuItem = new javax.swing.JMenuItem();
+        chopThresholdMenuItem = new javax.swing.JMenuItem();
         fallbackFrequencyMenuItem = new javax.swing.JMenuItem();
         verboseCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ignoreEndingSilenceCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -6986,6 +6987,14 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         protocolParametersMenu.add(dummyGapMenuItem);
 
+        chopThresholdMenuItem.setText("Chop threshold (ms)");
+        chopThresholdMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chopThresholdMenuItemActionPerformed(evt);
+            }
+        });
+        protocolParametersMenu.add(chopThresholdMenuItem);
+
         optionsMenu.add(protocolParametersMenu);
 
         fallbackFrequencyMenuItem.setText("Fallback Frequency...");
@@ -9807,11 +9816,21 @@ public final class GuiMain extends javax.swing.JFrame {
         }
 
         try {
-            rawTableModel.chopSignals(rows, chopSize);
+            rawTableModel.chopSignals(rows, properties.getChopThreshold());
         } catch (IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_rawChopMenuItemActionPerformed
+
+    private void chopThresholdMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chopThresholdMenuItemActionPerformed
+          try {
+            Double t = guiUtils.getDoubleInput("Threshold value in milliseconds for chopping long signals.", properties.getChopThreshold());
+            if (t != null)
+                properties.setChopThreshold(t);
+        } catch (NumberFormatException ex) {
+            guiUtils.error("Invalid number: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_chopThresholdMenuItemActionPerformed
 
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -9865,6 +9884,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem checkParametrizedSignalsMenuItem;
     private javax.swing.JMenuItem checkRawCommandsMenuItem;
     private javax.swing.JMenuItem checkUpToDateMenuItem;
+    private javax.swing.JMenuItem chopThresholdMenuItem;
     private javax.swing.JCheckBoxMenuItem cleanerCheckBoxMenuItem;
     private javax.swing.JMenuItem clearConsoleMenuItem;
     private javax.swing.JMenuItem clearMenuItem;
