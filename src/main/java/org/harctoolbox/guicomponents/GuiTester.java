@@ -136,7 +136,7 @@ public class GuiTester extends javax.swing.JFrame {
         //jythonPanel1.assign("guitester", this);
         //jythonPanel1.assign("globalcacheselector", globalCacheIrSenderSelector);
         irpMasterBean.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> {
-            if (evt.getPropertyName().equals(IrpMasterBean.PROP_PROTOCOL_NAME))
+            if (evt.getPropertyName().equals(IrpRenderBean.PROP_PROTOCOL_NAME))
                 guiUtils.message("Someone changed protocol from " + evt.getOldValue() + " to " + evt.getNewValue());
         });
     }
@@ -190,7 +190,7 @@ public class GuiTester extends javax.swing.JFrame {
         beaconPanel = new javax.swing.JPanel();
         amxBeaconListenerTree1 = new org.harctoolbox.guicomponents.AmxBeaconListenerPanel();
         jPanel3 = new javax.swing.JPanel();
-        irpMasterBean = new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpDatabase, "rc5");
+        irpMasterBean = new org.harctoolbox.guicomponents.IrpRenderBean(this, guiUtils, irpDatabase, "rc5");
         jScrollPane2 = new javax.swing.JScrollPane();
         ccfTextArea = new javax.swing.JTextArea();
         jButton2 = new javax.swing.JButton();
@@ -763,7 +763,7 @@ public class GuiTester extends javax.swing.JFrame {
     private org.harctoolbox.guicomponents.HexCalculator hexCalculator1;
     private org.harctoolbox.guicomponents.InternetHostPanel internetHostPanel1;
     private org.harctoolbox.guicomponents.InternetHostPanel internetHostPanel2;
-    private org.harctoolbox.guicomponents.IrpMasterBean irpMasterBean;
+    private org.harctoolbox.guicomponents.IrpRenderBean irpMasterBean;
     private org.harctoolbox.guicomponents.NamedCommandLauncher irtransNamedCommandLauncher;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;

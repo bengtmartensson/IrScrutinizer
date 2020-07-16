@@ -759,22 +759,22 @@ public final class GuiMain extends javax.swing.JFrame {
 
         irpMasterBean.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> {
             switch (evt.getPropertyName()) {
-                case IrpMasterBean.PROP_PROTOCOL_NAME:
+                case IrpRenderBean.PROP_PROTOCOL_NAME:
                     properties.setIrpMasterCurrentProtocol((String) evt.getNewValue());
                     break;
-                case IrpMasterBean.PROP_D:
+                case IrpRenderBean.PROP_D:
                     properties.setIrpMasterCurrentD((String) evt.getNewValue());
                     break;
-                case IrpMasterBean.PROP_S:
+                case IrpRenderBean.PROP_S:
                     properties.setIrpMasterCurrentS((String) evt.getNewValue());
                     break;
-                case IrpMasterBean.PROP_F:
+                case IrpRenderBean.PROP_F:
                     properties.setIrpMasterCurrentF((String) evt.getNewValue());
                     break;
-                case IrpMasterBean.PROP_T:
+                case IrpRenderBean.PROP_T:
                     properties.setIrpMasterCurrentT((String) evt.getNewValue());
                     break;
-                case IrpMasterBean.PROP_ADDITIONAL_PARAMS:
+                case IrpRenderBean.PROP_ADDITIONAL_PARAMS:
                     properties.setIrpMasterCurrentAdditionalParameters((String) evt.getNewValue());
                     break;
                 default:
@@ -2130,7 +2130,7 @@ public final class GuiMain extends javax.swing.JFrame {
         generateExportButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         generateTextArea = new javax.swing.JTextArea();
-        irpMasterBean = new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpDatabase, properties.getIrpMasterCurrentProtocol(), properties.getIrpMasterCurrentD(), properties.getIrpMasterCurrentS(), properties.getIrpMasterCurrentF(), properties.getIrpMasterCurrentT(), properties.getIrpMasterCurrentAdditionalParameters());
+        irpMasterBean = new org.harctoolbox.guicomponents.IrpRenderBean(this, guiUtils, irpDatabase, properties.getIrpMasterCurrentProtocol(), properties.getIrpMasterCurrentD(), properties.getIrpMasterCurrentS(), properties.getIrpMasterCurrentF(), properties.getIrpMasterCurrentT(), properties.getIrpMasterCurrentAdditionalParameters());
         generateButton = new javax.swing.JButton();
         generateHelpButton = new javax.swing.JButton();
         transferToParametricRemoteButton = new javax.swing.JButton();
@@ -10123,7 +10123,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel irdbPanel;
     private org.harctoolbox.irscrutinizer.importer.TreeImporter irdbTreeImporter;
     private javax.swing.JMenuItem irpFormatsIniReloadMenuItem;
-    private org.harctoolbox.guicomponents.IrpMasterBean irpMasterBean;
+    private org.harctoolbox.guicomponents.IrpRenderBean irpMasterBean;
     private javax.swing.JMenuItem irpProtocolsEditMenuItem;
     private javax.swing.JMenu irpProtocolsIniMenu;
     private javax.swing.JMenuItem irpProtocolsSelectMenuItem;
