@@ -33,7 +33,7 @@ Of course, it is also possible to manually download or clone these packages
 
 ### IrpTransmogrifier, Girr, HarcHardware, Jirc
 These are all Java packages that are required to build IrScrutinizer. HarcHardware requires RXTX.
-            They can be downloaded and built by the script `tools/build-harctoolbox-project.sh`,
+            They can be downloaded and built by the script `common/scripts/build-harctoolbox-project.sh`,
             using an argument of
             `IrpTransmogrifier`,
             `Girr`,
@@ -72,7 +72,7 @@ Note that the system supplied RXTX jar on many system (e.g. Fedora 21) has some 
 Normally, these components are downloaded and installed automatically by maven.
 
 ### Tonto
-[Tonto](http://localhost:8888/Glossary.html#Tonto) can be downloaded and installed by the script `common/scripts/build-tonto.sh`.
+[Tonto](Glossary.html#Tonto) can be downloaded and installed by the script `common/scripts/build-tonto.sh`.
         (On Fedora, instead the command `sudo dnf install tonto` can be used.)
         Note that the shared library `libjnijcomm`,
         which is required by the Tonto program for communicating with a Pronto remote through a serial interface,
