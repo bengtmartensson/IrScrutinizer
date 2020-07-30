@@ -76,6 +76,10 @@ not to hold the author responsible.</warning>
 	  <td>2020-05-20</td>
 	  <td>Minor updates for version 2.2.6.</td>
 	</tr>
+        <tr>
+	  <td>2020-07-30</td>
+	  <td>Updated building instructions.</td>
+	</tr>
       </table>
 
 <section>
@@ -1720,7 +1724,7 @@ necessary adaptations.
 </section>
 <section id="building-from-sources">
     <title>Appendix. Building from sources</title>
-    <p>"IrScrutinizer" is one subproject (corresponding to a Java <em>package</em>) within <a href="http://harctoolbox.org">harctoolbox.org</a>.
+    <p>"IrScrutinizer" is one subproject within <a href="http://harctoolbox.org">harctoolbox.org</a>.
     It depends on several other subprojects within harctoolbox. The repository <code>IrScrutinizer</code> consists
     of this subproject.</p>
 
@@ -1734,12 +1738,32 @@ necessary adaptations.
         Other platforms are treated stepmotherly.</p>
 <section>
     <title>Dependencies</title>
-<p>
-As any program of substantial size, IrScrutinizer uses a number of third-party components.
-    All of these are also free software, carrying compatible licenses.
-The dependent packages need to be installed also in
-    maven in order for the build to work. With the dependencies available, the script <code>tools/install-deps.sh</code>
-can be used to install  them in the local maven repository before building.</p>
+    <p>As any program of substantial size, IrScrutinizer uses a number of third-party components.
+        All of these are also free software, carrying compatible licenses.
+        The dependent packages need to be installed also in
+        the host-local Maven repository in order for the build to work.
+        In some cases (basically the ones with a version not ending with <code>-SNAPSHOT</code>), the packages
+        are uploaded to <a href="https://mvnrepository.com/repos/central">the Maven central repository</a>,
+        and will be automatically downloaded to the local host by a Maven invocation.
+</p>
+
+<p>There are some scripts to aid downloading and building, described next.</p>
+<p>Of course, it is also possible to manually download or clone these packages
+                from <a href="https://github.com/bengtmartensson?tab=repositories">my Github repositories</a>,
+                then build and install them locally by <code>mvn install</code>.</p>
+
+<section>
+        <title>IrpTransmogrifier, Girr, HarcHardware, Jirc</title>
+        <p>These are all Java packages that are required to build IrScrutinizer. HarcHardware requires RXTX.
+            They can be downloaded and built by the script <code>tools/build-harctoolbox-project.sh</code>,
+            using an argument of
+            <code>IrpTransmogrifier</code>,
+            <code>Girr</code>,
+            <code>HarcHardwar</code>, or
+            <code>Jirc</code>.
+            See the file <code>.travis.yml</code> for the complete commands.
+</p>
+    </section>
 
     <section>
         <title>DevSlashLirc</title>
@@ -1751,18 +1775,9 @@ can be used to install  them in the local maven repository before building.</p>
         <code>native/Linux-i386</code>, and
         <code>native/Linux-arm</code> contain compiled versions for the x86_64, x86_32, and ARM processors respectively.</p>
 
-        <p>The package can be downloaded, and the Java part built, by the script <code>tools/build-DevSlashLirc.sh</code>.</p>
-    </section>
-
-    <section>
-        <title>IrpTransmogrifier, Girr, HarcHardwareBundle, Jirc</title>
-        <p>These are all pure Java packages that are required to build IrScrutinizer.
-            They can be downloaded and built by the scripts
-            <code>tools/build-IrpTransmogrifier.sh</code>,
-            <code>tools/build-Girr.sh</code>,
-            <code>tools/build-HarcHardwareBundle.sh</code>, and
-            <code>tools/build-Jirc.sh</code>.
-        </p>
+        <p>The package can be downloaded, and the Java part built, by the script
+            <code>common/scripts/build-harctoolbox-project.sh</code> using the argument <code>DevSlashLirc</code>
+            (see <code>.travis.yml</code> for an example).</p>
     </section>
 
     <section>
@@ -1784,15 +1799,15 @@ can be used to install  them in the local maven repository before building.</p>
         <p>Normally, these components are downloaded and installed automatically by maven.</p>
     </section>
 
-    <section>
-        <title>Tonto</title>
-        <p>
-        Tonto can be downloaded and installed by the script <code>tools/build-tonto.sh</code>.
-        (On recent Fedora, instead the command <code>sudo dnf install tonto</code> can be used.)</p>
-
-        <p>Note that the shared library <code>libjnijcomm</code>,
-        which is required by the program Tonto for communicating with a Pronto remote through a serial interface,
-        is not required for use with IrScrutinizer, and can therefore be left out.</p>
+<section>
+    <title>Tonto</title>
+    <p><a href="http://localhost:8888/Glossary.html#Tonto">Tonto</a> can be downloaded and installed by the script <code>common/scripts/build-tonto.sh</code>.
+        (On Fedora, instead the command <code>sudo dnf install tonto</code> can be used.)
+        Note that the shared library <code>libjnijcomm</code>,
+        which is required by the Tonto program for communicating with a Pronto remote through a serial interface,
+        is not required for use with IrScrutinizer, and can therefore be left out.
+        Using the option <code>-n</code> to the script (see <code>.travis.yml</code> for an example),
+        the script stops without trying to build and install the shared library.</p>
 </section>
 </section>
 <section>
