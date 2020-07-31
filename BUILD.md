@@ -12,8 +12,8 @@ The released versions are found on the [download page](https://github.com/bengtm
 
 I go to great lengths ensuring that the program runs equally well on all supported platforms.
         I do not care too much that all aspects of the build runs equally well on all platforms.
-        I build with Linux (Fedora), the continuous integration build runs on Travis (Ubunto).
-        Other platforms are treated stepmotherly.
+        I build with Linux (Fedora), the continuous integration build runs on Travis (Ubuntu).
+        Other platforms are treated step-motherly.
 
 ## Dependencies
 As any program of substantial size, IrScrutinizer uses a number of third-party components.
@@ -25,7 +25,9 @@ As any program of substantial size, IrScrutinizer uses a number of third-party c
         and will be automatically downloaded to the local host by a Maven invocation.
 
 
-There are some scripts to aid downloading and building, described next.
+There are some scripts to aid downloading and building, described next. It is assumed that
+    [git](https://git-scm.com/) and [Maven](https://maven.apache.org/)
+    are installed and available as commands `git` and `mvn` respectively.
 
 Of course, it is also possible to manually download or clone these packages
                 from [my Github repositories](https://github.com/bengtmartensson?tab=repositories),
@@ -73,12 +75,13 @@ Normally, these components are downloaded and installed automatically by maven.
 
 ### Tonto
 [Tonto](Glossary.html#Tonto) can be downloaded and installed by the script `common/scripts/build-tonto.sh`.
+    It requires the [Apache ant](https://ant.apache.org/) build system to be installed as the command `ant`.
         (On Fedora, instead the command `sudo dnf install tonto` can be used.)
         Note that the shared library `libjnijcomm`,
         which is required by the Tonto program for communicating with a Pronto remote through a serial interface,
         is not required for use with IrScrutinizer, and can therefore be left out.
         Using the option `-n` to the script (see `.travis.yml` for an example),
-        the script stops without trying to build and install the shared library.
+        the script will not try to build and install the shared library.
 
 ## Building
 As of version 1.1.2, the [Maven](http://maven.apache.org/index.html) "software
@@ -87,13 +90,13 @@ Modern IDEs like Netbeans and Eclips integrate Maven, so build etc can be initia
 Of course, the shell command `mvn install` can also be used. It creates some artifacts which can
 be used to run IrScrutinizer in the `IrScrutinizer/target` directory.
 
-To prepare the Windows version, some shell tools are needed. These are:
+Two additional shell tools are needed. These are:
 
 
 
 * The `unix2dos` and `dos2unix` utilities, typically in the `dos2unix` package.
 
-* The `icotool` utility, typically in the `icoutils` package
+* The `icotool` utility, typically in the `icoutils` package.
 
 
 ## Windows setup.exe creation
