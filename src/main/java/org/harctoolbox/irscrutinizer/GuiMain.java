@@ -1936,7 +1936,10 @@ public final class GuiMain extends javax.swing.JFrame {
         protocolDocuPopup(frame, command.getProtocolName());
     }
 
-    private void protocolDocuPopup(java.awt.Frame frame, String protocolName) throws UnknownProtocolException {
+    private void protocolDocuPopup(java.awt.Frame frame, String protocolName) throws IrpException {
+        if (protocolName == null)
+            throw new IrpException("No decode.");
+
         String docu = irpDatabase.getDocumentation(protocolName); // throws UnknownProtocolException
         StringBuilder str = new StringBuilder(irpDatabase.getIrp(protocolName)).append("\n\n");
         if (docu != null)
@@ -9728,7 +9731,7 @@ public final class GuiMain extends javax.swing.JFrame {
         String[] arr = str.split(":");
         try {
             protocolDocuPopup(this, arr[0]);
-        } catch (UnknownProtocolException ex) {
+        } catch (IrpException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_scrutinizeSignalProtocolDocuMenuItemActionPerformed
