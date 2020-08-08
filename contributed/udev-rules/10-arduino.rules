@@ -1,0 +1,7 @@
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="0043", ATTRS{idVendor}=="2341", SYMLINK+="arduino arduino_uno arduino_uno_$attr{serial}"
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="7523", ATTRS{idVendor}=="1a86", SYMLINK+="arduino arduino_nano_qinheng"
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="2303", ATTRS{idVendor}=="067b", SYMLINK+="arduino arduino_nano_prolific"
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="6001", ATTRS{idVendor}=="0403", SYMLINK+="arduino arduino_nano_ftdi arduino_nano_ftdi_$attr{serial}"
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="8037", ATTRS{idVendor}=="2341", SYMLINK+="arduino arduino_micro"
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="8036", ATTRS{idVendor}=="2341", SYMLINK+="arduino arduino_leonardo"
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="0042", ATTRS{idVendor}=="2341", SYMLINK+="arduino arduino_mega arduino_mega_$attr{serial}"
