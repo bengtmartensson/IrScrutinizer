@@ -21,9 +21,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -268,7 +270,7 @@ public abstract class NamedIrSignal {
         }
 
         private boolean checkNonUniqueNames() {
-            List<String> duplicateNames = getNonUniqueNames();
+            Set<String> duplicateNames = getNonUniqueNames();
             if (!duplicateNames.isEmpty()) {
                 StringBuilder str = new StringBuilder("The following names are non-unique: ");
                 str.append(String.join(", ", duplicateNames));
@@ -323,18 +325,26 @@ public abstract class NamedIrSignal {
             unsavedChanges = true;
         }
 
-        public ArrayList<String> getNonUniqueNames() {
-            ArrayList<String> duplicates = new ArrayList<>(32);
-            ArrayList<String> allNames = new ArrayList<>(getRowCount() + 10);
+        public Set<String> getNonUniqueNames() {
+            Set<String> duplicates = new HashSet<>(32);
+            List<String> allNames = new ArrayList<>(getRowCount() + 10);
             for (int row = 0; row < getRowCount(); row++) {
                 String name = (String) getValueAt(row, columnsFunc.getPosName());
                 if (allNames.contains(name)) {
-                    if (!duplicates.contains(name))
                         duplicates.add(name);
                 } else
                     allNames.add(name);
             }
             return duplicates;
+        }
+        
+        public Set<String> getUniqueNames() {
+            Set<String> names = new HashSet<>(getRowCount());
+            for (int row = 0; row < getRowCount(); row++) {
+                String name = (String) getValueAt(row, columnsFunc.getPosName());
+                names.add(name);
+            }
+            return names;
         }
 
         public void uniquifyNames(String separator) {

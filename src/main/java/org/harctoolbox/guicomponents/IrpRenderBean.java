@@ -16,7 +16,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 */
 
 /**
- * Misleading name, should be called e.g. IrpTransmogrifierBean ...
+ * This Bean renders a protocol with its parameters.
  */
 package org.harctoolbox.guicomponents;
 
@@ -53,7 +53,7 @@ import org.harctoolbox.valuesets.RandomValueSet;
 /**
  *
  */
-public final class IrpMasterBean extends javax.swing.JPanel {
+public final class IrpRenderBean extends javax.swing.JPanel {
     private static final String invalidParameterString = Long.toString(IrCoreUtils.INVALID);
 
     private static final String FALLBACK_PROTOCOL_NAME = "NEC1";
@@ -109,15 +109,15 @@ public final class IrpMasterBean extends javax.swing.JPanel {
     /**
      * Creates new form IrpMasterBean
      */
-    public IrpMasterBean() {
+    public IrpRenderBean() {
         initComponents();
     }
 
-    public IrpMasterBean(JFrame frame, GuiUtils guiUtils, IrpDatabase irpMaster, String intialProtocol) {
+    public IrpRenderBean(JFrame frame, GuiUtils guiUtils, IrpDatabase irpMaster, String intialProtocol) {
         this(frame, guiUtils, irpMaster, intialProtocol, "0", invalidParameterString, "0", invalidParameterString, "");
     }
 
-    public IrpMasterBean(JFrame frame, GuiUtils guiUtils, IrpDatabase irpDatabase, String intialProtocol,
+    public IrpRenderBean(JFrame frame, GuiUtils guiUtils, IrpDatabase irpDatabase, String intialProtocol,
             String initialD, String initialS, String initialF, String initialT, String initialAdditionalParameters) {
         this.signalNameFormatter = new DefaultSignalNameFormatter();
         this.frame = frame;

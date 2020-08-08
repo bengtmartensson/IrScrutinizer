@@ -45,6 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // https://github.com/bengtmartensson/IrScrutinizer/issues
 
 // This file contains C identifiers which have been translated from command names.
+// Under some circumstances, these may clash with predefined variables.
 
 // Define exactly one of these
 // #define IRREMOTE
@@ -53,16 +54,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /////////////////////////////////////////////////////
 // Sanity check
-#if defined(IRREMOTE) & ( defined(IRLIB) | defined(INFRARED4ARDUINO) )
-#error Must define only one of IRREMOTE, IRLIB, or INFRARED4ARDUINO
-#endif
-
-#if defined(IRLIB) & ( defined(IRREMOTE) | defined(INFRARED4ARDUINO) )
-#error Must define only one of IRREMOTE, IRLIB, or INFRARED4ARDUINO
-#endif
-
-#if defined(INFRARED4ARDUINO) & ( defined(IRLIB) | defined(IRREMOTE) )
-#error Must define only one of IRREMOTE, IRLIB, or INFRARED4ARDUINO
+#if defined(IRREMOTE) + defined(IRLIB) + defined(INFRARED4ARDUINO) != 1
+#error Must define exactly only one of IRREMOTE, IRLIB, or INFRARED4ARDUINO
 #endif
 
 #ifdef IRREMOTE
@@ -81,6 +74,18 @@ typedef uint16_t microseconds_t; // Change if desired
 typedef uint16_t frequency_t;    // Change if desired
 
 static inline unsigned hz2khz(frequency_t f) { return f/1000U; }
+
+// IRremote and IRLib does not have HAS_FLASH_READ or similar.
+// As a first guess, use defined(ARDUINO_ARCH_AVR).
+// Change if desired.
+#define HAS_FLASH_READ defined(ARDUINO_ARCH_AVR)
+#endif
+
+// Infrared4Arduino already defines HAS_FLASH_READ, architecture dependant.
+// Feel free to override if you think that is a good idea.
+
+#if ! HAS_FLASH_READ
+#define PROGMEM /* nothing */
 #endif
 
 // Constants
@@ -100,12 +105,18 @@ IrSender *irsend = IrSenderPwm::getInstance(true);
 <xsl:apply-templates select="girr:remote[1]//girr:command" mode="definition"/>
 
 <xsl:text><![CDATA[
-static void sendRaw(const microseconds_t intro_P[], size_t lengthIntro, const microseconds_t repeat_P[],
+static void sendRaw
+#if HAS_FLASH_READ
+(const microseconds_t intro_P[], size_t lengthIntro, const microseconds_t repeat_P[],
              size_t lengthRepeat, frequency_t frequency, unsigned times) {
     microseconds_t intro[lengthIntro];
     microseconds_t repeat[lengthRepeat];
     memcpy_PF(intro, (uint_farptr_t) intro_P, sizeof(microseconds_t) * lengthIntro);
     memcpy_PF(repeat, (uint_farptr_t) repeat_P, sizeof(microseconds_t) * lengthRepeat);
+#else // ! HAS_FLASH_READ
+(const microseconds_t intro[], size_t lengthIntro, const microseconds_t repeat[],
+             size_t lengthRepeat, frequency_t frequency, unsigned times) {
+#endif // ! HAS_FLASH_READ
 
 #if defined(IRREMOTE) | defined(IRLIB)
     if (lengthIntro > 0U)

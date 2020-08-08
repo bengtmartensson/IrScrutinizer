@@ -689,6 +689,15 @@
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator18">
         </Component>
+        <MenuItem class="javax.swing.JMenuItem" name="rawChopMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Chop selected signals at long gaps"/>
+            <Property name="toolTipText" type="java.lang.String" value="Chop selected signals and enter the fragments as new signals"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rawChopMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="scrutinizeMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" value="Copy selected to &quot;Scrutinize Signal&quot;"/>
@@ -1729,6 +1738,14 @@
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dummyGapMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="chopThresholdMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Chop threshold (ms)"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chopThresholdMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
               </SubComponents>
@@ -3204,7 +3221,7 @@
                     </Component>
                   </SubComponents>
                 </Container>
-                <Component class="org.harctoolbox.guicomponents.IrpMasterBean" name="irpMasterBean">
+                <Component class="org.harctoolbox.guicomponents.IrpRenderBean" name="irpMasterBean">
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
@@ -3213,7 +3230,7 @@
                     </Property>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpDatabase, properties.getIrpMasterCurrentProtocol(), properties.getIrpMasterCurrentD(), properties.getIrpMasterCurrentS(), properties.getIrpMasterCurrentF(), properties.getIrpMasterCurrentT(), properties.getIrpMasterCurrentAdditionalParameters())"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrpRenderBean(this, guiUtils, irpDatabase, properties.getIrpMasterCurrentProtocol(), properties.getIrpMasterCurrentD(), properties.getIrpMasterCurrentS(), properties.getIrpMasterCurrentF(), properties.getIrpMasterCurrentT(), properties.getIrpMasterCurrentAdditionalParameters())"/>
                   </AuxValues>
                 </Component>
                 <Component class="javax.swing.JButton" name="generateButton">
@@ -4273,26 +4290,25 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="730" max="32767" attributes="0"/>
-                              </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="ictFileImporterBean" min="-2" pref="734" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
+                                  <EmptySpace pref="150" max="32767" attributes="0"/>
                                   <Component id="importIctHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="chopIctImportCheckBox" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
-                                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                                  <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="ictFileImporterBean" pref="311" max="32767" attributes="0"/>
+                                  <Component id="chopIctImportCheckBox" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                                  <Component id="ictFileImporterBean" pref="307" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
@@ -4309,11 +4325,6 @@
                             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;IctImporter&gt;"/>
                           </AuxValues>
                         </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel15">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Note: invokeRepeatFinder is used."/>
-                          </Properties>
-                        </Component>
                         <Component class="javax.swing.JButton" name="importIctHelpButton">
                           <Properties>
                             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -4323,6 +4334,18 @@
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importIctHelpButtonActionPerformed"/>
+                          </Events>
+                        </Component>
+                        <Component class="javax.swing.JCheckBox" name="chopIctImportCheckBox">
+                          <Properties>
+                            <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                              <Connection code="properties.getChopIctImports()" type="code"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="Chop long signals"/>
+                            <Property name="toolTipText" type="java.lang.String" value="If selected, the signals of an ICT imports are chopped according to the chopThreshold vaiable."/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chopIctImportCheckBoxActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>

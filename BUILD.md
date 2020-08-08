@@ -2,7 +2,7 @@
 
 # Building from sources
 
-"IrScrutinizer" is one subproject (corresponding to a Java _package_) within [harctoolbox.org](http://harctoolbox.org).
+"IrScrutinizer" is one subproject within [harctoolbox.org](http://harctoolbox.org).
     It depends on several other subprojects within harctoolbox. The repository `IrScrutinizer` consists
     of this subproject.
 
@@ -12,16 +12,37 @@ The released versions are found on the [download page](https://github.com/bengtm
 
 I go to great lengths ensuring that the program runs equally well on all supported platforms.
         I do not care too much that all aspects of the build runs equally well on all platforms.
-        I build with Linux (Fedora), the continuous integration build runs on Travis (Ubunto).
-        Other platforms are treated stepmotherly.
+        I build with Linux (Fedora), the continuous integration build runs on Travis (Ubuntu).
+        Other platforms are treated step-motherly.
 
 ## Dependencies
-
 As any program of substantial size, IrScrutinizer uses a number of third-party components.
-    All of these are also free software, carrying compatible licenses.
-The dependent packages need to be installed also in
-    maven in order for the build to work. With the dependencies available, the script `tools/install-deps.sh`
-can be used to install  them in the local maven repository before building.
+        All of these are also free software, carrying compatible licenses.
+        The dependent packages need to be installed also in
+        the host-local Maven repository in order for the build to work.
+        In some cases (basically the ones with a version not ending with `-SNAPSHOT`), the packages
+        are uploaded to [the Maven central repository](https://mvnrepository.com/repos/central),
+        and will be automatically downloaded to the local host by a Maven invocation.
+
+
+There are some scripts to aid downloading and building, described next. It is assumed that
+    [git](https://git-scm.com/) and [Maven](https://maven.apache.org/)
+    are installed and available as commands `git` and `mvn` respectively.
+
+Of course, it is also possible to manually download or clone these packages
+                from [my Github repositories](https://github.com/bengtmartensson?tab=repositories),
+                then build and install them locally by `mvn install`.
+
+### IrpTransmogrifier, Girr, HarcHardware, Jirc
+These are all Java packages that are required to build IrScrutinizer. HarcHardware requires RXTX.
+            They can be downloaded and built by the script `common/scripts/build-harctoolbox-project.sh`,
+            using an argument of
+            `IrpTransmogrifier`,
+            `Girr`,
+            `HarcHardwar`, or
+            `Jirc`.
+            See the file `.travis.yml` for the complete commands.
+
 
 ### DevSlashLirc
 This library is used to access `/dev/lirc`-hardware. It is used by the Linux version only.
@@ -33,16 +54,9 @@ The subdirectories `native/Linux-amd64`,
         `native/Linux-i386`, and
         `native/Linux-arm` contain compiled versions for the x86_64, x86_32, and ARM processors respectively.
 
-The package can be downloaded, and the Java part built, by the script `tools/build-DevSlashLirc.sh`.
-
-### IrpTransmogrifier, Girr, HarcHardwareBundle, Jirc
-These are all pure Java packages that are required to build IrScrutinizer.
-            They can be downloaded and built by the scripts
-            `tools/build-IrpTransmogrifier.sh`,
-            `tools/build-Girr.sh`,
-            `tools/build-HarcHardwareBundle.sh`, and
-            `tools/build-Jirc.sh`.
-        
+The package can be downloaded, and the Java part built, by the script
+            `common/scripts/build-harctoolbox-project.sh` using the argument `DevSlashLirc`
+            (see `.travis.yml` for an example).
 
 ### RXTX
 The serial communication packate RXTX is also included in the source package. This builds a shared library and a jar file.
@@ -60,13 +74,14 @@ Note that the system supplied RXTX jar on many system (e.g. Fedora 21) has some 
 Normally, these components are downloaded and installed automatically by maven.
 
 ### Tonto
-
-        Tonto can be downloaded and installed by the script `tools/build-tonto.sh`.
-        (On recent Fedora, instead the command `sudo dnf install tonto` can be used.)
-
-Note that the shared library `libjnijcomm`,
-        which is required by the program Tonto for communicating with a Pronto remote through a serial interface,
+[Tonto](Glossary.html#Tonto) can be downloaded and installed by the script `common/scripts/build-tonto.sh`.
+    It requires the [Apache ant](https://ant.apache.org/) build system to be installed as the command `ant`.
+        (On Fedora, instead the command `sudo dnf install tonto` can be used.)
+        Note that the shared library `libjnijcomm`,
+        which is required by the Tonto program for communicating with a Pronto remote through a serial interface,
         is not required for use with IrScrutinizer, and can therefore be left out.
+        Using the option `-n` to the script (see `.travis.yml` for an example),
+        the script will not try to build and install the shared library.
 
 ## Building
 As of version 1.1.2, the [Maven](http://maven.apache.org/index.html) "software
@@ -75,13 +90,13 @@ Modern IDEs like Netbeans and Eclips integrate Maven, so build etc can be initia
 Of course, the shell command `mvn install` can also be used. It creates some artifacts which can
 be used to run IrScrutinizer in the `IrScrutinizer/target` directory.
 
-To prepare the Windows version, some shell tools are needed. These are:
+Two additional shell tools are needed. These are:
 
 
 
 * The `unix2dos` and `dos2unix` utilities, typically in the `dos2unix` package.
 
-* The `icotool` utility, typically in the `icoutils` package
+* The `icotool` utility, typically in the `icoutils` package.
 
 
 ## Windows setup.exe creation

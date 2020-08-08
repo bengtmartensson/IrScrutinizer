@@ -158,6 +158,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="importPaneSelectedIndex" type="int" default='"2"' doc="Index of the selected pane in the importer"/>
     <property name="parametrizedRawTabbedPaneSelectedIndex" type="int" default='"0"' doc="Index of the selected pane in the CSV importer"/>
     <property name="rejectLircCodeImports" type="boolean" default='"true"' doc="If true, Lirc files without timing information are rejected."/>
+    <property name="chopIctImports" type="boolean" default='"false"' doc="If true, ICT imports are chopped according to the chopThreshold parameter."/>
     <property name="prontoModelIndex" type="int" default='"4"' doc="Index of selected Pronto Classic model."/>
     <property name="prontoScreenSizeX" type="int" default='"240"' doc="Pronto screen width" />
     <property name="prontoScreenSizeY" type="int" default='"220"' doc="Pronto screen height" />
@@ -170,6 +171,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="minLeadOut"         type="double" default='Double.toString(IrCoreUtils.DEFAULT_MINIMUM_LEADOUT)'    doc="Threshold value for lead-out (ms)." />
     <property name="minRepeatLastGap"   type="double" default='Double.toString(IrCoreUtils.DEFAULT_MIN_REPEAT_LAST_GAP)' doc="Minumal value in micro seconds to be considered as ending a repeat." />
     <property name="dummyGap"           type="double" default='Double.toString(IrSequence.DUMMYGAPDURATION)'            doc="Dummy gap added for sequences with an odd number of durations (ms)." />
+    <property name="chopThreshold"      type="double" default='Double.toString(GuiMain.chopThreshold)'                  doc="Threshold used when copping signals (ms)." />
 
     <property name="dontInquire4UnsavedParametricRemotes" type="boolean" default='"false"' doc="Skip acknowledge when exiting with unsaved changes in parameteric remotes."/>
     <property name="dontInquire4UnsavedRawRemotes" type="boolean" default='"false"' doc="Skip acknowledge when exiting with unsaved changes in raw remotes."/>

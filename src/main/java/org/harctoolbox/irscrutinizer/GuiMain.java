@@ -164,6 +164,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private final static int maxCharsInGuiMessages = 150;
     private final static int transmitSignalMouseButton = 2;
     private final static String UNIQUE_SEPARATOR = "#";
+    public final static double chopThreshold = 100.0; // TODO should problably live somewhere else
 
     private AboutPopup aboutBox;
     private Component currentPane = null;
@@ -498,6 +499,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
 
         ictImporter = new IctImporter();
+        ictImporter.setChop(properties.getChopIctImports());
 
         girrImporter = new GirrImporter(properties.getGirrValidate(), new URL(properties.getGirrSchemaLocation()));
         properties.addGirrSchemaLocationChangeListener((String name1, Object oldValue, Object newValue) -> {
@@ -757,22 +759,22 @@ public final class GuiMain extends javax.swing.JFrame {
 
         irpMasterBean.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> {
             switch (evt.getPropertyName()) {
-                case IrpMasterBean.PROP_PROTOCOL_NAME:
+                case IrpRenderBean.PROP_PROTOCOL_NAME:
                     properties.setIrpMasterCurrentProtocol((String) evt.getNewValue());
                     break;
-                case IrpMasterBean.PROP_D:
+                case IrpRenderBean.PROP_D:
                     properties.setIrpMasterCurrentD((String) evt.getNewValue());
                     break;
-                case IrpMasterBean.PROP_S:
+                case IrpRenderBean.PROP_S:
                     properties.setIrpMasterCurrentS((String) evt.getNewValue());
                     break;
-                case IrpMasterBean.PROP_F:
+                case IrpRenderBean.PROP_F:
                     properties.setIrpMasterCurrentF((String) evt.getNewValue());
                     break;
-                case IrpMasterBean.PROP_T:
+                case IrpRenderBean.PROP_T:
                     properties.setIrpMasterCurrentT((String) evt.getNewValue());
                     break;
-                case IrpMasterBean.PROP_ADDITIONAL_PARAMS:
+                case IrpRenderBean.PROP_ADDITIONAL_PARAMS:
                     properties.setIrpMasterCurrentAdditionalParameters((String) evt.getNewValue());
                     break;
                 default:
@@ -1934,7 +1936,10 @@ public final class GuiMain extends javax.swing.JFrame {
         protocolDocuPopup(frame, command.getProtocolName());
     }
 
-    private void protocolDocuPopup(java.awt.Frame frame, String protocolName) throws UnknownProtocolException {
+    private void protocolDocuPopup(java.awt.Frame frame, String protocolName) throws IrpException {
+        if (protocolName == null)
+            throw new IrpException("No decode.");
+
         String docu = irpDatabase.getDocumentation(protocolName); // throws UnknownProtocolException
         StringBuilder str = new StringBuilder(irpDatabase.getIrp(protocolName)).append("\n\n");
         if (docu != null)
@@ -2050,6 +2055,7 @@ public final class GuiMain extends javax.swing.JFrame {
         addRawTestSignalMenuItem = new javax.swing.JMenuItem();
         rawFromClipboardMenuItem = new javax.swing.JMenuItem();
         jSeparator18 = new javax.swing.JPopupMenu.Separator();
+        rawChopMenuItem = new javax.swing.JMenuItem();
         scrutinizeMenuItem = new javax.swing.JMenuItem();
         sendMenuItem = new javax.swing.JMenuItem();
         rawProtocolDocuMenuItem = new javax.swing.JMenuItem();
@@ -2127,7 +2133,7 @@ public final class GuiMain extends javax.swing.JFrame {
         generateExportButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         generateTextArea = new javax.swing.JTextArea();
-        irpMasterBean = new org.harctoolbox.guicomponents.IrpMasterBean(this, guiUtils, irpDatabase, properties.getIrpMasterCurrentProtocol(), properties.getIrpMasterCurrentD(), properties.getIrpMasterCurrentS(), properties.getIrpMasterCurrentF(), properties.getIrpMasterCurrentT(), properties.getIrpMasterCurrentAdditionalParameters());
+        irpMasterBean = new org.harctoolbox.guicomponents.IrpRenderBean(this, guiUtils, irpDatabase, properties.getIrpMasterCurrentProtocol(), properties.getIrpMasterCurrentD(), properties.getIrpMasterCurrentS(), properties.getIrpMasterCurrentF(), properties.getIrpMasterCurrentT(), properties.getIrpMasterCurrentAdditionalParameters());
         generateButton = new javax.swing.JButton();
         generateHelpButton = new javax.swing.JButton();
         transferToParametricRemoteButton = new javax.swing.JButton();
@@ -2193,8 +2199,8 @@ public final class GuiMain extends javax.swing.JFrame {
         importProntoProfessionalHelpButton = new javax.swing.JButton();
         ictImportPanel = new javax.swing.JPanel();
         ictFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, ictImporter);
-        jLabel15 = new javax.swing.JLabel();
         importIctHelpButton = new javax.swing.JButton();
+        chopIctImportCheckBox = new javax.swing.JCheckBox();
         mode2ImportPanel = new javax.swing.JPanel();
         mode2FileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, new Mode2Importer());
         jLabel17 = new javax.swing.JLabel();
@@ -2458,6 +2464,7 @@ public final class GuiMain extends javax.swing.JFrame {
         minLeadoutMenuItem = new javax.swing.JMenuItem();
         minRepeatGapMenuItem = new javax.swing.JMenuItem();
         dummyGapMenuItem = new javax.swing.JMenuItem();
+        chopThresholdMenuItem = new javax.swing.JMenuItem();
         fallbackFrequencyMenuItem = new javax.swing.JMenuItem();
         verboseCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ignoreEndingSilenceCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -3120,6 +3127,15 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         rawTablePopupMenu.add(rawFromClipboardMenuItem);
         rawTablePopupMenu.add(jSeparator18);
+
+        rawChopMenuItem.setText("Chop selected signals at long gaps");
+        rawChopMenuItem.setToolTipText("Chop selected signals and enter the fragments as new signals");
+        rawChopMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rawChopMenuItemActionPerformed(evt);
+            }
+        });
+        rawTablePopupMenu.add(rawChopMenuItem);
 
         scrutinizeMenuItem.setText("Copy selected to \"Scrutinize Signal\"");
         scrutinizeMenuItem.setToolTipText("Copy the (single) selected signal to the \"Scrutinize Signal\" pane.");
@@ -4442,8 +4458,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
         importTabbedPane.addTab("Pronto Prof (.xcf)", xcfImportPanel);
 
-        jLabel15.setText("Note: invokeRepeatFinder is used.");
-
         importIctHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         importIctHelpButton.setText("Help");
         importIctHelpButton.addActionListener(new java.awt.event.ActionListener() {
@@ -4452,27 +4466,35 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
+        chopIctImportCheckBox.setSelected(properties.getChopIctImports());
+        chopIctImportCheckBox.setText("Chop long signals");
+        chopIctImportCheckBox.setToolTipText("If selected, the signals of an ICT imports are chopped according to the chopThreshold vaiable.");
+        chopIctImportCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chopIctImportCheckBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout ictImportPanelLayout = new javax.swing.GroupLayout(ictImportPanel);
         ictImportPanel.setLayout(ictImportPanelLayout);
         ictImportPanelLayout.setHorizontalGroup(
             ictImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ictImportPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel15)
-                .addContainerGap(730, Short.MAX_VALUE))
-            .addGroup(ictImportPanelLayout.createSequentialGroup()
                 .addComponent(ictFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
                 .addComponent(importIctHelpButton)
                 .addContainerGap())
+            .addGroup(ictImportPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chopIctImportCheckBox)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         ictImportPanelLayout.setVerticalGroup(
             ictImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ictImportPanelLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(jLabel15)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ictFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE))
+                .addComponent(chopIctImportCheckBox)
+                .addGap(4, 4, 4)
+                .addComponent(ictFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ictImportPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(importIctHelpButton)
@@ -6974,6 +6996,14 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         protocolParametersMenu.add(dummyGapMenuItem);
+
+        chopThresholdMenuItem.setText("Chop threshold (ms)");
+        chopThresholdMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chopThresholdMenuItemActionPerformed(evt);
+            }
+        });
+        protocolParametersMenu.add(chopThresholdMenuItem);
 
         optionsMenu.add(protocolParametersMenu);
 
@@ -9701,7 +9731,7 @@ public final class GuiMain extends javax.swing.JFrame {
         String[] arr = str.split(":");
         try {
             protocolDocuPopup(this, arr[0]);
-        } catch (UnknownProtocolException ex) {
+        } catch (IrpException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_scrutinizeSignalProtocolDocuMenuItemActionPerformed
@@ -9788,6 +9818,36 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setRemoveDefaultedParameters(removeDefaultedParametersCheckBoxMenuItem.isSelected());
     }//GEN-LAST:event_removeDefaultedParametersCheckBoxMenuItemActionPerformed
 
+    private void rawChopMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawChopMenuItemActionPerformed
+        List<Integer> rows = tableUtils.modelLinesSelected(rawTable);
+        if (rows.isEmpty()) {
+            guiUtils.error("Nothing selected");
+            return;
+        }
+
+        try {
+            rawTableModel.chopSignals(rows, properties.getChopThreshold());
+        } catch (IrpException | IrCoreException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_rawChopMenuItemActionPerformed
+
+    private void chopThresholdMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chopThresholdMenuItemActionPerformed
+          try {
+            Double t = guiUtils.getDoubleInput("Threshold value in milliseconds for chopping long signals.", properties.getChopThreshold());
+            if (t != null)
+                properties.setChopThreshold(t);
+        } catch (NumberFormatException ex) {
+            guiUtils.error("Invalid number: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_chopThresholdMenuItemActionPerformed
+
+    private void chopIctImportCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chopIctImportCheckBoxActionPerformed
+        boolean isSel = chopIctImportCheckBox.isSelected();
+        ictImporter.setChop(isSel);
+        properties.setChopIctImports(isSel);
+    }//GEN-LAST:event_chopIctImportCheckBoxActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9840,6 +9900,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem checkParametrizedSignalsMenuItem;
     private javax.swing.JMenuItem checkRawCommandsMenuItem;
     private javax.swing.JMenuItem checkUpToDateMenuItem;
+    private javax.swing.JCheckBox chopIctImportCheckBox;
+    private javax.swing.JMenuItem chopThresholdMenuItem;
     private javax.swing.JCheckBoxMenuItem cleanerCheckBoxMenuItem;
     private javax.swing.JMenuItem clearConsoleMenuItem;
     private javax.swing.JMenuItem clearMenuItem;
@@ -10064,7 +10126,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel irdbPanel;
     private org.harctoolbox.irscrutinizer.importer.TreeImporter irdbTreeImporter;
     private javax.swing.JMenuItem irpFormatsIniReloadMenuItem;
-    private org.harctoolbox.guicomponents.IrpMasterBean irpMasterBean;
+    private org.harctoolbox.guicomponents.IrpRenderBean irpMasterBean;
     private javax.swing.JMenuItem irpProtocolsEditMenuItem;
     private javax.swing.JMenu irpProtocolsIniMenu;
     private javax.swing.JMenuItem irpProtocolsSelectMenuItem;
@@ -10077,7 +10139,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
@@ -10230,6 +10291,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem proxyMenuItem;
     private javax.swing.JMenuItem publicKeyMenuItem;
     private javax.swing.JMenuItem rawAddTestSignalMenuItem;
+    private javax.swing.JMenuItem rawChopMenuItem;
     private javax.swing.JMenuItem rawCodeAnalyzeMenuItem;
     private javax.swing.JMenuItem rawCodeClearMenuItem;
     private javax.swing.JComboBox<String> rawCodeColumnComboBox1;
