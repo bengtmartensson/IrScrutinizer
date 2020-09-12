@@ -5,8 +5,6 @@ The "low-level" issues are kept as [harctoolbox issues](https://github.com/bengt
 
 ## Vocabulary
 * _IrScrutinizer_ denotes the interactive program, and the source packages `org.harctoolbox.irscrutinizer` and subordinate packages,
-* _IrpMaster_ denotes the IRP rendering engine irpmaster.jar, source package `org.harctoolbox.IrpMaster` and subordinate packages
- (discontinued; not used in IrScrutinizer 2),
 * _IrpTransmogrifier_ is [this project](https://github.com/bengtmartensson/IrpTransmogrifier), that has replaced IrpMaster, DecodeIR, Analyzer, and much more,
 * _HarcHardware_ denotes a collection of "drivers" and other software that accesses hardware more or less directly,
   source package `org.harctoolbox.harchardware` and subordinate packages,
