@@ -82,7 +82,7 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
             rawIrSender.close();
         rawIrSender = null;
         try {
-            rawIrSender = clazz.getConstructor(String.class, int.class, int.class, boolean.class).newInstance(newPort, newBaud, properties.getSendingTimeout(), properties.getVerbose());
+            rawIrSender = clazz.getConstructor(String.class, boolean.class, Integer.class, Integer.class).newInstance(newPort, properties.getVerbose(), properties.getSendingTimeout(), newBaud);
             portName = newPort;
             Props.class.getMethod("set" + clazz.getSimpleName() + "PortName", String.class).invoke(properties, portName);
             this.baudRate = newBaud;

@@ -22,6 +22,7 @@ import java.io.IOException;
 import javax.swing.JPanel;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
+import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.ir.IrGenericSerial;
 import org.harctoolbox.irscrutinizer.Props;
 
@@ -112,9 +113,9 @@ public class SendingGenericSerialPort extends SendingHardware<IrGenericSerial> i
         close();
 
         try {
-            rawIrSender = new IrGenericSerial(genericSerialSenderBean.getPortName(), genericSerialSenderBean.getBaud(),
-                    genericSerialSenderBean.getDataSize(), genericSerialSenderBean.getStopBits(), genericSerialSenderBean.getParity(),
-                    genericSerialSenderBean.getFlowControl(), properties.getSendingTimeout(), properties.getVerbose());
+            rawIrSender = new IrGenericSerial(genericSerialSenderBean.getPortName(), properties.getVerbose(), properties.getSendingTimeout(), genericSerialSenderBean.getBaud(),
+                    genericSerialSenderBean.getDataSize(), LocalSerialPort.StopBits.mkStopBits(genericSerialSenderBean.getStopBits()), genericSerialSenderBean.getParity(),
+                    genericSerialSenderBean.getFlowControl());
             rawIrSender.setCommand(genericSerialSenderBean.getCommand());
             rawIrSender.setRaw(genericSerialSenderBean.getRaw());
             rawIrSender.setSeparator(genericSerialSenderBean.getSeparator());

@@ -119,7 +119,7 @@ public class GlobalCacheManagerMenu /*extends GlobalCacheManagerAbstractMenu*/ {
         globalCacheMenu.add(manualAddMenuItem);
         manualAddMenuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
             try {
-                String ip = guiUtils.getInput("Enter GlobalCache IP-Name or -address", "GlobalCache entry", GlobalCache.defaultGlobalCacheIP);
+                String ip = guiUtils.getInput("Enter GlobalCache IP-Name or -address", "GlobalCache entry", GlobalCache.DEFAULT_IP);
                 if (ip != null)
                     GlobalCacheManager.getInstance().addManualGlobalCache(InetAddress.getByName(ip));
             } catch (UnknownHostException ex) {
