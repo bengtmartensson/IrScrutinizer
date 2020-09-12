@@ -19,6 +19,9 @@ package org.harctoolbox.irscrutinizer.importer;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.Reader;
 import java.io.Serializable;
 import java.text.ParseException;
@@ -67,20 +70,40 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
     }
 
     public static void main(String[] args) {
-        for (String s : args) {
-            try {
-                Collection<Command> cmds = importer(new File(s));
-                for (Command cmd : cmds) {
-                    System.out.println(cmd.getName());
-                    System.out.println(cmd.toIrSignal());
-                    System.out.println();
-                }
-            } catch (IOException | IrCoreException | IrpException | ParseException ex) {
-                logger.log(Level.SEVERE, null, ex);
-            }
+        if (args.length == 0)
+            process(System.in, System.out);
+        else
+            for (String s : args)
+                process(new File(s), System.out);
+    }
+
+    private static void process(InputStream in, PrintStream out) {
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            Collection<Command> cmds = importer(reader, "<stdin>");
+            print(out, cmds);
+        } catch (IOException | IrpException | IrCoreException ex) {
+            logger.log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    private static void process(File f, PrintStream out) {
+        try {
+            Collection<Command> cmds = importer(f);
+            print(out, cmds);
+        } catch (IOException | IrpException | ParseException | IrCoreException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private static void print(PrintStream out, Collection<Command> cmds) throws IrpException, IrCoreException {
+        for (Command cmd : cmds) {
+            out.println(cmd.getName());
+            out.println(cmd.toIrSignal());
+            out.println();
+        }
+    }
+
     private boolean chop = false;
     private int lineNumber;
     private int anonymousNumber;
@@ -97,7 +120,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
      */
     public IctImporter() {
     }
-    
+
     public void setChop(boolean chop) {
         this.chop = chop;
     }
