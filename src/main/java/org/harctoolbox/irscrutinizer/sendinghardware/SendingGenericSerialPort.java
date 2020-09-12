@@ -25,6 +25,7 @@ import java.io.IOException;
 import javax.swing.JPanel;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.HarcHardwareException;
+import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.ir.IrGenericSerial;
 import org.harctoolbox.irscrutinizer.Props;
 
@@ -102,6 +103,7 @@ public class SendingGenericSerialPort extends SendingHardware<IrGenericSerial> i
         //hasChanged = false;
     }
 
+    // Temporarily disabled
     private void setupGenericSerialPort() throws IOException {
         String newPort = this.genericSerialSenderBean.getPortName();
         if (rawIrSender != null && (newPort == null || newPort.equals(portName)))
@@ -114,19 +116,21 @@ public class SendingGenericSerialPort extends SendingHardware<IrGenericSerial> i
         //genericSerialSenderBean.setVerbose(properties.getVerbose());
         close();
 
-        try {
-            rawIrSender = new IrGenericSerial(genericSerialSenderBean.getPortName(), genericSerialSenderBean.getBaud(),
-                    genericSerialSenderBean.getDataSize(), genericSerialSenderBean.getStopBits(), genericSerialSenderBean.getParity(),
-                    genericSerialSenderBean.getFlowControl(), properties.getSendingTimeout(), properties.getVerbose());
-            rawIrSender.setCommand(genericSerialSenderBean.getCommand());
-            rawIrSender.setRaw(genericSerialSenderBean.getRaw());
-            rawIrSender.setSeparator(genericSerialSenderBean.getSeparator());
-            rawIrSender.setUseSigns(genericSerialSenderBean.getUseSigns());
-            rawIrSender.setLineEnding(genericSerialSenderBean.getLineEnding());
-        } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException ex) {
-            // Should not happen
-            guiUtils.error(ex);
-        }
+//        try {
+            rawIrSender = null;
+//            new IrGenericSerial(genericSerialSenderBean.getPortName(), properties.getVerbose(), properties.getSendingTimeout(),
+//                    genericSerialSenderBean.getBaud(),
+//                    genericSerialSenderBean.getDataSize(), genericSerialSenderBean.getStopBits(), genericSerialSenderBean.getParity(),
+//                    genericSerialSenderBean.getFlowControl());
+//            rawIrSender.setCommand(genericSerialSenderBean.getCommand());
+//            rawIrSender.setRaw(genericSerialSenderBean.getRaw());
+//            rawIrSender.setSeparator(genericSerialSenderBean.getSeparator());
+//            rawIrSender.setUseSigns(genericSerialSenderBean.getUseSigns());
+//            rawIrSender.setLineEnding(genericSerialSenderBean.getLineEnding());
+//        } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException ex) {
+//            // Should not happen
+//            guiUtils.error(ex);
+//        }
         portName = genericSerialSenderBean.getPortName();
         genericSerialSenderBean.setHardware(rawIrSender);
     }

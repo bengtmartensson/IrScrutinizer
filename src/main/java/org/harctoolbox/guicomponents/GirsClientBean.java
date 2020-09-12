@@ -78,9 +78,9 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
         switch (getType()) {
             case serial: {
                 try {
-                    LocalSerialPortBuffered comm = new LocalSerialPortBuffered(getPortName(), getBaudRate(), defaultSerialTimeout, verbose);
+                    LocalSerialPortBuffered comm = new LocalSerialPortBuffered(getPortName(), verbose, getBaudRate(), defaultSerialTimeout);
                     hardware = new GirsClient<>(comm);
-                } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException | IOException | HarcHardwareException ex) {
+                } catch (IOException | HarcHardwareException ex) {
                     guiUtils.error(ex);
                 }
             }

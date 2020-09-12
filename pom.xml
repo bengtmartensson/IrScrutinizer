@@ -33,7 +33,7 @@
         <IrpTransmogrifier.version>1.2.8-SNAPSHOT</IrpTransmogrifier.version>
         <Girr.version>2.2.8-SNAPSHOT</Girr.version>
         <Jirc.version>2.2.8-SNAPSHOT</Jirc.version>
-        <HarcHardware.version>2.2.8-SNAPSHOT</HarcHardware.version>
+        <HarcHardware.version>2.2.7</HarcHardware.version>
     </properties>
 
     <profiles>

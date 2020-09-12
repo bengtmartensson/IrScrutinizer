@@ -274,6 +274,9 @@ public class GuiUtils implements Serializable {
                 if (verbose)
                     trace("open file \"" + file.toString() + "\" succeeded");
                 return;
+            } catch (IllegalArgumentException ex) {
+                error(file.getAbsolutePath() + " does not exist.");
+                return;
             } catch (IOException ex) {
                 if (verbose)
                     trace("open file \"" + file.toString() + "\" failed: " + ex.getLocalizedMessage());

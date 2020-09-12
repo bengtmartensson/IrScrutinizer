@@ -21,6 +21,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import javax.swing.DefaultComboBoxModel;
 import org.harctoolbox.harchardware.HarcHardwareException;
@@ -214,7 +215,7 @@ public final class SerialPortBean extends javax.swing.JPanel {
         if (hardware != null)
             hardware.close();
 
-        ArrayList<String> portNames = LocalSerialPort.getSerialPortNames(useCached);
+        List<String> portNames = LocalSerialPort.getSerialPortNames(useCached);
         portNames.add(0, null);
         DefaultComboBoxModel model = new DefaultComboBoxModel(portNames.toArray(new String[portNames.size()]));
         portComboBox.setModel(model);
@@ -410,7 +411,7 @@ public final class SerialPortBean extends javax.swing.JPanel {
     }//GEN-LAST:event_stopBitsComboBoxActionPerformed
 
     private void parityComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parityComboBoxActionPerformed
-        setParity(LocalSerialPort.Parity.valueOf(((String)parityComboBox.getSelectedItem()).toUpperCase(Locale.US)));
+        setParity(LocalSerialPort.Parity.parse(((String)parityComboBox.getSelectedItem()).toUpperCase(Locale.US)));
     }//GEN-LAST:event_parityComboBoxActionPerformed
 
     private void openToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openToggleButtonActionPerformed
