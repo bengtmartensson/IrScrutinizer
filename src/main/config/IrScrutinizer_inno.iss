@@ -16,8 +16,8 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-VersionInfoCopyright=Copyright (C) 2014-2019 Bengt Martensson.
-DefaultDirName={pf}\{#MyAppName}
+VersionInfoCopyright=Copyright (C) 2014-2020 Bengt Martensson.
+DefaultDirName={commonpf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 LicenseFile=doc\LICENSE.txt
@@ -53,7 +53,7 @@ Source: "..\native\Windows-x86\*"; DestDir: "{app}\Windows-x86"; Flags: ignoreve
 Source: "..\native\Windows-amd64\*"; DestDir: "{app}\Windows-amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "*.xml"; DestDir: "{app}"; Flags: ignoreversion
 ;;;Source: "maven-shared-archive-resources/*.ini"; DestDir: "{app}"; Flags: ignoreversion
-Source: "irscrutinizer.bat"; DestDir: "{app}"; Flags: ignoreversion
+;;;Source: "irscrutinizer.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "exportformats.d\*"; DestDir: "{app}\exportformats.d"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "contributed\import\*"; DestDir: "{app}\contributed\import"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "generated-documents\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: isreadme
@@ -130,18 +130,24 @@ procedure CreateWrapper;
 var
    wrapperFilename: String;
 begin
-   wrapperFilename := ExpandConstant('{app}') + '\IrpTransmogrifier.bat';
+   wrapperFilename := ExpandConstant('{app}') + '\IrScrutinizer.bat';
    SaveStringToFile(wrapperFilename, '@ECHO off' + #13#10, false);
+   SaveStringToFile(wrapperFilename, #13#10, true);
+   SaveStringToFile(wrapperFileName, 'REM Note: The preferred way to install and run IrScrutinizer and friends' + #13#10, true);
+   SaveStringToFile(wrapperFileName, 'REM on Windows is to use the setup program. This wrapper is provided just as' + #13#10, true)
+   SaveStringToFile(wrapperFileName, 'REM a convenience for command line friends.' + #13#10, true);
+   SaveStringToFile(wrapperFilename, #13#10, true);
+   SaveStringToFile(wrapperFilename, 'REM Where the files are located' + #13#10, true);
    SaveStringToFile(wrapperFilename, 'set IRSCRUTINIZERHOME=' + ExpandConstant('{app}') + #13#10, true);
    if WizardSetupType(False) = 'with_jvm' then
    begin
-      SaveStringToFile(wrapperFilename, 'set JAVA=' + ExpandConstant('{app}') + '\jre-x86-windows\bin\java' + #13#10, true);
+      SaveStringToFile(wrapperFilename, 'set JAVA=%IRSCRUTINIZERHOME%\jre-x86-windows\bin\java' + #13#10, true);
    end
    else
    begin
       SaveStringToFile(wrapperFilename, 'set JAVA=java' + #13#10, true);
    end;
-   SaveStringToFile(wrapperFilename, '"%JAVA%"' + ' -cp "%IRSCRUTINIZERHOME%\IrScrutinizer.jar" org.harctoolbox.irp.IrpTransmogrifier %1 %2 %3 %4 %5 %6 %7 %8 %9', true);
+   SaveStringToFile(wrapperFilename, '"%JAVA%"' + ' -jar "%IRSCRUTINIZERHOME%\IrScrutinizer.jar" %1 %2 %3 %4 %5 %6 %7 %8 %9', true);
 end;
 
 const
