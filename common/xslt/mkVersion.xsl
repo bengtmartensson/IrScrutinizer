@@ -20,6 +20,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <xsl:param name="version"/>
     <xsl:param name="url"/>
     <xsl:param name="appName"/>
+    <xsl:param name="commitId"/>
 
     <xsl:output method="text"/>
 
@@ -39,6 +40,7 @@ public final class Version {
 
     public final static String appName = "<xsl:value-of select='$appName'/>";
     public final static String version = "<xsl:value-of select='$version'/>";
+    public final static String commitId = "<xsl:value-of select='$commitId'/>";
     public final static String versionString = appName + " version " + version;
 
     /** Project home page. */
@@ -47,11 +49,12 @@ public final class Version {
     /** Documentation URL. */
     public final static String documentationUrl = "<xsl:value-of select='$url'/>" + "/" + appName + ".html";
 
-    /** URL containing current official version. */
+    /** URL containing current official version as text. */
     public final static String currentVersionUrl = homepageUrl + "/downloads/" + appName + ".version";
     <xsl:apply-templates select="publicKey"/>
     public static void main(String[] args) {
         System.out.println(versionString);
+        System.out.println(commitId);
     }
 
     private Version() {

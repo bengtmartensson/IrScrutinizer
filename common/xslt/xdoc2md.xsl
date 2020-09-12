@@ -62,7 +62,8 @@
         <xsl:text>```
 </xsl:text>
         <xsl:value-of select="text()"/>
-        <xsl:text>```
+        <xsl:text>
+```
 </xsl:text>
     </xsl:template>
 
