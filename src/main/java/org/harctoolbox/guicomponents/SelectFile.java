@@ -66,7 +66,7 @@ public class SelectFile {
     }
 
     /**
-     * Encapsulates a file selector. The finally selected direcory will be remembered, and used as initial direcory for subsequent invocations with the same title.
+     * Encapsulates a file selector. The finally selected direcory will be remembered, and used as initial directory for subsequent invocations with the same title.
      *
      * @param parent Component, to which the popup will be positioned.
      * @param title Title of the popup. Also identifies the file selector.

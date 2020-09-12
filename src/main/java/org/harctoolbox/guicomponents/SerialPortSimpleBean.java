@@ -152,10 +152,10 @@ public final class SerialPortSimpleBean extends javax.swing.JPanel implements IS
 
     private void setVersion(String version) {
         //java.lang.String oldVersion = this.version;
-        this.version = version;
+        this.version = version != null ? version : "n/a";
         versionLabel.setEnabled(hardware.isValid());
         versionLiteralLabel.setEnabled(hardware.isValid());
-        versionLabel.setText(version);
+        versionLabel.setText(this.version); // Looks ugly if this is null.
         //propertyChangeSupport.firePropertyChange(PROP_VERSION, oldVersion, version);
     }
 
