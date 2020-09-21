@@ -56,7 +56,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="selectedMainPaneIndex" type="int" default='"0"' doc='Index of selected pane.'/>
     <property name="selectedRemoteIndex" type="int" default='"0"' doc='Index of selected remote subpane.'/>
 
-    <property name="captureBeginTimeout" type="int" default='"3000"' doc='Timeout when capturing, in milliseconds. Exact semantics may depend on the hardware selected.' />
+    <property name="captureBeginTimeout" type="int" default='"10000"' doc='Timeout when capturing, in milliseconds. Exact semantics may depend on the hardware selected, which may even ignore it.' />
     <property name="captureMaxSize" type="int" default='"1000"' doc='Maximal length of recorded signal, in samples' />
     <property name="captureEndingTimeout" type="int" default='"300"' doc='Timeout when signal ends, in milliseconds' />
     <property name="sendingTimeout" type="int" default='"2000"' doc='Timeout when sending signals, in milliseconds' />
@@ -89,7 +89,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="protocolDocfilePath" type="string" default='"doc" + File.separator + "IrpProtocols.html"' doc='Path name for protocl documentation file.'/>
     <property name="releaseNotesPath" type="string" default='"doc" + File.separator + "IrScrutinizer.releasenotes.txt"' doc='Path name for release notes.'/>
     <property name="tutorialUrl" type="string" default='"http://www.hifi-remote.com/wiki/index.php?title=IrScrutinizer_Guide"' doc='URL for tutorial.'/>
-    <property name="irTransIpName" type="string" default='IrTrans.defaultIrTransIP' doc='IP name or address of IRTrans unit.'/>
+    <property name="irTransIpName" type="string" default='IrTrans.DEFAULT_IP' doc='IP name or address of IRTrans unit.'/>
     <property name="transmitHardware" type="string" default='"Audio Port"' doc="Name of selected transmit hardware."/>
     <property name="lircIpName" type="string" default='LircClient.defaultLircIP' doc='IP name or address of LIRC server.'/>
     <property name="lircPort" type="int" default='Integer.toString(LircClient.lircDefaultPort)' doc='TCP port number of LIRC server, typically 8765.'/>

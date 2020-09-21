@@ -17,9 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.guicomponents;
 
-import gnu.io.NoSuchPortException;
-import gnu.io.PortInUseException;
-import gnu.io.UnsupportedCommOperationException;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.beans.PropertyChangeListener;
@@ -78,7 +75,7 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
         switch (getType()) {
             case serial: {
                 try {
-                    LocalSerialPortBuffered comm = new LocalSerialPortBuffered(getPortName(), verbose, getBaudRate(), defaultSerialTimeout);
+                    LocalSerialPortBuffered comm = new LocalSerialPortBuffered(getPortName(), verbose, defaultSerialTimeout, getBaudRate());
                     hardware = new GirsClient<>(comm);
                 } catch (IOException | HarcHardwareException ex) {
                     guiUtils.error(ex);

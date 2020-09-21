@@ -17,7 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.capturinghardware;
 
-import gnu.io.NoSuchPortException;
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -26,8 +25,10 @@ import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.guicomponents.SerialPortSimpleBean;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.IHarcHardware;
+import org.harctoolbox.harchardware.comm.NonExistingPortException;
 import org.harctoolbox.harchardware.ir.ICapture;
 import org.harctoolbox.harchardware.ir.IrSerial;
+import org.harctoolbox.ircore.ThisCannotHappenException;
 import org.harctoolbox.irscrutinizer.Props;
 
 /**
@@ -72,7 +73,7 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
                     case SerialPortSimpleBean.PROP_ISOPEN:
                         break;
                     default:
-                        throw new RuntimeException("Programmming error detected");
+                        throw new ThisCannotHappenException("Programmming error detected");
                 }
             } catch (IOException ex) {
                 guiUtils.error(ex);
@@ -93,16 +94,15 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
         try {
             portName = newPort;
             if (IrSerial.class.isAssignableFrom(clazz)) {
-                hardware = clazz.getConstructor(String.class, int.class, int.class, int.class, int.class, boolean.class).newInstance(
-                        newPort, newBaud,
-                        properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndingTimeout(), properties.getVerbose());
+                hardware = clazz.getConstructor(String.class, boolean.class, Integer.class, Integer.class, Integer.class, Integer.class).newInstance(
+                        newPort, properties.getVerbose(), newBaud,
+                        properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndingTimeout());
                 baudRate = newBaud;
                 Props.class.getMethod("set" + clazz.getSimpleName() + "CapturePortBaudRate", int.class).invoke(properties, newBaud);
             } else {
-                hardware = clazz.getConstructor(String.class, int.class, int.class, int.class, boolean.class).newInstance(
-                        newPort,
-                        properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndingTimeout(), properties.getVerbose());
-
+                hardware = clazz.getConstructor(String.class, boolean.class, Integer.class, Integer.class, Integer.class).newInstance(
+                        newPort, properties.getVerbose(),
+                        properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndingTimeout());
             }
             Props.class.getMethod("set" + clazz.getSimpleName() + "CapturePortName", String.class).invoke(properties, portName);
             serialPortSimpleBean.setHardware(hardware);
@@ -111,7 +111,7 @@ public class CapturingSerial <T extends ICapture & IHarcHardware> extends Captur
             guiUtils.error(ex);
         } catch (InvocationTargetException ex) {
             // Likely NoSuchPortException
-            if (NoSuchPortException.class.isInstance(ex.getCause()))
+            if (NonExistingPortException.class.isInstance(ex.getCause()))
                 throw new IOException("No such port: " + newPort);
             else
                 guiUtils.error(ex);

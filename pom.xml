@@ -7,7 +7,7 @@
     <groupId>org.harctoolbox</groupId>
     <artifactId>IrScrutinizer</artifactId>
     <packaging>jar</packaging>
-    <version>2.2.7-SNAPSHOT</version>
+    <version>2.3.0-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <licenses>
         <license>
@@ -30,10 +30,10 @@
         <inno_path>${basedir}/Inno_Setup_6/ISCC.exe</inno_path>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <IrpTransmogrifier.version>1.2.8-SNAPSHOT</IrpTransmogrifier.version>
-        <Girr.version>2.2.8-SNAPSHOT</Girr.version>
-        <Jirc.version>2.2.8-SNAPSHOT</Jirc.version>
-        <HarcHardware.version>2.2.7</HarcHardware.version>
+        <IrpTransmogrifier.version>1.2.8</IrpTransmogrifier.version>
+        <Girr.version>2.2.9</Girr.version>
+        <Jirc.version>2.2.9</Jirc.version>
+        <HarcHardware.version>2.3.0-SNAPSHOT</HarcHardware.version>
     </properties>
 
     <profiles>
@@ -193,6 +193,10 @@
                                 <parameter>
                                     <name>appName</name>
                                     <value>${project.artifactId}</value>
+                                </parameter>
+                                <parameter>
+                                    <name>commitId</name>
+                                    <value>${git.commit.id}</value>
                                 </parameter>
                             </parameters>
                             <fileMappers>

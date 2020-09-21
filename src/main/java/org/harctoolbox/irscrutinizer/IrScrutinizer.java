@@ -23,8 +23,6 @@ import com.beust.jcommander.ParameterException;
 import java.awt.HeadlessException;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
@@ -32,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.harctoolbox.guicomponents.GuiUtils;
+import org.harctoolbox.harchardware.Utils;
 import org.harctoolbox.irp.IrpParseException;
 import org.harctoolbox.irp.IrpUtils;
 import org.xml.sax.SAXException;
@@ -89,28 +88,9 @@ public class IrScrutinizer {
             System.exit(IrpUtils.EXIT_SUCCESS);
         }
 
-        try {
-            String applicationHome = findApplicationHome(commandLineArgs.applicationHome);
-            guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose,
-                    commandLineArgs.experimental ? 1 : 0, commandLineArgs.arguments);
-        } catch (URISyntaxException ex) {
-            System.err.println(ex.getMessage());
-            System.exit(IrpUtils.EXIT_FATAL_PROGRAM_FAILURE);
-        }
-    }
-
-    private static String findApplicationHome(String appHome) throws URISyntaxException {
-        String applicationHome = appHome != null ? appHome : System.getenv("IRSCRUTINIZERHOME");
-        if (applicationHome == null) {
-            URL url = IrScrutinizer.class.getProtectionDomain().getCodeSource().getLocation();
-            File dir = new File(url.toURI()).getParentFile();
-            applicationHome = (dir.getName().equals("build") || dir.getName().equals("dist"))
-                    ? dir.getParent() : dir.getPath();
-        }
-        if (applicationHome != null && !applicationHome.endsWith(File.separator))
-            applicationHome += File.separator;
-
-        return applicationHome;
+        String applicationHome = Utils.findApplicationHome(commandLineArgs.applicationHome, IrScrutinizer.class, Version.appName);
+        guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose,
+                commandLineArgs.experimental ? 1 : 0, commandLineArgs.arguments);
     }
 
     private static String nukeProperties(boolean verbose) {

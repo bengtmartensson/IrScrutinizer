@@ -12,10 +12,14 @@
 #JAVA=/opt/jdk1.7.0_65/bin/java
 JAVA=${JAVA:-java}
 
+# Uncomment and/or modify for Hight DPI usage
+#JVM_ARGS=-Dsun.java2d.uiScale=2
+
 # Where the programs are installed, adjust if required
 #IRSCRUTINIZERHOME=/usr/local/irscrutinizer
 #IRSCRUTINIZERHOME="$( dirname "${BASH_SOURCE[0]}" )"
 export IRSCRUTINIZERHOME="$(dirname -- "$(readlink -f -- "${0}")" )"
+FATJAT=${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar
 
 checkgroup()
 {
@@ -26,14 +30,15 @@ checkgroup()
     fi
 }
 
+# If called using the name irptransmogrifier, invoke that "program".
+# Recall: exec does not return.
 if [ $(basename "$0" ) = "irptransmogrifier" ] ; then
-    exec "${JAVA}" -classpath "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
-    org.harctoolbox.irp.IrpTransmogrifier "$@"
+    exec "${JAVA}" -classpath "${FATJAT}" org.harctoolbox.irp.IrpTransmogrifier "$@"
 fi
 
-if [ $(basename "$0" ) != "irscrutinizer" ] ; then
-    exec "${JAVA}" -classpath "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
-    org.harctoolbox.guicomponents.$(basename "$0") "$@"
+# If called using a name of one of the tools, invoke that "program".
+if [ $(basename "$0" ) != "irscrutinizer" -a $(basename "$0" ) != "harchardware" ] ; then
+    exec "${JAVA}" -classpath "${FATJAT}" org.harctoolbox.guicomponents.$(basename "$0") "$@"
 fi
 
 # Path to DecodeIR and RXTX
@@ -50,12 +55,12 @@ fi
 # Use a system supplied librxtxSerial.so if present.
 # Fedora: dnf install rxtx (presently broken: https://bugzilla.redhat.com/show_bug.cgi?id=1645856 )
 # Ubunto >= 16: apt-get install librxtx-java
-if [ -f /usr/lib64/rxtx/librxtxSerial.so ] ; then
-    LOAD_RXTX_PATH=-Djava.library.path=/usr/local/lib:/usr/lib64/rxtx
-fi
-if [ -f /usr/lib/rxtx/librxtxSerial.so ] ; then
-    LOAD_RXTX_PATH=-Djava.library.path=/usr/local/lib:/usr/lib/rxtx
-fi
+#if [ -f /usr/lib64/rxtx/librxtxSerial.so ] ; then
+#    LOAD_RXTX_PATH=-Djava.library.path=/usr/local/lib:/usr/lib64/rxtx
+#fi
+#if [ -f /usr/lib/rxtx/librxtxSerial.so ] ; then
+#    LOAD_RXTX_PATH=-Djava.library.path=/usr/local/lib:/usr/lib/rxtx
+#fi
 #LIBRARY_PATH=${RXTXLIB_PATH}${IRSCRUTINIZERHOME}/`uname -s`-${ARCH}
 #LIBRARY_PATH=/usr/lib64/rxtx
 
@@ -73,11 +78,15 @@ if [ "x${MESSAGE}" != "x" ] ; then
     MESSAGE=$(echo ${MESSAGE} | sed -e "s/,$//")
     MESSAGEPRE="You are not a member of the group(s) "
     MESSAGETAIL=", so you will probably not have access to some devices.\nYou probably want to correct this. Otherwise, functionality will be limited.\n\nDepending on your operating system, the command for fixing this may be \"sudo usermod -aG $MESSAGE $USER\".\n\nProceed anyhow?"
-    if ! "${JAVA}" -classpath "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
+    if ! "${JAVA}" "${JVM_ARGS}" -classpath "${FATJAT}" \
         org.harctoolbox.guicomponents.StandalonePopupAnnoyer "${MESSAGEPRE}${MESSAGE}${MESSAGETAIL}" "$@" ; then
         exit 1
     fi
 fi
 
-exec "${JAVA}" ${LOAD_RXTX_PATH} ${RXTX_SERIAL_PORTS} -jar "${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
-    --apphome "${IRSCRUTINIZERHOME}" "$@"
+if [ $(basename "$0" ) = "harchardware" ] ; then
+    exec "${JAVA}" -classpath "${FATJAT}" org.harctoolbox.harchardware.Main --apphome "${IRSCRUTINIZERHOME}" "$@"
+fi
+
+#exec "${JAVA}" ${LOAD_RXTX_PATH} ${RXTX_SERIAL_PORTS} -jar "${FATJAT}" --apphome "${IRSCRUTINIZERHOME}" "$@"
+exec "${JAVA}" "${JVM_ARGS}" -jar "${FATJAT}" --apphome "${IRSCRUTINIZERHOME}" "$@"

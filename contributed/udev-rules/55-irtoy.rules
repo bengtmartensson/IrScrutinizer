@@ -1,0 +1,1 @@
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="fd08", ATTRS{idVendor}=="04d8", SYMLINK+="irtoy", MODE="660", GROUP="dialout"

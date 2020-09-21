@@ -17,7 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.sendinghardware;
 
-import gnu.io.NoSuchPortException;
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -25,6 +24,7 @@ import javax.swing.JPanel;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.guicomponents.SerialPortSimpleBean;
 import org.harctoolbox.harchardware.IHarcHardware;
+import org.harctoolbox.harchardware.comm.NonExistingPortException;
 import org.harctoolbox.harchardware.ir.IRawIrSender;
 import org.harctoolbox.irscrutinizer.Props;
 
@@ -82,7 +82,7 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
             rawIrSender.close();
         rawIrSender = null;
         try {
-            rawIrSender = clazz.getConstructor(String.class, int.class, int.class, boolean.class).newInstance(newPort, newBaud, properties.getSendingTimeout(), properties.getVerbose());
+            rawIrSender = clazz.getConstructor(String.class, boolean.class, Integer.class, Integer.class).newInstance(newPort, properties.getVerbose(), properties.getSendingTimeout(), newBaud);
             portName = newPort;
             Props.class.getMethod("set" + clazz.getSimpleName() + "PortName", String.class).invoke(properties, portName);
             this.baudRate = newBaud;
@@ -92,7 +92,7 @@ public class SendingSerial<T extends IRawIrSender & IHarcHardware> extends Sendi
             guiUtils.error(ex);
         } catch (InvocationTargetException ex) {
             // Likely NoSuchPortException
-            if (NoSuchPortException.class.isInstance(ex.getCause()))
+            if (NonExistingPortException.class.isInstance(ex.getCause()))
                 throw new IOException("No such port: " + newPort);
             else
                 guiUtils.error(ex);

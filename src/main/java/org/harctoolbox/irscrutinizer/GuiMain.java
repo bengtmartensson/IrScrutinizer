@@ -78,6 +78,7 @@ import org.harctoolbox.girr.Remote;
 import org.harctoolbox.guicomponents.*;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.TimeoutException;
+import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.ir.*;
 import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrCoreException;
@@ -390,6 +391,8 @@ public final class GuiMain extends javax.swing.JFrame {
             LircHardware.loadLibrary();
         } catch (UnsatisfiedLinkError e) {
         }
+
+        LocalSerialPort.setLibraryDir(org.harctoolbox.harchardware.Utils.libraryDir(applicationHome));
 
         properties = new Props(propsfilename, this.applicationHome);
         if (verbose)
@@ -784,7 +787,8 @@ public final class GuiMain extends javax.swing.JFrame {
         });
 
         initializePlot();
-        String title = Version.appName + " (powered by IrpTransmogrifier) version " + Version.version;
+        //String title = Version.appName + " (powered by IrpTransmogrifier) version " + Version.version;
+        String title = Version.appName + " (using NRJavaSerial) version " + Version.version;
         if (System.getenv("APPIMAGE") != null)
             title += " AppImage";
         super.setTitle(title);

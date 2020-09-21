@@ -435,7 +435,7 @@ public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
     }//GEN-LAST:event_globalCacheBrowseButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        String ip = guiUtils.getInput("Enter GlobalCache IP-Name or -address", "GlobalCache entry", GlobalCache.defaultGlobalCacheIP);
+        String ip = guiUtils.getInput("Enter GlobalCache IP-Name or -address", "GlobalCache entry", GlobalCache.DEFAULT_IP);
         try {
             if (ip != null) {
                 GlobalCacheManager.getInstance().addManualGlobalCache(InetAddress.getByName(ip));

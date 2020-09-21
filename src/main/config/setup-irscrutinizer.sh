@@ -37,6 +37,7 @@ GIRR_XML=${PREFIX}/share/applications/girr.xml
 mkdir -p ${PREFIX}/bin
 mklink ${MYPROG_LOWER}
 mklink irptransmogrifier
+mklink harchardware
 mklink AmxBeaconListenerPanel
 mklink HexCalculator
 mklink TimeFrequencyCalculator
@@ -54,23 +55,23 @@ mklink TimeFrequencyCalculator
 #install --mode=444 ../schemas/*.xsd ${PREFIX}/share/xml/harctoolbox
 #ln -sf ../xml/harctoolbox ${IRSCRUTINIZERHOME}/schemas
 
-# Find best librxtxSerial.so, and make librxtxSerial.so a link to it.
-# SUDO_USER is, if using sudo to run, the name of the invoking user (real uid).
-if [ "$(arch)" = "x86_64" ] ; then
-    cd ${IRSCRUTINIZERHOME}/Linux-amd64
-    for solib in librxtxSerial-var-lock.so librxtxSerial-var-lock-lockdev.so ; do
-        if [ x${SUDO_USER}y != "xy" ] ; then
-            su -c "${JAVA} -cp ${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar org.harctoolbox.harchardware.comm.TestRxtx ${solib} 2>&1 | grep 'No permission to create lock file.' >/dev/null"  ${SUDO_USER}
-        else
-            ${JAVA} -cp ${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar org.harctoolbox.harchardware.comm.TestRxtx ${solib} 2>&1 | grep 'No permission to create lock file.' >/dev/null
-        fi
-	if [ $? -ne 0 ] ; then
-	    ln -sf ${solib} librxtxSerial.so
-	    echo Made librxtxSerial.so link to ${solib}
-	    break
-	fi
-    done
-fi
+## Find best librxtxSerial.so, and make librxtxSerial.so a link to it.
+## SUDO_USER is, if using sudo to run, the name of the invoking user (real uid).
+#if [ "$(arch)" = "x86_64" ] ; then
+#    cd ${IRSCRUTINIZERHOME}/Linux-amd64
+#    for solib in librxtxSerial-var-lock.so librxtxSerial-var-lock-lockdev.so ; do
+#        if [ x${SUDO_USER}y != "xy" ] ; then
+#            su -c "${JAVA} -cp ${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar org.harctoolbox.harchardware.comm.TestRxtx ${solib} 2>&1 | grep 'No permission to create lock file.' >/dev/null"  ${SUDO_USER}
+#        else
+#            ${JAVA} -cp ${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar org.harctoolbox.harchardware.comm.TestRxtx ${solib} 2>&1 | grep 'No permission to create lock file.' >/dev/null
+#        fi
+#	if [ $? -ne 0 ] ; then
+#	    ln -sf ${solib} librxtxSerial.so
+#	    echo Made librxtxSerial.so link to ${solib}
+#	    break
+#	fi
+#    done
+#fi
 
 # Install desktop file
 install -d ${PREFIX}/share/applications
