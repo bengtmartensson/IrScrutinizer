@@ -116,7 +116,7 @@
     <Component class="javax.swing.JLabel" name="versionLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="Version.versionString" type="code"/>
+          <Connection code="Version.versionString + (Version.version.endsWith(&quot;SNAPSHOT&quot;) ? (&quot;; commitId = &quot; + Version.commitId) : &quot;&quot;)&#xa;" type="code"/>
         </Property>
       </Properties>
     </Component>

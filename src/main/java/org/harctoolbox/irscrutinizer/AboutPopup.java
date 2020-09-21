@@ -90,7 +90,8 @@ public final class AboutPopup extends javax.swing.JDialog {
             }
         });
 
-        versionLabel.setText(Version.versionString);
+        versionLabel.setText(Version.versionString + (Version.version.endsWith("SNAPSHOT") ? ("; commitId = " + Version.commitId) : "")
+        );
 
         authorLabel.setFont(new java.awt.Font("Lucida Bright", 2, 14)); // NOI18N
         authorLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
