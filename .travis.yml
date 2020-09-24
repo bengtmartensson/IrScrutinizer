@@ -16,8 +16,8 @@ before_install:
 
 install:
 #- ./common/scripts/build-harctoolbox-project.sh IrpTransmogrifier
-- ./common/scripts/build-harctoolbox-project.sh Girr
-- ./common/scripts/build-harctoolbox-project.sh Jirc
+#- ./common/scripts/build-harctoolbox-project.sh Girr
+#- ./common/scripts/build-harctoolbox-project.sh Jirc
 #- ./common/scripts/build-harctoolbox-project.sh DevSlashLirc
 - ./common/scripts/build-harctoolbox-project.sh HarcHardware
 - ./common/scripts/build-tonto.sh -n
