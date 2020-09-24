@@ -103,7 +103,7 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> imp
     }
 
     @Override
-    public void setTimeout(int i) throws IOException {
+    public void setTimeout(int i) throws IOException, HarcHardwareException {
         getCapturer().setTimeout(i);
     }
 
@@ -113,17 +113,17 @@ public abstract class CapturingHardware <T extends ICapture & IHarcHardware> imp
     }
 
     @Override
-    public void setBeginTimeout(int beginTimeout) throws IOException {
+    public void setBeginTimeout(int beginTimeout) throws IOException, HarcHardwareException {
         getCapturer().setBeginTimeout(beginTimeout);
     }
 
     @Override
-    public void setCaptureMaxSize(int captureMaxSize) {
+    public void setCaptureMaxSize(int captureMaxSize) throws IOException, HarcHardwareException {
         getCapturer().setCaptureMaxSize(captureMaxSize);
     }
 
     @Override
-    public void setEndingTimeout(int endingTimeout) {
+    public void setEndingTimeout(int endingTimeout) throws IOException, HarcHardwareException {
         getCapturer().setEndingTimeout(endingTimeout);
     }
 

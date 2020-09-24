@@ -741,17 +741,25 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.addCaptureBeginTimeoutChangeListener((String name1, Object oldValue, Object newValue) -> {
             try {
                 capturingHardwareManager.getCapturer().setBeginTimeout((Integer) newValue);
-            } catch (IOException ex) {
+            } catch (IOException | HarcHardwareException ex) {
                 guiUtils.error(ex);
             }
         });
 
         properties.addCaptureMaxSizeChangeListener((String name1, Object oldValue, Object newValue) -> {
-            capturingHardwareManager.getCapturer().setCaptureMaxSize((Integer) newValue);
+            try {
+                capturingHardwareManager.getCapturer().setCaptureMaxSize((Integer) newValue);
+            } catch (IOException | HarcHardwareException ex) {
+                guiUtils.error(ex);
+            }
         });
 
         properties.addCaptureEndingTimeoutChangeListener((String name1, Object oldValue, Object newValue) -> {
-            capturingHardwareManager.getCapturer().setEndingTimeout((Integer) newValue);
+            try {
+                capturingHardwareManager.getCapturer().setEndingTimeout((Integer) newValue);
+            } catch (IOException | HarcHardwareException ex) {
+                guiUtils.error(ex);
+            }
         });
 
         properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
