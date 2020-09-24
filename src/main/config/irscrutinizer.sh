@@ -89,4 +89,4 @@ if [ $(basename "$0" ) = "harchardware" ] ; then
 fi
 
 #exec "${JAVA}" ${LOAD_RXTX_PATH} ${RXTX_SERIAL_PORTS} -jar "${FATJAT}" --apphome "${IRSCRUTINIZERHOME}" "$@"
-exec "${JAVA}" "${JVM_ARGS}" -jar "${FATJAT}" --apphome "${IRSCRUTINIZERHOME}" "$@"
+exec "${JAVA}" ${JVM_ARGS} -jar "${FATJAT}" --apphome "${IRSCRUTINIZERHOME}" "$@"
