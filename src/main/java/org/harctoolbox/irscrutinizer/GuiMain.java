@@ -795,8 +795,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
 
         initializePlot();
-        //String title = Version.appName + " (powered by IrpTransmogrifier) version " + Version.version;
-        String title = Version.appName + " (using NRJavaSerial) version " + Version.version;
+        String title = Version.versionString;
         if (System.getenv("APPIMAGE") != null)
             title += " AppImage";
         super.setTitle(title);
