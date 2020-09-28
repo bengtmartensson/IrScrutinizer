@@ -7,7 +7,7 @@
     <groupId>org.harctoolbox</groupId>
     <artifactId>IrScrutinizer</artifactId>
     <packaging>jar</packaging>
-    <version>2.3.0</version>
+    <version>2.3.1-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <licenses>
         <license>
