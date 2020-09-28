@@ -13,10 +13,14 @@ JAVA=java
 
 mklink()
 {
-    if ln -sf ${IRSCRUTINIZERHOME}/${MYPROG_LOWER}.sh   ${PREFIX}/bin/${1} >/dev/null 2>&1 ; then
-        echo "Creating link ${PREFIX}/bin/${1} succeded"
-    else
-        echo "Creating link ${PREFIX}/bin/${1} failed, redo with sudo?"
+    if [ $(readlink -f -- "${PREFIX}/bin/$1") != "${IRSCRUTINIZERHOME}/${MYPROG_LOWER}.sh" ] ; then
+        if ln -sf ${IRSCRUTINIZERHOME}/${MYPROG_LOWER}.sh   ${PREFIX}/bin/${1} >/dev/null 2>&1 ; then
+            echo "Creating link ${PREFIX}/bin/${1} succeded"
+        else
+            echo "Creating link ${PREFIX}/bin/${1} failed, redo with sudo?"
+        fi
+#    else
+#        echo "Link ${PREFIX}/bin/$1 -> ${IRSCRUTINIZERHOME}/${MYPROG_LOWER}.sh already present and OK"
     fi
 }
 
@@ -76,18 +80,26 @@ mklink TimeFrequencyCalculator
 # Install desktop file
 install -d ${PREFIX}/share/applications
 if [ -f ${PREFIX}/share/applications/${MYPROG_LOWER}.desktop ] ; then
-    rm -f ${PREFIX}/share/applications/${MYPROG_LOWER}.desktop
+    rm -f ${PREFIX}/share/applications/${MYPROG_LOWER}.desktop > /dev/null 2>&1
 fi
-sed -e "s|Exec=.*|Exec=/bin/sh \"${PREFIX}/bin/${MYPROG_LOWER}\"|" \
+if sed -e "s|Exec=.*|Exec=/bin/sh \"${PREFIX}/bin/${MYPROG_LOWER}\"|" \
     -e "s|Icon=.*|Icon=${IRSCRUTINIZERHOME}/${MYPROG_LOWER}.png|" ${IRSCRUTINIZERHOME}/${MYPROG_LOWER}.desktop \
-  > ${DESKTOP_FILE} && echo "Creating ${DESKTOP_FILE} succeded."
+  > ${DESKTOP_FILE} ; then
+    echo "Creating ${DESKTOP_FILE} succeded."
+else
+    echo "Creating ${DESKTOP_FILE} failed, redo with sudo?"
+fi
 
 # Install mime type file for girr
 if [ -f ${PREFIX}/share/applications/girr.xml ] ; then
-    rm -f ${PREFIX}/share/applications/girr.xml
+    rm -f ${PREFIX}/share/applications/girr.xml >/dev/null 2>&1
 fi
 
-install --mode 444 ${IRSCRUTINIZERHOME}/girr.xml ${GIRR_XML} && echo "Creating ${GIRR_XML} succeded."
+if install --mode 444 ${IRSCRUTINIZERHOME}/girr.xml ${GIRR_XML} >/dev/null 2>&1 ; then
+    echo "Creating ${GIRR_XML} succeded."
+else
+    echo "Creating ${GIRR_XML} failed, redo with sudo?"
+fi
 
 echo "Consider deleting old properties with the command "
 echo "    irscrutinizer --nuke-properties"
