@@ -103,7 +103,9 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
         int rows = usedScreenHeight / buttonHeight;
         int columns = usedScreenWidth / buttonWidth;
         int vRest = usedScreenHeight % buttonHeight;
+        int vRestPart = rows > 1 ? vRest / (rows - 1) : 0;
         int hRest = usedScreenWidth % buttonWidth;
+        int hRestPart = columns > 1 ? hRest / (columns - 1) : 0;
         ccf = new CCF(prontoModel);
         if (prontoModel.getModel() == ProntoModel.CUSTOM)
             ccf.setScreenSize(screenWidth, screenHeight);
@@ -131,7 +133,9 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
                         CCFButton b1 = panel.createButton(buttonName);
                         b1.setFont(CCFFont.SIZE_8);
                         b1.setTextAlignment(CCFNode.TEXT_RIGHT);
-                        b1.setLocation(new Point(x * buttonWidth + (x * hRest) / (columns - 1), y * buttonHeight + (y * vRest) / (rows - 1)));
+                        int xPos = x * (buttonWidth + hRestPart);
+                        int yPos = y * (buttonHeight + vRestPart);
+                        b1.setLocation(new Point(xPos, yPos));
                         b1.setSize(new Dimension(buttonWidth, buttonHeight));
                         panel.addButton(b1);
                         String ccfstring = cmd.getProntoHex();
