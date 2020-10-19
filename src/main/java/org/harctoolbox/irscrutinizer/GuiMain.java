@@ -5246,33 +5246,33 @@ public final class GuiMain extends javax.swing.JFrame {
         prontoExportScreenWidthTextField.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         prontoExportScreenWidthTextField.setText(Integer.toString(properties.getProntoScreenSizeX()));
         prontoExportScreenWidthTextField.setMinimumSize(new java.awt.Dimension(12, 40));
-        prontoExportScreenWidthTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                prontoExportScreenWidthTextFieldActionPerformed(evt);
+        prontoExportScreenWidthTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                prontoExportScreenWidthTextFieldFocusLost(evt);
             }
         });
 
         prontoExportScreenHeightTextField.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         prontoExportScreenHeightTextField.setText(Integer.toString(properties.getProntoScreenSizeY()));
-        prontoExportScreenHeightTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                prontoExportScreenHeightTextFieldActionPerformed(evt);
+        prontoExportScreenHeightTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                prontoExportScreenHeightTextFieldFocusLost(evt);
             }
         });
 
         prontoExportButtonWidthTextField.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         prontoExportButtonWidthTextField.setText(Integer.toString(properties.getProntoButtonSizeX()));
-        prontoExportButtonWidthTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                prontoExportButtonWidthTextFieldActionPerformed(evt);
+        prontoExportButtonWidthTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                prontoExportButtonWidthTextFieldFocusLost(evt);
             }
         });
 
         prontoExportButtonHeightTextField.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         prontoExportButtonHeightTextField.setText(Integer.toString(properties.getProntoButtonSizeY()));
-        prontoExportButtonHeightTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                prontoExportButtonHeightTextFieldActionPerformed(evt);
+        prontoExportButtonHeightTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                prontoExportButtonHeightTextFieldFocusLost(evt);
             }
         });
 
@@ -9203,22 +9203,6 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setTransmitGeneratedCount(Integer.parseInt((String) noTransmitsComboBox.getSelectedItem()));
     }//GEN-LAST:event_noTransmitsComboBoxActionPerformed
 
-    private void prontoExportScreenWidthTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prontoExportScreenWidthTextFieldActionPerformed
-        properties.setProntoScreenSizeX(Integer.parseInt(prontoExportScreenWidthTextField.getText()));
-    }//GEN-LAST:event_prontoExportScreenWidthTextFieldActionPerformed
-
-    private void prontoExportScreenHeightTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prontoExportScreenHeightTextFieldActionPerformed
-        properties.setProntoScreenSizeY(Integer.parseInt(prontoExportScreenHeightTextField.getText()));
-    }//GEN-LAST:event_prontoExportScreenHeightTextFieldActionPerformed
-
-    private void prontoExportButtonWidthTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prontoExportButtonWidthTextFieldActionPerformed
-        properties.setProntoButtonSizeX(Integer.parseInt(prontoExportButtonWidthTextField.getText()));
-    }//GEN-LAST:event_prontoExportButtonWidthTextFieldActionPerformed
-
-    private void prontoExportButtonHeightTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prontoExportButtonHeightTextFieldActionPerformed
-        properties.setProntoButtonSizeY(Integer.parseInt(prontoExportButtonHeightTextField.getText()));
-    }//GEN-LAST:event_prontoExportButtonHeightTextFieldActionPerformed
-
     private void irTransWebButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irTransWebButtonActionPerformed
         try {
             guiUtils.browse(new URI(IrTransImporter.homeUrl));
@@ -9858,6 +9842,22 @@ public final class GuiMain extends javax.swing.JFrame {
         ictImporter.setChop(isSel);
         properties.setChopIctImports(isSel);
     }//GEN-LAST:event_chopIctImportCheckBoxActionPerformed
+
+    private void prontoExportScreenWidthTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_prontoExportScreenWidthTextFieldFocusLost
+        properties.setProntoScreenSizeX(Integer.parseInt(prontoExportScreenWidthTextField.getText()));
+    }//GEN-LAST:event_prontoExportScreenWidthTextFieldFocusLost
+
+    private void prontoExportScreenHeightTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_prontoExportScreenHeightTextFieldFocusLost
+        properties.setProntoScreenSizeY(Integer.parseInt(prontoExportScreenHeightTextField.getText()));
+    }//GEN-LAST:event_prontoExportScreenHeightTextFieldFocusLost
+
+    private void prontoExportButtonWidthTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_prontoExportButtonWidthTextFieldFocusLost
+        properties.setProntoButtonSizeX(Integer.parseInt(prontoExportButtonWidthTextField.getText()));
+    }//GEN-LAST:event_prontoExportButtonWidthTextFieldFocusLost
+
+    private void prontoExportButtonHeightTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_prontoExportButtonHeightTextFieldFocusLost
+        properties.setProntoButtonSizeY(Integer.parseInt(prontoExportButtonHeightTextField.getText()));
+    }//GEN-LAST:event_prontoExportButtonHeightTextFieldFocusLost
 
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables

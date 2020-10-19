@@ -5877,7 +5877,7 @@
                             </Property>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="prontoExportScreenWidthTextFieldActionPerformed"/>
+                            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="prontoExportScreenWidthTextFieldFocusLost"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JTextField" name="prontoExportScreenHeightTextField">
@@ -5888,7 +5888,7 @@
                             </Property>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="prontoExportScreenHeightTextFieldActionPerformed"/>
+                            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="prontoExportScreenHeightTextFieldFocusLost"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JTextField" name="prontoExportButtonWidthTextField">
@@ -5899,7 +5899,7 @@
                             </Property>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="prontoExportButtonWidthTextFieldActionPerformed"/>
+                            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="prontoExportButtonWidthTextFieldFocusLost"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JTextField" name="prontoExportButtonHeightTextField">
@@ -5910,7 +5910,7 @@
                             </Property>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="prontoExportButtonHeightTextFieldActionPerformed"/>
+                            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="prontoExportButtonHeightTextFieldFocusLost"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel22">
