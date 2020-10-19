@@ -162,8 +162,8 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="prontoModelIndex" type="int" default='"4"' doc="Index of selected Pronto Classic model."/>
     <property name="prontoScreenSizeX" type="int" default='"240"' doc="Pronto screen width" />
     <property name="prontoScreenSizeY" type="int" default='"220"' doc="Pronto screen height" />
-    <property name="prontoButtonSizeX" type="int" default='"80"' doc="Pronto screen width" />
-    <property name="prontoButtonSizeY" type="int" default='"30"' doc="Pronto screen height" />
+    <property name="prontoButtonSizeX" type="int" default='"80"' doc="Desired width of a Pronto button" />
+    <property name="prontoButtonSizeY" type="int" default='"30"' doc="Desired height of a Pronto button" />
 
     <property name="absoluteTolerance"  type="double" default='Double.toString(IrCoreUtils.DEFAULT_ABSOLUTE_TOLERANCE)' doc="Absolute tolerance for duration comparisons (ms)." />
     <property name="relativeTolerance"  type="double" default='Double.toString(IrCoreUtils.DEFAULT_RELATIVE_TOLERANCE)' doc="Relative tolerance for duration comparisons (ms)." />
