@@ -78,7 +78,7 @@ if [ "x${MESSAGE}" != "x" ] ; then
     MESSAGE=$(echo ${MESSAGE} | sed -e "s/,$//")
     MESSAGEPRE="You are not a member of the group(s) "
     MESSAGETAIL=", so you will probably not have access to some devices.\nYou probably want to correct this. Otherwise, functionality will be limited.\n\nDepending on your operating system, the command for fixing this may be \"sudo usermod -aG $MESSAGE $USER\".\n\nProceed anyhow?"
-    if ! "${JAVA}" "${JVM_ARGS}" -classpath "${FATJAT}" \
+    if ! "${JAVA}" ${JVM_ARGS} -classpath "${FATJAT}" \
         org.harctoolbox.guicomponents.StandalonePopupAnnoyer "${MESSAGEPRE}${MESSAGE}${MESSAGETAIL}" "$@" ; then
         exit 1
     fi
