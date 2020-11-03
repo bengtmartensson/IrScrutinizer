@@ -398,6 +398,7 @@ public final class GuiMain extends javax.swing.JFrame {
         if (verbose)
             properties.setVerbose(true);
         Importer.setProperties(properties);
+        HelpPopup.setBaseUrl(new URL("file", null, properties.mkPathAbsolute(properties.getProtocolDocfilePath())).toString());
 
         parameterTableModel = new ParametrizedIrSignal.ParameterIrSignalTableModel();
         rawTableModel = new RawIrSignal.RawTableModel();

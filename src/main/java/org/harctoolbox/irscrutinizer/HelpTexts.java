@@ -75,7 +75,7 @@ class HelpTexts {
             = "The character set used for the import can be selected as Options -> Import options -> Character set.";
 
     @SuppressWarnings("PackageVisibleField")
-    public static String scrutinizeSignalHelp = "This panel is devoted to the analysis of a single IR signal. "
+    public static String scrutinizeSignalHelp = "<html><div>This panel is devoted to the analysis of a single IR signal. "
             + "The signal is either read from hardware using the \"Capture\" button (requires that "
             + "the capturing hardware has been set on the \"Capturing Hardware\" pane), imported "
             + "from a file (using the context menu in the data window, or through File -> "
@@ -86,11 +86,11 @@ class HelpTexts {
             + "options menu. The text representation may be edited (assuming sufficient "
             + "knowledge!), after which the edited signal is analyzed and plotted again by "
             + "pressing the \"Scrutinize\" button. The signal may be sent to the sending "
-            + "hardware by pressing the \"Transmit\" button.\n\n"
-            + "Using context menus, the result can be sent to the clipboard or saved to a file.\n\n"
-            + "The plot can be zoomed by pressing the left mouse button and dragging.\n\n"
-            + "In rare cases, transforming the signal between different formats may introduce "
-            + "some rounding errors causing decoding to fail.";
+            + "hardware by pressing the \"Transmit\" button.</div><br/>"
+            + "<div>Using context menus, the result can be sent to the clipboard or saved to a file.</div><br/>"
+            + "<div>The plot can be zoomed by pressing the left mouse button and dragging.</div><br/>"
+            + "<div>In rare cases, transforming the signal between different formats may introduce "
+            + "some rounding errors causing decoding to fail.</div></html>";
 
     @SuppressWarnings("PackageVisibleField")
     public static String scrutinizeRemoteHelp

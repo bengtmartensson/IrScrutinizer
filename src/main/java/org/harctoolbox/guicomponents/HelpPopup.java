@@ -21,19 +21,34 @@ import java.awt.Desktop;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.MouseEvent;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import javax.swing.event.HyperlinkEvent;
 import org.harctoolbox.ircore.ThisCannotHappenException;
+import org.harctoolbox.xml.XmlUtils;
+import org.w3c.dom.Document;
 
 /**
  * A class for help popups.
  */
 public class HelpPopup extends javax.swing.JDialog {
+
+    private static String baseUrl = null;
+
+    public static void setBaseUrl(String newBaseUrl) {
+        baseUrl = newBaseUrl;
+    }
+
     private final String payload;
+    private final boolean isHtml;
     private final GuiUtils guiUtils;
 
     /**
@@ -43,13 +58,27 @@ public class HelpPopup extends javax.swing.JDialog {
      * @param helpText Text (one string, to be formatted to many lines) containing the messages.
      * @param title
      */
-    public HelpPopup(Window parent, String helpText, String title) {
+    private HelpPopup(Window parent, String helpText, boolean isHtml, String title) {
         super(parent, title);
         payload = helpText;
+        this.isHtml = isHtml;
         this.guiUtils = new GuiUtils(this);
         initComponents();
-        // show the start of the text
-        this.helpText.setCaretPosition(0);
+        textPane.setCaretPosition(0);
+        if (isHtml) {
+            textPane.addHyperlinkListener((HyperlinkEvent e) -> {
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    try {
+                        URL url = e.getURL();
+                        if (url == null)
+                            url = new URL(baseUrl + e.getDescription());
+                        guiUtils.browse(url.toURI());
+                    } catch (URISyntaxException | MalformedURLException ex) {
+                        guiUtils.error(ex);
+                    }
+                }
+            });
+        }
     }
 
     /** This method is called from within the constructor to
@@ -67,7 +96,7 @@ public class HelpPopup extends javax.swing.JDialog {
         printMenuItem = new javax.swing.JMenuItem();
         closeMenuItem = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
-        helpText = new javax.swing.JTextArea();
+        textPane = new javax.swing.JTextPane();
 
         copyMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/editcopy.png"))); // NOI18N
         copyMenuItem.setMnemonic('C');
@@ -117,24 +146,21 @@ public class HelpPopup extends javax.swing.JDialog {
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        helpText.setEditable(false);
-        helpText.setColumns(20);
-        helpText.setFont(new java.awt.Font("Lucida Bright", 0, 14)); // NOI18N
-        helpText.setLineWrap(true);
-        helpText.setRows(4);
-        helpText.setText(payload);
-        helpText.setToolTipText("Press menu mouse button for a context menu, or mouse button 2 to close.");
-        helpText.setWrapStyleWord(true);
-        helpText.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        helpText.setComponentPopupMenu(jPopupMenu1);
-        helpText.setMargin(new java.awt.Insets(0, 10, 0, 0));
-        helpText.addMouseListener(new java.awt.event.MouseAdapter() {
+        textPane.setEditable(false);
+        textPane.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        textPane.setContentType(isHtml ? "text/html" : "text/plain");
+        textPane.setFont(new java.awt.Font("Lucida Bright", 0, 14)); // NOI18N
+        textPane.setText(payload);
+        textPane.setToolTipText("Press menu mouse button for a context menu, or mouse button 2 to close.");
+        textPane.setComponentPopupMenu(jPopupMenu1);
+        textPane.setMargin(new java.awt.Insets(0, 10, 0, 0));
+        textPane.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                helpTextMouseClicked(evt);
+                textPaneMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(helpText);
-        helpText.getAccessibleContext().setAccessibleDescription("Press mouse button 2 or 3 to close window");
+        jScrollPane1.setViewportView(textPane);
+        textPane.getAccessibleContext().setAccessibleDescription("Press mouse button 2 or 3 to close window");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -194,10 +220,10 @@ public class HelpPopup extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_closeMenuItemActionPerformed
 
-    private void helpTextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpTextMouseClicked
+    private void textPaneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textPaneMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON2)
             dispose();
-    }//GEN-LAST:event_helpTextMouseClicked
+    }//GEN-LAST:event_textPaneMouseClicked
 
     /**
      * Saves the console content as text to the file given as argument.
@@ -213,11 +239,25 @@ public class HelpPopup extends javax.swing.JDialog {
     }
 
     public static HelpPopup newHelpPopup(Window parent, String helpText) {
-        return newHelpPopup(parent, helpText, "Help");
+        return newHelpPopup(parent, helpText, helpText.startsWith("<html"), "Help");
     }
 
     public static HelpPopup newHelpPopup(Window parent, String helpText, String title) {
-        HelpPopup helpBox = new HelpPopup(parent, helpText, title);
+        return newHelpPopup(parent, helpText, helpText.startsWith("<html"), title);
+    }
+
+    public static HelpPopup newHelpPopup(Window parent, Document doc, String title) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        try {
+            XmlUtils.printHtmlDOM(stream, doc, XmlUtils.DEFAULT_CHARSETNAME);
+        } catch (UnsupportedEncodingException ex) {
+            throw new ThisCannotHappenException(ex);
+        }
+        return newHelpPopup(parent, stream.toString(), true, title);
+    }
+
+    public static HelpPopup newHelpPopup(Window parent, String helpText, boolean isHtml, String title) {
+        HelpPopup helpBox = new HelpPopup(parent, helpText, isHtml, title);
         // Try to align just to the right of the parent
         Rectangle parentCoords = parent.getBounds();
         Rectangle myCoords = helpBox.getBounds();
@@ -235,7 +275,7 @@ public class HelpPopup extends javax.swing.JDialog {
     */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> {
-            HelpPopup dialog = new HelpPopup(new javax.swing.JFrame(), "The best defense against logic is ignorance.", "Helpful help");
+            HelpPopup dialog = newHelpPopup(new javax.swing.JFrame(), "<html><body>The best defense against logic is <i>ignorance</i>. <a href=\"http://www.harctoolbox.org\">Project site.</a></body></html>", "Helpful help");
             dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 
                 @Override
@@ -250,10 +290,10 @@ public class HelpPopup extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem closeMenuItem;
     private javax.swing.JMenuItem copyMenuItem;
-    private javax.swing.JTextArea helpText;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JMenuItem printMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
+    private javax.swing.JTextPane textPane;
     // End of variables declaration//GEN-END:variables
 }

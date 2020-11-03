@@ -49,6 +49,10 @@ import org.harctoolbox.irscrutinizer.DefaultSignalNameFormatter;
 import org.harctoolbox.irscrutinizer.ISignalNameFormatter;
 import org.harctoolbox.valuesets.InputVariableSetValues;
 import org.harctoolbox.valuesets.RandomValueSet;
+import org.harctoolbox.xml.XmlUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Element;
 
 /**
  *
@@ -503,11 +507,21 @@ public final class IrpRenderBean extends javax.swing.JPanel {
 
     private void protocolDocuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolDocuButtonActionPerformed
         try {
-            StringBuilder str = new StringBuilder(irpDatabase.getIrp(protocolName)).append("\n\n");
-            String docu = irpDatabase.getDocumentation(protocolName);
-            if (docu != null)
-                str.append(docu);
-            HelpPopup.newHelpPopup(frame, str.toString(), protocolName);
+            Document doc = XmlUtils.newDocument();
+            Element root = doc.createElement("html");
+            doc.appendChild(root);
+            Element body = doc.createElement("body");
+            root.appendChild(body);
+            Element pre = doc.createElement("div");
+            pre.setAttribute("class", "irp");
+            body.appendChild(pre);
+            pre.setTextContent(irpDatabase.getIrp(protocolName));
+            Element div = doc.createElement("div");
+            div.setAttribute("class", "documentation");
+            body.appendChild(div);
+            DocumentFragment fragment = irpDatabase.getHtmlDocumentation(protocolName);
+            div.appendChild(doc.importNode(fragment, true));
+            HelpPopup.newHelpPopup(frame, doc, protocolName);
         } catch (UnknownProtocolException ex) {
             guiUtils.error(ex);
         }
