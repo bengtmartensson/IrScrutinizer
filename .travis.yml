@@ -19,7 +19,7 @@ install:
 #- ./common/scripts/build-harctoolbox-project.sh Girr
 #- ./common/scripts/build-harctoolbox-project.sh Jirc
 #- ./common/scripts/build-harctoolbox-project.sh DevSlashLirc
-#- ./common/scripts/build-harctoolbox-project.sh HarcHardware
+- ./common/scripts/build-harctoolbox-project.sh HarcHardware
 - ./common/scripts/build-tonto.sh -n
 - ./tools/get-jdk.sh linux
 - wget --quiet http://www.harctoolbox.org/downloads/jre-x64-macOS.tar.gz
