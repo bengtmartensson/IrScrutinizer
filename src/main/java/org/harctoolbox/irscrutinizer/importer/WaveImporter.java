@@ -49,7 +49,7 @@ public class WaveImporter extends FileImporter implements IModulatedIrSequenceIm
     public void load(File file, String origin, String charsetName /* ignored */) throws IOException {
         try {
             Wave wave = new Wave(file);
-            sequence = wave.analyze(divideCarrier);
+            sequence = wave.analyze(System.err, divideCarrier);
         } catch (UnsupportedAudioFileException ex) {
             throw new IOException(ex.getMessage());
         }

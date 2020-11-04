@@ -55,7 +55,7 @@ public final class GlobalCacheManager {
 
     private GlobalCacheManager() {
         Callbacker callback = new Callbacker();
-        beaconListener = GlobalCache.newListener(callback, debug);
+        beaconListener = GlobalCache.newListener(callback);
     }
 
     private int sillyHashCode() {
@@ -67,8 +67,6 @@ public final class GlobalCacheManager {
      */
     public void setDebug(boolean debug) {
         this.debug = debug;
-        if (beaconListener != null)
-           beaconListener.setDebug(debug);
     }
 
     public String getType(int index) {
