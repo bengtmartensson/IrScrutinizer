@@ -64,7 +64,6 @@ Source: "{#MyAppName}.ico";  DestDir: "{app}"
 Source: "HexCalculator.ico"; DestDir: "{app}"
 Source: "TimeFrequencyCalculator.ico"; DestDir: "{app}"
 Source: "AmxBeaconListener.ico"; DestDir: "{app}"
-Source: "protocols.ini";  DestDir: "{app}"
 Source: "jre-x86-windows\*"; DestDir: "{app}\jre-x86-windows"; Components: jvm; Flags:  ignoreversion recursesubdirs createallsubdirs
 ;Source: "..\..\IrpMaster\target\generated-documents\IrpMaster.html"; DestDir: "{app}\doc"
 

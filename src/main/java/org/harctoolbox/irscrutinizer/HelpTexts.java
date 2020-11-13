@@ -158,23 +158,6 @@ class HelpTexts {
             + treeHelp;
 
     @SuppressWarnings("PackageVisibleField")
-    public static String importRemoteMasterHelp
-            = "The JP1 community has a large data base of parametric IR "
-            + "commands. IrScrutinizer has support for importing RMDU files for "
-            + "RemoteMaster. Unfortunately, the signals are stored as parameters for so-called "
-            + "executors, with sometimes different parameterization (\"hex\", \"efc\") than the IRP "
-            + "protocols. Translating these files to one of the known protocol/parameter "
-            + "format is nothing but straightforward. It uses protocol information contained "
-            + "in protocols.ini. IrScrutinizer reads this file, and can do some computations, "
-            + "for example on NEC1 protocols, but not on all protocols.\n\n"
-            + "For signals without recognized protocol name, importing "
-            + "as raw signals, or to \"Scrutinize signal\", is not possible. However, they can "
-            + "always be imported as parametric signals, possibly for manual edit.\n\n"
-            + fileUrlImportHelp + "\n\n"
-            + treeHelpReaderImporterIntro
-            + treeHelp;
-
-    @SuppressWarnings("PackageVisibleField")
     public static String importProntoClassicHelp
             = "Many Pronto CCF files are available in Internet, in particular by RemoteCentral. "
             + "IrScrutinizer can read in these files to its import tree, even "

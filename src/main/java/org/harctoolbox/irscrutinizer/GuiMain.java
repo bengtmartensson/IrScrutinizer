@@ -114,14 +114,12 @@ public final class GuiMain extends javax.swing.JFrame {
     private transient IrpDatabase irpDatabase = null;
     private transient Decoder decoder = null;
     private Decoder.DecoderParameters decoderParameters = null;
-    private ProtocolsIni protocolsIni = null;
     private transient CcfImporter ccfImporter;
     private transient XcfImporter xcfImporter;
     private CmlImporter cmlImporter;
     private CommandFusionImporter commandFusionImporter;
     private CsvRawImporter csvRawImporter;
     private CsvParametrizedImporter csvParametrizedImporter;
-    private RmduImporter rmduImporter;
     private IctImporter ictImporter;
     private transient GirrImporter girrImporter;
     private final LircImporter lircImporter;
@@ -561,8 +559,6 @@ public final class GuiMain extends javax.swing.JFrame {
         SelectFile.restoreFromString(properties.getFileselectordirs());
 
         loadExportFormats(); // must come before initComponents
-
-        loadProtocolsIni();
 
         initComponents();
 
@@ -1070,14 +1066,6 @@ public final class GuiMain extends javax.swing.JFrame {
         return InterpretString.interpretString(str, getFrequency(), properties.getDummyGap(),
                 properties.getInvokeRepeatFinder(), properties.getInvokeCleaner(),
                 properties.getAbsoluteTolerance(), properties.getRelativeTolerance(), properties.getMinRepeatLastGap());
-    }
-
-    private void loadProtocolsIni() throws IOException, java.text.ParseException {
-        protocolsIni = new ProtocolsIni(new File(properties.mkPathAbsolute(properties.getProtocolsIniPath())));
-        if (rmduImporter == null)
-            rmduImporter = new RmduImporter(protocolsIni);
-        else
-            rmduImporter.setProtocolsIni(protocolsIni);
     }
 
     private void clearSignal() {
@@ -2195,10 +2183,6 @@ public final class GuiMain extends javax.swing.JFrame {
         jButton20 = new javax.swing.JButton();
         lircFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, lircImporter);
         importLircHelpButton = new javax.swing.JButton();
-        rmduImportPanel = new javax.swing.JPanel();
-        webRmduButton = new javax.swing.JButton();
-        rmduImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, rmduImporter);
-        importRemoteMasterHelpButton = new javax.swing.JButton();
         irtransImportPanel = new javax.swing.JPanel();
         irTransWebButton = new javax.swing.JButton();
         irTransFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, irTransImporter);
@@ -2402,7 +2386,6 @@ public final class GuiMain extends javax.swing.JFrame {
         importLircMenuItem1 = new javax.swing.JMenuItem();
         importCcfMenuItem1 = new javax.swing.JMenuItem();
         importXcfMenuItem1 = new javax.swing.JMenuItem();
-        importRmduMenuItem1 = new javax.swing.JMenuItem();
         importCmlMenuItem = new javax.swing.JMenuItem();
         importCommandFusionMenuItem = new javax.swing.JMenuItem();
         importRawMenu = new javax.swing.JMenu();
@@ -2411,7 +2394,6 @@ public final class GuiMain extends javax.swing.JFrame {
         importLircMenuItem = new javax.swing.JMenuItem();
         importCcfMenuItem = new javax.swing.JMenuItem();
         importXcfMenuItem = new javax.swing.JMenuItem();
-        importRmduMenuItem = new javax.swing.JMenuItem();
         importCmlMenuItem2 = new javax.swing.JMenuItem();
         importCommandFusionMenuItem2 = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
@@ -4320,55 +4302,6 @@ public final class GuiMain extends javax.swing.JFrame {
         );
 
         importTabbedPane.addTab("LIRC", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-0.png")), lircImportPanel); // NOI18N
-
-        webRmduButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/jp1/favicon-2.png"))); // NOI18N
-        webRmduButton.setText("Web site");
-        webRmduButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                webRmduButtonActionPerformed(evt);
-            }
-        });
-
-        importRemoteMasterHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        importRemoteMasterHelpButton.setText("Help");
-        importRemoteMasterHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                importRemoteMasterHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout rmduImportPanelLayout = new javax.swing.GroupLayout(rmduImportPanel);
-        rmduImportPanel.setLayout(rmduImportPanelLayout);
-        rmduImportPanelLayout.setHorizontalGroup(
-            rmduImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(rmduImportPanelLayout.createSequentialGroup()
-                .addComponent(rmduImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, Short.MAX_VALUE)
-                .addGroup(rmduImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(importRemoteMasterHelpButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(webRmduButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-
-        rmduImportPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {importRemoteMasterHelpButton, webRmduButton});
-
-        rmduImportPanelLayout.setVerticalGroup(
-            rmduImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(rmduImportPanelLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addGroup(rmduImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(rmduImportPanelLayout.createSequentialGroup()
-                        .addGap(56, 56, 56)
-                        .addComponent(webRmduButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 206, Short.MAX_VALUE)
-                        .addComponent(importRemoteMasterHelpButton)
-                        .addContainerGap())
-                    .addComponent(rmduImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-        );
-
-        rmduImportPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {importRemoteMasterHelpButton, webRmduButton});
-
-        importTabbedPane.addTab("RemoteMaster", new javax.swing.ImageIcon(getClass().getResource("/icons/jp1/favicon-2.png")), rmduImportPanel); // NOI18N
 
         irTransWebButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/irtrans/favicon.png"))); // NOI18N
         irTransWebButton.setText("Web site");
@@ -6473,14 +6406,6 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         importParametricMenu.add(importXcfMenuItem1);
 
-        importRmduMenuItem1.setText("RMDU (incomplete)");
-        importRmduMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                importRmduMenuItem1ActionPerformed(evt);
-            }
-        });
-        importParametricMenu.add(importRmduMenuItem1);
-
         importCmlMenuItem.setText("CML");
         importCmlMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -6540,14 +6465,6 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         importRawMenu.add(importXcfMenuItem);
-
-        importRmduMenuItem.setText("RMDU (incomplete)");
-        importRmduMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                importRmduMenuItemActionPerformed(evt);
-            }
-        });
-        importRawMenu.add(importRmduMenuItem);
 
         importCmlMenuItem2.setText("CML");
         importCmlMenuItem2.addActionListener(new java.awt.event.ActionListener() {
@@ -8220,10 +8137,6 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setInvokeRepeatFinder(repeatFinderCheckBoxMenuItem.isSelected());
     }//GEN-LAST:event_repeatFinderCheckBoxMenuItemActionPerformed
 
-    private void importRmduMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importRmduMenuItemActionPerformed
-        importRemoteByFileSelector(rmduImporter, true);
-    }//GEN-LAST:event_importRmduMenuItemActionPerformed
-
     private void setProtocolMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setProtocolMenuItemActionPerformed
         List<Integer> rows = tableUtils.modelLinesSelected(parameterTable);
         if (rows.isEmpty()) {
@@ -8306,14 +8219,6 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_jButton20ActionPerformed
-
-    private void webRmduButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_webRmduButtonActionPerformed
-        try {
-            guiUtils.browse(new URI(RmduImporter.homeUrl));
-        } catch (URISyntaxException ex) {
-            guiUtils.error(ex);
-        }
-    }//GEN-LAST:event_webRmduButtonActionPerformed
 
     private void jumpToLastPanelMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jumpToLastPanelMenuItemActionPerformed
         selectLastPane();
@@ -8531,10 +8436,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private void importXcfMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importXcfMenuItem1ActionPerformed
         importRemoteByFileSelector(xcfImporter, false);
     }//GEN-LAST:event_importXcfMenuItem1ActionPerformed
-
-    private void importRmduMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importRmduMenuItem1ActionPerformed
-        importRemoteByFileSelector(rmduImporter, false);
-    }//GEN-LAST:event_importRmduMenuItem1ActionPerformed
 
     private void openLastExportFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openLastExportFileMenuItemActionPerformed
         try {
@@ -8791,10 +8692,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private void importLircHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importLircHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.importLircHelp);
     }//GEN-LAST:event_importLircHelpButtonActionPerformed
-
-    private void importRemoteMasterHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importRemoteMasterHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.importRemoteMasterHelp);
-    }//GEN-LAST:event_importRemoteMasterHelpButtonActionPerformed
 
     private void importProntoClassicHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importProntoClassicHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.importProntoClassicHelp);
@@ -10094,9 +9991,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton importProntoClassicHelpButton;
     private javax.swing.JButton importProntoProfessionalHelpButton;
     private javax.swing.JMenu importRawMenu;
-    private javax.swing.JButton importRemoteMasterHelpButton;
-    private javax.swing.JMenuItem importRmduMenuItem;
-    private javax.swing.JMenuItem importRmduMenuItem1;
     private javax.swing.JMenuItem importSignalAsGirrMenuItem;
     private javax.swing.JMenuItem importSignalAsGirrMenuItem1;
     private javax.swing.JMenuItem importSignalAsIctMenuItem;
@@ -10344,8 +10238,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem resetPropertiesMenuItem;
     private javax.swing.JMenuItem resetRawTableColumnsMenuItem;
     private javax.swing.JMenuItem resetRawTableColumnsMenuItem1;
-    private javax.swing.JPanel rmduImportPanel;
-    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<RmduImporter> rmduImporterBean;
     private javax.swing.JComboBox<String> sColumnComboBox;
     private javax.swing.JMenu saveCapturedMenu;
     private javax.swing.JMenuItem saveConsoleTextAsMenuItem;
@@ -10423,7 +10315,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel waveExportOptionsPanel;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<WaveImporter> waveFileImporterBean;
     private javax.swing.JPanel waveImportPanel;
-    private javax.swing.JButton webRmduButton;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<XcfImporter> xcfFileImporterBean;
     private javax.swing.JPanel xcfImportPanel;
     // End of variables declaration//GEN-END:variables

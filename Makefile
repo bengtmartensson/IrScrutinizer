@@ -73,9 +73,6 @@ install: $(IRP_TRANSMOGRIFIER_JAR) | $(INSTALLDIR)
 	rm -rf $(INSTALLDIR)/*
 	( cd $(INSTALLDIR); unzip $(TOP)/target/$(MYPROG)-$(VERSION)-bin.zip && ./setup-irscrutinizer.sh )
 
-protocols.ini:
-	curl -o $(TOP)/src/main/config/protocols.ini https://sourceforge.net/p/controlremote/code/HEAD/tree/trunk/km/protocols.ini?format=raw
-
 $(INSTALLDIR):
 	mkdir -p $@
 
@@ -83,4 +80,4 @@ clean:
 	mvn clean
 	rm -rf $(GH_PAGES) pom.xml.versionsBackup
 
-.PHONY: clean protocols.ini
+.PHONY: clean

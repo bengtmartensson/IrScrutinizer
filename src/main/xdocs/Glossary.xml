@@ -657,7 +657,7 @@ see <a href="http://www.hifi-remote.com/wiki/index.php?title=Remote_Master_Manua
 <dd>Configuration file for <a href="#RemoteMaster">RemoteMaster</a>, describing the configuration
 of a (universal) remote for a particular device. Contains parametrized commands, unfortunatelly not
 in the <a href="#IrProtocol">protocol/parameter form</a>, but parametrized by an <a href="#Executor">executor</a>
-and <em>its</em> parameters. In some cases, IrScrutinizer can import these files.
+and <em>its</em> parameters.
 </dd>
 
 <dt id="Scrutinize">scrutinize</dt>

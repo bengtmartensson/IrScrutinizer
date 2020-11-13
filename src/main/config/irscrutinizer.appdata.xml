@@ -15,7 +15,7 @@
             and senders are supported. IR Signals can be imported not only by capturing
             from one of the supported hardware sensors (among others: IrWidget,
             Global Caché, and Arduino), but also from a number of different file formats
-            (among others: LIRC, Wave, Pronto Classic and professional, RMDU (partially)
+            (among others: LIRC, Wave, Pronto Classic and professional,
             and different text based formats; not only from files, but also from the
             clipboard, from URLs, and from file hierarchies), as well as the Internet
             IR Databases by Global Caché and by IRDB.
