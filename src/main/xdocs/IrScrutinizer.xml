@@ -85,7 +85,7 @@ not to hold the author responsible.</warning>
 <section>
 <title>Introduction</title>
 <p>
-IrScrutinizer is a powerful program for capturing, generating, analyzing,
+IrScrutinizer is a powerful program for capturing, rendering, analyzing,
 importing, and
 exporting of infrared (IR) signals. For capturing and sending IR signals
 several different hardware sensors and senders are supported. IR Signals can be
@@ -480,7 +480,7 @@ user parameters.</p>
 <p>
 The main window is composed of seven sub panes denoted
 by "Scrutinize signal" (for processing single signal), "Scrutinize remote" (for
-collecting several signals to one "remote"), "Generate" (generates IR signal
+collecting several signals to one "remote"), "Render" (generates (renders) an IR signal
 from protocol name and parameters), "Import", "Export",
 "Sending Hardware", and "Capturing Hardware"
 respectively. These panels will be discussed in Section <a
@@ -711,7 +711,7 @@ key) enters a test signal, either as parametric signal, or as a raw signal.</p>
 </section>
 </section>
 <section>
-<title>The "Generate" pane</title>
+<title>The "Render" pane</title>
 <p>In the upper part of this pane, an  IR protocol is selected, identified by
 name, and the parameters D ("device", in almost all protocols), S
 ("sub-device", not in all protocols), F ("function", also called
@@ -719,10 +719,10 @@ command number or OBC, present in almost all protocols), as well as T, <a href="
 (in general 0 or 1, only in a few protocols). These number can be entered as
 decimal numbers, or, by prepending "0x", as hexadecimal numbers.</p>
 
-<p>In IrpTransmogrifier and its <a href="IrpTransmogrifier.html">documentation</a>,
-the word "render" is used instead of "generate".</p>
+<p>Earlier versions of this program (including documentation) used the word
+the word "generate" instead of "render".</p>
 
-<p>By pressing "Generate", the signal is computed, and the middle window is
+<p>By pressing "Render", the signal is computed, and the middle window is
 filled with a textual representation, in the form selected by Options -> Output
 Text Format.</p>
 
@@ -958,7 +958,7 @@ console.</p>
 <p>Using the export pane, export files can be generated,  allowing
 other programs to use the computed results. Single signals (from the
 "Scrutinize signal" pane), collections of signals (from the "Scrutinize remote"
-pane), or generated signals can be exported. Exports can be generated in a
+pane), or rendered signals can be exported. Exports can be generated in a
 number of different formats. Some (Girr and text) can contain both
 the Pronto format and the "raw" format (timings in
 microseconds, positive for pulses, negative for gaps), as well as other
@@ -1594,8 +1594,8 @@ stuff that simply works differently, like the export function.</p>
 <p>
 Use "Scrutinize remote" -> Parametric Remote. Fill in the table with signals to
 be tested, either using the pop-up button (right mouse in the table) Advanced ->
-Add missing F's, or from the Generate pane, using suitable parameter
-intervals (see <a href="#The+%22Generate%22+pane">this</a>), and transfer them using the "To parametric remote" button. Then
+Add missing F's, or from the Render pane, using suitable parameter
+intervals (see <a href="#The+%22Render%22+pane">this</a>), and transfer them using the "To parametric remote" button. Then
 test the candidate signals one at a time by transmit-ting them, using suitable
 sending hardware.
 The comment field can be used for note taking.</p>

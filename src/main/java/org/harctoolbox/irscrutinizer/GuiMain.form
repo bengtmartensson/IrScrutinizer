@@ -3071,8 +3071,8 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Generate">
-                    <Property name="tabTitle" type="java.lang.String" value="Generate"/>
+                  <JTabbedPaneConstraints tabName="Render">
+                    <Property name="tabTitle" type="java.lang.String" value="Render"/>
                     <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/gear.png"/>
                     </Property>
@@ -3238,7 +3238,7 @@
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/gear.png"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Generate"/>
+                    <Property name="text" type="java.lang.String" value="Render"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="generateButtonActionPerformed"/>
@@ -6744,8 +6744,8 @@
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/1rightarrow.png"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Transmit generated"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Transmit the signal defined on the &quot;Generate&quot; pane using the selected hardware."/>
+                    <Property name="text" type="java.lang.String" value="Transmit rendered"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Transmit the signal defined on the &quot;Render&quot; pane using the selected hardware."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="transmitGenerateButton2ActionPerformed"/>

@@ -20,7 +20,7 @@ and the projects [JGirs](https://github.com/bengtmartensson/JGirs), [AGirs](http
 HarcHardware is intended to be useful for those use cases.)
 
 ## 1. "Object oriented" GUI with internal sub-frames.
-The current panes "Scrutinize signal", "Scrutinize remote/parameteric", "Scrutinize remote/raw", generate, import,...
+The current panes "Scrutinize signal", "Scrutinize remote/parameteric", "Scrutinize remote/raw", render, import,...
 should instead be sub-panes of a "desktop pane", where they can be individually positioned, resized, minimized, maximized etc.
 Also, there should then be the possibility of instantiating these "subtools" more than once, to the extent it makes sense.
 They should also communicate, so that it can be possible  to right click on a signal in a table or tree,

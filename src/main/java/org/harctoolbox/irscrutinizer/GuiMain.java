@@ -3788,7 +3788,7 @@ public final class GuiMain extends javax.swing.JFrame {
         irpMasterBean.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
         generateButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/gear.png"))); // NOI18N
-        generateButton.setText("Generate");
+        generateButton.setText("Render");
         generateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 generateButtonActionPerformed(evt);
@@ -3873,7 +3873,7 @@ public final class GuiMain extends javax.swing.JFrame {
                         .addContainerGap())))
         );
 
-        topLevelTabbedPane.addTab("Generate", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/gear.png")), generatePanel); // NOI18N
+        topLevelTabbedPane.addTab("Render", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/gear.png")), generatePanel); // NOI18N
 
         gcdbImportButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/reload.png"))); // NOI18N
         gcdbImportButton.setText("Load");
@@ -5855,8 +5855,8 @@ public final class GuiMain extends javax.swing.JFrame {
         });
 
         transmitGenerateButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/1rightarrow.png"))); // NOI18N
-        transmitGenerateButton2.setText("Transmit generated");
-        transmitGenerateButton2.setToolTipText("Transmit the signal defined on the \"Generate\" pane using the selected hardware.");
+        transmitGenerateButton2.setText("Transmit rendered");
+        transmitGenerateButton2.setToolTipText("Transmit the signal defined on the \"Render\" pane using the selected hardware.");
         transmitGenerateButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 transmitGenerateButton2ActionPerformed(evt);

@@ -7,6 +7,11 @@ The gaps in release number sequence are due to keeping version numbers
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
+Version 2.3.1, released 202x-yy-zz.
+
+* Say "Render" instead of "Generate". #402.
+
+==============================================================================
 Version 2.3.0, released 2020-09-25.
 
 * Use NRJavaSerial instead of RXTX, through HardHardware 2.3.0.
