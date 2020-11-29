@@ -18,6 +18,8 @@
 package org.harctoolbox.irscrutinizer;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.harctoolbox.analyze.Cleaner;
 import org.harctoolbox.analyze.CleanerParser;
 import org.harctoolbox.analyze.RepeatFinder;
@@ -31,6 +33,8 @@ import org.harctoolbox.ircore.MultiParser;
 import org.harctoolbox.irp.ShortProntoParser;
 
 public class InterpretString {
+
+    private final static Logger logger = Logger.getLogger(InterpretString.class.getName());
 
     /**
      * If invokeRepeatFinder is true, tries to identify intro, repeat, and
@@ -62,16 +66,22 @@ public class InterpretString {
         List<IrSignalParser> parsers = MultiParser.ircoreParsersList(line);
         parsers.add(0, new GlobalCacheParser(line));
         parsers.add(1, new ShortProntoParser(line));
-        if (invokeRepeatFinder) {
-            RepeatFinderParser parser = new RepeatFinderParser(parsers, line, absoluteTolerance, relativeTolerance, minRepeatLastGap);
-            return invokeCleaner ? parser.toIrSignalClean(fallbackFrequency, dummyGap) : parser.toIrSignal(fallbackFrequency, dummyGap);
-        } else if (invokeCleaner) {
-            CleanerParser parser = new CleanerParser(parsers, line, absoluteTolerance, relativeTolerance);
-            return parser.toIrSignal(fallbackFrequency, dummyGap);
-        } else {
-            MultiParser parser = new MultiParser(parsers, line);
-            return parser.toIrSignal(fallbackFrequency, dummyGap);
+
+        // If it goes wrong with InvalidArgumentException, try again without repeat finder and cleaner.
+        try {
+            if (invokeRepeatFinder) {
+                RepeatFinderParser parser = new RepeatFinderParser(parsers, line, absoluteTolerance, relativeTolerance, minRepeatLastGap);
+                return invokeCleaner ? parser.toIrSignalClean(fallbackFrequency, dummyGap) : parser.toIrSignal(fallbackFrequency, dummyGap);
+            } else if (invokeCleaner) {
+                CleanerParser parser = new CleanerParser(parsers, line, absoluteTolerance, relativeTolerance);
+                return parser.toIrSignal(fallbackFrequency, dummyGap);
+            }
+        } catch (InvalidArgumentException ex) {
+            logger.log(Level.WARNING, "{0}", ex.getMessage());
         }
+
+        MultiParser parser = new MultiParser(parsers, line);
+        return parser.toIrSignal(fallbackFrequency, dummyGap);
     }
 
     private InterpretString() {
