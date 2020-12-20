@@ -186,7 +186,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
     }
 
     private void setParameter(String name, Object object) {
-        setParameter(name, object != null ? (Integer) object : IrCoreUtils.INVALID);
+        setParameter(name, object != null ? (Long) object : IrCoreUtils.INVALID);
     }
 
     public final void setParameter(String name, long value) {
