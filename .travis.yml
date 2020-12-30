@@ -15,9 +15,9 @@ before_install:
 - sudo apt-get install -y --force-yes autoconf dos2unix icoutils xsltproc genisoimage
 
 install:
-#- ./common/scripts/build-harctoolbox-project.sh IrpTransmogrifier
-#- ./common/scripts/build-harctoolbox-project.sh Girr
-#- ./common/scripts/build-harctoolbox-project.sh Jirc
+- ./common/scripts/build-harctoolbox-project.sh IrpTransmogrifier
+- ./common/scripts/build-harctoolbox-project.sh Girr
+- ./common/scripts/build-harctoolbox-project.sh Jirc
 #- ./common/scripts/build-harctoolbox-project.sh DevSlashLirc
 - ./common/scripts/build-harctoolbox-project.sh HarcHardware
 - ./common/scripts/build-tonto.sh -n
