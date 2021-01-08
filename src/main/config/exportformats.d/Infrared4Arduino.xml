@@ -50,6 +50,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <xsl:apply-templates select="//girr:remote[1][//girr:parameters/@protocol='nec1']" mode="includeNec1"/>
 <xsl:apply-templates select="//girr:remote[1][//girr:parameters/@protocol='rc5']" mode="includeRc5"/>
 <xsl:text>
+// Warnings on functions defined but not used are not really useful in
+// generated code, disable them.
+#pragma GCC diagnostic ignored "-Wunused-function"
+
 // Constants
 static const long BAUD = 115200UL; // Change if desired
 
