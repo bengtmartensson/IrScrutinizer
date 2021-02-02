@@ -185,8 +185,11 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         return val != null ? val : IrCoreUtils.INVALID;
     }
 
-    private void setParameter(String name, Object object) {
-        setParameter(name, object != null ? (Long) object : IrCoreUtils.INVALID);
+    private void setParameter(String name, Object object) throws NumberFormatException {
+        long value = object == null ? IrCoreUtils.INVALID
+                : object instanceof String ? Long.parseLong(object.toString())
+                : (Long) object;
+        setParameter(name, value);
     }
 
     public final void setParameter(String name, long value) {

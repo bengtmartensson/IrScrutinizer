@@ -7731,7 +7731,14 @@ public final class GuiMain extends javax.swing.JFrame {
                     : clazz == Boolean.class ? Boolean.parseBoolean(str)
                     : str;
 
-            tableModel.setValueAt(thing, r, c);
+            Object oldValue = tableModel.getValueAt(r, c);
+            try {
+                tableModel.setValueAt(thing, r, c);
+            } catch (NumberFormatException ex) {
+                // Tried to set something numeric to something non-numeric
+                guiUtils.error("Value has to be an integer!");
+                tableModel.setValueAt(oldValue, r, c);
+            }
             table.repaint();
         }
     }//GEN-LAST:event_editingTextFieldActionPerformed
