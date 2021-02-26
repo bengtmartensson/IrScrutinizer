@@ -8,16 +8,19 @@
 # When changing this file, or updating the programs, it may be a good idea to
 # delete the property file, normally ~/.config/IrScrutinizer/properties.xml.
 
+if [ "$1" = "-s" -o "$1" = "--scale" ] ; then
+    SCALE_FACTOR=$2
+    shift 2
+fi
+
 # Set to the preferred Java VM, with or without directory.
-#JAVA=/opt/jdk1.7.0_65/bin/java
 JAVA=${JAVA:-java}
 
-# Uncomment and/or modify for Hight DPI usage
-#JVM_ARGS=-Dsun.java2d.uiScale=2
+# Modify for Hight DPI usage.
+# Not all JVMs recognize this; some only accept integer arguments.
+JVM_ARGS=-Dsun.java2d.uiScale=${SCALE_FACTOR:-1}
 
 # Where the programs are installed, adjust if required
-#IRSCRUTINIZERHOME=/usr/local/irscrutinizer
-#IRSCRUTINIZERHOME="$( dirname "${BASH_SOURCE[0]}" )"
 export IRSCRUTINIZERHOME="$(dirname -- "$(readlink -f -- "${0}")" )"
 FATJAT=${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar
 
@@ -33,39 +36,13 @@ checkgroup()
 # If called using the name irptransmogrifier, invoke that "program".
 # Recall: exec does not return.
 if [ $(basename "$0" ) = "irptransmogrifier" ] ; then
-    exec "${JAVA}" -classpath "${FATJAT}" org.harctoolbox.irp.IrpTransmogrifier "$@"
+    exec "${JAVA}" ${JVM_ARGS} -classpath "${FATJAT}" org.harctoolbox.irp.IrpTransmogrifier "$@"
 fi
 
 # If called using a name of one of the tools, invoke that "program".
 if [ $(basename "$0" ) != "irscrutinizer" -a $(basename "$0" ) != "harchardware" ] ; then
-    exec "${JAVA}" -classpath "${FATJAT}" org.harctoolbox.guicomponents.$(basename "$0") "$@"
+    exec "${JAVA}" ${JVM_ARGS} -classpath "${FATJAT}" org.harctoolbox.guicomponents.$(basename "$0") "$@"
 fi
-
-# Path to DecodeIR and RXTX
-# If the code below does not work, just set LIBRARY_PATH to the directory
-# containing the shared lib to use, like in the commented-out example lines.
-#if [ `uname -m` = "armv6l" ] ; then
-#    ARCH=arml
-#elif [ `uname -m` = "x86_64" ] ; then
-#    ARCH=amd64
-#else
-#    ARCH=i386
-#fi
-
-# Use a system supplied librxtxSerial.so if present.
-# Fedora: dnf install rxtx (presently broken: https://bugzilla.redhat.com/show_bug.cgi?id=1645856 )
-# Ubunto >= 16: apt-get install librxtx-java
-#if [ -f /usr/lib64/rxtx/librxtxSerial.so ] ; then
-#    LOAD_RXTX_PATH=-Djava.library.path=/usr/local/lib:/usr/lib64/rxtx
-#fi
-#if [ -f /usr/lib/rxtx/librxtxSerial.so ] ; then
-#    LOAD_RXTX_PATH=-Djava.library.path=/usr/local/lib:/usr/lib/rxtx
-#fi
-#LIBRARY_PATH=${RXTXLIB_PATH}${IRSCRUTINIZERHOME}/`uname -s`-${ARCH}
-#LIBRARY_PATH=/usr/lib64/rxtx
-
-# Use if you need /dev/ttyACM* (IrToy, many Arduino types) and your rxtx does not support it
-#RXTX_SERIAL_PORTS=-Dgnu.io.rxtx.SerialPorts=/dev/ttyS0:/dev/ttyUSB0:/dev/ttyUSB1:/dev/ttyACM0:/dev/ttyACM1
 
 # Check that the use is a member of some groups ...
 checkgroup dialout
@@ -85,8 +62,7 @@ if [ "x${MESSAGE}" != "x" ] ; then
 fi
 
 if [ $(basename "$0" ) = "harchardware" ] ; then
-    exec "${JAVA}" -classpath "${FATJAT}" org.harctoolbox.harchardware.Main --apphome "${IRSCRUTINIZERHOME}" "$@"
+    exec "${JAVA}" ${JVM_ARGS} -classpath "${FATJAT}" org.harctoolbox.harchardware.Main --apphome "${IRSCRUTINIZERHOME}" "$@"
 fi
 
-#exec "${JAVA}" ${LOAD_RXTX_PATH} ${RXTX_SERIAL_PORTS} -jar "${FATJAT}" --apphome "${IRSCRUTINIZERHOME}" "$@"
 exec "${JAVA}" ${JVM_ARGS} -jar "${FATJAT}" --apphome "${IRSCRUTINIZERHOME}" "$@"
