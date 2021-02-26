@@ -71,7 +71,7 @@ upload-harctoolbox:
 # Only for Unix-like systems
 install: $(IRP_TRANSMOGRIFIER_JAR) | $(INSTALLDIR)
 	rm -rf $(INSTALLDIR)/*
-	( cd $(INSTALLDIR); unzip $(TOP)/target/$(MYPROG)-$(VERSION)-bin.zip && ./setup-irscrutinizer.sh )
+	( cd $(INSTALLDIR); unzip -q $(TOP)/target/$(MYPROG)-$(VERSION)-bin.zip && ./setup-irscrutinizer.sh )
 
 $(INSTALLDIR):
 	mkdir -p $@

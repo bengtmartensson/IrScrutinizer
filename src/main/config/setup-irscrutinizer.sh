@@ -8,9 +8,6 @@
 # It should be run with the rights required to write
 # at the desired places. I.e. root a priori not necessary.
 
-# Just for this file, do not affect installed wrappers.
-JAVA=java
-
 mklink()
 {
     if [ $(readlink -f -- "${PREFIX}/bin/$1") != "${IRSCRUTINIZERHOME}/${MYPROG_LOWER}.sh" ] ; then
@@ -45,37 +42,6 @@ mklink harchardware
 mklink AmxBeaconListenerPanel
 mklink HexCalculator
 mklink TimeFrequencyCalculator
-
-# Is it a good idea to install documentation and schemas as the commented-out
-# code once did? If anybody thinks so, please let me know!
-
-# Install documentation
-#install -d ${PREFIX}/share/doc/${MYPROG_LOWER}
-#install --mode=444 doc/* ${PREFIX}/share/doc/${MYPROG_LOWER}
-#ln -sf ../doc/${MYPROG_LOWER} ${IRSCRUTINIZERHOME}/doc
-
-# Install schemas
-#install -d ${PREFIX}/share/xml/harctoolbox
-#install --mode=444 ../schemas/*.xsd ${PREFIX}/share/xml/harctoolbox
-#ln -sf ../xml/harctoolbox ${IRSCRUTINIZERHOME}/schemas
-
-## Find best librxtxSerial.so, and make librxtxSerial.so a link to it.
-## SUDO_USER is, if using sudo to run, the name of the invoking user (real uid).
-#if [ "$(arch)" = "x86_64" ] ; then
-#    cd ${IRSCRUTINIZERHOME}/Linux-amd64
-#    for solib in librxtxSerial-var-lock.so librxtxSerial-var-lock-lockdev.so ; do
-#        if [ x${SUDO_USER}y != "xy" ] ; then
-#            su -c "${JAVA} -cp ${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar org.harctoolbox.harchardware.comm.TestRxtx ${solib} 2>&1 | grep 'No permission to create lock file.' >/dev/null"  ${SUDO_USER}
-#        else
-#            ${JAVA} -cp ${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar org.harctoolbox.harchardware.comm.TestRxtx ${solib} 2>&1 | grep 'No permission to create lock file.' >/dev/null
-#        fi
-#	if [ $? -ne 0 ] ; then
-#	    ln -sf ${solib} librxtxSerial.so
-#	    echo Made librxtxSerial.so link to ${solib}
-#	    break
-#	fi
-#    done
-#fi
 
 # Install desktop file
 install -d ${PREFIX}/share/applications
