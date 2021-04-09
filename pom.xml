@@ -118,6 +118,7 @@
                                     <executable>${basedir}/tools/mkappimage.sh</executable>
                                     <workingDirectory>${basedir}</workingDirectory>
                                     <arguments>
+                                        <!--argument>-v</argument-->
                                         <argument>${project.name}</argument>
                                         <argument>${project.version}</argument>
                                         <argument>${bundledjdk.linux}</argument>

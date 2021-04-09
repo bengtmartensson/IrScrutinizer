@@ -4,13 +4,19 @@
 # Should be called from the IrScrutinizer top directory.
 
 if [ $# -lt 2 ] ; then
-    echo -e "Usage:\n$0 <appname> <version> [<JDK-file>]" >&2
+    echo -e "Usage:\n$0 [-v] <appname> <version> [<JDK-file>]" >&2
     exit 1
 fi
 
 if [ "`uname -m`" != "x86_64" ] ; then
     echo "Presently, AppImages can only be built on x86_64, quitting." >&2
     exit 1
+fi
+
+if [ "$1" = "-v" ] ; then
+    echo Command line: $0 "$@"
+    VERBOSE="-v"
+    shift
 fi
 
 APPNAME=$1
@@ -143,4 +149,8 @@ ln -s ${MYPROG_LOWER} ${USR_BIN}/irptransmogrifier
 # but this is handled gracefully, so no need to handle special cases.
 
 ARCH=x86_64; export ARCH
-tools/appimagetool-x86_64.AppImage --sign --no-appstream ${APPDIR} ${APPIMAGE} > /dev/null
+if [ -n "${VERBOSE}" ] ; then
+    tools/appimagetool-x86_64.AppImage -v --sign --no-appstream ${APPDIR} ${APPIMAGE}
+else
+    tools/appimagetool-x86_64.AppImage --sign --no-appstream ${APPDIR} ${APPIMAGE} > /dev/null
+fi
