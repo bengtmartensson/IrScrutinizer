@@ -8036,6 +8036,8 @@ public final class GuiMain extends javax.swing.JFrame {
                 irdbImportButton.setEnabled(true);
                 irdbImportAllButton.setEnabled(true);
             }
+        } catch (com.eclipsesource.json.ParseException ex) {
+            guiUtils.error("Unparsable response from irdb.tk");
         } catch (IOException ex) {
             guiUtils.error(ex);
         } finally {
