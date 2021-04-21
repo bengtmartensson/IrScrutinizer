@@ -8189,7 +8189,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void girrWebSiteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_girrWebSiteButtonActionPerformed
         try {
-            guiUtils.browse(new URI(org.harctoolbox.girr.XmlExporter.GIRR_HOMEPAGE));
+            guiUtils.browse(new URI(org.harctoolbox.girr.XmlStatic.GIRR_HOMEPAGE));
         } catch (URISyntaxException ex) {
             guiUtils.error(ex);
         }
