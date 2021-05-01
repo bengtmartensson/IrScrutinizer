@@ -54,7 +54,11 @@ if [ "x${MESSAGE}" != "x" ] ; then
      # Remove last , of $MESSAGE
     MESSAGE=$(echo ${MESSAGE} | sed -e "s/,$//")
     MESSAGEPRE="You are not a member of the group(s) "
-    MESSAGETAIL=", so you will probably not have access to some devices.\nYou probably want to correct this. Otherwise, functionality will be limited.\n\nDepending on your operating system, the command for fixing this may be \"sudo usermod -aG $MESSAGE $USER\".\n\nProceed anyhow?"
+    MESSAGETAIL=", so you will probably not have access to some devices.\n"
+    MESSAGETAIL+="You probably want to correct this. Otherwise, functionality will be limited.\n\n"
+    MESSAGETAIL+="Depending on your operating system, the command for fixing this is typically \"sudo usermod -aG $MESSAGE $USER\",\n"
+    MESSAGETAIL+="after which you should logout and login again.\n\n"
+    MESSAGETAIL+="Proceed anyhow?"
     if ! "${JAVA}" ${JVM_ARGS} -classpath "${FATJAT}" \
         org.harctoolbox.guicomponents.StandalonePopupAnnoyer "${MESSAGEPRE}${MESSAGE}${MESSAGETAIL}" "$@" ; then
         exit 1
