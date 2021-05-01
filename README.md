@@ -47,8 +47,9 @@ Coding guidelines are found [here](CONTRIBUTING.md).
 
 ## Support
 
-No official support forum exists. Therefore, support questions (not just suggestions and bug reports)
-posted as [isssues](https://github.com/bengtmartensson/IrScrutinizer/issues) are welcome.
+Support is offered in the [Discussions](https://github.com/bengtmartensson/IrScrutinizer/discussions).
+Bug reports and suggestions can be 
+posted as [isssues](https://github.com/bengtmartensson/IrScrutinizer/issues).
 
 I also participate in the [JP1 forum](http://www.hifi-remote.com/forums/), see e.g.
 [this thread](http://www.hifi-remote.com/forums/viewtopic.php?t=14986)) and
