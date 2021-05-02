@@ -507,6 +507,12 @@ public final class IrpRenderBean extends javax.swing.JPanel {
 
     private void protocolDocuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolDocuButtonActionPerformed
         try {
+            DocumentFragment fragment = irpDatabase.getHtmlDocumentation(protocolName);
+            if (fragment == null) {
+                guiUtils.error("No documentation available for the current protcol.");
+                return;
+            }
+
             Document doc = XmlUtils.newDocument();
             Element root = doc.createElement("html");
             doc.appendChild(root);
@@ -519,7 +525,6 @@ public final class IrpRenderBean extends javax.swing.JPanel {
             Element div = doc.createElement("div");
             div.setAttribute("class", "documentation");
             body.appendChild(div);
-            DocumentFragment fragment = irpDatabase.getHtmlDocumentation(protocolName);
             div.appendChild(doc.importNode(fragment, true));
             HelpPopup.newHelpPopup(frame, doc, protocolName);
         } catch (UnknownProtocolException ex) {
