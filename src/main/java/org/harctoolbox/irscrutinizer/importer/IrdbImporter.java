@@ -20,6 +20,7 @@ package org.harctoolbox.irscrutinizer.importer;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,16 +47,18 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
 
     private final static String irdbOriginName = "IRDB";
 
+    private static ArrayList<String> dbIndex;
     private static ArrayList<String> manufacturers;
 
-    private final static String irdbHost = "irdb.tk";
-    private final static String urlFormat = "/api/code/?brand=%s&page=%d";
-    private final static String urlFormatBrands = "/api/brand/?page=%d";
+    private final static String irdbCdnProto = "https";
+    private final static String irdbCdnHost = "cdn.jsdelivr.net";
+    private final static String irdbCdnFormat = "/gh/probonopd/irdb@master/codes/%s";
+
     private static Proxy proxy = Proxy.NO_PROXY;
 
     public static URI getHomeUri() {
         try {
-            return new URI("http", irdbHost, null, null);
+            return new URI("https://github.com/probonopd/irdb");
         } catch (URISyntaxException ex) {
             return null;
         }
@@ -73,32 +76,34 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         return manufacturers.toArray(new String[manufacturers.size()]);
     }
 
-    private static JsonObject getJsonObject(String urlString, boolean verbose) throws IOException {
-        URL url = urlString.contains("//") ? new URL(urlString) : new URL("http", irdbHost, urlString);
-        if (verbose)
-            System.err.print("Accessing " + url.toString() + " using proxy " + proxy + "...");
-        URLConnection urlConnection = url.openConnection(proxy);
+    private static ArrayList<String> getLines(String urlString, boolean verbose) throws IOException {
+        ArrayList<String> lines = new ArrayList<>();
+        URL index = urlString.contains("//") ? new URL(urlString) : new URL(irdbCdnProto, irdbCdnHost, urlString);
+        URLConnection urlConnection = index.openConnection(proxy);
         InputStream stream = urlConnection.getInputStream();
-        return JsonObject.readFrom(new InputStreamReader(stream, Charset.forName("US-ASCII")));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream, Charset.forName("US-ASCII")));
+
+        String line = reader.readLine();
+        while (line != null) {
+            lines.add(line);
+            line = reader.readLine();
+        }
+        return lines;
+    }
+
+    private static void setupDbIndex(boolean verbose) throws IOException {
+        dbIndex = getLines(String.format(irdbCdnFormat, "index"), verbose);
     }
 
     private static void setupManufacturers(boolean verbose) throws IOException {
+        if (dbIndex == null)
+            setupDbIndex(verbose);
         ArrayList<String> newManufacturers = new ArrayList<>(1024);
-        String path = String.format(urlFormatBrands, 1);
-        for (int index = 1; index <= 100 && !path.isEmpty(); index++) {
-            JsonObject o = getJsonObject(path, verbose);
-            JsonValue meta = o.get("meta");
-            JsonObject metaObject = meta.asObject();
-            path = metaObject.get("next").asString();
-            if (verbose)
-                System.err.println("Read page " + metaObject.get("page").asInt());
-            JsonArray objects = o.get("objects").asArray();
-            for (JsonValue val : objects) {
-                JsonObject obj = val.asObject();
-                String brand = obj.get("brand").asString();
-                if (!newManufacturers.contains(brand))
-                    newManufacturers.add(brand);
-            }
+
+        for (String line: dbIndex) {
+            String brand = line.substring(0, line.indexOf('/'));
+            if (!newManufacturers.contains(brand))
+                newManufacturers.add(brand);
         }
         manufacturers = newManufacturers;
     }
@@ -144,31 +149,56 @@ public class IrdbImporter extends DatabaseImporter implements IRemoteSetImporter
         super(irdbOriginName);
         this.manufacturer = manufacturer;
         deviceTypes = new LinkedHashMap<>(16);
-        String path = String.format(urlFormat, URLEncoder.encode(manufacturer, "utf-8"), 1);
-        for (int index = 1; index <= 100 && !path.isEmpty(); index++) {
-            JsonObject o = getJsonObject(path, verbose);
-            JsonValue meta = o.get("meta");
-            JsonObject metaObject = meta.asObject();
-            path = metaObject.get("next").asString();
-            if (verbose)
-                System.err.println("Read page " + metaObject.get("page").asInt());
-            JsonArray objects = o.get("objects").asArray();
-            for (JsonValue val : objects) {
-                JsonObject obj = val.asObject();
-                String deviceType = obj.get("devicetype").asString();
-                if (!deviceTypes.containsKey(deviceType))
-                    deviceTypes.put(deviceType, new LinkedHashMap<>(8));
-                Map<ProtocolDeviceSubdevice, Map<String, Long>> devCollection = deviceTypes.get(deviceType);
-                ProtocolDeviceSubdevice pds = new ProtocolDeviceSubdevice(obj);
-                if (pds.getProtocol() == null) {
-                    System.err.println("Null protocol ignored");
+        for (String path : dbIndex) {
+            if (!path.startsWith(manufacturer))
+                continue;
+            String deviceType = path.substring(1 + path.indexOf("/"), path.lastIndexOf("/"));
+            if (!deviceTypes.containsKey(deviceType))
+                deviceTypes.put(deviceType, new LinkedHashMap<>(8));
+            Map<ProtocolDeviceSubdevice, Map<String, Long>> devCollection = deviceTypes.get(deviceType);
+            ArrayList<String> deviceData = getLines(String.format(irdbCdnFormat, path), verbose);
+            // deviceData is csv, header: functionname,protocol,device,subdevice,function
+            // In a given file, the protocol, device, and subdevice appear to be constant.
+
+            ProtocolDeviceSubdevice pds = null;
+            Map<String, Long> cmnds = null;
+            for (String entry : deviceData) {
+                if (entry.equals("functionname,protocol,device,subdevice,function"))
+                    continue;   // header row
+                String[] elts = entry.split(",");
+                if (elts.length != 5) {
+                    if (entry.startsWith("\"")) {
+                        // Special parsing in case the function name is quoted because it contains a comma.
+                        // Protocol is unlikely to contain a comma, and the rest are numbers,
+                        // so we'll just handle the function name here.
+                        int endOfFunctionName = entry.lastIndexOf("\",");
+                        String[] new_rest = entry.substring(endOfFunctionName + 2).split(",");
+                        if (new_rest.length == 4) {
+                            elts = new String[5];
+                            elts[0] = entry.substring(1, endOfFunctionName);
+                            int i = 1;
+                            for (String elt : new_rest) {
+                                elts[i++] = elt;
+                            }
+                        }
+                    }
+                }
+                if (elts.length != 5) {
+                    System.err.println("Could not parse line \"" + entry + "\" from file \"" + path + "\".");
                     continue;
                 }
-                if (!devCollection.containsKey(pds))
-                    devCollection.put(pds, new LinkedHashMap<>(8));
-                Map<String, Long> cmnds = devCollection.get(pds);
-                long function = parseLong(obj.get("function").asString()); // barfs for illegal
-                String functionName = obj.get("functionname").asString();
+                if (pds == null) {
+                    String protocol = elts[1];
+                    long device = Long.parseLong(elts[2]);
+                    long subdevice = Long.parseLong(elts[3]);
+                    pds = new ProtocolDeviceSubdevice(protocol, device, subdevice);
+                    if (!devCollection.containsKey(pds))
+                        devCollection.put(pds, new LinkedHashMap<>(8));
+                }
+                if (cmnds == null)
+                    cmnds = devCollection.get(pds);
+                long function = Long.parseLong(elts[4]);
+                String functionName = elts[0];
                 if (cmnds.containsKey(functionName))
                     System.err.println("functionname " + functionName + " more than once present, overwriting");
                 cmnds.put(functionName, function);
