@@ -63,7 +63,7 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
         for (Command.CommandTextFormat formatter : extraFormats)
             remoteSet.addFormat(formatter, count);
         Document document = remoteSet.toDocument(title, girrStyleSheetType, girrStyleSheetUrl, fatRaw, createSchemaLocation,
-                generateRaw, generateCcf, generateParameters);
+                generateParameters, generateCcf, generateRaw);
         XmlUtils.printDOM(file, document, charsetName, null);
         //(new XmlExporter(document)).printDOM(file, charsetName);
     }
