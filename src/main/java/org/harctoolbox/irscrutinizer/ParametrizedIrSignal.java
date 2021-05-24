@@ -87,11 +87,8 @@ public class ParametrizedIrSignal extends NamedIrSignal {
     public ParametrizedIrSignal(Command command) throws IrpException, IrCoreException {
         super(command.getName(), command.getComment());
         this.protocolName = command.getProtocolName();
-        if (protocolName == null)
-            throw new IrpException("Command \"" + command.getName() + "\" is not decodeable");
-        this.parameters = command.getParameters();
-        if (parameters == null)
-            parameters = new HashMap<>(3);
+        Map<String, Long> commandParams = command.getParameters();
+        this.parameters = commandParams != null ? new HashMap<>(commandParams) : new HashMap<>(3);
     }
 
     public ParametrizedIrSignal(String protocolName, Map<String, Long>parameters, String name, String comment) {
@@ -416,7 +413,7 @@ public class ParametrizedIrSignal extends NamedIrSignal {
                 return;
 
             rows.forEach((row) -> {
-                setValueAt(value != IrCoreUtils.INVALID ? (int) value : null, row, colPos);
+                setValueAt(value != IrCoreUtils.INVALID ? value : null, row, colPos);
             });
             fireTableDataChanged();
         }
