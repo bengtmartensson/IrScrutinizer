@@ -33,7 +33,6 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     private String girrStyleSheetType;
     private String girrStyleSheetUrl;
     private boolean fatRaw;
-    private boolean createSchemaLocation;
     private boolean generateRaw;
     private boolean generateCcf;
     private boolean generateParameters;
@@ -44,14 +43,13 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     }
 
     public GirrExporter(String creatingUser, String girrStyleSheetType, String girrStyleSheetUrl,
-            boolean fatRaw, boolean createSchemaLocation,
+            boolean fatRaw,
             boolean generateRaw, boolean generateCcf,
             boolean generateParameters, Command.CommandTextFormat... extraFormats) {
         super(creatingUser);
         this.girrStyleSheetType = girrStyleSheetType;
         this.girrStyleSheetUrl = girrStyleSheetUrl;
         this.fatRaw = fatRaw;
-        this.createSchemaLocation = createSchemaLocation;
         this.generateRaw = generateRaw;
         this.generateCcf = generateCcf;
         this.generateParameters = generateParameters;
@@ -62,7 +60,7 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws IOException, TransformerException {
         for (Command.CommandTextFormat formatter : extraFormats)
             remoteSet.addFormat(formatter, count);
-        Document document = remoteSet.toDocument(title, girrStyleSheetType, girrStyleSheetUrl, fatRaw, createSchemaLocation,
+        Document document = remoteSet.toDocument(title, girrStyleSheetType, girrStyleSheetUrl, fatRaw,
                 generateParameters, generateCcf, generateRaw);
         XmlUtils.printDOM(file, document, charsetName, null);
         //(new XmlExporter(document)).printDOM(file, charsetName);

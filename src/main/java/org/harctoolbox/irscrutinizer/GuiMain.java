@@ -1001,7 +1001,6 @@ public final class GuiMain extends javax.swing.JFrame {
                 properties.getGirrStyleSheetType(),
                 properties.getGirrStyleSheetUrl(),
                 properties.getGirrFatRaw(),
-                properties.getGirrCreateSchemaLocation(),
                 properties.getExportGenerateRaw(),
                 properties.getExportGenerateCcf(),
                 properties.getExportGenerateParameters(),
@@ -2265,7 +2264,6 @@ public final class GuiMain extends javax.swing.JFrame {
         girrExportOptionsPanel = new javax.swing.JPanel();
         girrStylesheetUrlTextField = new javax.swing.JTextField();
         jLabel28 = new javax.swing.JLabel();
-        girrSchemaLinkCheckBox = new javax.swing.JCheckBox();
         girrFatRawCheckBox = new javax.swing.JCheckBox();
         girrStylesheetTypeComboBox = new javax.swing.JComboBox<>();
         jLabel33 = new javax.swing.JLabel();
@@ -4590,7 +4588,7 @@ public final class GuiMain extends javax.swing.JFrame {
                         .addComponent(csvRawSeparatorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(csvRawImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(csvRawImportPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 233, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(importTextRawHelpButton)
                         .addGap(12, 12, 12))
                     .addGroup(csvRawImportPanelLayout.createSequentialGroup()
@@ -5056,14 +5054,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
         jLabel28.setText("Stylesheet URL");
 
-        girrSchemaLinkCheckBox.setSelected(properties.getGirrCreateSchemaLocation());
-        girrSchemaLinkCheckBox.setText("Schema link");
-        girrSchemaLinkCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                girrSchemaLinkCheckBoxActionPerformed(evt);
-            }
-        });
-
         girrFatRawCheckBox.setSelected(properties.getGirrFatRaw());
         girrFatRawCheckBox.setText("Fat form raw");
         girrFatRawCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -5101,13 +5091,11 @@ public final class GuiMain extends javax.swing.JFrame {
                         .addComponent(jLabel28)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(girrStylesheetUrlTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 342, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 363, Short.MAX_VALUE)
                         .addComponent(jLabel33)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(girrStylesheetTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(girrExportOptionsPanelLayout.createSequentialGroup()
-                        .addComponent(girrSchemaLinkCheckBox)
-                        .addGap(132, 132, 132)
                         .addComponent(girrFatRawCheckBox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(exportGirrHelpButton)))
@@ -5125,13 +5113,11 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addGroup(girrExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(girrExportOptionsPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(girrExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(girrSchemaLinkCheckBox)
-                            .addComponent(girrFatRawCheckBox)))
+                        .addComponent(girrFatRawCheckBox))
                     .addGroup(girrExportOptionsPanelLayout.createSequentialGroup()
                         .addGap(14, 14, 14)
                         .addComponent(exportGirrHelpButton)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(63, Short.MAX_VALUE))
         );
 
         exportSpecificOptionsTabbedPane.addTab("Girr", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/translate.png")), girrExportOptionsPanel); // NOI18N
@@ -6049,7 +6035,7 @@ public final class GuiMain extends javax.swing.JFrame {
                         .addGroup(captureLircMode2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(startMode2Button)
                             .addComponent(stopMode2Button))
-                        .addContainerGap(35, Short.MAX_VALUE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         capturingHardwareTabbedPane.addTab("LIRC Mode 2", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), captureLircMode2Panel, ""); // NOI18N
@@ -6512,7 +6498,7 @@ public final class GuiMain extends javax.swing.JFrame {
         fileMenu.add(resetPropertiesMenuItem);
         fileMenu.add(jSeparator6);
 
-        exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         exitMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/stop.png"))); // NOI18N
         exitMenuItem.setMnemonic('X');
         exitMenuItem.setText("Exit");
@@ -6614,7 +6600,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         actionsMenu.add(reAnalyzeMenuItem);
 
-        undoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
+        undoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         undoMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/undo.png"))); // NOI18N
         undoMenuItem.setMnemonic('U');
         undoMenuItem.setText("Undo Scrutinize Data");
@@ -6685,7 +6671,7 @@ public final class GuiMain extends javax.swing.JFrame {
         actionsMenu.add(openLastExportFileMenuItem);
         actionsMenu.add(jSeparator21);
 
-        jumpToLastPanelMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_LEFT, java.awt.event.InputEvent.ALT_MASK));
+        jumpToLastPanelMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_LEFT, java.awt.event.InputEvent.ALT_DOWN_MASK));
         jumpToLastPanelMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/previous.png"))); // NOI18N
         jumpToLastPanelMenuItem.setText("Jump to last panel");
         jumpToLastPanelMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -6705,7 +6691,7 @@ public final class GuiMain extends javax.swing.JFrame {
         outputFormatMenu.setText("Output Text Format");
         outputFormatMenu.setToolTipText("The text format for writing IR signals in the data window.");
 
-        ccfRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_MASK));
+        ccfRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_DOWN_MASK));
         ccfRadioButtonMenuItem.setSelected(true);
         ccfRadioButtonMenuItem.setText("Pronto Hex");
         ccfRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -6715,7 +6701,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         outputFormatMenu.add(ccfRadioButtonMenuItem);
 
-        rawRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
+        rawRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_DOWN_MASK));
         rawRadioButtonMenuItem.setText("Raw (with signs)");
         rawRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -6724,7 +6710,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         outputFormatMenu.add(rawRadioButtonMenuItem);
 
-        rawWithoutSignsRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.SHIFT_MASK));
+        rawWithoutSignsRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_DOWN_MASK | java.awt.event.InputEvent.SHIFT_DOWN_MASK));
         rawWithoutSignsRadioButtonMenuItem.setText("Raw (without signs)");
         rawWithoutSignsRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -7440,7 +7426,7 @@ public final class GuiMain extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(topLevelSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE)
+            .addComponent(topLevelSplitPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1000, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -8401,10 +8387,6 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_exportRawRemoteButtonActionPerformed
-
-    private void girrSchemaLinkCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_girrSchemaLinkCheckBoxActionPerformed
-        properties.setGirrCreateSchemaLocation(girrSchemaLinkCheckBox.isSelected());
-    }//GEN-LAST:event_girrSchemaLinkCheckBoxActionPerformed
 
     private void girrFatRawCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_girrFatRawCheckBoxActionPerformed
         properties.setGirrFatRaw(girrFatRawCheckBox.isSelected());
@@ -9942,7 +9924,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JCheckBox girrFatRawCheckBox;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<GirrImporter> girrFileImporterBean;
     private javax.swing.JPanel girrImportPanel;
-    private javax.swing.JCheckBox girrSchemaLinkCheckBox;
     private javax.swing.JMenuItem girrSchemaLocationMenuItem;
     private javax.swing.JComboBox<String> girrStylesheetTypeComboBox;
     private javax.swing.JTextField girrStylesheetUrlTextField;

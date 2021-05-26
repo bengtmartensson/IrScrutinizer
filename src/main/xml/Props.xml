@@ -149,7 +149,6 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="invokeAnalyzer" type="boolean" default='"true"' doc='If true, the analyzer is invoked on scrutineering and on imports.' />
 
     <property name="girrFatRaw" type="boolean" default='"false"' />
-    <property name="girrCreateSchemaLocation" type="boolean" default='"true"' />
     <property name="girrStyleSheetUrl" type="string" default='"simplehtml.xsl"'/>
     <property name="girrStyleSheetType" type="string" default='"xsl"'/>
     <property name="importWaveDivideCarrier" type="boolean" default='"true"' doc="If true (which is the normal case), it is assumed the actual frequency in the imported wave file is half of the actual modulation frequency"/>

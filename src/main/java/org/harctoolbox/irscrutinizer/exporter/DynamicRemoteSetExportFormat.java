@@ -229,7 +229,6 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
                 null,
                 null,
                 true, //fatRaw,
-                false, // createSchemaLocation,
                 true, //generateRaw,
                 true, //generateCcf,
                 true //generateParameters)

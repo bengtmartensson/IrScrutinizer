@@ -82,7 +82,6 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
                 null,
                 null,
                 true, //fatRaw,
-                false, // createSchemaLocation,
                 true, //generateRaw,
                 true, //generateCcf,
                 true //generateParameters)
