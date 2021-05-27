@@ -1,4 +1,5 @@
-# IrScrutinizer [![Build Status](https://travis-ci.org/bengtmartensson/IrScrutinizer.svg?branch=unbundling)](https://travis-ci.org/bengtmartensson/IrScrutinizer)
+# IrScrutinizer
+ [![Java CI with Maven + Upload](https://github.com/bengtmartensson/IrScrutinizer/actions/workflows/maven.yml/badge.svg)](https://github.com/bengtmartensson/IrScrutinizer/actions/workflows/maven.yml)
 IrScrutinizer is a powerful program for capturing, generating,
 analyzing, importing, and exporting of infrared (IR) signals.
 
@@ -48,7 +49,7 @@ Coding guidelines are found [here](CONTRIBUTING.md).
 ## Support
 
 Support is offered in the [Discussions](https://github.com/bengtmartensson/IrScrutinizer/discussions).
-Bug reports and suggestions can be 
+Bug reports and suggestions can be
 posted as [isssues](https://github.com/bengtmartensson/IrScrutinizer/issues).
 
 I also participate in the [JP1 forum](http://www.hifi-remote.com/forums/), see e.g.

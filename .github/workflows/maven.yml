@@ -1,0 +1,49 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Java CI with Maven + Upload
+
+on:
+  push:
+    branches: [ master ]
+#  pull_request:
+#    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 8
+      uses: actions/setup-java@v2
+      with:
+        java-version: '8'
+        distribution: 'adopt'
+    - name: Build IrpTransmogrifier
+      run: ./common/scripts/build-harctoolbox-project.sh IrpTransmogrifier
+    - name: Build Girr
+      run: ./common/scripts/build-harctoolbox-project.sh Girr
+    - name: Build Jirc
+      run: ./common/scripts/build-harctoolbox-project.sh Jirc
+    - name: Build HarcHardware
+      run: ./common/scripts/build-harctoolbox-project.sh HarcHardware
+    - name: Build Tonto
+      run: ./common/scripts/build-tonto.sh -n
+    - name: Get JDK/Linux
+      run: |
+        sudo apt-get install -y xsltproc
+        ./tools/get-jdk.sh linux
+    - name: Get JDK/MacOS
+      run: wget --quiet http://www.harctoolbox.org/downloads/jre-x64-macOS.tar.gz
+    - name: Build with Maven
+      run: |
+        sudo apt-get install -y dos2unix icoutils genisoimage
+        mvn -B -V install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true package
+    - name: List files
+      run: ls -l target
+    - name: Upload
+      env:
+          GITHUB_TOKEN: ${{ secrets.CI_UPLOADER }}
+      run: common/scripts/upload.sh target/*.zip target/*.dmg target/*AppImage target/*.md5 target/*.sha*
