@@ -4,7 +4,7 @@ set +x # Do not leak information
 
 # Exit immediately if one of the files given as arguments is not there
 # because we don't want to delete the existing release if we don't have
-# the new files that should be uploaded 
+# the new files that should be uploaded
 for file in "$@"
 do
     if [ ! -e "$file" ]
@@ -40,14 +40,27 @@ if [ ! -z "$TRAVIS_REPO_SLUG" ] ; then
     echo "You can get one from https://github.com/settings/tokens"
     exit 1
   fi
+elif [ ! -z "$GITHUB_ACTOR" ] ; then
+  # Github action
+  echo "Running as GitHub action"
+  if [ -z "$REPO_SLUG" ] ; then
+    REPO_SLUG=${GITHUB_REPOSITORY}
+  fi
+  if [ -z "$GITHUB_TOKEN" ] ; then
+    echo "\$GITHUB_TOKEN missing, please set it in the Travis CI settings of this project"
+    echo "You can get one from https://github.com/settings/tokens"
+    exit 1
+  fi
 else
+  # Neither Travis nor Github action
+  echo "Running interactively"
   # We are not running on Travis CI
   echo "Not running on Travis CI"
   if [ -z "$REPO_SLUG" ] ; then
-    read -s -p "Repo Slug (GitHub and Travis CI username/reponame): " REPO_SLUG
+    read -p "Repo Slug (GitHub and Travis CI username/reponame): " REPO_SLUG
   fi
   if [ -z "$GITHUB_TOKEN" ] ; then
-    read -s -p "Token (https://github.com/settings/tokens): " GITHUB_TOKEN
+    read -p "Token (https://github.com/settings/tokens): " GITHUB_TOKEN
   fi
 fi
 
