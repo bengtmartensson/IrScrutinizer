@@ -32,6 +32,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.ircore.InvalidArgumentException;
@@ -225,6 +226,8 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     }
 
     private void export(RemoteSet remoteSet, String title, int count, String fileName, String encoding) throws IOException, TransformerException {
+        boolean oldInheritStatus = Command.isUseInheritanceForXml();
+        Command.setUseInheritanceForXml(false);
         Document document = remoteSet.toDocument(title,
                 null,
                 null,
@@ -233,6 +236,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
                 true, //generateCcf,
                 true //generateParameters)
         );
+        Command.setUseInheritanceForXml(oldInheritStatus);
         export(document, fileName, encoding);
     }
 
