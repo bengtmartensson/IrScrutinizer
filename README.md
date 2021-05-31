@@ -1,5 +1,5 @@
-# IrScrutinizer
- [![Java CI with Maven + Upload](https://github.com/bengtmartensson/IrScrutinizer/actions/workflows/maven.yml/badge.svg)](https://github.com/bengtmartensson/IrScrutinizer/actions/workflows/maven.yml)
+# IrScrutinizer [![Java CI with Maven + Upload](https://github.com/bengtmartensson/IrScrutinizer/actions/workflows/maven.yml/badge.svg)](https://github.com/bengtmartensson/IrScrutinizer/actions/workflows/maven.yml)
+
 IrScrutinizer is a powerful program for capturing, generating,
 analyzing, importing, and exporting of infrared (IR) signals.
 

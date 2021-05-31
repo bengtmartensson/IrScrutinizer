@@ -27,6 +27,8 @@ jobs:
       run: ./common/scripts/build-harctoolbox-project.sh Girr
     - name: Build Jirc
       run: ./common/scripts/build-harctoolbox-project.sh Jirc
+    - name: Build RemoteLocator
+      run: ./common/scripts/build-harctoolbox-project.sh RemoteLocator
     - name: Build HarcHardware
       run: ./common/scripts/build-harctoolbox-project.sh HarcHardware
     - name: Build Tonto
@@ -41,6 +43,33 @@ jobs:
       run: |
         sudo apt-get install -y dos2unix icoutils genisoimage
         mvn -B -V install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true package
+
+  fetch-jre-x86-windows:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: suck
+      run: wget --quiet http://www.harctoolbox.org/downloads/jre-x86-windows.zip
+    - name: unpack
+      run: ( cd target; unzip ../jre-x86-windows.zip )
+    - name: download-inno
+      run: wget --quiet https://jrsoftware.org/download.php/is.exe
+
+  setup-exe:
+    needs: fetch-jre-x86-windows
+    runs-on: windows-latest
+    steps:
+     - name: install-inno
+       run: is /verysilent
+     - name: run-inno
+       run: |
+         cd target
+         C:\Program Files\Inno Setup 6\ISCC /Q IrScrutinizer_inno.iss
+
+  upload:
+    needs: setup-exe
+    runs-on: ubuntu-latest
+    steps:
     - name: List files
       run: ls -l target
     - name: Upload

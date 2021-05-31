@@ -3680,8 +3680,8 @@
                     <Container class="javax.swing.JPanel" name="irdbPanel">
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="IRDB">
-                            <Property name="tabTitle" type="java.lang.String" value="IRDB"/>
+                          <JTabbedPaneConstraints tabName="RemoteLocator">
+                            <Property name="tabTitle" type="java.lang.String" value="RemoteLocator"/>
                             <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                               <Image iconType="3" name="/icons/Crystal-Clear/22x22/apps/database.png"/>
                             </Property>
@@ -3707,20 +3707,30 @@
                                           </Group>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="jLabel49" min="-2" max="-2" attributes="0"/>
-                                              <Component id="irdbCodeSetComboBox" min="-2" pref="354" max="-2" attributes="0"/>
+                                              <Group type="102" attributes="0">
+                                                  <Component id="irdbCodeSetComboBox" max="32767" attributes="0"/>
+                                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jLabel49" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace min="-2" pref="167" max="-2" attributes="0"/>
+                                              </Group>
                                           </Group>
+                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                              <Component id="remoteLocatorImporterKindTextField" max="32767" attributes="0"/>
+                                              <Component id="jLabel10" pref="50" max="32767" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
-                                          <Component id="irdbTreeImporter" max="32767" attributes="0"/>
-                                          <EmptySpace min="102" pref="102" max="-2" attributes="0"/>
+                                          <Component id="irdbTreeImporter" pref="735" max="32767" attributes="0"/>
+                                          <EmptySpace min="-2" pref="114" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="importIrdbHelpButton" linkSize="33" alignment="1" min="-2" pref="110" max="-2" attributes="0"/>
                                       <Component id="irdbBrowseButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
-                                      <Component id="irdbImportAllButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
+                                      <Component id="irdbBrowseRemoteButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
                                       <Component id="irdbImportButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
@@ -3733,7 +3743,7 @@
                                   <EmptySpace min="-2" pref="75" max="-2" attributes="0"/>
                                   <Component id="irdbImportButton" linkSize="34" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="irdbImportAllButton" linkSize="34" min="-2" max="-2" attributes="0"/>
+                                  <Component id="irdbBrowseRemoteButton" linkSize="34" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="irdbBrowseButton" linkSize="34" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace pref="99" max="32767" attributes="0"/>
@@ -3746,12 +3756,14 @@
                                       <Component id="jLabel45" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel46" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel49" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="103" groupAlignment="3" attributes="0">
                                           <Component id="irdbDeviceTypeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="irdbCodeSetComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="remoteLocatorImporterKindTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <Component id="irdbManufacturerComboBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
@@ -3823,6 +3835,9 @@
                             </Property>
                             <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irdbCodeSetComboBoxActionPerformed"/>
+                          </Events>
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                           </AuxValues>
@@ -3839,7 +3854,7 @@
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel49">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Protocol &amp; Parameters"/>
+                            <Property name="text" type="java.lang.String" value="Remote Name"/>
                           </Properties>
                         </Component>
                         <Component class="org.harctoolbox.irscrutinizer.importer.TreeImporter" name="irdbTreeImporter">
@@ -3847,14 +3862,14 @@
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.TreeImporter(this.guiUtils)"/>
                           </AuxValues>
                         </Component>
-                        <Component class="javax.swing.JButton" name="irdbImportAllButton">
+                        <Component class="javax.swing.JButton" name="irdbBrowseRemoteButton">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Load all"/>
+                            <Property name="text" type="java.lang.String" value="Browse"/>
                             <Property name="toolTipText" type="java.lang.String" value="Load for all parameters and protocols"/>
                             <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irdbImportAllButtonActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irdbBrowseRemoteButtonActionPerformed"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JButton" name="importIrdbHelpButton">
@@ -3867,6 +3882,17 @@
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importIrdbHelpButtonActionPerformed"/>
                           </Events>
+                        </Component>
+                        <Component class="javax.swing.JTextField" name="remoteLocatorImporterKindTextField">
+                          <Properties>
+                            <Property name="editable" type="boolean" value="false"/>
+                            <Property name="toolTipText" type="java.lang.String" value="The origin kind of remote "/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="jLabel10">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value="Kind"/>
+                          </Properties>
                         </Component>
                       </SubComponents>
                     </Container>

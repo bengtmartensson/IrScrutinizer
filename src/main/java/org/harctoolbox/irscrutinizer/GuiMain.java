@@ -48,7 +48,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import javax.comm.DriverGenUnix;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -100,6 +99,8 @@ import org.harctoolbox.irscrutinizer.capturinghardware.*;
 import org.harctoolbox.irscrutinizer.exporter.*;
 import org.harctoolbox.irscrutinizer.importer.*;
 import org.harctoolbox.irscrutinizer.sendinghardware.*;
+import org.harctoolbox.remotelocator.Girrable;
+import org.harctoolbox.remotelocator.NotFoundException;
 import org.xml.sax.SAXException;
 
 public final class GuiMain extends javax.swing.JFrame {
@@ -110,7 +111,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private transient GlobalCacheIrDatabase globalCacheIrDatabase = null;
     private transient ControlTowerIrDatabase controlTowerIrDatabase = null;
     private Map<String, String> controlTowerCodesetTable = null;
-    private transient IrdbImporter irdbImporter = null;
+    private transient RemoteLocatorImporter remoteLocatorImporter = null;
     private transient IrpDatabase irpDatabase = null;
     private transient Decoder decoder = null;
     private Decoder.DecoderParameters decoderParameters = null;
@@ -180,7 +181,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void setupProxy() {
         proxy = mkProxy();
-        IrdbImporter.setProxy(proxy);
+        RemoteLocatorImporter.setProxy(proxy);
         ControlTowerIrDatabase.setProxy(proxy);
         GlobalCacheIrDatabase.setProxy(proxy);
         ReaderImporter.setProxy(proxy);
@@ -2172,8 +2173,10 @@ public final class GuiMain extends javax.swing.JFrame {
         jLabel46 = new javax.swing.JLabel();
         jLabel49 = new javax.swing.JLabel();
         irdbTreeImporter = new org.harctoolbox.irscrutinizer.importer.TreeImporter(this.guiUtils);
-        irdbImportAllButton = new javax.swing.JButton();
+        irdbBrowseRemoteButton = new javax.swing.JButton();
         importIrdbHelpButton = new javax.swing.JButton();
+        remoteLocatorImporterKindTextField = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
         girrImportPanel = new javax.swing.JPanel();
         girrWebSiteButton = new javax.swing.JButton();
         girrFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, girrImporter);
@@ -4122,19 +4125,24 @@ public final class GuiMain extends javax.swing.JFrame {
 
         irdbCodeSetComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--" }));
         irdbCodeSetComboBox.setEnabled(false);
+        irdbCodeSetComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                irdbCodeSetComboBoxActionPerformed(evt);
+            }
+        });
 
         jLabel45.setText("Manufacturer");
 
         jLabel46.setText("Device Type");
 
-        jLabel49.setText("Protocol & Parameters");
+        jLabel49.setText("Remote Name");
 
-        irdbImportAllButton.setText("Load all");
-        irdbImportAllButton.setToolTipText("Load for all parameters and protocols");
-        irdbImportAllButton.setEnabled(false);
-        irdbImportAllButton.addActionListener(new java.awt.event.ActionListener() {
+        irdbBrowseRemoteButton.setText("Browse");
+        irdbBrowseRemoteButton.setToolTipText("Load for all parameters and protocols");
+        irdbBrowseRemoteButton.setEnabled(false);
+        irdbBrowseRemoteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                irdbImportAllButtonActionPerformed(evt);
+                irdbBrowseRemoteButtonActionPerformed(evt);
             }
         });
 
@@ -4145,6 +4153,11 @@ public final class GuiMain extends javax.swing.JFrame {
                 importIrdbHelpButtonActionPerformed(evt);
             }
         });
+
+        remoteLocatorImporterKindTextField.setEditable(false);
+        remoteLocatorImporterKindTextField.setToolTipText("The origin kind of remote ");
+
+        jLabel10.setText("Kind");
 
         javax.swing.GroupLayout irdbPanelLayout = new javax.swing.GroupLayout(irdbPanel);
         irdbPanel.setLayout(irdbPanelLayout);
@@ -4163,21 +4176,28 @@ public final class GuiMain extends javax.swing.JFrame {
                             .addComponent(jLabel46))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(irdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel49)
-                            .addComponent(irdbCodeSetComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 354, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(irdbPanelLayout.createSequentialGroup()
+                                .addComponent(irdbCodeSetComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
+                            .addGroup(irdbPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel49)
+                                .addGap(167, 167, 167)))
+                        .addGroup(irdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(remoteLocatorImporterKindTextField)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE))
+                        .addGap(26, 26, 26))
                     .addGroup(irdbPanelLayout.createSequentialGroup()
-                        .addComponent(irdbTreeImporter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(102, 102, 102)))
-                .addGap(12, 12, 12)
+                        .addComponent(irdbTreeImporter, javax.swing.GroupLayout.DEFAULT_SIZE, 735, Short.MAX_VALUE)
+                        .addGap(114, 114, 114)))
                 .addGroup(irdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(importIrdbHelpButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(irdbBrowseButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(irdbImportAllButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(irdbBrowseRemoteButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(irdbImportButton, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGap(7, 7, 7))
         );
 
-        irdbPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {importIrdbHelpButton, irdbBrowseButton, irdbImportAllButton, irdbImportButton});
+        irdbPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {importIrdbHelpButton, irdbBrowseButton, irdbBrowseRemoteButton, irdbImportButton});
 
         irdbPanelLayout.setVerticalGroup(
             irdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4185,7 +4205,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addGap(75, 75, 75)
                 .addComponent(irdbImportButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(irdbImportAllButton)
+                .addComponent(irdbBrowseRemoteButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(irdbBrowseButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 99, Short.MAX_VALUE)
@@ -4196,21 +4216,23 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addGroup(irdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel45)
                     .addComponent(jLabel46)
-                    .addComponent(jLabel49))
+                    .addComponent(jLabel49)
+                    .addComponent(jLabel10))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(irdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(irdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(irdbDeviceTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(irdbCodeSetComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(irdbCodeSetComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(remoteLocatorImporterKindTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(irdbManufacturerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(irdbTreeImporter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(3, 3, 3))
         );
 
-        irdbPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {importIrdbHelpButton, irdbBrowseButton, irdbImportAllButton, irdbImportButton});
+        irdbPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {importIrdbHelpButton, irdbBrowseButton, irdbBrowseRemoteButton, irdbImportButton});
 
-        importTabbedPane.addTab("IRDB", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/database.png")), irdbPanel); // NOI18N
+        importTabbedPane.addTab("RemoteLocator", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/database.png")), irdbPanel); // NOI18N
 
         girrWebSiteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/translate.png"))); // NOI18N
         girrWebSiteButton.setText("Web site");
@@ -7426,7 +7448,7 @@ public final class GuiMain extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(topLevelSplitPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1000, Short.MAX_VALUE)
+            .addComponent(topLevelSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -7996,15 +8018,17 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_gcdbImportButtonActionPerformed
 
     private void irdbBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irdbBrowseButtonActionPerformed
-        guiUtils.browse(IrdbImporter.getHomeUri());
+        guiUtils.browse(RemoteLocatorImporter.getHomeUri());
     }//GEN-LAST:event_irdbBrowseButtonActionPerformed
 
     private void irdbManufacturerComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irdbManufacturerComboBoxActionPerformed
         BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
+            if (remoteLocatorImporter == null)
+                remoteLocatorImporter = new RemoteLocatorImporter(properties.getVerbose());
             if (irdbManufacturerComboBox.getModel().getSize() == 1) {
-                String[] manufacturers = IrdbImporter.getManufacturers(properties.getVerbose());
-                Arrays.sort(manufacturers);
+                String[] manufacturers = remoteLocatorImporter.getManufacturers();
+                //Arrays.sort(manufacturers);
                 DefaultComboBoxModel<String> dcbm = new DefaultComboBoxModel<>(manufacturers);
                 irdbManufacturerComboBox.setModel(dcbm);
                 irdbManufacturerComboBox.setSelectedIndex(0);
@@ -8012,19 +8036,19 @@ public final class GuiMain extends javax.swing.JFrame {
                     irdbManufacturerComboBoxActionPerformed(null);
             } else {
                 String manufacturer = (String) irdbManufacturerComboBox.getSelectedItem();
-                irdbImporter = new IrdbImporter(manufacturer, properties.getVerbose());
-                irdbTreeImporter.clear();
-                Set<String> arr = irdbImporter.getDeviceTypes();
-                DefaultComboBoxModel<String> dcbm = new DefaultComboBoxModel<>(arr.toArray(new String[arr.size()]));
+//                irdbImporter = new RemoteLocatorImporter(manufacturer, properties.getVerbose());
+//                irdbTreeImporter.clear();
+                String[] list = remoteLocatorImporter.getDeviceClasses(manufacturer);
+                DefaultComboBoxModel<String> dcbm = new DefaultComboBoxModel<>(list);
                 irdbDeviceTypeComboBox.setModel(dcbm);
                 irdbDeviceTypeComboBox.setEnabled(true);
-                irdbDeviceTypeComboBoxActionPerformed(null);
-                irdbImportButton.setEnabled(true);
-                irdbImportAllButton.setEnabled(true);
+                irdbDeviceTypeComboBoxActionPerformed(evt);
+//                irdbImportButton.setEnabled(true);
+//                irdbImportAllButton.setEnabled(true);
             }
-        } catch (com.eclipsesource.json.ParseException ex) {
-            guiUtils.error("Unparsable response from irdb.tk");
-        } catch (IOException ex) {
+//        } catch (com.eclipsesource.json.ParseException ex) {
+//            guiUtils.error("Unparsable response from irdb.tk");
+        } catch (IOException | NotFoundException | SAXException ex) {
             guiUtils.error(ex);
         } finally {
             busyWindow.unBusy();
@@ -8033,22 +8057,27 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void irdbDeviceTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irdbDeviceTypeComboBoxActionPerformed
         BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
-        String deviceType = (String) irdbDeviceTypeComboBox.getSelectedItem();
-        Set<IrdbImporter.ProtocolDeviceSubdevice> pdss = irdbImporter.getProtocolDeviceSubdevice(deviceType);
-        DefaultComboBoxModel dcbm = new DefaultComboBoxModel(pdss.toArray(new IrdbImporter.ProtocolDeviceSubdevice[pdss.size()]));
-        irdbCodeSetComboBox.setModel(dcbm);
-        irdbCodeSetComboBox.setEnabled(true);
-        irdbTreeImporter.clear();
-        busyWindow.unBusy();
+        try {
+            String manufacturer = (String) irdbManufacturerComboBox.getSelectedItem();
+            String deviceType = (String) irdbDeviceTypeComboBox.getSelectedItem();
+            String[] remoteNames = remoteLocatorImporter.getRemotes(manufacturer, deviceType);
+            DefaultComboBoxModel<String> dcbm = new DefaultComboBoxModel<>(remoteNames);
+            irdbCodeSetComboBox.setModel(dcbm);
+            irdbCodeSetComboBox.setEnabled(true);
+            irdbCodeSetComboBoxActionPerformed(evt);
+            //irdbTreeImporter.clear();
+        } catch (NotFoundException ex) {
+            guiUtils.error(ex);
+        } finally {
+            busyWindow.unBusy();
+        }
     }//GEN-LAST:event_irdbDeviceTypeComboBoxActionPerformed
 
     private void irdbImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irdbImportButtonActionPerformed
-        String deviceType = (String) irdbDeviceTypeComboBox.getSelectedItem();
-        IrdbImporter.ProtocolDeviceSubdevice pds = (IrdbImporter.ProtocolDeviceSubdevice) irdbCodeSetComboBox.getSelectedItem();
         try {
-            irdbImporter.load(deviceType, pds);
-            irdbTreeImporter.setRemoteSet(irdbImporter.getRemoteSet());
-        } catch (Exception ex) {
+            remoteLocatorImporter.loadRemote();
+            irdbTreeImporter.setRemoteSet(remoteLocatorImporter.getRemoteSet());
+        } catch (IOException | Girrable.NotGirrableException | NotFoundException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_irdbImportButtonActionPerformed
@@ -8197,15 +8226,14 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setTranslateProntoFont(translateProntoFontCheckBoxMenuItem.isSelected());
     }//GEN-LAST:event_translateProntoFontCheckBoxMenuItemActionPerformed
 
-    private void irdbImportAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irdbImportAllButtonActionPerformed
-        String deviceType = (String) irdbDeviceTypeComboBox.getSelectedItem();
+    private void irdbBrowseRemoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irdbBrowseRemoteButtonActionPerformed
+        URL url = remoteLocatorImporter.getRemoteURL();
         try {
-            irdbImporter.load(deviceType);
-            irdbTreeImporter.setRemoteSet(irdbImporter.getRemoteSet());
-        } catch (Exception ex) {
+            guiUtils.browse(url.toURI());
+        } catch (URISyntaxException ex) {
             guiUtils.error(ex);
         }
-    }//GEN-LAST:event_irdbImportAllButtonActionPerformed
+    }//GEN-LAST:event_irdbBrowseRemoteButtonActionPerformed
 
     private void jButton20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton20ActionPerformed
         try {
@@ -9748,6 +9776,25 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setProntoButtonSizeY(Integer.parseInt(prontoExportButtonHeightTextField.getText()));
     }//GEN-LAST:event_prontoExportButtonHeightTextFieldFocusLost
 
+    private void irdbCodeSetComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irdbCodeSetComboBoxActionPerformed
+        String manufacturer = (String) irdbManufacturerComboBox.getSelectedItem();
+        String deviceType = (String) irdbDeviceTypeComboBox.getSelectedItem();
+        String remoteName = (String) irdbCodeSetComboBox.getSelectedItem();
+        irdbImportButton.setEnabled(false);
+        irdbBrowseRemoteButton.setEnabled(false);
+        irdbTreeImporter.clear();
+        if (remoteName == null)
+            return;
+        try {
+            remoteLocatorImporter.load(manufacturer, deviceType, remoteName);
+            remoteLocatorImporterKindTextField.setText(remoteLocatorImporter.getkind());
+            irdbImportButton.setEnabled(remoteLocatorImporter.isLoadable());
+            irdbBrowseRemoteButton.setEnabled(true);
+        } catch (NotFoundException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_irdbCodeSetComboBoxActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -10014,9 +10061,9 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton irTransWebButton;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean irWidgetSerialPortSimpleBean;
     private javax.swing.JButton irdbBrowseButton;
+    private javax.swing.JButton irdbBrowseRemoteButton;
     private javax.swing.JComboBox<String> irdbCodeSetComboBox;
     private javax.swing.JComboBox<String> irdbDeviceTypeComboBox;
-    private javax.swing.JButton irdbImportAllButton;
     private javax.swing.JButton irdbImportButton;
     private javax.swing.JComboBox<String> irdbManufacturerComboBox;
     private javax.swing.JPanel irdbPanel;
@@ -10032,6 +10079,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem issuesMenuItem;
     private javax.swing.JButton jButton20;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
@@ -10220,6 +10268,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem rejectLircCodeImports;
     private javax.swing.JMenuItem relToleranceMenuItem;
     private javax.swing.JMenuItem releaseNotesMenuItem;
+    private javax.swing.JTextField remoteLocatorImporterKindTextField;
     private javax.swing.JPanel remoteScrutinizerPanel;
     private javax.swing.JCheckBoxMenuItem removeDefaultedParametersCheckBoxMenuItem;
     private javax.swing.JMenuItem removeUnusedMenuItem1;
