@@ -72,8 +72,10 @@ import org.harctoolbox.analyze.NoDecoderMatchException;
 import org.harctoolbox.analyze.RepeatFinder;
 import org.harctoolbox.devslashlirc.LircHardware;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.CommandSet;
 import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
+import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.guicomponents.*;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.TimeoutException;
@@ -955,6 +957,7 @@ public final class GuiMain extends javax.swing.JFrame {
         return exitOk;
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private void cleanupForShutdown() {
         try {
             System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, "US-ASCII"));
@@ -975,7 +978,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     public int importGirr(File file, boolean raw, String charsetName) throws ParseException, InvalidArgumentException, IOException {
-        return importCommands(girrImporter.getAllCommands(file, charsetName), girrImporter.getMetaData(), raw);
+        return importCommands(girrImporter.getRemoteSet(file), girrImporter.getMetaData(), raw);
     }
 
     public int importGirr(File file, boolean raw) throws ParseException, InvalidArgumentException, IOException {
@@ -1520,6 +1523,24 @@ public final class GuiMain extends javax.swing.JFrame {
         processIr(Command.concatenateAsSequence(commands));
     }
 
+    public int importCommands(RemoteSet remoteSet, Remote.MetaData metaData, boolean raw) {
+        int sum = 0;
+        for (Remote remote : remoteSet)
+            sum += importCommands(remote, metaData, raw);
+        return sum;
+    }
+
+    public int importCommands(Remote remote, Remote.MetaData metaData, boolean raw) {
+        int sum = 0;
+        for (CommandSet commandSet : remote)
+            sum += importCommands(commandSet, metaData, raw);
+        return sum;
+    }
+
+    public int importCommands(CommandSet commandSet, Remote.MetaData metaData, boolean raw) {
+        return importCommands(commandSet.getCommands(), metaData, raw);
+    }
+
     public int importCommands(Collection<Command> commands, Remote.MetaData metaData, boolean raw) {
         if (metaData != null && !metaData.isEmpty())
             this.metaData = metaData;
@@ -1543,14 +1564,15 @@ public final class GuiMain extends javax.swing.JFrame {
         return count;
     }
 
-    public void importCommand(Command command, boolean raw) throws IrpException, IrCoreException {
+    public int importCommand(Command command, boolean raw) throws IrpException, IrCoreException {
         if (command == null)
-            return;
+            return 0;
 
         if (raw)
             registerRawCommand(command);
         else
             registerParameterCommand(command);
+        return 1;
     }
 
     private <T extends IFileImporter & ICommandImporter> void importConcatenatedCommandsByFileSelector(T importer) {
@@ -8009,7 +8031,7 @@ public final class GuiMain extends javax.swing.JFrame {
             String deviceType = (String) gcdbDeviceTypeComboBox.getSelectedItem();
             String codeSet = (String) gcdbCodeSetComboBox.getSelectedItem();
             globalCacheIrDatabase.load(manufacturer, deviceType, codeSet);
-            gcdbTreeImporter.setRemoteSet(globalCacheIrDatabase.getRemoteSet());
+            gcdbTreeImporter.setRemoteSet(globalCacheIrDatabase.getRemoteSet(), "GCDB (old)");
         } catch (IOException | InvalidArgumentException ex) {
             guiUtils.error(ex);
         } finally {
@@ -8076,7 +8098,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void irdbImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irdbImportButtonActionPerformed
         try {
             remoteLocatorImporter.loadRemote();
-            irdbTreeImporter.setRemoteSet(remoteLocatorImporter.getRemoteSet());
+            irdbTreeImporter.setRemoteSet(remoteLocatorImporter.getRemoteSet(), "RemoteLocator");
         } catch (IOException | Girrable.NotGirrableException | NotFoundException ex) {
             guiUtils.error(ex);
         }
@@ -9275,7 +9297,7 @@ public final class GuiMain extends javax.swing.JFrame {
             String modelName = (String) controlTowerCodeSetComboBox.getSelectedItem();
             String codeSet = controlTowerCodesetTable.get(modelName);
             controlTowerIrDatabase.load(manufacturer, deviceType, codeSet);
-            controlTowerTreeImporter.setRemoteSet(controlTowerIrDatabase.getRemoteSet());
+            controlTowerTreeImporter.setRemoteSet(controlTowerIrDatabase.getRemoteSet(), "Control Tower");
         } catch (IOException ex) {
             guiUtils.error(ex);
         } finally {

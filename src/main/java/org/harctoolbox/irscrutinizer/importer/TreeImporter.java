@@ -20,7 +20,6 @@ package org.harctoolbox.irscrutinizer.importer;
 import java.awt.Component;
 import java.awt.Container;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Enumeration;
 import javax.swing.JTree;
 import javax.swing.event.TreeExpansionEvent;
@@ -28,9 +27,12 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.CommandSet;
 import org.harctoolbox.girr.GirrException;
+import org.harctoolbox.girr.Named;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.guicomponents.GuiUtils;
@@ -57,13 +59,22 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
     @Override
     public void treeExpanded(TreeExpansionEvent event) {
-        DefaultMutableTreeNode remote = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
-        if (!Remote.class.isInstance(remote.getUserObject())) // Just to be on the safe side...
-            return;
-
-        for (Enumeration e = remote.children(); e.hasMoreElements();) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
-            Command command = (Command) node.getUserObject();
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
+        String kind = node.getUserObject().getClass().getName();
+        switch (kind) {
+            case "org.harctoolbox.girr.Remote":
+                for (Enumeration e = node.children(); e.hasMoreElements();) {
+                    DefaultMutableTreeNode n = (DefaultMutableTreeNode) e.nextElement();
+                    CommandSet commandSet = (CommandSet) n.getUserObject();
+                }
+                break;
+            case "org.harctoolbox.girr.CommandSet":
+                for (Enumeration e = node.children(); e.hasMoreElements();) {
+                    DefaultMutableTreeNode n = (DefaultMutableTreeNode) e.nextElement();
+                    Command command = (Command) n.getUserObject();
+                }
+                break;
+            default:
         }
     }
 
@@ -101,7 +112,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         enableStuff(false);
     }
 
-    public void setRemoteSet(RemoteSet remoteSet) {
+    public void setRemoteSet(RemoteSet remoteSet, String rootName) {
         if (remoteSet == null || remoteSet.isEmpty()) {
             guiUtils.error("No remotes in import, aborting.");
             clear(); // Leaving old content can be confusing
@@ -112,16 +123,22 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         } catch (IrpException | IrCoreException ex) {
             guiUtils.warning(ex.getMessage());
         }
-        remoteSet.sort(new Remote.CompareNameCaseInsensitive());
+        remoteSet.sort(new Remote.CompareNameCaseInsensitive(), false);
         this.remoteSet = remoteSet;
-        updateTreeModel();
+        updateTreeModel(rootName);
+    }
+
+    private void updateTreeModel(String rootName) {
+        DefaultTreeModel treeModel = newTreeModel(rootName);
+        tree.setModel(treeModel);
+        tree.expandRow(1); // expand first Remote
+        tree.expandRow(2); // and its first CommandSet.
+        enableStuff(true);
     }
 
     private void updateTreeModel() {
-        DefaultTreeModel treeModel = newTreeModel();
-        tree.setModel(treeModel);
-        tree.expandRow(1);
-        enableStuff(true);
+        String oldTitle = tree.getModel().getRoot().toString();
+        updateTreeModel(oldTitle);
     }
 
     public void clear() {
@@ -162,21 +179,25 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         tree.setEditable(enabled);
     }
 
-    private DefaultTreeModel newTreeModel() {
-        root = new DefaultMutableTreeNode("Remotes");
-        Collection<Remote> remotes = remoteSet.getRemotes();
-        remotes.forEach((remote) -> {
+    private DefaultTreeModel newTreeModel(String rootName) {
+        root = new DefaultMutableTreeNode(rootName);
+        for (Remote remote : remoteSet)
             root.add(newRemoteNode(remote));
-        });
         return new DefaultTreeModel(root);
     }
 
     private DefaultMutableTreeNode newRemoteNode(Remote remote) {
-        DefaultMutableTreeNode n = new DefaultMutableTreeNode(remote);
-        remote.getCommands().entrySet().stream().map((kvp) -> new DefaultMutableTreeNode(kvp.getValue())).forEachOrdered((leaf) -> {
-            n.add(leaf);
-        });
-        return n;
+        DefaultMutableTreeNode remoteNode = new DefaultMutableTreeNode(remote);
+        for (CommandSet commandSet : remote)
+            remoteNode.add(newCommandSetNode(commandSet));
+        return remoteNode;
+    }
+
+    private MutableTreeNode newCommandSetNode(CommandSet commandSet) {
+        DefaultMutableTreeNode commandSetNode = new DefaultMutableTreeNode(commandSet);
+        for (Command command : commandSet)
+            commandSetNode.add(new javax.swing.tree.DefaultMutableTreeNode(command));
+        return commandSetNode;
     }
 
     private int importSelectedSignals(boolean raw) throws IrpException, IrCoreException, NoSelectionException {
@@ -187,13 +208,18 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         checkGuiMain();
         for (TreePath path : paths) {
             Object thing = ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
-            if (Remote.class.isInstance(thing)) {
-                guiMain.importCommands(((Remote) thing).getCommands().values(), getMetaData(), raw);
-                count += ((Remote) thing).getCommands().size();
-            } else if (Command.class.isInstance(thing)) {
-                guiMain.importCommand((Command) thing, raw);
-                count++;
-            } else {
+            String kind = thing.getClass().getCanonicalName();
+            switch (kind) {
+                case "org.harctoolbox.girr.Remote":
+                    count += guiMain.importCommands((Remote) thing, getMetaData(), raw);
+                    break;
+                case "org.harctoolbox.girr.CommandSet":
+                    count += guiMain.importCommands((CommandSet) thing, getMetaData(), raw);
+                    break;
+                case "org.harctoolbox.girr.Command":
+                    count += guiMain.importCommand((Command) thing, raw);
+                    break;
+                default:
                 guiUtils.error("This cannot happen: " + thing.getClass().getCanonicalName());
             }
         }
@@ -207,7 +233,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
     }
 
     private Remote.MetaData getMetaData() {
-        return remoteSet.getFirstMetaData();
+        return remoteSet.iterator().next().getMetaData();
     }
 
     private static class MyRenderer extends DefaultTreeCellRenderer /*implements TreeCellRenderer*/ {
@@ -223,8 +249,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
                 boolean hasFocus) {
 
             Object thing = ((DefaultMutableTreeNode) value).getUserObject();
-            String name = Command.class.isInstance(thing) ? ((Command) thing).getName()
-                    : Remote.class.isInstance(thing) ? ((Remote) thing).getName()
+            String name = Named.class.isInstance(thing) ? ((Named) thing).getName()
                     : thing.toString();
 
             super.getTreeCellRendererComponent(
@@ -526,7 +551,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
     private void importAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importAllButtonActionPerformed
         checkGuiMain();
-        int result = guiMain.importCommands(remoteSet.getAllCommands(), getMetaData(), false);
+        int result = guiMain.importCommands(remoteSet, getMetaData(), false);
         if (result > 0)
             importJump(result, ImportType.parametricRemote);
         else
@@ -568,7 +593,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
 
     private void importAllRawButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importAllRawButtonActionPerformed
         checkGuiMain();
-        int result = guiMain.importCommands(remoteSet.getAllCommands(), getMetaData(), true);
+        int result = guiMain.importCommands(remoteSet, getMetaData(), true);
         if (result > 0)
             importJump(result, ImportType.rawRemote);
         else

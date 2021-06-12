@@ -134,7 +134,7 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
             } catch (InterruptedException ex) {
             }
             RemoteSet remoteSet = remoteSetImporterLoadFile(url);
-            treeImporter.setRemoteSet(remoteSet);
+            treeImporter.setRemoteSet(remoteSet, url);
         } catch (IOException | ParseException | InvalidArgumentException | UnsupportedOperationException ex) {
             treeImporter.clear();
             guiUtils.error(ex);
@@ -342,7 +342,7 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
     private void loadClipboardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadClipboardButtonActionPerformed
         try {
             RemoteSet remoteSet = remoteSetImporterLoadClipboard();
-            treeImporter.setRemoteSet(remoteSet);
+            treeImporter.setRemoteSet(remoteSet, "Clipboard");
         } catch (IOException | InvalidArgumentException | ParseException ex) {
             guiUtils.error(ex);
         }

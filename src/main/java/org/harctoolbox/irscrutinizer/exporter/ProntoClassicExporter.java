@@ -32,8 +32,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
@@ -112,8 +112,9 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
         ccf.setVersionString("IrScrutinizer CCF");
         for (Remote remote : remoteSet.getRemotes()) {
             String remoteName = remote.getName();
-            Map<String, Command> cmds = remote.getCommands();
-            Iterator<Command> it = cmds.values().iterator();
+            @SuppressWarnings("deprecation")
+            Collection<Command> cmds = remote.getCommands();
+            Iterator<Command> it = cmds.iterator();
             //it.hasNext();)
             CCFDevice dev = ccf.createDevice(remoteName);
             ccf.appendDevice(dev);

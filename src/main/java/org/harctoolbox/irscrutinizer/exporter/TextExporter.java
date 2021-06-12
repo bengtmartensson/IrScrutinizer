@@ -24,7 +24,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.CommandSet;
 import org.harctoolbox.girr.GirrException;
+import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.irp.IrpException;
@@ -97,8 +99,10 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
             throws IOException, GirrException, IrCoreException, IrpException {
         open(file, charsetName);
         try {
-            for (Command command : remoteSet.getAllCommands())
-                printStream.println(formatCommand(command, count));
+            for (Remote remote : remoteSet)
+                for (CommandSet commandSet : remote)
+                    for (Command command : commandSet)
+                        printStream.println(formatCommand(command, count));
         } finally {
             close();
         }

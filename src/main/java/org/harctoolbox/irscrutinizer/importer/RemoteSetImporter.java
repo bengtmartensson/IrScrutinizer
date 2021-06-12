@@ -20,6 +20,7 @@ package org.harctoolbox.irscrutinizer.importer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.harctoolbox.girr.CommandSet;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.ircore.IrCoreUtils;
@@ -29,7 +30,7 @@ import org.harctoolbox.irscrutinizer.Version;
  * This class does something interesting and useful. Or not...
  */
 public abstract class RemoteSetImporter extends ReaderImporter implements IRemoteSetImporter {
-    protected RemoteSet remoteSet = null;
+    protected RemoteSet remoteSet;
 
     protected RemoteSetImporter() {
         super();
@@ -79,9 +80,12 @@ public abstract class RemoteSetImporter extends ReaderImporter implements IRemot
 
     protected void setupCommands() {
         clearCommands();
-        if (remoteSet != null)
-            remoteSet.getRemotes().forEach((remote) -> {
-                addCommands(remote.getCommands().values());
-            });
+        if (remoteSet == null)
+            return;
+
+        for (Remote remote : remoteSet)
+            for (CommandSet commandSet : remote)
+                addCommands(commandSet.getCommands());
+
     }
 }

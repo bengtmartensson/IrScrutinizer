@@ -174,6 +174,6 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
 
     @Override
     public Remote.MetaData getMetaData() {
-        return remoteSet.getFirstMetaData();
+        return remoteSet.iterator().next().getMetaData();
     }
 }
