@@ -79,8 +79,6 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
             throws IOException, TransformerException {
 
         Document document = remoteSet.toDocument(title,
-                null,
-                null,
                 true, //fatRaw,
                 true, //generateRaw,
                 true, //generateCcf,

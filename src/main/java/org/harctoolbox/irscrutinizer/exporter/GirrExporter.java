@@ -30,8 +30,6 @@ import org.w3c.dom.Document;
  */
 public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporter {
 
-    private String girrStyleSheetType;
-    private String girrStyleSheetUrl;
     private boolean fatRaw;
     private boolean generateRaw;
     private boolean generateCcf;
@@ -42,13 +40,11 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
         super();
     }
 
-    public GirrExporter(String creatingUser, String girrStyleSheetType, String girrStyleSheetUrl,
+    public GirrExporter(String creatingUser,
             boolean fatRaw,
             boolean generateRaw, boolean generateCcf,
             boolean generateParameters, Command.CommandTextFormat... extraFormats) {
         super(creatingUser);
-        this.girrStyleSheetType = girrStyleSheetType;
-        this.girrStyleSheetUrl = girrStyleSheetUrl;
         this.fatRaw = fatRaw;
         this.generateRaw = generateRaw;
         this.generateCcf = generateCcf;
@@ -60,7 +56,7 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws IOException, TransformerException {
         for (Command.CommandTextFormat formatter : extraFormats)
             remoteSet.addFormat(formatter, count);
-        Document document = remoteSet.toDocument(title, girrStyleSheetType, girrStyleSheetUrl, fatRaw,
+        Document document = remoteSet.toDocument(title, fatRaw,
                 generateParameters, generateCcf, generateRaw);
         XmlUtils.printDOM(file, document, charsetName, null);
         //(new XmlExporter(document)).printDOM(file, charsetName);

@@ -229,8 +229,6 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         boolean oldInheritStatus = Command.isUseInheritanceForXml();
         Command.setUseInheritanceForXml(false);
         Document document = remoteSet.toDocument(title,
-                null,
-                null,
                 true, //fatRaw,
                 true, //generateRaw,
                 true, //generateCcf,

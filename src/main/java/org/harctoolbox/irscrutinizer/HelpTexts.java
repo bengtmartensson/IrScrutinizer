@@ -310,9 +310,7 @@ class HelpTexts {
 
     @SuppressWarnings("PackageVisibleField")
     public static String exportGirrHelp
-            = "A style sheet can be selected to be linked in into the exported Girr "
-            + "file. The type of style file (presently xslt and css) can also be selected.\n\n"
-            + "\"Fat form raw\" can be selected; this means that the raw signals are not given "
+            = "\"Fat form raw\" can be selected; this means that the raw signals are not given "
             + " as a text string of alternating positive and negative numbers, but the "
             + " individual flashes and gaps are enclosed into own XML elements. This can be "
             + " advantageous if generating XML mainly for the purpose of transforming to other formats.";

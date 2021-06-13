@@ -1002,8 +1002,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private GirrExporter newGirrExporter() {
         return new GirrExporter(properties.getCreatingUser(),
-                properties.getGirrStyleSheetType(),
-                properties.getGirrStyleSheetUrl(),
                 properties.getGirrFatRaw(),
                 properties.getExportGenerateRaw(),
                 properties.getExportGenerateCcf(),
@@ -2287,11 +2285,7 @@ public final class GuiMain extends javax.swing.JFrame {
         exportRawRemoteButton = new javax.swing.JButton();
         exportSpecificOptionsTabbedPane = new javax.swing.JTabbedPane();
         girrExportOptionsPanel = new javax.swing.JPanel();
-        girrStylesheetUrlTextField = new javax.swing.JTextField();
-        jLabel28 = new javax.swing.JLabel();
         girrFatRawCheckBox = new javax.swing.JCheckBox();
-        girrStylesheetTypeComboBox = new javax.swing.JComboBox<>();
-        jLabel33 = new javax.swing.JLabel();
         exportGirrHelpButton = new javax.swing.JButton();
         waveExportOptionsPanel = new javax.swing.JPanel();
         exportAudioParametersBean = new org.harctoolbox.guicomponents.AudioParametersBean(properties);
@@ -5088,16 +5082,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
         exportSpecificOptionsTabbedPane.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        girrStylesheetUrlTextField.setText(properties.getGirrStyleSheetUrl());
-        girrStylesheetUrlTextField.setComponentPopupMenu(copyPastePopupMenu);
-        girrStylesheetUrlTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                girrStylesheetUrlTextFieldActionPerformed(evt);
-            }
-        });
-
-        jLabel28.setText("Stylesheet URL");
-
         girrFatRawCheckBox.setSelected(properties.getGirrFatRaw());
         girrFatRawCheckBox.setText("Fat form raw");
         girrFatRawCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -5105,16 +5089,6 @@ public final class GuiMain extends javax.swing.JFrame {
                 girrFatRawCheckBoxActionPerformed(evt);
             }
         });
-
-        girrStylesheetTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "xslt", "css" }));
-        girrStylesheetTypeComboBox.setSelectedItem(properties.getGirrStyleSheetType());
-        girrStylesheetTypeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                girrStylesheetTypeComboBoxActionPerformed(evt);
-            }
-        });
-
-        jLabel33.setText("Stylesheet type");
 
         exportGirrHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         exportGirrHelpButton.setText("Help");
@@ -5130,38 +5104,22 @@ public final class GuiMain extends javax.swing.JFrame {
             girrExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(girrExportOptionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(girrExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(girrExportOptionsPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel28)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(girrStylesheetUrlTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 363, Short.MAX_VALUE)
-                        .addComponent(jLabel33)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(girrStylesheetTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(girrExportOptionsPanelLayout.createSequentialGroup()
-                        .addComponent(girrFatRawCheckBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(exportGirrHelpButton)))
+                .addComponent(girrFatRawCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 743, Short.MAX_VALUE)
+                .addComponent(exportGirrHelpButton)
                 .addContainerGap())
         );
         girrExportOptionsPanelLayout.setVerticalGroup(
             girrExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(girrExportOptionsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(girrExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(girrStylesheetUrlTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel28)
-                    .addComponent(girrStylesheetTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel33))
                 .addGroup(girrExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(girrExportOptionsPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(38, 38, 38)
                         .addComponent(girrFatRawCheckBox))
                     .addGroup(girrExportOptionsPanelLayout.createSequentialGroup()
-                        .addGap(14, 14, 14)
+                        .addGap(50, 50, 50)
                         .addComponent(exportGirrHelpButton)))
-                .addContainerGap(63, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         exportSpecificOptionsTabbedPane.addTab("Girr", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/translate.png")), girrExportOptionsPanel); // NOI18N
@@ -8442,14 +8400,6 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setGirrFatRaw(girrFatRawCheckBox.isSelected());
     }//GEN-LAST:event_girrFatRawCheckBoxActionPerformed
 
-    private void girrStylesheetUrlTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_girrStylesheetUrlTextFieldActionPerformed
-        properties.setGirrStyleSheetUrl(girrStylesheetUrlTextField.getText());
-    }//GEN-LAST:event_girrStylesheetUrlTextFieldActionPerformed
-
-    private void girrStylesheetTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_girrStylesheetTypeComboBoxActionPerformed
-        properties.setGirrStyleSheetType((String)girrStylesheetTypeComboBox.getSelectedItem());
-    }//GEN-LAST:event_girrStylesheetTypeComboBoxActionPerformed
-
     private void importSignalAsGirrMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importSignalAsGirrMenuItemActionPerformed
         importConcatenatedCommandsByFileSelector(girrImporter);
     }//GEN-LAST:event_importSignalAsGirrMenuItemActionPerformed
@@ -9994,8 +9944,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<GirrImporter> girrFileImporterBean;
     private javax.swing.JPanel girrImportPanel;
     private javax.swing.JMenuItem girrSchemaLocationMenuItem;
-    private javax.swing.JComboBox<String> girrStylesheetTypeComboBox;
-    private javax.swing.JTextField girrStylesheetUrlTextField;
     private javax.swing.JCheckBoxMenuItem girrValidateCheckBoxMenuItem;
     private javax.swing.JButton girrWebSiteButton;
     private org.harctoolbox.guicomponents.CapturingSendingBean girsClientCapturingSendingBean;
@@ -10118,13 +10066,11 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
-    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
-    private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel44;
     private javax.swing.JLabel jLabel45;
