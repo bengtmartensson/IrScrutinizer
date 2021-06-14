@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -164,16 +163,6 @@ public final class IrpRenderBean extends javax.swing.JPanel {
         }
     }
 
-    private void checkParam(JComboBox comboBox, JLabel label, String parameterName, String initalValue) {
-        if (protocol.hasParameter(parameterName))
-            comboBox.setSelectedItem(initalValue);
-        else
-            comboBox.setSelectedItem("-");
-
-        comboBox.setEnabled(protocol.hasParameter(parameterName));
-        label.setEnabled(protocol.hasParameter(parameterName));
-    }
-
     private void setupProtocol(String protocolName, String initialD, String initialS, String initialF,
             String initalT, String initialAdditionalParameters)
             throws UnknownProtocolException, UnsupportedRepeatException, NameUnassignedException, InvalidNameException, IrpInvalidArgumentException {
@@ -280,6 +269,12 @@ public final class IrpRenderBean extends javax.swing.JPanel {
     @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    public void updateProtocols() {
+        String presentSelection = (String) protocolComboBox.getSelectedItem();
+        protocolComboBox.setModel(new DefaultComboBoxModel<>(irpMasterProtocols()));
+        protocolComboBox.setSelectedItem(presentSelection);
     }
 
     /**

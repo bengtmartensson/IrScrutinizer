@@ -506,7 +506,9 @@ public final class GuiMain extends javax.swing.JFrame {
         ictImporter = new IctImporter();
         ictImporter.setChop(properties.getChopIctImports());
 
-        girrImporter = new GirrImporter(properties.getGirrValidate(), new URL(properties.getGirrSchemaLocation()));
+        irpDatabase = new IrpDatabase(properties.mkPathAbsolute(properties.getIrpProtocolsPath())); // must come before initComponents
+
+        girrImporter = new GirrImporter(properties.getGirrValidate(), new URL(properties.getGirrSchemaLocation()), irpDatabase);
         properties.addGirrSchemaLocationChangeListener((String name1, Object oldValue, Object newValue) -> {
             try {
                 girrImporter.setUrl(new URL((String)newValue));
@@ -527,7 +529,6 @@ public final class GuiMain extends javax.swing.JFrame {
         RepeatFinder.setDefaultAbsoluteTolerance(properties.getAbsoluteTolerance());
         RepeatFinder.setDefaultRelativeTolerance(properties.getRelativeTolerance());
 
-        irpDatabase = new IrpDatabase(properties.mkPathAbsolute(properties.getIrpProtocolsPath())); // must come before initComponents
         decoder = new Decoder(irpDatabase);
         decoderParameters = new Decoder.DecoderParameters(decodeStrict,
                 decodeAllDecodes,
@@ -564,6 +565,8 @@ public final class GuiMain extends javax.swing.JFrame {
         loadExportFormats(); // must come before initComponents
 
         initComponents();
+
+        girrImporter.setIrpRendererBean(irpMasterBean);
 
         tableUtils.fixKeyMappings(parameterTable);
         tableUtils.fixKeyMappings(rawTable);

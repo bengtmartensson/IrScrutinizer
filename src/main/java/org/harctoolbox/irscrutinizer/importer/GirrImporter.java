@@ -35,8 +35,10 @@ import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.girr.XmlStatic;
+import org.harctoolbox.guicomponents.IrpRenderBean;
 import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrCoreUtils;
+import org.harctoolbox.irp.IrpDatabase;
 import org.harctoolbox.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -55,12 +57,16 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
     private transient Schema schema;
     private URL url;
     private boolean validate;
+    private final IrpDatabase irpDatabase;
+    //private final Set<String>accumulatedProtocols = new HashSet<>(4);
+    private IrpRenderBean irpMasterBean;
 
-    public GirrImporter(boolean validate, URL url) {
+    public GirrImporter(boolean validate, URL url, IrpDatabase irpDatabase) {
         super();
         schema = null;
         this.url = url;
         this.validate = validate;
+        this.irpDatabase = irpDatabase;
     }
 
     /**
@@ -92,6 +98,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
         prepareLoad(origin);
         remoteSet = null;
         loadIncremental(doc, origin);
+        accumulateProtocols(origin);
         setupCommands();
     }
 
@@ -189,6 +196,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
         prepareLoad(origin);
         remoteSet = null;
         loadRecursive(file, origin);
+        accumulateProtocols(origin);
         setupCommands();
     }
 
@@ -226,5 +234,29 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
     public RemoteSet getRemoteSet(File file) throws IOException, FileNotFoundException, ParseException, InvalidArgumentException {
         possiblyZipLoad(file, IrCoreUtils.UTF8_NAME);
         return remoteSet;
+    }
+
+    private void accumulateProtocols(String origin) {
+        IrpDatabase newProtocols = remoteSet.getIrpDatabase();
+        // This for branch IrpTransmogrifier/setProtocolDocumentation, i.e. IrpTransmogrifier 1.3.*
+//        for (NamedProtocol p : newProtocols) {
+//            DocumentFragment doc = p.getDocumentation();
+//            if (doc == null) {
+//                try {
+//                    newProtocols.setDocumentation(p.getName(), "Protocol imported from " + origin);
+//                } catch (UnknownProtocolException ex) {
+//                    throw new ThisCannotHappenException(ex);
+//                }
+//            }
+//        }
+        if (!newProtocols.isEmpty()) {
+//            accumulatedProtocols.addAll(newProtocols.getKeys());
+            irpDatabase.patch(newProtocols);
+            irpMasterBean.updateProtocols();
+        }
+    }
+
+    public void setIrpRendererBean(IrpRenderBean irpMasterBean) {
+        this.irpMasterBean = irpMasterBean;
     }
 }
