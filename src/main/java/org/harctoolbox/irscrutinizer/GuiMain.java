@@ -8344,7 +8344,11 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_exportDirSelectButtonActionPerformed
 
     private void exportDirOpenButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportDirOpenButtonActionPerformed
-        guiUtils.open(new File(properties.getExportDir()));
+        try {
+            guiUtils.open(new File(properties.getExportDir()));
+        } catch (IOException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_exportDirOpenButtonActionPerformed
 
     private void automaticExportFilenamesCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_automaticExportFilenamesCheckBoxActionPerformed
@@ -8634,8 +8638,12 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_pasteScrutinizeToDataWindowMenuItemActionPerformed
 
     private void irpProtocolsEditMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpProtocolsEditMenuItemActionPerformed
-        guiUtils.open(new File(properties.mkPathAbsolute(properties.getIrpProtocolsPath())));
-        guiUtils.warning("If editing the file, changes will not take effect before you save the file AND restart the program.");
+        try {
+            guiUtils.open(new File(properties.mkPathAbsolute(properties.getIrpProtocolsPath())));
+            guiUtils.warning("If editing the file, changes will not take effect before you save the file AND restart the program.");
+        } catch (IOException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_irpProtocolsEditMenuItemActionPerformed
 
     private void irpProtocolsSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpProtocolsSelectMenuItemActionPerformed
@@ -8649,8 +8657,12 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_irpProtocolsSelectMenuItemActionPerformed
 
     private void exportFormatsEditMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportFormatsEditMenuItemActionPerformed
-        guiUtils.open(new File(properties.mkPathAbsolute(properties.getExportFormatFilePath())));
-        guiUtils.warning("If editing, changes will not take effect before reloading.");
+        try {
+            guiUtils.open(new File(properties.mkPathAbsolute(properties.getExportFormatFilePath())));
+            guiUtils.warning("If editing, changes will not take effect before reloading.");
+        } catch (IOException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_exportFormatsEditMenuItemActionPerformed
 
     private void exportFormatsSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportFormatsSelectMenuItemActionPerformed

@@ -31,6 +31,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.ParseException;
+import java.util.concurrent.TimeUnit;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import org.harctoolbox.ircore.IrCoreUtils;
@@ -44,12 +45,29 @@ public class GuiUtils implements Serializable {
     private static boolean offerStackTrace = false;
     private static String programName = "unknown";
     private static boolean verbose = false;
+    private static boolean useXdbOpen = false;
+    private static final String XDG_COMMAND = "xdg-open";
+    private static final String XDG_COMMAND_TEST_OPTION = "--version";
+
+    static {
+        // Determine if there is a working xdg-open command;
+        // if so, we will use it instead of the java.awt.Desptop functions.
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(XDG_COMMAND, XDG_COMMAND_TEST_OPTION);
+            Process process = processBuilder.start();
+            process.waitFor(1, TimeUnit.SECONDS);
+            int exit = process.exitValue();
+            useXdbOpen = exit == 0;
+        } catch (IOException | InterruptedException ex) {
+            useXdbOpen = false;
+        }
+    }
 
     public static void fatal(Exception ex, int errorcode) {
         fatal(ex, errorcode, null);
     }
 
-    @SuppressWarnings("CallToPrintStackTrace")
+    @SuppressWarnings({"CallToPrintStackTrace", "UseOfSystemOutOrSystemErr"})
     public static void fatal(Exception ex, int errorcode, EmergencyFixer fixer) {
         String message = ex.getClass().getSimpleName() + ": " + ex.getMessage();
         if (System.console() != null)
@@ -121,6 +139,7 @@ public class GuiUtils implements Serializable {
                 : message.substring(0, maxGuiMessageLength - 3) + "...";
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void info(String message) {
          if (usePopupsForErrors) {
             JOptionPane.showMessageDialog(frame, truncate(message), programName + " information",
@@ -131,16 +150,19 @@ public class GuiUtils implements Serializable {
         }
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void trace(String message) {
         System.err.println(message);
     }
 
     // A message is there to be used, not to be clicked away.
     // Do not use popups here.
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void message(String message) {
         System.err.println(message);
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void warning(String message) {
          if (usePopupsForErrors) {
             JOptionPane.showMessageDialog(frame, truncate(message), programName + " warning",
@@ -155,6 +177,7 @@ public class GuiUtils implements Serializable {
         error(message, false);
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private boolean error(String message, boolean offerStackTrace) {
         int ans = 0;
         if (usePopupsForErrors) {
@@ -182,6 +205,7 @@ public class GuiUtils implements Serializable {
         error(ex, ex.getMessage());
     }
 
+    @SuppressWarnings({"UseOfSystemOutOrSystemErr", "null"})
     public void error(Throwable ex, String msg) {
         String message = msg.replaceFirst("^java.lang.RuntimeException: ", "");
         String errorMessage = ex instanceof ParseException
@@ -221,11 +245,6 @@ public class GuiUtils implements Serializable {
         return confirm(frame, message, optionType);
     }
 
-    public void mail(String address, String subject, String body) throws URISyntaxException, IOException {
-        URI uri = new URI("mailto:" + address + "?subject=" + subject + "&body=" + body);
-        Desktop.getDesktop().mail(uri);
-    }
-
     // There is, deliberately, no public void browse(String string)
     // rationale: too easy to confuse file names and URLs,
     // thereby too error prone.
@@ -234,24 +253,32 @@ public class GuiUtils implements Serializable {
         browse(file.toURI());
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void browse(URI uri) {
-        if (! Desktop.isDesktopSupported()) {
-            error("Desktop not supported");
-            return;
-        }
         if (uri == null || uri.toString().isEmpty()) {
             error("No URI.");
             return;
         }
+
         try {
             if (verbose)
                 trace("Browsing URI \"" + uri.toString() + "\"");
-            Desktop.getDesktop().browse(uri);
+
+            if (useXdbOpen)
+                xdgOpen(uri.toURL().toString());
+            else if (Desktop.isDesktopSupported())
+                Desktop.getDesktop().browse(uri);
+            else
+                error("Desktop not supported");
         } catch (IOException ex) {
             boolean stacktrace = error("Could not start browser using uri \"" + uri.toString() + "\".", offerStackTrace);
             if (stacktrace)
                 ex.printStackTrace(System.err);
         }
+    }
+    
+    private void xdgOpen(String string) throws IOException {
+        new ProcessBuilder(XDG_COMMAND, string).start();
     }
 
     // Do NOT add an edit(...) function!
@@ -262,43 +289,34 @@ public class GuiUtils implements Serializable {
      *
      * @param file file or directory to be opened/edited.
      */
-    public void open(File file) {
-        if (!Desktop.isDesktopSupported()) {
-            error("Desktop not supported");
-            return;
-        }
-
-        if (Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+    public void open(File file) throws IOException {
+        if (useXdbOpen) 
+            xdgOpen(file.getAbsolutePath());
+        else if (Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
             try {
                 Desktop.getDesktop().open(file);
                 if (verbose)
                     trace("open file \"" + file.toString() + "\" succeeded");
-                return;
             } catch (IllegalArgumentException ex) {
                 error(file.getAbsolutePath() + " does not exist.");
-                return;
             } catch (IOException ex) {
                 if (verbose)
                     trace("open file \"" + file.toString() + "\" failed: " + ex.getLocalizedMessage());
             }
-        }
-
-        if (Desktop.getDesktop().isSupported(Desktop.Action.EDIT)) {
+        } else if (Desktop.getDesktop().isSupported(Desktop.Action.EDIT)) {
             try {
                 Desktop.getDesktop().edit(file);
                 if (verbose)
                     trace("edit file \"" + file.toString() + "\" succeeded");
-                return;
             } catch (IOException ex) {
                 if (verbose)
                     trace("edit file \"" + file.toString() + "\" failed: " + ex.getLocalizedMessage());
             }
-        }
-
-        error("Neither edit nor open supported/working");
+        } else
+            error("Neither edit nor open supported/working");
     }
 
-    public void browseOrEdit(String urlOrFilename) {
+    public void browseOrEdit(String urlOrFilename) throws IOException {
         try {
             URL url = new URL(urlOrFilename);
             browse(url.toURI());
@@ -307,6 +325,7 @@ public class GuiUtils implements Serializable {
         }
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void help(String helpText) {
         if (usePopupsForHelp)
             HelpPopup.newHelpPopup(frame, helpText);

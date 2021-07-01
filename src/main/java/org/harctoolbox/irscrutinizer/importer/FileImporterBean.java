@@ -336,7 +336,11 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
             guiUtils.error("File/URL empty");
             return;
         }
-        guiUtils.browseOrEdit(filename);
+        try {
+            guiUtils.browseOrEdit(filename);
+        } catch (IOException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_editBrowseButtonActionPerformed
 
     private void loadClipboardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadClipboardButtonActionPerformed
