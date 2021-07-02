@@ -31,8 +31,6 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="outputFormatIndex" type="int" default='"1"' />
     <property name="irWidgetCapturePortName" type="string" default='ifWindows("COM8","/dev/ttyUSB0")' doc='Name of device to use, e.g. COM8 or /dev/ttyUSB0.' />
     <property name="globalCacheCaptureIpName" type="string" default='""' doc="IP Name or Address of GlobalCache to use (capturing)."/>
-    <property name="lircMode2Command" type="string" default='"mode2 --driver default"' doc='Command line for the LIRC mode2 command' />
-    <property name="lircMode2UseStdin" type="boolean" default='"false"' doc='Expect mode2 commands from standard input' />
     <property name="commandFusionPortName" type="string" default='ifWindows("COM14", "/dev/ttyUSB0")' doc='Name of device to use for sending IR with the CommandFusion, e.g. COM1 or /dev/ttyUSB0.' />
     <property name="commandFusionPortBaudRate" type="int" default='"9600"' doc='Baudrate for CommandFusion serial (sending).' />
     <property name="commandFusionCapturePortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for capturing with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
@@ -48,7 +46,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="irToyCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for IrToy (capturing).' />
     <property name="devLircName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc."/>
     <property name="devLircCaptureName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc captures."/>
-    <property name="captureDevice" type="string" default='"LIRC Mode 2"' />
+    <property name="captureDevice" type="string" default='"GirsClient"' />
     <property name="sorterOnParametrizedTable" type="boolean" default='"false"' />
     <property name="sorterOnRawTable" type="boolean" default='"false"' />
     <property name="removeDefaultedParameters" type="boolean" default='"true"' />
