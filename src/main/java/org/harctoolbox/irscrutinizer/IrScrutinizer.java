@@ -27,10 +27,13 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.Utils;
+import org.harctoolbox.ircore.IrCoreUtils;
 import org.harctoolbox.irp.IrpParseException;
 import org.harctoolbox.irp.IrpUtils;
 import org.xml.sax.SAXException;
@@ -89,6 +92,15 @@ public class IrScrutinizer {
         }
 
         String applicationHome = Utils.findApplicationHome(commandLineArgs.applicationHome, IrScrutinizer.class, Version.appName);
+
+        Map<String, Integer> map = new LinkedHashMap<>(8);
+        map.put("0b", 2);
+        map.put("%", 2);
+        map.put("0q", 4);
+        map.put("0", 8);
+        map.put("0x", 16);
+        IrCoreUtils.setRadixPrefixes(map);
+
         guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose,
                 commandLineArgs.experimental ? 1 : 0, commandLineArgs.arguments);
     }

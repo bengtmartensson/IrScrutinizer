@@ -2453,6 +2453,7 @@ public final class GuiMain extends javax.swing.JFrame {
         rawWithoutSignsRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         analyzerBasisMenu = new javax.swing.JMenu();
         analyzerBase2RadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        analyzerBase4RadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         analyzerBase8RadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         analyzerBase10RadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         analyzerBase16RadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -6739,6 +6740,16 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         analyzerBasisMenu.add(analyzerBase2RadioButtonMenuItem);
 
+        analyzerBaseButtonGroup.add(analyzerBase4RadioButtonMenuItem);
+        analyzerBase4RadioButtonMenuItem.setSelected(properties.getAnalyzerBase() == 4);
+        analyzerBase4RadioButtonMenuItem.setText("4");
+        analyzerBase4RadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                analyzerBase4RadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        analyzerBasisMenu.add(analyzerBase4RadioButtonMenuItem);
+
         analyzerBaseButtonGroup.add(analyzerBase8RadioButtonMenuItem);
         analyzerBase8RadioButtonMenuItem.setSelected(properties.getAnalyzerBase() == 8);
         analyzerBase8RadioButtonMenuItem.setText("8");
@@ -9782,6 +9793,10 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_irdbCodeSetComboBoxActionPerformed
 
+    private void analyzerBase4RadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_analyzerBase4RadioButtonMenuItemActionPerformed
+        properties.setAnalyzerBase(4);
+    }//GEN-LAST:event_analyzerBase4RadioButtonMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9799,6 +9814,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JRadioButtonMenuItem analyzerBase10RadioButtonMenuItem;
     private javax.swing.JRadioButtonMenuItem analyzerBase16RadioButtonMenuItem;
     private javax.swing.JRadioButtonMenuItem analyzerBase2RadioButtonMenuItem;
+    private javax.swing.JRadioButtonMenuItem analyzerBase4RadioButtonMenuItem;
     private javax.swing.JRadioButtonMenuItem analyzerBase8RadioButtonMenuItem;
     private javax.swing.ButtonGroup analyzerBaseButtonGroup;
     private javax.swing.JMenu analyzerBasisMenu;
