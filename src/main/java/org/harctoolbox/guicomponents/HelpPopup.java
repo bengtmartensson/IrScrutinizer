@@ -17,6 +17,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.guicomponents;
 
+import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Rectangle;
 import java.awt.Window;
@@ -31,6 +32,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import org.harctoolbox.ircore.ThisCannotHappenException;
 import org.harctoolbox.xml.XmlUtils;
@@ -79,6 +81,17 @@ public class HelpPopup extends javax.swing.JDialog {
                 }
             });
         }
+    }
+    
+    /**
+     * Creates a help popup.
+     *
+     * @param parent Parent window
+     * @param helpText Text (one string, to be formatted to many lines) containing the messages.
+     * @param title
+     */
+    private HelpPopup(Component parent, String helpText, boolean isHtml, String title) {
+        this(SwingUtilities.getWindowAncestor(parent), helpText, isHtml, title);
     }
 
     /** This method is called from within the constructor to
@@ -238,7 +251,7 @@ public class HelpPopup extends javax.swing.JDialog {
         }
     }
 
-    public static HelpPopup newHelpPopup(Window parent, String helpText) {
+    public static HelpPopup newHelpPopup(Component parent, String helpText) {
         return newHelpPopup(parent, helpText, helpText.startsWith("<html"), "Help");
     }
 
@@ -256,7 +269,7 @@ public class HelpPopup extends javax.swing.JDialog {
         return newHelpPopup(parent, stream.toString(), true, title);
     }
 
-    public static HelpPopup newHelpPopup(Window parent, String helpText, boolean isHtml, String title) {
+    public static HelpPopup newHelpPopup(Component parent, String helpText, boolean isHtml, String title) {
         HelpPopup helpBox = new HelpPopup(parent, helpText, isHtml, title);
         // Try to align just to the right of the parent
         Rectangle parentCoords = parent.getBounds();

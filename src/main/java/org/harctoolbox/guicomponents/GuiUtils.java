@@ -17,8 +17,8 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.guicomponents;
 
+import java.awt.Component;
 import java.awt.Desktop;
-import java.awt.Window;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -39,13 +39,8 @@ import org.harctoolbox.ircore.IrCoreUtils;
 // Interfaces to Desktop
 public class GuiUtils implements Serializable {
 
-    private static int maxGuiMessageLength = 200;
-    private static boolean usePopupsForErrors = false;
-    private static boolean usePopupsForHelp = false;
-    private static boolean offerStackTrace = false;
-    private static String programName = "unknown";
-    private static boolean verbose = false;
-    private static boolean useXdbOpen = false;
+    @SuppressWarnings("FieldMayBeFinal")
+    private static boolean useXdbOpen;
     private static final String XDG_COMMAND = "xdg-open";
     private static final String XDG_COMMAND_TEST_OPTION = "--version";
 
@@ -90,48 +85,58 @@ public class GuiUtils implements Serializable {
         System.exit(errorcode);
     }
 
-    private static boolean confirm(Window frame, String message, int optionType) {
+    private static boolean confirm(Component frame, String message, int optionType) {
         return JOptionPane.showConfirmDialog(frame, message, "Confirmation requested", optionType) == JOptionPane.OK_OPTION;
     }
 
-    private static boolean confirm(Window frame, String message) {
+    private static boolean confirm(Component frame, String message) {
         return confirm(frame, message, JOptionPane.OK_CANCEL_OPTION);
+    }
+
+    private static void xdgOpen(String string) throws IOException {
+        new ProcessBuilder(XDG_COMMAND, string).start();
+    }
+
+    private int maxGuiMessageLength = 200;
+    private boolean usePopupsForErrors = false;
+    private boolean usePopupsForHelp = false;
+    private boolean offerStackTrace = false;
+    private String programName = "unknown";
+    private boolean verbose = false;
+    private final Component frame;
+
+    public GuiUtils(Component frame) {
+        this.frame = frame;
     }
 
     /**
      * @param aMaxGuiMessageLength the maxGuiMessageLength to set
      */
-    public static void setMaxGuiMessageLength(int aMaxGuiMessageLength) {
+    public void setMaxGuiMessageLength(int aMaxGuiMessageLength) {
         maxGuiMessageLength = aMaxGuiMessageLength;
     }
 
     /**
      * @param aProgramName the programName to set
      */
-    public static void setProgramName(String aProgramName) {
+    public void setProgramName(String aProgramName) {
         programName = aProgramName;
     }
 
-    public static void setVerbose(boolean newVerbose) {
+    public void setVerbose(boolean newVerbose) {
         verbose = newVerbose;
     }
 
-    public static void setOfferStackTrace(boolean newOfferStackTrace) {
+    public void setOfferStackTrace(boolean newOfferStackTrace) {
         offerStackTrace = newOfferStackTrace;
     }
 
-    public static void setUsePopupsForErrors(boolean newUsePopupsForErrors) {
+    public void setUsePopupsForErrors(boolean newUsePopupsForErrors) {
         usePopupsForErrors = newUsePopupsForErrors;
     }
 
-    public static void setUsePopupsForHelp(boolean newUsePopupsForHelp) {
+    public void setUsePopupsForHelp(boolean newUsePopupsForHelp) {
         usePopupsForHelp = newUsePopupsForHelp;
-    }
-
-    private final Window frame;
-
-    public GuiUtils(Window frame) {
-        this.frame = frame;
     }
 
     private String truncate(String message) {
@@ -276,10 +281,7 @@ public class GuiUtils implements Serializable {
                 ex.printStackTrace(System.err);
         }
     }
-    
-    private void xdgOpen(String string) throws IOException {
-        new ProcessBuilder(XDG_COMMAND, string).start();
-    }
+
 
     // Do NOT add an edit(...) function!
 
@@ -290,7 +292,7 @@ public class GuiUtils implements Serializable {
      * @param file file or directory to be opened/edited.
      */
     public void open(File file) throws IOException {
-        if (useXdbOpen) 
+        if (useXdbOpen)
             xdgOpen(file.getAbsolutePath());
         else if (Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
             try {
