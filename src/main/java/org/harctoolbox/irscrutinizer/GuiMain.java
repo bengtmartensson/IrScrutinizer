@@ -159,7 +159,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private final String[] prontoModelNames;
     private ExportFormatManager exportFormatManager;
     private transient SendingHardwareManager sendingHardwareManager = null;
-    private transient SendingLircClient sendingLircClient;
     private transient CapturingHardwareManager capturingHardwareManager;
 
     private transient Remote.MetaData metaData = new Remote.MetaData("unnamed");
@@ -664,10 +663,6 @@ public final class GuiMain extends javax.swing.JFrame {
         SendingGlobalCache sendingGlobalCache = new SendingGlobalCache(globalCachePanel, properties,
                 guiUtils, globalCacheIrSenderSelector);
         sendingHardwareManager.add(sendingGlobalCache);
-
-        sendingLircClient = new SendingLircClient(lircPanel, properties,
-                guiUtils, lircInternetHostPanel, lircNamedCommandLauncher);
-        sendingHardwareManager.add(sendingLircClient);
 
         SendingIrTrans sendingIrTrans = new SendingIrTrans(irTransPanel, properties,
                 guiUtils, irTransInternetHostPanel);
@@ -2315,10 +2310,6 @@ public final class GuiMain extends javax.swing.JFrame {
         globalCachePanel = new javax.swing.JPanel();
         globalCacheIrSenderSelector = new org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector(guiUtils, properties.getVerbose(), properties.getGlobalCacheTimeout(), true);
         sendingGlobalCacheHelpButton = new javax.swing.JButton();
-        lircPanel = new javax.swing.JPanel();
-        lircInternetHostPanel = new org.harctoolbox.guicomponents.InternetHostPanel(guiUtils, true, true, true);
-        lircNamedCommandLauncher = new org.harctoolbox.guicomponents.NamedCommandLauncher(guiUtils);
-        sendingLircHelpButton = new javax.swing.JButton();
         devLircPanel = new javax.swing.JPanel();
         devLircBean = new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getDevLircName(), true);
         sendingDevLircHardwareHelpButton = new javax.swing.JButton();
@@ -2458,7 +2449,6 @@ public final class GuiMain extends javax.swing.JFrame {
         sendingTimeoutMenuItem = new javax.swing.JMenuItem();
         jSeparator26 = new javax.swing.JPopupMenu.Separator();
         globalCacheTimeoutMenuItem = new javax.swing.JMenuItem();
-        lircTimeoutMenuItem = new javax.swing.JMenuItem();
         protocolParametersMenu = new javax.swing.JMenu();
         absToleranceMenuItem = new javax.swing.JMenuItem();
         relToleranceMenuItem = new javax.swing.JMenuItem();
@@ -5459,48 +5449,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
         sendingHardwareTabbedPane.addTab("Global Caché", globalCachePanel);
 
-        lircInternetHostPanel.setIpName(properties.getLircIpName());
-        lircInternetHostPanel.setPortNumber(properties.getLircPort());
-
-        sendingLircHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        sendingLircHelpButton.setText("Help");
-        sendingLircHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendingLircHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout lircPanelLayout = new javax.swing.GroupLayout(lircPanel);
-        lircPanel.setLayout(lircPanelLayout);
-        lircPanelLayout.setHorizontalGroup(
-            lircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(lircPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(lircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lircPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(sendingLircHelpButton))
-                    .addGroup(lircPanelLayout.createSequentialGroup()
-                        .addGroup(lircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lircNamedCommandLauncher, javax.swing.GroupLayout.PREFERRED_SIZE, 785, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lircInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 770, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 34, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        lircPanelLayout.setVerticalGroup(
-            lircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(lircPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lircInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(lircNamedCommandLauncher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(sendingLircHelpButton)
-                .addContainerGap())
-        );
-
-        sendingHardwareTabbedPane.addTab("Lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), lircPanel); // NOI18N
-
         sendingDevLircHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         sendingDevLircHardwareHelpButton.setText("Help");
         sendingDevLircHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
@@ -6709,14 +6657,6 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         timeoutMenu.add(globalCacheTimeoutMenuItem);
-
-        lircTimeoutMenuItem.setText("Lirc timeout");
-        lircTimeoutMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                lircTimeoutMenuItemActionPerformed(evt);
-            }
-        });
-        timeoutMenu.add(lircTimeoutMenuItem);
 
         optionsMenu.add(timeoutMenu);
 
@@ -8819,10 +8759,6 @@ public final class GuiMain extends javax.swing.JFrame {
         HelpPopup.newHelpPopup(this, HelpTexts.sendingGenericSerialPortHelp);
     }//GEN-LAST:event_sendingGenericSerialPortHelpButtonActionPerformed
 
-    private void sendingLircHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingLircHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.sendingLircHelp);
-    }//GEN-LAST:event_sendingLircHelpButtonActionPerformed
-
     private void scrutinizeParametricMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scrutinizeParametricMenuItemActionPerformed
         try {
             scrutinizeIrSignal(parameterTable);
@@ -9191,18 +9127,6 @@ public final class GuiMain extends javax.swing.JFrame {
         if (sendingHardwareManager != null)
             properties.setSelectedRemoteIndex(rawCookedTabbedPane.getSelectedIndex());
     }//GEN-LAST:event_rawCookedTabbedPaneStateChanged
-
-    private void lircTimeoutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lircTimeoutMenuItemActionPerformed
-        try {
-            Integer t = guiUtils.getIntegerInput("Lirc socket time-out in milliseconds", properties.getLircTimeout());
-            if (t != null) {
-                properties.setLircTimeout(t);
-                sendingLircClient.setTimeout(t);
-            }
-        } catch (NumberFormatException ex) {
-            guiUtils.error("Invalid number: " + ex.getMessage());
-        }
-    }//GEN-LAST:event_lircTimeoutMenuItemActionPerformed
 
     private void rawCodePasteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawCodePasteMenuItemActionPerformed
         insertCapturedDataTextAreaFromClipboard();
@@ -9985,10 +9909,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem lengthMenuItem;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<LircImporter> lircFileImporterBean;
     private javax.swing.JPanel lircImportPanel;
-    private org.harctoolbox.guicomponents.InternetHostPanel lircInternetHostPanel;
-    private org.harctoolbox.guicomponents.NamedCommandLauncher lircNamedCommandLauncher;
-    private javax.swing.JPanel lircPanel;
-    private javax.swing.JMenuItem lircTimeoutMenuItem;
     private javax.swing.JMenu loadMenu;
     private javax.swing.JMenuItem mainDocuMenuItem;
     private javax.swing.JMenuBar menuBar;
@@ -10118,7 +10038,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JTabbedPane sendingHardwareTabbedPane;
     private javax.swing.JButton sendingIrToyHelpButton;
     private javax.swing.JButton sendingIrTransHelpButton;
-    private javax.swing.JButton sendingLircHelpButton;
     private javax.swing.JPanel sendingPanel;
     private javax.swing.JMenuItem sendingTimeoutMenuItem;
     private javax.swing.JMenuItem setDMenuItem;

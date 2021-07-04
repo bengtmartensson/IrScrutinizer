@@ -1665,14 +1665,6 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="globalCacheTimeoutMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JMenuItem" name="lircTimeoutMenuItem">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Lirc timeout"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="lircTimeoutMenuItemActionPerformed"/>
-                  </Events>
-                </MenuItem>
               </SubComponents>
             </Menu>
             <Menu class="javax.swing.JMenu" name="protocolParametersMenu">
@@ -6054,86 +6046,6 @@
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sendingGlobalCacheHelpButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                    <Container class="javax.swing.JPanel" name="lircPanel">
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Lirc">
-                            <Property name="tabTitle" type="java.lang.String" value="Lirc"/>
-                            <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/lirc/favicon-2.png"/>
-                            </Property>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="1" attributes="0">
-                                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                          <Component id="sendingLircHelpButton" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" attributes="0">
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="lircNamedCommandLauncher" min="-2" pref="785" max="-2" attributes="0"/>
-                                              <Component id="lircInternetHostPanel" min="-2" pref="770" max="-2" attributes="0"/>
-                                          </Group>
-                                          <EmptySpace min="0" pref="34" max="32767" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="lircInternetHostPanel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                                  <Component id="lircNamedCommandLauncher" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="sendingLircHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.InternetHostPanel" name="lircInternetHostPanel">
-                          <Properties>
-                            <Property name="ipName" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                              <Connection code="properties.getLircIpName()" type="code"/>
-                            </Property>
-                            <Property name="portNumber" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                              <Connection code="properties.getLircPort()" type="code"/>
-                            </Property>
-                          </Properties>
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.InternetHostPanel(guiUtils, true, true, true)"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="org.harctoolbox.guicomponents.NamedCommandLauncher" name="lircNamedCommandLauncher">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.NamedCommandLauncher(guiUtils)"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="sendingLircHelpButton">
-                          <Properties>
-                            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Help"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sendingLircHelpButtonActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>

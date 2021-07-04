@@ -20,7 +20,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 <!-- All relative file names are relative to IRSCRUTINIZERHOME = applicationHome -->
 <properties package="org.harctoolbox.irscrutinizer" useXml = "true" appName="Version.appName" home-environment-var="IRSCRUTINIZERHOME">
     <import class="org.harctoolbox.harchardware.ir.IrTrans"/>
-    <import class="org.harctoolbox.harchardware.ir.LircClient"/>
+    <!--import class="org.harctoolbox.harchardware.ir.LircClient"/-->
     <property name="proxyHostName" type="string" default='""' doc='Hostname of WEB proxy.' />
     <property name="proxyPort" type="int" default='"8080"' doc='Port number of WEB proxy.' />
     <import class="org.harctoolbox.ircore.IrCoreUtils"/>
@@ -89,9 +89,9 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="tutorialUrl" type="string" default='"http://www.hifi-remote.com/wiki/index.php?title=IrScrutinizer_Guide"' doc='URL for tutorial.'/>
     <property name="irTransIpName" type="string" default='IrTrans.DEFAULT_IP' doc='IP name or address of IRTrans unit.'/>
     <property name="transmitHardware" type="string" default='"Audio Port"' doc="Name of selected transmit hardware."/>
-    <property name="lircIpName" type="string" default='LircClient.defaultLircIP' doc='IP name or address of LIRC server.'/>
+    <!--property name="lircIpName" type="string" default='LircClient.defaultLircIP' doc='IP name or address of LIRC server.'/>
     <property name="lircPort" type="int" default='Integer.toString(LircClient.lircDefaultPort)' doc='TCP port number of LIRC server, typically 8765.'/>
-    <property name="lircTimeout" type="int" default='"5000"' doc="Timeout for connecting to TCP Lirc server" />
+    <property name="lircTimeout" type="int" default='"5000"' doc="Timeout for connecting to TCP Lirc server" /-->
     <property name="lookAndFeel" type="int" default='"0"' doc='Look and feel, as integer index in table. Semantics is system dependent.'/>
     <property name="globalCacheApiKey" type="string" default='""' />
     <property name="usePopupsForErrors" type="boolean" default='"true"' doc='If true, use popups for help. Otherwise the console will be used.'/>
