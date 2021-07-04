@@ -137,8 +137,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private final String applicationHome;
     private java.awt.Component lastPane;
     private int dynamicExportFormatsMenuPosition;
-    private boolean initialized = false;
-    private boolean stdinHasBeenClosed = false;
     private final transient TableUtils tableUtils;
     private Proxy proxy = Proxy.NO_PROXY;
 
@@ -875,7 +873,6 @@ public final class GuiMain extends javax.swing.JFrame {
         }
 
         processArguments(arguments);
-        initialized = true;
     } // end of constructor
 
     // Just snarfed from IrpMaster
@@ -8918,9 +8915,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_unsetTMenuItemActionPerformed
 
     private void debugCodeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugCodeMenuItemActionPerformed
-        String s = guiUtils.getInput("TODO", "Not yet implemented", "");
-        if (s != null)
-            ;
+        guiUtils.getInput("TODO", "Not yet implemented", "");
     }//GEN-LAST:event_debugCodeMenuItemActionPerformed
 
     private void sendingGirsClientHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingGirsClientHelpButtonActionPerformed

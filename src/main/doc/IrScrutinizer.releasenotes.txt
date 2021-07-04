@@ -6,6 +6,9 @@ https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
 Version 2.3.2 alternatively 2.4.0, released 2021-08-31(?).
 
+* Remove Lirc as sending device. Resolves #399.
+* Remove NamedCommand-support in the IrTrans pane.
+* New tool for sending named commands. #128.
 * Remove "LIRC Mode 2" as capturing device. #378.
 
 ==============================================================================

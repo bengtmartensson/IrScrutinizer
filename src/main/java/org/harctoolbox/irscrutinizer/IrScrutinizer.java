@@ -41,6 +41,7 @@ import org.xml.sax.SAXException;
 /**
  * This class decodes command line parameters and fires up the GUI.
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class IrScrutinizer {
 
     private final static String backupsuffix = "back";
