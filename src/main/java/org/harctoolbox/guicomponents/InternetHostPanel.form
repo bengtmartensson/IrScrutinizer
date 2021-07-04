@@ -32,9 +32,9 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="pingButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="versionLiteralLabel" min="-2" pref="36" max="-2" attributes="0"/>
+              <Component id="versionLiteralLabel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="versionLabel" pref="236" max="32767" attributes="0"/>
+              <Component id="versionLabel" pref="213" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -69,6 +69,7 @@
         <Property name="toolTipText" type="java.lang.String" value="IP-Name or -address of host"/>
       </Properties>
       <Events>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="ipNameTextFieldFocusLost"/>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ipNameTextFieldActionPerformed"/>
       </Events>
     </Component>
@@ -80,6 +81,7 @@
         <Property name="toolTipText" type="java.lang.String" value="Portnumber"/>
       </Properties>
       <Events>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="portTextFieldFocusLost"/>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="portTextFieldActionPerformed"/>
       </Events>
     </Component>
@@ -121,7 +123,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="versionLiteralLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Ver:"/>
+        <Property name="text" type="java.lang.String" value="Version:"/>
         <Property name="toolTipText" type="java.lang.String" value="Version of the firmware on the device, if supported by the device. Verifies that the connection is working."/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>

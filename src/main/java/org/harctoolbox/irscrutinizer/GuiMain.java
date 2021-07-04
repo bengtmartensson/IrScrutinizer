@@ -406,13 +406,13 @@ public final class GuiMain extends javax.swing.JFrame {
         parameterTableColumnModel = new ParametrizedIrSignal.ParameterIrSignalTableColumnModel();
         rawTableColumnModel = new RawIrSignal.RawTableColumnModel();
 
-        GuiUtils.setProgramName(Version.appName);
-        GuiUtils.setMaxGuiMessageLength(maxCharsInGuiMessages);
-        GuiUtils.setUsePopupsForErrors(false); // during initialization, popup errors might not work
-        GuiUtils.setUsePopupsForHelp(properties.getUsePopupsForHelp());
-        GuiUtils.setOfferStackTrace(properties.getOfferStackTrace());
-        GuiUtils.setVerbose(properties.getVerbose());
         guiUtils = new GuiUtils(this);
+        guiUtils.setProgramName(Version.appName);
+        guiUtils.setMaxGuiMessageLength(maxCharsInGuiMessages);
+        guiUtils.setUsePopupsForErrors(false); // during initialization, popup errors might not work
+        guiUtils.setUsePopupsForHelp(properties.getUsePopupsForHelp());
+        guiUtils.setOfferStackTrace(properties.getOfferStackTrace());
+        guiUtils.setVerbose(properties.getVerbose());
 
         tableUtils = new TableUtils(guiUtils);
 
@@ -2506,6 +2506,7 @@ public final class GuiMain extends javax.swing.JFrame {
         hexCalcMenuItem = new javax.swing.JMenuItem();
         timeFrequencyCalcMenuItem = new javax.swing.JMenuItem();
         beaconListenerMenuItem = new javax.swing.JMenuItem();
+        NamedCommandMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         publicKeyMenuItem = new javax.swing.JMenuItem();
         jSeparator41 = new javax.swing.JPopupMenu.Separator();
@@ -7140,6 +7141,16 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         toolsMenu.add(beaconListenerMenuItem);
+
+        NamedCommandMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/cache.png"))); // NOI18N
+        NamedCommandMenuItem.setText("Named Command Sender");
+        NamedCommandMenuItem.setToolTipText("Tool for sending named command from named remotes.");
+        NamedCommandMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NamedCommandMenuItemActionPerformed(evt);
+            }
+        });
+        toolsMenu.add(NamedCommandMenuItem);
         toolsMenu.add(jSeparator1);
 
         publicKeyMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/password.png"))); // NOI18N
@@ -9607,9 +9618,14 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setAnalyzerBase(4);
     }//GEN-LAST:event_analyzerBase4RadioButtonMenuItemActionPerformed
 
+    private void NamedCommandMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NamedCommandMenuItemActionPerformed
+        HarcletFrame.newHarcletFrame(this, new NamedCommandPanel(), false, lookAndFeelManager.getCurrentLAFClassName());
+    }//GEN-LAST:event_NamedCommandMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
+    private javax.swing.JMenuItem NamedCommandMenuItem;
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuItem absToleranceMenuItem;
     private javax.swing.JMenu actionsMenu;

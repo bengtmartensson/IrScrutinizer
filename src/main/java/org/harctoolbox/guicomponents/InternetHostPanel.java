@@ -17,7 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.guicomponents;
 
-import java.awt.Desktop;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
@@ -35,25 +34,18 @@ public final class InternetHostPanel extends JPanel {
     public static final String PROP_VERSION = "PROP_VERSION";
     public static final String PROP_ISOPEN = "PROP_ISOPEN";
 
-    public static final int defaultPingTimeout = 5000;
-    public static final String defaultIpName = "localhost";
-    public static final int defaultPortNumber = LircClient.lircDefaultPort;
-
-    private int pingTimeout = defaultPingTimeout;
+    public static final int PING_TIMEOUT = 5000;
+    public static final String INITIAL_IPNAME=  "localhost";
 
     private boolean usePort;
     private boolean usePing;
     private boolean useBrowse;
-
     private String ipName;
     private int portNumber;
     private boolean ready;
     private String version;
-
     private GuiUtils guiUtils;
-
     private IHarcHardware hardware;
-    private boolean listenable;
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -73,8 +65,8 @@ public final class InternetHostPanel extends JPanel {
         this.useBrowse = useBrowse;
         this.usePing = usePing;
         this.usePort = usePort;
-        ipName = defaultIpName;
-        portNumber = defaultPortNumber;
+        ipName = INITIAL_IPNAME;
+        portNumber = LircClient.lircDefaultPort;
         ready = false;
         initComponents();
         setUsePort(usePort);
@@ -104,13 +96,8 @@ public final class InternetHostPanel extends JPanel {
         return ready;
     }
 
-    /**
-     * @param ready the ready to set
-     */
-    public void setReady(boolean ready) {
-        boolean oldReady = this.ready;
-        this.ready = ready;
-        propertyChangeSupport.firePropertyChange(PROP_READY, oldReady, ready);
+    public void setBrowsingEnabled(boolean enable) {
+        browseButton.setEnabled(enable);
     }
 
     public void setIpName(String name) {
@@ -137,33 +124,16 @@ public final class InternetHostPanel extends JPanel {
         }
     }
 
-    public int getPingTimeout() {
-        return pingTimeout;
-    }
-
-    public void setPingTimeout(int val) {
-        pingTimeout = val;
-    }
-
-    public void setGuiUtils(GuiUtils guiUtils) {
-        this.guiUtils = guiUtils;
-    }
-
     public boolean isPingable() {
         boolean success = false;
         String host = getIpName();
         try {
-            success = InetAddress.getByName(host).isReachable(pingTimeout);
+            success = InetAddress.getByName(host).isReachable(PING_TIMEOUT);
             guiUtils.info(host + (success ? " is reachable" : " is not reachable (using Java's isReachable)"));
         } catch (IOException ex) {
             guiUtils.info(host + " is not reachable (using Java's isReachable): " + ex.getMessage());
         }
         return success;
-    }
-
-    public void testPing() {
-        boolean result = isPingable();
-        System.err.println(result);
     }
 
     public void setHardware(IHarcHardware hardware) throws IOException {
@@ -201,13 +171,6 @@ public final class InternetHostPanel extends JPanel {
         propertyChangeSupport.firePropertyChange(PROP_VERSION, oldVersion, version);
     }
 
-    //private void setVersion() {
-    //    try {
-    //        setVersion(hardware.isValid() ? hardware.getVersion() : "<not connected>");
-    //    } catch (IOException ex) {
-    //    }
-    //}
-
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         // just to be Javabeans safe
@@ -242,6 +205,11 @@ public final class InternetHostPanel extends JPanel {
 
         ipNameTextField.setText(getIpName());
         ipNameTextField.setToolTipText("IP-Name or -address of host");
+        ipNameTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                ipNameTextFieldFocusLost(evt);
+            }
+        });
         ipNameTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ipNameTextFieldActionPerformed(evt);
@@ -250,6 +218,11 @@ public final class InternetHostPanel extends JPanel {
 
         portTextField.setText(Integer.toString(getPortNumber()));
         portTextField.setToolTipText("Portnumber");
+        portTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                portTextFieldFocusLost(evt);
+            }
+        });
         portTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 portTextFieldActionPerformed(evt);
@@ -280,7 +253,7 @@ public final class InternetHostPanel extends JPanel {
 
         portLabel.setText("Port");
 
-        versionLiteralLabel.setText("Ver:");
+        versionLiteralLabel.setText("Version:");
         versionLiteralLabel.setToolTipText("Version of the firmware on the device, if supported by the device. Verifies that the connection is working.");
         versionLiteralLabel.setEnabled(false);
 
@@ -308,9 +281,9 @@ public final class InternetHostPanel extends JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pingButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(versionLiteralLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(versionLiteralLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(versionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE))
+                .addComponent(versionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -356,16 +329,20 @@ public final class InternetHostPanel extends JPanel {
 
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
         ipName = ipNameTextField.getText();
-        try {
-            Desktop.getDesktop().browse(URI.create("http://" + this.getIpName()));
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        }
+        guiUtils.browse(URI.create("http://" + this.getIpName()));
     }//GEN-LAST:event_browseButtonActionPerformed
 
     private void pingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pingButtonActionPerformed
         isPingable();
     }//GEN-LAST:event_pingButtonActionPerformed
+
+    private void ipNameTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ipNameTextFieldFocusLost
+        ipNameTextFieldActionPerformed(null);
+    }//GEN-LAST:event_ipNameTextFieldFocusLost
+
+    private void portTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_portTextFieldFocusLost
+        portTextFieldActionPerformed(null);
+    }//GEN-LAST:event_portTextFieldFocusLost
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;

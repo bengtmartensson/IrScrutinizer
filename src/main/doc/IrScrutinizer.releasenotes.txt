@@ -1,16 +1,26 @@
 Release notes for IrScrutinizer, including IrpMaster/IrpTransmogrifier,
 Girr, HardHardware, DevSlashLirc, and Jirc.
 
-The gaps in release number sequence are due to keeping version numbers
-(after the first digit) equal to IrpTransmogrifier.
-
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
-Version 2.3.1, released 202x-yy-zz.
+Version 2.3.2 alternatively 2.4.0, released 2021-08-31(?).
 
+* Remove "LIRC Mode 2" as capturing device. #378.
+
+==============================================================================
+Version 2.3.1, released 2021-07-04.
+
+* If possible, use xdg-open instead of java.awt.Desktop. #433.
+* Add basis 4 option to the analyzer. #432.
+* Replace IRDB data base by RemoteLocator- #429.
+* Girr importer now imports also Remotes, CommandSets and Commands. #420
+* Misc bugfixes (#403, #407, #412, #414, #417, #421, #430).
+* interpretString: Robustness fix. #407.
 * Remove RemoteMaster import and export. #400.
 * Say "Render" instead of "Generate". #402.
+* Arduino export issues: #414.
+* Support HTML in help popups. Resolves #159.
 
 ==============================================================================
 Version 2.3.0, released 2020-09-25.
