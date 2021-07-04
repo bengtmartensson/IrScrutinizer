@@ -417,13 +417,8 @@ class HelpTexts {
 
     @SuppressWarnings("PackageVisibleField")
     public static String sendingIrTransHelp
-            = "Enter IP name or -address and select an IR port (default \"intern\"). If the "
-            + "Ethernet IRTrans contains an \"IR Database\" (which is a slightly misleading term "
-            + "for an internal flash memory, that can be filled by the user), its commands can "
-            + "be sent from this pane. By pressing the \"Read\" button, the known remotes and "
-            + "commands are loaded, and the version of the IRTrans displayed. The selected "
-            + "command can now be sent by the \"Send\" button. (However, this "
-            + "functionality is otherwise not used by IrScrutinizer.)";
+            = "Enter IP name or -address.\n\n"
+            + "Selection of transmitter is not supported, just \"all\".";
 
     @SuppressWarnings("PackageVisibleField")
     public static String sendingIrToyHelp

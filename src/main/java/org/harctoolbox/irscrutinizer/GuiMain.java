@@ -31,6 +31,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
@@ -80,7 +81,12 @@ import org.harctoolbox.guicomponents.*;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.TimeoutException;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
-import org.harctoolbox.harchardware.ir.*;
+import org.harctoolbox.harchardware.ir.CommandFusion;
+import org.harctoolbox.harchardware.ir.GirsClient;
+import org.harctoolbox.harchardware.ir.IrToy;
+import org.harctoolbox.harchardware.ir.IrTrans;
+import org.harctoolbox.harchardware.ir.IrWidget;
+import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.IrCoreUtils;
@@ -664,7 +670,7 @@ public final class GuiMain extends javax.swing.JFrame {
         sendingHardwareManager.add(sendingLircClient);
 
         SendingIrTrans sendingIrTrans = new SendingIrTrans(irTransPanel, properties,
-                guiUtils, irTransInternetHostPanel, irTransNamedCommandLauncher);
+                guiUtils, irTransInternetHostPanel);
         sendingHardwareManager.add(sendingIrTrans);
 
         SendingIrAudioPort sendingIrAudioPort = new SendingIrAudioPort(audioPanel,
@@ -1820,10 +1826,10 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void setupIrTrans() throws UnknownHostException, IOException {
         String irTransIp = irTransInternetHostPanel.getIpName();
-        IrTransIRDB irTransIRDB = new IrTransIRDB(irTransIp, properties.getVerbose(), properties.getSendingTimeout());
+        IrTrans irTrans = new IrTrans(InetAddress.getByName(irTransIp), properties.getVerbose(), properties.getSendingTimeout());
         //irTrans = new IrTrans(irTransIp, properties.getVerbose(), properties.getStartTimeout());
-        irTransInternetHostPanel.setHardware(irTransIRDB);
-        irTransNamedCommandLauncher.setHardware(irTransIRDB);
+        irTransInternetHostPanel.setHardware(irTrans);
+        //irTransNamedCommandLauncher.setHardware(irTransIRDB);
         properties.setIrTransIpName(irTransIp);
     }
 
@@ -2318,7 +2324,6 @@ public final class GuiMain extends javax.swing.JFrame {
         sendingDevLircHardwareHelpButton = new javax.swing.JButton();
         irTransPanel = new javax.swing.JPanel();
         irTransInternetHostPanel = new org.harctoolbox.guicomponents.InternetHostPanel(guiUtils, false, true, true);
-        irTransNamedCommandLauncher = new org.harctoolbox.guicomponents.NamedCommandLauncher(guiUtils);
         sendingIrTransHelpButton = new javax.swing.JButton();
         audioPanel = new javax.swing.JPanel();
         transmitAudioParametersBean = new org.harctoolbox.guicomponents.AudioParametersBean(properties);
@@ -5549,17 +5554,13 @@ public final class GuiMain extends javax.swing.JFrame {
         irTransPanel.setLayout(irTransPanelLayout);
         irTransPanelLayout.setHorizontalGroup(
             irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(irTransPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, irTransPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, irTransPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(sendingIrTransHelpButton))
+                .addGroup(irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(irTransPanelLayout.createSequentialGroup()
-                        .addGroup(irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(irTransNamedCommandLauncher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 47, Short.MAX_VALUE)))
+                        .addGap(0, 726, Short.MAX_VALUE)
+                        .addComponent(sendingIrTransHelpButton)))
                 .addContainerGap())
         );
         irTransPanelLayout.setVerticalGroup(
@@ -5567,9 +5568,7 @@ public final class GuiMain extends javax.swing.JFrame {
             .addGroup(irTransPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(irTransNamedCommandLauncher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
                 .addComponent(sendingIrTransHelpButton)
                 .addContainerGap())
         );
@@ -9881,7 +9880,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.guicomponents.SerialPortSimpleBean irToySerialPortBean;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<IrTransImporter> irTransFileImporterBean;
     private org.harctoolbox.guicomponents.InternetHostPanel irTransInternetHostPanel;
-    private org.harctoolbox.guicomponents.NamedCommandLauncher irTransNamedCommandLauncher;
     private javax.swing.JPanel irTransPanel;
     private javax.swing.JButton irTransWebButton;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean irWidgetSerialPortSimpleBean;

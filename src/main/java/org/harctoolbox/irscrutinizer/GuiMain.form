@@ -6211,19 +6211,13 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
+                              <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="1" attributes="0">
-                                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                          <Component id="sendingIrTransHelpButton" min="-2" max="-2" attributes="0"/>
-                                      </Group>
+                                  <Group type="103" groupAlignment="1" attributes="0">
+                                      <Component id="irTransInternetHostPanel" max="32767" attributes="0"/>
                                       <Group type="102" attributes="0">
-                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                              <Component id="irTransNamedCommandLauncher" max="32767" attributes="0"/>
-                                              <Component id="irTransInternetHostPanel" max="32767" attributes="0"/>
-                                          </Group>
-                                          <EmptySpace min="0" pref="47" max="32767" attributes="0"/>
+                                          <EmptySpace min="0" pref="726" max="32767" attributes="0"/>
+                                          <Component id="sendingIrTransHelpButton" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
@@ -6235,9 +6229,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="irTransInternetHostPanel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                                  <Component id="irTransNamedCommandLauncher" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
+                                  <EmptySpace pref="68" max="32767" attributes="0"/>
                                   <Component id="sendingIrTransHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -6259,11 +6251,6 @@
                           </Events>
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.InternetHostPanel(guiUtils, false, true, true)"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="org.harctoolbox.guicomponents.NamedCommandLauncher" name="irTransNamedCommandLauncher">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.NamedCommandLauncher(guiUtils)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="sendingIrTransHelpButton">

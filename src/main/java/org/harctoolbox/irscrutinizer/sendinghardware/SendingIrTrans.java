@@ -19,12 +19,12 @@ package org.harctoolbox.irscrutinizer.sendinghardware;
 
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
+import java.net.InetAddress;
 import javax.swing.JPanel;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.guicomponents.InternetHostPanel;
-import org.harctoolbox.guicomponents.NamedCommandLauncher;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.ir.IrTransIRDB;
+import org.harctoolbox.harchardware.ir.IrTrans;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 import org.harctoolbox.harchardware.ir.Transmitter;
 import org.harctoolbox.irscrutinizer.Props;
@@ -32,19 +32,17 @@ import org.harctoolbox.irscrutinizer.Props;
 /**
  * This class does something interesting and useful. Or not...
  */
-public class SendingIrTrans extends SendingHardware<IrTransIRDB> implements ISendingHardware<IrTransIRDB> {
+public class SendingIrTrans extends SendingHardware<IrTrans> implements ISendingHardware<IrTrans> {
 
     private final InternetHostPanel internetHostPanel;
-    private final NamedCommandLauncher namedCommandLauncher;
     private String desiredIp;
     private String currentIp = null;
-    private IrTransIRDB rawIrSender;
+    private IrTrans rawIrSender;
 
     public SendingIrTrans(JPanel panel, Props properties, GuiUtils gui,
-            InternetHostPanel internetHostPanel, NamedCommandLauncher namedCommandLauncher) {
+            InternetHostPanel internetHostPanel) {
         super(panel, properties, gui);
         this.internetHostPanel = internetHostPanel;
-        this.namedCommandLauncher = namedCommandLauncher;
         desiredIp = properties.getIrTransIpName();
         this.internetHostPanel.addPropertyChangeListener((PropertyChangeEvent evt) -> {
             try {
@@ -62,7 +60,7 @@ public class SendingIrTrans extends SendingHardware<IrTransIRDB> implements ISen
 
     @Override
     public Transmitter getTransmitter() throws NoSuchTransmitterException {
-        return namedCommandLauncher.getTransmitter();
+        return rawIrSender.newTransmitter(IrTrans.Led.all);
     }
 
     @Override
@@ -72,15 +70,15 @@ public class SendingIrTrans extends SendingHardware<IrTransIRDB> implements ISen
         if (rawIrSender == null || currentIp == null || !currentIp.equals(internetHostPanel.getIpName())) {
             close();
             rawIrSender = null;
-            rawIrSender = new IrTransIRDB(internetHostPanel.getIpName(), properties.getVerbose(), properties.getSendingTimeout());
-            namedCommandLauncher.setHardware(rawIrSender);
+            InetAddress ip = InetAddress.getByName(internetHostPanel.getIpName());
+            rawIrSender = new IrTrans(ip, properties.getVerbose(), properties.getSendingTimeout());
             currentIp = internetHostPanel.getIpName();
             properties.setIrTransIpName(internetHostPanel.getIpName());
         }
     }
 
     @Override
-    public IrTransIRDB getRawIrSender() {
+    public IrTrans getRawIrSender() {
         return rawIrSender;
     }
 }
