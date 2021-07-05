@@ -6056,7 +6056,7 @@
                           <JTabbedPaneConstraints tabName="/dev/lirc">
                             <Property name="tabTitle" type="java.lang.String" value="/dev/lirc"/>
                             <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/lirc/favicon-2.png"/>
+                              <Image iconType="3" name="/icons/tux/tux-22.png"/>
                             </Property>
                           </JTabbedPaneConstraints>
                         </Constraint>
@@ -6730,7 +6730,7 @@
                           <JTabbedPaneConstraints tabName="/dev/lirc">
                             <Property name="tabTitle" type="java.lang.String" value="/dev/lirc"/>
                             <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/lirc/favicon-2.png"/>
+                              <Image iconType="3" name="/icons/tux/tux-22.png"/>
                             </Property>
                           </JTabbedPaneConstraints>
                         </Constraint>

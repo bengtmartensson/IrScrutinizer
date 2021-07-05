@@ -5477,7 +5477,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        sendingHardwareTabbedPane.addTab("/dev/lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), devLircPanel); // NOI18N
+        sendingHardwareTabbedPane.addTab("/dev/lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/tux/tux-22.png")), devLircPanel); // NOI18N
 
         irTransInternetHostPanel.setIpName(null);
         irTransInternetHostPanel.setPortNumber(IrTrans.portNumber);
@@ -5872,7 +5872,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        capturingHardwareTabbedPane.addTab("/dev/lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/lirc/favicon-2.png")), captureDevLircPanel); // NOI18N
+        capturingHardwareTabbedPane.addTab("/dev/lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/tux/tux-22.png")), captureDevLircPanel); // NOI18N
 
         capturingIrToyHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         capturingIrToyHardwareHelpButton.setText("Help");
