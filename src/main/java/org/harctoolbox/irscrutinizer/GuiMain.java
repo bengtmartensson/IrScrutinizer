@@ -30,6 +30,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -658,10 +659,32 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.setVerbose((Boolean)newValue);
         });
 
-        SendingGlobalCache sendingGlobalCache = new SendingGlobalCache(globalCachePanel, properties,
-                guiUtils, globalCacheIrSenderSelector);
-        sendingHardwareManager.add(sendingGlobalCache);
+//        SendingGlobalCache sendingGlobalCache = new SendingGlobalCache(globalCachePanel, properties,
+//                guiUtils, globalCacheIrSenderSelector);
+        //sendingHardwareManager.add(sendingGlobalCache);
 
+        globalCacheIrSenderSelector.setGlobalCache(properties.getGlobalCacheIpName());
+        globalCacheIrSenderSelector.setModule(properties.getGlobalCacheModule());
+        globalCacheIrSenderSelector.setPort(properties.getGlobalCachePort());
+        globalCacheIrSenderSelector.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+                case GlobalCacheIrSenderSelector.PROP_IPNAME:
+                    properties.setGlobalCacheIpName((String) evt.getNewValue());
+                    break;
+                case GlobalCacheIrSenderSelector.PROP_MODULE:
+                    properties.setGlobalCacheModule((Integer) evt.getNewValue());
+                    break;
+                case GlobalCacheIrSenderSelector.PROP_PORT:
+                    properties.setGlobalCachePort((Integer) evt.getNewValue());
+                    break;
+                case GlobalCacheIrSenderSelector.PROP_ISOPEN:
+//                    guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
+                    break;
+                default:
+                    throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
+            }
+        });
+        sendingHardwareManager.add(globalCacheIrSenderSelector);
         SendingIrTrans sendingIrTrans = new SendingIrTrans(irTransPanel, properties,
                 guiUtils, irTransInternetHostPanel);
         sendingHardwareManager.add(sendingIrTrans);

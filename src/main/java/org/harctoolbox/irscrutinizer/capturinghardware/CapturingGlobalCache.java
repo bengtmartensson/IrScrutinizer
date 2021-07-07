@@ -49,17 +49,17 @@ public class CapturingGlobalCache extends CapturingHardware<GlobalCache> impleme
         });
         //setupHardwareCommonStart();
 
-        globalCacheIrSenderSelector.addPropertyChangeListener((PropertyChangeEvent evt) -> {
-            try {
-                setup();
-                if (evt.getPropertyName().equals(GlobalCacheIrSenderSelector.PROP_IPNAME)) {
-                    //rawIrSender = globalCacheIrSenderSelector.getGlobalCache();
-                    properties.setGlobalCacheCaptureIpName((String) evt.getNewValue());
-                }
-            } catch (IOException | HarcHardwareException ex) {
-                Logger.getLogger(CapturingGlobalCache.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
+//        globalCacheIrSenderSelector.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+//            try {
+//                setup();
+//                if (evt.getPropertyName().equals(GlobalCacheIrSenderSelector.PROP_IPNAME)) {
+//                    //rawIrSender = globalCacheIrSenderSelector.getGlobalCache();
+//                    properties.setGlobalCacheCaptureIpName((String) evt.getNewValue());
+//                }
+//            } catch (IOException | HarcHardwareException ex) {
+//                Logger.getLogger(CapturingGlobalCache.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        });
     }
 
     @Override
@@ -67,10 +67,10 @@ public class CapturingGlobalCache extends CapturingHardware<GlobalCache> impleme
         hardware = null;
         try {
             if (initialIp != null) {
-                globalCacheIrSenderSelector.setIpName(initialIp);
+//                globalCacheIrSenderSelector.setIpName(initialIp);
                 initialIp = null;
             }
-            hardware = globalCacheIrSenderSelector.getGlobalCache();
+//            hardware = globalCacheIrSenderSelector.getGlobalCache();
             if (hardware != null && !hardware.isValid())
                 hardware.open();
             selectMe();
