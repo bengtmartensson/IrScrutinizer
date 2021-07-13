@@ -29,12 +29,9 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="bounds" type="rectangle" default='null' doc='Bounds of IrScrutinizer window.'/>
     <property name="fileselectordirs" type="string" default='""' doc='Serialized data from SelectFile.fileselectordirs'/>
     <property name="outputFormatIndex" type="int" default='"1"' />
-    <property name="irWidgetCapturePortName" type="string" default='ifWindows("COM8","/dev/ttyUSB0")' doc='Name of device to use, e.g. COM8 or /dev/ttyUSB0.' />
-    <property name="globalCacheCaptureIpName" type="string" default='""' doc="IP Name or Address of GlobalCache to use (capturing)."/>
+    <property name="irWidgetPortName" type="string" default='ifWindows("COM8","/dev/ttyUSB0")' doc='Name of device to use, e.g. COM8 or /dev/ttyUSB0.' />
     <property name="commandFusionPortName" type="string" default='ifWindows("COM14", "/dev/ttyUSB0")' doc='Name of device to use for sending IR with the CommandFusion, e.g. COM1 or /dev/ttyUSB0.' />
     <property name="commandFusionPortBaudRate" type="int" default='"9600"' doc='Baudrate for CommandFusion serial (sending).' />
-    <property name="commandFusionCapturePortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for capturing with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
-    <property name="commandFusionCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (capturing).' />
     <property name="girsClientSerialPortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for sending IR with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
     <property name="girsClientSerialPortBaudRate" type="int" default='"115200"' doc='Baudrate for Arduino serial (sending).' />
     <property name="girsClientIPName" type="string" default='"arduino"' doc='IP-Name (or address) of Girs client.' />
@@ -42,11 +39,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="girsClientType" type="string" default='"tcp"' doc='Type of Girs client (serial, tcp,...).' />
     <property name="irToyPortName" type="string" default='ifWindows("COM13", "/dev/ttyACM0")' doc="Port name for IrToy"/>
     <property name="irToyPortBaudRate" type="int" default='"9600"' doc="Baudrate for IrToy (sending)"/>
-    <property name="irToyCapturePortName" type="string" default='ifWindows("COM13", "/dev/ttyACM0")' doc='Name of device to use, e.g. COM1 or /dev/ttyUSB0.' />
-    <property name="irToyCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for IrToy (capturing).' />
     <property name="devLircName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc."/>
-    <property name="devLircCaptureName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc captures."/>
-    <property name="captureDevice" type="string" default='"GirsClient"' />
     <property name="sorterOnParametrizedTable" type="boolean" default='"false"' />
     <property name="sorterOnRawTable" type="boolean" default='"false"' />
     <property name="removeDefaultedParameters" type="boolean" default='"true"' />
@@ -88,7 +81,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="releaseNotesPath" type="string" default='"doc" + File.separator + "IrScrutinizer.releasenotes.txt"' doc='Path name for release notes.'/>
     <property name="tutorialUrl" type="string" default='"http://www.hifi-remote.com/wiki/index.php?title=IrScrutinizer_Guide"' doc='URL for tutorial.'/>
     <property name="irTransIpName" type="string" default='IrTrans.DEFAULT_IP' doc='IP name or address of IRTrans unit.'/>
-    <property name="transmitHardware" type="string" default='"Audio Port"' doc="Name of selected transmit hardware."/>
+    <property name="selectedHardware" type="string" default='"Audio Port"' doc="Name of selected hardware."/>
     <!--property name="lircIpName" type="string" default='LircClient.defaultLircIP' doc='IP name or address of LIRC server.'/>
     <property name="lircPort" type="int" default='Integer.toString(LircClient.lircDefaultPort)' doc='TCP port number of LIRC server, typically 8765.'/>
     <property name="lircTimeout" type="int" default='"5000"' doc="Timeout for connecting to TCP Lirc server" /-->

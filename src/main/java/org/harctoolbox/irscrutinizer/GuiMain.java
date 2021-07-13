@@ -50,6 +50,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.comm.DriverGenUnix;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -79,6 +81,8 @@ import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.guicomponents.*;
+import org.harctoolbox.guicomponents.HardwareBean.CannotCaptureException;
+import org.harctoolbox.guicomponents.HardwareBean.CannotSendException;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.TimeoutException;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
@@ -104,10 +108,8 @@ import org.harctoolbox.irp.IrpParseException;
 import org.harctoolbox.irp.IrpUtils;
 import org.harctoolbox.irp.Protocol;
 import org.harctoolbox.irp.UnknownProtocolException;
-import org.harctoolbox.irscrutinizer.capturinghardware.*;
 import org.harctoolbox.irscrutinizer.exporter.*;
 import org.harctoolbox.irscrutinizer.importer.*;
-import org.harctoolbox.irscrutinizer.sendinghardware.*;
 import org.harctoolbox.remotelocator.Girrable;
 import org.harctoolbox.remotelocator.NotFoundException;
 import org.xml.sax.SAXException;
@@ -157,8 +159,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private transient CaptureThread captureThread = null;
     private final String[] prontoModelNames;
     private ExportFormatManager exportFormatManager;
-    private transient SendingHardwareManager sendingHardwareManager = null;
-    private transient CapturingHardwareManager capturingHardwareManager;
+    private transient HardwareManager hardwareManager;
+//    private transient CapturingHardwareManager capturingHardwareManager;
 
     private transient Remote.MetaData metaData = new Remote.MetaData("unnamed");
 
@@ -653,9 +655,9 @@ public final class GuiMain extends javax.swing.JFrame {
             RepeatFinder.setDefaultRelativeTolerance((Double) newValue);
         });
 
-        sendingHardwareManager = new SendingHardwareManager(guiUtils, properties, sendingHardwareTabbedPane);
+        hardwareManager = new HardwareManager(guiUtils, sendingHardwareTabbedPane);
         properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
-            sendingHardwareManager.setVerbose((Boolean)newValue);
+            hardwareManager.setVerbose((Boolean)newValue);
             guiUtils.setVerbose((Boolean)newValue);
         });
 
@@ -678,117 +680,129 @@ public final class GuiMain extends javax.swing.JFrame {
                     properties.setGlobalCachePort((Integer) evt.getNewValue());
                     break;
                 case GlobalCacheIrSenderSelector.PROP_ISOPEN:
-//                    guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
+                    guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
                     break;
                 default:
                     throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
             }
         });
-        sendingHardwareManager.add(globalCacheIrSenderSelector);
-        SendingIrTrans sendingIrTrans = new SendingIrTrans(irTransPanel, properties,
-                guiUtils, irTransInternetHostPanel);
-        sendingHardwareManager.add(sendingIrTrans);
+        hardwareManager.add(globalCacheIrSenderSelector);
 
-        SendingIrAudioPort sendingIrAudioPort = new SendingIrAudioPort(audioPanel,
-                transmitAudioParametersBean, properties, guiUtils);
-        sendingHardwareManager.add(sendingIrAudioPort);
 
-        SendingSerial<IrToy> sendingIrToy = new SendingSerial<>(IrToy.class, irToyPanel, //irToyVersionLabel,
-                irToySerialPortBean, properties, guiUtils);
-        sendingHardwareManager.add(sendingIrToy);
 
-        SendingDevLirc sendingDevLirc = null;
-        if (LircHardware.isLibraryLoaded()) {
-            sendingDevLirc = new SendingDevLirc(devLircPanel, devLircBean, properties, guiUtils);
-            sendingHardwareManager.add(sendingDevLirc);
-        }
+            //        SendingIrTrans sendingIrTrans = new SendingIrTrans(irTransPanel, properties,
+//                guiUtils, irTransInternetHostPanel);
+//        hardwareManager.add(sendingIrTrans);
+//
+//        SendingIrAudioPort sendingIrAudioPort = new SendingIrAudioPort(audioPanel,
+//                transmitAudioParametersBean, properties, guiUtils);
+//        hardwareManager.add(sendingIrAudioPort);
+//
+//        SendingSerial<IrToy> sendingIrToy = new SendingSerial<>(IrToy.class, irToyPanel, //irToyVersionLabel,
+//                irToySerialPortBean, properties, guiUtils);
+//        hardwareManager.add(sendingIrToy);
+//
+//        SendingDevLirc sendingDevLirc = null;
+//        if (LircHardware.isLibraryLoaded()) {
+//            sendingDevLirc = new SendingDevLirc(devLircPanel, devLircBean, properties, guiUtils);
+//            hardwareManager.add(sendingDevLirc);
+//        }
+//
+//        SendingGirsClient sendingGirsClient = new SendingGirsClient(girsClientPanel,
+//                girsTcpSerialComboBean, properties, guiUtils);
+//        hardwareManager.add(sendingGirsClient);
+//
+//        SendingSerial<CommandFusion> sendingcommandFusion = new SendingSerial<>(CommandFusion.class, commandFusionSendPanel,
+//                commandFusionSendingSerialPortBean, properties, guiUtils);
+//        hardwareManager.add(sendingcommandFusion);
+//
+//        SendingGenericSerialPort sendingGenericSerialPort = new SendingGenericSerialPort(
+//                genericSerialPanel,
+//                genericSerialSenderBean,
+//                properties,
+//                guiUtils);
+//        if (userlevel != 0)
+//            hardwareManager.add(sendingGenericSerialPort);
 
-        SendingGirsClient sendingGirsClient = new SendingGirsClient(girsClientPanel,
-                girsTcpSerialComboBean, properties, guiUtils);
-        sendingHardwareManager.add(sendingGirsClient);
-
-        SendingSerial<CommandFusion> sendingcommandFusion = new SendingSerial<>(CommandFusion.class, commandFusionSendPanel,
-                commandFusionSendingSerialPortBean, properties, guiUtils);
-        sendingHardwareManager.add(sendingcommandFusion);
-
-        SendingGenericSerialPort sendingGenericSerialPort = new SendingGenericSerialPort(
-                genericSerialPanel,
-                genericSerialSenderBean,
-                properties,
-                guiUtils);
-        if (userlevel != 0)
-            sendingHardwareManager.add(sendingGenericSerialPort);
-
+//        try {
+//            hardwareManager.select(properties.getTransmitHardware());
+//        } catch (HarcHardwareException ex) {
+//            guiUtils.error(ex);
+//        }
+        String oldHardware = properties.getSelectedHardware();
         try {
-            sendingHardwareManager.select(properties.getTransmitHardware());
-        } catch (HarcHardwareException ex) {
-            guiUtils.error(ex);
+            hardwareManager.select(oldHardware);
+        } catch (HardwareUnavailableException ex) {
+            // FIXME
+            String replacement = hardwareManager.select();
+            System.err.println("Selected hardware " + oldHardware + " not found, falling back to " + replacement);
         }
+        hardwareManager.setVerbose(properties.getVerbose());
 
-        optionsMenu.add(sendingHardwareManager.getMenu());
+        optionsMenu.add(hardwareManager.getMenu());
 
-        capturingHardwareManager = new CapturingHardwareManager(guiUtils, properties,
-                capturingHardwareTabbedPane/*, startButton*/);
+//        capturingHardwareManager = new CapturingHardwareManager(guiUtils, properties,
+//                capturingHardwareTabbedPane/*, startButton*/);
 
-        capturingHardwareManager.add(new CapturingSerial<>(IrWidget.class, captureIrWidgetPanel,
-                irWidgetSerialPortSimpleBean, properties, guiUtils, capturingHardwareManager));
+//        capturingHardwareManager.add(new CapturingSerial<>(IrWidget.class, captureIrWidgetPanel,
+//                irWidgetSerialPortSimpleBean, properties, guiUtils, capturingHardwareManager));
+//
+//        capturingHardwareManager.add(new CapturingGlobalCache(properties.getGlobalCacheCaptureIpName(),
+//                globalCacheCaptureSelector, captureGlobalCachePanel,
+//                properties, guiUtils, capturingHardwareManager));
+//
+//        capturingHardwareManager.add(new CapturingSendingHardware<GirsClient>(captureGirsPanel, girsClientPanel,
+//                girsClientCapturingSendingBean, girsTcpSerialComboBean, sendingGirsClient,
+//                properties, guiUtils, capturingHardwareManager));
+//
+//        if (LircHardware.isLibraryLoaded())
+//            capturingHardwareManager.add(new CapturingSendingHardware<>(captureDevLircPanel, devLircPanel,
+//                    devLircCapturingSendingBean, devLircBean, sendingDevLirc,
+//                    properties, guiUtils, capturingHardwareManager));
+//
+//        capturingHardwareManager.add(new CapturingSendingHardware<>(captureCommandFusionPanel, commandFusionSendPanel,
+//                commandFusionCapturingSendingBean, commandFusionSendingSerialPortBean, sendingcommandFusion,
+//                properties, guiUtils, capturingHardwareManager));
+//
+//        capturingHardwareManager.add(new CapturingSendingHardware<>(captureIrToyPanel, irToyPanel,
+//                irtoyCapturingSendingBean, irToySerialPortBean, sendingIrToy,
+//                properties, guiUtils, capturingHardwareManager));
 
-        capturingHardwareManager.add(new CapturingGlobalCache(properties.getGlobalCacheCaptureIpName(),
-                globalCacheCaptureSelector, captureGlobalCachePanel,
-                properties, guiUtils, capturingHardwareManager));
+//        try {
+//            capturingHardwareManager.select(properties.getCaptureDevice());
+//        } catch (HarcHardwareException ex) {
+//            guiUtils.error(ex);
+//        }
 
-        capturingHardwareManager.add(new CapturingSendingHardware<GirsClient>(captureGirsPanel, girsClientPanel,
-                girsClientCapturingSendingBean, girsTcpSerialComboBean, sendingGirsClient,
-                properties, guiUtils, capturingHardwareManager));
-
-        if (LircHardware.isLibraryLoaded())
-            capturingHardwareManager.add(new CapturingSendingHardware<>(captureDevLircPanel, devLircPanel,
-                    devLircCapturingSendingBean, devLircBean, sendingDevLirc,
-                    properties, guiUtils, capturingHardwareManager));
-
-        capturingHardwareManager.add(new CapturingSendingHardware<>(captureCommandFusionPanel, commandFusionSendPanel,
-                commandFusionCapturingSendingBean, commandFusionSendingSerialPortBean, sendingcommandFusion,
-                properties, guiUtils, capturingHardwareManager));
-
-        capturingHardwareManager.add(new CapturingSendingHardware<>(captureIrToyPanel, irToyPanel,
-                irtoyCapturingSendingBean, irToySerialPortBean, sendingIrToy,
-                properties, guiUtils, capturingHardwareManager));
-
-        try {
-            capturingHardwareManager.select(properties.getCaptureDevice());
-        } catch (HarcHardwareException ex) {
-            guiUtils.error(ex);
-        }
-
-        properties.addCaptureBeginTimeoutChangeListener((String name1, Object oldValue, Object newValue) -> {
-            try {
-                capturingHardwareManager.getCapturer().setBeginTimeout((Integer) newValue);
-            } catch (IOException | HarcHardwareException ex) {
-                guiUtils.error(ex);
-            }
-        });
-
-        properties.addCaptureMaxSizeChangeListener((String name1, Object oldValue, Object newValue) -> {
-            try {
-                capturingHardwareManager.getCapturer().setCaptureMaxSize((Integer) newValue);
-            } catch (IOException | HarcHardwareException ex) {
-                guiUtils.error(ex);
-            }
-        });
-
-        properties.addCaptureEndingTimeoutChangeListener((String name1, Object oldValue, Object newValue) -> {
-            try {
-                capturingHardwareManager.getCapturer().setEndingTimeout((Integer) newValue);
-            } catch (IOException | HarcHardwareException ex) {
-                guiUtils.error(ex);
-            }
-        });
-
-        properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
-            capturingHardwareManager.setVerbose((Boolean)newValue);
-        });
-
-        optionsMenu.add(capturingHardwareManager.getMenu());
+//        properties.addCaptureBeginTimeoutChangeListener((String name1, Object oldValue, Object newValue) -> {
+//            try {
+//                capturingHardwareManager.getCapturer().setBeginTimeout((Integer) newValue);
+//            } catch (IOException | HarcHardwareException ex) {
+//                guiUtils.error(ex);
+//            }
+//        });
+//
+//        properties.addCaptureMaxSizeChangeListener((String name1, Object oldValue, Object newValue) -> {
+//            try {
+//                capturingHardwareManager.getCapturer().setCaptureMaxSize((Integer) newValue);
+//            } catch (IOException | HarcHardwareException ex) {
+//                guiUtils.error(ex);
+//            }
+//        });
+//
+//        properties.addCaptureEndingTimeoutChangeListener((String name1, Object oldValue, Object newValue) -> {
+//            try {
+//                capturingHardwareManager.getCapturer().setEndingTimeout((Integer) newValue);
+//            } catch (IOException | HarcHardwareException ex) {
+//                guiUtils.error(ex);
+//            }
+//        });
+//
+//        properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
+//            capturingHardwareManager.setVerbose((Boolean)newValue);
+//        });
+//
+//        optionsMenu.add(capturingHardwareManager.getMenu());
 
         irpMasterBean.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> {
             switch (evt.getPropertyName()) {
@@ -887,12 +901,12 @@ public final class GuiMain extends javax.swing.JFrame {
         console.setStdOut();
 
         guiUtils.setUsePopupsForErrors(properties.getUsePopupsForErrors());
-        if (userlevel == 0) { // ! experimental
-            sendingHardwareTabbedPane.remove(genericSerialPanel);
-        }
+//        if (userlevel == 0) { // ! experimental
+//            sendingHardwareTabbedPane.remove(genericSerialPanel);
+//        }
         if (!LircHardware.isLibraryLoaded()) {
             sendingHardwareTabbedPane.remove(devLircPanel);
-            capturingHardwareTabbedPane.remove(captureDevLircPanel);
+//  FIXME          hardwareManager.remove("/dev/lirc");
         }
 
         processArguments(arguments);
@@ -986,8 +1000,8 @@ public final class GuiMain extends javax.swing.JFrame {
         } catch (UnsupportedEncodingException ex) {
             throw new InternalError("This cannot happen");
         }
-        capturingHardwareManager.close();
-        sendingHardwareManager.close();
+//        capturingHardwareManager.close();
+        hardwareManager.close();
         properties.setFileselectordirs(SelectFile.saveString());
         try {
             if (!properties.getWasReset())
@@ -1102,12 +1116,12 @@ public final class GuiMain extends javax.swing.JFrame {
         endingLengthLabel.setText(null);
     }
 
-    private ModulatedIrSequence captureIrSequence() throws IOException, HarcHardwareException, InvalidArgumentException {
-        if (!capturingHardwareManager.isReady())
-            return null;
-
+    private ModulatedIrSequence captureIrSequence() throws IOException, HarcHardwareException, InvalidArgumentException, HardwareUnavailableException, CannotCaptureException {
+//        if (!capturingHardwareManager.isReady())
+//            return null;
+//
         try {
-            return capturingHardwareManager.capture();
+            return hardwareManager.capture();
         } catch (TimeoutException ex) {
             return null;
         }
@@ -1781,11 +1795,11 @@ public final class GuiMain extends javax.swing.JFrame {
                     if (sequence != null)
                         client.processSequence(sequence);
 
-                    if (!capturingHardwareManager.isReady()) {
+                    if (!hardwareManager.isReady()) {
                         guiUtils.error("Selected capture device is no longer ready");
                         client.getButton().setSelected(false);
                     }
-                } catch (IOException | HarcHardwareException | InvalidArgumentException ex) {
+                } catch (HardwareUnavailableException | IOException | HarcHardwareException | InvalidArgumentException ex) {
                     guiUtils.error(ex);
                     client.getButton().setSelected(false);
                 }
@@ -1848,15 +1862,15 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setIrTransIpName(irTransIp);
     }
 
-    public boolean transmit(IrSignal irSignal) throws IOException, HardwareUnavailableException, HarcHardwareException, NoSuchTransmitterException, InvalidArgumentException {
-        return sendingHardwareManager.sendIr(irSignal, Integer.parseInt((String)noTransmitsComboBox.getSelectedItem()));
+    public boolean transmit(IrSignal irSignal) throws IOException, HardwareUnavailableException, HarcHardwareException, NoSuchTransmitterException, InvalidArgumentException, CannotSendException {
+        return hardwareManager.sendIr(irSignal, Integer.parseInt((String)noTransmitsComboBox.getSelectedItem()));
     }
 
-    public boolean transmit(Command command) throws IrpException, IrCoreException, IOException, HardwareUnavailableException, HarcHardwareException {
+    public boolean transmit(Command command) throws IrpException, IrCoreException, IOException, HardwareUnavailableException, HarcHardwareException, NoSuchTransmitterException, InvalidArgumentException, CannotSendException {
         return transmit(command.toIrSignal());
     }
 
-    private boolean transmit(JTable table) throws ErroneousSelectionException, GirrException, IrpException, IrCoreException, IOException, HardwareUnavailableException, HarcHardwareException {
+    private boolean transmit(JTable table) throws ErroneousSelectionException, GirrException, IrpException, IrCoreException, IOException, HardwareUnavailableException, HarcHardwareException, NoSuchTransmitterException, InvalidArgumentException, CannotSendException {
         Command command = tableUtils.commandTableSelectedRow(table);
         return transmit(command);
     }
@@ -2328,7 +2342,7 @@ public final class GuiMain extends javax.swing.JFrame {
         sendingPanel = new javax.swing.JPanel();
         sendingHardwareTabbedPane = new javax.swing.JTabbedPane();
         globalCachePanel = new javax.swing.JPanel();
-        globalCacheIrSenderSelector = new org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector(guiUtils, properties.getVerbose(), properties.getGlobalCacheTimeout(), true);
+        globalCacheIrSenderSelector = new org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector(guiUtils, properties.getVerbose(), properties.getGlobalCacheTimeout());
         sendingGlobalCacheHelpButton = new javax.swing.JButton();
         devLircPanel = new javax.swing.JPanel();
         devLircBean = new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getDevLircName(), true);
@@ -2348,36 +2362,15 @@ public final class GuiMain extends javax.swing.JFrame {
         commandFusionSendPanel = new javax.swing.JPanel();
         commandFusionSendingSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionPortName(), CommandFusion.DEFAULTBAUDRATE, false);
         sendingCommandFusionHelpButton = new javax.swing.JButton();
-        genericSerialPanel = new javax.swing.JPanel();
-        genericSerialSenderBean = new org.harctoolbox.irscrutinizer.sendinghardware.GenericSerialSenderBean(guiUtils);
-        sendingGenericSerialPortHelpButton = new javax.swing.JButton();
+        captureIrWidgetPanel = new javax.swing.JPanel();
+        irWidgetSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrWidgetPortName(), 115200, false);
+        capturingIrWidgetHardwareHelpButton = new javax.swing.JButton();
         noTransmitsComboBox = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
         transmitScrutinizedButton = new javax.swing.JButton();
         transmitGenerateButton2 = new javax.swing.JButton();
         sendingHardwareHelpButton = new javax.swing.JButton();
-        capturingPanel = new javax.swing.JPanel();
-        capturingHardwareTabbedPane = new javax.swing.JTabbedPane();
-        captureIrWidgetPanel = new javax.swing.JPanel();
-        irWidgetSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrWidgetCapturePortName(), 115200, false);
-        capturingIrWidgetHardwareHelpButton = new javax.swing.JButton();
-        captureGlobalCachePanel = new javax.swing.JPanel();
-        globalCacheCaptureSelector = new org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector(guiUtils, properties.getVerbose(), properties.getSendingTimeout(), false);
-        capturingGlobalCacheHardwareHelpButton = new javax.swing.JButton();
-        captureDevLircPanel = new javax.swing.JPanel();
-        capturingDevLircHardwareHelpButton = new javax.swing.JButton();
-        devLircCapturingSendingBean = new CapturingSendingBean(this);
-        captureIrToyPanel = new javax.swing.JPanel();
-        capturingIrToyHardwareHelpButton = new javax.swing.JButton();
-        irtoyCapturingSendingBean = new CapturingSendingBean(this);
-        captureGirsPanel = new javax.swing.JPanel();
-        capturingGirsHardwareHelpButton = new javax.swing.JButton();
-        girsClientCapturingSendingBean = new CapturingSendingBean(this);
-        captureCommandFusionPanel = new javax.swing.JPanel();
-        capturingCommandFusionHardwareHelpButton = new javax.swing.JButton();
-        commandFusionCapturingSendingBean = new CapturingSendingBean(this);
         captureTestButton = new javax.swing.JButton();
-        capturingHardwareHelpButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         saveMenu = new javax.swing.JMenu();
@@ -5462,7 +5455,7 @@ public final class GuiMain extends javax.swing.JFrame {
             .addGroup(globalCachePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(globalCacheIrSenderSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(sendingGlobalCacheHelpButton)
                 .addContainerGap())
         );
@@ -5676,39 +5669,38 @@ public final class GuiMain extends javax.swing.JFrame {
 
         sendingHardwareTabbedPane.addTab("CommandFusion", commandFusionSendPanel);
 
-        sendingGenericSerialPortHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        sendingGenericSerialPortHelpButton.setText("Help");
-        sendingGenericSerialPortHelpButton.addActionListener(new java.awt.event.ActionListener() {
+        capturingIrWidgetHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        capturingIrWidgetHardwareHelpButton.setText("Help");
+        capturingIrWidgetHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendingGenericSerialPortHelpButtonActionPerformed(evt);
+                capturingIrWidgetHardwareHelpButtonActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout genericSerialPanelLayout = new javax.swing.GroupLayout(genericSerialPanel);
-        genericSerialPanel.setLayout(genericSerialPanelLayout);
-        genericSerialPanelLayout.setHorizontalGroup(
-            genericSerialPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(genericSerialPanelLayout.createSequentialGroup()
-                .addGroup(genericSerialPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(genericSerialPanelLayout.createSequentialGroup()
-                        .addComponent(genericSerialSenderBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 42, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, genericSerialPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(sendingGenericSerialPortHelpButton)))
+        javax.swing.GroupLayout captureIrWidgetPanelLayout = new javax.swing.GroupLayout(captureIrWidgetPanel);
+        captureIrWidgetPanel.setLayout(captureIrWidgetPanelLayout);
+        captureIrWidgetPanelLayout.setHorizontalGroup(
+            captureIrWidgetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureIrWidgetPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(irWidgetSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureIrWidgetPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(capturingIrWidgetHardwareHelpButton)
                 .addContainerGap())
         );
-        genericSerialPanelLayout.setVerticalGroup(
-            genericSerialPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(genericSerialPanelLayout.createSequentialGroup()
+        captureIrWidgetPanelLayout.setVerticalGroup(
+            captureIrWidgetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureIrWidgetPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(genericSerialSenderBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(sendingGenericSerialPortHelpButton)
+                .addComponent(irWidgetSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
+                .addComponent(capturingIrWidgetHardwareHelpButton)
                 .addContainerGap())
         );
 
-        sendingHardwareTabbedPane.addTab("Generic serial port", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/filesystems/socket.png")), genericSerialPanel); // NOI18N
+        sendingHardwareTabbedPane.addTab("IrWidget", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/usb.png")), captureIrWidgetPanel); // NOI18N
 
         noTransmitsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "10", "12", "15", "20", "30", "40", "50", "70", "100" }));
         noTransmitsComboBox.setSelectedItem(Integer.toString(properties.getTransmitGeneratedCount()));
@@ -5746,28 +5738,39 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
+        captureTestButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_record.png"))); // NOI18N
+        captureTestButton.setText("Test capture");
+        captureTestButton.setToolTipText("For testing the setup only.  Use \"Scrutinize signal\" or \"Scrutinize remote\" for deployment.");
+        captureTestButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                captureTestButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout sendingPanelLayout = new javax.swing.GroupLayout(sendingPanel);
         sendingPanel.setLayout(sendingPanelLayout);
         sendingPanelLayout.setHorizontalGroup(
             sendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sendingPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(transmitScrutinizedButton)
-                .addGap(18, 18, 18)
-                .addComponent(transmitGenerateButton2)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(noTransmitsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(sendingPanelLayout.createSequentialGroup()
                 .addGroup(sendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(sendingPanelLayout.createSequentialGroup()
-                        .addComponent(sendingHardwareTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 853, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 127, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sendingPanelLayout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(sendingHardwareHelpButton)))
+                        .addComponent(sendingHardwareHelpButton))
+                    .addGroup(sendingPanelLayout.createSequentialGroup()
+                        .addGroup(sendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(sendingPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(transmitScrutinizedButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(transmitGenerateButton2)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(noTransmitsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(98, 98, 98)
+                                .addComponent(captureTestButton, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(sendingHardwareTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 853, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 128, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -5783,267 +5786,14 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(transmitScrutinizedButton)
                     .addComponent(transmitGenerateButton2)
                     .addComponent(jLabel5)
-                    .addComponent(noTransmitsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
+                    .addComponent(noTransmitsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(captureTestButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                 .addComponent(sendingHardwareHelpButton)
                 .addContainerGap())
         );
 
-        topLevelTabbedPane.addTab("Sending hw", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/hardware.png")), sendingPanel); // NOI18N
-
-        capturingHardwareTabbedPane.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        capturingHardwareTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                capturingHardwareTabbedPaneStateChanged(evt);
-            }
-        });
-
-        capturingIrWidgetHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingIrWidgetHardwareHelpButton.setText("Help");
-        capturingIrWidgetHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingIrWidgetHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureIrWidgetPanelLayout = new javax.swing.GroupLayout(captureIrWidgetPanel);
-        captureIrWidgetPanel.setLayout(captureIrWidgetPanelLayout);
-        captureIrWidgetPanelLayout.setHorizontalGroup(
-            captureIrWidgetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureIrWidgetPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irWidgetSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureIrWidgetPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingIrWidgetHardwareHelpButton)
-                .addContainerGap())
-        );
-        captureIrWidgetPanelLayout.setVerticalGroup(
-            captureIrWidgetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureIrWidgetPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irWidgetSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
-                .addComponent(capturingIrWidgetHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("IrWidget", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/usb.png")), captureIrWidgetPanel); // NOI18N
-
-        capturingGlobalCacheHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingGlobalCacheHardwareHelpButton.setText("Help");
-        capturingGlobalCacheHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingGlobalCacheHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureGlobalCachePanelLayout = new javax.swing.GroupLayout(captureGlobalCachePanel);
-        captureGlobalCachePanel.setLayout(captureGlobalCachePanelLayout);
-        captureGlobalCachePanelLayout.setHorizontalGroup(
-            captureGlobalCachePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureGlobalCachePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(globalCacheCaptureSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureGlobalCachePanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingGlobalCacheHardwareHelpButton)
-                .addContainerGap())
-        );
-        captureGlobalCachePanelLayout.setVerticalGroup(
-            captureGlobalCachePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureGlobalCachePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(globalCacheCaptureSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                .addComponent(capturingGlobalCacheHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("Global Caché", captureGlobalCachePanel);
-
-        capturingDevLircHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingDevLircHardwareHelpButton.setText("Help");
-        capturingDevLircHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingDevLircHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureDevLircPanelLayout = new javax.swing.GroupLayout(captureDevLircPanel);
-        captureDevLircPanel.setLayout(captureDevLircPanelLayout);
-        captureDevLircPanelLayout.setHorizontalGroup(
-            captureDevLircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureDevLircPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingDevLircHardwareHelpButton)
-                .addContainerGap())
-            .addGroup(captureDevLircPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(devLircCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        captureDevLircPanelLayout.setVerticalGroup(
-            captureDevLircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureDevLircPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(devLircCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(capturingDevLircHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("/dev/lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/tux/tux-22.png")), captureDevLircPanel); // NOI18N
-
-        capturingIrToyHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingIrToyHardwareHelpButton.setText("Help");
-        capturingIrToyHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingIrToyHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureIrToyPanelLayout = new javax.swing.GroupLayout(captureIrToyPanel);
-        captureIrToyPanel.setLayout(captureIrToyPanelLayout);
-        captureIrToyPanelLayout.setHorizontalGroup(
-            captureIrToyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureIrToyPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingIrToyHardwareHelpButton)
-                .addContainerGap())
-            .addGroup(captureIrToyPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irtoyCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        captureIrToyPanelLayout.setVerticalGroup(
-            captureIrToyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureIrToyPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irtoyCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(capturingIrToyHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("IrToy", new javax.swing.ImageIcon(getClass().getResource("/icons/dangerousprototypes/favicon.png")), captureIrToyPanel); // NOI18N
-
-        capturingGirsHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingGirsHardwareHelpButton.setText("Help");
-        capturingGirsHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingGirsHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureGirsPanelLayout = new javax.swing.GroupLayout(captureGirsPanel);
-        captureGirsPanel.setLayout(captureGirsPanelLayout);
-        captureGirsPanelLayout.setHorizontalGroup(
-            captureGirsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureGirsPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingGirsHardwareHelpButton)
-                .addContainerGap())
-            .addGroup(captureGirsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(girsClientCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        captureGirsPanelLayout.setVerticalGroup(
-            captureGirsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureGirsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(girsClientCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(capturingGirsHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("Girs Client", captureGirsPanel);
-
-        capturingCommandFusionHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingCommandFusionHardwareHelpButton.setText("Help");
-        capturingCommandFusionHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingCommandFusionHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureCommandFusionPanelLayout = new javax.swing.GroupLayout(captureCommandFusionPanel);
-        captureCommandFusionPanel.setLayout(captureCommandFusionPanelLayout);
-        captureCommandFusionPanelLayout.setHorizontalGroup(
-            captureCommandFusionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureCommandFusionPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingCommandFusionHardwareHelpButton)
-                .addContainerGap())
-            .addGroup(captureCommandFusionPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(commandFusionCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        captureCommandFusionPanelLayout.setVerticalGroup(
-            captureCommandFusionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureCommandFusionPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(commandFusionCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(capturingCommandFusionHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("CommandFusion", captureCommandFusionPanel);
-
-        captureTestButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_record.png"))); // NOI18N
-        captureTestButton.setText("Test");
-        captureTestButton.setToolTipText("For testing the setup only.  Use \"Scrutinize signal\" or \"Scrutinize remote\" for deployment.");
-        captureTestButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                captureTestButtonActionPerformed(evt);
-            }
-        });
-
-        capturingHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingHardwareHelpButton.setText("Help");
-        capturingHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout capturingPanelLayout = new javax.swing.GroupLayout(capturingPanel);
-        capturingPanel.setLayout(capturingPanelLayout);
-        capturingPanelLayout.setHorizontalGroup(
-            capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(capturingPanelLayout.createSequentialGroup()
-                .addGroup(capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, capturingPanelLayout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(capturingHardwareHelpButton))
-                    .addGroup(capturingPanelLayout.createSequentialGroup()
-                        .addGroup(capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(capturingHardwareTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 853, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(capturingPanelLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(captureTestButton, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 127, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        capturingPanelLayout.setVerticalGroup(
-            capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(capturingPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(capturingHardwareTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(captureTestButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
-                .addComponent(capturingHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        topLevelTabbedPane.addTab("Capturing hw", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_microphone.png")), capturingPanel); // NOI18N
+        topLevelTabbedPane.addTab("Hardware", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/hardware.png")), sendingPanel); // NOI18N
 
         topLevelTabbedPane.setSelectedIndex(properties.getSelectedMainPaneIndex());
 
@@ -7614,7 +7364,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_clearSignalMenuItemActionPerformed
 
     private void startStopToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startStopToggleButtonActionPerformed
-        if (!capturingHardwareManager.isReady()) {
+        if (!hardwareManager.isReady()) {
             guiUtils.error("No capture device selected, aborting");
             startStopToggleButton.setSelected(false);
             return;
@@ -8364,21 +8114,21 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_irTransInternetHostPanelPropertyChange
 
     private void sendingHardwareTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sendingHardwareTabbedPaneStateChanged
-        if (sendingHardwareManager == null)
+        if (hardwareManager == null)
             return;
-        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
-        try {
-            for (ISendingHardware<?> hardware : sendingHardwareManager.getSendingHardware()) {
-                if (hardware.getPanel() == sendingHardwareTabbedPane.getSelectedComponent()) {
-                    sendingHardwareManager.selectDoWork(hardware.getName());
-                    break;
-                }
+//        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
+//        try {
+            for (String hardwareName : hardwareManager) {
+//                if (hardware.getPanel() == sendingHardwareTabbedPane.getSelectedComponent()) {
+//                    hardwareManager.selectDoWork(hardware.getName());
+//                    break;
+//                }
             }
-        } catch (HarcHardwareException ex) {
-            guiUtils.error(ex);
-        } finally {
-            busyWindow.unBusy();
-        }
+//        } catch (HarcHardwareException ex) {
+//            guiUtils.error(ex);
+//        } finally {
+//            busyWindow.unBusy();
+//        }
     }//GEN-LAST:event_sendingHardwareTabbedPaneStateChanged
 
     private void transmitScrutinizedButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitScrutinizedButtonActionPerformed
@@ -8388,67 +8138,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private void transmitGenerateButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitGenerateButton2ActionPerformed
         transmitGenerateButtonActionPerformed(evt);
     }//GEN-LAST:event_transmitGenerateButton2ActionPerformed
-
-    private void capturingHardwareTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_capturingHardwareTabbedPaneStateChanged
-        if (capturingHardwareManager == null)
-            return;
-        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
-        try {
-            for (ICapturingHardware<?> hardware : capturingHardwareManager.getCapturingHardware()) {
-                if (hardware.getPanel() == capturingHardwareTabbedPane.getSelectedComponent()) {
-                    capturingHardwareManager.selectDoWork(hardware.getName());
-                    break;
-                }
-            }
-        } catch (IOException | HarcHardwareException ex) {
-            guiUtils.error(ex);
-        } finally {
-            busyWindow.unBusy();
-        }
-    }//GEN-LAST:event_capturingHardwareTabbedPaneStateChanged
-
-    private void captureTestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_captureTestButtonActionPerformed
-        if (captureThreadRunning()) {
-            guiUtils.error("A capture thread is running. This must first be ended.");
-            return;
-        }
-        if (!capturingHardwareManager.hasSelection()) {
-            guiUtils.error("No capture device selected.");
-            return;
-        }
-        if (!capturingHardwareManager.isReady()) {
-            guiUtils.error("Selected capture device not ready (not opened?).");
-            return;
-        }
-
-        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
-        try {
-            ModulatedIrSequence modulatedIrSequence = captureIrSequence();
-
-            if (modulatedIrSequence == null) {
-                guiUtils.error("No signal received.");
-                return;
-            }
-
-            IrSignal signal = InterpretString.interpretIrSequence(modulatedIrSequence, true/*properties.getInvokeRepeatFinder()*/,
-                    true /*properties.getInvokeCleaner()*/, properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
-            guiUtils.message(modulatedIrSequence.toString(true));
-            guiUtils.message("f=" + Math.round(modulatedIrSequence.getFrequency()));
-            Decoder.SimpleDecodesSet decodes = decoder.decodeIrSignal(signal, decoderParameters);
-            if (decodes.isEmpty())
-                guiUtils.message("No decodes.");
-            else
-                decodes.forEach((decode) -> {
-                    guiUtils.message(decode.toString());
-                });
-        } catch (TimeoutException ex) {
-            guiUtils.error("Timeout capturing signal");
-        } catch (IOException | HarcHardwareException | NumberFormatException | InvalidArgumentException ex) {
-            guiUtils.error(ex);
-        } finally {
-            busyWindow.unBusy();
-        }
-    }//GEN-LAST:event_captureTestButtonActionPerformed
 
     private void rawCodeAnalyzeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawCodeAnalyzeMenuItemActionPerformed
         reAnalyze();
@@ -8593,27 +8282,27 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_signalExportButtonActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-        if (!capturingHardwareManager.isReady()) {
-            guiUtils.error("No capture device selected, aborting");
-            return;
-        }
-        if (captureThreadRunning()) {
-            guiUtils.error("A capture thread is running. This must first be ended.");
-            return;
-        }
-        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
-        try {
-            ModulatedIrSequence modulatedIrSequence = captureIrSequence();
-
-            if (modulatedIrSequence != null)
-                processIr(modulatedIrSequence);
-            else
-                guiUtils.message("no signal received");
-        } catch (IOException | HarcHardwareException | InvalidArgumentException ex) {
-            guiUtils.error(ex);
-        } finally {
-            busyWindow.unBusy();
-        }
+//        if (!capturingHardwareManager.isReady()) {
+//            guiUtils.error("No capture device selected, aborting");
+//            return;
+//        }
+//        if (captureThreadRunning()) {
+//            guiUtils.error("A capture thread is running. This must first be ended.");
+//            return;
+//        }
+//        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
+//        try {
+//            ModulatedIrSequence modulatedIrSequence = captureIrSequence();
+//
+//            if (modulatedIrSequence != null)
+//                processIr(modulatedIrSequence);
+//            else
+//                guiUtils.message("no signal received");
+//        } catch (IOException | HarcHardwareException | InvalidArgumentException ex) {
+//            guiUtils.error(ex);
+//        } finally {
+//            busyWindow.unBusy();
+//        }
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void capturedDataTextAreaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_capturedDataTextAreaMouseReleased
@@ -8704,10 +8393,6 @@ public final class GuiMain extends javax.swing.JFrame {
         reAnalyze();
     }//GEN-LAST:event_pasteAnalyzeButtonActionPerformed
 
-    private void capturingHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.capturingHardwareHelp);
-    }//GEN-LAST:event_capturingHardwareHelpButtonActionPerformed
-
     private void sendingHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingHardwareHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.sendingHardwareHelp);
     }//GEN-LAST:event_sendingHardwareHelpButtonActionPerformed
@@ -8728,7 +8413,7 @@ public final class GuiMain extends javax.swing.JFrame {
             if (t != null) {
                 properties.setGlobalCacheTimeout(t);
                 globalCacheIrSenderSelector.setTimeout(t);
-                globalCacheCaptureSelector.setTimeout(t);
+//                globalCacheCaptureSelector.setTimeout(t);
             }
         } catch (NumberFormatException ex) {
             guiUtils.error("Invalid number: " + ex.getMessage());
@@ -8739,17 +8424,9 @@ public final class GuiMain extends javax.swing.JFrame {
         clonePlot();
     }//GEN-LAST:event_clonePlotMenuItemActionPerformed
 
-    private void capturingIrToyHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingIrToyHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.capturingIrToyHardwareHelp);
-    }//GEN-LAST:event_capturingIrToyHardwareHelpButtonActionPerformed
-
     private void capturingIrWidgetHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingIrWidgetHardwareHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.capturingIrWidgetHardwareHelp);
     }//GEN-LAST:event_capturingIrWidgetHardwareHelpButtonActionPerformed
-
-    private void capturingGlobalCacheHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingGlobalCacheHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.capturingGlobalCacheHardwareHelp);
-    }//GEN-LAST:event_capturingGlobalCacheHardwareHelpButtonActionPerformed
 
     private void exportGirrHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportGirrHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.exportGirrHelp);
@@ -8774,10 +8451,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private void sendingIrToyHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingIrToyHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.sendingIrToyHelp);
     }//GEN-LAST:event_sendingIrToyHelpButtonActionPerformed
-
-    private void sendingGenericSerialPortHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingGenericSerialPortHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.sendingGenericSerialPortHelp);
-    }//GEN-LAST:event_sendingGenericSerialPortHelpButtonActionPerformed
 
     private void scrutinizeParametricMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scrutinizeParametricMenuItemActionPerformed
         try {
@@ -8949,14 +8622,6 @@ public final class GuiMain extends javax.swing.JFrame {
         HelpPopup.newHelpPopup(this, HelpTexts.sendingCommandFusionHelp);
     }//GEN-LAST:event_sendingCommandFusionHelpButtonActionPerformed
 
-    private void capturingGirsHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingGirsHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.capturingGirsHelp);
-    }//GEN-LAST:event_capturingGirsHardwareHelpButtonActionPerformed
-
-    private void capturingCommandFusionHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingCommandFusionHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.capturingCommandFusionHelp);
-    }//GEN-LAST:event_capturingCommandFusionHardwareHelpButtonActionPerformed
-
     private void importCmlHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCmlHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.importCmlHelp);
     }//GEN-LAST:event_importCmlHelpButtonActionPerformed
@@ -9028,10 +8693,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private void cleanerCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanerCheckBoxMenuItemActionPerformed
         properties.setInvokeCleaner(cleanerCheckBoxMenuItem.isSelected());
     }//GEN-LAST:event_cleanerCheckBoxMenuItemActionPerformed
-
-    private void capturingDevLircHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingDevLircHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.capturingDevLircHelp);
-    }//GEN-LAST:event_capturingDevLircHardwareHelpButtonActionPerformed
 
     private void sendingDevLircHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingDevLircHardwareHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.sendingDevLircHelp);
@@ -9133,7 +8794,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void topLevelTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_topLevelTabbedPaneStateChanged
         // Must make sure this is not effective during early initComponents().
-        if (sendingHardwareManager != null) {
+        if (hardwareManager != null) {
             lastPane = currentPane;
             currentPane = topLevelTabbedPane.getSelectedComponent();
             properties.setSelectedMainPaneIndex(topLevelTabbedPane.getSelectedIndex());
@@ -9142,7 +8803,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void rawCookedTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rawCookedTabbedPaneStateChanged
         // Must make sure this is not effective during early initComponents().
-        if (sendingHardwareManager != null)
+        if (hardwareManager != null)
             properties.setSelectedRemoteIndex(rawCookedTabbedPane.getSelectedIndex());
     }//GEN-LAST:event_rawCookedTabbedPaneStateChanged
 
@@ -9151,36 +8812,36 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_rawCodePasteMenuItemActionPerformed
 
     private void continuousCaptureButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_continuousCaptureButtonActionPerformed
-        if (!capturingHardwareManager.isReady()) {
-            guiUtils.error("No capture device selected, aborting");
-            continuousCaptureButton.setSelected(false);
-            return;
-        }
-        if (continuousCaptureButton.isSelected() && captureThreadRunning()) {
-            guiUtils.error("Another capture thread is running. This must first be ended.");
-            continuousCaptureButton.setSelected(false);
-            return;
-        }
-
-        if (continuousCaptureButton.isSelected()) {
-            captureThread = new CaptureThread(new CaptureThreadClient() {
-                @Override
-                public JToggleButton getButton() {
-                    return continuousCaptureButton;
-                }
-
-                @Override
-                public void processSequence(ModulatedIrSequence sequence) {
-                    try {
-                        processIr(sequence);
-                    } catch (InvalidArgumentException ex) {
-                    }
-                }
-            });
-            captureThread.start();
-            topLevelTabbedPane.setEnabled(false);
-            jumpToLastPanelMenuItem.setEnabled(false);
-        }
+//        if (!capturingHardwareManager.isReady()) {
+//            guiUtils.error("No capture device selected, aborting");
+//            continuousCaptureButton.setSelected(false);
+//            return;
+//        }
+//        if (continuousCaptureButton.isSelected() && captureThreadRunning()) {
+//            guiUtils.error("Another capture thread is running. This must first be ended.");
+//            continuousCaptureButton.setSelected(false);
+//            return;
+//        }
+//
+//        if (continuousCaptureButton.isSelected()) {
+//            captureThread = new CaptureThread(new CaptureThreadClient() {
+//                @Override
+//                public JToggleButton getButton() {
+//                    return continuousCaptureButton;
+//                }
+//
+//                @Override
+//                public void processSequence(ModulatedIrSequence sequence) {
+//                    try {
+//                        processIr(sequence);
+//                    } catch (InvalidArgumentException ex) {
+//                    }
+//                }
+//            });
+//            captureThread.start();
+//            topLevelTabbedPane.setEnabled(false);
+//            jumpToLastPanelMenuItem.setEnabled(false);
+//        }
     }//GEN-LAST:event_continuousCaptureButtonActionPerformed
 
     private void checkTable(NamedIrSignal.LearnedIrSignalTableModel tableModel) {
@@ -9563,6 +9224,50 @@ public final class GuiMain extends javax.swing.JFrame {
         HarcletFrame.newHarcletFrame(this, new NamedCommandPanel(), false, lookAndFeelManager.getCurrentLAFClassName());
     }//GEN-LAST:event_NamedCommandMenuItemActionPerformed
 
+    private void captureTestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_captureTestButtonActionPerformed
+       BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
+        try {
+            if (captureThreadRunning()) {
+            guiUtils.error("A capture thread is running. This must first be ended.");
+            return;
+        }
+        if (!hardwareManager.canCapture()) {
+            guiUtils.error("No capture device selected.");
+            return;
+        }
+        if (!hardwareManager.isReady()) {
+            guiUtils.error("Selected capture device not ready (not opened?).");
+            return;
+        }
+
+
+            ModulatedIrSequence modulatedIrSequence = captureIrSequence();
+
+            if (modulatedIrSequence == null) {
+                guiUtils.error("No signal received.");
+                return;
+            }
+
+            IrSignal signal = InterpretString.interpretIrSequence(modulatedIrSequence, true/*properties.getInvokeRepeatFinder()*/,
+                    true /*properties.getInvokeCleaner()*/, properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+            guiUtils.message(modulatedIrSequence.toString(true));
+            guiUtils.message("f=" + Math.round(modulatedIrSequence.getFrequency()));
+            Decoder.SimpleDecodesSet decodes = decoder.decodeIrSignal(signal, decoderParameters);
+            if (decodes.isEmpty())
+                guiUtils.message("No decodes.");
+            else
+                decodes.forEach((decode) -> {
+                    guiUtils.message(decode.toString());
+                });
+        } catch (TimeoutException ex) {
+            guiUtils.error("Timeout capturing signal");
+        } catch (HardwareUnavailableException | IOException | HarcHardwareException | NumberFormatException | InvalidArgumentException ex) {
+            guiUtils.error(ex);
+        } finally {
+            busyWindow.unBusy();
+        }
+    }//GEN-LAST:event_captureTestButtonActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9591,24 +9296,11 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JCheckBox autoOpenExportsCheckBox;
     private javax.swing.JCheckBox automaticExportFilenamesCheckBox;
     private javax.swing.JMenuItem beaconListenerMenuItem;
-    private javax.swing.JPanel captureCommandFusionPanel;
-    private javax.swing.JPanel captureDevLircPanel;
-    private javax.swing.JPanel captureGirsPanel;
-    private javax.swing.JPanel captureGlobalCachePanel;
-    private javax.swing.JPanel captureIrToyPanel;
     private javax.swing.JPanel captureIrWidgetPanel;
     private javax.swing.JButton captureTestButton;
     private javax.swing.JScrollPane capturedDataScrollPane;
     private org.harctoolbox.guicomponents.UndoableJTextArea capturedDataTextArea;
-    private javax.swing.JButton capturingCommandFusionHardwareHelpButton;
-    private javax.swing.JButton capturingDevLircHardwareHelpButton;
-    private javax.swing.JButton capturingGirsHardwareHelpButton;
-    private javax.swing.JButton capturingGlobalCacheHardwareHelpButton;
-    private javax.swing.JButton capturingHardwareHelpButton;
-    private javax.swing.JTabbedPane capturingHardwareTabbedPane;
-    private javax.swing.JButton capturingIrToyHardwareHelpButton;
     private javax.swing.JButton capturingIrWidgetHardwareHelpButton;
-    private javax.swing.JPanel capturingPanel;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CcfImporter> ccfFileImporterBean;
     private javax.swing.JPanel ccfImportPanel;
     private javax.swing.JRadioButtonMenuItem ccfRadioButtonMenuItem;
@@ -9629,7 +9321,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem clonePlotMenuItem;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CmlImporter> cmlFileImporterBean;
     private javax.swing.JPanel cmlImportPanel;
-    private org.harctoolbox.guicomponents.CapturingSendingBean commandFusionCapturingSendingBean;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CommandFusionImporter> commandFusionFileImporterBean;
     private javax.swing.JPanel commandFusionImportPanel;
     private javax.swing.JPanel commandFusionSendPanel;
@@ -9664,7 +9355,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JMenuItem deleteMenuItem1;
     private org.harctoolbox.guicomponents.DevLircBean devLircBean;
-    private org.harctoolbox.guicomponents.CapturingSendingBean devLircCapturingSendingBean;
     private javax.swing.JPanel devLircPanel;
     private javax.swing.JMenuItem downloadsMenuItem;
     private javax.swing.JMenuItem dummyGapMenuItem;
@@ -9733,8 +9423,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel generatePanel;
     private javax.swing.JCheckBoxMenuItem generateRawCheckBoxMenuItem;
     private javax.swing.JTextArea generateTextArea;
-    private javax.swing.JPanel genericSerialPanel;
-    private org.harctoolbox.irscrutinizer.sendinghardware.GenericSerialSenderBean genericSerialSenderBean;
     private javax.swing.JPanel girrExportOptionsPanel;
     private javax.swing.JCheckBox girrFatRawCheckBox;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<GirrImporter> girrFileImporterBean;
@@ -9742,11 +9430,9 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem girrSchemaLocationMenuItem;
     private javax.swing.JCheckBoxMenuItem girrValidateCheckBoxMenuItem;
     private javax.swing.JButton girrWebSiteButton;
-    private org.harctoolbox.guicomponents.CapturingSendingBean girsClientCapturingSendingBean;
     private javax.swing.JPanel girsClientPanel;
     private org.harctoolbox.guicomponents.GirsClientBean girsTcpSerialComboBean;
     private javax.swing.JMenuItem gitMenuItem;
-    private org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector globalCacheCaptureSelector;
     private javax.swing.JButton globalCacheDBBrowseButton;
     private org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector globalCacheIrSenderSelector;
     private javax.swing.JPanel globalCachePanel;
@@ -9839,7 +9525,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu irpProtocolsIniMenu;
     private javax.swing.JMenuItem irpProtocolsSelectMenuItem;
     private javax.swing.JMenuItem irpTransmogrifierHelpMenuItem;
-    private org.harctoolbox.guicomponents.CapturingSendingBean irtoyCapturingSendingBean;
     private javax.swing.JPanel irtransImportPanel;
     private javax.swing.JMenuItem issuesMenuItem;
     private javax.swing.JButton jButton20;
@@ -10049,7 +9734,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton sendingAudioHelpButton;
     private javax.swing.JButton sendingCommandFusionHelpButton;
     private javax.swing.JButton sendingDevLircHardwareHelpButton;
-    private javax.swing.JButton sendingGenericSerialPortHelpButton;
     private javax.swing.JButton sendingGirsClientHelpButton;
     private javax.swing.JButton sendingGlobalCacheHelpButton;
     private javax.swing.JButton sendingHardwareHelpButton;
