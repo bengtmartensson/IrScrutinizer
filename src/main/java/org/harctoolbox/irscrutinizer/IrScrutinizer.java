@@ -102,8 +102,7 @@ public class IrScrutinizer {
         map.put("0x", 16);
         IrCoreUtils.setRadixPrefixes(map);
 
-        guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose,
-                commandLineArgs.experimental ? 1 : 0, commandLineArgs.arguments);
+        guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.arguments);
     }
 
     private static String nukeProperties(boolean verbose) {
@@ -122,10 +121,10 @@ public class IrScrutinizer {
     }
 
     private static void guiExecute(final String applicationHome, final String propsfilename,
-            final boolean verbose, final int userlevel, final List<String> arguments) {
+            final boolean verbose, final List<String> arguments) {
         java.awt.EventQueue.invokeLater(() -> {
             try {
-                new GuiMain(applicationHome, propsfilename, verbose, userlevel, arguments).setVisible(true);
+                new GuiMain(applicationHome, propsfilename, verbose, arguments).setVisible(true);
             } catch (HeadlessException ex) {
                 System.err.println("This program does not run in headless mode.");
             } catch (ParseException | IOException /*| URISyntaxException*/ | IrpParseException | RuntimeException ex) {
@@ -182,9 +181,6 @@ public class IrScrutinizer {
 
         @Parameter(names = {"-v", "--verbose"}, description = "Have some commands executed verbosely")
         private boolean verbose;
-
-        @Parameter(names = {"-x", "--experimental"}, description = "Enable experimental features", hidden = true)
-        private boolean experimental;
 
         @Parameter(description = "Arguments to the program")
         private List<String> arguments = new ArrayList<>(4);

@@ -73,14 +73,12 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="globalCacheModule" type="int" default='"2"' doc='Module number of Global Cache to use, see its documentation.'/>
     <property name="globalCachePort" type="int" default='"1"' doc='IR Port number of selected Global Cache module, see Global Cache documenation.'/>
     <property name="globalCacheTimeout" type="int" default='"3000"' doc='Socket timeout for GlobalCache'/>
-    <property name="genericSerialPortDeviceName" type="string" default='ifWindows("COM2", "/dev/ttyS0")' doc="Port name for generic serial port"/>
     <property name="helpfilePath" type="string" default='"doc" + File.separator + "IrScrutinizer.html"' doc='Path name for help file.'/>
     <property name="irpTransmogrifierHelpfilePath" type="string" default='"doc" + File.separator + "IrpTransmogrifier.html"' doc='Path name for IrpTransmogrifier help file.'/>
     <property name="GlossaryFilePath"              type="string" default='"doc" + File.separator + "Glossary.html"' doc='Path name for Glossary file.'/>
     <property name="protocolDocfilePath" type="string" default='"doc" + File.separator + "IrpProtocols.html"' doc='Path name for protocl documentation file.'/>
     <property name="releaseNotesPath" type="string" default='"doc" + File.separator + "IrScrutinizer.releasenotes.txt"' doc='Path name for release notes.'/>
     <property name="tutorialUrl" type="string" default='"http://www.hifi-remote.com/wiki/index.php?title=IrScrutinizer_Guide"' doc='URL for tutorial.'/>
-    <property name="irTransIpName" type="string" default='IrTrans.DEFAULT_IP' doc='IP name or address of IRTrans unit.'/>
     <property name="selectedHardware" type="string" default='"Audio Port"' doc="Name of selected hardware."/>
     <!--property name="lircIpName" type="string" default='LircClient.defaultLircIP' doc='IP name or address of LIRC server.'/>
     <property name="lircPort" type="int" default='Integer.toString(LircClient.lircDefaultPort)' doc='TCP port number of LIRC server, typically 8765.'/>
@@ -127,7 +125,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name='parametricNumberBaseIndex' type="int" default='"2"' doc='Number base (index) for interpreting parametric files.'/>
     <property name="parametricSeparatorIndex" type="int" default='"0"' doc='Field separator for parsing parametric files.'/>
 
-    <property name="girrSchemaLocation" type="string" default='"http://www.harctoolbox.org/schemas/girr_ns.xsd"' doc='URL for schema for girr (for validating import).' />
+    <property name="girrSchemaLocation" type="string" default='"http://www.harctoolbox.org/schemas/girr_ns.xsd"' doc='URL for schema for girr (for validating import).' /><!-- FIXME -->
     <property name="girrValidate" type="boolean" default='"false"' doc='If true, girr instances are validated against the schema selected.'/>
 
     <property name="irpMasterCurrentProtocol" type="string" default='"nec1"' doc='Selected protocol for generator.'/>

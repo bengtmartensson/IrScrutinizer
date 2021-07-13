@@ -341,26 +341,15 @@ class HelpTexts {
             + "The ending timeout is 1.4 seconds, and cannot be changed. This is not optimal for most IR signal captures.";
 
     @SuppressWarnings("PackageVisibleField")
-    public static String capturingIrWidgetHardwareHelp
+    public static String irWidgetHardwareHelp
             = "Plug the IrWidget it into the computer. Check that the operating system has assigned a port to it, and note which one it is. On Windows: open the device manager, and check that there is one \"USB Serial Port\" under Ports. Note the port number (e.g. COM8). On a Linux system, it likely shows up as a device like /dev/ttyUSB0. If the port does not show up, a suitable driver needs to be installed. If the correct port is already visible in the combo box, just press \"Open\". Otherwise, press \"Refresh\", which makes the program determine the available serial ports. Select the correct one. Press \"Open\". which should now remain \"pressed\". The port can be closed again by a repeated press, but there is not much reason to do so, unless another capturing hardware should be used, or the IrWidget should be used from another program.";
-
-    @SuppressWarnings("PackageVisibleField")
-    public static String capturingGlobalCacheHardwareHelp
-            = "IrScrutinizer automatically detects alive Global Caché units in the local area network, using its AMX Beacon. However, this may take up to 60 seconds, and is not implemented in very old firmware. Using the \"Add\" button, the IP address/name of older units can be entered manually.\n\n"
-            + "The \"Browse\" button points the browser to the selected unit.\n\n"
-            + "The reported type and firmware version verifies that the communication is working.";
-
-    @SuppressWarnings("PackageVisibleField")
-    public static String capturingMode2HardwareHelp
-            = "mode2 is a program from the LIRC distribution, that prints timing information in a simple text format to its standard-out. In theory, any program that prints information in that format can be used. The command line for the program with possible parameters is to be entered as command. With the Start button, a sub-process is started, running the given command line. The \"Stop\" button stops the sub-process — although sometimes this may not stop the started program.\n\n"
-            + "Has been tested only on Linux, should however work on all systems.";
 
     @SuppressWarnings("PackageVisibleField")
     public static String sendingHardwareHelp
             = "The sub-panes of this pane allows for the selection and configuration of the employed IR sending hardware. Note that selecting a sub-pane selects the associated hardware for sending, to the extent possible";
 
     @SuppressWarnings("PackageVisibleField")
-    public static String sendingGlobalCacheHelp
+    public static String globalCacheHelp
             = "IrScrutinizer automatically detects alive Global Caché units in the local area "
             + "network, using the AMX Beacon. However, this may take "
             + "up to 60 seconds, and is not implemented in very old firmware. Using the \"Add\""
@@ -371,28 +360,6 @@ class HelpTexts {
             + "possibly initiated from another source.\n\n"
             + "The user can select one of the thus available Global Caché units, together with "
             + "IR-module and IR-port.";
-
-    @SuppressWarnings("PackageVisibleField")
-    public static String sendingLircHelp
-            = "To be fully usable for IrScrutinizer, the LIRC server has to be extended to be "
-            + "able to cope with CCF signal not residing in the local data base, but sent from "
-            + "a client like IrScrutinizer, thus mimicking the function of e.g. a "
-            + "Global Caché. The needed modification (\"patch\") is in detail described "
-            + "in http://www.harctoolbox.org/lirc_ccf.xml. However, even without "
-            + "this patch, the configuration page can be used to send the predefined commands "
-            + "(i.e. residing it its data base lirc.conf). It can be considered as a GUI version of "
-            + "the irsend command.\n\n"
-            + "The LIRC server needs to be started in network listening mode with "
-            + "the -l or --listen option. Default TCP port is 8765.\n\n"
-            + "After entering IP-Address or name, and port (stay with 8765 unless a reason "
-            + "to do otherwise), press the \"Read\" button. This will query the LIRC server for "
-            + "its version (to replace the grayed out \"<unknown>\" of the virgin "
-            + "IrScrutinizer), and its known remotes and their commands. Thus, the \"Remote\" and "
-            + "\"Command\" combo boxes should now be selectable. After selecting a remote and one "
-            + "of its command, it can be sent to the LIRC server by pressing the \"Send\""
-            + "button. If (and only if) the LIRC server has the above described patch applied, "
-            + "transmitting signals to \"LIRC\" now works.\n\n"
-            + "Due to LIRC's peculiar form of API stop command, the \"Stop IR\" command presently does not work.";
 
     @SuppressWarnings("PackageVisibleField")
     public static String sendingAudioHelp
@@ -416,17 +383,8 @@ class HelpTexts {
             + "48000kHz, 8bit, 1 channel, omit trailing gap.";
 
     @SuppressWarnings("PackageVisibleField")
-    public static String sendingIrTransHelp
-            = "Enter IP name or -address.\n\n"
-            + "Selection of transmitter is not supported, just \"all\".";
-
-    @SuppressWarnings("PackageVisibleField")
     public static String sendingIrToyHelp
             = "Using this pane, the IrToy (version 2) can be used to transmit IR signals.";
-
-    @SuppressWarnings("PackageVisibleField")
-    public static String sendingGenericSerialPortHelp
-            = "This pane contains the controls for sending a signal in a general format to one of the serial ports available on the system.";
 
     @SuppressWarnings("PackageVisibleField")
     public static String sendingGirsHelp = "TODO";
@@ -441,11 +399,7 @@ class HelpTexts {
     public static String capturingCommandFusionHelp = "With this pane, a CommandFusion Learner can be used for capturing IR signals.";
 
     @SuppressWarnings("PackageVisibleField")
-    public static String capturingDevLircHelp = "Using this pane, the Lirc /dev/lirc device can be used to capture IR signals. "
-            + "This requires a so-called mode2 device connected.";
-
-    @SuppressWarnings("PackageVisibleField")
-    public static String sendingDevLircHelp = "Using this pane, the Lirc /dev/lirc device can be used to send IR signals. "
+    public static String devLircHelp = "Using this pane, the Lirc /dev/lirc device can be used to send and capture IR signals. "
             + "This requires a so-called mode2 device connected, capable of sending.";
 
     private HelpTexts() {

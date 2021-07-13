@@ -374,7 +374,6 @@ public final class GuiMain extends javax.swing.JFrame {
      * @param applicationHome
      * @param propsfilename Name of properties file. Null for system default.
      * @param verbose Verbose execution of some commands, dependent on invoked programs.
-     * @param userlevel Presently not used.
      * @param arguments
      * @throws ParserConfigurationException
      * @throws SAXException
@@ -382,8 +381,7 @@ public final class GuiMain extends javax.swing.JFrame {
      * @throws java.text.ParseException
      * @throws org.harctoolbox.irp.IrpParseException
      */
-    public GuiMain(String applicationHome, String propsfilename, boolean verbose,
-            int userlevel, List<String> arguments) throws IOException, java.text.ParseException, ParserConfigurationException, SAXException, IrpParseException {
+    public GuiMain(String applicationHome, String propsfilename, boolean verbose, List<String> arguments) throws IOException, java.text.ParseException, ParserConfigurationException, SAXException, IrpParseException {
         this.applicationHome = applicationHome;
         System.setProperty("harctoolbox.jniLibsHome", applicationHome);
 
@@ -1853,14 +1851,14 @@ public final class GuiMain extends javax.swing.JFrame {
             parameterTableModel.setParameter(name, answer, rows);
     }
 
-    private void setupIrTrans() throws UnknownHostException, IOException {
-        String irTransIp = irTransInternetHostPanel.getIpName();
-        IrTrans irTrans = new IrTrans(InetAddress.getByName(irTransIp), properties.getVerbose(), properties.getSendingTimeout());
-        //irTrans = new IrTrans(irTransIp, properties.getVerbose(), properties.getStartTimeout());
-        irTransInternetHostPanel.setHardware(irTrans);
-        //irTransNamedCommandLauncher.setHardware(irTransIRDB);
-        properties.setIrTransIpName(irTransIp);
-    }
+//    private void setupIrTrans() throws UnknownHostException, IOException {
+//        String irTransIp = irTransInternetHostPanel.getIpName();
+//        IrTrans irTrans = new IrTrans(InetAddress.getByName(irTransIp), properties.getVerbose(), properties.getSendingTimeout());
+//        //irTrans = new IrTrans(irTransIp, properties.getVerbose(), properties.getStartTimeout());
+//        irTransInternetHostPanel.setHardware(irTrans);
+//        //irTransNamedCommandLauncher.setHardware(irTransIRDB);
+//        properties.setIrTransIpName(irTransIp);
+//    }
 
     public boolean transmit(IrSignal irSignal) throws IOException, HardwareUnavailableException, HarcHardwareException, NoSuchTransmitterException, InvalidArgumentException, CannotSendException {
         return hardwareManager.sendIr(irSignal, Integer.parseInt((String)noTransmitsComboBox.getSelectedItem()));
@@ -2347,9 +2345,6 @@ public final class GuiMain extends javax.swing.JFrame {
         devLircPanel = new javax.swing.JPanel();
         devLircBean = new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getDevLircName(), true);
         sendingDevLircHardwareHelpButton = new javax.swing.JButton();
-        irTransPanel = new javax.swing.JPanel();
-        irTransInternetHostPanel = new org.harctoolbox.guicomponents.InternetHostPanel(guiUtils, false, true, true);
-        sendingIrTransHelpButton = new javax.swing.JButton();
         audioPanel = new javax.swing.JPanel();
         transmitAudioParametersBean = new org.harctoolbox.guicomponents.AudioParametersBean(properties);
         sendingAudioHelpButton = new javax.swing.JButton();
@@ -5488,53 +5483,12 @@ public final class GuiMain extends javax.swing.JFrame {
             .addGroup(devLircPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(devLircBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
                 .addComponent(sendingDevLircHardwareHelpButton)
                 .addContainerGap())
         );
 
         sendingHardwareTabbedPane.addTab("/dev/lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/tux/tux-22.png")), devLircPanel); // NOI18N
-
-        irTransInternetHostPanel.setIpName(null);
-        irTransInternetHostPanel.setPortNumber(IrTrans.portNumber);
-        irTransInternetHostPanel.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                irTransInternetHostPanelPropertyChange(evt);
-            }
-        });
-
-        sendingIrTransHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        sendingIrTransHelpButton.setText("Help");
-        sendingIrTransHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendingIrTransHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout irTransPanelLayout = new javax.swing.GroupLayout(irTransPanel);
-        irTransPanel.setLayout(irTransPanelLayout);
-        irTransPanelLayout.setHorizontalGroup(
-            irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, irTransPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(irTransPanelLayout.createSequentialGroup()
-                        .addGap(0, 726, Short.MAX_VALUE)
-                        .addComponent(sendingIrTransHelpButton)))
-                .addContainerGap())
-        );
-        irTransPanelLayout.setVerticalGroup(
-            irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(irTransPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
-                .addComponent(sendingIrTransHelpButton)
-                .addContainerGap())
-        );
-
-        sendingHardwareTabbedPane.addTab("IrTrans", new javax.swing.ImageIcon(getClass().getResource("/icons/irtrans/favicon.png")), irTransPanel); // NOI18N
 
         sendingAudioHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         sendingAudioHelpButton.setText("Help");
@@ -5562,7 +5516,7 @@ public final class GuiMain extends javax.swing.JFrame {
             .addGroup(audioPanelLayout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addComponent(transmitAudioParametersBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 105, Short.MAX_VALUE)
                 .addComponent(sendingAudioHelpButton)
                 .addContainerGap())
         );
@@ -5595,7 +5549,7 @@ public final class GuiMain extends javax.swing.JFrame {
             .addGroup(irToyPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(irToySerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
                 .addComponent(sendingIrToyHelpButton)
                 .addContainerGap())
         );
@@ -5662,7 +5616,7 @@ public final class GuiMain extends javax.swing.JFrame {
             .addGroup(commandFusionSendPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(commandFusionSendingSerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
                 .addComponent(sendingCommandFusionHelpButton)
                 .addContainerGap())
         );
@@ -5695,7 +5649,7 @@ public final class GuiMain extends javax.swing.JFrame {
             .addGroup(captureIrWidgetPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(irWidgetSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
                 .addComponent(capturingIrWidgetHardwareHelpButton)
                 .addContainerGap())
         );
@@ -8105,14 +8059,6 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setImportWaveDivideCarrier(importWaveDivideCarrierCheckBox1.isSelected());
     }//GEN-LAST:event_importWaveDivideCarrierCheckBox1ActionPerformed
 
-    private void irTransInternetHostPanelPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_irTransInternetHostPanelPropertyChange
-        try {
-            setupIrTrans();
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        }
-    }//GEN-LAST:event_irTransInternetHostPanelPropertyChange
-
     private void sendingHardwareTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sendingHardwareTabbedPaneStateChanged
         if (hardwareManager == null)
             return;
@@ -8425,7 +8371,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_clonePlotMenuItemActionPerformed
 
     private void capturingIrWidgetHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingIrWidgetHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.capturingIrWidgetHardwareHelp);
+        HelpPopup.newHelpPopup(this, HelpTexts.irWidgetHardwareHelp);
     }//GEN-LAST:event_capturingIrWidgetHardwareHelpButtonActionPerformed
 
     private void exportGirrHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportGirrHelpButtonActionPerformed
@@ -8441,7 +8387,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_exportProntoHelpButtonActionPerformed
 
     private void sendingGlobalCacheHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingGlobalCacheHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.sendingGlobalCacheHelp);
+        HelpPopup.newHelpPopup(this, HelpTexts.globalCacheHelp);
     }//GEN-LAST:event_sendingGlobalCacheHelpButtonActionPerformed
 
     private void sendingAudioHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingAudioHelpButtonActionPerformed
@@ -8467,10 +8413,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private void importTextParametrizedHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importTextParametrizedHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.importTextParametrizedHelp);
     }//GEN-LAST:event_importTextParametrizedHelpButtonActionPerformed
-
-    private void sendingIrTransHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingIrTransHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.sendingIrTransHelp);
-    }//GEN-LAST:event_sendingIrTransHelpButtonActionPerformed
 
     private void parametrizedLearnIgnoreTCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parametrizedLearnIgnoreTCheckBoxMenuItemActionPerformed
         properties.setParametrizedLearnIgnoreT(this.parametrizedLearnIgnoreTCheckBoxMenuItem.isSelected());
@@ -8695,7 +8637,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_cleanerCheckBoxMenuItemActionPerformed
 
     private void sendingDevLircHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingDevLircHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.sendingDevLircHelp);
+        HelpPopup.newHelpPopup(this, HelpTexts.devLircHelp);
     }//GEN-LAST:event_sendingDevLircHardwareHelpButtonActionPerformed
 
     private void rejectLircCodeImportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rejectLircCodeImportsActionPerformed
@@ -9507,8 +9449,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel irToyPanel;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean irToySerialPortBean;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<IrTransImporter> irTransFileImporterBean;
-    private org.harctoolbox.guicomponents.InternetHostPanel irTransInternetHostPanel;
-    private javax.swing.JPanel irTransPanel;
     private javax.swing.JButton irTransWebButton;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean irWidgetSerialPortSimpleBean;
     private javax.swing.JButton irdbBrowseButton;
@@ -9739,7 +9679,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton sendingHardwareHelpButton;
     private javax.swing.JTabbedPane sendingHardwareTabbedPane;
     private javax.swing.JButton sendingIrToyHelpButton;
-    private javax.swing.JButton sendingIrTransHelpButton;
     private javax.swing.JPanel sendingPanel;
     private javax.swing.JMenuItem sendingTimeoutMenuItem;
     private javax.swing.JMenuItem setDMenuItem;
