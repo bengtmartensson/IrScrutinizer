@@ -80,7 +80,7 @@
     <Component class="javax.swing.JComboBox" name="portComboBox">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] { notInitialized })" type="code"/>
+          <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] { NOT_INITIALIZED })" type="code"/>
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="Device name to use"/>
       </Properties>

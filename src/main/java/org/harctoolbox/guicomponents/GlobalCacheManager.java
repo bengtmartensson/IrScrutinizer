@@ -80,7 +80,8 @@ public final class GlobalCacheManager {
             return null;
         if (index < manualGlobalCaches.size())
             return manualGlobalCaches.get(index);
-        return automaticGlobalCaches.get(index - manualGlobalCaches.size());
+        int idx = index - manualGlobalCaches.size();
+        return idx < automaticGlobalCaches.size() ? automaticGlobalCaches.get(idx) : null;
     }
 
     public int getIndex(InetAddress inetAddress) {

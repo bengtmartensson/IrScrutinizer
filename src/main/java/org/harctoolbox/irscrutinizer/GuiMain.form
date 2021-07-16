@@ -6096,7 +6096,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.guicomponents.DevLircBean" name="devLircBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getDevLircName(), true)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getVerbose(), properties.getDevLircTimeout(), properties.getDevLircName())"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="sendingDevLircHardwareHelpButton">

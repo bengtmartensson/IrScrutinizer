@@ -96,17 +96,20 @@ public abstract class HardwareBean extends JPanel implements Closeable {
         return (JPanel) getParent();
     }
 
-    protected void openClose(boolean opening) throws IOException {
+    protected void openClose(boolean opening) throws IOException, HarcHardwareException {
         if (opening)
             open();
         else
             close();
     }
 
-    abstract void open() throws IOException;
+    @Override
+    public abstract String getName();
+
+    abstract void open() throws IOException, HarcHardwareException;
 
     @Override
-    public abstract void close();
+    public abstract void close() throws IOException;
 
     public boolean isOpen() {
         return hardware != null && hardware.isValid();
@@ -134,7 +137,7 @@ public abstract class HardwareBean extends JPanel implements Closeable {
     }
 
     /**
-     * Default implementation.
+     * Default implementation, override whenever the subclass can capture.
      * @return false
      */
     public boolean canCapture() {
@@ -142,17 +145,25 @@ public abstract class HardwareBean extends JPanel implements Closeable {
     }
 
     /**
-     * Default implementation.
+     * Default implementation, override whenever the subclass can send.
      * @return false
      */
     public boolean canSend() {
         return false;
     }
 
-    public ModulatedIrSequence capture() throws CannotCaptureException {
+    /**
+     * Default implementation, override whenever the subclass can capture.
+     * @return ModulatedSequence captured, or null.
+     */
+    public ModulatedIrSequence capture() throws CannotCaptureException, HarcHardwareException, InvalidArgumentException {
         throw new CannotCaptureException(getName());
     }
 
+    /**
+     * Default implementation, override whenever the subclass can send.
+     * @return success of operation
+     */
     public boolean sendIr(IrSignal irSignal, int count) throws NoSuchTransmitterException, IOException, HardwareUnavailableException, HarcHardwareException, InvalidArgumentException {
         throw new CannotSendException(getName());
     }

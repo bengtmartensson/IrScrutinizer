@@ -19,6 +19,7 @@ package org.harctoolbox.irscrutinizer;
 
 import com.neuron.app.tonto.ProntoModel;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
@@ -32,14 +33,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.io.*;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -50,8 +49,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.comm.DriverGenUnix;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -87,10 +84,6 @@ import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.TimeoutException;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.ir.CommandFusion;
-import org.harctoolbox.harchardware.ir.GirsClient;
-import org.harctoolbox.harchardware.ir.IrToy;
-import org.harctoolbox.harchardware.ir.IrTrans;
-import org.harctoolbox.harchardware.ir.IrWidget;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrCoreException;
@@ -164,7 +157,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private transient Remote.MetaData metaData = new Remote.MetaData("unnamed");
 
-    private final static String feedbackMail = "feedback@harctoolbox.org";
     private final static String issuesUrl = "https://github.com/bengtmartensson/IrScrutinizer/issues";
     private final static String gitUrl = "https://github.com/bengtmartensson/IrScrutinizer/";
     private final static String downloadsUrl = "https://github.com/bengtmartensson/IrScrutinizer/releases";
@@ -653,31 +645,41 @@ public final class GuiMain extends javax.swing.JFrame {
             RepeatFinder.setDefaultRelativeTolerance((Double) newValue);
         });
 
-        hardwareManager = new HardwareManager(guiUtils, sendingHardwareTabbedPane);
+        hardwareManager = new HardwareManager(guiUtils);
         properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
             hardwareManager.setVerbose((Boolean)newValue);
             guiUtils.setVerbose((Boolean)newValue);
         });
+        hardwareManager.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+                case HardwareManager.PROP_SELECTED_HARDWARE:
+                    String name = (String) evt.getNewValue();
+                    properties.setSelectedHardware(name);
+                    Container bean = hardwareManager.getBean(name).getParent();
+                    sendingHardwareTabbedPane.setSelectedComponent(bean);
+                    break;
 
-//        SendingGlobalCache sendingGlobalCache = new SendingGlobalCache(globalCachePanel, properties,
-//                guiUtils, globalCacheIrSenderSelector);
-        //sendingHardwareManager.add(sendingGlobalCache);
+                default:
+                    throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
+            }
+        });
 
+        // globalCacheIrSenderSelector was constructed in initComponents
         globalCacheIrSenderSelector.setGlobalCache(properties.getGlobalCacheIpName());
         globalCacheIrSenderSelector.setModule(properties.getGlobalCacheModule());
         globalCacheIrSenderSelector.setPort(properties.getGlobalCachePort());
         globalCacheIrSenderSelector.addPropertyChangeListener((PropertyChangeEvent evt) -> {
             switch (evt.getPropertyName()) {
-                case GlobalCacheIrSenderSelector.PROP_IPNAME:
+                case HardwareBean.PROP_IPNAME:
                     properties.setGlobalCacheIpName((String) evt.getNewValue());
                     break;
-                case GlobalCacheIrSenderSelector.PROP_MODULE:
+                case HardwareBean.PROP_MODULE:
                     properties.setGlobalCacheModule((Integer) evt.getNewValue());
                     break;
-                case GlobalCacheIrSenderSelector.PROP_PORT:
+                case HardwareBean.PROP_PORT:
                     properties.setGlobalCachePort((Integer) evt.getNewValue());
                     break;
-                case GlobalCacheIrSenderSelector.PROP_ISOPEN:
+                case HardwareBean.PROP_ISOPEN:
                     guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
                     break;
                 default:
@@ -701,10 +703,25 @@ public final class GuiMain extends javax.swing.JFrame {
 //        hardwareManager.add(sendingIrToy);
 //
 //        SendingDevLirc sendingDevLirc = null;
-//        if (LircHardware.isLibraryLoaded()) {
+        if (LircHardware.isLibraryLoaded()) {
 //            sendingDevLirc = new SendingDevLirc(devLircPanel, devLircBean, properties, guiUtils);
-//            hardwareManager.add(sendingDevLirc);
-//        }
+            // devLircBean was constructed in initComponents()
+            devLircBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+                switch (evt.getPropertyName()) {
+                    case HardwareBean.PROP_PORT:
+                        properties.setDevLircName((String) evt.getNewValue());
+                        break;
+                    case HardwareBean.PROP_PROPS:
+                        break;
+                    case HardwareBean.PROP_ISOPEN:
+                        guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
+                        break;
+                    default:
+                        throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
+                }
+            });
+            hardwareManager.add(devLircBean);
+        }
 //
 //        SendingGirsClient sendingGirsClient = new SendingGirsClient(girsClientPanel,
 //                girsTcpSerialComboBean, properties, guiUtils);
@@ -713,20 +730,10 @@ public final class GuiMain extends javax.swing.JFrame {
 //        SendingSerial<CommandFusion> sendingcommandFusion = new SendingSerial<>(CommandFusion.class, commandFusionSendPanel,
 //                commandFusionSendingSerialPortBean, properties, guiUtils);
 //        hardwareManager.add(sendingcommandFusion);
-//
-//        SendingGenericSerialPort sendingGenericSerialPort = new SendingGenericSerialPort(
-//                genericSerialPanel,
-//                genericSerialSenderBean,
-//                properties,
-//                guiUtils);
-//        if (userlevel != 0)
-//            hardwareManager.add(sendingGenericSerialPort);
 
-//        try {
-//            hardwareManager.select(properties.getTransmitHardware());
-//        } catch (HarcHardwareException ex) {
-//            guiUtils.error(ex);
-//        }
+//        capturingHardwareManager.add(new CapturingSerial<>(IrWidget.class, captureIrWidgetPanel,
+//                irWidgetSerialPortSimpleBean, properties, guiUtils, capturingHardwareManager));
+
         String oldHardware = properties.getSelectedHardware();
         try {
             hardwareManager.select(oldHardware);
@@ -738,39 +745,6 @@ public final class GuiMain extends javax.swing.JFrame {
         hardwareManager.setVerbose(properties.getVerbose());
 
         optionsMenu.add(hardwareManager.getMenu());
-
-//        capturingHardwareManager = new CapturingHardwareManager(guiUtils, properties,
-//                capturingHardwareTabbedPane/*, startButton*/);
-
-//        capturingHardwareManager.add(new CapturingSerial<>(IrWidget.class, captureIrWidgetPanel,
-//                irWidgetSerialPortSimpleBean, properties, guiUtils, capturingHardwareManager));
-//
-//        capturingHardwareManager.add(new CapturingGlobalCache(properties.getGlobalCacheCaptureIpName(),
-//                globalCacheCaptureSelector, captureGlobalCachePanel,
-//                properties, guiUtils, capturingHardwareManager));
-//
-//        capturingHardwareManager.add(new CapturingSendingHardware<GirsClient>(captureGirsPanel, girsClientPanel,
-//                girsClientCapturingSendingBean, girsTcpSerialComboBean, sendingGirsClient,
-//                properties, guiUtils, capturingHardwareManager));
-//
-//        if (LircHardware.isLibraryLoaded())
-//            capturingHardwareManager.add(new CapturingSendingHardware<>(captureDevLircPanel, devLircPanel,
-//                    devLircCapturingSendingBean, devLircBean, sendingDevLirc,
-//                    properties, guiUtils, capturingHardwareManager));
-//
-//        capturingHardwareManager.add(new CapturingSendingHardware<>(captureCommandFusionPanel, commandFusionSendPanel,
-//                commandFusionCapturingSendingBean, commandFusionSendingSerialPortBean, sendingcommandFusion,
-//                properties, guiUtils, capturingHardwareManager));
-//
-//        capturingHardwareManager.add(new CapturingSendingHardware<>(captureIrToyPanel, irToyPanel,
-//                irtoyCapturingSendingBean, irToySerialPortBean, sendingIrToy,
-//                properties, guiUtils, capturingHardwareManager));
-
-//        try {
-//            capturingHardwareManager.select(properties.getCaptureDevice());
-//        } catch (HarcHardwareException ex) {
-//            guiUtils.error(ex);
-//        }
 
 //        properties.addCaptureBeginTimeoutChangeListener((String name1, Object oldValue, Object newValue) -> {
 //            try {
@@ -795,12 +769,6 @@ public final class GuiMain extends javax.swing.JFrame {
 //                guiUtils.error(ex);
 //            }
 //        });
-//
-//        properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
-//            capturingHardwareManager.setVerbose((Boolean)newValue);
-//        });
-//
-//        optionsMenu.add(capturingHardwareManager.getMenu());
 
         irpMasterBean.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> {
             switch (evt.getPropertyName()) {
@@ -2343,7 +2311,7 @@ public final class GuiMain extends javax.swing.JFrame {
         globalCacheIrSenderSelector = new org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector(guiUtils, properties.getVerbose(), properties.getGlobalCacheTimeout());
         sendingGlobalCacheHelpButton = new javax.swing.JButton();
         devLircPanel = new javax.swing.JPanel();
-        devLircBean = new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getDevLircName(), true);
+        devLircBean = new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getVerbose(), properties.getDevLircTimeout(), properties.getDevLircName());
         sendingDevLircHardwareHelpButton = new javax.swing.JButton();
         audioPanel = new javax.swing.JPanel();
         transmitAudioParametersBean = new org.harctoolbox.guicomponents.AudioParametersBean(properties);
@@ -8062,19 +8030,19 @@ public final class GuiMain extends javax.swing.JFrame {
     private void sendingHardwareTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sendingHardwareTabbedPaneStateChanged
         if (hardwareManager == null)
             return;
-//        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
-//        try {
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
+        try {
             for (String hardwareName : hardwareManager) {
-//                if (hardware.getPanel() == sendingHardwareTabbedPane.getSelectedComponent()) {
-//                    hardwareManager.selectDoWork(hardware.getName());
-//                    break;
-//                }
+                if (hardwareManager.getBean(hardwareName).getParent() == sendingHardwareTabbedPane.getSelectedComponent()) {
+                    hardwareManager.select(hardwareName);
+                    break;
+                }
             }
-//        } catch (HarcHardwareException ex) {
-//            guiUtils.error(ex);
-//        } finally {
-//            busyWindow.unBusy();
-//        }
+        } catch (HardwareUnavailableException ex) {
+            guiUtils.error(ex);
+        } finally {
+            busyWindow.unBusy();
+        }
     }//GEN-LAST:event_sendingHardwareTabbedPaneStateChanged
 
     private void transmitScrutinizedButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitScrutinizedButtonActionPerformed
@@ -9167,21 +9135,20 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_NamedCommandMenuItemActionPerformed
 
     private void captureTestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_captureTestButtonActionPerformed
-       BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
             if (captureThreadRunning()) {
-            guiUtils.error("A capture thread is running. This must first be ended.");
-            return;
-        }
-        if (!hardwareManager.canCapture()) {
-            guiUtils.error("No capture device selected.");
-            return;
-        }
-        if (!hardwareManager.isReady()) {
-            guiUtils.error("Selected capture device not ready (not opened?).");
-            return;
-        }
-
+                guiUtils.error("A capture thread is running. This must first be ended.");
+                return;
+            }
+            if (!hardwareManager.canCapture()) {
+                guiUtils.error("No capturing device selected.");
+                return;
+            }
+            if (!hardwareManager.isReady()) {
+                guiUtils.error("Selected capture device not ready (not opened?).");
+                return;
+            }
 
             ModulatedIrSequence modulatedIrSequence = captureIrSequence();
 

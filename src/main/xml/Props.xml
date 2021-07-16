@@ -40,6 +40,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="irToyPortName" type="string" default='ifWindows("COM13", "/dev/ttyACM0")' doc="Port name for IrToy"/>
     <property name="irToyPortBaudRate" type="int" default='"9600"' doc="Baudrate for IrToy (sending)"/>
     <property name="devLircName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc."/>
+    <property name="devLircTimeout" type="int" default='"5000"' doc="Timeout when accessing /dev/lirc*."/>
     <property name="sorterOnParametrizedTable" type="boolean" default='"false"' />
     <property name="sorterOnRawTable" type="boolean" default='"false"' />
     <property name="removeDefaultedParameters" type="boolean" default='"true"' />
@@ -69,7 +70,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="defaultImportDir" type="string" default='"testfiles"' doc='Just the starting directory for file selectors.'/>
     <property name="exportFormatFilePath" type="string" default='"exportformats.d"' doc='File or directory containing export format descriptions.'/>
     <property name="exportFormatName" type="string" default='"Girr"' doc='Name of currenty selected export file format' />
-    <property name="globalCacheIpName" type="string" default='""' doc="IP Name or Address of GlobalCache to use (transmitting)."/>
+    <property name="globalCacheIpName" type="string" default='org.harctoolbox.harchardware.ir.GlobalCache.DEFAULT_IP' doc="IP Name or Address of GlobalCache to use (transmitting)."/>
     <property name="globalCacheModule" type="int" default='"2"' doc='Module number of Global Cache to use, see its documentation.'/>
     <property name="globalCachePort" type="int" default='"1"' doc='IR Port number of selected Global Cache module, see Global Cache documenation.'/>
     <property name="globalCacheTimeout" type="int" default='"3000"' doc='Socket timeout for GlobalCache'/>

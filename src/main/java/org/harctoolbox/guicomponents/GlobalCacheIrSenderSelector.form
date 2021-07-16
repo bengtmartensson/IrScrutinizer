@@ -57,7 +57,7 @@
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="openToggleButton" min="-2" max="-2" attributes="0"/>
+              <Component id="openCloseToggleButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -88,7 +88,7 @@
                   <Component id="globalCacheVersionLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="openToggleButton" min="-2" max="-2" attributes="0"/>
+              <Component id="openCloseToggleButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace pref="25" max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -228,15 +228,15 @@
         <Property name="toolTipText" type="java.lang.String" value="Firmware version as reported by the device."/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="openToggleButton">
+    <Component class="javax.swing.JToggleButton" name="openCloseToggleButton">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/connect_creating.png"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Open"/>
+        <Property name="text" type="java.lang.String" value="Open/Close"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openToggleButtonActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openCloseToggleButtonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

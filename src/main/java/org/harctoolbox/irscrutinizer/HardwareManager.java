@@ -16,11 +16,15 @@
  */
 package org.harctoolbox.irscrutinizer;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
+import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JRadioButton;
@@ -39,20 +43,19 @@ import org.harctoolbox.ircore.ThisCannotHappenException;
 
 final class HardwareManager implements Iterable<String>, Closeable {
     private static final int INITIAL_MAP_CAPACITY = 8;
+    public static final String PROP_SELECTED_HARDWARE = "PROP_SELECTED_HARDWARE";
+
     private final GuiUtils guiUtils;
-//    private final Props properties;
-    private final JTabbedPane hardwareTabbedPane;
     private boolean verbose;
     private final Map<String, HardwareBean> map;
     private HardwareBean selected;
     private JMenu menu;
     private ButtonGroup buttonGroup;
+    private final PropertyChangeSupport propertyChangeSupport;
 
-
-    HardwareManager(GuiUtils guiUtils, JTabbedPane hardwareTabbedPane) {
+    HardwareManager(GuiUtils guiUtils) {
         this.guiUtils = guiUtils;
-//        this.properties = properties;
-        this.hardwareTabbedPane = hardwareTabbedPane;
+        this.propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
         map = new LinkedHashMap<>(INITIAL_MAP_CAPACITY);
         menu = null;
         selected = null;
@@ -62,52 +65,27 @@ final class HardwareManager implements Iterable<String>, Closeable {
         this.verbose = verbose;
         if (selected != null)
             selected.setVerbose(verbose);
-//        properties.setVerbose(verbose);
     }
 
     public void add(HardwareBean hardwareBean) {
-//        Hardware hardware = new Hardware(hardwareBean);
         String name = hardwareBean.getName();
         map.put(name, hardwareBean);
-//        hardwareBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
-//            switch (evt.getPropertyName()) {
-////                case GlobalCacheIrSenderSelector.PROP_IPNAME:
-////                    properties.setGlobalCacheIpName((String) evt.getNewValue());
-////                    break;
-////                case GlobalCacheIrSenderSelector.PROP_MODULE:
-////                    properties.setGlobalCacheModule((Integer) evt.getNewValue());
-////                    break;
-////                case GlobalCacheIrSenderSelector.PROP_PORT:
-////                    properties.setGlobalCachePort((Integer) evt.getNewValue());
-////                    break;
-//                case HardwareBean.PROP_ISOPEN:
-//                    if ((Boolean) evt.getNewValue())
-//                        hardware =
-////                    guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
-//                    break;
-//                default:
-////                    throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
-//            }
-//        });
     }
 
     public JMenu getMenu() {
         if (menu == null)
-            createMenu(selected != null ? selected.getName() : null);
+            createMenu();
         return menu;
     }
 
-    private void createMenu(String current) {
+    private void createMenu() {
         menu = new JMenu();
         menu.setText("Selected Hardware");
         menu.setToolTipText("Allows direct selection of hardware");
         buttonGroup = new ButtonGroup();
         map.keySet().stream().map((String name) -> {
-//            String name = kvp.getKey();
-//            Hardware hardware = kvp.getValue();
             JRadioButton menuItem = new JRadioButton(name);
-            menuItem.setSelected(name.equals(current));
-            //portRadioButtons[i] = menuItem;
+//            menuItem.setSelected(name.equals(current));
             menuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
                 try {
                     select(name);
@@ -122,32 +100,50 @@ final class HardwareManager implements Iterable<String>, Closeable {
         }).forEachOrdered((menuItem) -> {
             menu.add(menuItem);
         });
+        updateMenuSelection();
     }
 
-    boolean canCapture() throws HardwareUnavailableException {
-        assertSelected();
-        return selected.canCapture();
+    private int selectedNr() {
+        int i = 0;
+        for (HardwareBean bean : map.values()) {
+            if (bean == selected)
+                return i;
+            i++;
+        }
+        return -1;
+    }
+
+    private void updateMenuSelection() {
+        if (menu != null) {
+            int selNr = selectedNr();
+            ((AbstractButton) menu.getMenuComponent(selNr)).setSelected(true);
+        }
+    }
+
+    boolean canCapture() {
+        return selected != null && selected.canCapture();
     }
 
     boolean canSend() throws HardwareUnavailableException {
-        assertSelected();
-        return selected.canSend();
+        return selected != null && selected.canSend();
     }
 
-    boolean isValid() throws HardwareUnavailableException {
-        assertSelected();
-        return selected.isValid();
+    boolean isValid() {
+        return selected != null && selected.getHardware().isValid();
     }
 
     boolean isReady() {
-        return selected != null && selected.isValid();
+        return isValid();
     }
 
     private void select(HardwareBean hardwareBean) {
-//        String old = selected != null ? selected.getName() : null;
-        selected = hardwareBean;
-        selected.setVerbose(verbose);
-        // TODO: update menu
+        if (hardwareBean != selected) {
+            String old = selected != null ? selected.getName() : null;
+            selected = hardwareBean;
+            selected.setVerbose(verbose);
+            updateMenuSelection();
+            propertyChangeSupport.firePropertyChange(PROP_SELECTED_HARDWARE, old, hardwareBean.getName());
+        }
     }
 
     void select(String newHardware) throws HardwareUnavailableException {
@@ -157,8 +153,13 @@ final class HardwareManager implements Iterable<String>, Closeable {
         select(sel);
     }
 
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        if (propertyChangeSupport != null)
+            propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
     /**
-     * This is essentially a fallback.
+     * This is a fallback if nothing is selected.
      */
     public String select() {
         HardwareBean first = map.values().iterator().next();
@@ -169,7 +170,11 @@ final class HardwareManager implements Iterable<String>, Closeable {
     @Override
     public void close() {
         map.values().forEach(hardware -> {
-            hardware.close();
+            try {
+                hardware.close();
+            } catch (IOException ex) {
+                guiUtils.error(ex);
+            }
         });
         selected = null;
     }
@@ -206,79 +211,8 @@ final class HardwareManager implements Iterable<String>, Closeable {
             throw new ThisCannotHappenException("Name " + name + " not existing."); // programming error
     }
 
-/*
-    private class Hardware {
-
-//        IHarcHardware hardware;
-//        private final Class<? extends IHarcHardware> clazz;
-        private final HardwareBean hardwareBean;
-        private Transmitter transmitter;
-
-//        private Hardware(HardwareBean hardwareBean) {
-////            this.clazz = clazz;
-//            this.hardwareBean = hardwareBean;
-//        }
-
-        private Hardware(HardwareBean hardwareBean) {
-//            this.clazz = null;
-            this.hardwareBean = hardwareBean;
-        }
-
-        ICapture asCapturer() throws CannotCaptureException {
-            if (!canCapture())
-                throw new CannotCaptureException(getName());
-            return (ICapture) getHardware();
-        }
-
-        IRawIrSender asSender() throws CannotSendException {
-            if (!canSend())
-                throw new CannotSendException(getName());
-            return (IRawIrSender) getHardware();
-        }
-
-        private String getName() {
-            return hardwareBean.getName();
-        }
-
-        private IHarcHardware getHardware() {
-            return hardwareBean.getHardware();
-        }
-
-        private boolean canCapture() {
-            return getHardware() instanceof ICapture;
-        }
-
-        private void setVerbose(boolean verbose) {
-            if (getHardware() != null)
-                hardwareBean.setVerbose(verbose);
-        }
-
-        private boolean canSend() {
-            return getHardware() instanceof IRawIrSender;
-        }
-
-        private void close() {
-            try {
-                if (getHardware() != null)
-                    getHardware().close();
-            } catch (IOException ex) {
-                guiUtils.error(ex);
-            }
-        }
-
-        private ModulatedIrSequence capture() throws CannotCaptureException, HarcHardwareException, IOException, InvalidArgumentException {
-            ICapture capturer = asCapturer();
-            return capturer.capture();
-        }
-
-        private boolean sendIr(IrSignal irSignal, int count) throws CannotSendException, HarcHardwareException, NoSuchTransmitterException, IOException, InvalidArgumentException {
-            IRawIrSender sender = asSender();
-            return sender.sendIr(irSignal, count, transmitter);
-        }
-
-        private boolean isValid() {
-            return getHardware() != null && getHardware().isValid();
-        }
+    public HardwareBean getBean(String name) {
+        Objects.requireNonNull(name);
+        return map.get(name);
     }
-*/
 }

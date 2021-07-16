@@ -24,6 +24,8 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import org.harctoolbox.harchardware.HarcHardwareException;
@@ -31,6 +33,7 @@ import org.harctoolbox.harchardware.ir.GlobalCache;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 
 public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swing.JPanel implements ISendingHardware<GlobalCache>, ISendingReceivingBean*/ {
@@ -66,9 +69,18 @@ public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swin
         }
 
         GlobalCacheManager.getInstance().addManualGlobalCache(inetAddress);
-        openToggleButton.setEnabled(true);
+        openCloseToggleButton.setEnabled(true);
         enableStuff();
         propertyChangeSupport.firePropertyChange(PROP_IPNAME, old, inetAddress.getHostAddress());
+    }
+
+    private void assertValidModule() {
+        if (hardware == null)
+            return;
+
+        List<Integer> irModules = ((GlobalCache) hardware).getIrModules();
+        if (! irModules.contains(module))
+            module = irModules.get(0);
     }
 
     private void enableStuff() {
@@ -102,7 +114,7 @@ public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swin
         setNumberOfPortsForModule(module);
         portComboBox.setSelectedItem(Integer.toString(port));
         portComboBox.setEnabled(open);
-        openToggleButton.setSelected(open);
+        openCloseToggleButton.setSelected(open);
     }
 
     private void setGlobalCache(int index) throws UnknownHostException, IOException {
@@ -245,7 +257,12 @@ public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swin
         stopButton.setEnabled(value);
     }
 
-//    @Override
+    @Override
+    public boolean canSend() {
+        return true;
+    }
+
+    @Override
     public boolean sendIr(IrSignal irSignal, int count) throws NoSuchTransmitterException, IOException, HardwareUnavailableException, HarcHardwareException, InvalidArgumentException {
         assertHardwareValid();
         return ((GlobalCache) hardware).sendIr(irSignal, count, getTransmitter());
@@ -272,7 +289,7 @@ public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swin
             throw new IOException("Set up of GlobalCache@" + inetAddress.getHostName() + " failed.");
         String version = hardware.getVersion();
         globalCacheVersionLabel.setText(version);
-
+        assertValidModule();
         propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, isOpen());
         enableStuff();
     }
@@ -298,6 +315,19 @@ public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swin
             }
         }
         enableStuff();
+    }
+
+    @Override
+    public boolean canCapture() {
+        return true;
+    }
+
+    @Override
+    public ModulatedIrSequence capture() throws HarcHardwareException, InvalidArgumentException {
+        if (hardware == null)
+            return null;
+
+        return ((GlobalCache) hardware).capture();
     }
 
 //    @Override
@@ -327,7 +357,7 @@ public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swin
         addButton = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         globalCacheVersionLabel = new javax.swing.JLabel();
-        openToggleButton = new javax.swing.JButton();
+        openCloseToggleButton = new javax.swing.JToggleButton();
 
         globalCacheIpComboBox.setToolTipText("Used to select between several Global Caché units.");
         globalCacheIpComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -393,11 +423,11 @@ public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swin
         globalCacheVersionLabel.setText("<unknown>");
         globalCacheVersionLabel.setToolTipText("Firmware version as reported by the device.");
 
-        openToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/connect_creating.png"))); // NOI18N
-        openToggleButton.setText("Open");
-        openToggleButton.addActionListener(new java.awt.event.ActionListener() {
+        openCloseToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/connect_creating.png"))); // NOI18N
+        openCloseToggleButton.setText("Open/Close");
+        openCloseToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openToggleButtonActionPerformed(evt);
+                openCloseToggleButtonActionPerformed(evt);
             }
         });
 
@@ -438,7 +468,7 @@ public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swin
                 .addGap(9, 9, 9))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(openToggleButton)
+                .addComponent(openCloseToggleButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -464,7 +494,7 @@ public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swin
                     .addComponent(jLabel5)
                     .addComponent(globalCacheVersionLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(openToggleButton)
+                .addComponent(openCloseToggleButton)
                 .addContainerGap(25, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -508,18 +538,18 @@ public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swin
         setPort(Integer.parseInt((String)portComboBox.getSelectedItem()));
     }//GEN-LAST:event_portComboBoxActionPerformed
 
-    private void openToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openToggleButtonActionPerformed
+    private void openCloseToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openCloseToggleButtonActionPerformed
         Cursor oldCursor = setBusyCursor();
-//        boolean opening = openToggleButton.isSelected();
         try {
             openClose(! isOpen());
-        } catch (IOException ex) {
+        } catch (IOException | HarcHardwareException ex) {
             guiUtils.error(ex);
+            enableStuff();
         } finally {
-            openToggleButton.setSelected(isOpen());
+            openCloseToggleButton.setSelected(isOpen());
             resetCursor(oldCursor);
         }
-    }//GEN-LAST:event_openToggleButtonActionPerformed
+    }//GEN-LAST:event_openCloseToggleButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
@@ -531,7 +561,7 @@ public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swin
     private javax.swing.JLabel jLabel5;
     private javax.swing.JComboBox<String> moduleComboBox;
     private javax.swing.JLabel moduleLabel;
-    private javax.swing.JButton openToggleButton;
+    private javax.swing.JToggleButton openCloseToggleButton;
     private javax.swing.JComboBox<String> portComboBox;
     private javax.swing.JLabel portLabel;
     private javax.swing.JButton stopButton;
