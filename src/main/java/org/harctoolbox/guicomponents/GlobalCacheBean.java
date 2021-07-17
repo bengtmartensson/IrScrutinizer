@@ -34,7 +34,7 @@ import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 
-public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swing.JPanel implements ISendingHardware<GlobalCache>, ISendingReceivingBean*/ {
+public final class GlobalCacheBean extends HardwareBean /*javax.swing.JPanel implements ISendingHardware<GlobalCache>, ISendingReceivingBean*/ {
 
 //    private GuiUtils guiUtils;
 //    private transient GlobalCache globalCache;
@@ -215,11 +215,11 @@ public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swin
      * @param timeout
      */
 //    // FIXME
-//    public GlobalCacheIrSenderSelector(GuiUtils guiUtils, boolean verbose, int timeout, boolean senderSupport) {
+//    public GlobalCacheBean(GuiUtils guiUtils, boolean verbose, int timeout, boolean senderSupport) {
 //        this(guiUtils, verbose, timeout);
 //    }
 
-    public GlobalCacheIrSenderSelector(GuiUtils guiUtils, boolean verbose, int timeout) {
+    public GlobalCacheBean(GuiUtils guiUtils, boolean verbose, int timeout) {
         super(guiUtils, verbose, timeout);
 //        this.propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
 //        this.guiUtils = guiUtils;
@@ -242,7 +242,7 @@ public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swin
         });
     }
 
-    public GlobalCacheIrSenderSelector() {
+    public GlobalCacheBean() {
         this(null, false, GlobalCache.DEFAULT_BEGIN_TIMEOUT);
     }
 

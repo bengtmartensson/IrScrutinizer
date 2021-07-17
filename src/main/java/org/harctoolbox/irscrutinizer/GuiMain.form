@@ -6036,9 +6036,9 @@
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector" name="globalCacheIrSenderSelector">
+                        <Component class="org.harctoolbox.guicomponents.GlobalCacheBean" name="globalCacheIrSenderSelector">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector(guiUtils, properties.getVerbose(), properties.getGlobalCacheTimeout())"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.GlobalCacheBean(guiUtils, properties.getVerbose(), properties.getGlobalCacheTimeout())"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="sendingGlobalCacheHelpButton">

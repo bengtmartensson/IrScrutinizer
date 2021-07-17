@@ -2347,7 +2347,7 @@ public final class GuiMain extends javax.swing.JFrame {
         sendingPanel = new javax.swing.JPanel();
         sendingHardwareTabbedPane = new javax.swing.JTabbedPane();
         globalCachePanel = new javax.swing.JPanel();
-        globalCacheIrSenderSelector = new org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector(guiUtils, properties.getVerbose(), properties.getGlobalCacheTimeout());
+        globalCacheIrSenderSelector = new org.harctoolbox.guicomponents.GlobalCacheBean(guiUtils, properties.getVerbose(), properties.getGlobalCacheTimeout());
         sendingGlobalCacheHelpButton = new javax.swing.JButton();
         devLircPanel = new javax.swing.JPanel();
         devLircBean = new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getVerbose(), properties.getDevLircTimeout(), properties.getDevLircName());
@@ -9382,7 +9382,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.guicomponents.GirsClientBean girsTcpSerialComboBean;
     private javax.swing.JMenuItem gitMenuItem;
     private javax.swing.JButton globalCacheDBBrowseButton;
-    private org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector globalCacheIrSenderSelector;
+    private org.harctoolbox.guicomponents.GlobalCacheBean globalCacheIrSenderSelector;
     private javax.swing.JPanel globalCachePanel;
     private javax.swing.JMenuItem globalCacheTimeoutMenuItem;
     private javax.swing.JMenuItem glossaryMenuItem;
