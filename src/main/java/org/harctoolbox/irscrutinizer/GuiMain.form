@@ -5728,7 +5728,7 @@
                         <Component class="javax.swing.JComboBox" name="prontoModelComboBox">
                           <Properties>
                             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                              <Connection code="new DefaultComboBoxModel(prontoModelNames)" type="code"/>
+                              <Connection code="new DefaultComboBoxModel(ProntoClassicExporter.prontoModelNames)" type="code"/>
                             </Property>
                             <Property name="selectedIndex" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                               <Connection code="properties.getProntoModelIndex()" type="code"/>

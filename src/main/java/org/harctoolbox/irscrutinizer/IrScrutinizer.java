@@ -127,7 +127,7 @@ public class IrScrutinizer {
                 new GuiMain(applicationHome, propsfilename, verbose, arguments).setVisible(true);
             } catch (HeadlessException ex) {
                 System.err.println("This program does not run in headless mode.");
-            } catch (ParseException | IOException /*| URISyntaxException*/ | IrpParseException | RuntimeException ex) {
+            } catch (IOException /*| URISyntaxException*/ | IrpParseException | RuntimeException ex) {
                 GuiUtils.fatal(ex, IrpUtils.EXIT_CONFIG_READ_ERROR, new GuiUtils.EmergencyFixer() {
                     private String backupfile;
 

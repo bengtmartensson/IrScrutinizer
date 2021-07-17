@@ -24,8 +24,6 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import org.harctoolbox.harchardware.HarcHardwareException;
@@ -215,7 +213,6 @@ public final class GlobalCacheIrSenderSelector extends HardwareBean /*javax.swin
      * @param guiUtils
      * @param verbose
      * @param timeout
-     * @param senderSupport
      */
 //    // FIXME
 //    public GlobalCacheIrSenderSelector(GuiUtils guiUtils, boolean verbose, int timeout, boolean senderSupport) {

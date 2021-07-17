@@ -28,7 +28,6 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JRadioButton;
-import javax.swing.JTabbedPane;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.guicomponents.HardwareBean;
 import org.harctoolbox.guicomponents.HardwareBean.CannotCaptureException;
@@ -161,7 +160,7 @@ final class HardwareManager implements Iterable<String>, Closeable {
     /**
      * This is a fallback if nothing is selected.
      */
-    public String select() {
+    public String selectFallback() {
         HardwareBean first = map.values().iterator().next();
         select(first);
         return first.getName();
