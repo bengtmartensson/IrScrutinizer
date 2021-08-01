@@ -153,7 +153,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
     public void load(InputStream inputStream, String origin, String charsetName /* ignored */) throws IOException, ParseException {
         try {
             loadSchema();
-            Document thing = XmlUtils.openXmlStream(inputStream, validate ? schema : null, false, false);
+            Document thing = XmlUtils.openXmlStream(inputStream, validate ? schema : null, true, true);
             load(thing, origin);
         } catch (SAXParseException ex) {
             throw new ParseException(ex.getMessage(), ex.getLineNumber());
@@ -171,7 +171,7 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
     public void load(Reader reader, String origin) throws IOException, ParseException {
         try {
             loadSchema();
-            load(XmlUtils.openXmlReader(reader, validate ? schema : null, false, false), origin);
+            load(XmlUtils.openXmlReader(reader, validate ? schema : null, true, true), origin);
         } catch (SAXParseException ex) {
             throw new ParseException(ex.getMessage(), ex.getLineNumber());
         } catch (SAXException | GirrException ex) {
