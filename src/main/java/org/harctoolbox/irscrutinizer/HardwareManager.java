@@ -16,6 +16,7 @@
  */
 package org.harctoolbox.irscrutinizer;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Closeable;
@@ -69,6 +70,9 @@ final class HardwareManager implements Iterable<String>, Closeable {
     public void add(HardwareBean hardwareBean) {
         String name = hardwareBean.getName();
         map.put(name, hardwareBean);
+        hardwareBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            propertyChangeSupport.firePropertyChange(evt);
+        });
     }
 
     public JMenu getMenu() {
@@ -123,12 +127,12 @@ final class HardwareManager implements Iterable<String>, Closeable {
         return selected != null && selected.canCapture();
     }
 
-    boolean canSend() throws HardwareUnavailableException {
+    boolean canSend() {
         return selected != null && selected.canSend();
     }
 
     boolean isValid() {
-        return selected != null && selected.getHardware().isValid();
+        return selected != null && selected.isOpen();
     }
 
     boolean isReady() {

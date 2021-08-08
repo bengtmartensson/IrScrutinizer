@@ -34,23 +34,13 @@ import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 
-public final class GlobalCacheBean extends HardwareBean /*javax.swing.JPanel implements ISendingHardware<GlobalCache>, ISendingReceivingBean*/ {
-
-//    private GuiUtils guiUtils;
-//    private transient GlobalCache globalCache;
-//    private boolean verbose;
-//    private int timeout;
+public final class GlobalCacheBean extends HardwareBean {
 
     private InetAddress inetAddress;
     private int module;
     private int port;
-//    private boolean senderSupport; // TODO: remove
+    //private boolean senderSupport; // TODO: remove
     private final boolean openOnSelect = false; // To implement (or not?)
-
-//    private final PropertyChangeSupport propertyChangeSupport;
-//    public static final String PROP_MODULE = "PROP_MODULE";
-//    public static final String PROP_PORT = "PROP_PORT";
-//    private static final int DEFAULT_TIMEOUT = 5000;
 
     private void setGlobalCache(InetAddress globalCacheInetAddress) throws UnknownHostException, IOException {
         if (globalCacheInetAddress == null)
@@ -122,16 +112,6 @@ public final class GlobalCacheBean extends HardwareBean /*javax.swing.JPanel imp
     public void setGlobalCache(String ipName) throws UnknownHostException, IOException {
         setGlobalCache(InetAddress.getByName(ipName));
     }
-//    @Override
-//    public void addPropertyChangeListener(PropertyChangeListener listener) {
-//        if (propertyChangeSupport != null)
-//            propertyChangeSupport.addPropertyChangeListener(listener);
-//    }
-//
-//    @Override
-//    public void removePropertyChangeListener(PropertyChangeListener listener) {
-//        propertyChangeSupport.removePropertyChangeListener(listener);
-//    }
 
     /**
      * @return the ipName
@@ -158,12 +138,10 @@ public final class GlobalCacheBean extends HardwareBean /*javax.swing.JPanel imp
      * @param module the module to set
      */
     public void setModule(int module) {
-//        if (senderSupport) {
-            int oldModule = this.module;
-            this.module = module;
-            setNumberOfPortsForModule(module);
-            propertyChangeSupport.firePropertyChange(PROP_MODULE, oldModule, module);
-//        }
+        int oldModule = this.module;
+        this.module = module;
+        setNumberOfPortsForModule(module);
+        propertyChangeSupport.firePropertyChange(PROP_MODULE, oldModule, module);
     }
 
     /**
@@ -177,11 +155,9 @@ public final class GlobalCacheBean extends HardwareBean /*javax.swing.JPanel imp
      * @param port the port to set
      */
     public void setPort(int port) {
-//        if (senderSupport) {
-            int oldPort = this.port;
-            this.port = port;
-            propertyChangeSupport.firePropertyChange(PROP_PORT, oldPort, port);
-//        }
+        int oldPort = this.port;
+        this.port = port;
+        propertyChangeSupport.firePropertyChange(PROP_PORT, oldPort, port);
     }
 
     private void setNumberOfPortsForModule(int module) {
@@ -203,7 +179,6 @@ public final class GlobalCacheBean extends HardwareBean /*javax.swing.JPanel imp
      * @return
      * @throws NoSuchTransmitterException
      */
-//    @Override
     public GlobalCache.GlobalCacheIrTransmitter getTransmitter() throws NoSuchTransmitterException {
         return ((GlobalCache) hardware).newTransmitter(module, port);
     }
@@ -214,26 +189,10 @@ public final class GlobalCacheBean extends HardwareBean /*javax.swing.JPanel imp
      * @param verbose
      * @param timeout
      */
-//    // FIXME
-//    public GlobalCacheBean(GuiUtils guiUtils, boolean verbose, int timeout, boolean senderSupport) {
-//        this(guiUtils, verbose, timeout);
-//    }
-
     public GlobalCacheBean(GuiUtils guiUtils, boolean verbose, int timeout) {
         super(guiUtils, verbose, timeout);
-//        this.propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
-//        this.guiUtils = guiUtils;
-//        this.verbose = verbose;
-//        this.timeout = timeout;
-//        this.senderSupport = senderSupport;
-//        this.globalCache = null;
         this.port = GlobalCache.defaultGlobalCachePort;
         initComponents();
-//        this.moduleLabel.setVisible(true);
-//        this.moduleComboBox.setVisible(true);
-//        this.portLabel.setVisible(true);
-//        this.portComboBox.setVisible(true);
-//        this.stopButton.setVisible(true);
         updateGlobalCacheList();
 
         GlobalCacheManager.getInstance().addPropertyChangeListener((PropertyChangeEvent evt) -> {
@@ -270,7 +229,6 @@ public final class GlobalCacheBean extends HardwareBean /*javax.swing.JPanel imp
         return "Global Caché";
     }
 
-//    @Override
     public void setup() throws IOException, HarcHardwareException {
         if (inetAddress != null)
             open();
@@ -290,11 +248,6 @@ public final class GlobalCacheBean extends HardwareBean /*javax.swing.JPanel imp
         propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, isOpen());
         enableStuff();
     }
-
-//    @Override
-//    public JPanel getPanel() {
-//        return (JPanel) getParent();
-//    }
 
     @Override
     public void close() {
@@ -326,11 +279,6 @@ public final class GlobalCacheBean extends HardwareBean /*javax.swing.JPanel imp
 
         return ((GlobalCache) hardware).capture();
     }
-
-//    @Override
-//    public GlobalCache getRawIrSender() {
-//        return globalCache;
-//    }
 
     /**
      * This method is called from within the constructor to initialize the form.

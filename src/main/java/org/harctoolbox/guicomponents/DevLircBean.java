@@ -21,23 +21,22 @@ import java.awt.Cursor;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.DefaultComboBoxModel;
+import org.harctoolbox.devslashlirc.LircDeviceException;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.ir.DevLirc;
 import org.harctoolbox.harchardware.ir.LircTransmitter;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.ircore.ModulatedIrSequence;
+import org.harctoolbox.ircore.OddSequenceLengthException;
+import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 
 /**
  *
  */
 public final class DevLircBean extends HardwareBean {
-    private static final String NOT_INITIALIZED = "not initialized";
 
     private String portName;
     private String propsString;
-//    private GuiUtils guiUtils;
-//    private transient DevLirc hardware;
-//    private boolean listenable;
-//    private boolean enableSending;
-//    private final PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
 
     /**
      * Creates new form DevLircBean
@@ -53,9 +52,6 @@ public final class DevLircBean extends HardwareBean {
     public DevLircBean(GuiUtils guiUtils, boolean verbose, int timeout, String initialPort) {//, boolean enableSending) {
         super(guiUtils, verbose, timeout);
         initComponents();
-//        this.enableSending = enableSending;
-//        this.guiUtils = guiUtils;
-//        listenable = false;
         DefaultComboBoxModel<String> model;
         try {
             model = new DefaultComboBoxModel<>(candidates());
@@ -83,6 +79,7 @@ public final class DevLircBean extends HardwareBean {
             }
         }
         setPortName(actualPort);
+        enableStuff(false);
     }
 
     @Override
@@ -99,7 +96,7 @@ public final class DevLircBean extends HardwareBean {
     }
 
     private void conditionallyEnableOpen() {
-        openToggleButton.setEnabled(hardware != null && portComboBox.getSelectedItem() != null);
+        openToggleButton.setEnabled(/*hardware != null && */ portComboBox.getSelectedItem() != null);
     }
 
     /**
@@ -126,7 +123,15 @@ public final class DevLircBean extends HardwareBean {
     public void setHardware(DevLirc hardware) {
         this.hardware = hardware;
         conditionallyEnableOpen();
-        openToggleButton.setSelected(hardware.isValid());
+        openToggleButton.setSelected(isOpen());
+    }
+
+    private void setHardware() {
+        try {
+            setHardware(new DevLirc(portName, verbose, timeout));
+        } catch (LircDeviceException ex) {
+            guiUtils.error(ex);
+        }
     }
 
     public LircTransmitter getTransmitter() {
@@ -138,37 +143,15 @@ public final class DevLircBean extends HardwareBean {
     private void setProps(String version) {
         java.lang.String oldVersion = this.propsString;
         this.propsString = version;
-        propsLabel.setEnabled(hardware.isValid());
-        versionLiteralLabel.setEnabled(hardware.isValid());
+        propsLabel.setEnabled(isOpen());
+        versionLiteralLabel.setEnabled(isOpen());
         propsLabel.setText(version);
         propertyChangeSupport.firePropertyChange(PROP_PROPS, oldVersion, version);
     }
 
     private void setProps() {
-        setProps(hardware.isValid() ? hardware.toString() : "<not connected>");
+        setProps(isOpen() ? ((DevLirc) hardware).toString() : NOT_CONNECTED);
     }
-
-//    @Override
-//    public void addPropertyChangeListener(PropertyChangeListener listener) {
-//        // just to be Javabeans safe
-//        if (propertyChangeSupport == null)
-//            super.addPropertyChangeListener(listener);
-//        else
-//            propertyChangeSupport.addPropertyChangeListener(listener);
-//    }
-//
-//    @Override
-//    public void removePropertyChangeListener(PropertyChangeListener listener) {
-//        propertyChangeSupport.removePropertyChangeListener(listener);
-//    }
-
-//    public void setup(String desiredPort) throws IOException {
-//        ComboBoxModel<String> model = portComboBox.getModel();
-//        if (model == null || model.getSize() == 0 || ((model.getSize() == 1) && ((String)portComboBox.getSelectedItem()).equals(NOT_INITIALIZED)))
-//            setupPortComboBox(/*true*/);
-//
-//        portComboBox.setSelectedItem(desiredPort != null ? desiredPort : portName);
-//    }
 
     private void setupPortComboBox(/*boolean useCached*/) throws IOException {
         if (hardware != null)
@@ -178,63 +161,42 @@ public final class DevLircBean extends HardwareBean {
         portComboBox.setModel(model);
     }
 
-//    public boolean isListenable() {
-//        return listenable;
-//    }
-
-//    @Override
-//    protected void openClose(boolean opening) throws IOException, HarcHardwareException {
-//        boolean oldIsOpen = hardware.isValid();
-//        try {
-//            if (opening) {
-//                hardware.open();
-//                listenable = true;
-//                DevLirc devLirc = (DevLirc) getHardware();
-//                if (devLirc.canSetTransmitter()) {
-//                    DefaultComboBoxModel<String> transmitterComboBoxModel = new javax.swing.DefaultComboBoxModel<>(
-//                            devLirc.getNumberTransmitters() > 1
-//                                    ? devLirc.getTransmitterNames()
-//                                    : new String[]{"default", "1", "2", "3", "4", "5", "6", "7", "8"});
-//                    transmitterComboBox.setModel(transmitterComboBoxModel);
-//                }
-//            } else {
-//                listenable = false;
-//                hardware.close();
-//            }
-//        } finally {
-//            enableStuff(opening && hardware.isValid());
-//            setProps();
-//            propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, hardware.isValid());
-//        }
-//    }
-
     private void enableStuff(boolean isOpen) {
         portComboBox.setEnabled(!isOpen);
         boolean enableTransmitters = isOpen && ((DevLirc) getHardware()).canSetTransmitter();
         transmitterLabel.setEnabled(enableTransmitters);
         transmitterComboBox.setEnabled(enableTransmitters);
+        conditionallyEnableOpen();
     }
 
     @Override
     public boolean canCapture() {
-        return true;
+        return isOpen() && ((DevLirc) hardware).canReceive();
+    }
+
+    @Override
+    public ModulatedIrSequence capture() throws HarcHardwareException, OddSequenceLengthException {
+        return ((DevLirc) hardware).capture();
     }
 
     @Override
     public boolean canSend() {
-        return true;
+        return isOpen() && ((DevLirc) hardware).canSend();
     }
 
     @Override
-    void open() throws IOException, HarcHardwareException {
-        if (hardware == null)
-            return;
+    public boolean sendIr(IrSignal irSignal, int count) throws HardwareUnavailableException, HarcHardwareException {
+        return ((DevLirc) hardware).sendIr(irSignal, count, getTransmitter());
+    }
 
-        boolean oldIsOpen = hardware.isValid();
+    @Override
+    public void open() throws IOException, HarcHardwareException {
+        boolean oldIsOpen = isOpen();
+        if (hardware == null)
+            setHardware();
+
         try {
-//            if (opening) {
             hardware.open();
-//            listenable = true;
             DevLirc devLirc = (DevLirc) getHardware();
             if (devLirc.canSetTransmitter()) {
                 DefaultComboBoxModel<String> transmitterComboBoxModel = new javax.swing.DefaultComboBoxModel<>(
@@ -243,12 +205,8 @@ public final class DevLircBean extends HardwareBean {
                         : new String[]{"default", "1", "2", "3", "4", "5", "6", "7", "8"});
                 transmitterComboBox.setModel(transmitterComboBoxModel);
             }
-//            } else {
-//                listenable = false;
-//                hardware.close();
-//            }
         } finally {
-            enableStuff(hardware.isValid());
+            enableStuff(isOpen());
             setProps();
             propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, hardware.isValid());
         }
@@ -261,21 +219,7 @@ public final class DevLircBean extends HardwareBean {
 
         boolean oldIsOpen = hardware.isValid();
         try {
-//            if (opening) {
-//                hardware.open();
-//                listenable = true;
-//                DevLirc devLirc = (DevLirc) getHardware();
-//                if (devLirc.canSetTransmitter()) {
-//                    DefaultComboBoxModel<String> transmitterComboBoxModel = new javax.swing.DefaultComboBoxModel<>(
-//                            devLirc.getNumberTransmitters() > 1
-//                                    ? devLirc.getTransmitterNames()
-//                                    : new String[]{"default", "1", "2", "3", "4", "5", "6", "7", "8"});
-//                    transmitterComboBox.setModel(transmitterComboBoxModel);
-//                }
-//            } else {
-//            listenable = false;
             hardware.close();
-//            }
         } finally {
             enableStuff(false);
             setProps();
@@ -421,7 +365,7 @@ public final class DevLircBean extends HardwareBean {
         } catch (HarcHardwareException | IOException ex) {
             guiUtils.error(ex);
         } finally {
-            openToggleButton.setSelected(hardware.isValid());
+            openToggleButton.setSelected(isOpen());
             resetCursor(oldCursor);
         }
     }//GEN-LAST:event_openToggleButtonActionPerformed

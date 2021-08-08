@@ -101,7 +101,7 @@ public class NamedCommandPanel extends HarcPanel {
     private void initComponents() {
 
         namedCommandLauncher = new org.harctoolbox.guicomponents.NamedCommandLauncher(guiUtils);
-        internetHostPanel = new org.harctoolbox.guicomponents.InternetHostPanel(guiUtils, true, true, true);
+        internetHostPanel = new org.harctoolbox.guicomponents.InternetHostPanel(guiUtils, true);
         kindComboBox = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();

@@ -6277,7 +6277,7 @@
                         </Component>
                         <Component class="org.harctoolbox.guicomponents.GirsClientBean" name="girsTcpSerialComboBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.GirsClientBean(guiUtils, properties)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.GirsClientBean(guiUtils, properties.getVerbose())"/>
                           </AuxValues>
                         </Component>
                       </SubComponents>

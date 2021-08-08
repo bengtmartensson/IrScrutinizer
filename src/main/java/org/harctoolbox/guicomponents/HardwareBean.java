@@ -31,19 +31,22 @@ import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 
 /**
- *
- *
+ * This is a superclass of all the hardware managing beans.
  */
 public abstract class HardwareBean extends JPanel implements Closeable {
 
-    public static final String PROP_VERSION = "PROP_VERSION";
-    public static final String PROP_BAUD = "PROP_BAUD";
-    public static final String PROP_ISOPEN = "PROP_ISOPEN";
-    public static final String PROP_PROPS = "PROP_PROPS";
-    public static final String PROP_PORTNAME = "PROP_PORTNAME";
-    public static final String PROP_IPNAME = "PROP_IPNAME";
-    public static final String PROP_MODULE = "PROP_MODULE";
-    public static final String PROP_PORT = "PROP_PORT";
+    public static final String PROP_VERSION     = "PROP_VERSION";
+    public static final String PROP_BAUD        = "PROP_BAUD";
+    public static final String PROP_ISOPEN      = "PROP_ISOPEN";
+    public static final String PROP_PROPS       = "PROP_PROPS";
+    public static final String PROP_PORTNAME    = "PROP_PORTNAME";
+    public static final String PROP_IPNAME      = "PROP_IPNAME";
+    public static final String PROP_MODULE      = "PROP_MODULE";
+    public static final String PROP_PORT        = "PROP_PORT";
+    public static final String PROP_TYPE        = "PROP_TYPE";
+
+    protected static final String NOT_INITIALIZED = "not initialized";
+    protected static final String NOT_CONNECTED   = "not connected";
 
     protected final PropertyChangeSupport propertyChangeSupport;
     protected final GuiUtils guiUtils;
@@ -88,14 +91,6 @@ public abstract class HardwareBean extends JPanel implements Closeable {
         this.verbose = verbose;
     }
 
-    /**
-     * Default implementation, override if necessary.
-     * @return
-     */
-    public JPanel getTabPanel() {
-        return (JPanel) getParent();
-    }
-
     protected void openClose(boolean opening) throws IOException, HarcHardwareException {
         if (opening)
             open();
@@ -103,10 +98,15 @@ public abstract class HardwareBean extends JPanel implements Closeable {
             close();
     }
 
+    /**
+     * Returns a somewhat friendly name of the class.
+     */
     @Override
-    public abstract String getName();
+    public String getName() {
+        return this.getClass().getSimpleName();
+    }
 
-    abstract void open() throws IOException, HarcHardwareException;
+    public abstract void open() throws IOException, HarcHardwareException;
 
     @Override
     public abstract void close() throws IOException;
@@ -156,7 +156,7 @@ public abstract class HardwareBean extends JPanel implements Closeable {
      * Default implementation, override whenever the subclass can capture.
      * @return ModulatedSequence captured, or null.
      */
-    public ModulatedIrSequence capture() throws CannotCaptureException, HarcHardwareException, InvalidArgumentException {
+    public ModulatedIrSequence capture() throws CannotCaptureException, HarcHardwareException, InvalidArgumentException, IOException {
         throw new CannotCaptureException(getName());
     }
 

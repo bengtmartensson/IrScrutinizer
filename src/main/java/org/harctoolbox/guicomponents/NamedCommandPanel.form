@@ -67,7 +67,7 @@
     </Component>
     <Component class="org.harctoolbox.guicomponents.InternetHostPanel" name="internetHostPanel">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.InternetHostPanel(guiUtils, true, true, true)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.InternetHostPanel(guiUtils, true)"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JComboBox" name="kindComboBox">

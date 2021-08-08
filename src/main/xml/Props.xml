@@ -33,10 +33,11 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="commandFusionPortName" type="string" default='ifWindows("COM14", "/dev/ttyUSB0")' doc='Name of device to use for sending IR with the CommandFusion, e.g. COM1 or /dev/ttyUSB0.' />
     <property name="commandFusionPortBaudRate" type="int" default='"9600"' doc='Baudrate for CommandFusion serial (sending).' />
     <property name="girsClientSerialPortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for sending IR with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
-    <property name="girsClientSerialPortBaudRate" type="int" default='"115200"' doc='Baudrate for Arduino serial (sending).' />
-    <property name="girsClientIPName" type="string" default='"arduino"' doc='IP-Name (or address) of Girs client.' />
-    <property name="girsClientPortNumber" type="int" default='"33333"' doc='Portnumber of Girs client.' />
-    <property name="girsClientType" type="string" default='"tcp"' doc='Type of Girs client (serial, tcp,...).' />
+    <property name="girsClientSerialPortBaudRate" type="int" default='Integer.toString(org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_BAUD)' doc='Baudrate for Arduino serial (sending).' />
+    <property name="girsClientIPName" type="string" default='org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_IPNAME' doc='IP-Name (or address) of Girs client.' />
+    <property name="girsClientPortNumber" type="int" default='Integer.toString(org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_PORT)' doc='Portnumber of Girs client.' />
+    <property name="girsClientType" type="string" default='org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_TYPE.toString()' doc='Type of Girs client (serial, tcp,...).' />
+    <property name="girsClientTimeout" type="int" default='Integer.toString(org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_TIMEOUT)' doc='Timeout for Girs communication.' />
     <property name="irToyPortName" type="string" default='ifWindows("COM13", "/dev/ttyACM0")' doc="Port name for IrToy"/>
     <property name="irToyPortBaudRate" type="int" default='"9600"' doc="Baudrate for IrToy (sending)"/>
     <property name="devLircName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc."/>

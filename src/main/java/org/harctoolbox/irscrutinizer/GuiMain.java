@@ -613,7 +613,7 @@ public final class GuiMain extends javax.swing.JFrame {
         setupIrAudioPort();
         setupIrToy();
         setupDevLirc();
-        setupGirrClient();
+        setupGirsClient();
         setupCommandFusion();
         setupIrWidget();
 
@@ -635,16 +635,26 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.setVerbose((Boolean)newValue);
         });
         hardwareManager.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            boolean canSend;
             switch (evt.getPropertyName()) {
                 case HardwareManager.PROP_SELECTED_HARDWARE:
                     String name = (String) evt.getNewValue();
                     properties.setSelectedHardware(name);
                     Container bean = hardwareManager.getBean(name).getParent();
                     sendingHardwareTabbedPane.setSelectedComponent(bean);
+                    captureTestButton.setEnabled(hardwareManager.canCapture());
+                    canSend = hardwareManager.canSend();
+                    transmitScrutinizedButton.setEnabled(canSend);
+                    transmitGenerateButton2.setEnabled(canSend);
                     break;
-
+                case HardwareBean.PROP_ISOPEN:
+                    captureTestButton.setEnabled(hardwareManager.canCapture());
+                    canSend = hardwareManager.canSend();
+                    transmitScrutinizedButton.setEnabled(canSend);
+                    transmitGenerateButton2.setEnabled(canSend);
+                    break;
                 default:
-                    throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
+                    // throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
             }
         });
 
@@ -734,10 +744,45 @@ public final class GuiMain extends javax.swing.JFrame {
         hardwareManager.add(devLircBean);
     }
 
-    private void setupGirrClient() {
-//        SendingGirsClient sendingGirsClient = new SendingGirsClient(girsClientPanel,
-//                girsTcpSerialComboBean, properties, guiUtils);
-//        hardwareManager.add(sendingGirsClient);
+    private void setupGirsClient() {
+        // girsTcpSerialComboBean was constructed in initComponents()
+        girsTcpSerialComboBean.setTimeout(properties.getGirsClientTimeout());
+        girsTcpSerialComboBean.setPortName(properties.getGirsClientSerialPortName());
+        girsTcpSerialComboBean.setBaud(properties.getGirsClientSerialPortBaudRate());
+        girsTcpSerialComboBean.setIpName(properties.getGirsClientIPName());
+        girsTcpSerialComboBean.setPort(properties.getGirsClientPortNumber());
+        girsTcpSerialComboBean.setType(properties.getGirsClientType());
+
+        girsTcpSerialComboBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+
+                case HardwareBean.PROP_BAUD:
+                    properties.setGirsClientSerialPortBaudRate((int) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_PORTNAME:
+                    properties.setGirsClientSerialPortName((String) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_IPNAME:
+                    properties.setGirsClientIPName((String) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_PORT:
+                    properties.setGirsClientPortNumber((int) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_TYPE:
+                    properties.setGirsClientType(evt.getNewValue().toString());
+                    break;
+                case HardwareBean.PROP_VERSION:
+                case HardwareBean.PROP_MODULE:
+                case HardwareBean.PROP_PROPS:
+                    break;
+                case HardwareBean.PROP_ISOPEN:
+                    guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
+                    break;
+                default:
+                    throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
+            }
+        });
+        hardwareManager.add(girsTcpSerialComboBean);
     }
 
     private void setupCommandFusion() {
@@ -2360,7 +2405,7 @@ public final class GuiMain extends javax.swing.JFrame {
         sendingIrToyHelpButton = new javax.swing.JButton();
         girsClientPanel = new javax.swing.JPanel();
         sendingGirsClientHelpButton = new javax.swing.JButton();
-        girsTcpSerialComboBean = new org.harctoolbox.guicomponents.GirsClientBean(guiUtils, properties);
+        girsTcpSerialComboBean = new org.harctoolbox.guicomponents.GirsClientBean(guiUtils, properties.getVerbose());
         commandFusionSendPanel = new javax.swing.JPanel();
         commandFusionSendingSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionPortName(), CommandFusion.DEFAULTBAUDRATE, false);
         sendingCommandFusionHelpButton = new javax.swing.JButton();
@@ -9180,12 +9225,12 @@ public final class GuiMain extends javax.swing.JFrame {
                 guiUtils.error("A capture thread is running. This must first be ended.");
                 return;
             }
-            if (!hardwareManager.canCapture()) {
-                guiUtils.error("No capturing device selected.");
+            if (!hardwareManager.isReady()) {
+                guiUtils.error("Selected device not ready (not opened?).");
                 return;
             }
-            if (!hardwareManager.isReady()) {
-                guiUtils.error("Selected capture device not ready (not opened?).");
+            if (!hardwareManager.canCapture()) {
+                guiUtils.error("Selected device cannot capture.");
                 return;
             }
 
