@@ -336,11 +336,6 @@ class HelpTexts {
             + "Note that selecting a sub-pane selects the associated capturing hardware, to the extent possible.";
 
     @SuppressWarnings("PackageVisibleField")
-    public static String capturingIrToyHardwareHelp
-            = "After connecting the IrToy to an USB port, select the virtual serial port in the combo box, pressing \"Refresh\" if necessary. \"Open\" the port thereafter.\n\n"
-            + "The ending timeout is 1.4 seconds, and cannot be changed. This is not optimal for most IR signal captures.";
-
-    @SuppressWarnings("PackageVisibleField")
     public static String irWidgetHardwareHelp
             = "Plug the IrWidget it into the computer. Check that the operating system has assigned a port to it, and note which one it is. On Windows: open the device manager, and check that there is one \"USB Serial Port\" under Ports. Note the port number (e.g. COM8). On a Linux system, it likely shows up as a device like /dev/ttyUSB0. If the port does not show up, a suitable driver needs to be installed. If the correct port is already visible in the combo box, just press \"Open\". Otherwise, press \"Refresh\", which makes the program determine the available serial ports. Select the correct one. Press \"Open\". which should now remain \"pressed\". The port can be closed again by a repeated press, but there is not much reason to do so, unless another capturing hardware should be used, or the IrWidget should be used from another program.";
 
@@ -381,10 +376,6 @@ class HelpTexts {
             + "and more channels sound better (in general). However, generating \"audio\" for"
             + "IR-LEDs is a completely different use case. The recommended settings are:"
             + "48000kHz, 8bit, 1 channel, omit trailing gap.";
-
-    @SuppressWarnings("PackageVisibleField")
-    public static String sendingIrToyHelp
-            = "Using this pane, the IrToy (version 2) can be used to transmit IR signals.";
 
     @SuppressWarnings("PackageVisibleField")
     public static String sendingGirsHelp = "TODO";

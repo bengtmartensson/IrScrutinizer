@@ -611,7 +611,6 @@ public final class GuiMain extends javax.swing.JFrame {
         setupHardwareManager();
         setupGlobalCache();
         setupIrAudioPort();
-        setupIrToy();
         setupDevLirc();
         setupGirsClient();
         setupCommandFusion();
@@ -713,12 +712,6 @@ public final class GuiMain extends javax.swing.JFrame {
 //        SendingIrAudioPort sendingIrAudioPort = new SendingIrAudioPort(audioPanel,
 //                transmitAudioParametersBean, properties, guiUtils);
 //        hardwareManager.add(sendingIrAudioPort);
-    }
-
-    private void setupIrToy() {
-        //        SendingSerial<IrToy> sendingIrToy = new SendingSerial<>(IrToy.class, irToyPanel, //irToyVersionLabel,
-//                irToySerialPortBean, properties, guiUtils);
-//        hardwareManager.add(sendingIrToy);
     }
 
     private void setupDevLirc() {
@@ -2400,9 +2393,6 @@ public final class GuiMain extends javax.swing.JFrame {
         audioPanel = new javax.swing.JPanel();
         transmitAudioParametersBean = new org.harctoolbox.guicomponents.AudioParametersBean(properties);
         sendingAudioHelpButton = new javax.swing.JButton();
-        irToyPanel = new javax.swing.JPanel();
-        irToySerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrToyPortName(), properties.getIrToyPortBaudRate(), true);
-        sendingIrToyHelpButton = new javax.swing.JButton();
         girsClientPanel = new javax.swing.JPanel();
         sendingGirsClientHelpButton = new javax.swing.JButton();
         girsTcpSerialComboBean = new org.harctoolbox.guicomponents.GirsClientBean(guiUtils, properties.getVerbose());
@@ -5575,39 +5565,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
         sendingHardwareTabbedPane.addTab("Audio Port", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_audio.png")), audioPanel); // NOI18N
 
-        sendingIrToyHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        sendingIrToyHelpButton.setText("Help");
-        sendingIrToyHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendingIrToyHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout irToyPanelLayout = new javax.swing.GroupLayout(irToyPanel);
-        irToyPanel.setLayout(irToyPanelLayout);
-        irToyPanelLayout.setHorizontalGroup(
-            irToyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, irToyPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(sendingIrToyHelpButton)
-                .addContainerGap())
-            .addGroup(irToyPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irToySerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(261, Short.MAX_VALUE))
-        );
-        irToyPanelLayout.setVerticalGroup(
-            irToyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(irToyPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irToySerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
-                .addComponent(sendingIrToyHelpButton)
-                .addContainerGap())
-        );
-
-        sendingHardwareTabbedPane.addTab("IrToy", new javax.swing.ImageIcon(getClass().getResource("/icons/dangerousprototypes/favicon.png")), irToyPanel); // NOI18N
-
         sendingGirsClientHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         sendingGirsClientHelpButton.setText("Help");
         sendingGirsClientHelpButton.addActionListener(new java.awt.event.ActionListener() {
@@ -8446,10 +8403,6 @@ public final class GuiMain extends javax.swing.JFrame {
         HelpPopup.newHelpPopup(this, HelpTexts.sendingAudioHelp);
     }//GEN-LAST:event_sendingAudioHelpButtonActionPerformed
 
-    private void sendingIrToyHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingIrToyHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.sendingIrToyHelp);
-    }//GEN-LAST:event_sendingIrToyHelpButtonActionPerformed
-
     private void scrutinizeParametricMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scrutinizeParametricMenuItemActionPerformed
         try {
             scrutinizeIrSignal(parameterTable);
@@ -9497,8 +9450,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem invokeAnalyzerCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem invokeDecoderCheckBoxMenuItem;
     private org.harctoolbox.guicomponents.IrPlotter irPlotter;
-    private javax.swing.JPanel irToyPanel;
-    private org.harctoolbox.guicomponents.SerialPortSimpleBean irToySerialPortBean;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<IrTransImporter> irTransFileImporterBean;
     private javax.swing.JButton irTransWebButton;
     private org.harctoolbox.guicomponents.SerialPortSimpleBean irWidgetSerialPortSimpleBean;
@@ -9729,7 +9680,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton sendingGlobalCacheHelpButton;
     private javax.swing.JButton sendingHardwareHelpButton;
     private javax.swing.JTabbedPane sendingHardwareTabbedPane;
-    private javax.swing.JButton sendingIrToyHelpButton;
     private javax.swing.JPanel sendingPanel;
     private javax.swing.JMenuItem sendingTimeoutMenuItem;
     private javax.swing.JMenuItem setDMenuItem;

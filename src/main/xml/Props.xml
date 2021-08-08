@@ -38,8 +38,6 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="girsClientPortNumber" type="int" default='Integer.toString(org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_PORT)' doc='Portnumber of Girs client.' />
     <property name="girsClientType" type="string" default='org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_TYPE.toString()' doc='Type of Girs client (serial, tcp,...).' />
     <property name="girsClientTimeout" type="int" default='Integer.toString(org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_TIMEOUT)' doc='Timeout for Girs communication.' />
-    <property name="irToyPortName" type="string" default='ifWindows("COM13", "/dev/ttyACM0")' doc="Port name for IrToy"/>
-    <property name="irToyPortBaudRate" type="int" default='"9600"' doc="Baudrate for IrToy (sending)"/>
     <property name="devLircName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc."/>
     <property name="devLircTimeout" type="int" default='"5000"' doc="Timeout when accessing /dev/lirc*."/>
     <property name="sorterOnParametrizedTable" type="boolean" default='"false"' />
