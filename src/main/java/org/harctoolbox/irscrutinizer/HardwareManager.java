@@ -204,7 +204,7 @@ final class HardwareManager implements Iterable<String>, Closeable {
 
     private void assertHardwareValid() throws HardwareUnavailableException {
         assertSelected();
-        if (! selected.isValid())
+        if (! selected.isOpen())
             throw new HardwareUnavailableException("Hardware selected but not open.");
     }
 

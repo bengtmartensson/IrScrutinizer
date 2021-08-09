@@ -6129,12 +6129,12 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="transmitAudioParametersBean" min="-2" max="-2" attributes="0"/>
+                                  <Component id="transmitAudioBean" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace pref="407" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="sendingAudioHelpButton" min="-2" max="-2" attributes="0"/>
+                                  <Component id="transmitAudioHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -6143,21 +6143,21 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                                  <Component id="transmitAudioParametersBean" min="-2" max="-2" attributes="0"/>
+                                  <Component id="transmitAudioBean" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace pref="105" max="32767" attributes="0"/>
-                                  <Component id="sendingAudioHelpButton" min="-2" max="-2" attributes="0"/>
+                                  <Component id="transmitAudioHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.AudioParametersBean" name="transmitAudioParametersBean">
+                        <Component class="org.harctoolbox.guicomponents.AudioTransmitterBean" name="transmitAudioBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.AudioParametersBean(properties)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.AudioTransmitterBean(guiUtils, properties.getVerbose(), properties.getWaveSampleFrequency(), properties.getWaveChannels(), properties.getWaveSampleSize(), properties.getWaveOmitTrailingGap())"/>
                           </AuxValues>
                         </Component>
-                        <Component class="javax.swing.JButton" name="sendingAudioHelpButton">
+                        <Component class="javax.swing.JButton" name="transmitAudioHelpButton">
                           <Properties>
                             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                               <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
@@ -6165,7 +6165,7 @@
                             <Property name="text" type="java.lang.String" value="Help"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sendingAudioHelpButtonActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="transmitAudioHelpButtonActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>

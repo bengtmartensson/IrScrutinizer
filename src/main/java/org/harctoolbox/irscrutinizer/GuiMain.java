@@ -609,9 +609,9 @@ public final class GuiMain extends javax.swing.JFrame {
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private void setupHardware() throws IOException {
         setupHardwareManager();
-        setupGlobalCache();
-        setupIrAudioPort();
+        setupGlobalCache(); // Keep the same order as they appear in the pane
         setupDevLirc();
+        setupIrAudioPort();
         setupGirsClient();
         setupCommandFusion();
         setupIrWidget();
@@ -709,9 +709,26 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setupIrAudioPort() {
-//        SendingIrAudioPort sendingIrAudioPort = new SendingIrAudioPort(audioPanel,
-//                transmitAudioParametersBean, properties, guiUtils);
-//        hardwareManager.add(sendingIrAudioPort);
+        // transmitAudioParametersBean was constructed in initComponents()
+        transmitAudioBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+                case AudioTransmitterBean.PROP_SAMPLEFREQUENCY:
+                    properties.setWaveSampleFrequency((Integer) evt.getNewValue());
+                    break;
+                case AudioTransmitterBean.PROP_NOCHANNELS:
+                    properties.setWaveChannels((Integer) evt.getNewValue());
+                    break;
+                case AudioTransmitterBean.PROP_SAMPLESIZE:
+                    properties.setWaveSampleSize((Integer) evt.getNewValue());
+                    break;
+                case AudioTransmitterBean.PROP_OMITTRAILINGGAP:
+                    properties.setWaveOmitTrailingGap((Boolean) evt.getNewValue());
+                    break;
+                default:
+                    throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
+            }
+        });
+        hardwareManager.add(transmitAudioBean);
     }
 
     private void setupDevLirc() {
@@ -2391,8 +2408,8 @@ public final class GuiMain extends javax.swing.JFrame {
         devLircBean = new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getVerbose(), properties.getDevLircTimeout(), properties.getDevLircName());
         sendingDevLircHardwareHelpButton = new javax.swing.JButton();
         audioPanel = new javax.swing.JPanel();
-        transmitAudioParametersBean = new org.harctoolbox.guicomponents.AudioParametersBean(properties);
-        sendingAudioHelpButton = new javax.swing.JButton();
+        transmitAudioBean = new org.harctoolbox.guicomponents.AudioTransmitterBean(guiUtils, properties.getVerbose(), properties.getWaveSampleFrequency(), properties.getWaveChannels(), properties.getWaveSampleSize(), properties.getWaveOmitTrailingGap());
+        transmitAudioHelpButton = new javax.swing.JButton();
         girsClientPanel = new javax.swing.JPanel();
         sendingGirsClientHelpButton = new javax.swing.JButton();
         girsTcpSerialComboBean = new org.harctoolbox.guicomponents.GirsClientBean(guiUtils, properties.getVerbose());
@@ -5532,11 +5549,11 @@ public final class GuiMain extends javax.swing.JFrame {
 
         sendingHardwareTabbedPane.addTab("/dev/lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/tux/tux-22.png")), devLircPanel); // NOI18N
 
-        sendingAudioHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        sendingAudioHelpButton.setText("Help");
-        sendingAudioHelpButton.addActionListener(new java.awt.event.ActionListener() {
+        transmitAudioHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        transmitAudioHelpButton.setText("Help");
+        transmitAudioHelpButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendingAudioHelpButtonActionPerformed(evt);
+                transmitAudioHelpButtonActionPerformed(evt);
             }
         });
 
@@ -5546,20 +5563,20 @@ public final class GuiMain extends javax.swing.JFrame {
             audioPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(audioPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(transmitAudioParametersBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(transmitAudioBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(407, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, audioPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(sendingAudioHelpButton)
+                .addComponent(transmitAudioHelpButton)
                 .addContainerGap())
         );
         audioPanelLayout.setVerticalGroup(
             audioPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(audioPanelLayout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addComponent(transmitAudioParametersBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(transmitAudioBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 105, Short.MAX_VALUE)
-                .addComponent(sendingAudioHelpButton)
+                .addComponent(transmitAudioHelpButton)
                 .addContainerGap())
         );
 
@@ -8399,9 +8416,9 @@ public final class GuiMain extends javax.swing.JFrame {
         HelpPopup.newHelpPopup(this, HelpTexts.globalCacheHelp);
     }//GEN-LAST:event_sendingGlobalCacheHelpButtonActionPerformed
 
-    private void sendingAudioHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingAudioHelpButtonActionPerformed
+    private void transmitAudioHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitAudioHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.sendingAudioHelp);
-    }//GEN-LAST:event_sendingAudioHelpButtonActionPerformed
+    }//GEN-LAST:event_transmitAudioHelpButtonActionPerformed
 
     private void scrutinizeParametricMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scrutinizeParametricMenuItemActionPerformed
         try {
@@ -9673,7 +9690,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton scrutinizeSignalHelpButton;
     private javax.swing.JMenuItem scrutinizeSignalProtocolDocuMenuItem;
     private javax.swing.JMenuItem sendMenuItem;
-    private javax.swing.JButton sendingAudioHelpButton;
     private javax.swing.JButton sendingCommandFusionHelpButton;
     private javax.swing.JButton sendingDevLircHardwareHelpButton;
     private javax.swing.JButton sendingGirsClientHelpButton;
@@ -9709,7 +9725,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem transformNameMenuItem;
     private javax.swing.JMenu transformNamesMenu;
     private javax.swing.JCheckBoxMenuItem translateProntoFontCheckBoxMenuItem;
-    private org.harctoolbox.guicomponents.AudioParametersBean transmitAudioParametersBean;
+    private org.harctoolbox.guicomponents.AudioTransmitterBean transmitAudioBean;
+    private javax.swing.JButton transmitAudioHelpButton;
     private javax.swing.JButton transmitGenerateButton;
     private javax.swing.JButton transmitGenerateButton2;
     private javax.swing.JMenuItem transmitMenuItem;
