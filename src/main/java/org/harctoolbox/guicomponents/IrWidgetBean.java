@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013, 2014 Bengt Martensson.
+Copyright (C) 2013, 2014, 2021 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,53 +18,39 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.guicomponents;
 
 import java.awt.Cursor;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.util.List;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
+import static org.harctoolbox.harchardware.ir.IIrReader.DEFAULT_BEGIN_TIMEOUT;
+import org.harctoolbox.harchardware.ir.IrWidget;
+import org.harctoolbox.ircore.ModulatedIrSequence;
 
 /**
  *
  */
-public final class IrWidgetBean extends javax.swing.JPanel implements ISendingReceivingBean {
-    private static final int defaultBaudRate = 9600;
-    private static final String notInitialized = "not initialized";
+public final class IrWidgetBean extends HardwareBean {
 
     private String portName;
-    private int baudRate;
-    private String version;
-    private GuiUtils guiUtils;
-    private IHarcHardware hardware;
-    private final boolean settableBaudRate;
-    private boolean listenable;
 
-    /**
-     * Creates new form SerialPortSimpleBean
-     */
     public IrWidgetBean() {
-        this(null, null, defaultBaudRate, true);
+        this(null);
     }
 
     public IrWidgetBean(GuiUtils guiUtils) {
-        this(guiUtils, null, defaultBaudRate, true);
+        this(guiUtils, false, DEFAULT_BEGIN_TIMEOUT, null);
     }
 
-    @SuppressWarnings("unchecked")
-    public IrWidgetBean(GuiUtils guiUtils, String initialPort, int initialBaud, boolean settableBaudRate) {
-        initComponents();
-        this.guiUtils = guiUtils;
-        listenable = false;
+    public IrWidgetBean(GuiUtils guiUtils, boolean verbose, int timeout, String initialPort) {
+        super(guiUtils, verbose, timeout);
+       initComponents();
         DefaultComboBoxModel<String> model;
         try {
-            List<String> portList = LocalSerialPort.getSerialPortNames(true); // Loads librxtxSerial (first time)
+            List<String> portList = LocalSerialPort.getSerialPortNames(true);
             model = new DefaultComboBoxModel<>(portList.toArray(new String[portList.size()]));
         } catch (IOException | LinkageError ex) {
-            model =  new DefaultComboBoxModel<>(new String[]{ initialPort != null ? initialPort : notInitialized });
+            model =  new DefaultComboBoxModel<>(new String[]{ initialPort != null ? initialPort : NOT_INITIALIZED });
         }
 
         portComboBox.setModel(model);
@@ -87,10 +73,6 @@ public final class IrWidgetBean extends javax.swing.JPanel implements ISendingRe
             }
         }
         setPortName(actualPort);
-        setBaudRateUnconditionally(initialBaud);
-        this.settableBaudRate = settableBaudRate;
-        baudComboBox.setEnabled(settableBaudRate);
-        baudRateLabel.setEnabled(settableBaudRate);
     }
 
     /**
@@ -107,87 +89,11 @@ public final class IrWidgetBean extends javax.swing.JPanel implements ISendingRe
         if (portName == null || portName.isEmpty())
             return;
 
-        openToggleButton.setEnabled(hardware != null);
+        openToggleButton.setEnabled(! isOpen());
         String oldPort = this.portName;
         this.portName = portName;
         // this propery changer should set up the hardware and call setHardware()
         propertyChangeSupport.firePropertyChange(PROP_PORTNAME, oldPort, portName);
-    }
-
-    /**
-     * @return the baudRate
-     */
-    public int getBaudRate() {
-        return baudRate;
-    }
-
-    /**
-     * @param baudRate the baudRate to set
-     */
-    public void setBaudRate(int baudRate) {
-        if (settableBaudRate)
-            setBaudRateUnconditionally(baudRate);
-    }
-
-    private void setBaudRateUnconditionally(int baudRate) {
-        int oldBaud = this.baudRate;
-        this.baudRate = baudRate;
-        this.baudComboBox.setSelectedItem(Integer.toString(baudRate));
-        propertyChangeSupport.firePropertyChange(PROP_BAUD, oldBaud, baudRate);
-    }
-
-    public void setHardware(IHarcHardware hardware) {
-        this.hardware = hardware;
-        openToggleButton.setEnabled(hardware != null);
-        openToggleButton.setSelected(hardware.isValid());
-        setVersion();
-    }
-
-    /**
-     * @return the version
-     */
-    public String getVersion() {
-        return version;
-    }
-
-    private void setVersion(String version) {
-        //java.lang.String oldVersion = this.version;
-        this.version = version != null ? version : "n/a";
-        versionLabel.setEnabled(hardware.isValid());
-        versionLiteralLabel.setEnabled(hardware.isValid());
-        versionLabel.setText(this.version); // Looks ugly if this is null.
-        //propertyChangeSupport.firePropertyChange(PROP_VERSION, oldVersion, version);
-    }
-
-    private void setVersion() {
-        try {
-            setVersion(hardware.isValid() ? hardware.getVersion() : "<not connected>");
-        } catch (IOException ex) {
-        }
-    }
-
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        // just to be Javabeans safe
-        if (propertyChangeSupport == null)
-            super.addPropertyChangeListener(listener);
-        else
-            propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
-    }
-
-    private final PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
-
-    public void setup(String desiredPort) throws IOException {
-        ComboBoxModel<String> model = portComboBox.getModel();
-        if (model == null || model.getSize() == 0 || ((model.getSize() == 1) && ((String)portComboBox.getSelectedItem()).equals(notInitialized)))
-            setupPortComboBox(true);
-
-        portComboBox.setSelectedItem(desiredPort != null ? desiredPort : portName);
     }
 
     private void setupPortComboBox(boolean useCached) throws IOException {
@@ -200,44 +106,49 @@ public final class IrWidgetBean extends javax.swing.JPanel implements ISendingRe
         portComboBox.setModel(model);
     }
 
-    public boolean isListenable() {
-        return listenable;
+    private void enableStuff(boolean isOpen) {
+        portComboBox.setEnabled(!isOpen);
     }
 
-    private void openClose(boolean opening) throws IOException, HarcHardwareException {
-        boolean oldIsOpen = hardware.isValid();
+    private void enableStuff() {
+        enableStuff(isOpen());
+    }
+
+    @Override
+    public void open() throws HarcHardwareException, IOException {
+        boolean oldIsOpen = isOpen();
         try {
-            if (opening) {
+            if (!oldIsOpen) {
+                hardware = new IrWidget(portName, verbose, timeout);
                 hardware.open();
-                listenable = true;
-                //openToggleButton.setSelected(hardware.isValid());
-                //refreshButton.setEnabled(!hardware.isValid());
-            } else {
-                listenable = false;
-                hardware.close();
-                //openToggleButton.setSelected(false);
-                //refreshButton.setEnabled(true);
             }
         } finally {
-            enableStuff(opening && hardware.isValid());
-            setVersion();
+            enableStuff();
             propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, hardware.isValid());
         }
     }
 
-    private void enableStuff(boolean isOpen) {
-        baudComboBox.setEnabled(!isOpen && settableBaudRate);
-        portComboBox.setEnabled(!isOpen);
+    @Override
+    public void close() throws IOException {
+        boolean oldIsOpen = isOpen();
+        try {
+            if (oldIsOpen)
+                hardware.close();
+        } finally {
+            enableStuff(false);
+            propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, isOpen());
+            hardware = null;
+        }
     }
 
-    private Cursor setBusyCursor() {
-        Cursor oldCursor = getCursor();
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        return oldCursor;
+    @Override
+    public boolean canCapture() {
+        return true;
     }
 
-    private void resetCursor(Cursor cursor) {
-        setCursor(cursor);
+    @Override
+    public ModulatedIrSequence capture() throws IOException {
+        return ((IrWidget) hardware).capture();
     }
 
     /**
@@ -253,14 +164,10 @@ public final class IrWidgetBean extends javax.swing.JPanel implements ISendingRe
         refreshButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         openToggleButton = new javax.swing.JToggleButton();
-        versionLiteralLabel = new javax.swing.JLabel();
-        versionLabel = new javax.swing.JLabel();
-        baudComboBox = new javax.swing.JComboBox<>();
-        baudRateLabel = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(800, 80));
 
-        portComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { notInitialized }));
+        portComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { NOT_INITIALIZED }));
         portComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 portComboBoxActionPerformed(evt);
@@ -288,27 +195,6 @@ public final class IrWidgetBean extends javax.swing.JPanel implements ISendingRe
             }
         });
 
-        versionLiteralLabel.setText("Ver:");
-        versionLiteralLabel.setToolTipText("Version of the firmware on the device, if supported by the device. Verifies that the connection is working.");
-        versionLiteralLabel.setEnabled(false);
-
-        versionLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        versionLabel.setText("no version available");
-        versionLabel.setToolTipText("Version of firmware on device. Serves to verify the connection.");
-        versionLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        versionLabel.setEnabled(false);
-        versionLabel.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-
-        baudComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "115200", "57600", "38400", "19200", "9600", "4800", "2400", "1200" }));
-        baudComboBox.setSelectedItem("9600");
-        baudComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                baudComboBoxActionPerformed(evt);
-            }
-        });
-
-        baudRateLabel.setText("bits/s");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -319,36 +205,23 @@ public final class IrWidgetBean extends javax.swing.JPanel implements ISendingRe
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addComponent(portComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(baudComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(openToggleButton)
-                        .addGap(6, 6, 6)
-                        .addComponent(versionLiteralLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(versionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE))
-                    .addComponent(baudRateLabel))
-                .addContainerGap())
+                        .addComponent(portComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(openToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(281, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(baudRateLabel))
+                .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(portComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(refreshButton)
-                    .addComponent(openToggleButton)
-                    .addComponent(versionLiteralLabel)
-                    .addComponent(versionLabel)
-                    .addComponent(baudComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(openToggleButton))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -375,24 +248,16 @@ public final class IrWidgetBean extends javax.swing.JPanel implements ISendingRe
         } catch (HarcHardwareException | IOException ex) {
             guiUtils.error(ex);
         } finally {
-            openToggleButton.setSelected(hardware.isValid());
+            openToggleButton.setSelected(isOpen());
             //refreshButton.setEnabled(!hardware.isValid());
             resetCursor(oldCursor);
         }
     }//GEN-LAST:event_openToggleButtonActionPerformed
 
-    private void baudComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baudComboBoxActionPerformed
-        setBaudRate(Integer.parseInt((String) baudComboBox.getSelectedItem()));
-    }//GEN-LAST:event_baudComboBoxActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> baudComboBox;
-    private javax.swing.JLabel baudRateLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JToggleButton openToggleButton;
     private javax.swing.JComboBox<String> portComboBox;
     private javax.swing.JButton refreshButton;
-    private javax.swing.JLabel versionLabel;
-    private javax.swing.JLabel versionLiteralLabel;
     // End of variables declaration//GEN-END:variables
 }

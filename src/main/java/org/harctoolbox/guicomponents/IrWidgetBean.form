@@ -27,22 +27,13 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                  <Component id="portComboBox" min="-2" pref="200" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="baudComboBox" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="openToggleButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                      <Component id="versionLiteralLabel" min="-2" pref="36" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="versionLabel" pref="254" max="32767" attributes="0"/>
+                      <Component id="portComboBox" min="-2" pref="244" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="openToggleButton" min="-2" pref="130" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="baudRateLabel" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace pref="281" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -50,20 +41,14 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="baudRateLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
+              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="portComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="refreshButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="openToggleButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="versionLiteralLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="versionLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="baudComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="15" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -72,7 +57,7 @@
     <Component class="javax.swing.JComboBox" name="portComboBox">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] { notInitialized })" type="code"/>
+          <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] { NOT_INITIALIZED })" type="code"/>
         </Property>
       </Properties>
       <Events>
@@ -112,57 +97,6 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openToggleButtonActionPerformed"/>
       </Events>
-    </Component>
-    <Component class="javax.swing.JLabel" name="versionLiteralLabel">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Ver:"/>
-        <Property name="toolTipText" type="java.lang.String" value="Version of the firmware on the device, if supported by the device. Verifies that the connection is working."/>
-        <Property name="enabled" type="boolean" value="false"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="versionLabel">
-      <Properties>
-        <Property name="horizontalAlignment" type="int" value="4"/>
-        <Property name="text" type="java.lang.String" value="no version available"/>
-        <Property name="toolTipText" type="java.lang.String" value="Version of firmware on device. Serves to verify the connection."/>
-        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
-            <BevelBorder bevelType="1"/>
-          </Border>
-        </Property>
-        <Property name="enabled" type="boolean" value="false"/>
-        <Property name="horizontalTextPosition" type="int" value="4"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JComboBox" name="baudComboBox">
-      <Properties>
-        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="8">
-            <StringItem index="0" value="115200"/>
-            <StringItem index="1" value="57600"/>
-            <StringItem index="2" value="38400"/>
-            <StringItem index="3" value="19200"/>
-            <StringItem index="4" value="9600"/>
-            <StringItem index="5" value="4800"/>
-            <StringItem index="6" value="2400"/>
-            <StringItem index="7" value="1200"/>
-          </StringArray>
-        </Property>
-        <Property name="selectedItem" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="&quot;9600&quot;" type="code"/>
-        </Property>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="baudComboBoxActionPerformed"/>
-      </Events>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JLabel" name="baudRateLabel">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="bits/s"/>
-      </Properties>
     </Component>
   </SubComponents>
 </Form>

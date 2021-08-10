@@ -6296,12 +6296,12 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="irWidgetSerialPortSimpleBean" min="-2" max="-2" attributes="0"/>
+                                  <Component id="irWidgetBean" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="capturingIrWidgetHardwareHelpButton" min="-2" max="-2" attributes="0"/>
+                                  <Component id="irWidgetHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -6310,21 +6310,21 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="irWidgetSerialPortSimpleBean" min="-2" max="-2" attributes="0"/>
+                                  <Component id="irWidgetBean" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace pref="100" max="32767" attributes="0"/>
-                                  <Component id="capturingIrWidgetHardwareHelpButton" min="-2" max="-2" attributes="0"/>
+                                  <Component id="irWidgetHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.IrWidgetBean" name="irWidgetSerialPortSimpleBean">
+                        <Component class="org.harctoolbox.guicomponents.IrWidgetBean" name="irWidgetBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getIrWidgetPortName(), 115200, false)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getVerbose(), properties.getCaptureBeginTimeout(), properties.getIrWidgetPortName())"/>
                           </AuxValues>
                         </Component>
-                        <Component class="javax.swing.JButton" name="capturingIrWidgetHardwareHelpButton">
+                        <Component class="javax.swing.JButton" name="irWidgetHelpButton">
                           <Properties>
                             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                               <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
@@ -6332,7 +6332,7 @@
                             <Property name="text" type="java.lang.String" value="Help"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="capturingIrWidgetHardwareHelpButtonActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irWidgetHelpButtonActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>

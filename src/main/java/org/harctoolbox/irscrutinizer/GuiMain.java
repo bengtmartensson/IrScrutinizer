@@ -821,8 +821,24 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setupIrWidget() {
-//        capturingHardwareManager.add(new CapturingSerial<>(IrWidget.class, captureIrWidgetPanel,
-//                irWidgetSerialPortSimpleBean, properties, guiUtils, capturingHardwareManager));
+        //irWidgetBean was setup in initComponents()
+        irWidgetBean.setPortName(properties.getIrWidgetPortName());
+
+        irWidgetBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+
+                case HardwareBean.PROP_PORTNAME:
+                    properties.setIrWidgetPortName((String) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_ISOPEN:
+                    guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
+                    break;
+                default:
+                    throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
+            }
+        });
+
+        hardwareManager.add(irWidgetBean);
     }
 
     private void setupRendering() {
@@ -2435,8 +2451,8 @@ public final class GuiMain extends javax.swing.JFrame {
         commandFusionBean = new org.harctoolbox.guicomponents.CommandFusionBean(guiUtils, properties.getVerbose(), properties.getCommandFusionPortName());
         sendingCommandFusionHelpButton = new javax.swing.JButton();
         captureIrWidgetPanel = new javax.swing.JPanel();
-        irWidgetSerialPortSimpleBean = new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getIrWidgetPortName(), 115200, false);
-        capturingIrWidgetHardwareHelpButton = new javax.swing.JButton();
+        irWidgetBean = new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getVerbose(), properties.getCaptureBeginTimeout(), properties.getIrWidgetPortName());
+        irWidgetHelpButton = new javax.swing.JButton();
         noTransmitsComboBox = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
         transmitScrutinizedButton = new javax.swing.JButton();
@@ -5665,11 +5681,11 @@ public final class GuiMain extends javax.swing.JFrame {
 
         sendingHardwareTabbedPane.addTab("Command Fusion", commandFusionSendPanel);
 
-        capturingIrWidgetHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingIrWidgetHardwareHelpButton.setText("Help");
-        capturingIrWidgetHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
+        irWidgetHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        irWidgetHelpButton.setText("Help");
+        irWidgetHelpButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingIrWidgetHardwareHelpButtonActionPerformed(evt);
+                irWidgetHelpButtonActionPerformed(evt);
             }
         });
 
@@ -5679,20 +5695,20 @@ public final class GuiMain extends javax.swing.JFrame {
             captureIrWidgetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(captureIrWidgetPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(irWidgetSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(irWidgetBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureIrWidgetPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingIrWidgetHardwareHelpButton)
+                .addComponent(irWidgetHelpButton)
                 .addContainerGap())
         );
         captureIrWidgetPanelLayout.setVerticalGroup(
             captureIrWidgetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(captureIrWidgetPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(irWidgetSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(irWidgetBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
-                .addComponent(capturingIrWidgetHardwareHelpButton)
+                .addComponent(irWidgetHelpButton)
                 .addContainerGap())
         );
 
@@ -8412,9 +8428,9 @@ public final class GuiMain extends javax.swing.JFrame {
         clonePlot();
     }//GEN-LAST:event_clonePlotMenuItemActionPerformed
 
-    private void capturingIrWidgetHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingIrWidgetHardwareHelpButtonActionPerformed
+    private void irWidgetHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irWidgetHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.irWidgetHardwareHelp);
-    }//GEN-LAST:event_capturingIrWidgetHardwareHelpButtonActionPerformed
+    }//GEN-LAST:event_irWidgetHelpButtonActionPerformed
 
     private void exportGirrHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportGirrHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.exportGirrHelp);
@@ -9279,7 +9295,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton captureTestButton;
     private javax.swing.JScrollPane capturedDataScrollPane;
     private org.harctoolbox.guicomponents.UndoableJTextArea capturedDataTextArea;
-    private javax.swing.JButton capturingIrWidgetHardwareHelpButton;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CcfImporter> ccfFileImporterBean;
     private javax.swing.JPanel ccfImportPanel;
     private javax.swing.JRadioButtonMenuItem ccfRadioButtonMenuItem;
@@ -9485,7 +9500,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.guicomponents.IrPlotter irPlotter;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<IrTransImporter> irTransFileImporterBean;
     private javax.swing.JButton irTransWebButton;
-    private org.harctoolbox.guicomponents.IrWidgetBean irWidgetSerialPortSimpleBean;
+    private org.harctoolbox.guicomponents.IrWidgetBean irWidgetBean;
+    private javax.swing.JButton irWidgetHelpButton;
     private javax.swing.JButton irdbBrowseButton;
     private javax.swing.JButton irdbBrowseRemoteButton;
     private javax.swing.JComboBox<String> irdbCodeSetComboBox;
