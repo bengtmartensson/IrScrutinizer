@@ -31,7 +31,7 @@ import org.harctoolbox.harchardware.comm.LocalSerialPort;
 /**
  *
  */
-public final class SerialPortSimpleBean extends javax.swing.JPanel implements ISendingReceivingBean {
+public final class IrWidgetBean extends javax.swing.JPanel implements ISendingReceivingBean {
     private static final int defaultBaudRate = 9600;
     private static final String notInitialized = "not initialized";
 
@@ -46,16 +46,16 @@ public final class SerialPortSimpleBean extends javax.swing.JPanel implements IS
     /**
      * Creates new form SerialPortSimpleBean
      */
-    public SerialPortSimpleBean() {
+    public IrWidgetBean() {
         this(null, null, defaultBaudRate, true);
     }
 
-    public SerialPortSimpleBean(GuiUtils guiUtils) {
+    public IrWidgetBean(GuiUtils guiUtils) {
         this(guiUtils, null, defaultBaudRate, true);
     }
 
     @SuppressWarnings("unchecked")
-    public SerialPortSimpleBean(GuiUtils guiUtils, String initialPort, int initialBaud, boolean settableBaudRate) {
+    public IrWidgetBean(GuiUtils guiUtils, String initialPort, int initialBaud, boolean settableBaudRate) {
         initComponents();
         this.guiUtils = guiUtils;
         listenable = false;

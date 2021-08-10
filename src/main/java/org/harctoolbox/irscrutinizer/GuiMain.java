@@ -796,10 +796,28 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setupCommandFusion() {
-//
+        // commandFusionBean was setup in initComponents()
+
 //        SendingSerial<CommandFusion> sendingcommandFusion = new SendingSerial<>(CommandFusion.class, commandFusionSendPanel,
 //                commandFusionSendingSerialPortBean, properties, guiUtils);
-//        hardwareManager.add(sendingcommandFusion);
+
+        commandFusionBean.setPortName(properties.getCommandFusionPortName());
+
+        commandFusionBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+
+                case HardwareBean.PROP_PORTNAME:
+                    properties.setCommandFusionPortName((String) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_ISOPEN:
+                    guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
+                    break;
+                default:
+                    throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
+            }
+        });
+
+        hardwareManager.add(commandFusionBean);
     }
 
     private void setupIrWidget() {
@@ -2414,10 +2432,10 @@ public final class GuiMain extends javax.swing.JFrame {
         sendingGirsClientHelpButton = new javax.swing.JButton();
         girsTcpSerialComboBean = new org.harctoolbox.guicomponents.GirsClientBean(guiUtils, properties.getVerbose());
         commandFusionSendPanel = new javax.swing.JPanel();
-        commandFusionSendingSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionPortName(), CommandFusion.DEFAULTBAUDRATE, false);
+        commandFusionBean = new org.harctoolbox.guicomponents.CommandFusionBean(guiUtils, properties.getVerbose(), properties.getCommandFusionPortName());
         sendingCommandFusionHelpButton = new javax.swing.JButton();
         captureIrWidgetPanel = new javax.swing.JPanel();
-        irWidgetSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrWidgetPortName(), 115200, false);
+        irWidgetSerialPortSimpleBean = new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getIrWidgetPortName(), 115200, false);
         capturingIrWidgetHardwareHelpButton = new javax.swing.JButton();
         noTransmitsComboBox = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
@@ -5614,8 +5632,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
         sendingHardwareTabbedPane.addTab("Girs Client", girsClientPanel);
 
-        commandFusionSendingSerialPortBean.setBaudRate(115200);
-
         sendingCommandFusionHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         sendingCommandFusionHelpButton.setText("Help");
         sendingCommandFusionHelpButton.addActionListener(new java.awt.event.ActionListener() {
@@ -5634,20 +5650,20 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(commandFusionSendPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(commandFusionSendingSerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(commandFusionBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(31, Short.MAX_VALUE))
         );
         commandFusionSendPanelLayout.setVerticalGroup(
             commandFusionSendPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(commandFusionSendPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(commandFusionSendingSerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(commandFusionBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
                 .addComponent(sendingCommandFusionHelpButton)
                 .addContainerGap())
         );
 
-        sendingHardwareTabbedPane.addTab("CommandFusion", commandFusionSendPanel);
+        sendingHardwareTabbedPane.addTab("Command Fusion", commandFusionSendPanel);
 
         capturingIrWidgetHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         capturingIrWidgetHardwareHelpButton.setText("Help");
@@ -9284,10 +9300,10 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem clonePlotMenuItem;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CmlImporter> cmlFileImporterBean;
     private javax.swing.JPanel cmlImportPanel;
+    private org.harctoolbox.guicomponents.CommandFusionBean commandFusionBean;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CommandFusionImporter> commandFusionFileImporterBean;
     private javax.swing.JPanel commandFusionImportPanel;
     private javax.swing.JPanel commandFusionSendPanel;
-    private org.harctoolbox.guicomponents.SerialPortSimpleBean commandFusionSendingSerialPortBean;
     private org.harctoolbox.guicomponents.Console console;
     private javax.swing.JToggleButton continuousCaptureButton;
     private javax.swing.JButton controlTowerBrowseButton;
@@ -9469,7 +9485,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.guicomponents.IrPlotter irPlotter;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<IrTransImporter> irTransFileImporterBean;
     private javax.swing.JButton irTransWebButton;
-    private org.harctoolbox.guicomponents.SerialPortSimpleBean irWidgetSerialPortSimpleBean;
+    private org.harctoolbox.guicomponents.IrWidgetBean irWidgetSerialPortSimpleBean;
     private javax.swing.JButton irdbBrowseButton;
     private javax.swing.JButton irdbBrowseRemoteButton;
     private javax.swing.JComboBox<String> irdbCodeSetComboBox;

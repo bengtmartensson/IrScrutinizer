@@ -6227,8 +6227,8 @@
                     <Container class="javax.swing.JPanel" name="commandFusionSendPanel">
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="CommandFusion">
-                            <Property name="tabTitle" type="java.lang.String" value="CommandFusion"/>
+                          <JTabbedPaneConstraints tabName="Command Fusion">
+                            <Property name="tabTitle" type="java.lang.String" value="Command Fusion"/>
                           </JTabbedPaneConstraints>
                         </Constraint>
                       </Constraints>
@@ -6243,7 +6243,7 @@
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="commandFusionSendingSerialPortBean" min="-2" max="-2" attributes="0"/>
+                                  <Component id="commandFusionBean" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace pref="31" max="32767" attributes="0"/>
                               </Group>
                           </Group>
@@ -6252,7 +6252,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="commandFusionSendingSerialPortBean" min="-2" max="-2" attributes="0"/>
+                                  <Component id="commandFusionBean" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace pref="100" max="32767" attributes="0"/>
                                   <Component id="sendingCommandFusionHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
@@ -6261,14 +6261,9 @@
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.SerialPortSimpleBean" name="commandFusionSendingSerialPortBean">
-                          <Properties>
-                            <Property name="baudRate" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                              <Connection code="115200" type="code"/>
-                            </Property>
-                          </Properties>
+                        <Component class="org.harctoolbox.guicomponents.CommandFusionBean" name="commandFusionBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionPortName(), CommandFusion.DEFAULTBAUDRATE, false)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.CommandFusionBean(guiUtils, properties.getVerbose(), properties.getCommandFusionPortName())"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="sendingCommandFusionHelpButton">
@@ -6324,9 +6319,9 @@
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.SerialPortSimpleBean" name="irWidgetSerialPortSimpleBean">
+                        <Component class="org.harctoolbox.guicomponents.IrWidgetBean" name="irWidgetSerialPortSimpleBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrWidgetPortName(), 115200, false)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getIrWidgetPortName(), 115200, false)"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="capturingIrWidgetHardwareHelpButton">

@@ -31,7 +31,6 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="outputFormatIndex" type="int" default='"1"' />
     <property name="irWidgetPortName" type="string" default='ifWindows("COM8","/dev/ttyUSB0")' doc='Name of device to use, e.g. COM8 or /dev/ttyUSB0.' />
     <property name="commandFusionPortName" type="string" default='ifWindows("COM14", "/dev/ttyUSB0")' doc='Name of device to use for sending IR with the CommandFusion, e.g. COM1 or /dev/ttyUSB0.' />
-    <property name="commandFusionPortBaudRate" type="int" default='"9600"' doc='Baudrate for CommandFusion serial (sending).' />
     <property name="girsClientSerialPortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for sending IR with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
     <property name="girsClientSerialPortBaudRate" type="int" default='Integer.toString(org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_BAUD)' doc='Baudrate for Arduino serial (sending).' />
     <property name="girsClientIPName" type="string" default='org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_IPNAME' doc='IP-Name (or address) of Girs client.' />
