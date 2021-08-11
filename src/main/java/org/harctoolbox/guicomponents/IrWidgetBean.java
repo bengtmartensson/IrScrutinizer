@@ -19,10 +19,8 @@ package org.harctoolbox.guicomponents;
 
 import java.awt.Cursor;
 import java.io.IOException;
-import java.util.List;
-import javax.swing.DefaultComboBoxModel;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.comm.LocalSerialPort;
+import org.harctoolbox.harchardware.comm.NonExistingPortException;
 import static org.harctoolbox.harchardware.ir.IIrReader.DEFAULT_BEGIN_TIMEOUT;
 import org.harctoolbox.harchardware.ir.IrWidget;
 import org.harctoolbox.ircore.ModulatedIrSequence;
@@ -30,9 +28,7 @@ import org.harctoolbox.ircore.ModulatedIrSequence;
 /**
  *
  */
-public final class IrWidgetBean extends HardwareBean {
-
-    private String portName;
+public final class IrWidgetBean extends SerialHardwareBean {
 
     public IrWidgetBean() {
         this(null);
@@ -44,101 +40,29 @@ public final class IrWidgetBean extends HardwareBean {
 
     public IrWidgetBean(GuiUtils guiUtils, boolean verbose, int timeout, String initialPort) {
         super(guiUtils, verbose, timeout);
-       initComponents();
-        DefaultComboBoxModel<String> model;
-        try {
-            List<String> portList = LocalSerialPort.getSerialPortNames(true);
-            model = new DefaultComboBoxModel<>(portList.toArray(new String[portList.size()]));
-        } catch (IOException | LinkageError ex) {
-            model =  new DefaultComboBoxModel<>(new String[]{ initialPort != null ? initialPort : NOT_INITIALIZED });
-        }
-
-        portComboBox.setModel(model);
-        boolean hit = false;
-        if (initialPort != null) {
-            for (int i = 0; i < model.getSize(); i++) {
-                if (initialPort.equalsIgnoreCase(model.getElementAt(i))) {
-                    hit = true;
-                    portComboBox.setSelectedIndex(i);
-                    break;
-                }
-            }
-        }
-        String actualPort = initialPort;
-        if (!hit) {
-            // Got a problem here, want to select a port that is not there, at least not now
-            if (model.getSize() > 0) {
-                portComboBox.setSelectedIndex(0);
-                actualPort = portComboBox.getItemAt(0);
-            }
-        }
-        setPortName(actualPort);
+        initComponents();
+        setupPortComboBox(portComboBox, initialPort);
     }
 
-    /**
-     * @return the port
-     */
-    public String getPortName() {
-        return portName;
+    @Override
+    protected void setupHardware() throws IOException, NonExistingPortException {
+        hardware = new IrWidget(portName, verbose, timeout);
     }
 
-    /**
-     * @param portName the port to set
-     */
-    public void setPortName(String portName) {
-        if (portName == null || portName.isEmpty())
-            return;
-
-        openToggleButton.setEnabled(! isOpen());
-        String oldPort = this.portName;
-        this.portName = portName;
-        // this propery changer should set up the hardware and call setHardware()
-        propertyChangeSupport.firePropertyChange(PROP_PORTNAME, oldPort, portName);
+    @Override
+    protected void setVersion() {
     }
 
     private void setupPortComboBox(boolean useCached) throws IOException {
         if (hardware != null)
             hardware.close();
 
-        List<String> portNames = LocalSerialPort.getSerialPortNames(useCached);
-        portNames.add(0, "");
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(portNames.toArray(new String[portNames.size()]));
-        portComboBox.setModel(model);
+        portComboBox.setModel(createModel(useCached));
     }
 
-    private void enableStuff(boolean isOpen) {
+    @Override
+    protected void enableStuff(boolean isOpen) {
         portComboBox.setEnabled(!isOpen);
-    }
-
-    private void enableStuff() {
-        enableStuff(isOpen());
-    }
-
-    @Override
-    public void open() throws HarcHardwareException, IOException {
-        boolean oldIsOpen = isOpen();
-        try {
-            if (!oldIsOpen) {
-                hardware = new IrWidget(portName, verbose, timeout);
-                hardware.open();
-            }
-        } finally {
-            enableStuff();
-            propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, hardware.isValid());
-        }
-    }
-
-    @Override
-    public void close() throws IOException {
-        boolean oldIsOpen = isOpen();
-        try {
-            if (oldIsOpen)
-                hardware.close();
-        } finally {
-            enableStuff(false);
-            propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, isOpen());
-            hardware = null;
-        }
     }
 
     @Override
@@ -149,6 +73,16 @@ public final class IrWidgetBean extends HardwareBean {
     @Override
     public ModulatedIrSequence capture() throws IOException {
         return ((IrWidget) hardware).capture();
+    }
+
+    @Override
+    public String getName() {
+        return IrWidget.IRWIDGET;
+    }
+
+    @Override
+    protected void enableOpenToggleButton(boolean enabled) {
+        openToggleButton.setEnabled(enabled);
     }
 
     /**

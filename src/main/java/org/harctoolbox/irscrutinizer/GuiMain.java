@@ -83,7 +83,6 @@ import org.harctoolbox.guicomponents.HardwareBean.CannotSendException;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.TimeoutException;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
-import org.harctoolbox.harchardware.ir.CommandFusion;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrCoreException;

@@ -19,12 +19,7 @@ package org.harctoolbox.guicomponents;
 
 import java.awt.Cursor;
 import java.io.IOException;
-import java.util.List;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
 import org.harctoolbox.harchardware.HarcHardwareException;
-import org.harctoolbox.harchardware.IHarcHardware;
-import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.ir.CommandFusion;
 import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrSignal;
@@ -33,14 +28,10 @@ import org.harctoolbox.ircore.ModulatedIrSequence;
 /**
  *
  */
-public final class CommandFusionBean extends HardwareBean {
+public final class CommandFusionBean extends SerialHardwareBean {
 
-    private String portName;
     private String version;
 
-    /**
-     * Creates new form SerialPortSimpleBean
-     */
     public CommandFusionBean() {
         this(null);
     }
@@ -52,62 +43,12 @@ public final class CommandFusionBean extends HardwareBean {
     public CommandFusionBean(GuiUtils guiUtils, boolean verbose, String initialPort) {
         super(guiUtils, verbose, 0);
         initComponents();
-        DefaultComboBoxModel<String> model;
-        try {
-            List<String> portList = LocalSerialPort.getSerialPortNames(true);
-            model = new DefaultComboBoxModel<>(portList.toArray(new String[portList.size()]));
-        } catch (IOException | LinkageError ex) {
-            model =  new DefaultComboBoxModel<>(new String[]{ initialPort != null ? initialPort : NOT_INITIALIZED });
-        }
-
-        portComboBox.setModel(model);
-        boolean hit = false;
-        if (initialPort != null) {
-            for (int i = 0; i < model.getSize(); i++) {
-                if (initialPort.equalsIgnoreCase(model.getElementAt(i))) {
-                    hit = true;
-                    portComboBox.setSelectedIndex(i);
-                    break;
-                }
-            }
-        }
-        String actualPort = initialPort;
-        if (!hit) {
-            // Got a problem here, want to select a port that is not there, at least not now
-            if (model.getSize() > 0) {
-                portComboBox.setSelectedIndex(0);
-                actualPort = portComboBox.getItemAt(0);
-            }
-        }
-        setPortName(actualPort);
+        setupPortComboBox(portComboBox, initialPort);
     }
 
-    /**
-     * @return the port
-     */
-    public String getPortName() {
-        return portName;
-    }
-
-    /**
-     * @param portName the port to set
-     */
-    public void setPortName(String portName) {
-        if (portName == null || portName.isEmpty())
-            return;
-
-        openToggleButton.setEnabled(! isOpen());
-        String oldPort = this.portName;
-        this.portName = portName;
-        // this propery changer should set up the hardware and call setHardware()
-        propertyChangeSupport.firePropertyChange(PROP_PORTNAME, oldPort, portName);
-    }
-
-    private void setHardware(IHarcHardware hardware) {
-        this.hardware = hardware;
-        openToggleButton.setEnabled(hardware != null);
-        openToggleButton.setSelected(hardware.isValid());
-        setVersion();
+    @Override
+    protected void setupHardware() throws IOException {
+            hardware = new CommandFusion(portName, verbose);
     }
 
     /**
@@ -126,70 +67,24 @@ public final class CommandFusionBean extends HardwareBean {
         //propertyChangeSupport.firePropertyChange(PROP_VERSION, oldVersion, version);
     }
 
-    private void setVersion() {
+    @Override
+    protected void setVersion() {
         try {
             setVersion(isOpen() ? hardware.getVersion() : NOT_CONNECTED);
         } catch (IOException ex) {
         }
     }
 
-    private void setup() throws IOException {
-        setup(portName);
-    }
-
-    private void setup(String desiredPort) throws IOException {
-        ComboBoxModel<String> model = portComboBox.getModel();
-        if (model == null || model.getSize() == 0 || ((model.getSize() == 1) && ((String)portComboBox.getSelectedItem()).equals(NOT_INITIALIZED)))
-            setupPortComboBox(true);
-
-        portComboBox.setSelectedItem(desiredPort != null ? desiredPort : portName);
-    }
-
     private void setupPortComboBox(boolean useCached) throws IOException {
         if (hardware != null)
             hardware.close();
 
-        List<String> portNames = LocalSerialPort.getSerialPortNames(useCached);
-        portNames.add(0, "");
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(portNames.toArray(new String[portNames.size()]));
-        portComboBox.setModel(model);
+        portComboBox.setModel(createModel(useCached));
     }
 
-    private void enableStuff(boolean isOpen) {
+    @Override
+    protected void enableStuff(boolean isOpen) {
         portComboBox.setEnabled(! isOpen);
-    }
-
-    private void enableStuff() {
-        enableStuff(isOpen());
-    }
-
-    @Override
-    public void open() throws HarcHardwareException, IOException {
-        boolean oldIsOpen = isOpen();
-        try {
-            if (!oldIsOpen) {
-                hardware = new CommandFusion(portName, verbose);
-                hardware.open();
-            }
-        } finally {
-            enableStuff();
-            setVersion();
-            propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, hardware.isValid());
-        }
-    }
-
-    @Override
-    public void close() throws IOException {
-        boolean oldIsOpen = isOpen();
-        try {
-            if (oldIsOpen)
-                hardware.close();
-        } finally {
-            enableStuff(false);
-            setVersion();
-            propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, isOpen());
-            hardware = null;
-        }
     }
 
     @Override
@@ -215,6 +110,11 @@ public final class CommandFusionBean extends HardwareBean {
     @Override
     public String getName() {
         return CommandFusion.COMMAND_FUSION;
+    }
+
+    @Override
+    protected void enableOpenToggleButton(boolean enabled) {
+        openToggleButton.setEnabled(enabled);
     }
 
     /**
