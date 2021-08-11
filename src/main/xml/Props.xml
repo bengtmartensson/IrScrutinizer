@@ -29,24 +29,16 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="bounds" type="rectangle" default='null' doc='Bounds of IrScrutinizer window.'/>
     <property name="fileselectordirs" type="string" default='""' doc='Serialized data from SelectFile.fileselectordirs'/>
     <property name="outputFormatIndex" type="int" default='"1"' />
-    <property name="irWidgetCapturePortName" type="string" default='ifWindows("COM8","/dev/ttyUSB0")' doc='Name of device to use, e.g. COM8 or /dev/ttyUSB0.' />
-    <property name="globalCacheCaptureIpName" type="string" default='""' doc="IP Name or Address of GlobalCache to use (capturing)."/>
+    <property name="irWidgetPortName" type="string" default='ifWindows("COM8","/dev/ttyUSB0")' doc='Name of device to use, e.g. COM8 or /dev/ttyUSB0.' />
     <property name="commandFusionPortName" type="string" default='ifWindows("COM14", "/dev/ttyUSB0")' doc='Name of device to use for sending IR with the CommandFusion, e.g. COM1 or /dev/ttyUSB0.' />
-    <property name="commandFusionPortBaudRate" type="int" default='"9600"' doc='Baudrate for CommandFusion serial (sending).' />
-    <property name="commandFusionCapturePortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for capturing with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
-    <property name="commandFusionCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for Arduino serial (capturing).' />
     <property name="girsClientSerialPortName" type="string" default='ifWindows("COM14", "/dev/ttyACM0")' doc='Name of device to use for sending IR with the Arduino, e.g. COM1 or /dev/ttyUSB0.' />
-    <property name="girsClientSerialPortBaudRate" type="int" default='"115200"' doc='Baudrate for Arduino serial (sending).' />
-    <property name="girsClientIPName" type="string" default='"arduino"' doc='IP-Name (or address) of Girs client.' />
-    <property name="girsClientPortNumber" type="int" default='"33333"' doc='Portnumber of Girs client.' />
-    <property name="girsClientType" type="string" default='"tcp"' doc='Type of Girs client (serial, tcp,...).' />
-    <property name="irToyPortName" type="string" default='ifWindows("COM13", "/dev/ttyACM0")' doc="Port name for IrToy"/>
-    <property name="irToyPortBaudRate" type="int" default='"9600"' doc="Baudrate for IrToy (sending)"/>
-    <property name="irToyCapturePortName" type="string" default='ifWindows("COM13", "/dev/ttyACM0")' doc='Name of device to use, e.g. COM1 or /dev/ttyUSB0.' />
-    <property name="irToyCapturePortBaudRate" type="int" default='"9600"' doc='Baudrate for IrToy (capturing).' />
+    <property name="girsClientSerialPortBaudRate" type="int" default='Integer.toString(org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_BAUD)' doc='Baudrate for Arduino serial (sending).' />
+    <property name="girsClientIPName" type="string" default='org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_IPNAME' doc='IP-Name (or address) of Girs client.' />
+    <property name="girsClientPortNumber" type="int" default='Integer.toString(org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_PORT)' doc='Portnumber of Girs client.' />
+    <property name="girsClientType" type="string" default='org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_TYPE.toString()' doc='Type of Girs client (serial, tcp,...).' />
+    <property name="girsClientTimeout" type="int" default='Integer.toString(org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_TIMEOUT)' doc='Timeout for Girs communication.' />
     <property name="devLircName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc."/>
-    <property name="devLircCaptureName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc captures."/>
-    <property name="captureDevice" type="string" default='"GirsClient"' />
+    <property name="devLircTimeout" type="int" default='"5000"' doc="Timeout when accessing /dev/lirc*."/>
     <property name="sorterOnParametrizedTable" type="boolean" default='"false"' />
     <property name="sorterOnRawTable" type="boolean" default='"false"' />
     <property name="removeDefaultedParameters" type="boolean" default='"true"' />
@@ -63,7 +55,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="waveSampleFrequency" type="int" default='"48000"' doc="Sample frequency (!= modulation frequency) of generated wave files."/>
     <property name="waveChannels" type="int" default='"1"' doc="Number of channels in generated wave files."/>
     <property name="waveSampleSize" type="int" default='"8"' doc="Bit width in generated wave files."/>
-    <property name="waveOmitTrailingGap" type="boolean" default='"48000"' doc="If true, omit the last silence from generated wave files."/>
+    <property name="waveOmitTrailingGap" type="boolean" default='"false"' doc="If true, omit the last silence from generated wave files."/>
 
     <property name="fallbackFrequency" type="double" default='"38000"' doc='Fallback frequency, for use with demodulating sensors' />
     <property name="analyzerBase" type="int" default='"16"' doc='Number base for printing analyzer results' />
@@ -76,19 +68,17 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="defaultImportDir" type="string" default='"testfiles"' doc='Just the starting directory for file selectors.'/>
     <property name="exportFormatFilePath" type="string" default='"exportformats.d"' doc='File or directory containing export format descriptions.'/>
     <property name="exportFormatName" type="string" default='"Girr"' doc='Name of currenty selected export file format' />
-    <property name="globalCacheIpName" type="string" default='""' doc="IP Name or Address of GlobalCache to use (transmitting)."/>
+    <property name="globalCacheIpName" type="string" default='org.harctoolbox.harchardware.ir.GlobalCache.DEFAULT_IP' doc="IP Name or Address of GlobalCache to use (transmitting)."/>
     <property name="globalCacheModule" type="int" default='"2"' doc='Module number of Global Cache to use, see its documentation.'/>
     <property name="globalCachePort" type="int" default='"1"' doc='IR Port number of selected Global Cache module, see Global Cache documenation.'/>
     <property name="globalCacheTimeout" type="int" default='"3000"' doc='Socket timeout for GlobalCache'/>
-    <property name="genericSerialPortDeviceName" type="string" default='ifWindows("COM2", "/dev/ttyS0")' doc="Port name for generic serial port"/>
     <property name="helpfilePath" type="string" default='"doc" + File.separator + "IrScrutinizer.html"' doc='Path name for help file.'/>
     <property name="irpTransmogrifierHelpfilePath" type="string" default='"doc" + File.separator + "IrpTransmogrifier.html"' doc='Path name for IrpTransmogrifier help file.'/>
     <property name="GlossaryFilePath"              type="string" default='"doc" + File.separator + "Glossary.html"' doc='Path name for Glossary file.'/>
     <property name="protocolDocfilePath" type="string" default='"doc" + File.separator + "IrpProtocols.html"' doc='Path name for protocl documentation file.'/>
     <property name="releaseNotesPath" type="string" default='"doc" + File.separator + "IrScrutinizer.releasenotes.txt"' doc='Path name for release notes.'/>
     <property name="tutorialUrl" type="string" default='"http://www.hifi-remote.com/wiki/index.php?title=IrScrutinizer_Guide"' doc='URL for tutorial.'/>
-    <property name="irTransIpName" type="string" default='IrTrans.DEFAULT_IP' doc='IP name or address of IRTrans unit.'/>
-    <property name="transmitHardware" type="string" default='"Audio Port"' doc="Name of selected transmit hardware."/>
+    <property name="selectedHardware" type="string" default='"Audio Port"' doc="Name of selected hardware."/>
     <!--property name="lircIpName" type="string" default='LircClient.defaultLircIP' doc='IP name or address of LIRC server.'/>
     <property name="lircPort" type="int" default='Integer.toString(LircClient.lircDefaultPort)' doc='TCP port number of LIRC server, typically 8765.'/>
     <property name="lircTimeout" type="int" default='"5000"' doc="Timeout for connecting to TCP Lirc server" /-->
@@ -134,7 +124,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name='parametricNumberBaseIndex' type="int" default='"2"' doc='Number base (index) for interpreting parametric files.'/>
     <property name="parametricSeparatorIndex" type="int" default='"0"' doc='Field separator for parsing parametric files.'/>
 
-    <property name="girrSchemaLocation" type="string" default='"http://www.harctoolbox.org/schemas/girr_ns.xsd"' doc='URL for schema for girr (for validating import).' />
+    <property name="girrSchemaLocation" type="string" default='"http://www.harctoolbox.org/schemas/girr_ns.xsd"' doc='URL for schema for girr (for validating import).' /><!-- FIXME -->
     <property name="girrValidate" type="boolean" default='"false"' doc='If true, girr instances are validated against the schema selected.'/>
 
     <property name="irpMasterCurrentProtocol" type="string" default='"nec1"' doc='Selected protocol for generator.'/>

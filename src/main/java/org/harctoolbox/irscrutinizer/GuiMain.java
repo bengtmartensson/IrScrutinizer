@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2013, 2014, 2015, 2017, 2018, 2019 Bengt Martensson.
+Copyright (C) 2013, 2014, 2015, 2017, 2018, 2019, 2021 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@ package org.harctoolbox.irscrutinizer;
 
 import com.neuron.app.tonto.ProntoModel;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
@@ -30,15 +31,14 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
 import java.io.*;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -78,14 +78,11 @@ import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.guicomponents.*;
+import org.harctoolbox.guicomponents.HardwareBean.CannotCaptureException;
+import org.harctoolbox.guicomponents.HardwareBean.CannotSendException;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.TimeoutException;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
-import org.harctoolbox.harchardware.ir.CommandFusion;
-import org.harctoolbox.harchardware.ir.GirsClient;
-import org.harctoolbox.harchardware.ir.IrToy;
-import org.harctoolbox.harchardware.ir.IrTrans;
-import org.harctoolbox.harchardware.ir.IrWidget;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrCoreException;
@@ -103,80 +100,44 @@ import org.harctoolbox.irp.IrpParseException;
 import org.harctoolbox.irp.IrpUtils;
 import org.harctoolbox.irp.Protocol;
 import org.harctoolbox.irp.UnknownProtocolException;
-import org.harctoolbox.irscrutinizer.capturinghardware.*;
+import static org.harctoolbox.irscrutinizer.TestSignal.testSignal;
 import org.harctoolbox.irscrutinizer.exporter.*;
 import org.harctoolbox.irscrutinizer.importer.*;
-import org.harctoolbox.irscrutinizer.sendinghardware.*;
 import org.harctoolbox.remotelocator.Girrable;
 import org.harctoolbox.remotelocator.NotFoundException;
 import org.xml.sax.SAXException;
 
 public final class GuiMain extends javax.swing.JFrame {
 
-    private Props properties;
-    private final transient LookAndFeelManager lookAndFeelManager;
-    private GuiUtils guiUtils;
-    private transient GlobalCacheIrDatabase globalCacheIrDatabase = null;
-    private transient ControlTowerIrDatabase controlTowerIrDatabase = null;
-    private Map<String, String> controlTowerCodesetTable = null;
-    private transient RemoteLocatorImporter remoteLocatorImporter = null;
-    private transient IrpDatabase irpDatabase = null;
-    private transient Decoder decoder = null;
-    private Decoder.DecoderParameters decoderParameters = null;
-    private transient CcfImporter ccfImporter;
-    private transient XcfImporter xcfImporter;
-    private CmlImporter cmlImporter;
-    private CommandFusionImporter commandFusionImporter;
-    private CsvRawImporter csvRawImporter;
-    private CsvParametrizedImporter csvParametrizedImporter;
-    private IctImporter ictImporter;
-    private transient GirrImporter girrImporter;
-    private final LircImporter lircImporter;
-    private final transient IrTransImporter irTransImporter;
-    private transient WaveImporter waveImporter;
-    private final String applicationHome;
-    private java.awt.Component lastPane;
-    private int dynamicExportFormatsMenuPosition;
-    private final transient TableUtils tableUtils;
-    private Proxy proxy = Proxy.NO_PROXY;
+    private final static String ISSUES_URL = "https://github.com/bengtmartensson/IrScrutinizer/issues";
+    private final static String GIT_URL = "https://github.com/bengtmartensson/IrScrutinizer/";
+    private final static String DOWNLOADS_URL = "https://github.com/bengtmartensson/IrScrutinizer/releases";
+    private final static String UNIQUE_SEPARATOR = "#";
 
-    private final static String testSignalCcf = // NEC1 12.34 56
-            "0000 006C 0022 0002 015B 00AD 0016 0016 0016 0016 0016 0041 0016 0041 "
-            + "0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0016 "
-            + "0016 0016 0016 0016 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 "
-            + "0016 0016 0016 0041 0016 0041 0016 0041 0016 0016 0016 0016 0016 0041 "
-            + "0016 0041 0016 0041 0016 0016 0016 0016 0016 0016 0016 0041 0016 0041 "
-            + "0016 06A4 015B 0057 0016 0E6C";
-    private final static IrSignal testSignal;
-
-    private final RawIrSignal.RawTableColumnModel rawTableColumnModel;
-    private final ParametrizedIrSignal.ParameterIrSignalTableColumnModel parameterTableColumnModel;
-    private final RawIrSignal.RawTableModel rawTableModel;
-    private final ParametrizedIrSignal.ParameterIrSignalTableModel parameterTableModel;
-    private transient CaptureThread captureThread = null;
-    private final String[] prontoModelNames;
-    private ExportFormatManager exportFormatManager;
-    private transient SendingHardwareManager sendingHardwareManager = null;
-    private transient CapturingHardwareManager capturingHardwareManager;
-
-    private transient Remote.MetaData metaData = new Remote.MetaData("unnamed");
-
-    private final static String feedbackMail = "feedback@harctoolbox.org";
-    private final static String issuesUrl = "https://github.com/bengtmartensson/IrScrutinizer/issues";
-    private final static String gitUrl = "https://github.com/bengtmartensson/IrScrutinizer/";
-    private final static String downloadsUrl = "https://github.com/bengtmartensson/IrScrutinizer/releases";
+    // Stuff that may turn properties in the future
     private final static int importSequenceAskThreshold = 3;
     private final static int maxCharsInGuiMessages = 150;
     private final static int transmitSignalMouseButton = 2;
-    private final static String UNIQUE_SEPARATOR = "#";
     public final static double chopThreshold = 100.0; // TODO should problably live somewhere else
 
-    private AboutPopup aboutBox;
-    private Component currentPane = null;
+    // Preferences for the analyzer. Possibly these should be made properties?
+    private final static boolean analyzerEliminateConstantVars = false;
+    private final static double analyzerMaxRoundingError = Burst.Preferences.DEFAULT_MAX_ROUNDING_ERROR;
+    private final static double analyzerMaxUnits = Burst.Preferences.DEFAULT_MAX_UNITS;
+    private final static double analyzerMaxMicroSeconds = Burst.Preferences.DEFAULT_MAX_MICROSECONDS;
+    private final static String analyzerTimeBase = null;
+    private final static boolean analyzerLsb = false;
+    private final static boolean analyzerExtent = false;
+    private final static List<Integer> analyzerParameterWidths = new ArrayList<>(0);
+    private final static int analyzerMaxParameterWidth = 64;
+    private final static boolean analyzerInvert = false;
 
-    private Proxy mkProxy() {
-        return mkProxy(properties.getProxyHostName(), properties.getProxyPort());
-    }
+    // ... and some more preferences for the decoding, that should probably be
+    // properties too. (See IrpTransmogrifier for the semantics.)
+    private final static boolean decodeStrict = false;
+    private final static boolean decodeAllDecodes = false;
+    private final static boolean decodeRecursive = false;
+    private final static boolean decodeOverride = false;
 
     private static Proxy mkProxy(String hostName, int port) {
         return hostName == null || hostName.isEmpty()
@@ -184,32 +145,1817 @@ public final class GuiMain extends javax.swing.JFrame {
                 : new Proxy(Proxy.Type.HTTP, new InetSocketAddress(hostName, port));
     }
 
+    private static File libraryFileName(String appHome, String libraryName) {
+        String subFolderName = (System.getProperty("os.name").startsWith("Windows")
+                ? "Windows"
+                : System.getProperty("os.name"))
+                + '-' + System.getProperty("os.arch").toLowerCase(Locale.US);
+        String stem = System.getProperty("harctoolbox.jniLibsHome") != null
+                ? System.getProperty("harctoolbox.jniLibsHome")
+                : appHome;
+        String mappedName = System.mapLibraryName(libraryName);
+        return new File(new File(stem, subFolderName), mappedName);
+    }
+
+    private static int csvNumberbaseIndex2numberbase(int index) {
+        return (new int[] { 2, 8, 10, 16 })[index];
+    }
+
+    private Props properties;
+    private String applicationHome;
+    private IrpDatabase irpDatabase;
+    private Decoder decoder;
+    private Decoder.DecoderParameters decoderParameters;
+    private ExportFormatManager exportFormatManager;
+    private HardwareManager hardwareManager;
+    private Remote.MetaData metaData;
+    private int dynamicExportFormatsMenuPosition;
+    private TableUtils tableUtils;
+    private Proxy proxy;
+    private CaptureThread captureThread = null;
+    private LookAndFeelManager lookAndFeelManager;
+    private GuiUtils guiUtils;
+    private Component lastPane;
+    private Component currentPane;
+    private AboutPopup aboutBox;
+
+    private GlobalCacheIrDatabase globalCacheIrDatabase;
+    private ControlTowerIrDatabase controlTowerIrDatabase;
+    private Map<String, String> controlTowerCodesetTable;
+    private RemoteLocatorImporter remoteLocatorImporter;
+
+    private CcfImporter ccfImporter;
+    private XcfImporter xcfImporter;
+    private CmlImporter cmlImporter;
+    private CommandFusionImporter commandFusionImporter;
+    private CsvRawImporter csvRawImporter;
+    private CsvParametrizedImporter csvParametrizedImporter;
+    private IctImporter ictImporter;
+    private GirrImporter girrImporter;
+    private LircImporter lircImporter;
+    private IrTransImporter irTransImporter;
+    private WaveImporter waveImporter;
+
+    private RawIrSignal.RawTableColumnModel rawTableColumnModel;
+    private ParametrizedIrSignal.ParameterIrSignalTableColumnModel parameterTableColumnModel;
+    private RawIrSignal.RawTableModel rawTableModel;
+    private ParametrizedIrSignal.ParameterIrSignalTableModel parameterTableModel;
+
+    /**
+     * Constructor for the GUI. Throws exceptions if configuration files cannot be found or on similar errors.
+     * It may of course be questioned if this is necessary, however, it is faster for the user to
+     * install the files than for me to write code for semi-working in semi-broken situations.
+     *
+     * @param applicationHome
+     * @param propsfilename Name of properties file. Null for system default.
+     * @param verbose Verbose execution of some commands, dependent on invoked programs.
+     * @param arguments
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws IOException
+     * @throws org.harctoolbox.irp.IrpParseException
+     */
+    public GuiMain(String applicationHome, String propsfilename, boolean verbose, List<String> arguments) throws IOException, ParserConfigurationException, SAXException, IrpParseException {
+        this.applicationHome = applicationHome;
+        setupProperties(propsfilename, verbose);
+        setupFrame();
+        loadLibraries();
+        setupGuiUtils();
+        setupTables();
+        setupIrpDatabase();
+        setupImporters();
+        setupDecoder();
+        loadExportFormats(); // must come before initComponents
+        initComponents();
+        if (!LircHardware.isLibraryLoaded())
+            sendingHardwareTabbedPane.remove(devLircPanel);
+        girrImporter.setIrpRendererBean(irpMasterBean);
+        tweakTables();
+        tweakFrame();
+        setupProxy();
+        setupRepeatFinder();
+        setupHardware();
+        setupRendering();
+        initializePlot();
+        updateOutputFormat(properties.getOutputFormatIndex());
+        setupLAF();
+        selectFormat();
+        dummyLoadTontoLibrary();
+        setupConsole(); // redefines stdout/stderr
+        guiUtils.setUsePopupsForErrors(properties.getUsePopupsForErrors());
+        processArguments(arguments);
+    }
+
+    private void setupProperties(String propsfilename, boolean verbose) throws MalformedURLException {
+        properties = new Props(propsfilename, this.applicationHome);
+        if (verbose)
+            properties.setVerbose(true);
+        Importer.setProperties(properties);
+        HelpPopup.setBaseUrl(new URL("file", null, properties.mkPathAbsolute(properties.getProtocolDocfilePath())).toString());
+        SelectFile.restoreFromString(properties.getFileselectordirs());
+    }
+
+    private void setupFrame() {
+        String title = Version.versionString;
+        if (System.getenv("APPIMAGE") != null)
+            title += " AppImage";
+        super.setTitle(title);
+
+        Rectangle bounds = properties.getBounds();
+        if (bounds != null)
+            super.setBounds(bounds);
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                cleanupForShutdown();
+            }
+        });
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+                boolean leave = checkUnsavedStuff();
+                if (leave) {
+                    killRunningCapture();
+                    System.exit(IrpUtils.EXIT_SUCCESS);
+                }
+            }
+        });
+        super.setIconImage((new ImageIcon(GuiMain.class.getResource("/icons/Crystal-Clear/64x64/apps/babelfish.png"))).getImage());
+    }
+
+    private void loadLibraries() throws IOException {
+        System.setProperty("harctoolbox.jniLibsHome", applicationHome);
+        // First try to load library from absolute path,
+        try {
+            LircHardware.loadLibrary(libraryFileName(applicationHome, LircHardware.libraryName));
+        } catch (UnsatisfiedLinkError ex) {
+        }
+
+        // ... then try system path.
+        try {
+            LircHardware.loadLibrary();
+        } catch (UnsatisfiedLinkError e) {
+        }
+
+        LocalSerialPort.setLibraryDir(org.harctoolbox.harchardware.Utils.libraryDir(applicationHome));
+    }
+
+    private void setupGuiUtils() {
+        guiUtils = new GuiUtils(this);
+        guiUtils.setProgramName(Version.appName);
+        guiUtils.setMaxGuiMessageLength(maxCharsInGuiMessages);
+        guiUtils.setUsePopupsForErrors(false); // during initialization, popup errors might not work
+        guiUtils.setUsePopupsForHelp(properties.getUsePopupsForHelp());
+        guiUtils.setOfferStackTrace(properties.getOfferStackTrace());
+        guiUtils.setVerbose(properties.getVerbose());
+    }
+
+    private void setupTables() {
+        parameterTableModel = new ParametrizedIrSignal.ParameterIrSignalTableModel();
+        rawTableModel = new RawIrSignal.RawTableModel();
+        parameterTableColumnModel = new ParametrizedIrSignal.ParameterIrSignalTableColumnModel();
+        rawTableColumnModel = new RawIrSignal.RawTableColumnModel();
+        tableUtils = new TableUtils(guiUtils);
+    }
+
+    // must come before initComponents
+    private void setupIrpDatabase() throws IOException, IrpParseException, SAXException {
+        irpDatabase = new IrpDatabase(properties.mkPathAbsolute(properties.getIrpProtocolsPath()));
+        Command.setIrpDatabase(irpDatabase);
+    }
+
+    private void setupImporters() throws MalformedURLException, IrpParseException {
+        setupLircImporter();
+        setupIrTransImporter();
+        setupCmlImporter();
+        setupCommandFusionImporter();
+        setupProntoClassicImporter();
+        setupXcfImporter();
+        setupRawCsvImporter();
+        setupParametrizedCsvImporter();
+        setupGirrImporter();
+        setupWaveImporter();
+        setupIctImporter();
+    }
+
+    private void setupLircImporter() {
+        lircImporter = new LircImporter();
+        lircImporter.setRejectLircCode(properties.getRejectLircCodeImports());
+        properties.addRejectLircCodeImportsChangeListener((String name1, Object oldValue, Object newValue) -> {
+            lircImporter.setRejectLircCode((Boolean) newValue);
+        });
+    }
+
+    private void setupIrTransImporter() {
+        irTransImporter = new IrTransImporter();
+    }
+
+    private void setupCmlImporter() {
+        cmlImporter = new CmlImporter();
+    }
+
+    private void setupCommandFusionImporter() {
+        commandFusionImporter = new CommandFusionImporter();
+    }
+
+    private void setupProntoClassicImporter() {
+        ccfImporter = new CcfImporter();
+        ccfImporter.setTranslateProntoFont(properties.getTranslateProntoFont());
+    }
+
+    private void setupXcfImporter() {
+        xcfImporter = new XcfImporter();
+        xcfImporter.setTranslateProntoFont(properties.getTranslateProntoFont());
+        properties.addTranslateProntoFontChangeListener((String name1, Object oldValue, Object newValue) -> {
+            ccfImporter.setTranslateProntoFont((Boolean) newValue);
+            xcfImporter.setTranslateProntoFont((Boolean) newValue);
+        });
+    }
+
+    private void setupRawCsvImporter() {
+        csvRawImporter = new CsvRawImporter(properties.getRawSeparatorIndex(), properties.getRawNameColumn(),
+                properties.getRawNameMultiColumn(), properties.getCodeColumn(),
+                properties.getIncludeTail());
+
+        properties.addRawSeparatorIndexChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvRawImporter.setSeparatorIndex((Integer)newValue);
+        });
+        properties.addRawNameColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvRawImporter.setNameColumn((Integer)newValue);
+        });
+        properties.addRawNameMultiColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvRawImporter.setNameMultiColumn((Boolean)newValue);
+        });
+        properties.addCodeColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvRawImporter.setCodeColumn((Integer)newValue);
+        });
+        properties.addIncludeTailChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvRawImporter.setIncludeTail((Boolean)newValue);
+        });
+    }
+
+    private void setupParametrizedCsvImporter() {
+        csvParametrizedImporter = new CsvParametrizedImporter(
+                CsvImporter.getSeparator(properties.getParametricSeparatorIndex()),
+                properties.getParametricNameColumn(),
+                properties.getParametrizedNameMultiColumn(),
+                properties.getVerbose(),
+                csvNumberbaseIndex2numberbase(properties.getParametricNumberBaseIndex()),
+                properties.getFColumn(),
+                properties.getDColumn(),
+                properties.getSColumn(),
+                properties.getProtocolColumn(),
+                properties.getMiscParametersColumn());
+
+        properties.addParametricSeparatorIndexChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setSeparatorIndex((Integer) newValue);
+        });
+
+        properties.addParametricNameColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setNameColumn((Integer) newValue);
+        });
+
+        properties.addParametricNumberBaseIndexChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setNumberBase(csvNumberbaseIndex2numberbase((Integer) newValue));
+        });
+
+        properties.addFColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setFColumn((Integer) newValue);
+        });
+
+        properties.addDColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setDColumn((Integer) newValue);
+        });
+
+        properties.addSColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setSColumn((Integer) newValue);
+        });
+
+        properties.addProtocolColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setProtocolColumn((Integer) newValue);
+        });
+
+        properties.addParametrizedNameMultiColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
+            csvParametrizedImporter.setNameMultiColumn((Boolean) newValue);
+        });
+    }
+
+    private void setupIctImporter() {
+        ictImporter = new IctImporter();
+        ictImporter.setChop(properties.getChopIctImports());
+    }
+
+    private void setupGirrImporter() throws MalformedURLException {
+        girrImporter = new GirrImporter(properties.getGirrValidate(), new URL(properties.getGirrSchemaLocation()), irpDatabase);
+        properties.addGirrSchemaLocationChangeListener((String name1, Object oldValue, Object newValue) -> {
+            try {
+                girrImporter.setUrl(new URL((String)newValue));
+            } catch (MalformedURLException ex) {
+                guiUtils.error(ex);
+            }
+        });
+
+        properties.addGirrValidateChangeListener((String name1, Object oldValue, Object newValue) -> {
+            girrImporter.setValidate((Boolean) newValue);
+        });
+    }
+
+    private void setupWaveImporter() {
+        waveImporter = new WaveImporter(properties.getImportWaveDivideCarrier());
+        properties.addImportWaveDivideCarrierChangeListener((String name1, Object oldValue, Object newValue) -> {
+            waveImporter.setDivideCarrier((Boolean) newValue);
+        });
+    }
+
+    private void loadExportFormats() throws ParserConfigurationException, SAXException, IOException {
+        exportFormatManager = new ExportFormatManager(guiUtils,
+                new File(properties.mkPathAbsolute(properties.getExportFormatFilePath())), //new File(properties.getExportDir()),
+                (String name1) -> {
+                    selectFormat(name1);
+                }, () -> newGirrExporter(), () -> exportAudioParametersBean.newWaveExporter(), () -> newTextExporter(), () -> newProntoClassicExporter());
+    }
+
+    private void setupDecoder() throws IrpParseException {
+        RepeatFinder.setDefaultAbsoluteTolerance(properties.getAbsoluteTolerance());
+        RepeatFinder.setDefaultRelativeTolerance(properties.getRelativeTolerance());
+
+        decoder = new Decoder(irpDatabase);
+        decoderParameters = new Decoder.DecoderParameters(decodeStrict,
+                decodeAllDecodes,
+                properties.getRemoveDefaultedParameters(),
+                decodeRecursive,
+                properties.getFrequencyTolerance(),
+                properties.getAbsoluteTolerance(),
+                properties.getRelativeTolerance(),
+                properties.getMinLeadOut(),
+                decodeOverride,
+                properties.getIgnoreLeadingGarbage()
+        );
+        Command.setDecoderParameters(decoderParameters);
+        RawIrSignal.setDecoderParameters(decoderParameters);
+        ParametrizedIrSignal.setDecoderParameters(decoderParameters);
+        properties.addFrequencyToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
+            decoderParameters.setFrequencyTolerance((Double) newValue);
+        });
+        properties.addAbsoluteToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
+            decoderParameters.setAbsoluteTolerance((Double) newValue);
+        });
+        properties.addRelativeToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
+            decoderParameters.setRelativeTolerance((Double) newValue);
+        });
+        properties.addMinLeadOutChangeListener((String name1, Object oldValue, Object newValue) -> {
+            decoderParameters.setMinimumLeadout((Double) newValue);
+        });
+        properties.addRemoveDefaultedParametersChangeListener((String name1, Object oldValue, Object newValue) -> {
+            decoderParameters.setRemoveDefaultedParameters((Boolean) newValue);
+        });
+    }
+
+    private void tweakTables() {
+        tableUtils.fixKeyMappings(parameterTable);
+        tableUtils.fixKeyMappings(rawTable);
+        enableSorter(rawTable, properties.getSorterOnRawTable());
+        enableSorter(parameterTable, properties.getSorterOnParametrizedTable());
+
+        // Scroll the tables to the last line
+        parameterTable.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                if (parameterTableModel.getAndResetScrollRequest())
+                    parameterTable.scrollRectToVisible(parameterTable.getCellRect(parameterTable.getRowCount() - 1, 0, true));
+            }
+        });
+
+        rawTable.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                if (rawTableModel.getAndResetScrollRequest())
+                    rawTable.scrollRectToVisible(parameterTable.getCellRect(parameterTable.getRowCount() - 1, 0, true));
+            }
+        });
+
+        ParametrizedIrSignal.setDecoder(decoder);
+        ParametrizedIrSignal.setGenerateCcf(properties.getGenerateCcf());
+        ParametrizedIrSignal.setGenerateRaw(properties.getGenerateRaw());
+
+        properties.addGenerateCcfChangeListener((String name1, Object oldValue, Object newValue) -> {
+            ParametrizedIrSignal.setGenerateCcf((Boolean) newValue);
+        });
+        properties.addGenerateRawChangeListener((String name1, Object oldValue, Object newValue) -> {
+            ParametrizedIrSignal.setGenerateRaw((Boolean) newValue);
+        });
+
+        RawIrSignal.setDecoder(decoder);
+        RawIrSignal.setInvokeAnalyzer(properties.getInvokeAnalyzer());
+        RawIrSignal.setInvokeDecoder(properties.getInvokeDecoder());
+        RawIrSignal.setAbsoluteTolerance(properties.getAbsoluteTolerance());
+        RawIrSignal.setRelativeTolerance(properties.getRelativeTolerance());
+
+        properties.addInvokeAnalyzerChangeListener((String name1, Object oldValue, Object newValue) -> {
+            RawIrSignal.setInvokeAnalyzer((Boolean) newValue);
+        });
+        properties.addInvokeDecoderChangeListener((String name1, Object oldValue, Object newValue) -> {
+            RawIrSignal.setInvokeDecoder((Boolean) newValue);
+        });
+        properties.addAbsoluteToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
+            RawIrSignal.setAbsoluteTolerance((Double) newValue);
+            RepeatFinder.setDefaultAbsoluteTolerance((Double) newValue);
+        });
+        properties.addRelativeToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
+            RawIrSignal.setRelativeTolerance((Double) newValue);
+            RepeatFinder.setDefaultRelativeTolerance((Double) newValue);
+        });
+
+    }
+
+    private void tweakFrame() {
+        currentPane = topLevelTabbedPane.getSelectedComponent();
+        cookedPanel.setTransferHandler(new GirrImporterBeanTransferHandler(false));
+        rawPanel.setTransferHandler(new GirrImporterBeanTransferHandler(true));
+
+        capturedDataTextArea.setTransferHandler(new SignalScrutinizerTransferHandler(capturedDataTextArea.getTransferHandler()));
+
+        // Cannot do this in initComponents, since then it will be called therein
+        importTabbedPane.addChangeListener((javax.swing.event.ChangeEvent evt) -> {
+            int index = importTabbedPane.getSelectedIndex();
+            properties.setImportPaneSelectedIndex(index);
+        });
+        parametrizedRawTabbedPane.addChangeListener((javax.swing.event.ChangeEvent evt) -> {
+            int index = parametrizedRawTabbedPane.getSelectedIndex();
+            properties.setParametrizedRawTabbedPaneSelectedIndex(index);
+        });
+        dynamicExportFormatsMenuPosition = optionsMenu.getItemCount();
+        optionsMenu.add(exportFormatManager.getMenu(properties.getExportFormatName()));
+        optionsMenu.add(new Separator());
+    }
+
     private void setupProxy() {
-        proxy = mkProxy();
+        proxy = mkProxy(properties.getProxyHostName(), properties.getProxyPort());
         RemoteLocatorImporter.setProxy(proxy);
         ControlTowerIrDatabase.setProxy(proxy);
         GlobalCacheIrDatabase.setProxy(proxy);
         ReaderImporter.setProxy(proxy);
     }
 
-    // Preferences for the analyzer. Possibly these should be made properties?
-    private boolean analyzerEliminateConstantVars = false;
-    private double analyzerMaxRoundingError = Burst.Preferences.DEFAULT_MAX_ROUNDING_ERROR;
-    private double analyzerMaxUnits = Burst.Preferences.DEFAULT_MAX_UNITS;
-    private double analyzerMaxMicroSeconds = Burst.Preferences.DEFAULT_MAX_MICROSECONDS;
-    private String analyzerTimeBase = null;
-    private boolean analyzerLsb = false;
-    private boolean analyzerExtent = false;
-    private List<Integer> analyzerParameterWidths = new ArrayList<>(0);
-    private int analyzerMaxParameterWidth = 64;
-    private boolean analyzerInvert = false;
+    private void setupRepeatFinder() {
+        RepeatFinder.setDefaultAbsoluteTolerance(properties.getAbsoluteTolerance());
+        RepeatFinder.setDefaultRelativeTolerance(properties.getRelativeTolerance());
+        // propertychangelistener?
+    }
 
-    // ... and some more preferences for the decoding, that should probably be
-    // properties too. (See IrpTransmogrifier for the semantics.)
-    private boolean decodeStrict = false;
-    private boolean decodeAllDecodes = false;
-    private boolean decodeRecursive = false;
-    private boolean decodeOverride = false;
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
+    private void setupHardware() throws IOException {
+        setupHardwareManager();
+        setupGlobalCache(); // Keep the same order as they appear in the pane
+        setupDevLirc();
+        setupIrAudioPort();
+        setupGirsClient();
+        setupCommandFusion();
+        setupIrWidget();
+
+        try {
+            hardwareManager.select(properties.getSelectedHardware());
+        } catch (HardwareUnavailableException ex) {
+            // FIXME
+            String replacement = hardwareManager.selectFallback();
+            System.err.println("Selected hardware " + properties.getSelectedHardware() + " not found, falling back to " + replacement);
+        }
+        hardwareManager.setVerbose(properties.getVerbose());
+        optionsMenu.add(hardwareManager.getMenu());
+    }
+
+    private void setupHardwareManager() {
+        hardwareManager = new HardwareManager(guiUtils);
+        properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
+            hardwareManager.setVerbose((Boolean)newValue);
+            guiUtils.setVerbose((Boolean)newValue);
+        });
+        hardwareManager.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            boolean canSend;
+            switch (evt.getPropertyName()) {
+                case HardwareManager.PROP_SELECTED_HARDWARE:
+                    String name = (String) evt.getNewValue();
+                    properties.setSelectedHardware(name);
+                    Container bean = hardwareManager.getBean(name).getParent();
+                    sendingHardwareTabbedPane.setSelectedComponent(bean);
+                    captureTestButton.setEnabled(hardwareManager.canCapture());
+                    canSend = hardwareManager.canSend();
+                    transmitScrutinizedButton.setEnabled(canSend);
+                    transmitGenerateButton2.setEnabled(canSend);
+                    break;
+                case HardwareBean.PROP_ISOPEN:
+                    captureTestButton.setEnabled(hardwareManager.canCapture());
+                    canSend = hardwareManager.canSend();
+                    transmitScrutinizedButton.setEnabled(canSend);
+                    transmitGenerateButton2.setEnabled(canSend);
+                    break;
+                default:
+                    // throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
+            }
+        });
+
+//        properties.addCaptureBeginTimeoutChangeListener((String name1, Object oldValue, Object newValue) -> {
+//            try {
+//                capturingHardwareManager.getCapturer().setBeginTimeout((Integer) newValue);
+//            } catch (IOException | HarcHardwareException ex) {
+//                guiUtils.error(ex);
+//            }
+//        });
+//
+//        properties.addCaptureMaxSizeChangeListener((String name1, Object oldValue, Object newValue) -> {
+//            try {
+//                capturingHardwareManager.getCapturer().setCaptureMaxSize((Integer) newValue);
+//            } catch (IOException | HarcHardwareException ex) {
+//                guiUtils.error(ex);
+//            }
+//        });
+//
+//        properties.addCaptureEndingTimeoutChangeListener((String name1, Object oldValue, Object newValue) -> {
+//            try {
+//                capturingHardwareManager.getCapturer().setEndingTimeout((Integer) newValue);
+//            } catch (IOException | HarcHardwareException ex) {
+//                guiUtils.error(ex);
+//            }
+//        });
+    }
+
+    private void setupGlobalCache() throws IOException {
+        // globalCacheIrSenderSelector was constructed in initComponents
+        globalCacheIrSenderSelector.setGlobalCache(properties.getGlobalCacheIpName());
+        globalCacheIrSenderSelector.setModule(properties.getGlobalCacheModule());
+        globalCacheIrSenderSelector.setPort(properties.getGlobalCachePort());
+        globalCacheIrSenderSelector.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+                case HardwareBean.PROP_IPNAME:
+                    properties.setGlobalCacheIpName((String) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_MODULE:
+                    properties.setGlobalCacheModule((Integer) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_PORT:
+                    properties.setGlobalCachePort((Integer) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_ISOPEN:
+                    guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
+                    break;
+                default:
+                    throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
+            }
+        });
+        hardwareManager.add(globalCacheIrSenderSelector);
+    }
+
+    private void setupIrAudioPort() {
+        // transmitAudioParametersBean was constructed in initComponents()
+        transmitAudioBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+                case AudioTransmitterBean.PROP_SAMPLEFREQUENCY:
+                    properties.setWaveSampleFrequency((Integer) evt.getNewValue());
+                    break;
+                case AudioTransmitterBean.PROP_NOCHANNELS:
+                    properties.setWaveChannels((Integer) evt.getNewValue());
+                    break;
+                case AudioTransmitterBean.PROP_SAMPLESIZE:
+                    properties.setWaveSampleSize((Integer) evt.getNewValue());
+                    break;
+                case AudioTransmitterBean.PROP_OMITTRAILINGGAP:
+                    properties.setWaveOmitTrailingGap((Boolean) evt.getNewValue());
+                    break;
+                default:
+                    throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
+            }
+        });
+        hardwareManager.add(transmitAudioBean);
+    }
+
+    private void setupDevLirc() {
+        if (!LircHardware.isLibraryLoaded())
+            return;
+
+//            sendingDevLirc = new SendingDevLirc(devLircPanel, devLircBean, properties, guiUtils);
+        // devLircBean was constructed in initComponents()
+        devLircBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+                case HardwareBean.PROP_PORT:
+                    properties.setDevLircName((String) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_PROPS:
+                    break;
+                case HardwareBean.PROP_ISOPEN:
+                    guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
+                    break;
+                default:
+                    throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
+            }
+        });
+        hardwareManager.add(devLircBean);
+    }
+
+    private void setupGirsClient() {
+        // girsTcpSerialComboBean was constructed in initComponents()
+        girsTcpSerialComboBean.setTimeout(properties.getGirsClientTimeout());
+        girsTcpSerialComboBean.setPortName(properties.getGirsClientSerialPortName());
+        girsTcpSerialComboBean.setBaud(properties.getGirsClientSerialPortBaudRate());
+        girsTcpSerialComboBean.setIpName(properties.getGirsClientIPName());
+        girsTcpSerialComboBean.setPort(properties.getGirsClientPortNumber());
+        girsTcpSerialComboBean.setType(properties.getGirsClientType());
+
+        girsTcpSerialComboBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+
+                case HardwareBean.PROP_BAUD:
+                    properties.setGirsClientSerialPortBaudRate((int) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_PORTNAME:
+                    properties.setGirsClientSerialPortName((String) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_IPNAME:
+                    properties.setGirsClientIPName((String) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_PORT:
+                    properties.setGirsClientPortNumber((int) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_TYPE:
+                    properties.setGirsClientType(evt.getNewValue().toString());
+                    break;
+                case HardwareBean.PROP_VERSION:
+                case HardwareBean.PROP_MODULE:
+                case HardwareBean.PROP_PROPS:
+                    break;
+                case HardwareBean.PROP_ISOPEN:
+                    guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
+                    break;
+                default:
+                    throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
+            }
+        });
+        hardwareManager.add(girsTcpSerialComboBean);
+    }
+
+    private void setupCommandFusion() {
+        // commandFusionBean was setup in initComponents()
+
+//        SendingSerial<CommandFusion> sendingcommandFusion = new SendingSerial<>(CommandFusion.class, commandFusionSendPanel,
+//                commandFusionSendingSerialPortBean, properties, guiUtils);
+
+        commandFusionBean.setPortName(properties.getCommandFusionPortName());
+
+        commandFusionBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+
+                case HardwareBean.PROP_PORTNAME:
+                    properties.setCommandFusionPortName((String) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_ISOPEN:
+                    guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
+                    break;
+                default:
+                    throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
+            }
+        });
+
+        hardwareManager.add(commandFusionBean);
+    }
+
+    private void setupIrWidget() {
+        //irWidgetBean was setup in initComponents()
+        irWidgetBean.setPortName(properties.getIrWidgetPortName());
+
+        irWidgetBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+
+                case HardwareBean.PROP_PORTNAME:
+                    properties.setIrWidgetPortName((String) evt.getNewValue());
+                    break;
+                case HardwareBean.PROP_ISOPEN:
+                    guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
+                    break;
+                default:
+                    throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
+            }
+        });
+
+        hardwareManager.add(irWidgetBean);
+    }
+
+    private void setupRendering() {
+        irpMasterBean.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+                case IrpRenderBean.PROP_PROTOCOL_NAME:
+                    properties.setIrpMasterCurrentProtocol((String) evt.getNewValue());
+                    break;
+                case IrpRenderBean.PROP_D:
+                    properties.setIrpMasterCurrentD((String) evt.getNewValue());
+                    break;
+                case IrpRenderBean.PROP_S:
+                    properties.setIrpMasterCurrentS((String) evt.getNewValue());
+                    break;
+                case IrpRenderBean.PROP_F:
+                    properties.setIrpMasterCurrentF((String) evt.getNewValue());
+                    break;
+                case IrpRenderBean.PROP_T:
+                    properties.setIrpMasterCurrentT((String) evt.getNewValue());
+                    break;
+                case IrpRenderBean.PROP_ADDITIONAL_PARAMS:
+                    properties.setIrpMasterCurrentAdditionalParameters((String) evt.getNewValue());
+                    break;
+                default:
+                    guiUtils.error("Programming error detected: " + evt.getPropertyName());
+                    break;
+            }
+        });
+    }
+
+    private void setupLAF() {
+        LookAndFeelManager.ILookAndFeelManagerCaller caller = new ScrutinizeIrCaller();
+        lookAndFeelManager = new LookAndFeelManager(this, lafMenu, caller);
+        lookAndFeelManager.setLAF(properties.getLookAndFeel());
+        lookAndFeelManager.updateLAF();
+        lafMenu.setVisible(true);
+    }
+
+    // When the Tonto stuff loads, it tries to load a library called jnijcomm,
+    // see javax.comm.DriverGenUnix. This will fail, but that is no concern for us.
+    // However, it writes an ugly stacktrace on stderr, which is scaring the user.
+    // Therefore, redirect stderr to nirvana, and make that call now.
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
+    private void dummyLoadTontoLibrary() {
+        PrintStream nullPrintStream = new PrintStream(new ByteArrayOutputStream());
+        System.setErr(nullPrintStream);
+        new DriverGenUnix();
+    }
+
+    private void setupConsole() {
+        console.setErrorFunction(
+                new org.harctoolbox.guicomponents.Console.IErrorFunction() {
+            @Override
+            public void err(Exception ex, String message) {
+                if (ex == null)
+                    guiUtils.error(message);
+                else
+                    guiUtils.error(ex, message);
+            }
+
+            @Override
+            public void err(String str) {
+                guiUtils.error(str);
+            }
+        });
+
+        console.setStdErr();
+        console.setStdOut();
+    }
+
+    private void processArguments(List<String> arguments) {
+        int sum = 0;
+        for (String str : arguments) {
+            try {
+                sum += importGirr(new File(str), false);
+            } catch (FileNotFoundException ex) {
+                guiUtils.error("File \"" + str + "\" not found, ignoring.");
+            } catch (IOException | ParseException | InvalidArgumentException ex) {
+                guiUtils.error(ex);
+            }
+        }
+        if (sum > 0) {
+            selectImportPane(ImportType.parametricRemote);
+            parameterTableModel.clearUnsavedChanges();
+        }
+    }
+
+    private boolean killRunningCapture() {
+        if (captureThreadRunning()) {
+            captureThread.terminate();
+            try {
+                if (captureThread != null)
+                    captureThread.join(1000L);
+            } catch (InterruptedException ex) {
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean captureThreadRunning() {
+        return captureThread != null && captureThread.isAlive();
+    }
+
+    private boolean checkUnsavedStuff() {
+        AckWithMemoryDialog.PropertyFlip parameterFlip = new AckWithMemoryDialog.PropertyFlip() {
+            @Override
+            public boolean getProperty() {
+                return properties.getDontInquire4UnsavedParametricRemotes();
+            }
+
+            @Override
+            public void setProperty(boolean value) {
+                properties.setDontInquire4UnsavedParametricRemotes(value);
+            }
+        };
+
+        AckWithMemoryDialog.PropertyFlip rawFlip = new AckWithMemoryDialog.PropertyFlip() {
+            @Override
+            public boolean getProperty() {
+                return properties.getDontInquire4UnsavedRawRemotes();
+            }
+
+            @Override
+            public void setProperty(boolean value) {
+                properties.setDontInquire4UnsavedRawRemotes(value);
+            }
+        };
+
+        boolean exitOk = !parameterTableModel.hasUnsavedChanges()
+                || AckWithMemoryDialog.ackWithMemoryDialog("There is unsaved data in \"Parametetric Remote\".", "Really exit?", parameterFlip, this);
+        exitOk = exitOk && (!rawTableModel.hasUnsavedChanges()
+                || AckWithMemoryDialog.ackWithMemoryDialog("There is unsaved data in \"Raw Remote\".", "Really exit?", rawFlip, this));
+
+        return exitOk;
+    }
+
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
+    private void cleanupForShutdown() {
+        try {
+            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, "US-ASCII"));
+            System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err), true, "US-ASCII"));
+        } catch (UnsupportedEncodingException ex) {
+            throw new InternalError("This cannot happen");
+        }
+//        capturingHardwareManager.close();
+        hardwareManager.close();
+        properties.setFileselectordirs(SelectFile.saveString());
+        try {
+            if (!properties.getWasReset())
+                properties.setBounds(getBounds());
+            properties.save();
+        } catch (IOException e) {
+            System.err.println("Problems saving properties; " + e.getMessage());
+        }
+    }
+
+    private int importGirr(File file, boolean raw) throws ParseException, InvalidArgumentException, IOException {
+        return importCommands(girrImporter.getRemoteSet(file), girrImporter.getMetaData(), raw);
+    }
+
+//    private void selectSenderHardware(HardwareBean panel) {
+//        lastPane = topLevelTabbedPane.getSelectedComponent();
+//        topLevelTabbedPane.setSelectedComponent(sendingPanel);
+//        sendingHardwareTabbedPane.setSelectedComponent(panel);
+//    }
+
+    private Command.CommandTextFormat[] setupExtraTextFormats() {
+        ArrayList<Command.CommandTextFormat> formats = new ArrayList<>(8);
+        if (properties.getExportGenerateShortCcf())
+            formats.add(new ShortCcfFormatter());
+        if (properties.getExportGenerateSendIr())
+            formats.add(new SendIrFormatter());
+        return formats.toArray(new Command.CommandTextFormat[formats.size()]);
+    }
+
+    private GirrExporter newGirrExporter() {
+        return new GirrExporter(properties.getCreatingUser(),
+                properties.getGirrFatRaw(),
+                properties.getExportGenerateRaw(),
+                properties.getExportGenerateCcf(),
+                properties.getExportGenerateParameters(),
+                setupExtraTextFormats());
+    }
+
+    private TextExporter newTextExporter() {
+        return new TextExporter(properties.getExportGenerateRaw(),
+                properties.getExportGenerateCcf(),
+                properties.getExportGenerateParameters(),
+                setupExtraTextFormats());
+    }
+
+    private ProntoClassicExporter newProntoClassicExporter() {
+        ProntoModel prontomodel = ProntoModel.getModelByName((String) prontoModelComboBox.getSelectedItem());
+        int buttonwidth = Integer.parseInt(prontoExportButtonWidthTextField.getText());
+        int buttonheight = Integer.parseInt(prontoExportButtonHeightTextField.getText());
+        int screenwidth = Integer.parseInt(prontoExportScreenWidthTextField.getText());
+        int screenheight = Integer.parseInt(prontoExportScreenHeightTextField.getText());
+        return new ProntoClassicExporter(/*new File(properties.getExportDir()),*/ prontomodel,
+                buttonwidth, buttonheight, screenwidth, screenheight);
+    }
+
+    private RemoteSetExporter newRemoteExporter() {
+        ICommandExporter exporter = newExporter();
+        if (exporter != null && !RemoteSetExporter.class.isInstance(exporter)) {
+            guiUtils.error("Selected export format only supports single commands");
+            return null;
+        }
+        return (RemoteSetExporter) exporter;
+    }
+
+    private ICommandExporter newExporter() {
+        return newExporter((String) exportFormatComboBox.getSelectedItem());
+    }
+
+    private ICommandExporter newExporter(String formatName) {
+        ICommandExporter exporter = exportFormatManager.get(formatName).newExporter();
+        boolean supportsEmbedded = IRemoteSetExporter.class.isInstance(exporter) && ((IRemoteSetExporter) exporter).supportsEmbeddedFormats();
+        if (supportsEmbedded && !properties.getExportGenerateParameters()
+                && !properties.getExportGenerateCcf() && !properties.getExportGenerateRaw()) {
+            boolean answer = guiUtils.confirm("All of \"Parameters\", \"Raw\", and \"Pronto Hex\" deselected in the export. Continue?");
+            if (!answer)
+                return null;
+        }
+        return exporter;
+    }
+
+    private IrSignal getCapturedIrSignal() throws InvalidArgumentException {
+        String str = capturedDataTextArea.getText();
+        if (str.trim().isEmpty())
+            return null;
+
+        return InterpretString.interpretString(str, getFrequency(), properties.getDummyGap(),
+                properties.getInvokeRepeatFinder(), properties.getInvokeCleaner(),
+                properties.getAbsoluteTolerance(), properties.getRelativeTolerance(), properties.getMinRepeatLastGap());
+    }
+
+    private void clearSignal() {
+        capturedDataTextArea.setText(null);
+        irPlotter.clear();
+        decodeIRTextField.setText(null);
+        analyzerTextField.setText(null);
+        frequencyLabel.setText(null);
+        introLengthLabel.setText(null);
+        repLengthLabel.setText(null);
+        noRepsLabel.setText(null);
+        endingLengthLabel.setText(null);
+    }
+
+    private ModulatedIrSequence captureIrSequence() throws IOException, HarcHardwareException, InvalidArgumentException, HardwareUnavailableException, CannotCaptureException {
+        try {
+            return hardwareManager.capture();
+        } catch (TimeoutException ex) {
+            return null;
+        }
+    }
+
+    private void initializePlot() {
+        irPlotter.setIgnoreLast(properties.getIgnoreEndingSilence());
+    }
+
+    private void clonePlot() {
+        if (irPlotter.isEmpty()) {
+            guiUtils.error("No plot to clone.");
+            return;
+        }
+        IrPlotter dolly = new IrPlotter(irPlotter, false);
+        dolly.setPreferredSize(irPlotter.getSize());
+        HarcletFrame.newHarcletFrame(this, dolly, false, this.lookAndFeelManager.getCurrentLAFClassName());
+    }
+
+    private void setRepeatParameters(int introLength, int repeatLength, int nRepetitions, int endingLength) {
+        introLengthLabel.setText(Integer.toString(introLength));
+        repLengthLabel.setText(Integer.toString(repeatLength));
+        endingLengthLabel.setText(Integer.toString(endingLength));
+        noRepsLabel.setText(Integer.toString(nRepetitions));
+    }
+
+    private void setRepeatParameters(RepeatFinder repeatFinder) {
+        setRepeatParameters(repeatFinder.getRepeatFinderData().getBeginLength(),
+                repeatFinder.getRepeatFinderData().getRepeatLength(),
+                repeatFinder.getRepeatFinderData().getNumberRepeats(),
+                repeatFinder.getRepeatFinderData().getEndingLength());
+    }
+
+    private void setFrequencyParameter(Double frequency) {
+        frequencyLabel.setText(frequency != null ? Long.toString(Math.round(frequency)) : "");
+    }
+
+    private void setFrequencyParameter(IrSignal irSignal) {
+        setFrequencyParameter(irSignal.getFrequency());
+    }
+
+    private String formatIrSignal(IrSignal irSignal, int formatIndex) {
+        return OutputTextFormat.newOutputTextFormat(formatIndex).formatIrSignal(irSignal);
+    }
+
+    private String formatIrSignal(IrSignal irSignal) {
+        return formatIrSignal(irSignal, properties.getOutputFormatIndex());
+    }
+
+    private void setCaptureWindow(IrSignal irSignal) {
+        try {
+            capturedDataTextArea.setText(formatIrSignal(irSignal, properties.getOutputFormatIndex()));
+        } catch (Exception ex) {
+            guiUtils.error(ex);
+            capturedDataTextArea.setText(null);
+        }
+    }
+
+    private void setDecodeIrParameters(IrSignal irSignal) {
+        Decoder.AbstractDecodesCollection<? extends ElementaryDecode> decodes = decoder.decodeLoose(irSignal, decoderParameters);
+        setDecodeResult(decodes);
+    }
+
+//    private Collection<Decoder.Decode> decodeIrSequence(ModulatedIrSequence irSequence) {
+//        Decoder.DecodeTree decodeTree = decoder.decode(irSequence, decoderParameters);
+//        List<Decoder.Decode> decodes = new ArrayList<>(4);
+//        for (Decoder.TrunkDecodeTree decode : decodeTree)
+//            decodes.add(decode.getTrunk());
+//        return decodes;
+//    }
+
+//    private Iterable<Decoder.Decode> decodeIrSignal(IrSignal irSignal) {
+//        Decoder.SimpleDecodesSet decodes = decoder.decodeIrSignal(irSignal, decoderParameters);
+//        return decodes;
+//    }
+
+    private void setDecodeResult(Decoder.AbstractDecodesCollection<? extends ElementaryDecode> decodes) {
+        Iterator<? extends ElementaryDecode> iterator = decodes.iterator();
+        if (!iterator.hasNext()) {
+            decodeIRTextField.setText("");
+            return;
+        }
+
+        int index = 0;
+        StringBuilder decodeString = new StringBuilder(40);
+        for (ElementaryDecode decode : decodes) {
+            if (index == 0)
+                decodeString.append(decode.toString());
+            if (properties.getPrintDecodesToConsole())
+                guiUtils.message(decode.toString());
+            index++;
+        }
+
+        if (index == 2)
+            decodeString.append(" + one more decode");
+        else if (index > 2)
+            decodeString.append(" + ").append(Integer.toString(index - 1)).append(" more decodes");
+
+        decodeIRTextField.setText(decodeString.toString());
+    }
+
+    private void clearAnalyzeParameters() {
+        analyzerTextField.setText(null);
+    }
+
+    private void setAnalyzeParameters(String line) {
+        analyzerTextField.setText(line);
+    }
+
+    private void setAnalyzeParameters(Protocol protocol) {
+        if (protocol == null)
+            clearAnalyzeParameters();
+        else {
+            Protocol actualProtocol = analyzerEliminateConstantVars ? protocol.substituteConstantVariables() : protocol;
+            String line = actualProtocol.toIrpString(properties.getAnalyzerBase());
+            setAnalyzeParameters(line);
+            if (properties.getPrintAnalyzerIRPsToConsole())
+                guiUtils.message(line);
+        }
+    }
+
+    private void setAnalyzeParameters(Analyzer analyzer) {
+        Burst.Preferences burstPrefs = new Burst.Preferences(analyzerMaxRoundingError, analyzerMaxUnits, analyzerMaxMicroSeconds);
+        Analyzer.AnalyzerParams params = new Analyzer.AnalyzerParams(analyzer.getFrequency(), analyzerTimeBase,
+                analyzerLsb ? BitDirection.lsb : BitDirection.msb,
+                analyzerExtent, analyzerParameterWidths, analyzerMaxParameterWidth, analyzerInvert, burstPrefs, new ArrayList<>(0));
+        List<Protocol> protocols = null;
+        try {
+            protocols = analyzer.searchBestProtocol(params);
+        } catch (NoDecoderMatchException ex) {
+            guiUtils.error(ex);
+        }
+        if (protocols == null || protocols.isEmpty())
+            clearAnalyzeParameters();
+        else {
+            setAnalyzeParameters(protocols.get(0));
+        }
+    }
+
+    private void setAnalyzeParameters(ModulatedIrSequence irSequence) throws InvalidArgumentException {
+        Analyzer analyzer = new Analyzer(irSequence, irSequence.getFrequency(), properties.getInvokeRepeatFinder(),
+                properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+        setAnalyzeParameters(analyzer);
+    }
+
+    private void setAnalyzeParameters(IrSignal irSignal) throws InvalidArgumentException {
+        // Ignore repeatfinder request if irSignal already has repeat.
+        if (properties.getInvokeRepeatFinder() && irSignal.getRepeatLength() == 0) {
+            ModulatedIrSequence irSequence = irSignal.toModulatedIrSequence();
+            setAnalyzeParameters(irSequence);
+        } else {
+            Analyzer analyzer = new Analyzer(irSignal, properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+            setAnalyzeParameters(analyzer);
+        }
+    }
+
+    public void scrutinizeIrSignal(IrSignal irSignal) throws InvalidArgumentException {
+        if (irSignal == null || irSignal.isEmpty()) {
+            guiUtils.error("Not scrutinizing empty signal.");
+            return;
+        }
+
+        while (irSignal.containsZeros()) {
+            String answer = guiUtils.getInput(
+                    "The signal contains one or more duration of zero length, and is thus a meaningless signal.\n"
+                    + "Enter a replacement value for the zero durations, if desired.\n"
+                    + "If four characters, will be interpreted as Pronto hex, otherwise as microseconds.",
+                    "Enter zero replacement", "0001");
+            if (answer == null) {
+                // user pressed cancel
+                return;
+            }
+            answer = answer.trim();
+            try {
+                if (answer.length() == Pronto.CHARS_IN_DIGIT) {
+                    irSignal.replaceZeros(Integer.parseInt(answer, 16));
+                } else {
+                    irSignal.replaceZeros(Double.parseDouble(answer));
+                }
+            } catch (NumberFormatException ex) {
+                guiUtils.error(ex);
+            }
+        }
+
+        setRepeatParameters(irSignal.getIntroLength(), irSignal.getRepeatLength(), irSignal.getRepeatLength() >  0 ? 1 : 0, irSignal.getEndingLength());
+
+        if (properties.getInvokeAnalyzer())
+            setAnalyzeParameters(irSignal);
+        else
+            clearAnalyzeParameters();
+        displaySignal(irSignal);
+    }
+
+    private void scrutinizeIrSignal(JTable table) throws ErroneousSelectionException, GirrException, IrpException, IrCoreException {
+        Command command = tableUtils.commandTableSelectedRow(table);
+        scrutinizeIrSignal(command.toIrSignal());
+    }
+
+    private void displaySignal(IrSignal irSignal) {
+        setFrequencyParameter(irSignal);
+        setCaptureWindow(irSignal);
+        irPlotter.plot(irSignal);
+        setDecodeIrParameters(irSignal);
+    }
+
+    private void processIr(ModulatedIrSequence modulatedIrSequence) throws InvalidArgumentException {
+        if (modulatedIrSequence == null || modulatedIrSequence.isEmpty()) {
+            guiUtils.error("Not showing empty sequence.");
+            return;
+        }
+
+        ModulatedIrSequence possiblyCleaned = properties.getInvokeCleaner()
+                ? Cleaner.clean(modulatedIrSequence, properties.getAbsoluteTolerance(), properties.getRelativeTolerance())
+                : modulatedIrSequence;
+
+        if (properties.getInvokeAnalyzer())
+            setAnalyzeParameters(modulatedIrSequence);
+        else
+            clearAnalyzeParameters();
+
+        IrSignal irSignal;
+        if (properties.getInvokeRepeatFinder()) {
+            RepeatFinder repeatFinder = new RepeatFinder(modulatedIrSequence);
+            setRepeatParameters(repeatFinder);
+            irSignal = repeatFinder.getRepeatFinderData().chopIrSequence(possiblyCleaned);
+        } else
+            irSignal = new IrSignal(possiblyCleaned);
+        displaySignal(irSignal);
+    }
+
+    private String mkTitle(JTable table) {
+        return Version.appName + ((table == parameterTable) ? " parametric export" : " raw export");
+    }
+
+    private void saveSelectedSignals(JTable table) throws GirrException, IOException, TransformerException, IrCoreException, IrpException {
+        saveCommands(tableUtils.commandTableSelected(table), mkTitle(table), newRemoteExporter());
+    }
+
+    private void saveAllSignals(JTable table) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+        saveAllSignals(table, newRemoteExporter());
+    }
+
+    private void saveAllSignals(JTable table, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+        NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
+        saveCommands(tableModel, mkTitle(table), exporter);
+    }
+
+    private File saveCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel, String title, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+        Map<String, Command> commands = tableModel.getCommandsWithSanityCheck(guiUtils);
+        if (commands == null)
+            return null;
+        File file = saveCommandsWrite(commands, title, exporter);
+        if (file != null) {
+            tableModel.clearUnsavedChanges();
+            guiUtils.message("File " + file + " was successfully written.");
+            if (properties.getAutoOpenExports())
+                guiUtils.open(file);
+        }
+        return file;
+    }
+
+    private File saveCommandsWrite(Map<String, Command> commands, String title, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+        if (properties.getExportAutomaticFilenames())
+            if (!checkChangeExportDirectory(new File(exportDirectoryTextField.getText())))
+                return null;
+
+        if (properties.getExportInquireDeviceData() && exporter.supportsMetaData()) {
+            Remote.MetaData newMetaData = MetaDataDialog.inquireMetaData(metaData, this);
+            if (newMetaData == null) // user bailed out
+                return null;
+
+            metaData = newMetaData;
+        }
+
+        File file = exporter.export(commands, null, title, metaData,
+                properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
+                new File(properties.getExportDir()), properties.getExportCharsetName());
+        return file;
+    }
+
+    private File saveCommands(Map<String, Command> commands, String title, RemoteSetExporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+        if (commands.isEmpty()) {
+            guiUtils.error("Nothing to export");
+            return null;
+        }
+
+        File savedFile;
+        if (commands.size() == 1) {
+            // exporting just a single command
+            savedFile = saveSignalWrite(commands.values().iterator().next(), title, newExporter());
+            if (savedFile != null)
+                guiUtils.message("File " + savedFile.getPath() + " successfully written with one signal.");
+        } else {
+            //RemoteSetExporter exporter = newRemoteExporter();
+            if (exporter == null)
+                return null; // error has already been reported to the user.
+            savedFile = saveCommandsWrite(commands, title, exporter);
+            if (savedFile != null)
+                guiUtils.message("File " + savedFile.getPath() + " successfully written with " + commands.size() + " signals.");
+        }
+        if (savedFile != null && properties.getAutoOpenExports())
+            guiUtils.open(savedFile);
+        return savedFile;
+    }
+
+    private void saveSignal(IrSignal irSignal) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+        saveSignal(irSignal, newExporter());
+    }
+
+    private void saveSignal(IrSignal irSignal, ICommandExporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+        if (irSignal == null) {
+            guiUtils.error("Not exporting empty signal.");
+            return;
+        }
+        Command command = new Command("IrScrutinizer scrutinized signal", null, irSignal);
+        File savedFile = saveSignalWrite(command, "IrScrutinizer scrutinized signal", exporter);
+        if (savedFile != null) {
+            guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
+            if (properties.getAutoOpenExports())
+                guiUtils.open(savedFile);
+        }
+    }
+
+    private File saveSignalWrite(Command command, String title, ICommandExporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+        if (!checkChangeExportDirectory(new File(exportDirectoryTextField.getText())))
+            return null;
+
+        return exporter.export(command, "IrScrutinizer captured signal", title,
+                properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
+                new File(properties.getExportDir()), properties.getExportCharsetName());
+    }
+
+    private double getFrequency() {
+        try {
+            return Double.parseDouble(frequencyLabel.getText());
+        } catch (NumberFormatException | NullPointerException ex) {
+        }
+        double f = properties.getFallbackFrequency();
+        return f > 0 ? f : ModulatedIrSequence.DEFAULT_FREQUENCY;
+    }
+
+    private void reAnalyze() {
+        try {
+            IrSignal irSignal = getCapturedIrSignal();
+            if (irSignal != null)
+                scrutinizeIrSignal(irSignal);
+            else
+                // Do not include the input text in the error message; it will make a popup unreadable.
+                guiUtils.error("Could not parse the text in capture data window as IR signal.");
+        } catch (InvalidArgumentException ex) {
+            guiUtils.error(ex);
+        } catch (RuntimeException ex) {
+            // ??? Can be many different causes
+            guiUtils.error("Unspecified error: \"" + ex.getMessage() + "\", please report.");
+        }
+    }
+
+    private void saveCapturedDataAsText() {
+        if (capturedDataTextArea.getText().trim().isEmpty()) {
+            guiUtils.error("Nothing to save.");
+            return;
+        }
+
+        TextExporter exporter = newTextExporter();
+        try {
+            File file = exporter.export(capturedDataTextArea.getText().trim(),
+                    properties.getExportAutomaticFilenames(), this, new File(properties.getExportDir()),
+                    properties.getExportCharsetName());
+            guiUtils.message("File " + file.getPath() + " successfully written.");
+        } catch (IOException ex) {
+            guiUtils.error(ex);
+        }
+    }
+
+    GuiUtils getGuiUtils() {
+        return guiUtils;
+    }
+
+    IrpDatabase getIrpDatabase() {
+        return this.irpDatabase;
+    }
+
+    private void updateOutputFormat(OutputTextFormat format) {
+        updateOutputFormat(format.ordinal());
+    }
+
+    private void updateOutputFormat(int format) {
+        for (int i = 0; i < outputFormatMenu.getItemCount(); i++)
+            outputFormatMenu.getItem(i).setSelected(i == format);
+        properties.setOutputFormatIndex(format);
+    }
+
+    private String analysisString() {
+        String linefeed = IrCoreUtils.LINE_SEPARATOR;
+        StringBuilder str = new StringBuilder(256);
+        str.append("Decode: ");
+        str.append(decodeIRTextField.getText());
+        str.append(linefeed);
+        str.append("Analyze: ");
+        str.append(analyzerTextField.getText());
+        str.append(linefeed);
+        str.append("Frequency: ");
+        str.append(frequencyLabel.getText());
+        str.append(linefeed);
+        str.append(String.format("Introbursts: %s, Repeatbursts: %s, # repeats: %s, Endbursts: %s",
+                introLengthLabel.getText(), repLengthLabel.getText(),
+                noRepsLabel.getText(), endingLengthLabel.getText()));
+        return str.toString();
+    }
+
+    private void importSequence(ICommandImporter importer) throws IrpException, IrCoreException {
+        Collection<Command> commands = importer.getCommands();
+        if (commands.isEmpty()) {
+            guiUtils.error("Import does not contain any signals; aborting.");
+            return;
+        }
+        if (commands.size() >= importSequenceAskThreshold
+                && ! guiUtils.confirm("There are " + commands.size() + " commands. Proceed?"))
+            return;
+
+        processIr(Command.concatenateAsSequence(commands));
+    }
+
+    public int importCommands(RemoteSet remoteSet, Remote.MetaData metaData, boolean raw) {
+        int sum = 0;
+        for (Remote remote : remoteSet)
+            sum += importCommands(remote, metaData, raw);
+        return sum;
+    }
+
+    public int importCommands(Remote remote, Remote.MetaData metaData, boolean raw) {
+        int sum = 0;
+        for (CommandSet commandSet : remote)
+            sum += importCommands(commandSet, metaData, raw);
+        return sum;
+    }
+
+    public int importCommands(CommandSet commandSet, Remote.MetaData metaData, boolean raw) {
+        return importCommands(commandSet.getCommands(), metaData, raw);
+    }
+
+    private int importCommands(Collection<Command> commands, Remote.MetaData metaData, boolean raw) {
+        if (metaData != null && !metaData.isEmpty())
+            this.metaData = metaData;
+        boolean observeErrors = true;
+        int count = 0;
+        for (Command command : commands) {
+            try {
+                importCommand(command, raw);
+                count++;
+            } catch (IrpException | IrCoreException ex) {
+                if (observeErrors) {
+                    guiUtils.error("Erroneous signal: " + ex.getMessage());
+                    boolean ans = guiUtils.confirm("Continue import and ignore further erroneous signals?");
+                    if (ans)
+                        observeErrors = false;
+                    else
+                        return -count;
+                }
+            }
+        }
+        return count;
+    }
+
+    public int importCommand(Command command, boolean raw) throws IrpException, IrCoreException {
+        if (command == null)
+            return 0;
+
+        if (raw)
+            registerRawCommand(command);
+        else
+            registerParameterCommand(command);
+        return 1;
+    }
+
+    private <T extends IFileImporter & ICommandImporter> void importConcatenatedCommandsByFileSelector(T importer) {
+        try {
+            boolean status = importer.loadFileSelector(this, "Select file for signal import",
+                    properties.getDefaultImportDir(), properties.getImportCharsetName());
+            if (status)
+                importSequence(importer);
+        } catch (IOException | ParseException | IrCoreException | IrpException ex) {
+            guiUtils.error(ex);
+        }
+    }
+
+    private <T extends IFileImporter & IModulatedIrSequenceImporter> void importModulatedIrSequenceByFileSelector(T importer) {
+    try {
+            boolean status = importer.loadFileSelector(this, "Select file for signal import",
+                    properties.getDefaultImportDir(), properties.getImportCharsetName());
+            if (status)
+                processIr(importer.getModulatedIrSequence());
+        } catch (IOException | ParseException | InvalidArgumentException ex) {
+            guiUtils.error(ex);
+        }
+    }
+
+    private <T extends IFileImporter & ICommandImporter> void importRemoteByFileSelector(T importer, boolean raw) {
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
+        try {
+            repaint();
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+            }
+            boolean status = importer.loadFileSelector(this, "Select file for signal import",
+                    properties.getDefaultImportDir(), properties.getImportCharsetName());
+            if (status)
+                importCommands(importer.getCommands(), importer.getMetaData(), raw);
+        } catch (IOException | ParseException | InvalidArgumentException ex) {
+            guiUtils.error(ex);
+        } finally {
+            busyWindow.unBusy();
+        }
+    }
+
+    private <T extends IFileImporter & IModulatedIrSequenceImporter> ModulatedIrSequence importSequence(File file, T importer) {
+        try {
+            importer.load(file, properties.getImportCharsetName());
+            return importer.getModulatedIrSequence();
+        } catch (IOException | ParseException | InvalidArgumentException ex) {
+        }
+        return null;
+    }
+
+    private <T extends IFileImporter & ICommandImporter> ModulatedIrSequence importCommands(File file, T importer) {
+        try {
+            importer.load(file, properties.getImportCharsetName());
+            return importer.getConcatenatedCommands();
+        } catch (IOException | ParseException | IrCoreException | IrpException ex) {
+        }
+        return null;
+    }
+
+    private void importModulatedIrSequenceFile(File file) throws InvalidArgumentException {
+        ModulatedIrSequence sequence = importCommands(file, girrImporter);
+        if (sequence == null || sequence.isEmpty())
+            sequence = importCommands(file, ictImporter);
+
+        if (sequence == null || sequence.isEmpty())
+            sequence = importSequence(file, new Mode2Importer());
+
+        if (sequence == null || sequence.isEmpty())
+            sequence = importSequence(file, waveImporter);
+
+        if (sequence == null || sequence.isEmpty())
+            guiUtils.error("File not recoginzed, ignored");
+        else
+            processIr(sequence);
+    }
+
+    private void registerRawCommands(Collection<Command> commands) throws IrpException, IrCoreException {
+        for (Command command : commands)
+            registerRawCommand(new RawIrSignal(command));
+    }
+
+    private void registerRawCommand(Command command) throws IrpException, IrCoreException {
+        registerRawCommand(new RawIrSignal(command));
+    }
+
+    private void registerParameterCommand(Command command) throws IrpException, IrCoreException {
+        registerParameterSignal(new ParametrizedIrSignal(command));
+    }
+
+    private void registerRawSignal(IrSignal irSignal, String name, String comment) {
+        if (irSignal != null) {
+            RawIrSignal cis = new RawIrSignal(irSignal, name, comment);
+            registerRawCommand(cis);
+        }
+    }
+
+    private void registerRawSignal(ModulatedIrSequence irSequence, String name, String comment) {
+        if (irSequence != null) {
+            RawIrSignal cis = new RawIrSignal(irSequence, name, comment);
+            registerRawCommand(cis);
+        }
+    }
+
+    private void registerRawCommand(RawIrSignal cir) {
+        rawTableModel.addSignal(cir);
+    }
+
+    private void registerParameterSignal(ModulatedIrSequence irSequence) {
+        if (irSequence != null) {
+            try {
+                ParametrizedIrSignal pir = new ParametrizedIrSignal(irSequence, properties.getParametrizedLearnIgnoreT());
+                registerParameterSignal(pir);
+            } catch (NoDecodeException ex) {
+                guiUtils.message("Undecodable signal, ignored");
+            }
+        }
+    }
+
+    private void registerParameterSignal(IrSignal irSignal) {
+        if (irSignal != null) {
+            try {
+                ParametrizedIrSignal pir = new ParametrizedIrSignal(irSignal, properties.getParametrizedLearnIgnoreT());
+                registerParameterSignal(pir);
+            } catch (NoDecodeException ex) {
+                guiUtils.message("Undecodable signal, ignored");
+            }
+        }
+    }
+
+    private void registerParameterSignal(Collection<Command> commands) throws IrpException, IrCoreException {
+        for (Command command : commands) {
+            registerParameterSignal(new ParametrizedIrSignal(command));
+        }
+    }
+
+    private void registerParameterSignal(ParametrizedIrSignal signal) {
+        parameterTableModel.addSignal(signal);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends TableModel> void enableSorter(JTable table, boolean state) {
+        TableRowSorter<T> tableRowSorter = state ? new TableRowSorter<>((T) table.getModel()) : null;
+        table.setRowSorter(tableRowSorter);
+    }
+
+    private <T extends TableModel> void copyTableToClipboard(JTable table, boolean useSelection) {
+        StringBuilder str = new StringBuilder(1024);
+        for (int i = 0; i < table.getRowCount(); i++) {
+            if (!useSelection || table.isRowSelected(i)) {
+                if (str.length() > 0)
+                    str.append('\n');
+                for (int j = 0; j < table.getColumnCount(); j++) {
+                    if (j > 0)
+                        str.append('\t');
+                    Object obj = table.getValueAt(i, j);
+                    if (obj != null)
+                        str.append(obj.toString());
+                }
+            }
+        }
+        (new CopyClipboardText(null)).toClipboard(str.toString());
+    }
+
+    private void enableRawCaptureOnly(boolean value) {
+        // FXIME: what is more to do? Disable the popup menu?
+        rawCookedTabbedPane.setEnabledAt(0, !value);
+        for (int i = 0; i < this.topLevelTabbedPane.getTabCount(); i++) {
+            this.topLevelTabbedPane.setEnabledAt(i, !value || i == this.topLevelTabbedPane.getSelectedIndex());
+        }
+    }
+
+    private void parameterTableAddMissingF() throws UnknownProtocolException, ErroneousSelectionException, GirrException, IrpException, IrCoreException {
+        Command command = tableUtils.commandTableSelectedRow(parameterTable);
+        if (command == null)
+            throw new IllegalArgumentException("No command selected.");
+        ArrayList<Long> presentFs = parameterTableModel.listF(command);
+        String protocolName = command.getProtocolName();
+        Protocol protocol = irpDatabase.getProtocol(protocolName);
+        for (Long F = protocol.getParameterMin("F"); F <= protocol.getParameterMax("F"); F++) {
+            if (!presentFs.contains(F)) {
+                @SuppressWarnings("unchecked")
+                Map<String, Long> params = new HashMap<>(command.getParameters());
+                params.put("F", F);
+                registerParameterCommand(new Command(DefaultSignalNameFormatter.formatName(command.getProtocolName(), params),
+                        "", protocolName, params));
+            }
+        }
+    }
+
+    private void setParameter(String name) {
+        List<Integer> rows = tableUtils.modelLinesSelected(parameterTable);
+        if (rows.isEmpty()) {
+            guiUtils.error("Nothing selected");
+            return;
+        }
+        Long answer = guiUtils.getLongInput("Enter new value for " + name, 0);
+        if (answer != null)
+            parameterTableModel.setParameter(name, answer, rows);
+    }
+
+    private boolean transmit(IrSignal irSignal) throws IOException, HardwareUnavailableException, HarcHardwareException, NoSuchTransmitterException, InvalidArgumentException, CannotSendException {
+        return hardwareManager.sendIr(irSignal, Integer.parseInt((String)noTransmitsComboBox.getSelectedItem()));
+    }
+
+    public boolean transmit(Command command) throws IrpException, IrCoreException, IOException, HardwareUnavailableException, HarcHardwareException, NoSuchTransmitterException, InvalidArgumentException, CannotSendException {
+        return transmit(command.toIrSignal());
+    }
+
+    private boolean transmit(JTable table) throws ErroneousSelectionException, GirrException, IrpException, IrCoreException, IOException, HardwareUnavailableException, HarcHardwareException, NoSuchTransmitterException, InvalidArgumentException, CannotSendException {
+        Command command = tableUtils.commandTableSelectedRow(table);
+        return transmit(command);
+    }
+
+    public void selectImportPane(ImportType type) {
+        lastPane = topLevelTabbedPane.getSelectedComponent();
+        topLevelTabbedPane.setSelectedComponent(type == ImportType.signal ? signalScrutinizerPanel : remoteScrutinizerPanel);
+        if (type != ImportType.signal)
+            rawCookedTabbedPane.setSelectedComponent(type == ImportType.parametricRemote ? cookedPanel : rawPanel);
+    }
+
+    private void selectLastPane() {
+        if (lastPane != null) {
+            Component present = topLevelTabbedPane.getSelectedComponent();
+            topLevelTabbedPane.setSelectedComponent(lastPane);
+            lastPane = present;
+        }
+    }
+
+    private void enableSubFormats(boolean select) {
+        exportGenerateParametersCheckBox.setEnabled(select);
+        exportGenerateRawCheckBox.setEnabled(select);
+        exportGenerateCcfCheckBox.setEnabled(select);
+        exportGenerateShortCcfCheckBox.setEnabled(select);
+        exportGenerateSendIrCheckBox.setEnabled(select);
+    }
+
+    private void selectFormat() {
+        selectFormat(properties.getExportFormatName());
+    }
+
+    private void selectFormat(String formatNm) {
+        String formatName = formatNm;
+        IExporterFactory format = exportFormatManager.get(formatName);
+        if (format == null) {
+            guiUtils.warning("Export format " + formatName + " not found, selecting Girr.");
+            formatName = "Girr";
+            format = exportFormatManager.get(formatName);
+        }
+        properties.setExportFormatName(formatName);
+
+        ICommandExporter exporter = format.newExporter();
+        boolean supportsEmbedded = IRemoteSetExporter.class.isInstance(exporter) && ((IRemoteSetExporter) exporter).supportsEmbeddedFormats();
+        enableSubFormats(supportsEmbedded);
+        exportRepeatComboBox.setEnabled(supportsEmbedded && exportGenerateSendIrCheckBox.isSelected() || exporter.considersRepetitions());
+        if (!formatName.equals(exportFormatComboBox.getSelectedItem()))
+            exportFormatComboBox.setSelectedItem(formatName);
+        exportFormatManager.setMenuSelection(formatName);
+    }
+
+    private void setCapturedDataTextAreaFromClipboard() {
+        String clip = (new CopyClipboardText(null)).fromClipboard();
+        if (clip == null)
+            clip = "";
+        capturedDataTextArea.setText(clip.replace('\n', ' '));
+    }
+
+    // There is almost certainly a more eleganat way of doing this ;-).
+    private void insertCapturedDataTextAreaFromClipboard() {
+        String clip = (new CopyClipboardText(null)).fromClipboard();
+        if (clip == null)
+            clip = "";
+        String old = capturedDataTextArea.getText();
+        if (old == null)
+            old = "";
+        int index = capturedDataTextArea.getCaretPosition();
+        String newContent = (old.substring(0, index) + clip + old.substring(index)).replace('\n', ' ');
+        capturedDataTextArea.setText(newContent);
+        capturedDataTextArea.setCaretPosition(index + clip.length());
+    }
+
+    private void loadExportFormatsGuiRefresh() {
+        try {
+            loadExportFormats();
+            exportFormatComboBox.setModel(new DefaultComboBoxModel<>(exportFormatManager.toArray()));
+            exportFormatComboBox.setSelectedItem(properties.getExportFormatName());
+            optionsMenu.remove(dynamicExportFormatsMenuPosition);
+            optionsMenu.add(exportFormatManager.getMenu(properties.getExportFormatName()), dynamicExportFormatsMenuPosition);
+        } catch (IOException | ParserConfigurationException | SAXException ex) {
+            guiUtils.error(ex);
+        }
+    }
+
+    private boolean checkChangeExportDirectory(File dirName) {
+        // Don't care for checking writeability of dirName
+        File dir;
+        try {
+            dir = dirName.getCanonicalFile();
+        } catch (IOException ex) {
+            // really unlikely
+            guiUtils.error(ex);
+            return false;
+        }
+        if (dir.isDirectory()) {
+            properties.setExportDir(exportDirectoryTextField.getText());
+            return true;
+        }
+
+        boolean create = guiUtils.confirm(exportDirectoryTextField.getText() + " does not exist. Create it?");
+        if (!create)
+            return false;
+
+        boolean status = dir.mkdirs();
+        if (!status) {
+            guiUtils.error("Failed to create " + dir);
+            return false;
+        }
+
+        properties.setExportDir(exportDirectoryTextField.getText());
+        return true;
+    }
+
+    private void protocolDocuPopup(Command command) throws IrpException, IrCoreException {
+        protocolDocuPopup(command.getProtocolName());
+    }
+
+    private void protocolDocuPopup(String protocolName) throws IrpException {
+        if (protocolName == null)
+            throw new IrpException("No decode.");
+
+        String docu = irpDatabase.getDocumentation(protocolName); // throws UnknownProtocolException
+        StringBuilder str = new StringBuilder(irpDatabase.getIrp(protocolName)).append("\n\n");
+        if (docu != null)
+            str.append(docu);
+        HelpPopup.newHelpPopup(this, str.toString(), protocolName);
+    }
+
+    private void pasteColumnInTable(JTable rawTable, NamedIrSignal.LearnedIrSignalTableModel tableModel) throws NoSelectionException {
+        String clip = (new CopyClipboardText(null)).fromClipboard();
+        String[] arr = clip.split("\r?\n");
+        int row = rawTable.getSelectedRow();
+        int column = rawTable.convertColumnIndexToModel(rawTable.getSelectedColumn());
+        if (row < 0 || column < 0)
+            throw new NoSelectionException("No target cell selected");
+        tableModel.replaceColumnSubset(row, column, arr);
+    }
+
+    private static interface CaptureThreadClient {
+
+        JToggleButton getButton();
+        void processSequence(ModulatedIrSequence modulatedIrSequence);
+    }
+
+    private class CaptureThread extends Thread {
+
+        private final CaptureThreadClient client;
+        private boolean terminate;
+
+        CaptureThread(CaptureThreadClient client) {
+            this.client = client;
+            terminate = false;
+        }
+
+        @Override
+        public void run() {
+            startButton.setEnabled(false);
+            while (!terminate && client.getButton().isSelected()) {
+                try {
+                    ModulatedIrSequence sequence = captureIrSequence();
+                    if (sequence != null)
+                        client.processSequence(sequence);
+
+                    if (!hardwareManager.isReady()) {
+                        guiUtils.error("Selected capture device is no longer ready");
+                        client.getButton().setSelected(false);
+                    }
+                } catch (HardwareUnavailableException | IOException | HarcHardwareException | InvalidArgumentException ex) {
+                    guiUtils.error(ex);
+                    client.getButton().setSelected(false);
+                }
+            }
+            captureThread = null; // thread suicide
+            startButton.setEnabled(true);
+            enableRawCaptureOnly(false);
+            topLevelTabbedPane.setEnabled(true);
+            jumpToLastPanelMenuItem.setEnabled(true);
+        }
+
+        private void terminate() {
+            terminate = true;
+        }
+    }
 
     private class ScrutinizeIrCaller implements LookAndFeelManager.ILookAndFeelManagerCaller {
         @Override
@@ -353,1622 +2099,6 @@ public final class GuiMain extends javax.swing.JFrame {
                 }
             }
         }
-    }
-
-    static {
-        try {
-            testSignal = Pronto.parse(testSignalCcf);
-        } catch (Pronto.NonProntoFormatException | InvalidArgumentException ex) {
-            throw new ThisCannotHappenException(ex);
-        }
-    }
-
-    /**
-     * Main class for the GUI. Throws exceptions if configuration files cannot be found or on similar errors.
-     * It may of course be questioned if this is necessary, however, it is faster for the user to
-     * install the files than for me to write code for semi-working in semi-broken situations.
-     *
-     * @param applicationHome
-     * @param propsfilename Name of properties file. Null for system default.
-     * @param verbose Verbose execution of some commands, dependent on invoked programs.
-     * @param userlevel Presently not used.
-     * @param arguments
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws IOException
-     * @throws java.text.ParseException
-     * @throws org.harctoolbox.irp.IrpParseException
-     */
-    public GuiMain(String applicationHome, String propsfilename, boolean verbose,
-            int userlevel, List<String> arguments) throws IOException, java.text.ParseException, ParserConfigurationException, SAXException, IrpParseException {
-        this.applicationHome = applicationHome;
-        System.setProperty("harctoolbox.jniLibsHome", applicationHome);
-
-        // First try to load library from absolute path,
-        try {
-            LircHardware.loadLibrary(libraryFileName(applicationHome, LircHardware.libraryName));
-        } catch (UnsatisfiedLinkError ex) {
-        }
-
-        // ... then try system path.
-        try {
-            LircHardware.loadLibrary();
-        } catch (UnsatisfiedLinkError e) {
-        }
-
-        LocalSerialPort.setLibraryDir(org.harctoolbox.harchardware.Utils.libraryDir(applicationHome));
-
-        properties = new Props(propsfilename, this.applicationHome);
-        if (verbose)
-            properties.setVerbose(true);
-        Importer.setProperties(properties);
-        HelpPopup.setBaseUrl(new URL("file", null, properties.mkPathAbsolute(properties.getProtocolDocfilePath())).toString());
-
-        parameterTableModel = new ParametrizedIrSignal.ParameterIrSignalTableModel();
-        rawTableModel = new RawIrSignal.RawTableModel();
-        parameterTableColumnModel = new ParametrizedIrSignal.ParameterIrSignalTableColumnModel();
-        rawTableColumnModel = new RawIrSignal.RawTableColumnModel();
-
-        guiUtils = new GuiUtils(this);
-        guiUtils.setProgramName(Version.appName);
-        guiUtils.setMaxGuiMessageLength(maxCharsInGuiMessages);
-        guiUtils.setUsePopupsForErrors(false); // during initialization, popup errors might not work
-        guiUtils.setUsePopupsForHelp(properties.getUsePopupsForHelp());
-        guiUtils.setOfferStackTrace(properties.getOfferStackTrace());
-        guiUtils.setVerbose(properties.getVerbose());
-
-        tableUtils = new TableUtils(guiUtils);
-
-        ProntoModel[] prontomodels = ProntoModel.getModels();
-        prontoModelNames = new String[prontomodels.length];
-        for (int i = 0; i < prontomodels.length; i++)
-            prontoModelNames[i] = prontomodels[i].toString();
-
-        lircImporter = new LircImporter();
-        lircImporter.setRejectLircCode(properties.getRejectLircCodeImports());
-        properties.addRejectLircCodeImportsChangeListener((String name1, Object oldValue, Object newValue) -> {
-            lircImporter.setRejectLircCode((Boolean) newValue);
-        });
-
-        irTransImporter = new IrTransImporter();
-        cmlImporter = new CmlImporter();
-        commandFusionImporter = new CommandFusionImporter();
-        ccfImporter = new CcfImporter();
-        ccfImporter.setTranslateProntoFont(properties.getTranslateProntoFont());
-        xcfImporter = new XcfImporter();
-        xcfImporter.setTranslateProntoFont(properties.getTranslateProntoFont());
-        properties.addTranslateProntoFontChangeListener((String name1, Object oldValue, Object newValue) -> {
-            ccfImporter.setTranslateProntoFont((Boolean) newValue);
-            xcfImporter.setTranslateProntoFont((Boolean) newValue);
-        });
-
-        csvRawImporter = new CsvRawImporter(properties.getRawSeparatorIndex(), properties.getRawNameColumn(),
-                properties.getRawNameMultiColumn(), properties.getCodeColumn(),
-                properties.getIncludeTail());
-
-        properties.addRawSeparatorIndexChangeListener((String name1, Object oldValue, Object newValue) -> {
-            csvRawImporter.setSeparatorIndex((Integer)newValue);
-        });
-        properties.addRawNameColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
-            csvRawImporter.setNameColumn((Integer)newValue);
-        });
-        properties.addRawNameMultiColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
-            csvRawImporter.setNameMultiColumn((Boolean)newValue);
-        });
-        properties.addCodeColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
-            csvRawImporter.setCodeColumn((Integer)newValue);
-        });
-        properties.addIncludeTailChangeListener((String name1, Object oldValue, Object newValue) -> {
-            csvRawImporter.setIncludeTail((Boolean)newValue);
-        });
-
-        csvParametrizedImporter = new CsvParametrizedImporter(
-                CsvImporter.getSeparator(properties.getParametricSeparatorIndex()),
-                properties.getParametricNameColumn(),
-                properties.getParametrizedNameMultiColumn(),
-                properties.getVerbose(),
-                numberbaseIndex2numberbase(properties.getParametricNumberBaseIndex()),
-                properties.getFColumn(),
-                properties.getDColumn(),
-                properties.getSColumn(),
-                properties.getProtocolColumn(),
-                properties.getMiscParametersColumn());
-
-        properties.addParametricSeparatorIndexChangeListener((String name1, Object oldValue, Object newValue) -> {
-            csvParametrizedImporter.setSeparatorIndex((Integer) newValue);
-        });
-
-        properties.addParametricNameColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
-            csvParametrizedImporter.setNameColumn((Integer) newValue);
-        });
-
-        properties.addParametricNumberBaseIndexChangeListener((String name1, Object oldValue, Object newValue) -> {
-            csvParametrizedImporter.setNumberBase(numberbaseIndex2numberbase((Integer) newValue));
-        });
-
-        properties.addFColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
-            csvParametrizedImporter.setFColumn((Integer) newValue);
-        });
-
-        properties.addDColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
-            csvParametrizedImporter.setDColumn((Integer) newValue);
-        });
-
-        properties.addSColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
-            csvParametrizedImporter.setSColumn((Integer) newValue);
-        });
-
-        properties.addProtocolColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
-            csvParametrizedImporter.setProtocolColumn((Integer) newValue);
-        });
-
-        properties.addParametrizedNameMultiColumnChangeListener((String name1, Object oldValue, Object newValue) -> {
-            csvParametrizedImporter.setNameMultiColumn((Boolean) newValue);
-        });
-
-        ictImporter = new IctImporter();
-        ictImporter.setChop(properties.getChopIctImports());
-
-        irpDatabase = new IrpDatabase(properties.mkPathAbsolute(properties.getIrpProtocolsPath())); // must come before initComponents
-
-        girrImporter = new GirrImporter(properties.getGirrValidate(), new URL(properties.getGirrSchemaLocation()), irpDatabase);
-        properties.addGirrSchemaLocationChangeListener((String name1, Object oldValue, Object newValue) -> {
-            try {
-                girrImporter.setUrl(new URL((String)newValue));
-            } catch (MalformedURLException ex) {
-                guiUtils.error(ex);
-            }
-        });
-
-        properties.addGirrValidateChangeListener((String name1, Object oldValue, Object newValue) -> {
-            girrImporter.setValidate((Boolean) newValue);
-        });
-
-        waveImporter = new WaveImporter(properties.getImportWaveDivideCarrier());
-        properties.addImportWaveDivideCarrierChangeListener((String name1, Object oldValue, Object newValue) -> {
-            waveImporter.setDivideCarrier((Boolean) newValue);
-        });
-
-        RepeatFinder.setDefaultAbsoluteTolerance(properties.getAbsoluteTolerance());
-        RepeatFinder.setDefaultRelativeTolerance(properties.getRelativeTolerance());
-
-        decoder = new Decoder(irpDatabase);
-        decoderParameters = new Decoder.DecoderParameters(decodeStrict,
-                decodeAllDecodes,
-                properties.getRemoveDefaultedParameters(),
-                decodeRecursive,
-                properties.getFrequencyTolerance(),
-                properties.getAbsoluteTolerance(),
-                properties.getRelativeTolerance(),
-                properties.getMinLeadOut(),
-                decodeOverride,
-                properties.getIgnoreLeadingGarbage()
-        );
-        Command.setDecoderParameters(decoderParameters);
-        RawIrSignal.setDecoderParameters(decoderParameters);
-        ParametrizedIrSignal.setDecoderParameters(decoderParameters);
-        properties.addFrequencyToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
-            decoderParameters.setFrequencyTolerance((Double) newValue);
-        });
-        properties.addAbsoluteToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
-            decoderParameters.setAbsoluteTolerance((Double) newValue);
-        });
-        properties.addRelativeToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
-            decoderParameters.setRelativeTolerance((Double) newValue);
-        });
-        properties.addMinLeadOutChangeListener((String name1, Object oldValue, Object newValue) -> {
-            decoderParameters.setMinimumLeadout((Double) newValue);
-        });
-        properties.addRemoveDefaultedParametersChangeListener((String name1, Object oldValue, Object newValue) -> {
-            decoderParameters.setRemoveDefaultedParameters((Boolean) newValue);
-        });
-
-        SelectFile.restoreFromString(properties.getFileselectordirs());
-
-        loadExportFormats(); // must come before initComponents
-
-        initComponents();
-
-        girrImporter.setIrpRendererBean(irpMasterBean);
-
-        tableUtils.fixKeyMappings(parameterTable);
-        tableUtils.fixKeyMappings(rawTable);
-
-        currentPane = topLevelTabbedPane.getSelectedComponent();
-
-        cookedPanel.setTransferHandler(new GirrImporterBeanTransferHandler(false));
-        rawPanel.setTransferHandler(new GirrImporterBeanTransferHandler(true));
-
-        capturedDataTextArea.setTransferHandler(new SignalScrutinizerTransferHandler(capturedDataTextArea.getTransferHandler()));
-
-        // Cannot do this in initComponents, since then it will be called therein
-        importTabbedPane.addChangeListener((javax.swing.event.ChangeEvent evt) -> {
-            int index  = importTabbedPane.getSelectedIndex();
-            properties.setImportPaneSelectedIndex(index);
-        });
-        parametrizedRawTabbedPane.addChangeListener((javax.swing.event.ChangeEvent evt) -> {
-            int index  = parametrizedRawTabbedPane.getSelectedIndex();
-            properties.setParametrizedRawTabbedPaneSelectedIndex(index);
-        });
-
-        // Scroll the tables to the last line
-        parameterTable.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                if (parameterTableModel.getAndResetScrollRequest())
-                    parameterTable.scrollRectToVisible(parameterTable.getCellRect(parameterTable.getRowCount() - 1, 0, true));
-            }
-        });
-
-        rawTable.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                if (rawTableModel.getAndResetScrollRequest())
-                    rawTable.scrollRectToVisible(parameterTable.getCellRect(parameterTable.getRowCount() - 1, 0, true));
-            }
-        });
-
-        enableSorter(rawTable, properties.getSorterOnRawTable());
-        enableSorter(parameterTable, properties.getSorterOnParametrizedTable());
-
-        setupProxy();
-
-        dynamicExportFormatsMenuPosition = optionsMenu.getItemCount();
-        optionsMenu.add(this.exportFormatManager.getMenu(properties.getExportFormatName()));
-        optionsMenu.add(new Separator());
-
-        Command.setIrpDatabase(irpDatabase);
-        ParametrizedIrSignal.setDecoder(decoder);
-        ParametrizedIrSignal.setGenerateCcf(properties.getGenerateCcf());
-        ParametrizedIrSignal.setGenerateRaw(properties.getGenerateRaw());
-
-        properties.addGenerateCcfChangeListener((String name1, Object oldValue, Object newValue) -> {
-            ParametrizedIrSignal.setGenerateCcf((Boolean) newValue);
-        });
-        properties.addGenerateRawChangeListener((String name1, Object oldValue, Object newValue) -> {
-            ParametrizedIrSignal.setGenerateRaw((Boolean) newValue);
-        });
-
-        RawIrSignal.setDecoder(decoder);
-        RawIrSignal.setInvokeAnalyzer(properties.getInvokeAnalyzer());
-        RawIrSignal.setInvokeDecoder(properties.getInvokeDecoder());
-        RawIrSignal.setAbsoluteTolerance(properties.getAbsoluteTolerance());
-        RawIrSignal.setRelativeTolerance(properties.getRelativeTolerance());
-        RepeatFinder.setDefaultAbsoluteTolerance(properties.getAbsoluteTolerance());
-        RepeatFinder.setDefaultRelativeTolerance(properties.getRelativeTolerance());
-
-        properties.addInvokeAnalyzerChangeListener((String name1, Object oldValue, Object newValue) -> {
-            RawIrSignal.setInvokeAnalyzer((Boolean) newValue);
-        });
-        properties.addInvokeDecoderChangeListener((String name1, Object oldValue, Object newValue) -> {
-            RawIrSignal.setInvokeDecoder((Boolean) newValue);
-        });
-        properties.addAbsoluteToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
-            RawIrSignal.setAbsoluteTolerance((Double) newValue);
-            RepeatFinder.setDefaultAbsoluteTolerance((Double) newValue);
-        });
-        properties.addRelativeToleranceChangeListener((String name1, Object oldValue, Object newValue) -> {
-            RawIrSignal.setRelativeTolerance((Double) newValue);
-            RepeatFinder.setDefaultRelativeTolerance((Double) newValue);
-        });
-
-        sendingHardwareManager = new SendingHardwareManager(guiUtils, properties, sendingHardwareTabbedPane);
-        properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
-            sendingHardwareManager.setVerbose((Boolean)newValue);
-            guiUtils.setVerbose((Boolean)newValue);
-        });
-
-        SendingGlobalCache sendingGlobalCache = new SendingGlobalCache(globalCachePanel, properties,
-                guiUtils, globalCacheIrSenderSelector);
-        sendingHardwareManager.add(sendingGlobalCache);
-
-        SendingIrTrans sendingIrTrans = new SendingIrTrans(irTransPanel, properties,
-                guiUtils, irTransInternetHostPanel);
-        sendingHardwareManager.add(sendingIrTrans);
-
-        SendingIrAudioPort sendingIrAudioPort = new SendingIrAudioPort(audioPanel,
-                transmitAudioParametersBean, properties, guiUtils);
-        sendingHardwareManager.add(sendingIrAudioPort);
-
-        SendingSerial<IrToy> sendingIrToy = new SendingSerial<>(IrToy.class, irToyPanel, //irToyVersionLabel,
-                irToySerialPortBean, properties, guiUtils);
-        sendingHardwareManager.add(sendingIrToy);
-
-        SendingDevLirc sendingDevLirc = null;
-        if (LircHardware.isLibraryLoaded()) {
-            sendingDevLirc = new SendingDevLirc(devLircPanel, devLircBean, properties, guiUtils);
-            sendingHardwareManager.add(sendingDevLirc);
-        }
-
-        SendingGirsClient sendingGirsClient = new SendingGirsClient(girsClientPanel,
-                girsTcpSerialComboBean, properties, guiUtils);
-        sendingHardwareManager.add(sendingGirsClient);
-
-        SendingSerial<CommandFusion> sendingcommandFusion = new SendingSerial<>(CommandFusion.class, commandFusionSendPanel,
-                commandFusionSendingSerialPortBean, properties, guiUtils);
-        sendingHardwareManager.add(sendingcommandFusion);
-
-        SendingGenericSerialPort sendingGenericSerialPort = new SendingGenericSerialPort(
-                genericSerialPanel,
-                genericSerialSenderBean,
-                properties,
-                guiUtils);
-        if (userlevel != 0)
-            sendingHardwareManager.add(sendingGenericSerialPort);
-
-        try {
-            sendingHardwareManager.select(properties.getTransmitHardware());
-        } catch (HarcHardwareException ex) {
-            guiUtils.error(ex);
-        }
-
-        optionsMenu.add(sendingHardwareManager.getMenu());
-
-        capturingHardwareManager = new CapturingHardwareManager(guiUtils, properties,
-                capturingHardwareTabbedPane/*, startButton*/);
-
-        capturingHardwareManager.add(new CapturingSerial<>(IrWidget.class, captureIrWidgetPanel,
-                irWidgetSerialPortSimpleBean, properties, guiUtils, capturingHardwareManager));
-
-        capturingHardwareManager.add(new CapturingGlobalCache(properties.getGlobalCacheCaptureIpName(),
-                globalCacheCaptureSelector, captureGlobalCachePanel,
-                properties, guiUtils, capturingHardwareManager));
-
-        capturingHardwareManager.add(new CapturingSendingHardware<GirsClient>(captureGirsPanel, girsClientPanel,
-                girsClientCapturingSendingBean, girsTcpSerialComboBean, sendingGirsClient,
-                properties, guiUtils, capturingHardwareManager));
-
-        if (LircHardware.isLibraryLoaded())
-            capturingHardwareManager.add(new CapturingSendingHardware<>(captureDevLircPanel, devLircPanel,
-                    devLircCapturingSendingBean, devLircBean, sendingDevLirc,
-                    properties, guiUtils, capturingHardwareManager));
-
-        capturingHardwareManager.add(new CapturingSendingHardware<>(captureCommandFusionPanel, commandFusionSendPanel,
-                commandFusionCapturingSendingBean, commandFusionSendingSerialPortBean, sendingcommandFusion,
-                properties, guiUtils, capturingHardwareManager));
-
-        capturingHardwareManager.add(new CapturingSendingHardware<>(captureIrToyPanel, irToyPanel,
-                irtoyCapturingSendingBean, irToySerialPortBean, sendingIrToy,
-                properties, guiUtils, capturingHardwareManager));
-
-        try {
-            capturingHardwareManager.select(properties.getCaptureDevice());
-        } catch (HarcHardwareException ex) {
-            guiUtils.error(ex);
-        }
-
-        properties.addCaptureBeginTimeoutChangeListener((String name1, Object oldValue, Object newValue) -> {
-            try {
-                capturingHardwareManager.getCapturer().setBeginTimeout((Integer) newValue);
-            } catch (IOException | HarcHardwareException ex) {
-                guiUtils.error(ex);
-            }
-        });
-
-        properties.addCaptureMaxSizeChangeListener((String name1, Object oldValue, Object newValue) -> {
-            try {
-                capturingHardwareManager.getCapturer().setCaptureMaxSize((Integer) newValue);
-            } catch (IOException | HarcHardwareException ex) {
-                guiUtils.error(ex);
-            }
-        });
-
-        properties.addCaptureEndingTimeoutChangeListener((String name1, Object oldValue, Object newValue) -> {
-            try {
-                capturingHardwareManager.getCapturer().setEndingTimeout((Integer) newValue);
-            } catch (IOException | HarcHardwareException ex) {
-                guiUtils.error(ex);
-            }
-        });
-
-        properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
-            capturingHardwareManager.setVerbose((Boolean)newValue);
-        });
-
-        optionsMenu.add(capturingHardwareManager.getMenu());
-
-        irpMasterBean.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> {
-            switch (evt.getPropertyName()) {
-                case IrpRenderBean.PROP_PROTOCOL_NAME:
-                    properties.setIrpMasterCurrentProtocol((String) evt.getNewValue());
-                    break;
-                case IrpRenderBean.PROP_D:
-                    properties.setIrpMasterCurrentD((String) evt.getNewValue());
-                    break;
-                case IrpRenderBean.PROP_S:
-                    properties.setIrpMasterCurrentS((String) evt.getNewValue());
-                    break;
-                case IrpRenderBean.PROP_F:
-                    properties.setIrpMasterCurrentF((String) evt.getNewValue());
-                    break;
-                case IrpRenderBean.PROP_T:
-                    properties.setIrpMasterCurrentT((String) evt.getNewValue());
-                    break;
-                case IrpRenderBean.PROP_ADDITIONAL_PARAMS:
-                    properties.setIrpMasterCurrentAdditionalParameters((String) evt.getNewValue());
-                    break;
-                default:
-                    guiUtils.error("Programming error detected: " + evt.getPropertyName());
-                    break;
-            }
-        });
-
-        initializePlot();
-        String title = Version.versionString;
-        if (System.getenv("APPIMAGE") != null)
-            title += " AppImage";
-        super.setTitle(title);
-        updateOutputFormat(properties.getOutputFormatIndex());
-
-        LookAndFeelManager.ILookAndFeelManagerCaller caller = new ScrutinizeIrCaller();
-        lookAndFeelManager = new LookAndFeelManager(this, lafMenu, caller);
-        lookAndFeelManager.setLAF(properties.getLookAndFeel());
-        lookAndFeelManager.updateLAF();
-        lafMenu.setVisible(true);
-
-        selectFormat();
-
-        Rectangle bounds = properties.getBounds();
-        if (bounds != null)
-            super.setBounds(bounds);
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                cleanupForShutdown();
-            }
-        });
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent we) {
-                boolean leave = checkUnsavedStuff();
-                if (leave) {
-                    killRunningCapture();
-                    System.exit(IrpUtils.EXIT_SUCCESS);
-                }
-            }
-        });
-
-        super.setIconImage((new ImageIcon(GuiMain.class.getResource("/icons/Crystal-Clear/64x64/apps/babelfish.png"))).getImage());
-        console.setErrorFunction(
-                new org.harctoolbox.guicomponents.Console.IErrorFunction() {
-            @Override
-            public void err(Exception ex, String message) {
-                if (ex == null)
-                    guiUtils.error(message);
-                else
-                    guiUtils.error(ex, message);
-            }
-
-            @Override
-            public void err(String str) {
-                guiUtils.error(str);
-            }
-        });
-
-        // When the Tonto stuff loads, it tries to load a library called jnijcomm,
-        // see javax.comm.DriverGenUnix. This will fail, but that is no concern for us.
-        // However, it writes an ugly stacktrace on stderr, which is scaring the user.
-        // Therefore, redirect stderr to nirvana, and make that call now.
-        PrintStream nullPrintStream;
-        try {
-            nullPrintStream = new PrintStream(new ByteArrayOutputStream(), false, "US-ASCII");
-        } catch (UnsupportedEncodingException ex) {
-            throw new ThisCannotHappenException();
-        }
-        System.setErr(nullPrintStream);
-        DriverGenUnix ignored = new DriverGenUnix();
-
-        console.setStdErr();
-        console.setStdOut();
-
-        guiUtils.setUsePopupsForErrors(properties.getUsePopupsForErrors());
-        if (userlevel == 0) { // ! experimental
-            sendingHardwareTabbedPane.remove(genericSerialPanel);
-        }
-        if (!LircHardware.isLibraryLoaded()) {
-            sendingHardwareTabbedPane.remove(devLircPanel);
-            capturingHardwareTabbedPane.remove(captureDevLircPanel);
-        }
-
-        processArguments(arguments);
-    } // end of constructor
-
-    // Just snarfed from IrpMaster
-    private static File libraryFileName(String appHome, String libraryName) {
-        String subFolderName = (System.getProperty("os.name").startsWith("Windows")
-                ? "Windows"
-                : System.getProperty("os.name"))
-                + '-' + System.getProperty("os.arch").toLowerCase(Locale.US);
-        String stem = System.getProperty("harctoolbox.jniLibsHome") != null
-                ? System.getProperty("harctoolbox.jniLibsHome")
-                : appHome;
-        String mappedName = System.mapLibraryName(libraryName);
-        return new File(new File(stem, subFolderName), mappedName);
-    }
-
-    private void processArguments(List<String> arguments) {
-        int sum = 0;
-        for (String str : arguments) {
-            try {
-                sum += importGirr(new File(str), false);
-            } catch (FileNotFoundException ex) {
-                guiUtils.error("File \"" + str + "\" not found, ignoring.");
-            } catch (IOException | ParseException | InvalidArgumentException ex) {
-                guiUtils.error(ex);
-            }
-        }
-        if (sum > 0) {
-            selectImportPane(ImportType.parametricRemote);
-            parameterTableModel.clearUnsavedChanges();
-        }
-    }
-
-    private boolean killRunningCapture() {
-        if (captureThreadRunning()) {
-            captureThread.terminate();
-            try {
-                if (captureThread != null)
-                    captureThread.join(1000L);
-            } catch (InterruptedException ex) {
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private boolean captureThreadRunning() {
-        return captureThread != null && captureThread.isAlive();
-    }
-
-    private boolean checkUnsavedStuff() {
-        AckWithMemoryDialog.PropertyFlip parameterFlip = new AckWithMemoryDialog.PropertyFlip() {
-            @Override
-            public boolean getProperty() {
-                return properties.getDontInquire4UnsavedParametricRemotes();
-            }
-
-            @Override
-            public void setProperty(boolean value) {
-                properties.setDontInquire4UnsavedParametricRemotes(value);
-            }
-        };
-
-        AckWithMemoryDialog.PropertyFlip rawFlip = new AckWithMemoryDialog.PropertyFlip() {
-            @Override
-            public boolean getProperty() {
-                return properties.getDontInquire4UnsavedRawRemotes();
-            }
-
-            @Override
-            public void setProperty(boolean value) {
-                properties.setDontInquire4UnsavedRawRemotes(value);
-            }
-        };
-
-        boolean exitOk = !parameterTableModel.hasUnsavedChanges()
-                || AckWithMemoryDialog.ackWithMemoryDialog("There is unsaved data in \"Parametetric Remote\".", "Really exit?", parameterFlip, this);
-        exitOk = exitOk && (!rawTableModel.hasUnsavedChanges()
-                || AckWithMemoryDialog.ackWithMemoryDialog("There is unsaved data in \"Raw Remote\".", "Really exit?", rawFlip, this));
-
-        return exitOk;
-    }
-
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
-    private void cleanupForShutdown() {
-        try {
-            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, "US-ASCII"));
-            System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err), true, "US-ASCII"));
-        } catch (UnsupportedEncodingException ex) {
-            throw new InternalError("This cannot happen");
-        }
-        capturingHardwareManager.close();
-        sendingHardwareManager.close();
-        properties.setFileselectordirs(SelectFile.saveString());
-        try {
-            if (!properties.getWasReset())
-                properties.setBounds(getBounds());
-            properties.save();
-        } catch (IOException e) {
-            System.err.println("Problems saving properties; " + e.getMessage());
-        }
-    }
-
-    public int importGirr(File file, boolean raw, String charsetName) throws ParseException, InvalidArgumentException, IOException {
-        return importCommands(girrImporter.getRemoteSet(file), girrImporter.getMetaData(), raw);
-    }
-
-    public int importGirr(File file, boolean raw) throws ParseException, InvalidArgumentException, IOException {
-        return importGirr(file, raw, properties.getImportCharsetName());
-    }
-
-    public void selectSenderHardware(javax.swing.JPanel panel) {
-        lastPane = topLevelTabbedPane.getSelectedComponent();
-        topLevelTabbedPane.setSelectedComponent(sendingPanel);
-        sendingHardwareTabbedPane.setSelectedComponent(panel);
-    }
-
-    private Command.CommandTextFormat[] setupExtraTextFormats() {
-        ArrayList<Command.CommandTextFormat> formats = new ArrayList<>(8);
-        if (properties.getExportGenerateShortCcf())
-            formats.add(new ShortCcfFormatter());
-        if (properties.getExportGenerateSendIr())
-            formats.add(new SendIrFormatter());
-        return formats.toArray(new Command.CommandTextFormat[formats.size()]);
-    }
-
-    private GirrExporter newGirrExporter() {
-        return new GirrExporter(properties.getCreatingUser(),
-                properties.getGirrFatRaw(),
-                properties.getExportGenerateRaw(),
-                properties.getExportGenerateCcf(),
-                properties.getExportGenerateParameters(),
-                setupExtraTextFormats());
-    }
-
-    private TextExporter newTextExporter() {
-        return new TextExporter(properties.getExportGenerateRaw(),
-                properties.getExportGenerateCcf(),
-                properties.getExportGenerateParameters(),
-                setupExtraTextFormats());
-    }
-
-    public ProntoClassicExporter newProntoClassicExporter() {
-        ProntoModel prontomodel = ProntoModel.getModelByName((String) prontoModelComboBox.getSelectedItem());
-        int buttonwidth = Integer.parseInt(prontoExportButtonWidthTextField.getText());
-        int buttonheight = Integer.parseInt(prontoExportButtonHeightTextField.getText());
-        int screenwidth = Integer.parseInt(prontoExportScreenWidthTextField.getText());
-        int screenheight = Integer.parseInt(prontoExportScreenHeightTextField.getText());
-        return new ProntoClassicExporter(/*new File(properties.getExportDir()),*/ prontomodel,
-                buttonwidth, buttonheight, screenwidth, screenheight);
-    }
-
-    private void loadExportFormats() throws ParserConfigurationException, SAXException, IOException {
-        exportFormatManager = new ExportFormatManager(guiUtils,
-                new File(properties.mkPathAbsolute(properties.getExportFormatFilePath())), //new File(properties.getExportDir()),
-                (String name1) -> {
-                    selectFormat(name1);
-                }, () -> newGirrExporter(), () -> exportAudioParametersBean.newWaveExporter(), () -> newTextExporter(), () -> newProntoClassicExporter());
-    }
-
-    private RemoteSetExporter newRemoteExporter() {
-        ICommandExporter exporter = newExporter();
-        if (exporter != null && !RemoteSetExporter.class.isInstance(exporter)) {
-            guiUtils.error("Selected export format only supports single commands");
-            return null;
-        }
-        return (RemoteSetExporter) exporter;
-    }
-
-    private ICommandExporter newExporter() {
-        return newExporter((String) exportFormatComboBox.getSelectedItem());
-    }
-
-    private ICommandExporter newExporter(String formatName) {
-        ICommandExporter exporter = exportFormatManager.get(formatName).newExporter();
-        boolean supportsEmbedded = IRemoteSetExporter.class.isInstance(exporter) && ((IRemoteSetExporter) exporter).supportsEmbeddedFormats();
-        if (supportsEmbedded && !properties.getExportGenerateParameters()
-                && !properties.getExportGenerateCcf() && !properties.getExportGenerateRaw()) {
-            boolean answer = guiUtils.confirm("All of \"Parameters\", \"Raw\", and \"Pronto Hex\" deselected in the export. Continue?");
-            if (!answer)
-                return null;
-        }
-        return exporter;
-    }
-
-    private IrSignal getCapturedIrSignal() throws InvalidArgumentException {
-        String str = capturedDataTextArea.getText();
-        if (str.trim().isEmpty())
-            return null;
-
-        return InterpretString.interpretString(str, getFrequency(), properties.getDummyGap(),
-                properties.getInvokeRepeatFinder(), properties.getInvokeCleaner(),
-                properties.getAbsoluteTolerance(), properties.getRelativeTolerance(), properties.getMinRepeatLastGap());
-    }
-
-    private void clearSignal() {
-        capturedDataTextArea.setText(null);
-        irPlotter.clear();
-        decodeIRTextField.setText(null);
-        analyzerTextField.setText(null);
-        frequencyLabel.setText(null);
-        introLengthLabel.setText(null);
-        repLengthLabel.setText(null);
-        noRepsLabel.setText(null);
-        endingLengthLabel.setText(null);
-    }
-
-    private ModulatedIrSequence captureIrSequence() throws IOException, HarcHardwareException, InvalidArgumentException {
-        if (!capturingHardwareManager.isReady())
-            return null;
-
-        try {
-            return capturingHardwareManager.capture();
-        } catch (TimeoutException ex) {
-            return null;
-        }
-    }
-
-    private void initializePlot() {
-        irPlotter.setIgnoreLast(properties.getIgnoreEndingSilence());
-    }
-
-    private void clonePlot() {
-        if (irPlotter.isEmpty()) {
-            guiUtils.error("No plot to clone.");
-            return;
-        }
-        IrPlotter dolly = new IrPlotter(irPlotter, false);
-        dolly.setPreferredSize(irPlotter.getSize());
-        HarcletFrame.newHarcletFrame(this, dolly, false, this.lookAndFeelManager.getCurrentLAFClassName());
-    }
-
-    private void setRepeatParameters(int introLength, int repeatLength, int nRepetitions, int endingLength) {
-        introLengthLabel.setText(Integer.toString(introLength));
-        repLengthLabel.setText(Integer.toString(repeatLength));
-        endingLengthLabel.setText(Integer.toString(endingLength));
-        noRepsLabel.setText(Integer.toString(nRepetitions));
-    }
-
-    private void setRepeatParameters(RepeatFinder repeatFinder) {
-        setRepeatParameters(repeatFinder.getRepeatFinderData().getBeginLength(),
-                repeatFinder.getRepeatFinderData().getRepeatLength(),
-                repeatFinder.getRepeatFinderData().getNumberRepeats(),
-                repeatFinder.getRepeatFinderData().getEndingLength());
-    }
-
-    private void setFrequencyParameter(Double frequency) {
-        frequencyLabel.setText(frequency != null ? Long.toString(Math.round(frequency)) : "");
-    }
-
-    private void setFrequencyParameter(IrSignal irSignal) {
-        setFrequencyParameter(irSignal.getFrequency());
-    }
-
-    private String formatIrSignal(IrSignal irSignal, int formatIndex) {
-        return OutputTextFormat.newOutputTextFormat(formatIndex).formatIrSignal(irSignal);
-    }
-
-    private String formatIrSignal(IrSignal irSignal) {
-        return formatIrSignal(irSignal, properties.getOutputFormatIndex());
-    }
-
-    private void setCaptureWindow(IrSignal irSignal) {
-        try {
-            capturedDataTextArea.setText(formatIrSignal(irSignal, properties.getOutputFormatIndex()));
-        } catch (Exception ex) {
-            guiUtils.error(ex);
-            capturedDataTextArea.setText(null);
-        }
-    }
-
-    private void setDecodeIrParameters(IrSignal irSignal) {
-        Decoder.AbstractDecodesCollection<? extends ElementaryDecode> decodes = decoder.decodeLoose(irSignal, decoderParameters);
-        setDecodeResult(decodes);
-    }
-
-    private Collection<Decoder.Decode> decodeIrSequence(ModulatedIrSequence irSequence) {
-        Decoder.DecodeTree decodeTree = decoder.decode(irSequence, decoderParameters);
-        List<Decoder.Decode> decodes = new ArrayList<>(4);
-        for (Decoder.TrunkDecodeTree decode : decodeTree)
-            decodes.add(decode.getTrunk());
-        return decodes;
-    }
-
-    private Iterable<Decoder.Decode> decodeIrSignal(IrSignal irSignal) {
-        Decoder.SimpleDecodesSet decodes = decoder.decodeIrSignal(irSignal, decoderParameters);
-        return decodes;
-    }
-
-    private void setDecodeResult(Decoder.AbstractDecodesCollection<? extends ElementaryDecode> decodes) {
-        Iterator<? extends ElementaryDecode> iterator = decodes.iterator();
-        if (!iterator.hasNext()) {
-            decodeIRTextField.setText("");
-            return;
-        }
-
-        int index = 0;
-        StringBuilder decodeString = new StringBuilder(40);
-        for (ElementaryDecode decode : decodes) {
-            if (index == 0)
-                decodeString.append(decode.toString());
-            if (properties.getPrintDecodesToConsole())
-                guiUtils.message(decode.toString());
-            index++;
-        }
-
-        if (index == 2)
-            decodeString.append(" + one more decode");
-        else if (index > 2)
-            decodeString.append(" + ").append(Integer.toString(index - 1)).append(" more decodes");
-
-        decodeIRTextField.setText(decodeString.toString());
-    }
-
-    private void clearAnalyzeParameters() {
-        analyzerTextField.setText(null);
-    }
-
-    private void setAnalyzeParameters(String line) {
-        analyzerTextField.setText(line);
-    }
-
-    private void setAnalyzeParameters(Protocol protocol) {
-        if (protocol == null)
-            clearAnalyzeParameters();
-        else {
-            Protocol actualProtocol = analyzerEliminateConstantVars ? protocol.substituteConstantVariables() : protocol;
-            String line = actualProtocol.toIrpString(properties.getAnalyzerBase());
-            setAnalyzeParameters(line);
-            if (properties.getPrintAnalyzerIRPsToConsole())
-                guiUtils.message(line);
-        }
-    }
-
-    private void setAnalyzeParameters(Analyzer analyzer) {
-        Burst.Preferences burstPrefs = new Burst.Preferences(analyzerMaxRoundingError, analyzerMaxUnits, analyzerMaxMicroSeconds);
-        Analyzer.AnalyzerParams params = new Analyzer.AnalyzerParams(analyzer.getFrequency(), analyzerTimeBase,
-                analyzerLsb ? BitDirection.lsb : BitDirection.msb,
-                analyzerExtent, analyzerParameterWidths, analyzerMaxParameterWidth, analyzerInvert, burstPrefs, new ArrayList<>(0));
-        List<Protocol> protocols = null;
-        try {
-            protocols = analyzer.searchBestProtocol(params);
-        } catch (NoDecoderMatchException ex) {
-            guiUtils.error(ex);
-        }
-        if (protocols == null || protocols.isEmpty())
-            clearAnalyzeParameters();
-        else {
-            setAnalyzeParameters(protocols.get(0));
-        }
-    }
-
-    private void setAnalyzeParameters(ModulatedIrSequence irSequence) throws InvalidArgumentException {
-        Analyzer analyzer = new Analyzer(irSequence, irSequence.getFrequency(), properties.getInvokeRepeatFinder(),
-                properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
-        setAnalyzeParameters(analyzer);
-    }
-
-    private void setAnalyzeParameters(IrSignal irSignal) throws InvalidArgumentException {
-        // Ignore repeatfinder request if irSignal already has repeat.
-        if (properties.getInvokeRepeatFinder() && irSignal.getRepeatLength() == 0) {
-            ModulatedIrSequence irSequence = irSignal.toModulatedIrSequence();
-            setAnalyzeParameters(irSequence);
-        } else {
-            Analyzer analyzer = new Analyzer(irSignal, properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
-            setAnalyzeParameters(analyzer);
-        }
-    }
-
-    private int numberbaseIndex2numberbase(int index) {
-        return index == 0 ? 2
-                : index == 1 ? 8
-                : index == 2 ? 10
-                : 16;
-    }
-
-    public void scrutinizeIrSignal(IrSignal irSignal) throws InvalidArgumentException {
-        if (irSignal == null || irSignal.isEmpty()) {
-            guiUtils.error("Not scrutinizing empty signal.");
-            return;
-        }
-
-        while (irSignal.containsZeros()) {
-            String answer = guiUtils.getInput(
-                    "The signal contains one or more duration of zero length, and is thus a meaningless signal.\n"
-                    + "Enter a replacement value for the zero durations, if desired.\n"
-                    + "If four characters, will be interpreted as Pronto hex, otherwise as microseconds.",
-                    "Enter zero replacement", "0001");
-            if (answer == null) {
-                // user pressed cancel
-                return;
-            }
-            answer = answer.trim();
-            try {
-                if (answer.length() == Pronto.CHARS_IN_DIGIT) {
-                    irSignal.replaceZeros(Integer.parseInt(answer, 16));
-                } else {
-                    irSignal.replaceZeros(Double.parseDouble(answer));
-                }
-            } catch (NumberFormatException ex) {
-                guiUtils.error(ex);
-            }
-        }
-
-        setRepeatParameters(irSignal.getIntroLength(), irSignal.getRepeatLength(), irSignal.getRepeatLength() >  0 ? 1 : 0, irSignal.getEndingLength());
-
-        if (properties.getInvokeAnalyzer())
-            setAnalyzeParameters(irSignal);
-        else
-            clearAnalyzeParameters();
-        displaySignal(irSignal);
-    }
-
-    public void scrutinizeIrSignal(JTable table) throws ErroneousSelectionException, GirrException, IrpException, IrCoreException {
-        Command command = tableUtils.commandTableSelectedRow(table);
-        scrutinizeIrSignal(command.toIrSignal());
-    }
-
-    private void displaySignal(IrSignal irSignal) {
-        setFrequencyParameter(irSignal);
-        setCaptureWindow(irSignal);
-        irPlotter.plot(irSignal);
-        setDecodeIrParameters(irSignal);
-    }
-
-    private void processIr(ModulatedIrSequence modulatedIrSequence) throws InvalidArgumentException {
-        if (modulatedIrSequence == null || modulatedIrSequence.isEmpty()) {
-            guiUtils.error("Not showing empty sequence.");
-            return;
-        }
-
-        ModulatedIrSequence possiblyCleaned = properties.getInvokeCleaner()
-                ? Cleaner.clean(modulatedIrSequence, properties.getAbsoluteTolerance(), properties.getRelativeTolerance())
-                : modulatedIrSequence;
-
-        if (properties.getInvokeAnalyzer())
-            setAnalyzeParameters(modulatedIrSequence);
-        else
-            clearAnalyzeParameters();
-
-        IrSignal irSignal;
-        if (properties.getInvokeRepeatFinder()) {
-            RepeatFinder repeatFinder = new RepeatFinder(modulatedIrSequence);
-            setRepeatParameters(repeatFinder);
-            irSignal = repeatFinder.getRepeatFinderData().chopIrSequence(possiblyCleaned);
-        } else
-            irSignal = new IrSignal(possiblyCleaned);
-        displaySignal(irSignal);
-    }
-
-    private boolean autoOpen() {
-        return properties.getAutoOpenExports();
-    }
-
-    private String mkTitle(JTable table) {
-        return Version.appName + ((table == parameterTable) ? " parametric export" : " raw export");
-    }
-
-    private void saveSelectedSignals(JTable table) throws GirrException, IOException, TransformerException, IrCoreException, IrpException {
-        saveCommands(tableUtils.commandTableSelected(table), mkTitle(table), newRemoteExporter());
-    }
-
-    private void saveAllSignals(JTable table) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
-        saveAllSignals(table, newRemoteExporter());
-    }
-
-    private void saveAllSignals(JTable table, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
-        NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
-        saveCommands(tableModel, mkTitle(table), exporter);
-    }
-
-    private File saveCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel, String title, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
-        Map<String, Command> commands = tableModel.getCommandsWithSanityCheck(guiUtils);
-        if (commands == null)
-            return null;
-        File file = saveCommandsWrite(commands, title, exporter);
-        if (file != null) {
-            tableModel.clearUnsavedChanges();
-            guiUtils.message("File " + file + " was successfully written.");
-            if (autoOpen())
-                guiUtils.open(file);
-        }
-        return file;
-    }
-
-    private File saveCommandsWrite(Map<String, Command> commands, String title, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
-        if (properties.getExportAutomaticFilenames())
-            if (!checkChangeExportDirectory(new File(exportDirectoryTextField.getText())))
-                return null;
-
-        if (properties.getExportInquireDeviceData() && exporter.supportsMetaData()) {
-            Remote.MetaData newMetaData = MetaDataDialog.inquireMetaData(metaData, this);
-            if (newMetaData == null) // user bailed out
-                return null;
-
-            metaData = newMetaData;
-        }
-
-        File file = exporter.export(commands, null, title, metaData,
-                properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
-                new File(properties.getExportDir()), properties.getExportCharsetName());
-        return file;
-    }
-
-    private File saveCommands(Map<String, Command> commands, String title, RemoteSetExporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
-        if (commands.isEmpty()) {
-            guiUtils.error("Nothing to export");
-            return null;
-        }
-
-        File savedFile;
-        if (commands.size() == 1) {
-            // exporting just a single command
-            savedFile = saveSignalWrite(commands.values().iterator().next(), title, newExporter());
-            if (savedFile != null)
-                guiUtils.message("File " + savedFile.getPath() + " successfully written with one signal.");
-        } else {
-            //RemoteSetExporter exporter = newRemoteExporter();
-            if (exporter == null)
-                return null; // error has already been reported to the user.
-            savedFile = saveCommandsWrite(commands, title, exporter);
-            if (savedFile != null)
-                guiUtils.message("File " + savedFile.getPath() + " successfully written with " + commands.size() + " signals.");
-        }
-        if (savedFile != null && autoOpen())
-            guiUtils.open(savedFile);
-        return savedFile;
-    }
-
-    private void saveSignal(IrSignal irSignal) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
-        saveSignal(irSignal, newExporter());
-    }
-
-    private void saveSignal(IrSignal irSignal, ICommandExporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
-        if (irSignal == null) {
-            guiUtils.error("Not exporting empty signal.");
-            return;
-        }
-        Command command = new Command("IrScrutinizer scrutinized signal", null, irSignal);
-        File savedFile = saveSignalWrite(command, "IrScrutinizer scrutinized signal", exporter);
-        if (savedFile != null) {
-            guiUtils.message("File " + savedFile.getPath() + " successfully writtten");
-            if (autoOpen())
-                guiUtils.open(savedFile);
-        }
-    }
-
-    private File saveSignalWrite(Command command, String title, ICommandExporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
-        if (!checkChangeExportDirectory(new File(exportDirectoryTextField.getText())))
-            return null;
-
-        return exporter.export(command, "IrScrutinizer captured signal", title,
-                properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
-                new File(properties.getExportDir()), properties.getExportCharsetName());
-    }
-
-    private double getFrequency() {
-        try {
-            return Double.parseDouble(frequencyLabel.getText());
-        } catch (NumberFormatException | NullPointerException ex) {
-        }
-        double f = properties.getFallbackFrequency();
-        return f > 0 ? f : ModulatedIrSequence.DEFAULT_FREQUENCY;
-    }
-
-    private void reAnalyze() {
-        try {
-            IrSignal irSignal = getCapturedIrSignal();
-            if (irSignal != null)
-                scrutinizeIrSignal(irSignal);
-            else
-                // Do not include the input text in the error message; it will make a popup unreadable.
-                guiUtils.error("Could not parse the text in capture data window as IR signal.");
-        } catch (InvalidArgumentException ex) {
-            guiUtils.error(ex);
-        } catch (RuntimeException ex) {
-            // ??? Can be many different causes
-            guiUtils.error("Unspecified error: \"" + ex.getMessage() + "\", please report.");
-        }
-    }
-
-    private void saveCapturedDataAsText() {
-        if (capturedDataTextArea.getText().trim().isEmpty()) {
-            guiUtils.error("Nothing to save.");
-            return;
-        }
-
-        TextExporter exporter = newTextExporter();
-        try {
-            File file = exporter.export(capturedDataTextArea.getText().trim(),
-                    properties.getExportAutomaticFilenames(), this, new File(properties.getExportDir()),
-                    properties.getExportCharsetName());
-            guiUtils.message("File " + file.getPath() + " successfully written.");
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        }
-    }
-
-    GuiUtils getGuiUtils() {
-        return guiUtils;
-    }
-
-    IrpDatabase getIrpDatabase() {
-        return this.irpDatabase;
-    }
-
-    private void updateOutputFormat(OutputTextFormat format) {
-        updateOutputFormat(format.ordinal());
-    }
-
-    private void updateOutputFormat(int format) {
-        for (int i = 0; i < outputFormatMenu.getItemCount(); i++)
-            outputFormatMenu.getItem(i).setSelected(i == format);
-        properties.setOutputFormatIndex(format);
-    }
-
-    private String analysisString() {
-        String linefeed = IrCoreUtils.LINE_SEPARATOR;
-        StringBuilder str = new StringBuilder(256);
-        str.append("Decode: ");
-        str.append(decodeIRTextField.getText());
-        str.append(linefeed);
-        str.append("Analyze: ");
-        str.append(analyzerTextField.getText());
-        str.append(linefeed);
-        str.append("Frequency: ");
-        str.append(frequencyLabel.getText());
-        str.append(linefeed);
-        str.append(String.format("Introbursts: %s, Repeatbursts: %s, # repeats: %s, Endbursts: %s",
-                introLengthLabel.getText(), repLengthLabel.getText(),
-                noRepsLabel.getText(), endingLengthLabel.getText()));
-        return str.toString();
-    }
-
-    private void importSequence(ICommandImporter importer) throws IrpException, IrCoreException {
-        Collection<Command> commands = importer.getCommands();
-        if (commands.isEmpty()) {
-            guiUtils.error("Import does not contain any signals; aborting.");
-            return;
-        }
-        if (commands.size() >= importSequenceAskThreshold
-                && ! guiUtils.confirm("There are " + commands.size() + " commands. Proceed?"))
-            return;
-
-        processIr(Command.concatenateAsSequence(commands));
-    }
-
-    public int importCommands(RemoteSet remoteSet, Remote.MetaData metaData, boolean raw) {
-        int sum = 0;
-        for (Remote remote : remoteSet)
-            sum += importCommands(remote, metaData, raw);
-        return sum;
-    }
-
-    public int importCommands(Remote remote, Remote.MetaData metaData, boolean raw) {
-        int sum = 0;
-        for (CommandSet commandSet : remote)
-            sum += importCommands(commandSet, metaData, raw);
-        return sum;
-    }
-
-    public int importCommands(CommandSet commandSet, Remote.MetaData metaData, boolean raw) {
-        return importCommands(commandSet.getCommands(), metaData, raw);
-    }
-
-    public int importCommands(Collection<Command> commands, Remote.MetaData metaData, boolean raw) {
-        if (metaData != null && !metaData.isEmpty())
-            this.metaData = metaData;
-        boolean observeErrors = true;
-        int count = 0;
-        for (Command command : commands) {
-            try {
-                importCommand(command, raw);
-                count++;
-            } catch (IrpException | IrCoreException ex) {
-                if (observeErrors) {
-                    guiUtils.error("Erroneous signal: " + ex.getMessage());
-                    boolean ans = guiUtils.confirm("Continue import and ignore further erroneous signals?");
-                    if (ans)
-                        observeErrors = false;
-                    else
-                        return -count;
-                }
-            }
-        }
-        return count;
-    }
-
-    public int importCommand(Command command, boolean raw) throws IrpException, IrCoreException {
-        if (command == null)
-            return 0;
-
-        if (raw)
-            registerRawCommand(command);
-        else
-            registerParameterCommand(command);
-        return 1;
-    }
-
-    private <T extends IFileImporter & ICommandImporter> void importConcatenatedCommandsByFileSelector(T importer) {
-        try {
-            boolean status = importer.loadFileSelector(this, "Select file for signal import",
-                    properties.getDefaultImportDir(), properties.getImportCharsetName());
-            if (status)
-                importSequence(importer);
-        } catch (IOException | ParseException | IrCoreException | IrpException ex) {
-            guiUtils.error(ex);
-        }
-    }
-
-    private <T extends IFileImporter & IModulatedIrSequenceImporter> void importModulatedIrSequenceByFileSelector(T importer) {
-    try {
-            boolean status = importer.loadFileSelector(this, "Select file for signal import",
-                    properties.getDefaultImportDir(), properties.getImportCharsetName());
-            if (status)
-                processIr(importer.getModulatedIrSequence());
-        } catch (IOException | ParseException | InvalidArgumentException ex) {
-            guiUtils.error(ex);
-        }
-    }
-
-    private <T extends IFileImporter & ICommandImporter> void importRemoteByFileSelector(T importer, boolean raw) {
-        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
-        try {
-            repaint();
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException ex) {
-            }
-            boolean status = importer.loadFileSelector(this, "Select file for signal import",
-                    properties.getDefaultImportDir(), properties.getImportCharsetName());
-            if (status)
-                importCommands(importer.getCommands(), importer.getMetaData(), raw);
-        } catch (IOException | ParseException | InvalidArgumentException ex) {
-            guiUtils.error(ex);
-        } finally {
-            busyWindow.unBusy();
-        }
-    }
-
-    private <T extends IFileImporter & IModulatedIrSequenceImporter> ModulatedIrSequence importSequence(File file, T importer) {
-        try {
-            importer.load(file, properties.getImportCharsetName());
-            return importer.getModulatedIrSequence();
-        } catch (IOException | ParseException | InvalidArgumentException ex) {
-        }
-        return null;
-    }
-
-    private <T extends IFileImporter & ICommandImporter> ModulatedIrSequence importCommands(File file, T importer) {
-        try {
-            importer.load(file, properties.getImportCharsetName());
-            return importer.getConcatenatedCommands();
-        } catch (IOException | ParseException | IrCoreException | IrpException ex) {
-        }
-        return null;
-    }
-
-    public void importModulatedIrSequenceFile(File file) throws InvalidArgumentException {
-        ModulatedIrSequence sequence = importCommands(file, girrImporter);
-        if (sequence == null || sequence.isEmpty())
-            sequence = importCommands(file, ictImporter);
-
-        if (sequence == null || sequence.isEmpty())
-            sequence = importSequence(file, new Mode2Importer());
-
-        if (sequence == null || sequence.isEmpty())
-            sequence = importSequence(file, waveImporter);
-
-        if (sequence == null || sequence.isEmpty())
-            guiUtils.error("File not recoginzed, ignored");
-        else
-            processIr(sequence);
-    }
-
-    private void registerRawCommands(Collection<Command> commands) throws IrpException, IrCoreException {
-        for (Command command : commands)
-            registerRawCommand(new RawIrSignal(command));
-    }
-
-    private void registerRawCommand(Command command) throws IrpException, IrCoreException {
-        registerRawCommand(new RawIrSignal(command));
-    }
-
-    private void registerParameterCommand(Command command) throws IrpException, IrCoreException {
-        registerParameterSignal(new ParametrizedIrSignal(command));
-    }
-
-    private void registerRawSignal(IrSignal irSignal, String name, String comment) {
-        if (irSignal != null) {
-            RawIrSignal cis = new RawIrSignal(irSignal, name, comment);
-            registerRawCommand(cis);
-        }
-    }
-
-    private void registerRawSignal(ModulatedIrSequence irSequence, String name, String comment) {
-        if (irSequence != null) {
-            RawIrSignal cis = new RawIrSignal(irSequence, name, comment);
-            registerRawCommand(cis);
-        }
-    }
-
-    private void registerRawCommand(RawIrSignal cir) {
-        rawTableModel.addSignal(cir);
-    }
-
-    private void registerParameterSignal(ModulatedIrSequence irSequence) {
-        if (irSequence != null) {
-            try {
-                ParametrizedIrSignal pir = new ParametrizedIrSignal(irSequence, properties.getParametrizedLearnIgnoreT());
-                registerParameterSignal(pir);
-            } catch (NoDecodeException ex) {
-                guiUtils.message("Undecodable signal, ignored");
-            }
-        }
-    }
-
-    private void registerParameterSignal(IrSignal irSignal) {
-        if (irSignal != null) {
-            try {
-                ParametrizedIrSignal pir = new ParametrizedIrSignal(irSignal, properties.getParametrizedLearnIgnoreT());
-                registerParameterSignal(pir);
-            } catch (NoDecodeException ex) {
-                guiUtils.message("Undecodable signal, ignored");
-            }
-        }
-    }
-
-    private void registerParameterSignal(Collection<Command> commands) throws IrpException, IrCoreException {
-        for (Command command : commands) {
-            registerParameterSignal(new ParametrizedIrSignal(command));
-        }
-    }
-
-    private void registerParameterSignal(ParametrizedIrSignal signal) {
-        parameterTableModel.addSignal(signal);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T extends TableModel> void enableSorter(JTable table, boolean state) {
-        TableRowSorter<T> tableRowSorter = state ? new TableRowSorter<>((T) table.getModel()) : null;
-        table.setRowSorter(tableRowSorter);
-    }
-
-    private <T extends TableModel> void copyTableToClipboard(JTable table, boolean useSelection) {
-        StringBuilder str = new StringBuilder(1024);
-        for (int i = 0; i < table.getRowCount(); i++) {
-            if (!useSelection || table.isRowSelected(i)) {
-                if (str.length() > 0)
-                    str.append('\n');
-                for (int j = 0; j < table.getColumnCount(); j++) {
-                    if (j > 0)
-                        str.append('\t');
-                    Object obj = table.getValueAt(i, j);
-                    if (obj != null)
-                        str.append(obj.toString());
-                }
-            }
-        }
-        (new CopyClipboardText(null)).toClipboard(str.toString());
-    }
-
-    private static interface CaptureThreadClient {
-
-        JToggleButton getButton();
-        void processSequence(ModulatedIrSequence modulatedIrSequence);
-    }
-
-    private class CaptureThread extends Thread {
-        private final CaptureThreadClient client;
-        private boolean terminate;
-
-        CaptureThread(CaptureThreadClient client) {
-            this.client = client;
-            terminate = false;
-        }
-
-        @Override
-        public void run() {
-            startButton.setEnabled(false);
-            while (! terminate && client.getButton().isSelected()) {
-                try {
-                    ModulatedIrSequence sequence = captureIrSequence();
-                    if (sequence != null)
-                        client.processSequence(sequence);
-
-                    if (!capturingHardwareManager.isReady()) {
-                        guiUtils.error("Selected capture device is no longer ready");
-                        client.getButton().setSelected(false);
-                    }
-                } catch (IOException | HarcHardwareException | InvalidArgumentException ex) {
-                    guiUtils.error(ex);
-                    client.getButton().setSelected(false);
-                }
-            }
-            captureThread = null; // thread suicide
-            startButton.setEnabled(true);
-            enableRawCaptureOnly(false);
-            topLevelTabbedPane.setEnabled(true);
-            jumpToLastPanelMenuItem.setEnabled(true);
-        }
-
-        private void terminate() {
-            terminate = true;
-        }
-    }
-
-    private void enableRawCaptureOnly(boolean value) {
-        // FXIME: what is more to do? Disable the popup menu?
-        rawCookedTabbedPane.setEnabledAt(0, !value);
-        for (int i = 0; i < this.topLevelTabbedPane.getTabCount(); i++) {
-            this.topLevelTabbedPane.setEnabledAt(i, !value || i == this.topLevelTabbedPane.getSelectedIndex());
-        }
-    }
-
-    private void parameterTableAddMissingF() throws UnknownProtocolException, ErroneousSelectionException, GirrException, IrpException, IrCoreException {
-        Command command = tableUtils.commandTableSelectedRow(parameterTable);
-        if (command == null)
-            throw new IllegalArgumentException("No command selected.");
-        ArrayList<Long> presentFs = parameterTableModel.listF(command);
-        String protocolName = command.getProtocolName();
-        Protocol protocol = irpDatabase.getProtocol(protocolName);
-        for (Long F = protocol.getParameterMin("F"); F <= protocol.getParameterMax("F"); F++) {
-            if (!presentFs.contains(F)) {
-                @SuppressWarnings("unchecked")
-                Map<String, Long> params = new HashMap<>(command.getParameters());
-                params.put("F", F);
-                registerParameterCommand(new Command(DefaultSignalNameFormatter.formatName(command.getProtocolName(), params),
-                        "", protocolName, params));
-            }
-        }
-    }
-
-    private void setParameter(String name) {
-        List<Integer> rows = tableUtils.modelLinesSelected(parameterTable);
-        if (rows.isEmpty()) {
-            guiUtils.error("Nothing selected");
-            return;
-        }
-        Long answer = guiUtils.getLongInput("Enter new value for " + name, 0);
-        if (answer != null)
-            parameterTableModel.setParameter(name, answer, rows);
-    }
-
-    private void setupIrTrans() throws UnknownHostException, IOException {
-        String irTransIp = irTransInternetHostPanel.getIpName();
-        IrTrans irTrans = new IrTrans(InetAddress.getByName(irTransIp), properties.getVerbose(), properties.getSendingTimeout());
-        //irTrans = new IrTrans(irTransIp, properties.getVerbose(), properties.getStartTimeout());
-        irTransInternetHostPanel.setHardware(irTrans);
-        //irTransNamedCommandLauncher.setHardware(irTransIRDB);
-        properties.setIrTransIpName(irTransIp);
-    }
-
-    public boolean transmit(IrSignal irSignal) throws IOException, HardwareUnavailableException, HarcHardwareException, NoSuchTransmitterException, InvalidArgumentException {
-        return sendingHardwareManager.sendIr(irSignal, Integer.parseInt((String)noTransmitsComboBox.getSelectedItem()));
-    }
-
-    public boolean transmit(Command command) throws IrpException, IrCoreException, IOException, HardwareUnavailableException, HarcHardwareException {
-        return transmit(command.toIrSignal());
-    }
-
-    private boolean transmit(JTable table) throws ErroneousSelectionException, GirrException, IrpException, IrCoreException, IOException, HardwareUnavailableException, HarcHardwareException {
-        Command command = tableUtils.commandTableSelectedRow(table);
-        return transmit(command);
-    }
-
-    public void selectImportPane(ImportType type) {
-        lastPane = topLevelTabbedPane.getSelectedComponent();
-        topLevelTabbedPane.setSelectedComponent(type == ImportType.signal ? signalScrutinizerPanel : remoteScrutinizerPanel);
-        if (type != ImportType.signal)
-            rawCookedTabbedPane.setSelectedComponent(type == ImportType.parametricRemote ? cookedPanel : rawPanel);
-    }
-
-    private void selectLastPane() {
-        if (lastPane != null) {
-            Component present = topLevelTabbedPane.getSelectedComponent();
-            topLevelTabbedPane.setSelectedComponent(lastPane);
-            lastPane = present;
-        }
-    }
-
-    private void enableSubFormats(boolean select) {
-        exportGenerateParametersCheckBox.setEnabled(select);
-        exportGenerateRawCheckBox.setEnabled(select);
-        exportGenerateCcfCheckBox.setEnabled(select);
-        exportGenerateShortCcfCheckBox.setEnabled(select);
-        exportGenerateSendIrCheckBox.setEnabled(select);
-    }
-
-    private void selectFormat() {
-        selectFormat(properties.getExportFormatName());
-    }
-
-    private void selectFormat(String formatNm) {
-        String formatName = formatNm;
-        IExporterFactory format = exportFormatManager.get(formatName);
-        if (format == null) {
-            guiUtils.warning("Export format " + formatName + " not found, selecting Girr.");
-            formatName = "Girr";
-            format = exportFormatManager.get(formatName);
-        }
-        properties.setExportFormatName(formatName);
-
-        ICommandExporter exporter = format.newExporter();
-        boolean supportsEmbedded = IRemoteSetExporter.class.isInstance(exporter) && ((IRemoteSetExporter) exporter).supportsEmbeddedFormats();
-        enableSubFormats(supportsEmbedded);
-        exportRepeatComboBox.setEnabled(supportsEmbedded && exportGenerateSendIrCheckBox.isSelected() || exporter.considersRepetitions());
-        if (!formatName.equals(exportFormatComboBox.getSelectedItem()))
-            exportFormatComboBox.setSelectedItem(formatName);
-        exportFormatManager.setMenuSelection(formatName);
-    }
-
-    private void setCapturedDataTextAreaFromClipboard() {
-        String clip = (new CopyClipboardText(null)).fromClipboard();
-        if (clip == null)
-            clip = "";
-        capturedDataTextArea.setText(clip.replace('\n', ' '));
-    }
-
-    // There is almost certainly a more eleganat way of doing this ;-).
-    private void insertCapturedDataTextAreaFromClipboard() {
-        String clip = (new CopyClipboardText(null)).fromClipboard();
-        if (clip == null)
-            clip = "";
-        String old = capturedDataTextArea.getText();
-        if (old == null)
-            old = "";
-        int index = capturedDataTextArea.getCaretPosition();
-        String newContent = (old.substring(0, index) + clip + old.substring(index)).replace('\n', ' ');
-        capturedDataTextArea.setText(newContent);
-        capturedDataTextArea.setCaretPosition(index + clip.length());
-    }
-
-    private void loadExportFormatsGuiRefresh() {
-        try {
-            loadExportFormats();
-            exportFormatComboBox.setModel(new DefaultComboBoxModel<>(exportFormatManager.toArray()));
-            exportFormatComboBox.setSelectedItem(properties.getExportFormatName());
-            optionsMenu.remove(dynamicExportFormatsMenuPosition);
-            optionsMenu.add(exportFormatManager.getMenu(properties.getExportFormatName()), dynamicExportFormatsMenuPosition);
-        } catch (IOException | ParserConfigurationException | SAXException ex) {
-            guiUtils.error(ex);
-        }
-    }
-
-    private boolean checkChangeExportDirectory(File dirName) {
-        // Don't care for checking writeability of dirName
-        File dir;
-        try {
-            dir = dirName.getCanonicalFile();
-        } catch (IOException ex) {
-            // really unlikely
-            guiUtils.error(ex);
-            return false;
-        }
-        if (dir.isDirectory()) {
-            properties.setExportDir(exportDirectoryTextField.getText());
-            return true;
-        }
-
-        boolean create = guiUtils.confirm(exportDirectoryTextField.getText() + " does not exist. Create it?");
-        if (!create)
-            return false;
-
-        boolean status = dir.mkdirs();
-        if (!status) {
-            guiUtils.error("Failed to create " + dir);
-            return false;
-        }
-
-        properties.setExportDir(exportDirectoryTextField.getText());
-        return true;
-    }
-
-    private void protocolDocuPopup(java.awt.Frame frame, Command command) throws IrpException, IrCoreException {
-        protocolDocuPopup(frame, command.getProtocolName());
-    }
-
-    private void protocolDocuPopup(java.awt.Frame frame, String protocolName) throws IrpException {
-        if (protocolName == null)
-            throw new IrpException("No decode.");
-
-        String docu = irpDatabase.getDocumentation(protocolName); // throws UnknownProtocolException
-        StringBuilder str = new StringBuilder(irpDatabase.getIrp(protocolName)).append("\n\n");
-        if (docu != null)
-            str.append(docu);
-        HelpPopup.newHelpPopup(this, str.toString(), protocolName);
-    }
-
-    private void pasteColumnInTable(JTable rawTable, NamedIrSignal.LearnedIrSignalTableModel tableModel) throws NoSelectionException {
-        String clip = (new CopyClipboardText(null)).fromClipboard();
-        String[] arr = clip.split("\r?\n");
-        int row = rawTable.getSelectedRow();
-        int column = rawTable.convertColumnIndexToModel(rawTable.getSelectedColumn());
-        if (row < 0 || column < 0)
-            throw new NoSelectionException("No target cell selected");
-        tableModel.replaceColumnSubset(row, column, arr);
     }
 
     /**
@@ -2305,56 +2435,29 @@ public final class GuiMain extends javax.swing.JFrame {
         sendingPanel = new javax.swing.JPanel();
         sendingHardwareTabbedPane = new javax.swing.JTabbedPane();
         globalCachePanel = new javax.swing.JPanel();
-        globalCacheIrSenderSelector = new org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector(guiUtils, properties.getVerbose(), properties.getGlobalCacheTimeout(), true);
+        globalCacheIrSenderSelector = new org.harctoolbox.guicomponents.GlobalCacheBean(guiUtils, properties.getVerbose(), properties.getGlobalCacheTimeout());
         sendingGlobalCacheHelpButton = new javax.swing.JButton();
         devLircPanel = new javax.swing.JPanel();
-        devLircBean = new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getDevLircName(), true);
+        devLircBean = new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getVerbose(), properties.getDevLircTimeout(), properties.getDevLircName());
         sendingDevLircHardwareHelpButton = new javax.swing.JButton();
-        irTransPanel = new javax.swing.JPanel();
-        irTransInternetHostPanel = new org.harctoolbox.guicomponents.InternetHostPanel(guiUtils, false, true, true);
-        sendingIrTransHelpButton = new javax.swing.JButton();
         audioPanel = new javax.swing.JPanel();
-        transmitAudioParametersBean = new org.harctoolbox.guicomponents.AudioParametersBean(properties);
-        sendingAudioHelpButton = new javax.swing.JButton();
-        irToyPanel = new javax.swing.JPanel();
-        irToySerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrToyPortName(), properties.getIrToyPortBaudRate(), true);
-        sendingIrToyHelpButton = new javax.swing.JButton();
+        transmitAudioBean = new org.harctoolbox.guicomponents.AudioTransmitterBean(guiUtils, properties.getVerbose(), properties.getWaveSampleFrequency(), properties.getWaveChannels(), properties.getWaveSampleSize(), properties.getWaveOmitTrailingGap());
+        transmitAudioHelpButton = new javax.swing.JButton();
         girsClientPanel = new javax.swing.JPanel();
         sendingGirsClientHelpButton = new javax.swing.JButton();
-        girsTcpSerialComboBean = new org.harctoolbox.guicomponents.GirsClientBean(guiUtils, properties);
+        girsTcpSerialComboBean = new org.harctoolbox.guicomponents.GirsClientBean(guiUtils, properties.getVerbose());
         commandFusionSendPanel = new javax.swing.JPanel();
-        commandFusionSendingSerialPortBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionPortName(), CommandFusion.DEFAULTBAUDRATE, false);
+        commandFusionBean = new org.harctoolbox.guicomponents.CommandFusionBean(guiUtils, properties.getVerbose(), properties.getCommandFusionPortName());
         sendingCommandFusionHelpButton = new javax.swing.JButton();
-        genericSerialPanel = new javax.swing.JPanel();
-        genericSerialSenderBean = new org.harctoolbox.irscrutinizer.sendinghardware.GenericSerialSenderBean(guiUtils);
-        sendingGenericSerialPortHelpButton = new javax.swing.JButton();
+        captureIrWidgetPanel = new javax.swing.JPanel();
+        irWidgetBean = new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getVerbose(), properties.getCaptureBeginTimeout(), properties.getIrWidgetPortName());
+        irWidgetHelpButton = new javax.swing.JButton();
         noTransmitsComboBox = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
         transmitScrutinizedButton = new javax.swing.JButton();
         transmitGenerateButton2 = new javax.swing.JButton();
         sendingHardwareHelpButton = new javax.swing.JButton();
-        capturingPanel = new javax.swing.JPanel();
-        capturingHardwareTabbedPane = new javax.swing.JTabbedPane();
-        captureIrWidgetPanel = new javax.swing.JPanel();
-        irWidgetSerialPortSimpleBean = new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrWidgetCapturePortName(), 115200, false);
-        capturingIrWidgetHardwareHelpButton = new javax.swing.JButton();
-        captureGlobalCachePanel = new javax.swing.JPanel();
-        globalCacheCaptureSelector = new org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector(guiUtils, properties.getVerbose(), properties.getSendingTimeout(), false);
-        capturingGlobalCacheHardwareHelpButton = new javax.swing.JButton();
-        captureDevLircPanel = new javax.swing.JPanel();
-        capturingDevLircHardwareHelpButton = new javax.swing.JButton();
-        devLircCapturingSendingBean = new CapturingSendingBean(this);
-        captureIrToyPanel = new javax.swing.JPanel();
-        capturingIrToyHardwareHelpButton = new javax.swing.JButton();
-        irtoyCapturingSendingBean = new CapturingSendingBean(this);
-        captureGirsPanel = new javax.swing.JPanel();
-        capturingGirsHardwareHelpButton = new javax.swing.JButton();
-        girsClientCapturingSendingBean = new CapturingSendingBean(this);
-        captureCommandFusionPanel = new javax.swing.JPanel();
-        capturingCommandFusionHardwareHelpButton = new javax.swing.JButton();
-        commandFusionCapturingSendingBean = new CapturingSendingBean(this);
         captureTestButton = new javax.swing.JButton();
-        capturingHardwareHelpButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         saveMenu = new javax.swing.JMenu();
@@ -5136,7 +5239,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
         exportSpecificOptionsTabbedPane.addTab("Wave", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_audio.png")), waveExportOptionsPanel); // NOI18N
 
-        prontoModelComboBox.setModel(new DefaultComboBoxModel(prontoModelNames));
+        prontoModelComboBox.setModel(new DefaultComboBoxModel(ProntoClassicExporter.prontoModelNames));
         prontoModelComboBox.setSelectedIndex(properties.getProntoModelIndex());
         prontoModelComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -5439,7 +5542,7 @@ public final class GuiMain extends javax.swing.JFrame {
             .addGroup(globalCachePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(globalCacheIrSenderSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(sendingGlobalCacheHelpButton)
                 .addContainerGap())
         );
@@ -5472,59 +5575,18 @@ public final class GuiMain extends javax.swing.JFrame {
             .addGroup(devLircPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(devLircBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
                 .addComponent(sendingDevLircHardwareHelpButton)
                 .addContainerGap())
         );
 
         sendingHardwareTabbedPane.addTab("/dev/lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/tux/tux-22.png")), devLircPanel); // NOI18N
 
-        irTransInternetHostPanel.setIpName(null);
-        irTransInternetHostPanel.setPortNumber(IrTrans.portNumber);
-        irTransInternetHostPanel.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                irTransInternetHostPanelPropertyChange(evt);
-            }
-        });
-
-        sendingIrTransHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        sendingIrTransHelpButton.setText("Help");
-        sendingIrTransHelpButton.addActionListener(new java.awt.event.ActionListener() {
+        transmitAudioHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        transmitAudioHelpButton.setText("Help");
+        transmitAudioHelpButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendingIrTransHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout irTransPanelLayout = new javax.swing.GroupLayout(irTransPanel);
-        irTransPanel.setLayout(irTransPanelLayout);
-        irTransPanelLayout.setHorizontalGroup(
-            irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, irTransPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(irTransPanelLayout.createSequentialGroup()
-                        .addGap(0, 726, Short.MAX_VALUE)
-                        .addComponent(sendingIrTransHelpButton)))
-                .addContainerGap())
-        );
-        irTransPanelLayout.setVerticalGroup(
-            irTransPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(irTransPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irTransInternetHostPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
-                .addComponent(sendingIrTransHelpButton)
-                .addContainerGap())
-        );
-
-        sendingHardwareTabbedPane.addTab("IrTrans", new javax.swing.ImageIcon(getClass().getResource("/icons/irtrans/favicon.png")), irTransPanel); // NOI18N
-
-        sendingAudioHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        sendingAudioHelpButton.setText("Help");
-        sendingAudioHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendingAudioHelpButtonActionPerformed(evt);
+                transmitAudioHelpButtonActionPerformed(evt);
             }
         });
 
@@ -5534,57 +5596,24 @@ public final class GuiMain extends javax.swing.JFrame {
             audioPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(audioPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(transmitAudioParametersBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(transmitAudioBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(407, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, audioPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(sendingAudioHelpButton)
+                .addComponent(transmitAudioHelpButton)
                 .addContainerGap())
         );
         audioPanelLayout.setVerticalGroup(
             audioPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(audioPanelLayout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addComponent(transmitAudioParametersBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
-                .addComponent(sendingAudioHelpButton)
+                .addComponent(transmitAudioBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 105, Short.MAX_VALUE)
+                .addComponent(transmitAudioHelpButton)
                 .addContainerGap())
         );
 
         sendingHardwareTabbedPane.addTab("Audio Port", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_audio.png")), audioPanel); // NOI18N
-
-        sendingIrToyHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        sendingIrToyHelpButton.setText("Help");
-        sendingIrToyHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendingIrToyHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout irToyPanelLayout = new javax.swing.GroupLayout(irToyPanel);
-        irToyPanel.setLayout(irToyPanelLayout);
-        irToyPanelLayout.setHorizontalGroup(
-            irToyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, irToyPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(sendingIrToyHelpButton)
-                .addContainerGap())
-            .addGroup(irToyPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irToySerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(261, Short.MAX_VALUE))
-        );
-        irToyPanelLayout.setVerticalGroup(
-            irToyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(irToyPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irToySerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
-                .addComponent(sendingIrToyHelpButton)
-                .addContainerGap())
-        );
-
-        sendingHardwareTabbedPane.addTab("IrToy", new javax.swing.ImageIcon(getClass().getResource("/icons/dangerousprototypes/favicon.png")), irToyPanel); // NOI18N
 
         sendingGirsClientHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         sendingGirsClientHelpButton.setText("Help");
@@ -5618,8 +5647,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
         sendingHardwareTabbedPane.addTab("Girs Client", girsClientPanel);
 
-        commandFusionSendingSerialPortBean.setBaudRate(115200);
-
         sendingCommandFusionHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         sendingCommandFusionHelpButton.setText("Help");
         sendingCommandFusionHelpButton.addActionListener(new java.awt.event.ActionListener() {
@@ -5638,54 +5665,53 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(commandFusionSendPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(commandFusionSendingSerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(commandFusionBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(31, Short.MAX_VALUE))
         );
         commandFusionSendPanelLayout.setVerticalGroup(
             commandFusionSendPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(commandFusionSendPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(commandFusionSendingSerialPortBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addComponent(commandFusionBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
                 .addComponent(sendingCommandFusionHelpButton)
                 .addContainerGap())
         );
 
-        sendingHardwareTabbedPane.addTab("CommandFusion", commandFusionSendPanel);
+        sendingHardwareTabbedPane.addTab("Command Fusion", commandFusionSendPanel);
 
-        sendingGenericSerialPortHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        sendingGenericSerialPortHelpButton.setText("Help");
-        sendingGenericSerialPortHelpButton.addActionListener(new java.awt.event.ActionListener() {
+        irWidgetHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        irWidgetHelpButton.setText("Help");
+        irWidgetHelpButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendingGenericSerialPortHelpButtonActionPerformed(evt);
+                irWidgetHelpButtonActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout genericSerialPanelLayout = new javax.swing.GroupLayout(genericSerialPanel);
-        genericSerialPanel.setLayout(genericSerialPanelLayout);
-        genericSerialPanelLayout.setHorizontalGroup(
-            genericSerialPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(genericSerialPanelLayout.createSequentialGroup()
-                .addGroup(genericSerialPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(genericSerialPanelLayout.createSequentialGroup()
-                        .addComponent(genericSerialSenderBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 42, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, genericSerialPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(sendingGenericSerialPortHelpButton)))
+        javax.swing.GroupLayout captureIrWidgetPanelLayout = new javax.swing.GroupLayout(captureIrWidgetPanel);
+        captureIrWidgetPanel.setLayout(captureIrWidgetPanelLayout);
+        captureIrWidgetPanelLayout.setHorizontalGroup(
+            captureIrWidgetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureIrWidgetPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(irWidgetBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureIrWidgetPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(irWidgetHelpButton)
                 .addContainerGap())
         );
-        genericSerialPanelLayout.setVerticalGroup(
-            genericSerialPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(genericSerialPanelLayout.createSequentialGroup()
+        captureIrWidgetPanelLayout.setVerticalGroup(
+            captureIrWidgetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(captureIrWidgetPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(genericSerialSenderBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(sendingGenericSerialPortHelpButton)
+                .addComponent(irWidgetBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
+                .addComponent(irWidgetHelpButton)
                 .addContainerGap())
         );
 
-        sendingHardwareTabbedPane.addTab("Generic serial port", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/filesystems/socket.png")), genericSerialPanel); // NOI18N
+        sendingHardwareTabbedPane.addTab("IrWidget", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/usb.png")), captureIrWidgetPanel); // NOI18N
 
         noTransmitsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "10", "12", "15", "20", "30", "40", "50", "70", "100" }));
         noTransmitsComboBox.setSelectedItem(Integer.toString(properties.getTransmitGeneratedCount()));
@@ -5723,28 +5749,39 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
+        captureTestButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_record.png"))); // NOI18N
+        captureTestButton.setText("Test capture");
+        captureTestButton.setToolTipText("For testing the setup only.  Use \"Scrutinize signal\" or \"Scrutinize remote\" for deployment.");
+        captureTestButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                captureTestButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout sendingPanelLayout = new javax.swing.GroupLayout(sendingPanel);
         sendingPanel.setLayout(sendingPanelLayout);
         sendingPanelLayout.setHorizontalGroup(
             sendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sendingPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(transmitScrutinizedButton)
-                .addGap(18, 18, 18)
-                .addComponent(transmitGenerateButton2)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(noTransmitsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(sendingPanelLayout.createSequentialGroup()
                 .addGroup(sendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(sendingPanelLayout.createSequentialGroup()
-                        .addComponent(sendingHardwareTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 853, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 127, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sendingPanelLayout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(sendingHardwareHelpButton)))
+                        .addComponent(sendingHardwareHelpButton))
+                    .addGroup(sendingPanelLayout.createSequentialGroup()
+                        .addGroup(sendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(sendingPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(transmitScrutinizedButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(transmitGenerateButton2)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(noTransmitsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(98, 98, 98)
+                                .addComponent(captureTestButton, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(sendingHardwareTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 853, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 128, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -5760,267 +5797,14 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(transmitScrutinizedButton)
                     .addComponent(transmitGenerateButton2)
                     .addComponent(jLabel5)
-                    .addComponent(noTransmitsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
+                    .addComponent(noTransmitsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(captureTestButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                 .addComponent(sendingHardwareHelpButton)
                 .addContainerGap())
         );
 
-        topLevelTabbedPane.addTab("Sending hw", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/hardware.png")), sendingPanel); // NOI18N
-
-        capturingHardwareTabbedPane.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        capturingHardwareTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                capturingHardwareTabbedPaneStateChanged(evt);
-            }
-        });
-
-        capturingIrWidgetHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingIrWidgetHardwareHelpButton.setText("Help");
-        capturingIrWidgetHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingIrWidgetHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureIrWidgetPanelLayout = new javax.swing.GroupLayout(captureIrWidgetPanel);
-        captureIrWidgetPanel.setLayout(captureIrWidgetPanelLayout);
-        captureIrWidgetPanelLayout.setHorizontalGroup(
-            captureIrWidgetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureIrWidgetPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irWidgetSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureIrWidgetPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingIrWidgetHardwareHelpButton)
-                .addContainerGap())
-        );
-        captureIrWidgetPanelLayout.setVerticalGroup(
-            captureIrWidgetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureIrWidgetPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irWidgetSerialPortSimpleBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
-                .addComponent(capturingIrWidgetHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("IrWidget", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/usb.png")), captureIrWidgetPanel); // NOI18N
-
-        capturingGlobalCacheHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingGlobalCacheHardwareHelpButton.setText("Help");
-        capturingGlobalCacheHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingGlobalCacheHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureGlobalCachePanelLayout = new javax.swing.GroupLayout(captureGlobalCachePanel);
-        captureGlobalCachePanel.setLayout(captureGlobalCachePanelLayout);
-        captureGlobalCachePanelLayout.setHorizontalGroup(
-            captureGlobalCachePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureGlobalCachePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(globalCacheCaptureSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureGlobalCachePanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingGlobalCacheHardwareHelpButton)
-                .addContainerGap())
-        );
-        captureGlobalCachePanelLayout.setVerticalGroup(
-            captureGlobalCachePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureGlobalCachePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(globalCacheCaptureSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                .addComponent(capturingGlobalCacheHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("Global Caché", captureGlobalCachePanel);
-
-        capturingDevLircHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingDevLircHardwareHelpButton.setText("Help");
-        capturingDevLircHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingDevLircHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureDevLircPanelLayout = new javax.swing.GroupLayout(captureDevLircPanel);
-        captureDevLircPanel.setLayout(captureDevLircPanelLayout);
-        captureDevLircPanelLayout.setHorizontalGroup(
-            captureDevLircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureDevLircPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingDevLircHardwareHelpButton)
-                .addContainerGap())
-            .addGroup(captureDevLircPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(devLircCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        captureDevLircPanelLayout.setVerticalGroup(
-            captureDevLircPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureDevLircPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(devLircCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(capturingDevLircHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("/dev/lirc", new javax.swing.ImageIcon(getClass().getResource("/icons/tux/tux-22.png")), captureDevLircPanel); // NOI18N
-
-        capturingIrToyHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingIrToyHardwareHelpButton.setText("Help");
-        capturingIrToyHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingIrToyHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureIrToyPanelLayout = new javax.swing.GroupLayout(captureIrToyPanel);
-        captureIrToyPanel.setLayout(captureIrToyPanelLayout);
-        captureIrToyPanelLayout.setHorizontalGroup(
-            captureIrToyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureIrToyPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingIrToyHardwareHelpButton)
-                .addContainerGap())
-            .addGroup(captureIrToyPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irtoyCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        captureIrToyPanelLayout.setVerticalGroup(
-            captureIrToyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureIrToyPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(irtoyCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(capturingIrToyHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("IrToy", new javax.swing.ImageIcon(getClass().getResource("/icons/dangerousprototypes/favicon.png")), captureIrToyPanel); // NOI18N
-
-        capturingGirsHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingGirsHardwareHelpButton.setText("Help");
-        capturingGirsHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingGirsHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureGirsPanelLayout = new javax.swing.GroupLayout(captureGirsPanel);
-        captureGirsPanel.setLayout(captureGirsPanelLayout);
-        captureGirsPanelLayout.setHorizontalGroup(
-            captureGirsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureGirsPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingGirsHardwareHelpButton)
-                .addContainerGap())
-            .addGroup(captureGirsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(girsClientCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        captureGirsPanelLayout.setVerticalGroup(
-            captureGirsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureGirsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(girsClientCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(capturingGirsHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("Girs Client", captureGirsPanel);
-
-        capturingCommandFusionHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingCommandFusionHardwareHelpButton.setText("Help");
-        capturingCommandFusionHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingCommandFusionHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout captureCommandFusionPanelLayout = new javax.swing.GroupLayout(captureCommandFusionPanel);
-        captureCommandFusionPanel.setLayout(captureCommandFusionPanelLayout);
-        captureCommandFusionPanelLayout.setHorizontalGroup(
-            captureCommandFusionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, captureCommandFusionPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(capturingCommandFusionHardwareHelpButton)
-                .addContainerGap())
-            .addGroup(captureCommandFusionPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(commandFusionCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        captureCommandFusionPanelLayout.setVerticalGroup(
-            captureCommandFusionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(captureCommandFusionPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(commandFusionCapturingSendingBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(capturingCommandFusionHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        capturingHardwareTabbedPane.addTab("CommandFusion", captureCommandFusionPanel);
-
-        captureTestButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_record.png"))); // NOI18N
-        captureTestButton.setText("Test");
-        captureTestButton.setToolTipText("For testing the setup only.  Use \"Scrutinize signal\" or \"Scrutinize remote\" for deployment.");
-        captureTestButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                captureTestButtonActionPerformed(evt);
-            }
-        });
-
-        capturingHardwareHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
-        capturingHardwareHelpButton.setText("Help");
-        capturingHardwareHelpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                capturingHardwareHelpButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout capturingPanelLayout = new javax.swing.GroupLayout(capturingPanel);
-        capturingPanel.setLayout(capturingPanelLayout);
-        capturingPanelLayout.setHorizontalGroup(
-            capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(capturingPanelLayout.createSequentialGroup()
-                .addGroup(capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, capturingPanelLayout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(capturingHardwareHelpButton))
-                    .addGroup(capturingPanelLayout.createSequentialGroup()
-                        .addGroup(capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(capturingHardwareTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 853, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(capturingPanelLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(captureTestButton, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 127, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        capturingPanelLayout.setVerticalGroup(
-            capturingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(capturingPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(capturingHardwareTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(captureTestButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
-                .addComponent(capturingHardwareHelpButton)
-                .addContainerGap())
-        );
-
-        topLevelTabbedPane.addTab("Capturing hw", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_microphone.png")), capturingPanel); // NOI18N
+        topLevelTabbedPane.addTab("Hardware", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/hardware.png")), sendingPanel); // NOI18N
 
         topLevelTabbedPane.setSelectedIndex(properties.getSelectedMainPaneIndex());
 
@@ -7591,7 +7375,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_clearSignalMenuItemActionPerformed
 
     private void startStopToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startStopToggleButtonActionPerformed
-        if (!capturingHardwareManager.isReady()) {
+        if (!hardwareManager.isReady()) {
             guiUtils.error("No capture device selected, aborting");
             startStopToggleButton.setSelected(false);
             return;
@@ -8332,26 +8116,18 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setImportWaveDivideCarrier(importWaveDivideCarrierCheckBox1.isSelected());
     }//GEN-LAST:event_importWaveDivideCarrierCheckBox1ActionPerformed
 
-    private void irTransInternetHostPanelPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_irTransInternetHostPanelPropertyChange
-        try {
-            setupIrTrans();
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        }
-    }//GEN-LAST:event_irTransInternetHostPanelPropertyChange
-
     private void sendingHardwareTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sendingHardwareTabbedPaneStateChanged
-        if (sendingHardwareManager == null)
+        if (hardwareManager == null)
             return;
         BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
         try {
-            for (ISendingHardware<?> hardware : sendingHardwareManager.getSendingHardware()) {
-                if (hardware.getPanel() == sendingHardwareTabbedPane.getSelectedComponent()) {
-                    sendingHardwareManager.selectDoWork(hardware.getName());
+            for (String hardwareName : hardwareManager) {
+                if (hardwareManager.getBean(hardwareName).getParent() == sendingHardwareTabbedPane.getSelectedComponent()) {
+                    hardwareManager.select(hardwareName);
                     break;
                 }
             }
-        } catch (HarcHardwareException ex) {
+        } catch (HardwareUnavailableException ex) {
             guiUtils.error(ex);
         } finally {
             busyWindow.unBusy();
@@ -8365,67 +8141,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private void transmitGenerateButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitGenerateButton2ActionPerformed
         transmitGenerateButtonActionPerformed(evt);
     }//GEN-LAST:event_transmitGenerateButton2ActionPerformed
-
-    private void capturingHardwareTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_capturingHardwareTabbedPaneStateChanged
-        if (capturingHardwareManager == null)
-            return;
-        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
-        try {
-            for (ICapturingHardware<?> hardware : capturingHardwareManager.getCapturingHardware()) {
-                if (hardware.getPanel() == capturingHardwareTabbedPane.getSelectedComponent()) {
-                    capturingHardwareManager.selectDoWork(hardware.getName());
-                    break;
-                }
-            }
-        } catch (IOException | HarcHardwareException ex) {
-            guiUtils.error(ex);
-        } finally {
-            busyWindow.unBusy();
-        }
-    }//GEN-LAST:event_capturingHardwareTabbedPaneStateChanged
-
-    private void captureTestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_captureTestButtonActionPerformed
-        if (captureThreadRunning()) {
-            guiUtils.error("A capture thread is running. This must first be ended.");
-            return;
-        }
-        if (!capturingHardwareManager.hasSelection()) {
-            guiUtils.error("No capture device selected.");
-            return;
-        }
-        if (!capturingHardwareManager.isReady()) {
-            guiUtils.error("Selected capture device not ready (not opened?).");
-            return;
-        }
-
-        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
-        try {
-            ModulatedIrSequence modulatedIrSequence = captureIrSequence();
-
-            if (modulatedIrSequence == null) {
-                guiUtils.error("No signal received.");
-                return;
-            }
-
-            IrSignal signal = InterpretString.interpretIrSequence(modulatedIrSequence, true/*properties.getInvokeRepeatFinder()*/,
-                    true /*properties.getInvokeCleaner()*/, properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
-            guiUtils.message(modulatedIrSequence.toString(true));
-            guiUtils.message("f=" + Math.round(modulatedIrSequence.getFrequency()));
-            Decoder.SimpleDecodesSet decodes = decoder.decodeIrSignal(signal, decoderParameters);
-            if (decodes.isEmpty())
-                guiUtils.message("No decodes.");
-            else
-                decodes.forEach((decode) -> {
-                    guiUtils.message(decode.toString());
-                });
-        } catch (TimeoutException ex) {
-            guiUtils.error("Timeout capturing signal");
-        } catch (IOException | HarcHardwareException | NumberFormatException | InvalidArgumentException ex) {
-            guiUtils.error(ex);
-        } finally {
-            busyWindow.unBusy();
-        }
-    }//GEN-LAST:event_captureTestButtonActionPerformed
 
     private void rawCodeAnalyzeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawCodeAnalyzeMenuItemActionPerformed
         reAnalyze();
@@ -8570,27 +8285,27 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_signalExportButtonActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-        if (!capturingHardwareManager.isReady()) {
-            guiUtils.error("No capture device selected, aborting");
-            return;
-        }
-        if (captureThreadRunning()) {
-            guiUtils.error("A capture thread is running. This must first be ended.");
-            return;
-        }
-        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
-        try {
-            ModulatedIrSequence modulatedIrSequence = captureIrSequence();
-
-            if (modulatedIrSequence != null)
-                processIr(modulatedIrSequence);
-            else
-                guiUtils.message("no signal received");
-        } catch (IOException | HarcHardwareException | InvalidArgumentException ex) {
-            guiUtils.error(ex);
-        } finally {
-            busyWindow.unBusy();
-        }
+//        if (!capturingHardwareManager.isReady()) {
+//            guiUtils.error("No capture device selected, aborting");
+//            return;
+//        }
+//        if (captureThreadRunning()) {
+//            guiUtils.error("A capture thread is running. This must first be ended.");
+//            return;
+//        }
+//        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
+//        try {
+//            ModulatedIrSequence modulatedIrSequence = captureIrSequence();
+//
+//            if (modulatedIrSequence != null)
+//                processIr(modulatedIrSequence);
+//            else
+//                guiUtils.message("no signal received");
+//        } catch (IOException | HarcHardwareException | InvalidArgumentException ex) {
+//            guiUtils.error(ex);
+//        } finally {
+//            busyWindow.unBusy();
+//        }
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void capturedDataTextAreaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_capturedDataTextAreaMouseReleased
@@ -8681,10 +8396,6 @@ public final class GuiMain extends javax.swing.JFrame {
         reAnalyze();
     }//GEN-LAST:event_pasteAnalyzeButtonActionPerformed
 
-    private void capturingHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.capturingHardwareHelp);
-    }//GEN-LAST:event_capturingHardwareHelpButtonActionPerformed
-
     private void sendingHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingHardwareHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.sendingHardwareHelp);
     }//GEN-LAST:event_sendingHardwareHelpButtonActionPerformed
@@ -8705,7 +8416,7 @@ public final class GuiMain extends javax.swing.JFrame {
             if (t != null) {
                 properties.setGlobalCacheTimeout(t);
                 globalCacheIrSenderSelector.setTimeout(t);
-                globalCacheCaptureSelector.setTimeout(t);
+//                globalCacheCaptureSelector.setTimeout(t);
             }
         } catch (NumberFormatException ex) {
             guiUtils.error("Invalid number: " + ex.getMessage());
@@ -8716,17 +8427,9 @@ public final class GuiMain extends javax.swing.JFrame {
         clonePlot();
     }//GEN-LAST:event_clonePlotMenuItemActionPerformed
 
-    private void capturingIrToyHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingIrToyHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.capturingIrToyHardwareHelp);
-    }//GEN-LAST:event_capturingIrToyHardwareHelpButtonActionPerformed
-
-    private void capturingIrWidgetHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingIrWidgetHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.capturingIrWidgetHardwareHelp);
-    }//GEN-LAST:event_capturingIrWidgetHardwareHelpButtonActionPerformed
-
-    private void capturingGlobalCacheHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingGlobalCacheHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.capturingGlobalCacheHardwareHelp);
-    }//GEN-LAST:event_capturingGlobalCacheHardwareHelpButtonActionPerformed
+    private void irWidgetHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irWidgetHelpButtonActionPerformed
+        HelpPopup.newHelpPopup(this, HelpTexts.irWidgetHardwareHelp);
+    }//GEN-LAST:event_irWidgetHelpButtonActionPerformed
 
     private void exportGirrHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportGirrHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.exportGirrHelp);
@@ -8741,20 +8444,12 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_exportProntoHelpButtonActionPerformed
 
     private void sendingGlobalCacheHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingGlobalCacheHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.sendingGlobalCacheHelp);
+        HelpPopup.newHelpPopup(this, HelpTexts.globalCacheHelp);
     }//GEN-LAST:event_sendingGlobalCacheHelpButtonActionPerformed
 
-    private void sendingAudioHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingAudioHelpButtonActionPerformed
+    private void transmitAudioHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitAudioHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.sendingAudioHelp);
-    }//GEN-LAST:event_sendingAudioHelpButtonActionPerformed
-
-    private void sendingIrToyHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingIrToyHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.sendingIrToyHelp);
-    }//GEN-LAST:event_sendingIrToyHelpButtonActionPerformed
-
-    private void sendingGenericSerialPortHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingGenericSerialPortHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.sendingGenericSerialPortHelp);
-    }//GEN-LAST:event_sendingGenericSerialPortHelpButtonActionPerformed
+    }//GEN-LAST:event_transmitAudioHelpButtonActionPerformed
 
     private void scrutinizeParametricMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scrutinizeParametricMenuItemActionPerformed
         try {
@@ -8771,10 +8466,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private void importTextParametrizedHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importTextParametrizedHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.importTextParametrizedHelp);
     }//GEN-LAST:event_importTextParametrizedHelpButtonActionPerformed
-
-    private void sendingIrTransHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingIrTransHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.sendingIrTransHelp);
-    }//GEN-LAST:event_sendingIrTransHelpButtonActionPerformed
 
     private void parametrizedLearnIgnoreTCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parametrizedLearnIgnoreTCheckBoxMenuItemActionPerformed
         properties.setParametrizedLearnIgnoreT(this.parametrizedLearnIgnoreTCheckBoxMenuItem.isSelected());
@@ -8926,14 +8617,6 @@ public final class GuiMain extends javax.swing.JFrame {
         HelpPopup.newHelpPopup(this, HelpTexts.sendingCommandFusionHelp);
     }//GEN-LAST:event_sendingCommandFusionHelpButtonActionPerformed
 
-    private void capturingGirsHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingGirsHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.capturingGirsHelp);
-    }//GEN-LAST:event_capturingGirsHardwareHelpButtonActionPerformed
-
-    private void capturingCommandFusionHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingCommandFusionHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.capturingCommandFusionHelp);
-    }//GEN-LAST:event_capturingCommandFusionHardwareHelpButtonActionPerformed
-
     private void importCmlHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCmlHelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.importCmlHelp);
     }//GEN-LAST:event_importCmlHelpButtonActionPerformed
@@ -8988,7 +8671,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void gitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gitMenuItemActionPerformed
         try {
-            guiUtils.browse(new URI(gitUrl));
+            guiUtils.browse(new URI(GIT_URL));
         } catch (URISyntaxException ex) {
             guiUtils.error(ex);
         }
@@ -8996,7 +8679,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void issuesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_issuesMenuItemActionPerformed
         try {
-            guiUtils.browse(new URI(issuesUrl));
+            guiUtils.browse(new URI(ISSUES_URL));
         } catch (URISyntaxException ex) {
             guiUtils.error(ex);
         }
@@ -9006,12 +8689,8 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setInvokeCleaner(cleanerCheckBoxMenuItem.isSelected());
     }//GEN-LAST:event_cleanerCheckBoxMenuItemActionPerformed
 
-    private void capturingDevLircHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capturingDevLircHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.capturingDevLircHelp);
-    }//GEN-LAST:event_capturingDevLircHardwareHelpButtonActionPerformed
-
     private void sendingDevLircHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingDevLircHardwareHelpButtonActionPerformed
-        HelpPopup.newHelpPopup(this, HelpTexts.sendingDevLircHelp);
+        HelpPopup.newHelpPopup(this, HelpTexts.devLircHelp);
     }//GEN-LAST:event_sendingDevLircHardwareHelpButtonActionPerformed
 
     private void rejectLircCodeImportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rejectLircCodeImportsActionPerformed
@@ -9110,7 +8789,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void topLevelTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_topLevelTabbedPaneStateChanged
         // Must make sure this is not effective during early initComponents().
-        if (sendingHardwareManager != null) {
+        if (hardwareManager != null) {
             lastPane = currentPane;
             currentPane = topLevelTabbedPane.getSelectedComponent();
             properties.setSelectedMainPaneIndex(topLevelTabbedPane.getSelectedIndex());
@@ -9119,7 +8798,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void rawCookedTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rawCookedTabbedPaneStateChanged
         // Must make sure this is not effective during early initComponents().
-        if (sendingHardwareManager != null)
+        if (hardwareManager != null)
             properties.setSelectedRemoteIndex(rawCookedTabbedPane.getSelectedIndex());
     }//GEN-LAST:event_rawCookedTabbedPaneStateChanged
 
@@ -9128,36 +8807,36 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_rawCodePasteMenuItemActionPerformed
 
     private void continuousCaptureButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_continuousCaptureButtonActionPerformed
-        if (!capturingHardwareManager.isReady()) {
-            guiUtils.error("No capture device selected, aborting");
-            continuousCaptureButton.setSelected(false);
-            return;
-        }
-        if (continuousCaptureButton.isSelected() && captureThreadRunning()) {
-            guiUtils.error("Another capture thread is running. This must first be ended.");
-            continuousCaptureButton.setSelected(false);
-            return;
-        }
-
-        if (continuousCaptureButton.isSelected()) {
-            captureThread = new CaptureThread(new CaptureThreadClient() {
-                @Override
-                public JToggleButton getButton() {
-                    return continuousCaptureButton;
-                }
-
-                @Override
-                public void processSequence(ModulatedIrSequence sequence) {
-                    try {
-                        processIr(sequence);
-                    } catch (InvalidArgumentException ex) {
-                    }
-                }
-            });
-            captureThread.start();
-            topLevelTabbedPane.setEnabled(false);
-            jumpToLastPanelMenuItem.setEnabled(false);
-        }
+//        if (!capturingHardwareManager.isReady()) {
+//            guiUtils.error("No capture device selected, aborting");
+//            continuousCaptureButton.setSelected(false);
+//            return;
+//        }
+//        if (continuousCaptureButton.isSelected() && captureThreadRunning()) {
+//            guiUtils.error("Another capture thread is running. This must first be ended.");
+//            continuousCaptureButton.setSelected(false);
+//            return;
+//        }
+//
+//        if (continuousCaptureButton.isSelected()) {
+//            captureThread = new CaptureThread(new CaptureThreadClient() {
+//                @Override
+//                public JToggleButton getButton() {
+//                    return continuousCaptureButton;
+//                }
+//
+//                @Override
+//                public void processSequence(ModulatedIrSequence sequence) {
+//                    try {
+//                        processIr(sequence);
+//                    } catch (InvalidArgumentException ex) {
+//                    }
+//                }
+//            });
+//            captureThread.start();
+//            topLevelTabbedPane.setEnabled(false);
+//            jumpToLastPanelMenuItem.setEnabled(false);
+//        }
     }//GEN-LAST:event_continuousCaptureButtonActionPerformed
 
     private void checkTable(NamedIrSignal.LearnedIrSignalTableModel tableModel) {
@@ -9302,7 +8981,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void downloadsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadsMenuItemActionPerformed
         try {
-            guiUtils.browse(new URI(downloadsUrl));
+            guiUtils.browse(new URI(DOWNLOADS_URL));
         } catch (URISyntaxException ex) {
             guiUtils.error(ex);
         }
@@ -9369,7 +9048,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void protocolDocuMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolDocuMenuItemActionPerformed
         try {
-            protocolDocuPopup(this, tableUtils.commandTableSelectedRow(parameterTable));
+            protocolDocuPopup(tableUtils.commandTableSelectedRow(parameterTable));
         } catch (ErroneousSelectionException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -9379,7 +9058,7 @@ public final class GuiMain extends javax.swing.JFrame {
         String str = decodeIRTextField.getText();
         String[] arr = str.split(":");
         try {
-            protocolDocuPopup(this, arr[0]);
+            protocolDocuPopup(arr[0]);
         } catch (IrpException ex) {
             guiUtils.error(ex);
         }
@@ -9387,7 +9066,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void rawProtocolDocuMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawProtocolDocuMenuItemActionPerformed
          try {
-            protocolDocuPopup(this, tableUtils.commandTableSelectedRow(rawTable));
+            protocolDocuPopup(tableUtils.commandTableSelectedRow(rawTable));
         } catch (ErroneousSelectionException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -9540,6 +9219,49 @@ public final class GuiMain extends javax.swing.JFrame {
         HarcletFrame.newHarcletFrame(this, new NamedCommandPanel(), false, lookAndFeelManager.getCurrentLAFClassName());
     }//GEN-LAST:event_NamedCommandMenuItemActionPerformed
 
+    private void captureTestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_captureTestButtonActionPerformed
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
+        try {
+            if (captureThreadRunning()) {
+                guiUtils.error("A capture thread is running. This must first be ended.");
+                return;
+            }
+            if (!hardwareManager.isReady()) {
+                guiUtils.error("Selected device not ready (not opened?).");
+                return;
+            }
+            if (!hardwareManager.canCapture()) {
+                guiUtils.error("Selected device cannot capture.");
+                return;
+            }
+
+            ModulatedIrSequence modulatedIrSequence = captureIrSequence();
+
+            if (modulatedIrSequence == null) {
+                guiUtils.error("No signal received.");
+                return;
+            }
+
+            IrSignal signal = InterpretString.interpretIrSequence(modulatedIrSequence, true/*properties.getInvokeRepeatFinder()*/,
+                    true /*properties.getInvokeCleaner()*/, properties.getAbsoluteTolerance(), properties.getRelativeTolerance());
+            guiUtils.message(modulatedIrSequence.toString(true));
+            guiUtils.message("f=" + Math.round(modulatedIrSequence.getFrequency()));
+            Decoder.SimpleDecodesSet decodes = decoder.decodeIrSignal(signal, decoderParameters);
+            if (decodes.isEmpty())
+                guiUtils.message("No decodes.");
+            else
+                decodes.forEach((decode) -> {
+                    guiUtils.message(decode.toString());
+                });
+        } catch (TimeoutException ex) {
+            guiUtils.error("Timeout capturing signal");
+        } catch (HardwareUnavailableException | IOException | HarcHardwareException | NumberFormatException | InvalidArgumentException ex) {
+            guiUtils.error(ex);
+        } finally {
+            busyWindow.unBusy();
+        }
+    }//GEN-LAST:event_captureTestButtonActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9568,24 +9290,10 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JCheckBox autoOpenExportsCheckBox;
     private javax.swing.JCheckBox automaticExportFilenamesCheckBox;
     private javax.swing.JMenuItem beaconListenerMenuItem;
-    private javax.swing.JPanel captureCommandFusionPanel;
-    private javax.swing.JPanel captureDevLircPanel;
-    private javax.swing.JPanel captureGirsPanel;
-    private javax.swing.JPanel captureGlobalCachePanel;
-    private javax.swing.JPanel captureIrToyPanel;
     private javax.swing.JPanel captureIrWidgetPanel;
     private javax.swing.JButton captureTestButton;
     private javax.swing.JScrollPane capturedDataScrollPane;
     private org.harctoolbox.guicomponents.UndoableJTextArea capturedDataTextArea;
-    private javax.swing.JButton capturingCommandFusionHardwareHelpButton;
-    private javax.swing.JButton capturingDevLircHardwareHelpButton;
-    private javax.swing.JButton capturingGirsHardwareHelpButton;
-    private javax.swing.JButton capturingGlobalCacheHardwareHelpButton;
-    private javax.swing.JButton capturingHardwareHelpButton;
-    private javax.swing.JTabbedPane capturingHardwareTabbedPane;
-    private javax.swing.JButton capturingIrToyHardwareHelpButton;
-    private javax.swing.JButton capturingIrWidgetHardwareHelpButton;
-    private javax.swing.JPanel capturingPanel;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CcfImporter> ccfFileImporterBean;
     private javax.swing.JPanel ccfImportPanel;
     private javax.swing.JRadioButtonMenuItem ccfRadioButtonMenuItem;
@@ -9606,11 +9314,10 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem clonePlotMenuItem;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CmlImporter> cmlFileImporterBean;
     private javax.swing.JPanel cmlImportPanel;
-    private org.harctoolbox.guicomponents.CapturingSendingBean commandFusionCapturingSendingBean;
+    private org.harctoolbox.guicomponents.CommandFusionBean commandFusionBean;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<CommandFusionImporter> commandFusionFileImporterBean;
     private javax.swing.JPanel commandFusionImportPanel;
     private javax.swing.JPanel commandFusionSendPanel;
-    private org.harctoolbox.guicomponents.SerialPortSimpleBean commandFusionSendingSerialPortBean;
     private org.harctoolbox.guicomponents.Console console;
     private javax.swing.JToggleButton continuousCaptureButton;
     private javax.swing.JButton controlTowerBrowseButton;
@@ -9641,7 +9348,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JMenuItem deleteMenuItem1;
     private org.harctoolbox.guicomponents.DevLircBean devLircBean;
-    private org.harctoolbox.guicomponents.CapturingSendingBean devLircCapturingSendingBean;
     private javax.swing.JPanel devLircPanel;
     private javax.swing.JMenuItem downloadsMenuItem;
     private javax.swing.JMenuItem dummyGapMenuItem;
@@ -9710,8 +9416,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel generatePanel;
     private javax.swing.JCheckBoxMenuItem generateRawCheckBoxMenuItem;
     private javax.swing.JTextArea generateTextArea;
-    private javax.swing.JPanel genericSerialPanel;
-    private org.harctoolbox.irscrutinizer.sendinghardware.GenericSerialSenderBean genericSerialSenderBean;
     private javax.swing.JPanel girrExportOptionsPanel;
     private javax.swing.JCheckBox girrFatRawCheckBox;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<GirrImporter> girrFileImporterBean;
@@ -9719,13 +9423,11 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem girrSchemaLocationMenuItem;
     private javax.swing.JCheckBoxMenuItem girrValidateCheckBoxMenuItem;
     private javax.swing.JButton girrWebSiteButton;
-    private org.harctoolbox.guicomponents.CapturingSendingBean girsClientCapturingSendingBean;
     private javax.swing.JPanel girsClientPanel;
     private org.harctoolbox.guicomponents.GirsClientBean girsTcpSerialComboBean;
     private javax.swing.JMenuItem gitMenuItem;
-    private org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector globalCacheCaptureSelector;
     private javax.swing.JButton globalCacheDBBrowseButton;
-    private org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector globalCacheIrSenderSelector;
+    private org.harctoolbox.guicomponents.GlobalCacheBean globalCacheIrSenderSelector;
     private javax.swing.JPanel globalCachePanel;
     private javax.swing.JMenuItem globalCacheTimeoutMenuItem;
     private javax.swing.JMenuItem glossaryMenuItem;
@@ -9795,13 +9497,10 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem invokeAnalyzerCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem invokeDecoderCheckBoxMenuItem;
     private org.harctoolbox.guicomponents.IrPlotter irPlotter;
-    private javax.swing.JPanel irToyPanel;
-    private org.harctoolbox.guicomponents.SerialPortSimpleBean irToySerialPortBean;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<IrTransImporter> irTransFileImporterBean;
-    private org.harctoolbox.guicomponents.InternetHostPanel irTransInternetHostPanel;
-    private javax.swing.JPanel irTransPanel;
     private javax.swing.JButton irTransWebButton;
-    private org.harctoolbox.guicomponents.SerialPortSimpleBean irWidgetSerialPortSimpleBean;
+    private org.harctoolbox.guicomponents.IrWidgetBean irWidgetBean;
+    private javax.swing.JButton irWidgetHelpButton;
     private javax.swing.JButton irdbBrowseButton;
     private javax.swing.JButton irdbBrowseRemoteButton;
     private javax.swing.JComboBox<String> irdbCodeSetComboBox;
@@ -9816,7 +9515,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu irpProtocolsIniMenu;
     private javax.swing.JMenuItem irpProtocolsSelectMenuItem;
     private javax.swing.JMenuItem irpTransmogrifierHelpMenuItem;
-    private org.harctoolbox.guicomponents.CapturingSendingBean irtoyCapturingSendingBean;
     private javax.swing.JPanel irtransImportPanel;
     private javax.swing.JMenuItem issuesMenuItem;
     private javax.swing.JButton jButton20;
@@ -10023,16 +9721,12 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton scrutinizeSignalHelpButton;
     private javax.swing.JMenuItem scrutinizeSignalProtocolDocuMenuItem;
     private javax.swing.JMenuItem sendMenuItem;
-    private javax.swing.JButton sendingAudioHelpButton;
     private javax.swing.JButton sendingCommandFusionHelpButton;
     private javax.swing.JButton sendingDevLircHardwareHelpButton;
-    private javax.swing.JButton sendingGenericSerialPortHelpButton;
     private javax.swing.JButton sendingGirsClientHelpButton;
     private javax.swing.JButton sendingGlobalCacheHelpButton;
     private javax.swing.JButton sendingHardwareHelpButton;
     private javax.swing.JTabbedPane sendingHardwareTabbedPane;
-    private javax.swing.JButton sendingIrToyHelpButton;
-    private javax.swing.JButton sendingIrTransHelpButton;
     private javax.swing.JPanel sendingPanel;
     private javax.swing.JMenuItem sendingTimeoutMenuItem;
     private javax.swing.JMenuItem setDMenuItem;
@@ -10062,7 +9756,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem transformNameMenuItem;
     private javax.swing.JMenu transformNamesMenu;
     private javax.swing.JCheckBoxMenuItem translateProntoFontCheckBoxMenuItem;
-    private org.harctoolbox.guicomponents.AudioParametersBean transmitAudioParametersBean;
+    private org.harctoolbox.guicomponents.AudioTransmitterBean transmitAudioBean;
+    private javax.swing.JButton transmitAudioHelpButton;
     private javax.swing.JButton transmitGenerateButton;
     private javax.swing.JButton transmitGenerateButton2;
     private javax.swing.JMenuItem transmitMenuItem;

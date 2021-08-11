@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2013 Bengt Martensson.
+ Copyright (C) 2013, 2021 Bengt Martensson.
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -17,115 +17,100 @@
 
 package org.harctoolbox.guicomponents;
 
+import java.awt.Cursor;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URI;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
+import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.ir.GlobalCache;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.ircore.ModulatedIrSequence;
+import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 
-public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
-    private GuiUtils guiUtils;
-    private transient GlobalCache globalCache;
-    private boolean verbose;
-    private int timeout;
+public final class GlobalCacheBean extends HardwareBean {
 
     private InetAddress inetAddress;
     private int module;
     private int port;
-    private boolean senderSupport;
-
-    private final PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
-    public static final String PROP_GLOBALCACHE = "PROP_GLOBALCACHE";
-    public static final String PROP_IPNAME = "PROP_IPNAME";
-    public static final String PROP_MODULE = "PROP_MODULE";
-    public static final String PROP_PORT = "PROP_PORT";
-    private static final int defaultTimeout = 5000;
-
-    /**
-     * @param timeout the timeout to set
-     */
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
-    }
+    //private boolean senderSupport; // TODO: remove
+    private final boolean openOnSelect = false; // To implement (or not?)
 
     private void setGlobalCache(InetAddress globalCacheInetAddress) throws UnknownHostException, IOException {
         if (globalCacheInetAddress == null)
             return;
-        if (globalCache != null && globalCache.isValid() && globalCacheInetAddress.equals(InetAddress.getByName(globalCache.getIp())))
+        if (hardware != null && hardware.isValid() && globalCacheInetAddress.equals(this.inetAddress))
             return;
 
-        String oldIpName = getIpName();
-        closeGlobalCache();
-        globalCache = null;
-        typeLabel.setText("<unknown>");
-        moduleComboBox.setEnabled(false);
-        portComboBox.setEnabled(false);
-
-        globalCache = new GlobalCache(globalCacheInetAddress.getHostName(), verbose, timeout);
-
-        if (!globalCache.isValid())
-            throw new IOException("Set up of GlobalCache@" + globalCacheInetAddress.getHostName() + " failed.");
-
-        inetAddress = globalCacheInetAddress;
-        GlobalCacheManager.getInstance().addManualGlobalCache(inetAddress);
-        setup();
-        int index = GlobalCacheManager.getInstance().getIndex(globalCacheInetAddress);
-        String type = GlobalCacheManager.getInstance().getType(index);
-        typeLabel.setText(type);
-        globalCacheBrowseButton.setEnabled(true);
-        ArrayList<Integer> irModules = globalCache.getIrModules();
-        this.port = GlobalCache.defaultGlobalCachePort;
-        String[] modules;
-        if (irModules.isEmpty())
-            modules = new String[]{"-"};
-        else {
-            modules = new String[irModules.size()];
-            for (int i = 0; i < irModules.size(); i++) {
-                modules[i] = Integer.toString(irModules.get(i));
-            }
-            setModule(irModules.get(0));
+        String old = inetAddress != null ? inetAddress.getHostAddress() : "";
+        if (!globalCacheInetAddress.equals(inetAddress)) {
+            close();
+            inetAddress = globalCacheInetAddress;
+            if (openOnSelect)
+                open();
         }
-        moduleComboBox.setModel(new DefaultComboBoxModel(modules));
-        moduleComboBox.setEnabled(true);
-        portComboBox.setEnabled(true);
-        globalCacheVersionLabel.setText(globalCache.getVersion());
-        globalCacheIpComboBox.setSelectedIndex(index);
-        globalCacheIpComboBox.repaint();
 
-        propertyChangeSupport.firePropertyChange(PROP_IPNAME, oldIpName, getIpName());
+        GlobalCacheManager.getInstance().addManualGlobalCache(inetAddress);
+        openCloseToggleButton.setEnabled(true);
+        enableStuff();
+        propertyChangeSupport.firePropertyChange(PROP_IPNAME, old, inetAddress.getHostAddress());
+    }
+
+    private void assertValidModule() {
+        if (hardware == null)
+            return;
+
+        List<Integer> irModules = ((GlobalCache) hardware).getIrModules();
+        if (! irModules.contains(module))
+            module = irModules.get(0);
+    }
+
+    private void enableStuff() {
+        enableStuff(isOpen());
+    }
+
+    private void enableStuff(boolean open) {
+        int index = GlobalCacheManager.getInstance().getIndex(inetAddress);
+        if (index != globalCacheIpComboBox.getSelectedIndex())
+            globalCacheIpComboBox.setSelectedIndex(index);
+        String type = GlobalCacheManager.getInstance().getType(index);
+        typeLabel.setText(/*open ? */type/* : "<unknown>"*/);
+        addButton.setEnabled(!open);
+        globalCacheIpComboBox.setEnabled(!open);
+        globalCacheBrowseButton.setEnabled(inetAddress != null);
+        if (open) {
+            List<Integer> irModules = ((GlobalCache) hardware).getIrModules();
+            String[] modules;
+            if (irModules.isEmpty())
+                modules = new String[]{"-"};
+            else {
+                modules = new String[irModules.size()];
+                for (int i = 0; i < irModules.size(); i++)
+                    modules[i] = Integer.toString(irModules.get(i));
+            }
+            moduleComboBox.setModel(new DefaultComboBoxModel<>(modules));
+        }
+        moduleComboBox.setSelectedItem(Integer.toString(module));
+        moduleComboBox.setEnabled(open);
+
+        setNumberOfPortsForModule(module);
+        portComboBox.setSelectedItem(Integer.toString(port));
+        portComboBox.setEnabled(open);
+        openCloseToggleButton.setSelected(open);
     }
 
     private void setGlobalCache(int index) throws UnknownHostException, IOException {
         setGlobalCache(GlobalCacheManager.getInstance().getInetAddress(index));
     }
 
-    private void closeGlobalCache() throws IOException {
-        if (globalCache != null)
-            globalCache.close();
-    }
-
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        if (propertyChangeSupport != null)
-            propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
-    }
-
-    /**
-     * @param verbose the verbose to set
-     */
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
+    public void setGlobalCache(String ipName) throws UnknownHostException, IOException {
+        setGlobalCache(InetAddress.getByName(ipName));
     }
 
     /**
@@ -135,27 +120,11 @@ public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
         return inetAddress != null ? inetAddress.getHostName() : null;
     }
 
-    /**
-     * @param ipName the ipName to set
-     * @throws UnknownHostException
-     * @throws IOException
-     */
-    public void setIpName(String ipName) throws UnknownHostException, IOException {
-        if (ipName == null || ipName.isEmpty() || ipName.equals(getIpName()))
-            return;
-
-        //String oldIpName = ipName;
-        inetAddress = InetAddress.getByName(ipName);
-        setGlobalCache(inetAddress);
-        //propertyChangeSupport.firePropertyChange(PROP_IPNAME, oldIpName, ipName);
-    }
-
-    private void setup() {
-        ComboBoxModel cbm = new DefaultComboBoxModel(GlobalCacheManager.getInstance().getAllNames());
+    private void updateGlobalCacheList() {
+        ComboBoxModel<String> cbm = new DefaultComboBoxModel<>(GlobalCacheManager.getInstance().getAllNames());
         globalCacheIpComboBox.setModel(cbm);
         int index = GlobalCacheManager.getInstance().getIndex(inetAddress);
         globalCacheIpComboBox.setSelectedIndex(index);
-        globalCacheIpComboBox.repaint();
     }
 
     /**
@@ -169,12 +138,10 @@ public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
      * @param module the module to set
      */
     public void setModule(int module) {
-        if (senderSupport) {
-            int oldModule = this.module;
-            this.module = module;
-            setNumberOfPortsForModule(module);
-            propertyChangeSupport.firePropertyChange(PROP_MODULE, oldModule, module);
-        }
+        int oldModule = this.module;
+        this.module = module;
+        setNumberOfPortsForModule(module);
+        propertyChangeSupport.firePropertyChange(PROP_MODULE, oldModule, module);
     }
 
     /**
@@ -188,16 +155,16 @@ public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
      * @param port the port to set
      */
     public void setPort(int port) {
-        if (senderSupport) {
-            int oldPort = this.port;
-            this.port = port;
-            propertyChangeSupport.firePropertyChange(PROP_PORT, oldPort, port);
-        }
+        int oldPort = this.port;
+        this.port = port;
+        propertyChangeSupport.firePropertyChange(PROP_PORT, oldPort, port);
     }
 
     private void setNumberOfPortsForModule(int module) {
-        int number = globalCache.getModuleSecondNumber(module);
-        setNumberOfPorts(number);
+        if (hardware != null) {
+            int number = ((GlobalCache) hardware).getModuleSecondNumber(module);
+            setNumberOfPorts(number);
+        }
     }
 
     private void setNumberOfPorts(int ports) {
@@ -208,64 +175,34 @@ public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
     }
 
     /**
-     * @return the stopButton
-     * /
-    public javax.swing.JButton getStopButton() {
-        return stopButton;
-    }*/
-
-    /**
      *
      * @return
      * @throws NoSuchTransmitterException
      */
     public GlobalCache.GlobalCacheIrTransmitter getTransmitter() throws NoSuchTransmitterException {
-        return globalCache.newTransmitter(module, port);
+        return ((GlobalCache) hardware).newTransmitter(module, port);
     }
-
-    /**
-     * @param stopButton the stopButton to set
-     * /
-    public void setStopButton(javax.swing.JButton stopButton) {
-        javax.swing.JButton oldStopButton = this.stopButton;
-        this.stopButton = stopButton;
-        propertyChangeSupport.firePropertyChange(PROP_STOPBUTTON, oldStopButton, stopButton);
-    }*/
 
     /**
      * Creates new form GlobalCacheIrSenderSelector
      * @param guiUtils
      * @param verbose
      * @param timeout
-     * @param senderSupport
      */
-    public GlobalCacheIrSenderSelector(final GuiUtils guiUtils, final boolean verbose, int timeout, boolean senderSupport) {
-        this.globalCache = null;
-        this.guiUtils = guiUtils;
-        this.verbose = verbose;
-        this.timeout = timeout;
-        this.senderSupport = senderSupport;
+    public GlobalCacheBean(GuiUtils guiUtils, boolean verbose, int timeout) {
+        super(guiUtils, verbose, timeout);
+        this.port = GlobalCache.defaultGlobalCachePort;
         initComponents();
-        this.moduleLabel.setVisible(senderSupport);
-        this.moduleComboBox.setVisible(senderSupport);
-        this.portLabel.setVisible(senderSupport);
-        this.portComboBox.setVisible(senderSupport);
-        this.stopButton.setVisible(senderSupport);
-        setup();
+        updateGlobalCacheList();
 
         GlobalCacheManager.getInstance().addPropertyChangeListener((PropertyChangeEvent evt) -> {
-            setup();
+            if (evt.getPropertyName().equals(GlobalCacheManager.PROP_GCMANAGER_NAME))
+                updateGlobalCacheList();
         });
     }
 
-    public GlobalCacheIrSenderSelector() {
-        this(null, false, defaultTimeout, true);
-        this.port = GlobalCache.defaultGlobalCachePort;
-        this.globalCache = null;
-    }
-
-    public void setGuiUtils(GuiUtils guiUtils) {
-        this.guiUtils = guiUtils;
+    public GlobalCacheBean() {
+        this(null, false, GlobalCache.DEFAULT_BEGIN_TIMEOUT);
     }
 
     public boolean isStopEnabled() {
@@ -276,8 +213,71 @@ public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
         stopButton.setEnabled(value);
     }
 
-    public GlobalCache getGlobalCache() {
-        return globalCache;
+    @Override
+    public boolean canSend() {
+        return true;
+    }
+
+    @Override
+    public boolean sendIr(IrSignal irSignal, int count) throws NoSuchTransmitterException, IOException, HardwareUnavailableException, HarcHardwareException, InvalidArgumentException {
+        assertHardwareValid();
+        return ((GlobalCache) hardware).sendIr(irSignal, count, getTransmitter());
+    }
+
+    @Override
+    public String getName() {
+        return "Global Caché";
+    }
+
+    public void setup() throws IOException, HarcHardwareException {
+        if (inetAddress != null)
+            open();
+    }
+
+    @Override
+    public void open() throws IOException {
+        boolean oldIsOpen = isOpen();
+        if (isOpen())
+            close();
+        hardware = new GlobalCache(inetAddress.getHostAddress(), verbose, timeout);
+        if (!hardware.isValid())
+            throw new IOException("Set up of GlobalCache@" + inetAddress.getHostName() + " failed.");
+        String version = hardware.getVersion();
+        globalCacheVersionLabel.setText(version);
+        assertValidModule();
+        propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, isOpen());
+        enableStuff();
+    }
+
+    @Override
+    public void close() {
+        if (hardware != null) {
+            try {
+                boolean oldIsOpen = isOpen();
+                hardware.close();
+                hardware = null;
+                globalCacheVersionLabel.setText(null);
+                propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, isOpen());
+                if (verbose)
+                    guiUtils.message("Closed GlobalCache");
+            } catch (IOException ex) {
+                guiUtils.error(ex);
+            }
+        }
+        enableStuff();
+    }
+
+    @Override
+    public boolean canCapture() {
+        return true;
+    }
+
+    @Override
+    public ModulatedIrSequence capture() throws HarcHardwareException, InvalidArgumentException {
+        if (hardware == null)
+            return null;
+
+        return ((GlobalCache) hardware).capture();
     }
 
     /**
@@ -302,6 +302,7 @@ public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
         addButton = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         globalCacheVersionLabel = new javax.swing.JLabel();
+        openCloseToggleButton = new javax.swing.JToggleButton();
 
         globalCacheIpComboBox.setToolTipText("Used to select between several Global Caché units.");
         globalCacheIpComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -367,6 +368,14 @@ public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
         globalCacheVersionLabel.setText("<unknown>");
         globalCacheVersionLabel.setToolTipText("Firmware version as reported by the device.");
 
+        openCloseToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/connect_creating.png"))); // NOI18N
+        openCloseToggleButton.setText("Open");
+        openCloseToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openCloseToggleButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -402,6 +411,10 @@ public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(globalCacheVersionLabel)))
                 .addGap(9, 9, 9))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(openCloseToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -425,13 +438,19 @@ public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
                     .addComponent(typeLabel)
                     .addComponent(jLabel5)
                     .addComponent(globalCacheVersionLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(openCloseToggleButton)
+                .addContainerGap(25, Short.MAX_VALUE))
         );
+
+        openCloseToggleButton.getAccessibleContext().setAccessibleName("Open");
     }// </editor-fold>//GEN-END:initComponents
 
     private void globalCacheBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_globalCacheBrowseButtonActionPerformed
-        if (globalCache != null)
-            guiUtils.browse(globalCache.getUri(null, null));
+        URI uri = hardware != null
+                ? ((GlobalCache) hardware).getUri(null, null)
+                : URI.create("http://" + GlobalCacheManager.getInstance().getInetAddress(globalCacheIpComboBox.getSelectedIndex()).getHostAddress());
+        guiUtils.browse(uri);
     }//GEN-LAST:event_globalCacheBrowseButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
@@ -466,6 +485,19 @@ public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
         setPort(Integer.parseInt((String)portComboBox.getSelectedItem()));
     }//GEN-LAST:event_portComboBoxActionPerformed
 
+    private void openCloseToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openCloseToggleButtonActionPerformed
+        Cursor oldCursor = setBusyCursor();
+        try {
+            openClose(! isOpen());
+        } catch (IOException | HarcHardwareException ex) {
+            guiUtils.error(ex);
+            enableStuff();
+        } finally {
+            openCloseToggleButton.setSelected(isOpen());
+            resetCursor(oldCursor);
+        }
+    }//GEN-LAST:event_openCloseToggleButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JButton globalCacheBrowseButton;
@@ -476,6 +508,7 @@ public final class GlobalCacheIrSenderSelector extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JComboBox<String> moduleComboBox;
     private javax.swing.JLabel moduleLabel;
+    private javax.swing.JToggleButton openCloseToggleButton;
     private javax.swing.JComboBox<String> portComboBox;
     private javax.swing.JLabel portLabel;
     private javax.swing.JButton stopButton;

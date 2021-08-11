@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2016 Bengt Martensson.
+Copyright (C) 2016, 2021 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,51 +18,45 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.guicomponents;
 
 import java.awt.Cursor;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import org.harctoolbox.devslashlirc.LircDeviceException;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.ir.DevLirc;
 import org.harctoolbox.harchardware.ir.LircTransmitter;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.ircore.ModulatedIrSequence;
+import org.harctoolbox.ircore.OddSequenceLengthException;
+import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 
 /**
  *
  */
-public final class DevLircBean extends javax.swing.JPanel implements ISendingReceivingBean {
-    private static final String notInitialized = "not initialized";
+public final class DevLircBean extends HardwareBean {
 
     private String portName;
     private String propsString;
-    private GuiUtils guiUtils;
-    private transient DevLirc hardware;
-    private boolean listenable;
-    private boolean enableSending;
-    private final PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
 
     /**
      * Creates new form DevLircBean
      */
     public DevLircBean() {
-        this(null, null, true);
+        this(null, false, DevLirc.DEFAULT_BEGIN_TIMEOUT, null);
     }
 
     public DevLircBean(GuiUtils guiUtils) {
-        this(guiUtils, null, true);
+        this(guiUtils, false, DevLirc.DEFAULT_BEGIN_TIMEOUT, null);
     }
 
-    public DevLircBean(GuiUtils guiUtils, String initialPort, boolean enableSending) {
+    public DevLircBean(GuiUtils guiUtils, boolean verbose, int timeout, String initialPort) {//, boolean enableSending) {
+        super(guiUtils, verbose, timeout);
         initComponents();
-        this.enableSending = enableSending;
-        this.guiUtils = guiUtils;
-        listenable = false;
         DefaultComboBoxModel<String> model;
         try {
             model = new DefaultComboBoxModel<>(candidates());
         } catch (LinkageError | IOException ex) {
-            model = new DefaultComboBoxModel<>(new String[]{ initialPort != null ? initialPort : notInitialized });
+            model = new DefaultComboBoxModel<>(new String[]{ initialPort != null ? initialPort : NOT_INITIALIZED });
         }
 
         portComboBox.setModel(model);
@@ -85,6 +79,12 @@ public final class DevLircBean extends javax.swing.JPanel implements ISendingRec
             }
         }
         setPortName(actualPort);
+        enableStuff(false);
+    }
+
+    @Override
+    public String getName() {
+        return DevLirc.DEVSLASHLIRC;
     }
 
     private static String[] candidates() throws IOException {
@@ -96,7 +96,7 @@ public final class DevLircBean extends javax.swing.JPanel implements ISendingRec
     }
 
     private void conditionallyEnableOpen() {
-        openToggleButton.setEnabled(hardware != null && portComboBox.getSelectedItem() != null);
+        openToggleButton.setEnabled(/*hardware != null && */ portComboBox.getSelectedItem() != null);
     }
 
     /**
@@ -123,11 +123,19 @@ public final class DevLircBean extends javax.swing.JPanel implements ISendingRec
     public void setHardware(DevLirc hardware) {
         this.hardware = hardware;
         conditionallyEnableOpen();
-        openToggleButton.setSelected(hardware.isValid());
+        openToggleButton.setSelected(isOpen());
+    }
+
+    private void setHardware() {
+        try {
+            setHardware(new DevLirc(portName, verbose, timeout));
+        } catch (LircDeviceException ex) {
+            guiUtils.error(ex);
+        }
     }
 
     public LircTransmitter getTransmitter() {
-        return hardware.canSetTransmitter()
+        return ((DevLirc) getHardware()).canSetTransmitter()
                 ? new LircTransmitter((String) transmitterComboBox.getSelectedItem())
                 : new LircTransmitter();
     }
@@ -135,36 +143,14 @@ public final class DevLircBean extends javax.swing.JPanel implements ISendingRec
     private void setProps(String version) {
         java.lang.String oldVersion = this.propsString;
         this.propsString = version;
-        propsLabel.setEnabled(hardware.isValid());
-        versionLiteralLabel.setEnabled(hardware.isValid());
+        propsLabel.setEnabled(isOpen());
+        versionLiteralLabel.setEnabled(isOpen());
         propsLabel.setText(version);
         propertyChangeSupport.firePropertyChange(PROP_PROPS, oldVersion, version);
     }
 
     private void setProps() {
-        setProps(hardware.isValid() ? hardware.toString() : "<not connected>");
-    }
-
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        // just to be Javabeans safe
-        if (propertyChangeSupport == null)
-            super.addPropertyChangeListener(listener);
-        else
-            propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
-    }
-
-    public void setup(String desiredPort) throws IOException {
-        ComboBoxModel<String> model = portComboBox.getModel();
-        if (model == null || model.getSize() == 0 || ((model.getSize() == 1) && ((String)portComboBox.getSelectedItem()).equals(notInitialized)))
-            setupPortComboBox(/*true*/);
-
-        portComboBox.setSelectedItem(desiredPort != null ? desiredPort : portName);
+        setProps(isOpen() ? ((DevLirc) hardware).toString() : NOT_CONNECTED);
     }
 
     private void setupPortComboBox(/*boolean useCached*/) throws IOException {
@@ -175,49 +161,70 @@ public final class DevLircBean extends javax.swing.JPanel implements ISendingRec
         portComboBox.setModel(model);
     }
 
-    public boolean isListenable() {
-        return listenable;
+    private void enableStuff(boolean isOpen) {
+        portComboBox.setEnabled(!isOpen);
+        boolean enableTransmitters = isOpen && ((DevLirc) getHardware()).canSetTransmitter();
+        transmitterLabel.setEnabled(enableTransmitters);
+        transmitterComboBox.setEnabled(enableTransmitters);
+        conditionallyEnableOpen();
     }
 
-    private void openClose(boolean opening) throws IOException, HarcHardwareException {
-        boolean oldIsOpen = hardware.isValid();
+    @Override
+    public boolean canCapture() {
+        return isOpen() && ((DevLirc) hardware).canReceive();
+    }
+
+    @Override
+    public ModulatedIrSequence capture() throws HarcHardwareException, OddSequenceLengthException {
+        return ((DevLirc) hardware).capture();
+    }
+
+    @Override
+    public boolean canSend() {
+        return isOpen() && ((DevLirc) hardware).canSend();
+    }
+
+    @Override
+    public boolean sendIr(IrSignal irSignal, int count) throws HardwareUnavailableException, HarcHardwareException {
+        return ((DevLirc) hardware).sendIr(irSignal, count, getTransmitter());
+    }
+
+    @Override
+    public void open() throws IOException, HarcHardwareException {
+        boolean oldIsOpen = isOpen();
+        if (hardware == null)
+            setHardware();
+
         try {
-            if (opening) {
-                hardware.open();
-                listenable = true;
-                if (hardware.canSetTransmitter()) {
-                    DefaultComboBoxModel<String> transmitterComboBoxModel = new javax.swing.DefaultComboBoxModel<>(
-                            hardware.getNumberTransmitters() > 1
-                                    ? hardware.getTransmitterNames()
-                                    : new String[]{"default", "1", "2", "3", "4", "5", "6", "7", "8"});
-                    transmitterComboBox.setModel(transmitterComboBoxModel);
-                }
-            } else {
-                listenable = false;
-                hardware.close();
+            hardware.open();
+            DevLirc devLirc = (DevLirc) getHardware();
+            if (devLirc.canSetTransmitter()) {
+                DefaultComboBoxModel<String> transmitterComboBoxModel = new javax.swing.DefaultComboBoxModel<>(
+                        devLirc.getNumberTransmitters() > 1
+                        ? devLirc.getTransmitterNames()
+                        : new String[]{"default", "1", "2", "3", "4", "5", "6", "7", "8"});
+                transmitterComboBox.setModel(transmitterComboBoxModel);
             }
         } finally {
-            enableStuff(opening && hardware.isValid());
+            enableStuff(isOpen());
             setProps();
             propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, hardware.isValid());
         }
     }
 
-    private void enableStuff(boolean isOpen) {
-        portComboBox.setEnabled(!isOpen);
-        boolean enableTransmitters = enableSending && isOpen && hardware.canSetTransmitter();
-        transmitterLabel.setEnabled(enableTransmitters);
-        transmitterComboBox.setEnabled(enableTransmitters);
-    }
+    @Override
+    public void close() throws IOException {
+        if (hardware == null)
+            return;
 
-    private Cursor setBusyCursor() {
-        Cursor oldCursor = getCursor();
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        return oldCursor;
-    }
-
-    private void resetCursor(Cursor cursor) {
-        setCursor(cursor);
+        boolean oldIsOpen = hardware.isValid();
+        try {
+            hardware.close();
+        } finally {
+            enableStuff(false);
+            setProps();
+            propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, hardware.isValid());
+        }
     }
 
     /**
@@ -240,7 +247,7 @@ public final class DevLircBean extends javax.swing.JPanel implements ISendingRec
 
         setPreferredSize(new java.awt.Dimension(800, 80));
 
-        portComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { notInitialized }));
+        portComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { NOT_INITIALIZED }));
         portComboBox.setToolTipText("Device name to use");
         portComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -296,22 +303,21 @@ public final class DevLircBean extends javax.swing.JPanel implements ISendingRec
                 .addComponent(refreshButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(portComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 107, Short.MAX_VALUE)))
+                    .addComponent(jLabel1)
+                    .addComponent(portComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(transmitterLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(transmitterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(openToggleButton)))
-                .addGap(12, 12, 12)
+                        .addComponent(openToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(propsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(versionLiteralLabel))
-                .addContainerGap())
+                    .addComponent(propsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(versionLiteralLabel)
+                        .addGap(0, 114, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -321,16 +327,18 @@ public final class DevLircBean extends javax.swing.JPanel implements ISendingRec
                     .addComponent(jLabel1)
                     .addComponent(transmitterLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(versionLiteralLabel))
-                .addGap(4, 4, 4)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(openToggleButton)
-                        .addComponent(propsLabel))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(transmitterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(portComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(refreshButton)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(transmitterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(portComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(refreshButton)
+                            .addComponent(openToggleButton)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(propsLabel)))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -358,7 +366,7 @@ public final class DevLircBean extends javax.swing.JPanel implements ISendingRec
         } catch (HarcHardwareException | IOException ex) {
             guiUtils.error(ex);
         } finally {
-            openToggleButton.setSelected(hardware.isValid());
+            openToggleButton.setSelected(isOpen());
             resetCursor(oldCursor);
         }
     }//GEN-LAST:event_openToggleButtonActionPerformed

@@ -69,6 +69,7 @@ public class HarcletFrame extends javax.swing.JFrame {
      * @param className Classname to be started. If it does not contain a period (.), "org.harctoolbox.guicomponents." is prepended.
      * @param lafName Name of requested look-and-feel, or null.
      */
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void run(String className, String lafName) {
         /* Create and display the form */
         final String laf = lafName;

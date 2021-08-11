@@ -38,8 +38,6 @@ public final class InternetHostPanel extends JPanel {
     public static final String INITIAL_IPNAME=  "localhost";
 
     private boolean usePort;
-    private boolean usePing;
-    private boolean useBrowse;
     private String ipName;
     private int portNumber;
     private boolean ready;
@@ -50,20 +48,16 @@ public final class InternetHostPanel extends JPanel {
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     public InternetHostPanel() {
-        this(null, true, true, true);
+        this(null, true);
     }
 
     /**
      * Creates new form InternetHostPanel
      * @param guiUtils
      * @param usePort
-     * @param usePing
-     * @param useBrowse
      */
-    public InternetHostPanel(GuiUtils guiUtils, boolean usePort, boolean usePing, boolean useBrowse) {
+    public InternetHostPanel(GuiUtils guiUtils, boolean usePort) {
         this.guiUtils = guiUtils;
-        this.useBrowse = useBrowse;
-        this.usePing = usePing;
         this.usePort = usePort;
         ipName = INITIAL_IPNAME;
         portNumber = LircClient.lircDefaultPort;
@@ -71,8 +65,6 @@ public final class InternetHostPanel extends JPanel {
         initComponents();
         setUsePort(usePort);
         portTextField.setEnabled(usePort);
-        pingButton.setEnabled(usePing);
-        browseButton.setEnabled(useBrowse);
     }
 
     public void setUsePort(boolean value) {

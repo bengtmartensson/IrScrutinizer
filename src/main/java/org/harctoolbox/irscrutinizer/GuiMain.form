@@ -5728,7 +5728,7 @@
                         <Component class="javax.swing.JComboBox" name="prontoModelComboBox">
                           <Properties>
                             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                              <Connection code="new DefaultComboBoxModel(prontoModelNames)" type="code"/>
+                              <Connection code="new DefaultComboBoxModel(ProntoClassicExporter.prontoModelNames)" type="code"/>
                             </Property>
                             <Property name="selectedIndex" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                               <Connection code="properties.getProntoModelIndex()" type="code"/>
@@ -5923,8 +5923,8 @@
             <Container class="javax.swing.JPanel" name="sendingPanel">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Sending hw">
-                    <Property name="tabTitle" type="java.lang.String" value="Sending hw"/>
+                  <JTabbedPaneConstraints tabName="Hardware">
+                    <Property name="tabTitle" type="java.lang.String" value="Hardware"/>
                     <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/icons/Crystal-Clear/22x22/apps/hardware.png"/>
                     </Property>
@@ -5936,25 +5936,28 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="transmitScrutinizedButton" linkSize="24" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="transmitGenerateButton2" linkSize="24" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="noTransmitsComboBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
-                      </Group>
-                      <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="sendingHardwareTabbedPane" min="-2" pref="853" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="127" max="32767" attributes="0"/>
-                              </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
                                   <Component id="sendingHardwareHelpButton" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="1" attributes="0">
+                                      <Group type="102" attributes="0">
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="transmitScrutinizedButton" linkSize="24" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Component id="transmitGenerateButton2" linkSize="24" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="noTransmitsComboBox" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="98" max="-2" attributes="0"/>
+                                          <Component id="captureTestButton" min="-2" pref="191" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Component id="sendingHardwareTabbedPane" min="-2" pref="853" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="0" pref="128" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -5972,8 +5975,9 @@
                               <Component id="transmitGenerateButton2" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="noTransmitsComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="captureTestButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="104" max="32767" attributes="0"/>
+                          <EmptySpace pref="10" max="32767" attributes="0"/>
                           <Component id="sendingHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -6024,7 +6028,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="globalCacheIrSenderSelector" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="38" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                                   <Component id="sendingGlobalCacheHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -6032,9 +6036,9 @@
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector" name="globalCacheIrSenderSelector">
+                        <Component class="org.harctoolbox.guicomponents.GlobalCacheBean" name="globalCacheIrSenderSelector">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector(guiUtils, properties.getVerbose(), properties.getGlobalCacheTimeout(), true)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.GlobalCacheBean(guiUtils, properties.getVerbose(), properties.getGlobalCacheTimeout())"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="sendingGlobalCacheHelpButton">
@@ -6082,7 +6086,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="devLircBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="61" max="32767" attributes="0"/>
+                                  <EmptySpace pref="100" max="32767" attributes="0"/>
                                   <Component id="sendingDevLircHardwareHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -6092,7 +6096,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.guicomponents.DevLircBean" name="devLircBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getDevLircName(), true)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.DevLircBean(guiUtils, properties.getVerbose(), properties.getDevLircTimeout(), properties.getDevLircName())"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="sendingDevLircHardwareHelpButton">
@@ -6104,76 +6108,6 @@
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sendingDevLircHardwareHelpButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                    <Container class="javax.swing.JPanel" name="irTransPanel">
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="IrTrans">
-                            <Property name="tabTitle" type="java.lang.String" value="IrTrans"/>
-                            <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/irtrans/favicon.png"/>
-                            </Property>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="irTransInternetHostPanel" max="32767" attributes="0"/>
-                                      <Group type="102" attributes="0">
-                                          <EmptySpace min="0" pref="726" max="32767" attributes="0"/>
-                                          <Component id="sendingIrTransHelpButton" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="irTransInternetHostPanel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="68" max="32767" attributes="0"/>
-                                  <Component id="sendingIrTransHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.InternetHostPanel" name="irTransInternetHostPanel">
-                          <Properties>
-                            <Property name="ipName" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                              <Connection code="null" type="code"/>
-                            </Property>
-                            <Property name="portNumber" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                              <Connection code="IrTrans.portNumber" type="code"/>
-                            </Property>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="irTransInternetHostPanelPropertyChange"/>
-                          </Events>
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.InternetHostPanel(guiUtils, false, true, true)"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="sendingIrTransHelpButton">
-                          <Properties>
-                            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Help"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sendingIrTransHelpButtonActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>
@@ -6195,12 +6129,12 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="transmitAudioParametersBean" min="-2" max="-2" attributes="0"/>
+                                  <Component id="transmitAudioBean" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace pref="407" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="sendingAudioHelpButton" min="-2" max="-2" attributes="0"/>
+                                  <Component id="transmitAudioHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -6209,21 +6143,21 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                                  <Component id="transmitAudioParametersBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="65" max="32767" attributes="0"/>
-                                  <Component id="sendingAudioHelpButton" min="-2" max="-2" attributes="0"/>
+                                  <Component id="transmitAudioBean" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="105" max="32767" attributes="0"/>
+                                  <Component id="transmitAudioHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.AudioParametersBean" name="transmitAudioParametersBean">
+                        <Component class="org.harctoolbox.guicomponents.AudioTransmitterBean" name="transmitAudioBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.AudioParametersBean(properties)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.AudioTransmitterBean(guiUtils, properties.getVerbose(), properties.getWaveSampleFrequency(), properties.getWaveChannels(), properties.getWaveSampleSize(), properties.getWaveOmitTrailingGap())"/>
                           </AuxValues>
                         </Component>
-                        <Component class="javax.swing.JButton" name="sendingAudioHelpButton">
+                        <Component class="javax.swing.JButton" name="transmitAudioHelpButton">
                           <Properties>
                             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                               <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
@@ -6231,65 +6165,7 @@
                             <Property name="text" type="java.lang.String" value="Help"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sendingAudioHelpButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                    <Container class="javax.swing.JPanel" name="irToyPanel">
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="IrToy">
-                            <Property name="tabTitle" type="java.lang.String" value="IrToy"/>
-                            <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/dangerousprototypes/favicon.png"/>
-                            </Property>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="sendingIrToyHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="irToySerialPortBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="261" max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="irToySerialPortBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="61" max="32767" attributes="0"/>
-                                  <Component id="sendingIrToyHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.SerialPortSimpleBean" name="irToySerialPortBean">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrToyPortName(), properties.getIrToyPortBaudRate(), true)"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="sendingIrToyHelpButton">
-                          <Properties>
-                            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Help"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sendingIrToyHelpButtonActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="transmitAudioHelpButtonActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>
@@ -6343,7 +6219,7 @@
                         </Component>
                         <Component class="org.harctoolbox.guicomponents.GirsClientBean" name="girsTcpSerialComboBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.GirsClientBean(guiUtils, properties)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.GirsClientBean(guiUtils, properties.getVerbose())"/>
                           </AuxValues>
                         </Component>
                       </SubComponents>
@@ -6351,8 +6227,8 @@
                     <Container class="javax.swing.JPanel" name="commandFusionSendPanel">
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="CommandFusion">
-                            <Property name="tabTitle" type="java.lang.String" value="CommandFusion"/>
+                          <JTabbedPaneConstraints tabName="Command Fusion">
+                            <Property name="tabTitle" type="java.lang.String" value="Command Fusion"/>
                           </JTabbedPaneConstraints>
                         </Constraint>
                       </Constraints>
@@ -6367,7 +6243,7 @@
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="commandFusionSendingSerialPortBean" min="-2" max="-2" attributes="0"/>
+                                  <Component id="commandFusionBean" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace pref="31" max="32767" attributes="0"/>
                               </Group>
                           </Group>
@@ -6376,8 +6252,8 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="commandFusionSendingSerialPortBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="61" max="32767" attributes="0"/>
+                                  <Component id="commandFusionBean" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="100" max="32767" attributes="0"/>
                                   <Component id="sendingCommandFusionHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -6385,14 +6261,9 @@
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.SerialPortSimpleBean" name="commandFusionSendingSerialPortBean">
-                          <Properties>
-                            <Property name="baudRate" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                              <Connection code="115200" type="code"/>
-                            </Property>
-                          </Properties>
+                        <Component class="org.harctoolbox.guicomponents.CommandFusionBean" name="commandFusionBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getCommandFusionPortName(), CommandFusion.DEFAULTBAUDRATE, false)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.CommandFusionBean(guiUtils, properties.getVerbose(), properties.getCommandFusionPortName())"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="sendingCommandFusionHelpButton">
@@ -6408,13 +6279,13 @@
                         </Component>
                       </SubComponents>
                     </Container>
-                    <Container class="javax.swing.JPanel" name="genericSerialPanel">
+                    <Container class="javax.swing.JPanel" name="captureIrWidgetPanel">
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Generic serial port">
-                            <Property name="tabTitle" type="java.lang.String" value="Generic serial port"/>
+                          <JTabbedPaneConstraints tabName="IrWidget">
+                            <Property name="tabTitle" type="java.lang.String" value="IrWidget"/>
                             <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/Crystal-Clear/22x22/filesystems/socket.png"/>
+                              <Image iconType="3" name="/icons/Crystal-Clear/22x22/apps/usb.png"/>
                             </Property>
                           </JTabbedPaneConstraints>
                         </Constraint>
@@ -6423,40 +6294,37 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="genericSerialSenderBean" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace min="0" pref="42" max="32767" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" alignment="1" attributes="0">
-                                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                          <Component id="sendingGenericSerialPortHelpButton" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="irWidgetBean" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="irWidgetHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
+                              <Group type="102" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="genericSerialSenderBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="sendingGenericSerialPortHelpButton" min="-2" max="-2" attributes="0"/>
+                                  <Component id="irWidgetBean" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="100" max="32767" attributes="0"/>
+                                  <Component id="irWidgetHelpButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="org.harctoolbox.irscrutinizer.sendinghardware.GenericSerialSenderBean" name="genericSerialSenderBean">
+                        <Component class="org.harctoolbox.guicomponents.IrWidgetBean" name="irWidgetBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.sendinghardware.GenericSerialSenderBean(guiUtils)"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getVerbose(), properties.getCaptureBeginTimeout(), properties.getIrWidgetPortName())"/>
                           </AuxValues>
                         </Component>
-                        <Component class="javax.swing.JButton" name="sendingGenericSerialPortHelpButton">
+                        <Component class="javax.swing.JButton" name="irWidgetHelpButton">
                           <Properties>
                             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                               <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
@@ -6464,7 +6332,7 @@
                             <Property name="text" type="java.lang.String" value="Help"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sendingGenericSerialPortHelpButtonActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irWidgetHelpButtonActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>
@@ -6544,435 +6412,16 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sendingHardwareHelpButtonActionPerformed"/>
                   </Events>
                 </Component>
-              </SubComponents>
-            </Container>
-            <Container class="javax.swing.JPanel" name="capturingPanel">
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Capturing hw">
-                    <Property name="tabTitle" type="java.lang.String" value="Capturing hw"/>
-                    <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/mix_microphone.png"/>
-                    </Property>
-                  </JTabbedPaneConstraints>
-                </Constraint>
-              </Constraints>
-
-              <Layout>
-                <DimensionLayout dim="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="capturingHardwareHelpButton" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="capturingHardwareTabbedPane" min="-2" pref="853" max="-2" attributes="0"/>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="captureTestButton" min="-2" pref="123" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace min="0" pref="127" max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-                <DimensionLayout dim="1">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="capturingHardwareTabbedPane" min="-2" pref="257" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="captureTestButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="128" max="32767" attributes="0"/>
-                          <Component id="capturingHardwareHelpButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-              </Layout>
-              <SubComponents>
-                <Container class="javax.swing.JTabbedPane" name="capturingHardwareTabbedPane">
-                  <Properties>
-                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                      <Border info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
-                        <BevelBorder bevelType="1"/>
-                      </Border>
-                    </Property>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="capturingHardwareTabbedPaneStateChanged"/>
-                  </Events>
-
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
-                  <SubComponents>
-                    <Container class="javax.swing.JPanel" name="captureIrWidgetPanel">
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="IrWidget">
-                            <Property name="tabTitle" type="java.lang.String" value="IrWidget"/>
-                            <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/Crystal-Clear/22x22/apps/usb.png"/>
-                            </Property>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="irWidgetSerialPortSimpleBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="capturingIrWidgetHardwareHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="irWidgetSerialPortSimpleBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="67" max="32767" attributes="0"/>
-                                  <Component id="capturingIrWidgetHardwareHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.SerialPortSimpleBean" name="irWidgetSerialPortSimpleBean">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.SerialPortSimpleBean(guiUtils, properties.getIrWidgetCapturePortName(), 115200, false)"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="capturingIrWidgetHardwareHelpButton">
-                          <Properties>
-                            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Help"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="capturingIrWidgetHardwareHelpButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                    <Container class="javax.swing.JPanel" name="captureGlobalCachePanel">
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Global Cach&#xe9;">
-                            <Property name="tabTitle" type="java.lang.String" value="Global Cach&#xe9;"/>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="globalCacheCaptureSelector" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="capturingGlobalCacheHardwareHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="globalCacheCaptureSelector" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="44" max="32767" attributes="0"/>
-                                  <Component id="capturingGlobalCacheHardwareHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Component class="org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector" name="globalCacheCaptureSelector">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.GlobalCacheIrSenderSelector(guiUtils, properties.getVerbose(), properties.getSendingTimeout(), false)"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="capturingGlobalCacheHardwareHelpButton">
-                          <Properties>
-                            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Help"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="capturingGlobalCacheHardwareHelpButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                    <Container class="javax.swing.JPanel" name="captureDevLircPanel">
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="/dev/lirc">
-                            <Property name="tabTitle" type="java.lang.String" value="/dev/lirc"/>
-                            <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/tux/tux-22.png"/>
-                            </Property>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="capturingDevLircHardwareHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="devLircCapturingSendingBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="devLircCapturingSendingBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="21" max="32767" attributes="0"/>
-                                  <Component id="capturingDevLircHardwareHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Component class="javax.swing.JButton" name="capturingDevLircHardwareHelpButton">
-                          <Properties>
-                            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Help"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="capturingDevLircHardwareHelpButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                        <Component class="org.harctoolbox.guicomponents.CapturingSendingBean" name="devLircCapturingSendingBean">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new CapturingSendingBean(this)"/>
-                          </AuxValues>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                    <Container class="javax.swing.JPanel" name="captureIrToyPanel">
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="IrToy">
-                            <Property name="tabTitle" type="java.lang.String" value="IrToy"/>
-                            <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/dangerousprototypes/favicon.png"/>
-                            </Property>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="capturingIrToyHardwareHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="irtoyCapturingSendingBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="irtoyCapturingSendingBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="21" max="32767" attributes="0"/>
-                                  <Component id="capturingIrToyHardwareHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Component class="javax.swing.JButton" name="capturingIrToyHardwareHelpButton">
-                          <Properties>
-                            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Help"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="capturingIrToyHardwareHelpButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                        <Component class="org.harctoolbox.guicomponents.CapturingSendingBean" name="irtoyCapturingSendingBean">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new CapturingSendingBean(this)"/>
-                          </AuxValues>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                    <Container class="javax.swing.JPanel" name="captureGirsPanel">
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Girs Client">
-                            <Property name="tabTitle" type="java.lang.String" value="Girs Client"/>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="capturingGirsHardwareHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="girsClientCapturingSendingBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="girsClientCapturingSendingBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="21" max="32767" attributes="0"/>
-                                  <Component id="capturingGirsHardwareHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Component class="javax.swing.JButton" name="capturingGirsHardwareHelpButton">
-                          <Properties>
-                            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Help"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="capturingGirsHardwareHelpButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                        <Component class="org.harctoolbox.guicomponents.CapturingSendingBean" name="girsClientCapturingSendingBean">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new CapturingSendingBean(this)"/>
-                          </AuxValues>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                    <Container class="javax.swing.JPanel" name="captureCommandFusionPanel">
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="CommandFusion">
-                            <Property name="tabTitle" type="java.lang.String" value="CommandFusion"/>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="capturingCommandFusionHardwareHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="commandFusionCapturingSendingBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="commandFusionCapturingSendingBean" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="21" max="32767" attributes="0"/>
-                                  <Component id="capturingCommandFusionHardwareHelpButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Component class="javax.swing.JButton" name="capturingCommandFusionHardwareHelpButton">
-                          <Properties>
-                            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Help"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="capturingCommandFusionHardwareHelpButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                        <Component class="org.harctoolbox.guicomponents.CapturingSendingBean" name="commandFusionCapturingSendingBean">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new CapturingSendingBean(this)"/>
-                          </AuxValues>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                  </SubComponents>
-                </Container>
                 <Component class="javax.swing.JButton" name="captureTestButton">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/mix_record.png"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Test"/>
+                    <Property name="text" type="java.lang.String" value="Test capture"/>
                     <Property name="toolTipText" type="java.lang.String" value="For testing the setup only.  Use &quot;Scrutinize signal&quot; or &quot;Scrutinize remote&quot; for deployment."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="captureTestButtonActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JButton" name="capturingHardwareHelpButton">
-                  <Properties>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Help"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="capturingHardwareHelpButtonActionPerformed"/>
                   </Events>
                 </Component>
               </SubComponents>

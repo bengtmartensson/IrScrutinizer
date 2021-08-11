@@ -24,56 +24,37 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
               <Component id="refreshButton" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                  <Component id="portComboBox" min="-2" pref="177" max="-2" attributes="0"/>
-              </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="transmitterLabel" alignment="0" min="-2" pref="66" max="-2" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="transmitterComboBox" min="-2" pref="72" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="portComboBox" min="-2" pref="244" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="openToggleButton" min="-2" pref="130" max="-2" attributes="0"/>
                   </Group>
               </Group>
+              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+              <Component id="versionLiteralLabel" min="-2" pref="36" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="propsLabel" max="32767" attributes="0"/>
-                  <Group type="102" attributes="0">
-                      <Component id="versionLiteralLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="114" max="32767" attributes="0"/>
-                  </Group>
-              </Group>
+              <Component id="versionLabel" pref="221" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
-              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="transmitterLabel" alignment="3" min="-2" pref="24" max="-2" attributes="0"/>
+                  <Component id="portComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="refreshButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="openToggleButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="versionLiteralLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="versionLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="transmitterComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="portComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="refreshButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="openToggleButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="propsLabel" min="-2" max="-2" attributes="0"/>
-                  </Group>
-              </Group>
-              <EmptySpace pref="14" max="32767" attributes="0"/>
+              <EmptySpace pref="15" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -84,7 +65,6 @@
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;(new String[] { NOT_INITIALIZED })" type="code"/>
         </Property>
-        <Property name="toolTipText" type="java.lang.String" value="Device name to use"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="portComboBoxActionPerformed"/>
@@ -100,7 +80,7 @@
           <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/reload.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Refresh"/>
-        <Property name="toolTipText" type="java.lang.String" value="Reload list of available /dev/lirc devices"/>
+        <Property name="toolTipText" type="java.lang.String" value="Reload list of available serial ports."/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshButtonActionPerformed"/>
@@ -108,7 +88,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Device"/>
+        <Property name="text" type="java.lang.String" value="Serial Port"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JToggleButton" name="openToggleButton">
@@ -118,7 +98,6 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Open"/>
         <Property name="toolTipText" type="java.lang.String" value="Open or close connection to device."/>
-        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openToggleButtonActionPerformed"/>
@@ -126,16 +105,18 @@
     </Component>
     <Component class="javax.swing.JLabel" name="versionLiteralLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Detected properties"/>
+        <Property name="text" type="java.lang.String" value="Ver:"/>
         <Property name="toolTipText" type="java.lang.String" value="Version of the firmware on the device, if supported by the device. Verifies that the connection is working."/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="propsLabel">
+    <Component class="javax.swing.JLabel" name="versionLabel">
       <Properties>
-        <Property name="horizontalAlignment" type="int" value="2"/>
-        <Property name="text" type="java.lang.String" value="--"/>
-        <Property name="toolTipText" type="java.lang.String" value="Properties of the device, as reported from it."/>
+        <Property name="horizontalAlignment" type="int" value="4"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="NOT_INITIALIZED" type="code"/>
+        </Property>
+        <Property name="toolTipText" type="java.lang.String" value="Version of firmware on device. Serves to verify the connection."/>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
             <BevelBorder bevelType="1"/>
@@ -143,30 +124,6 @@
         </Property>
         <Property name="enabled" type="boolean" value="false"/>
         <Property name="horizontalTextPosition" type="int" value="4"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JComboBox" name="transmitterComboBox">
-      <Properties>
-        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="5">
-            <StringItem index="0" value="default"/>
-            <StringItem index="1" value="1"/>
-            <StringItem index="2" value="2"/>
-            <StringItem index="3" value="3"/>
-            <StringItem index="4" value="4"/>
-          </StringArray>
-        </Property>
-        <Property name="toolTipText" type="java.lang.String" value="The transmitter to use to send the command"/>
-        <Property name="enabled" type="boolean" value="false"/>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JLabel" name="transmitterLabel">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="xmitter"/>
-        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
   </SubComponents>

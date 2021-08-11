@@ -45,7 +45,7 @@ public final class GlobalCacheManager {
         return instance;
     }
 
-    private boolean debug = false;
+//    private boolean debug = false;
     private AmxBeaconListener beaconListener = null;
     private ArrayList<InetAddress> automaticGlobalCaches = new ArrayList<>(4);
     private ArrayList<String> automaticGlobalCacheTypes = new ArrayList<>(4);
@@ -62,12 +62,12 @@ public final class GlobalCacheManager {
         return automaticGlobalCaches.hashCode() + 1000*manualGlobalCaches.hashCode();
     }
 
-    /**
-     * @param debug
-     */
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-    }
+//    /**
+//     * @param debug
+//     */
+//    public void setDebug(boolean debug) {
+//        this.debug = debug;
+//    }
 
     public String getType(int index) {
         if (index < manualGlobalCaches.size())
@@ -80,7 +80,8 @@ public final class GlobalCacheManager {
             return null;
         if (index < manualGlobalCaches.size())
             return manualGlobalCaches.get(index);
-        return automaticGlobalCaches.get(index - manualGlobalCaches.size());
+        int idx = index - manualGlobalCaches.size();
+        return idx < automaticGlobalCaches.size() ? automaticGlobalCaches.get(idx) : null;
     }
 
     public int getIndex(InetAddress inetAddress) {

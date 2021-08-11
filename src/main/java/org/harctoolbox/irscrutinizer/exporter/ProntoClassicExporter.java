@@ -47,6 +47,14 @@ import org.harctoolbox.irp.IrpException;
 public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteSetExporter {
 
     private static final int buttonLabelLength = 100;
+    public static final String[] prontoModelNames;
+
+    static {
+        ProntoModel[] prontomodels = ProntoModel.getModels();
+        prontoModelNames = new String[prontomodels.length];
+        for (int i = 0; i < prontomodels.length; i++)
+            prontoModelNames[i] = prontomodels[i].toString();
+    }
 
     private ProntoModel prontoModel;
     private CCF ccf;
@@ -79,6 +87,7 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
     public String getPreferredFileExtension() {
         return "ccf";
     }
+
 
     @Override
     public String getFormatName() {

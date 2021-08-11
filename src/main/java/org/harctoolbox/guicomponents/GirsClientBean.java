@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2016 Bengt Martensson.
+Copyright (C) 2016, 2021 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,106 +19,57 @@ package org.harctoolbox.guicomponents;
 
 import java.awt.Cursor;
 import java.awt.Desktop;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.DefaultComboBoxModel;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.comm.LocalSerialPortBuffered;
 import org.harctoolbox.harchardware.comm.TcpSocketPort;
 import org.harctoolbox.harchardware.ir.GirsClient;
-import org.harctoolbox.irscrutinizer.Props;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.ircore.ModulatedIrSequence;
+import org.harctoolbox.ircore.OddSequenceLengthException;
 
+public final class GirsClientBean extends HardwareBean {
 
-public final class GirsClientBean extends javax.swing.JPanel implements ISendingReceivingBean {
-
-    public static final String PROP_IPNAME = "PROP_IPNAME";
-    public static final String PROP_TYPE = "PROP_TYPE";
-
-    private static final int defaultPingTimeout = 5000;
-    private static final int defaultBaudRate = 115200;
-    private static final int defaultPortNumber = 33333;
-    private static final int defaultSerialTimeout = 12000; // 10 seconds + margin
-    private static final Type defaultType = Type.serial;
-    private static final String defaultPortName = "/dev/arduino";
-    private static final String defaultHost = "localhost";
-    private static final String notInitialized = "not initialized";
-    private static final String notConnected = "not connected";
+    public static final int DEFAULT_TIMEOUT         = 1000;
+    public static final int DEFAULT_BAUD            = 115200;
+    private static final int DEFAULT_SERIAL_TIMEOUT = 12000; // 10 seconds + margin
+    public static final Type DEFAULT_TYPE           = Type.SERIAL;
+    public static final String DEFAULT_PORTNAME     = "/dev/arduino";
+    public static final String DEFAULT_IPNAME       = "arduino";
+    public static final int DEFAULT_PORT            = 33333;
 
     private String portName;
-    private int baudRate;
-    private GuiUtils guiUtils;
-    private transient GirsClient<?> hardware;
+    private int baud;
     private int portNumber;
     private String ipName;
-    private int pingTimeout;
     private Type type;
-    private final Props properties;
-
-
-    public void initHardware() throws HarcHardwareException, IOException {
-        if (hardware != null) {
-            if (hardware.isValid())
-                return;
-            else {
-                hardware.close();
-                enableStuff(false);
-                setVersion();
-            }
-        }
-
-        boolean verbose = properties.getVerbose();
-        switch (getType()) {
-            case serial: {
-                try {
-                    LocalSerialPortBuffered comm = new LocalSerialPortBuffered(getPortName(), verbose, defaultSerialTimeout, getBaudRate());
-                    hardware = new GirsClient<>(comm);
-                } catch (IOException | HarcHardwareException ex) {
-                    guiUtils.error(ex);
-                }
-            }
-            break;
-            case tcp: {
-                try {
-                    TcpSocketPort comm = new TcpSocketPort(ipName, portNumber, defaultSerialTimeout, verbose, TcpSocketPort.ConnectionMode.keepAlive);
-                    hardware = new GirsClient<>(comm);
-                } catch (HarcHardwareException | IOException ex) {
-                    guiUtils.error(ex);
-                }
-            }
-            break;
-            default:
-                throw new IllegalArgumentException("Type " + getType() + " not yet supported");
-        }
-    }
-
-    public static enum Type {
-        serial,
-        tcp,
-        upd,
-        http
-    }
 
     public GirsClientBean() {
-        this(null, null);
+        this(null, false);
     }
 
-    public GirsClientBean(GuiUtils guiUtils, Props properties) {
-        this.guiUtils = guiUtils;
-        this.properties = properties;
-        this.pingTimeout = defaultPingTimeout;
+    public GirsClientBean(GuiUtils guiUtils, boolean verbose) {
+        this(guiUtils, verbose, DEFAULT_TIMEOUT, DEFAULT_PORTNAME, DEFAULT_BAUD, DEFAULT_IPNAME, DEFAULT_PORT, DEFAULT_TYPE);
+    }
+
+    public GirsClientBean(GuiUtils guiUtils, boolean verbose, int timeout, String initialPort, int baud,
+            String ipName, int portNumber, Type type) {
+        super(guiUtils, verbose, timeout);
         initComponents();
-        String initialPort = properties != null ? properties.getGirsClientSerialPortName() : defaultPortName;
+        if (initialPort == null)
+            initialPort = DEFAULT_PORTNAME;
         DefaultComboBoxModel<String> model;
         try {
             List<String> portList = LocalSerialPort.getSerialPortNames(true);
             model = new DefaultComboBoxModel<>(portList.toArray(new String[portList.size()]));
         } catch (IOException | LinkageError ex) {
-            model =  new DefaultComboBoxModel<>(new String[]{ initialPort != null ? initialPort : notInitialized });
+            model =  new DefaultComboBoxModel<>(new String[]{ initialPort != null ? initialPort : NOT_INITIALIZED });
         }
 
         portComboBox.setModel(model);
@@ -141,25 +92,79 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
             }
         }
         setPortName(actualPort);
-        setBaudRate(properties != null ? properties.getGirsClientSerialPortBaudRate() : defaultBaudRate);
-        setIpName(properties != null ? properties.getGirsClientIPName() : defaultHost);
-        setPortNumber(properties != null ? properties.getGirsClientPortNumber() : defaultPortNumber);
-        setType(properties != null ? Type.valueOf(properties.getGirsClientType()) : defaultType);
+        setBaud(baud);
+        setIpName(ipName);
+        setPortNumber(portNumber);
+        setType(type != null ? type : DEFAULT_TYPE);
+        enableStuff(false);
+    }
 
-        if (properties != null) { // to be javabeans safe...
-            properties.addVerboseChangeListener((String name1, Object oldValue, Object newValue) -> {
-                if (hardware != null)
-                    hardware.setVerbose((Boolean) newValue);
-            });
+    private void initHardware() throws HarcHardwareException, IOException {
+        if (hardware != null) {
+            if (hardware.isValid())
+                return;
+            else {
+                hardware.close();
+                enableStuff(false);
+            }
+        }
+
+        switch (getType()) {
+            case SERIAL: {
+                try {
+                    LocalSerialPortBuffered comm = new LocalSerialPortBuffered(getPortName(), verbose, timeout, getBaud());
+                    hardware = new GirsClient<>(comm);
+                } catch (IOException | HarcHardwareException ex) {
+                    guiUtils.error(ex);
+                }
+            }
+            break;
+            case TCP: {
+                try {
+                    TcpSocketPort comm = new TcpSocketPort(ipName, portNumber, DEFAULT_SERIAL_TIMEOUT, verbose, TcpSocketPort.ConnectionMode.keepAlive);
+                    hardware = new GirsClient<>(comm);
+                } catch (HarcHardwareException | IOException ex) {
+                    guiUtils.error(ex);
+                }
+            }
+            break;
+            default:
+                throw new IllegalArgumentException("Type " + getType() + " not yet supported");
         }
     }
 
-    private void setType(Type type) {
+    @Override
+    public boolean sendIr(IrSignal irSignal, int count) throws IOException, HarcHardwareException {
+        return ((GirsClient<?>) hardware).sendIr(irSignal, count);
+    }
+
+    @Override
+    public ModulatedIrSequence capture() throws HarcHardwareException, OddSequenceLengthException, IOException {
+        return isOpen()
+                ? ((GirsClient<?>) hardware).capture()
+                : null;
+    }
+
+    @Override
+    public String getName() {
+        return "Girs Client";
+    }
+
+    public void setPort(int portNumber) {
+        int oldPort = this.portNumber;
+        this.portNumber = portNumber;
+        propertyChangeSupport.firePropertyChange(PROP_PORT, oldPort, portNumber);
+    }
+
+    public void setType(String typeName) {
+        setType(Type.valueOf(typeName.toUpperCase(Locale.US)));
+    }
+
+    public void setType(Type type) {
         Type oldType = this.type;
         this.type = type;
+        // ???
         propertyChangeSupport.firePropertyChange(PROP_TYPE, oldType, type);
-        if (properties != null)
-            properties.setGirsClientType(type.toString());
     }
 
     public Type getType() {
@@ -176,7 +181,7 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
     /**
      * @param portName the port to set
      */
-    private void setPortName(String portName) {
+    public void setPortName(String portName) {
         if (portName == null || portName.isEmpty())
             return;
 
@@ -184,24 +189,20 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
         this.portName = portName;
 
         propertyChangeSupport.firePropertyChange(PROP_PORTNAME, oldPort, portName);
-        if (properties != null)
-            properties.setGirsClientSerialPortName(portName);
     }
 
     /**
      * @return the baudRate
      */
-    public int getBaudRate() {
-        return baudRate;
+    public int getBaud() {
+        return baud;
     }
 
-    private void setBaudRate(int baudRate) {
-        int oldBaud = this.baudRate;
-        this.baudRate = baudRate;
-        this.baudComboBox.setSelectedItem(Integer.toString(baudRate));
-        propertyChangeSupport.firePropertyChange(PROP_BAUD, oldBaud, baudRate);
-        if (properties != null)
-            properties.setGirsClientSerialPortBaudRate(baudRate);
+    public void setBaud(int baud) {
+        int oldBaud = this.baud;
+        this.baud = baud;
+        this.baudComboBox.setSelectedItem(Integer.toString(baud));
+        propertyChangeSupport.firePropertyChange(PROP_BAUD, oldBaud, baud);
     }
 
     /**
@@ -211,41 +212,25 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
         return isValid() ? versionTextField.getText() : null;
     }
 
-    private void setVersion(String version) {
-        versionLabel.setEnabled(hardware.isValid());
-        versionTextField.setEnabled(hardware.isValid());
+    private void displayVersion(String version) {
+        versionLabel.setEnabled(isOpen());
+        versionTextField.setEnabled(isOpen());
         versionTextField.setText(version);
     }
 
-    private void setVersion() {
+    private void displayVersion() {
         try {
-            setVersion(hardware.isValid() ? hardware.getVersion() : notConnected);
-            setModules(hardware.isValid() ? hardware.getModules() : null);
+            displayVersion(isOpen() ? hardware.getVersion() : NOT_CONNECTED);
+            displayModules(isOpen() ? ((GirsClient<?>) hardware).getModules() : null);
         } catch (IOException ex) {
-            setVersion(notConnected);
-            setModules(null);
+            displayVersion(NOT_CONNECTED);
+            displayModules(null);
         }
     }
 
-    private void setModules(List<String>modules) {
+    private void displayModules(List<String>modules) {
         modulesTextField.setText(modules == null ? "" : String.join(" ", modules));
     }
-
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        // just to be Javabeans safe
-        if (propertyChangeSupport == null)
-            super.addPropertyChangeListener(listener);
-        else
-            propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
-    }
-
-    private final PropertyChangeSupport propertyChangeSupport = new java.beans.PropertyChangeSupport(this);
 
     private void setupPortComboBox(boolean useCached) throws IOException {
         if (hardware != null)
@@ -257,13 +242,11 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
         portComboBox.setModel(model);
     }
 
-    private void setIpName(String name) {
+    public void setIpName(String name) {
         ipNameTextField.setText(name);
         String old = ipName;
         ipName = name;
         propertyChangeSupport.firePropertyChange(PROP_IPNAME, old, name);
-        if (properties != null)
-            properties.setGirsClientIPName(name);
     }
 
     private void setPortNumber(int val) {
@@ -271,23 +254,13 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
         int old = portNumber;
         portNumber = val;
         propertyChangeSupport.firePropertyChange(PROP_PORTNAME, old, val);
-        if (properties != null)
-            properties.setGirsClientPortNumber(val);
-    }
-
-    public void setPingTimeout(int val) {
-        pingTimeout = val;
-    }
-
-    public GirsClient<?> getHardware() {
-        return hardware;
     }
 
     public boolean isPingable(boolean useGui) {
         Cursor oldCursor = setBusyCursor();
         boolean success = false;
         try {
-            success = InetAddress.getByName(ipName).isReachable(pingTimeout);
+            success = InetAddress.getByName(ipName).isReachable(timeout);
             if (useGui)
                 guiUtils.info(ipName + (success ? " is reachable" : " is not reachable (using Java's isReachable)"));
         } catch (IOException ex) {
@@ -299,25 +272,46 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
         return success;
     }
 
-    private void openClose(boolean opening) throws IOException, HarcHardwareException {
+    @Override
+    public boolean canCapture() {
+        return isOpen() && ((GirsClient<?>) hardware).hasCaptureModule();
+    }
+
+    @Override
+    public boolean canSend() {
+        return isOpen() && ((GirsClient<?>) hardware).hasTransmitModule();
+    }
+
+    @Override
+    public void open() throws IOException, HarcHardwareException {
         Cursor oldCursor = setBusyCursor();
-        boolean oldIsOpen = hardware.isValid();
+        boolean oldIsOpen = isOpen();
         try {
-            if (opening) {
-                initHardware();
-                hardware.open();
-                boolean canCapture = hardware.hasCaptureModule();
-                useReceiveForCaptureCheckBox.setEnabled(canCapture);
-                useReceiveForCaptureCheckBox.setSelected(! canCapture);
-            } else {
-                hardware.close();
-                useReceiveForCaptureCheckBox.setSelected(false);
-            }
+            initHardware();
+            hardware.open();
+            boolean canCapture = ((GirsClient<?>) hardware).hasCaptureModule();
+            useReceiveForCaptureCheckBox.setEnabled(canCapture);
+            useReceiveForCaptureCheckBox.setSelected(!canCapture);
             propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, hardware.isValid());
         } finally {
             resetCursor(oldCursor);
-            enableStuff(opening && hardware.isValid());
-            setVersion();
+            enableStuff(isOpen());
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (hardware == null)
+            return;
+        Cursor oldCursor = setBusyCursor();
+        boolean oldIsOpen = isOpen();//hardware.isValid();
+        try {
+            hardware.close();
+            useReceiveForCaptureCheckBox.setSelected(false);
+            propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, hardware.isValid());
+        } finally {
+            resetCursor(oldCursor);
+            enableStuff(false);
         }
     }
 
@@ -337,17 +331,15 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
         modulesTextField.setEnabled(isOpen);
         modulesLabel.setEnabled(isOpen);
         openToggleButton.setSelected(isOpen);
-        useReceiveForCaptureCheckBox.setEnabled(isOpen && hardware.hasCaptureModule());
+        useReceiveForCaptureCheckBox.setEnabled(isOpen && ((GirsClient<?>) hardware).hasCaptureModule());
+        displayVersion();
     }
 
-    private Cursor setBusyCursor() {
-        Cursor oldCursor = getCursor();
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        return oldCursor;
-    }
-
-    private void resetCursor(Cursor cursor) {
-        setCursor(cursor);
+    public static enum Type {
+        SERIAL,
+        TCP,
+        UPD,
+        HTTP
     }
 
     /**
@@ -399,7 +391,7 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
             }
         });
 
-        portComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { notInitialized }));
+        portComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { NOT_INITIALIZED }));
         portComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 portComboBoxActionPerformed(evt);
@@ -561,7 +553,7 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
             }
         });
 
-        versionLabel.setText("Version");
+        versionLabel.setText("Version:");
         versionLabel.setEnabled(false);
 
         versionTextField.setEditable(false);
@@ -597,9 +589,9 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
                                 .addComponent(versionTextField))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(openToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(openToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(useReceiveForCaptureCheckBox))
-                                .addGap(0, 54, Short.MAX_VALUE))))
+                                .addGap(0, 51, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(modulesLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -609,7 +601,7 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(openToggleButton)
@@ -617,7 +609,7 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(versionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(versionLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addComponent(useReceiveForCaptureCheckBox))
                     .addComponent(serialTcpTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
@@ -644,7 +636,7 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
     }//GEN-LAST:event_portComboBoxActionPerformed
 
     private void baudComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baudComboBoxActionPerformed
-        setBaudRate(Integer.parseInt((String) baudComboBox.getSelectedItem()));
+        setBaud(Integer.parseInt((String) baudComboBox.getSelectedItem()));
     }//GEN-LAST:event_baudComboBoxActionPerformed
 
     private void ipNameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ipNameTextFieldActionPerformed
@@ -674,7 +666,7 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
     }//GEN-LAST:event_pingButtonActionPerformed
 
     private void typeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeComboBoxActionPerformed
-        setType(Type.valueOf((String)typeComboBox.getSelectedItem()));
+        setType(Type.valueOf(typeComboBox.getSelectedItem().toString().toUpperCase(Locale.US)));
     }//GEN-LAST:event_typeComboBoxActionPerformed
 
     private void openToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openToggleButtonActionPerformed
@@ -683,22 +675,22 @@ public final class GirsClientBean extends javax.swing.JPanel implements ISending
         } catch (IOException | HarcHardwareException ex) {
             guiUtils.error(ex);
         } finally {
-            openToggleButton.setSelected(hardware.isValid());
+            openToggleButton.setSelected(isOpen());
         }
     }//GEN-LAST:event_openToggleButtonActionPerformed
 
     private void serialPanelComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_serialPanelComponentShown
-        setType(Type.serial);
+        setType(Type.SERIAL);
     }//GEN-LAST:event_serialPanelComponentShown
 
     private void ethernetPanelComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_ethernetPanelComponentShown
-        setType(Type.valueOf((String)typeComboBox.getSelectedItem()));
+        setType(Type.TCP);
     }//GEN-LAST:event_ethernetPanelComponentShown
 
     private void useReceiveForCaptureCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useReceiveForCaptureCheckBoxActionPerformed
         if (hardware.isValid())
             try {
-                hardware.setUseReceiveForCapture(useReceiveForCaptureCheckBox.isSelected());
+                ((GirsClient<?>) hardware).setUseReceiveForCapture(useReceiveForCaptureCheckBox.isSelected());
         } catch (HarcHardwareException ex) {
             guiUtils.error("Girs server does not support capture");
         }
