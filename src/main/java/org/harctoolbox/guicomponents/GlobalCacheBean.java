@@ -369,7 +369,7 @@ public final class GlobalCacheBean extends HardwareBean {
         globalCacheVersionLabel.setToolTipText("Firmware version as reported by the device.");
 
         openCloseToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/connect_creating.png"))); // NOI18N
-        openCloseToggleButton.setText("Open/Close");
+        openCloseToggleButton.setText("Open");
         openCloseToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openCloseToggleButtonActionPerformed(evt);
@@ -413,7 +413,7 @@ public final class GlobalCacheBean extends HardwareBean {
                 .addGap(9, 9, 9))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(openCloseToggleButton)
+                .addComponent(openCloseToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -442,6 +442,8 @@ public final class GlobalCacheBean extends HardwareBean {
                 .addComponent(openCloseToggleButton)
                 .addContainerGap(25, Short.MAX_VALUE))
         );
+
+        openCloseToggleButton.getAccessibleContext().setAccessibleName("Open");
     }// </editor-fold>//GEN-END:initComponents
 
     private void globalCacheBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_globalCacheBrowseButtonActionPerformed

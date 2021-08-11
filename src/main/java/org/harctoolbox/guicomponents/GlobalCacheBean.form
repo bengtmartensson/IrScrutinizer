@@ -57,7 +57,7 @@
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="openCloseToggleButton" min="-2" max="-2" attributes="0"/>
+              <Component id="openCloseToggleButton" min="-2" pref="130" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -233,8 +233,11 @@
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/connect_creating.png"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Open/Close"/>
+        <Property name="text" type="java.lang.String" value="Open"/>
       </Properties>
+      <AccessibilityProperties>
+        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Open"/>
+      </AccessibilityProperties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openCloseToggleButtonActionPerformed"/>
       </Events>
