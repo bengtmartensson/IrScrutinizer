@@ -43,7 +43,7 @@ public final class CommandFusionBean extends SerialHardwareBean {
     public CommandFusionBean(GuiUtils guiUtils, boolean verbose, String initialPort) {
         super(guiUtils, verbose, 0);
         initComponents();
-        setupPortComboBox(portComboBox, initialPort);
+        setupPortComboBox(portComboBox, true, initialPort);
     }
 
     @Override
@@ -73,13 +73,6 @@ public final class CommandFusionBean extends SerialHardwareBean {
             setVersion(isOpen() ? hardware.getVersion() : NOT_CONNECTED);
         } catch (IOException ex) {
         }
-    }
-
-    private void setupPortComboBox(boolean useCached) throws IOException {
-        if (hardware != null)
-            hardware.close();
-
-        portComboBox.setModel(createModel(useCached));
     }
 
     @Override
@@ -210,14 +203,7 @@ public final class CommandFusionBean extends SerialHardwareBean {
     }// </editor-fold>//GEN-END:initComponents
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-        Cursor oldCursor = setBusyCursor();
-        try {
-            setupPortComboBox(false);
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } finally {
-            resetCursor(oldCursor);
-        }
+         setupPortComboBox(this.portComboBox, false, null);
     }//GEN-LAST:event_refreshButtonActionPerformed
 
     private void portComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_portComboBoxActionPerformed

@@ -41,7 +41,7 @@ public final class IrWidgetBean extends SerialHardwareBean {
     public IrWidgetBean(GuiUtils guiUtils, boolean verbose, int timeout, String initialPort) {
         super(guiUtils, verbose, timeout);
         initComponents();
-        setupPortComboBox(portComboBox, initialPort);
+        setupPortComboBox(portComboBox, true, initialPort);
     }
 
     @Override
@@ -51,13 +51,6 @@ public final class IrWidgetBean extends SerialHardwareBean {
 
     @Override
     protected void setVersion() {
-    }
-
-    private void setupPortComboBox(boolean useCached) throws IOException {
-        if (hardware != null)
-            hardware.close();
-
-        portComboBox.setModel(createModel(useCached));
     }
 
     @Override
@@ -160,14 +153,7 @@ public final class IrWidgetBean extends SerialHardwareBean {
     }// </editor-fold>//GEN-END:initComponents
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-        Cursor oldCursor = setBusyCursor();
-        try {
-            setupPortComboBox(false);
-        } catch (IOException ex) {
-            guiUtils.error(ex);
-        } finally {
-            resetCursor(oldCursor);
-        }
+        setupPortComboBox(this.portComboBox, false, null);
     }//GEN-LAST:event_refreshButtonActionPerformed
 
     private void portComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_portComboBoxActionPerformed

@@ -708,7 +708,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setupIrAudioPort() {
-        // transmitAudioParametersBean was constructed in initComponents()
+        // transmitAudioParametersBean was constructed and setup in initComponents()
         transmitAudioBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
             switch (evt.getPropertyName()) {
                 case AudioTransmitterBean.PROP_SAMPLEFREQUENCY:
@@ -734,8 +734,7 @@ public final class GuiMain extends javax.swing.JFrame {
         if (!LircHardware.isLibraryLoaded())
             return;
 
-//            sendingDevLirc = new SendingDevLirc(devLircPanel, devLircBean, properties, guiUtils);
-        // devLircBean was constructed in initComponents()
+        // devLircBean was constructed and setup in initComponents()
         devLircBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
             switch (evt.getPropertyName()) {
                 case HardwareBean.PROP_PORT:
@@ -795,13 +794,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setupCommandFusion() {
-        // commandFusionBean was setup in initComponents()
-
-//        SendingSerial<CommandFusion> sendingcommandFusion = new SendingSerial<>(CommandFusion.class, commandFusionSendPanel,
-//                commandFusionSendingSerialPortBean, properties, guiUtils);
-
-        commandFusionBean.setPortName(properties.getCommandFusionPortName());
-
+        // commandFusionBean was constructed and setup in initComponents()
         commandFusionBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
             switch (evt.getPropertyName()) {
 
@@ -820,9 +813,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setupIrWidget() {
-        //irWidgetBean was setup in initComponents()
-        irWidgetBean.setPortName(properties.getIrWidgetPortName());
-
+        //irWidgetBean was constructed and setup in initComponents()
         irWidgetBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
             switch (evt.getPropertyName()) {
 

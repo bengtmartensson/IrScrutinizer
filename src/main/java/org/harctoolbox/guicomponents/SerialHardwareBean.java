@@ -50,8 +50,8 @@ public abstract class SerialHardwareBean extends HardwareBean {
         super(guiUtils, verbose, timeout);
     }
 
-    protected void setupPortComboBox(JComboBox<String> portComboBox, String preferredPort) {
-        DefaultComboBoxModel<String> model = createModel(true);
+    protected void setupPortComboBox(JComboBox<String> portComboBox, boolean useCached, String preferredPort) {
+        DefaultComboBoxModel<String> model = createModel(useCached);
         portComboBox.setModel(model);
         if (preferredPort != null)
             portComboBox.setSelectedItem(preferredPort);
@@ -68,7 +68,8 @@ public abstract class SerialHardwareBean extends HardwareBean {
     }
 
     /**
-     * @param portName the port to set
+     * @param portName the port to set.
+     * No sanity test is made.
      */
     public void setPortName(String portName) {
         if (portName == null || portName.isEmpty())
@@ -104,7 +105,7 @@ public abstract class SerialHardwareBean extends HardwareBean {
         } finally {
             enableStuff();
             setVersion();
-            propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, hardware.isValid());
+            propertyChangeSupport.firePropertyChange(PROP_ISOPEN, oldIsOpen, isOpen());
         }
     }
 
