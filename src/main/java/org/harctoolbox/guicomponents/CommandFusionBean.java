@@ -61,8 +61,8 @@ public final class CommandFusionBean extends SerialHardwareBean {
     private void setVersion(String version) {
         //java.lang.String oldVersion = this.version;
         this.version = version != null ? version : NOT_INITIALIZED;
-        versionLabel.setEnabled(hardware.isValid());
-        versionLiteralLabel.setEnabled(hardware.isValid());
+        versionLabel.setEnabled(isOpen());
+        versionLiteralLabel.setEnabled(isOpen());
         versionLabel.setText(this.version); // Looks ugly if this is null.
         //propertyChangeSupport.firePropertyChange(PROP_VERSION, oldVersion, version);
     }
