@@ -37,23 +37,8 @@ import org.harctoolbox.irscrutinizer.Version;
  */
 public abstract class RemoteSetExporter extends Exporter {
 
-    protected String creatingUser;
-
-    protected  RemoteSetExporter() {
-        this(false, null);
-    }
-
-    protected  RemoteSetExporter(boolean executable, String encoding) {
-        this(System.getProperty("user.name", "unknown"), executable, encoding);
-    }
-
-    protected  RemoteSetExporter(String creatingUser) {
-        this(creatingUser, false, null);
-    }
-
-    protected RemoteSetExporter(String creatingUser, boolean executable, String encoding) {
-        super(executable, encoding);
-        this.creatingUser = creatingUser;
+    protected RemoteSetExporter() {
+        super();
     }
 
     public void export(RemoteSet remoteSet, String title, int repeatCount, boolean automaticFilenames,
@@ -67,7 +52,7 @@ public abstract class RemoteSetExporter extends Exporter {
 
     public void export(Remote remote, String title, String source, int repeatCount, File saveFile, String charsetName)
             throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
-        RemoteSet remoteSet = new RemoteSet(creatingUser,
+        RemoteSet remoteSet = new RemoteSet(getCreatingUser(),
                 source,
                 Exporter.getDateString(), //java.lang.String creationDate,
                 Version.appName, //java.lang.String tool,

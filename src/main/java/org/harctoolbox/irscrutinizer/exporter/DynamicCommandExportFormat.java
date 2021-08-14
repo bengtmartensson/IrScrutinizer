@@ -27,6 +27,7 @@ import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.ircore.IrCoreUtils;
 import org.harctoolbox.xml.XmlUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -40,10 +41,13 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
     private final boolean simpleSequence;
     private final boolean binary;
     private final Document xslt;
-
+    private final boolean executable;
+    private final DocumentFragment documentation;
 
     public DynamicCommandExportFormat(Element el, String documentURI) {
-        super(Boolean.parseBoolean(el.getAttribute("executable")), el.getAttribute("encoding"));
+        super();
+        executable = Boolean.parseBoolean(el.getAttribute("executable"));
+        documentation = DynamicRemoteSetExportFormat.extractDocumentation(el);
         this.formatName = el.getAttribute("name");
         this.extension = el.getAttribute("extension");
         this.simpleSequence = Boolean.parseBoolean(el.getAttribute("simpleSequence"));
@@ -72,6 +76,16 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
     @Override
     public String getPreferredFileExtension() {
         return extension;
+    }
+
+    @Override
+    public DocumentFragment getDocumentation() {
+        return documentation;
+    }
+
+    @Override
+    protected boolean isExecutable() {
+        return executable;
     }
 
     @Override

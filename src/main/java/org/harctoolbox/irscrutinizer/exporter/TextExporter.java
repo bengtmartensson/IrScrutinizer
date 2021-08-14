@@ -30,16 +30,19 @@ import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.irp.IrpException;
+import org.harctoolbox.xml.XmlUtils;
+import org.w3c.dom.DocumentFragment;
 
 /**
  * This class does something interesting and useful. Or not...
  */
 public class TextExporter extends RemoteSetExporter implements IRemoteSetExporter {
+    private static final DocumentFragment documentation = XmlUtils.stringToDocumentFragment("TextExporter documentation not yet written.");
 
-    private boolean generateRaw;
-    private boolean generateCcf;
-    private boolean generateParameters;
-    private Command.CommandTextFormat[] extraFormatters;
+    private final boolean generateRaw;
+    private final boolean generateCcf;
+    private final boolean generateParameters;
+    private final Command.CommandTextFormat[] extraFormatters;
     private PrintStream printStream;
 
     public TextExporter(boolean generateRaw, boolean generateCcf,
@@ -49,10 +52,6 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
         this.generateCcf = generateCcf;
         this.generateParameters = generateParameters;
         this.extraFormatters = extraFormatters;
-    }
-
-    public TextExporter() {
-        this(false, true, true, (Command.CommandTextFormat[]) null);
     }
 
     @Override
@@ -68,6 +67,21 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
     @Override
     public String getPreferredFileExtension() {
         return "txt";
+    }
+
+    @Override
+    public DocumentFragment getDocumentation() {
+        return documentation;
+    }
+
+    @Override
+    protected boolean isExecutable() {
+        return false;
+    }
+
+    @Override
+    public boolean supportsEmbeddedFormats() {
+        return true;
     }
 
     private void open(File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException {
@@ -132,10 +146,5 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
             str.append(command.getFormat(formatter.getName())).append(linefeed);
         }
         return str.toString();
-    }
-
-    @Override
-    public boolean supportsEmbeddedFormats() {
-        return true;
     }
 }

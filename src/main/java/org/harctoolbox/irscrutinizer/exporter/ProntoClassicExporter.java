@@ -40,6 +40,8 @@ import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.irp.IrpException;
+import org.harctoolbox.xml.XmlUtils;
+import org.w3c.dom.DocumentFragment;
 
 /**
  * This class does something interesting and useful. Or not...
@@ -48,6 +50,7 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
 
     private static final int buttonLabelLength = 100;
     public static final String[] prontoModelNames;
+    private static final DocumentFragment documentation = XmlUtils.stringToDocumentFragment("ProntoClassicExporter documentation not written yet.");
 
     static {
         ProntoModel[] prontomodels = ProntoModel.getModels();
@@ -56,21 +59,17 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
             prontoModelNames[i] = prontomodels[i].toString();
     }
 
-    private ProntoModel prontoModel;
+    private final ProntoModel prontoModel;
     private CCF ccf;
-    private int buttonWidth;
-    private int buttonHeight;
+    private final int buttonWidth;
+    private final int buttonHeight;
     private int screenWidth;
     private int screenHeight;
 
-    public ProntoClassicExporter() {
-        super();
-        this.ccf = null;
-    }
-
     public ProntoClassicExporter(ProntoModel prontomodel,
             int buttonwidth, int buttonheight, int screenwidth, int screenheight) {
-        this();
+        super();
+        this.ccf = null;
         this.prontoModel = prontomodel;
         this.buttonWidth = buttonwidth;
         this.buttonHeight = buttonheight;
@@ -88,10 +87,19 @@ public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteS
         return "ccf";
     }
 
-
     @Override
     public String getFormatName() {
         return "ProntoClassic";
+    }
+
+    @Override
+    public DocumentFragment getDocumentation() {
+        return documentation;
+    }
+
+    @Override
+    protected boolean isExecutable() {
+        return false;
     }
 
     @Override

@@ -21,6 +21,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import org.harctoolbox.ircore.IrCoreUtils;
 import org.harctoolbox.irp.IrpUtils;
 import org.harctoolbox.xml.XmlUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -51,11 +53,15 @@ import org.xml.sax.SAXException;
  */
 public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements IRemoteSetExporter {
 
-    public final static String exportFormatNamespace = "http://www.harctoolbox.org/exportformats";
+    public final static String EXPORTFORMAT_NAMESPACE = "http://www.harctoolbox.org/exportformats";
+
     private static JCommander argumentParser;
     private static final CommandLineArgs commandLineArgs = new CommandLineArgs();
 
     static Map<String, IExporterFactory> parseExportFormats(GuiUtils guiUtils, File file) throws ParserConfigurationException, SAXException, IOException {
+        if (! file.exists())
+            throw new FileNotFoundException(file + " does not exist.");
+
         return file.isDirectory()
                 ? parseExportFormatsDirectory(guiUtils, file)
                 : parseExportFormatsFile(guiUtils, file);
@@ -90,7 +96,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         Document doc = builder.parse(file);
 
         Map<String, IExporterFactory> result = new HashMap<>(32);
-        NodeList nl = doc.getElementsByTagNameNS(exportFormatNamespace, "exportformat");
+        NodeList nl = doc.getElementsByTagNameNS(EXPORTFORMAT_NAMESPACE, "exportformat");
         String documentURI = doc.getDocumentURI();
         for (int i = 0; i < nl.getLength(); i++) {
             final Element el = (Element) nl.item(i);
@@ -101,6 +107,42 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
             putWithCheck(guiUtils, result, ef.getFormatName(), () -> ef);
         }
         return result;
+    }
+
+    static DocumentFragment extractDocumentation(Element el) {
+        NodeList nodeList = el.getElementsByTagNameNS(EXPORTFORMAT_NAMESPACE, "documentation");
+        DocumentFragment doc = nodeList.getLength() > 0 ? nodeListToDocumentFragment(nodeList, true) : null;
+        return doc;
+    }
+
+    private static DocumentFragment nodeToDocumentFragment(Node node, boolean preserve) {
+        return nodeListToDocumentFragment(node.getChildNodes(), preserve);
+    }
+
+    private static DocumentFragment nodeListToDocumentFragment(NodeList childNodes, boolean preserveSpace) {
+        Document doc = XmlUtils.newDocument(true);
+        DocumentFragment fragment = doc.createDocumentFragment();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node node = childNodes.item(i);
+            if (preserveSpace)
+                fragment.appendChild(doc.importNode(node, true));
+            else {
+                switch (node.getNodeType()) {
+                    case Node.TEXT_NODE:
+                        if (preserveSpace || !node.getTextContent().matches(IrCoreUtils.WHITESPACE))
+                            fragment.appendChild(doc.createTextNode(node.getTextContent()));
+                        break;
+                    case Node.COMMENT_NODE:
+                        break;
+                    default:
+                        Node importedNode = doc.importNode(node, false);
+                        fragment.appendChild(importedNode);
+                        importedNode.appendChild(doc.importNode(nodeToDocumentFragment(node, preserveSpace), true));
+                        break;
+                }
+            }
+        }
+        return fragment;
     }
 
     private static void putWithCheck(GuiUtils guiUtils, Map<String, IExporterFactory> result, String formatName, IExporterFactory iExporterFactory) {
@@ -180,9 +222,13 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     private final boolean binary;
     private final boolean metadata;
     private final Document xslt;
+    private final DocumentFragment documentation;
+    private final boolean executable;
 
     private DynamicRemoteSetExportFormat(Element el, String documentURI) {
-        super(Boolean.parseBoolean(el.getAttribute("executable")), el.getAttribute("encoding"));
+        super();
+        this.executable = Boolean.parseBoolean(el.getAttribute("executable"));
+        this.documentation = extractDocumentation(el);
         this.formatName = el.getAttribute("name");
         this.extension = el.getAttribute("extension");
         this.simpleSequence = Boolean.parseBoolean(el.getAttribute("simpleSequence"));
@@ -221,6 +267,16 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     }
 
     @Override
+    public DocumentFragment getDocumentation() {
+        return documentation;
+    }
+
+    @Override
+    protected boolean isExecutable() {
+        return executable;
+    }
+
+    @Override
     public void export(RemoteSet remoteSet, String title, int count, File saveFile, String encoding) throws IOException, TransformerException {
         export(remoteSet, title, count, saveFile.getCanonicalPath(), encoding);
     }
@@ -248,7 +304,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
     private Map<String, String> standardParameter(String encoding) {
         Map<String, String> parameters = new HashMap<>(8);
         parameters.put("encoding", "'" + encoding + "'");
-        parameters.put("creatingUser", "'" + creatingUser + "'");
+        parameters.put("creatingUser", "'" + getCreatingUser() + "'");
         parameters.put("creatingTool", "'" + org.harctoolbox.irscrutinizer.Version.versionString + "'");
         parameters.put("creatingDate", "'" + (new Date()).toString() + "'");
         return parameters;

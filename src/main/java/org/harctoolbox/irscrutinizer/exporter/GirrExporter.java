@@ -24,27 +24,24 @@ import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.xml.XmlUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 
 /**
  * This class does something interesting and useful. Or not...
  */
 public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporter {
 
-    private boolean fatRaw;
-    private boolean generateRaw;
-    private boolean generateCcf;
-    private boolean generateParameters;
-    private Command.CommandTextFormat[] extraFormats;
+    private final static DocumentFragment documentation = parseToDocumentFragment("<div>Girr documentation <b>not</b> yet <a href=\"http://www.harctoolbox.org\">written</a></div>");
 
-    private GirrExporter() {
-        super();
-    }
+    private final boolean fatRaw;
+    private final boolean generateRaw;
+    private final boolean generateCcf;
+    private final boolean generateParameters;
+    private final Command.CommandTextFormat[] extraFormats;
 
-    public GirrExporter(String creatingUser,
-            boolean fatRaw,
-            boolean generateRaw, boolean generateCcf,
+    public GirrExporter(boolean fatRaw, boolean generateRaw, boolean generateCcf,
             boolean generateParameters, Command.CommandTextFormat... extraFormats) {
-        super(creatingUser);
+        super();
         this.fatRaw = fatRaw;
         this.generateRaw = generateRaw;
         this.generateCcf = generateCcf;
@@ -59,7 +56,6 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
         Document document = remoteSet.toDocument(title, fatRaw,
                 generateParameters, generateCcf, generateRaw);
         XmlUtils.printDOM(file, document, charsetName, null);
-        //(new XmlExporter(document)).printDOM(file, charsetName);
     }
 
     @Override
@@ -85,5 +81,15 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     @Override
     public boolean supportsMetaData() {
         return true;
+    }
+
+    @Override
+    public DocumentFragment getDocumentation() {
+        return documentation;
+    }
+
+    @Override
+    protected boolean isExecutable() {
+        return false;
     }
 }

@@ -25,11 +25,14 @@ import org.harctoolbox.harchardware.ir.Wave;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.irp.IrpException;
+import org.harctoolbox.xml.XmlUtils;
+import org.w3c.dom.DocumentFragment;
 
 /**
  * This class does something interesting and useful. Or not...
  */
 public class WaveExporter extends CommandExporter implements ICommandExporter {
+    private static final DocumentFragment documentation = XmlUtils.stringToDocumentFragment("Wave exporter documentation not yet written.");
 
     private int sampleFrequency;
     private int sampleSize;
@@ -82,6 +85,21 @@ public class WaveExporter extends CommandExporter implements ICommandExporter {
         return "wav";
     }
 
+    @Override
+    public boolean considersRepetitions() {
+        return true;
+    }
+
+    @Override
+    public DocumentFragment getDocumentation() {
+        return documentation;
+    }
+
+    @Override
+    protected boolean isExecutable() {
+        return false;
+    }
+
     public void export(Command command, String source, String title, int repeatCount, File exportFile) throws FileNotFoundException, IrpException, IrCoreException {
         export(command, source, title, repeatCount, exportFile, null);
     }
@@ -100,10 +118,5 @@ public class WaveExporter extends CommandExporter implements ICommandExporter {
                 square,
                 divideCarrier);
         wave.export(exportFile);
-    }
-
-    @Override
-    public boolean considersRepetitions() {
-        return true;
     }
 }

@@ -1006,8 +1006,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private GirrExporter newGirrExporter() {
-        return new GirrExporter(properties.getCreatingUser(),
-                properties.getGirrFatRaw(),
+        return new GirrExporter(properties.getGirrFatRaw(),
                 properties.getExportGenerateRaw(),
                 properties.getExportGenerateCcf(),
                 properties.getExportGenerateParameters(),
@@ -2423,6 +2422,8 @@ public final class GuiMain extends javax.swing.JFrame {
         exportRawRemoteButton1 = new javax.swing.JButton();
         exportGenerateShortCcfCheckBox = new javax.swing.JCheckBox();
         autoOpenExportsCheckBox = new javax.swing.JCheckBox();
+        exportFormatDocumentationButton = new javax.swing.JButton();
+        exportFormatExtraParametersButton = new javax.swing.JButton();
         sendingPanel = new javax.swing.JPanel();
         sendingHardwareTabbedPane = new javax.swing.JTabbedPane();
         globalCachePanel = new javax.swing.JPanel();
@@ -3637,7 +3638,7 @@ public final class GuiMain extends javax.swing.JFrame {
         irPlotter.setLayout(irPlotterLayout);
         irPlotterLayout.setHorizontalGroup(
             irPlotterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 982, Short.MAX_VALUE)
+            .addGap(0, 984, Short.MAX_VALUE)
         );
         irPlotterLayout.setVerticalGroup(
             irPlotterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3693,7 +3694,7 @@ public final class GuiMain extends javax.swing.JFrame {
         cookedPanel.setLayout(cookedPanelLayout);
         cookedPanelLayout.setHorizontalGroup(
             cookedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(parameterTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 984, Short.MAX_VALUE)
+            .addComponent(parameterTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 988, Short.MAX_VALUE)
         );
         cookedPanelLayout.setVerticalGroup(
             cookedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3725,9 +3726,9 @@ public final class GuiMain extends javax.swing.JFrame {
         rawPanel.setLayout(rawPanelLayout);
         rawPanelLayout.setHorizontalGroup(
             rawPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 984, Short.MAX_VALUE)
+            .addGap(0, 988, Short.MAX_VALUE)
             .addGroup(rawPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(rawTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 984, Short.MAX_VALUE))
+                .addComponent(rawTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 988, Short.MAX_VALUE))
         );
         rawPanelLayout.setVerticalGroup(
             rawPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3899,7 +3900,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addGap(6, 6, 6)
                 .addGroup(generatePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
-                    .addComponent(irpMasterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 980, Short.MAX_VALUE)
+                    .addComponent(irpMasterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 981, Short.MAX_VALUE)
                     .addGroup(generatePanelLayout.createSequentialGroup()
                         .addGroup(generatePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(generatePanelLayout.createSequentialGroup()
@@ -4027,7 +4028,7 @@ public final class GuiMain extends javax.swing.JFrame {
                         .addComponent(jLabel48)
                         .addGap(461, 461, 461))))
             .addGroup(gcdbPanelLayout.createSequentialGroup()
-                .addComponent(gcdbTreeImporter, javax.swing.GroupLayout.DEFAULT_SIZE, 728, Short.MAX_VALUE)
+                .addComponent(gcdbTreeImporter, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
                 .addGroup(gcdbPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(gcdbPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
@@ -4137,12 +4138,12 @@ public final class GuiMain extends javax.swing.JFrame {
                         .addComponent(jLabel52)
                         .addGap(461, 461, 461))
                     .addGroup(controlTowerPanelLayout.createSequentialGroup()
-                        .addComponent(controlTowerCodeSetComboBox, 0, 317, Short.MAX_VALUE)
+                        .addComponent(controlTowerCodeSetComboBox, 0, 318, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(controlTowerImportButton)
                         .addGap(169, 169, 169))))
             .addGroup(controlTowerPanelLayout.createSequentialGroup()
-                .addComponent(controlTowerTreeImporter, javax.swing.GroupLayout.DEFAULT_SIZE, 734, Short.MAX_VALUE)
+                .addComponent(controlTowerTreeImporter, javax.swing.GroupLayout.DEFAULT_SIZE, 735, Short.MAX_VALUE)
                 .addGap(111, 111, 111)
                 .addGroup(controlTowerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(importControlTowerHelpButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -4390,7 +4391,7 @@ public final class GuiMain extends javax.swing.JFrame {
             .addGroup(lircImportPanelLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(lircFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 124, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, Short.MAX_VALUE)
                 .addGroup(lircImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(importLircHelpButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jButton20, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -4435,7 +4436,7 @@ public final class GuiMain extends javax.swing.JFrame {
             .addGroup(irtransImportPanelLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(irTransFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 124, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, Short.MAX_VALUE)
                 .addGroup(irtransImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(importIrTransHelpButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(irTransWebButton, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -4468,7 +4469,7 @@ public final class GuiMain extends javax.swing.JFrame {
             ccfImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ccfImportPanelLayout.createSequentialGroup()
                 .addComponent(ccfFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 149, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
                 .addComponent(importProntoClassicHelpButton)
                 .addContainerGap())
         );
@@ -4497,7 +4498,7 @@ public final class GuiMain extends javax.swing.JFrame {
             xcfImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(xcfImportPanelLayout.createSequentialGroup()
                 .addComponent(xcfFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 149, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
                 .addComponent(importProntoProfessionalHelpButton)
                 .addContainerGap())
         );
@@ -4574,7 +4575,7 @@ public final class GuiMain extends javax.swing.JFrame {
             .addGroup(mode2ImportPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel17)
-                .addContainerGap(730, Short.MAX_VALUE))
+                .addContainerGap(731, Short.MAX_VALUE))
             .addGroup(mode2ImportPanelLayout.createSequentialGroup()
                 .addComponent(mode2FileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -4967,7 +4968,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addGroup(waveImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(waveImportPanelLayout.createSequentialGroup()
                         .addComponent(waveFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 149, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
                         .addComponent(importWaveHelpButton))
                     .addComponent(importWaveDivideCarrierCheckBox1))
                 .addContainerGap())
@@ -5001,7 +5002,7 @@ public final class GuiMain extends javax.swing.JFrame {
             cmlImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(cmlImportPanelLayout.createSequentialGroup()
                 .addComponent(cmlFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 149, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
                 .addComponent(importCmlHelpButton)
                 .addContainerGap())
         );
@@ -5030,7 +5031,7 @@ public final class GuiMain extends javax.swing.JFrame {
             commandFusionImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(commandFusionImportPanelLayout.createSequentialGroup()
                 .addComponent(commandFusionFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 149, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
                 .addComponent(importCommandFusionHelpButton)
                 .addContainerGap())
         );
@@ -5052,7 +5053,7 @@ public final class GuiMain extends javax.swing.JFrame {
         importPanelLayout.setHorizontalGroup(
             importPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, importPanelLayout.createSequentialGroup()
-                .addComponent(importTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 992, Short.MAX_VALUE)
+                .addComponent(importTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 993, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
         importPanelLayout.setVerticalGroup(
@@ -5210,7 +5211,7 @@ public final class GuiMain extends javax.swing.JFrame {
         waveExportOptionsPanelLayout.setHorizontalGroup(
             waveExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(waveExportOptionsPanelLayout.createSequentialGroup()
-                .addContainerGap(890, Short.MAX_VALUE)
+                .addContainerGap(866, Short.MAX_VALUE)
                 .addComponent(exportWaveHelpButton)
                 .addContainerGap())
             .addGroup(waveExportOptionsPanelLayout.createSequentialGroup()
@@ -5397,6 +5398,22 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
+        exportFormatDocumentationButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/info.png"))); // NOI18N
+        exportFormatDocumentationButton.setText("Documentation");
+        exportFormatDocumentationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportFormatDocumentationButtonActionPerformed(evt);
+            }
+        });
+
+        exportFormatExtraParametersButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/configure.png"))); // NOI18N
+        exportFormatExtraParametersButton.setText("Extra parameters");
+        exportFormatExtraParametersButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportFormatExtraParametersButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout exportPanelLayout = new javax.swing.GroupLayout(exportPanel);
         exportPanel.setLayout(exportPanelLayout);
         exportPanelLayout.setHorizontalGroup(
@@ -5430,11 +5447,13 @@ public final class GuiMain extends javax.swing.JFrame {
                                         .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(exportGenerateSendIrCheckBox)
                                             .addComponent(exportGenerateShortCcfCheckBox)))
-                                    .addComponent(exportGenerateRawCheckBox))
+                                    .addComponent(exportGenerateRawCheckBox)
+                                    .addComponent(exportFormatExtraParametersButton))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(autoOpenExportsCheckBox)
-                                    .addComponent(automaticExportFilenamesCheckBox))
+                                    .addComponent(automaticExportFilenamesCheckBox)
+                                    .addComponent(exportFormatDocumentationButton))
                                 .addGap(76, 76, 76))
                             .addGroup(exportPanelLayout.createSequentialGroup()
                                 .addComponent(exportSignalButton)
@@ -5446,7 +5465,7 @@ public final class GuiMain extends javax.swing.JFrame {
                                 .addComponent(exportRawRemoteButton1)
                                 .addGap(18, 18, 18)
                                 .addComponent(openLastFileButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(exportPanelLayout.createSequentialGroup()
                                 .addComponent(exportDirSelectButton)
@@ -5485,8 +5504,10 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel16)
-                    .addComponent(exportRepeatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(23, 23, 23)
+                    .addComponent(exportRepeatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportFormatDocumentationButton)
+                    .addComponent(exportFormatExtraParametersButton))
+                .addGap(19, 19, 19)
                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportSignalButton)
                     .addComponent(exportParametricRemoteButton)
@@ -5494,7 +5515,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(exportRawRemoteButton1)
                     .addComponent(openLastFileButton))
                 .addGap(23, 23, 23)
-                .addComponent(exportSpecificOptionsTabbedPane)
+                .addComponent(exportSpecificOptionsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
@@ -9253,6 +9274,21 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_captureTestButtonActionPerformed
 
+    private void exportFormatDocumentationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportFormatDocumentationButtonActionPerformed
+//        IExporterFactory factory = exportFormatManager.getSelected();
+//        ICommandExporter exporter = factory.newExporter();
+        org.w3c.dom.Document doc = exportFormatManager.getDocument();
+        String name = exportFormatManager.getFormatName();
+        if (doc != null)
+            HelpPopup.newHelpPopup(this, doc, "Documentation for " + name);
+        else
+            guiUtils.error("No documentation available for format " + name);
+    }//GEN-LAST:event_exportFormatDocumentationButtonActionPerformed
+
+    private void exportFormatExtraParametersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportFormatExtraParametersButtonActionPerformed
+
+    }//GEN-LAST:event_exportFormatExtraParametersButtonActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9357,6 +9393,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton exportDirSelectButton;
     private javax.swing.JTextField exportDirectoryTextField;
     private javax.swing.JComboBox<String> exportFormatComboBox;
+    private javax.swing.JButton exportFormatDocumentationButton;
+    private javax.swing.JButton exportFormatExtraParametersButton;
     private javax.swing.JMenuItem exportFormatsEditMenuItem;
     private javax.swing.JMenu exportFormatsMenu;
     private javax.swing.JMenuItem exportFormatsReloadMenuItem;

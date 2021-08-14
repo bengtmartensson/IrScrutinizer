@@ -18,7 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.exporter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,6 +30,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.xml.parsers.ParserConfigurationException;
 import org.harctoolbox.guicomponents.GuiUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.xml.sax.SAXException;
 
 /**
@@ -42,25 +43,28 @@ public class ExportFormatManager implements Serializable {
     private final IExportFormatSelector exportFormatSelector;
     private JMenu menu;
     private ButtonGroup buttonGroup;
+    private IExporterFactory selected;
 
     public ExportFormatManager(GuiUtils guiUtils, File exportFormatFile, IExportFormatSelector exportFormatSelector,
             IExporterFactory girrExporter, IExporterFactory waveExporter, IExporterFactory textExporter,
             IExporterFactory prontoExporter) throws ParserConfigurationException, SAXException, IOException {
         this.exportFormatSelector = exportFormatSelector;
+        selected = null;
         exportFormats = new LinkedHashMap<>(32);
         exportFormats.put("Girr", girrExporter);
         exportFormats.put("Text", textExporter);
         exportFormats.put("Wave", waveExporter);
         exportFormats.put("ProntoClassic", prontoExporter);
 
-        if (!exportFormatFile.exists())
-            throw new FileNotFoundException(exportFormatFile + " does not exist.");
-
         exportFormats.putAll(DynamicRemoteSetExportFormat.parseExportFormats(guiUtils, exportFormatFile));
     }
 
     public IExporterFactory get(String name) {
         return exportFormats.get(name);
+    }
+
+    public IExporterFactory getSelected() {
+        return selected;
     }
 
     private void createMenu(String selection) {
@@ -81,6 +85,36 @@ public class ExportFormatManager implements Serializable {
         }
     }
 
+    public DocumentFragment getDocumentation() {
+        return getDocumentation(selected);
+    }
+
+    public DocumentFragment getDocumentation(String formatName) {
+        return getDocumentation(get(formatName));
+    }
+
+    public DocumentFragment getDocumentation(IExporterFactory format) {
+        ICommandExporter exporter = format.newExporter();
+        return exporter.getDocumentation();
+    }
+
+    public Document getDocument() {
+        return getDocument(selected);
+    }
+
+    public Document getDocument(IExporterFactory factory) {
+        ICommandExporter exporter = factory.newExporter();
+        return exporter.getDocument();
+    }
+
+    public String getFormatName(IExporterFactory format) {
+        return format.newExporter().getFormatName();
+    }
+
+    public String getFormatName() {
+        return getFormatName(selected);
+    }
+
     public void setMenuSelection(String format) {
         if (menu == null)
             createMenu(format);
@@ -89,6 +123,7 @@ public class ExportFormatManager implements Serializable {
             JMenuItem item = menu.getItem(i);
             item.setSelected(item.getText().equals(format));
         }
+        selected = exportFormats.get(format);
     }
 
     public JMenu getMenu(String format) {
@@ -105,6 +140,7 @@ public class ExportFormatManager implements Serializable {
         Collections.sort(list, String.CASE_INSENSITIVE_ORDER);
         return list.toArray(new String[list.size()]);
     }
+
     public interface IExportFormatSelector extends Serializable {
         public void select(String name);
     }

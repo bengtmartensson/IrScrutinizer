@@ -20,6 +20,7 @@ package org.harctoolbox.irscrutinizer.exporter;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,6 +31,12 @@ import java.util.Locale;
 import javax.swing.JFileChooser;
 import org.harctoolbox.guicomponents.SelectFile;
 import org.harctoolbox.ircore.IrCoreUtils;
+import org.harctoolbox.ircore.ThisCannotHappenException;
+import org.harctoolbox.xml.XmlUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  * This class is a common base class of all the exporters.
@@ -41,6 +48,11 @@ public abstract class Exporter {
     private static final String defaultDateFormatFileString = "yyyy-MM-dd_HH-mm-ss";
     private static String dateFormatString = defaultDateFormatString;
     private static String dateFormatFileString = defaultDateFormatFileString;
+    private static String creatingUser = System.getProperty("user.name");
+    private static String encodingName = IrCoreUtils.UTF8_NAME;
+    @SuppressWarnings("StaticNonFinalUsedInInitialization")
+    private static Charset charset = Charset.forName(encodingName);
+
 
     /**
      * @param aDateFormatString the dateFormatString to set
@@ -82,21 +94,60 @@ public abstract class Exporter {
         lastSaveFile = theLastSaveFile;
     }
 
-    private final boolean executable;
-    private final String encoding;
+    public static String getCreatingUser() {
+        return creatingUser;
+    }
 
-    protected Exporter(boolean executable, String encoding) {
-        this.executable = executable;
-        this.encoding = encoding;
+    public static void setCreatingUser(String newCreatingUser) {
+        creatingUser = newCreatingUser;
+    }
+
+    public final static String getEncoding() {
+        return encodingName;
+    }
+
+    public static Charset getCharset() {
+        return charset;
+    }
+
+    public static void setEncoding(String newEncoding) {
+        charset = Charset.forName(encodingName);
+        encodingName = newEncoding;
+    }
+
+    public static Document getDocument(DocumentFragment fragment) {
+        if (fragment == null)
+            return null;
+
+        Document doc = XmlUtils.newDocument();
+        Element root = doc.createElement("html");
+        doc.appendChild(root);
+        Element body = doc.createElement("body");
+        root.appendChild(body);
+        Element div = doc.createElement("div");
+        div.setAttribute("class", "documentation");
+        body.appendChild(div);
+        div.appendChild(doc.importNode(fragment, true));
+        return doc;
+    }
+
+    protected static DocumentFragment parseToDocumentFragment(String str) {
+        try {
+            Document doc = XmlUtils.parseStringToXmlDocument(str, true, true);
+            DocumentFragment fragment = doc.createDocumentFragment();
+            fragment.appendChild(doc.getDocumentElement());
+            return fragment;
+        } catch (SAXException ex) {
+            throw new ThisCannotHappenException(ex);
+        }
+    }
+
+    protected Exporter() {
     }
 
     protected void possiblyMakeExecutable(File file) {
-        if (executable)
+        if (isExecutable())
             file.setExecutable(true, false);
-    }
-
-    public String getEncoding() {
-        return encoding;
     }
 
     public String getDateFormatString() {
@@ -108,8 +159,16 @@ public abstract class Exporter {
     // Dummy
     public abstract String getPreferredFileExtension();
 
-
     public abstract String getFormatName();
+
+    public abstract DocumentFragment getDocumentation();
+
+    public Document getDocument() {
+        return getDocument(getDocumentation());
+    }
+
+    protected abstract boolean isExecutable();
+
 
     private File selectExportFile(Component parent, File exportDir) {
         File answer = SelectFile.selectFile(parent, "Select file for " + getFormatName() + " export.",

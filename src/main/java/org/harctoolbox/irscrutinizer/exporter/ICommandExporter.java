@@ -25,6 +25,8 @@ import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.irp.IrpException;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 
 /**
  *
@@ -43,4 +45,8 @@ public interface ICommandExporter {
     public String getPreferredFileExtension();
 
     public String getFormatName();
+
+    public DocumentFragment getDocumentation();
+
+    public Document getDocument();
 }
