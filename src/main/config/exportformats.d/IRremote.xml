@@ -55,11 +55,11 @@ static const long BAUD = 115200UL; // Change if desired
 // Global variables
 IRsend irsend;
 ]]></xsl:text>
-    <xsl:apply-templates select="//girr:remote[1][//girr:parameters/@protocol='rc5']" mode="defineRc5Toggle"/>
-    <xsl:apply-templates select="//girr:remote[1][//girr:parameters/@protocol='rc6']" mode="defineRc6Toggle"/>
-    <xsl:apply-templates select="//girr:remote[1][//girr:parameters/@protocol='sony12'
-                                 or //girr:parameters/@protocol='sony15'
-                                 or //girr:parameters/@protocol='sony20']" mode="defineSonyRepeats"/>
+    <xsl:apply-templates select="//girr:remote[1][//girr:parameters/@protocol='RC5']" mode="defineRc5Toggle"/>
+    <xsl:apply-templates select="//girr:remote[1][//girr:parameters/@protocol='RC6']" mode="defineRc6Toggle"/>
+    <xsl:apply-templates select="//girr:remote[1][//girr:parameters/@protocol='Sony12'
+                                 or //girr:parameters/@protocol='Sony15'
+                                 or //girr:parameters/@protocol='Sony20']" mode="defineSonyRepeats"/>
     <xsl:text>
 </xsl:text>
     <xsl:apply-templates select="//girr:remote[1]//girr:command" mode="definition"/>
@@ -131,9 +131,9 @@ void loop() {
 </xsl:text>
     </xsl:template>
 
-    <xsl:template match="girr:command[girr:parameters[@protocol='nec1'
-                         or @protocol='rc5' or @protocol='rc6'
-                         or @protocol='sony12' or @protocol='sony15' or @protocol='sony20']]"
+    <xsl:template match="girr:command[girr:parameters[@protocol='NEC1'
+                         or @protocol='RC5' or @protocol='RC6'
+                         or @protocol='Sony12' or @protocol='Sony15' or @protocol='Sony20']]"
                   mode="definition">
         <xsl:text>// Command #</xsl:text>
         <xsl:value-of select="position()"/>
@@ -212,7 +212,7 @@ void loop() {
 
 
     <!-- version without S -->
-    <xsl:template match="girr:command[girr:parameters[@protocol='nec1']]" mode="using">
+    <xsl:template match="girr:command[girr:parameters[@protocol='NEC1']]" mode="using">
         <xsl:text>    case </xsl:text>
         <xsl:value-of select="position()"/>
         <xsl:text>L:
@@ -227,7 +227,7 @@ void loop() {
     </xsl:template>
 
     <!-- version with S -->
-    <xsl:template match="girr:command[girr:parameters[@protocol='nec1'][girr:parameter/@name='S']]" mode="using">
+    <xsl:template match="girr:command[girr:parameters[@protocol='NEC1'][girr:parameter/@name='S']]" mode="using">
         <xsl:text>    case </xsl:text>
         <xsl:value-of select="position()"/>
         <xsl:text>L:
@@ -242,7 +242,7 @@ void loop() {
     </xsl:template>
 
 
-    <xsl:template match="girr:command[girr:parameters/@protocol='rc5']" mode="using">
+    <xsl:template match="girr:command[girr:parameters/@protocol='RC5']" mode="using">
         <xsl:text>    case </xsl:text>
         <xsl:value-of select="position()"/>
         <xsl:text>L:
@@ -254,7 +254,7 @@ void loop() {
 </xsl:text>
     </xsl:template>
 
-    <xsl:template match="girr:command[girr:parameters/@protocol='rc6']" mode="using">
+    <xsl:template match="girr:command[girr:parameters/@protocol='RC6']" mode="using">
         <xsl:text>    case </xsl:text>
         <xsl:value-of select="position()"/>
         <xsl:text>L:
@@ -267,7 +267,7 @@ void loop() {
 </xsl:text>
     </xsl:template>
 
-   <xsl:template match="girr:command[girr:parameters/@protocol='sony12']" mode="using">
+   <xsl:template match="girr:command[girr:parameters/@protocol='Sony12']" mode="using">
         <xsl:text>    case </xsl:text>
         <xsl:value-of select="position()"/>
         <xsl:text>L:
@@ -282,7 +282,7 @@ void loop() {
 </xsl:text>
    </xsl:template>
 
-   <xsl:template match="girr:command[girr:parameters/@protocol='sony15']" mode="using">
+   <xsl:template match="girr:command[girr:parameters/@protocol='Sony15']" mode="using">
         <xsl:text>    case </xsl:text>
         <xsl:value-of select="position()"/>
         <xsl:text>L:
@@ -297,7 +297,7 @@ void loop() {
 </xsl:text>
    </xsl:template>
 
-   <xsl:template match="girr:command[girr:parameters/@protocol='sony20']" mode="using">
+   <xsl:template match="girr:command[girr:parameters/@protocol='Sony20']" mode="using">
         <xsl:text>    case </xsl:text>
         <xsl:value-of select="position()"/>
         <xsl:text>L:
