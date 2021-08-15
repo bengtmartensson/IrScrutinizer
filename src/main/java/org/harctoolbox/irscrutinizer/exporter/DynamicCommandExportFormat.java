@@ -23,8 +23,11 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.transform.TransformerException;
+import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.RemoteSet;
+import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.IrCoreUtils;
+import org.harctoolbox.irp.IrpException;
 import org.harctoolbox.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
@@ -34,7 +37,7 @@ import org.w3c.dom.Node;
 /**
  * This class does something interesting and useful. Or not...
  */
-public class DynamicCommandExportFormat extends RemoteSetExporter implements ICommandExporter {
+public class DynamicCommandExportFormat extends Exporter {
 
     private final String formatName;
     private final String extension;
@@ -89,16 +92,10 @@ public class DynamicCommandExportFormat extends RemoteSetExporter implements ICo
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int noRepeats, File saveFile, String charsetName)
-            throws IOException, TransformerException {
-
-        Document document = remoteSet.toDocument(title,
-                true, //fatRaw,
-                true, //generateRaw,
-                true, //generateCcf,
-                true //generateParameters)
-                );
-        export(document, saveFile.getCanonicalPath(), charsetName, noRepeats);
+    //  FIXME
+    public void export(Command command, String source, String title, int repeatCount, File exportFile, String charsetName) throws IOException, IrpException, IrCoreException, TransformerException {
+        Document document = command.toDocument(title, true, true, true, true);
+        export(document, exportFile.getCanonicalPath(), charsetName, repeatCount);
     }
 
     void export(Document document, String fileName, String charsetName, int noRepeats) throws IOException, TransformerException {

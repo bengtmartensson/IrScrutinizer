@@ -19,7 +19,9 @@ package org.harctoolbox.irscrutinizer.exporter;
 
 import java.awt.Component;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,6 +112,7 @@ public abstract class RemoteSetExporter extends Exporter {
         export(cmds, source, title, new Remote.MetaData(), repeatCount, saveFile, charsetName);
     }
 
+    @Override
     public File export(Command command, String title, String source, int repeatCount,
             boolean automaticFilenames, Component parent, File exportDir, String charsetName)
             throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
@@ -120,6 +123,7 @@ public abstract class RemoteSetExporter extends Exporter {
         return file;
     }
 
+    @Override
     public void export(Command command, String source, String title, int repeatCount, File saveFile, String charsetName)
             throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
         Map<String,Command> commands = new HashMap<>(1);
@@ -128,10 +132,6 @@ public abstract class RemoteSetExporter extends Exporter {
     }
 
     public boolean supportsEmbeddedFormats() {
-        return false;
-    }
-
-    public boolean considersRepetitions() {
         return false;
     }
 

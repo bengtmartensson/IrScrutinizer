@@ -18,8 +18,8 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.exporter;
 
 import java.io.File;
-import java.io.IOException;
-import javax.xml.transform.TransformerException;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.xml.XmlUtils;
@@ -29,7 +29,7 @@ import org.w3c.dom.DocumentFragment;
 /**
  * This class does something interesting and useful. Or not...
  */
-public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporter {
+public class GirrExporter extends RemoteSetExporter {
 
     private final static DocumentFragment documentation = parseToDocumentFragment("<div>Girr documentation <b>not</b> yet <a href=\"http://www.harctoolbox.org\">written</a></div>");
 
@@ -50,11 +50,10 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws IOException, TransformerException {
+    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException  {
         for (Command.CommandTextFormat formatter : extraFormats)
             remoteSet.addFormat(formatter, count);
-        Document document = remoteSet.toDocument(title, fatRaw,
-                generateParameters, generateCcf, generateRaw);
+        Document document = remoteSet.toDocument(title, fatRaw, generateParameters, generateCcf, generateRaw);
         XmlUtils.printDOM(file, document, charsetName, null);
     }
 

@@ -29,9 +29,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import javax.swing.JFileChooser;
+import javax.xml.transform.TransformerException;
+import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.guicomponents.SelectFile;
+import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.IrCoreUtils;
 import org.harctoolbox.ircore.ThisCannotHappenException;
+import org.harctoolbox.irp.IrpException;
 import org.harctoolbox.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
@@ -191,6 +196,19 @@ public abstract class Exporter {
         File file =  automatic ? automaticFilename(exportDir) : selectExportFile(parent, exportDir);
         if (file != null)
             setLastSaveFile(file);
+        return file;
+    }
+
+    public boolean considersRepetitions() {
+        return false;
+    }
+
+    public abstract void export(Command command, String source, String title, int repeatCount, File exportFile, String charsetName) throws IOException, IrpException, IrCoreException, GirrException, TransformerException;
+
+    public File export(Command command, String source, String title, int repeatCount, boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IOException, IrpException, IrCoreException, GirrException, TransformerException {
+        File file = exportFilename(automaticFilenames, parent, exportDir);
+        export(command, source, title, repeatCount, file, charsetName);
+        possiblyMakeExecutable(file);
         return file;
     }
 }

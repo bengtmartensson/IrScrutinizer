@@ -24,5 +24,5 @@ import java.io.Serializable;
  */
 public interface IExporterFactory extends Serializable {
 
-    public ICommandExporter newExporter();
+    public Exporter newExporter();
 }

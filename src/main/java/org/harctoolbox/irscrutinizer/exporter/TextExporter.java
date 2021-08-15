@@ -36,7 +36,7 @@ import org.w3c.dom.DocumentFragment;
 /**
  * This class does something interesting and useful. Or not...
  */
-public class TextExporter extends RemoteSetExporter implements IRemoteSetExporter {
+public class TextExporter extends RemoteSetExporter {
     private static final DocumentFragment documentation = XmlUtils.stringToDocumentFragment("TextExporter documentation not yet written.");
 
     private final boolean generateRaw;

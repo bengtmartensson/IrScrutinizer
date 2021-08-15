@@ -94,7 +94,7 @@ public class ExportFormatManager implements Serializable {
     }
 
     public DocumentFragment getDocumentation(IExporterFactory format) {
-        ICommandExporter exporter = format.newExporter();
+        Exporter exporter = format.newExporter();
         return exporter.getDocumentation();
     }
 
@@ -103,7 +103,7 @@ public class ExportFormatManager implements Serializable {
     }
 
     public Document getDocument(IExporterFactory factory) {
-        ICommandExporter exporter = factory.newExporter();
+        Exporter exporter = factory.newExporter();
         return exporter.getDocument();
     }
 

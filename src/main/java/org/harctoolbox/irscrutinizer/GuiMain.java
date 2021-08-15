@@ -1031,7 +1031,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private RemoteSetExporter newRemoteExporter() {
-        ICommandExporter exporter = newExporter();
+        Exporter exporter = newExporter();
         if (exporter != null && !RemoteSetExporter.class.isInstance(exporter)) {
             guiUtils.error("Selected export format only supports single commands");
             return null;
@@ -1039,13 +1039,13 @@ public final class GuiMain extends javax.swing.JFrame {
         return (RemoteSetExporter) exporter;
     }
 
-    private ICommandExporter newExporter() {
+    private Exporter newExporter() {
         return newExporter((String) exportFormatComboBox.getSelectedItem());
     }
 
-    private ICommandExporter newExporter(String formatName) {
-        ICommandExporter exporter = exportFormatManager.get(formatName).newExporter();
-        boolean supportsEmbedded = IRemoteSetExporter.class.isInstance(exporter) && ((IRemoteSetExporter) exporter).supportsEmbeddedFormats();
+    private Exporter newExporter(String formatName) {
+        Exporter exporter = exportFormatManager.get(formatName).newExporter();
+        boolean supportsEmbedded = RemoteSetExporter.class.isInstance(exporter) && ((RemoteSetExporter) exporter).supportsEmbeddedFormats();
         if (supportsEmbedded && !properties.getExportGenerateParameters()
                 && !properties.getExportGenerateCcf() && !properties.getExportGenerateRaw()) {
             boolean answer = guiUtils.confirm("All of \"Parameters\", \"Raw\", and \"Pronto Hex\" deselected in the export. Continue?");
@@ -1389,7 +1389,7 @@ public final class GuiMain extends javax.swing.JFrame {
         saveSignal(irSignal, newExporter());
     }
 
-    private void saveSignal(IrSignal irSignal, ICommandExporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+    private void saveSignal(IrSignal irSignal, Exporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
         if (irSignal == null) {
             guiUtils.error("Not exporting empty signal.");
             return;
@@ -1403,7 +1403,7 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }
 
-    private File saveSignalWrite(Command command, String title, ICommandExporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+    private File saveSignalWrite(Command command, String title, Exporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
         if (!checkChangeExportDirectory(new File(exportDirectoryTextField.getText())))
             return null;
 
@@ -1805,8 +1805,8 @@ public final class GuiMain extends javax.swing.JFrame {
         }
         properties.setExportFormatName(formatName);
 
-        ICommandExporter exporter = format.newExporter();
-        boolean supportsEmbedded = IRemoteSetExporter.class.isInstance(exporter) && ((IRemoteSetExporter) exporter).supportsEmbeddedFormats();
+        Exporter exporter = format.newExporter();
+        boolean supportsEmbedded = RemoteSetExporter.class.isInstance(exporter) && ((RemoteSetExporter) exporter).supportsEmbeddedFormats();
         enableSubFormats(supportsEmbedded);
         exportRepeatComboBox.setEnabled(supportsEmbedded && exportGenerateSendIrCheckBox.isSelected() || exporter.considersRepetitions());
         if (!formatName.equals(exportFormatComboBox.getSelectedItem()))
@@ -7304,7 +7304,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void exportSignalIctMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSignalIctMenuItemActionPerformed
         try {
-            ICommandExporter exporter = newExporter("ICT");
+            Exporter exporter = newExporter("ICT");
             saveSignal(getCapturedIrSignal(), exporter);
         } catch (IOException | TransformerException | IrpException | GirrException | IrCoreException ex) {
             guiUtils.error(ex);

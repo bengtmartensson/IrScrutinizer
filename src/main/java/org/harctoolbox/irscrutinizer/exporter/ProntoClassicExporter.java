@@ -46,7 +46,7 @@ import org.w3c.dom.DocumentFragment;
 /**
  * This class does something interesting and useful. Or not...
  */
-public class ProntoClassicExporter extends RemoteSetExporter implements IRemoteSetExporter {
+public class ProntoClassicExporter extends RemoteSetExporter {
 
     private static final int buttonLabelLength = 100;
     public static final String[] prontoModelNames;

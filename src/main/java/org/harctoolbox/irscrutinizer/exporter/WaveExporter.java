@@ -31,7 +31,7 @@ import org.w3c.dom.DocumentFragment;
 /**
  * This class does something interesting and useful. Or not...
  */
-public class WaveExporter extends CommandExporter implements ICommandExporter {
+public class WaveExporter extends Exporter {
     private static final DocumentFragment documentation = XmlUtils.stringToDocumentFragment("Wave exporter documentation not yet written.");
 
     private int sampleFrequency;

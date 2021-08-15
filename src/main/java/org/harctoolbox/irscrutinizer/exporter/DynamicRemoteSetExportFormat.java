@@ -51,7 +51,7 @@ import org.xml.sax.SAXException;
  * This class is a RemoteSetExporter that dynamically takes its content from the contents of a configuration file,
  * or a directory of such.
  */
-public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements IRemoteSetExporter {
+public class DynamicRemoteSetExportFormat extends RemoteSetExporter {
 
     public final static String EXPORTFORMAT_NAMESPACE = "http://www.harctoolbox.org/exportformats";
 
@@ -100,7 +100,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
         String documentURI = doc.getDocumentURI();
         for (int i = 0; i < nl.getLength(); i++) {
             final Element el = (Element) nl.item(i);
-            final ICommandExporter ef = (el.getAttribute("multiSignal").equals("true"))
+            final Exporter ef = (el.getAttribute("multiSignal").equals("true"))
                     ? new DynamicRemoteSetExportFormat(el, documentURI)
                     : new DynamicCommandExportFormat(el, documentURI);
 
@@ -198,7 +198,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter implements I
                 System.exit(IrpUtils.EXIT_SEMANTIC_USAGE_ERROR);
             }
 
-            ICommandExporter exporter = format.newExporter();
+            Exporter exporter = format.newExporter();
 
             String outFileName = commandLineArgs.outputFile != null
                     ? commandLineArgs.outputFile
