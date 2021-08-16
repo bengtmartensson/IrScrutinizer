@@ -67,6 +67,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter {
                 : parseExportFormatsFile(guiUtils, file);
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     static Map<String, IExporterFactory> parseExportFormatsDirectory(GuiUtils guiUtils, File file) throws ParserConfigurationException, SAXException, IOException {
         Map<String, IExporterFactory> result = new HashMap<>(32);
         File[] files = file.listFiles((File dir, String name) -> name.endsWith(".xml"));
@@ -104,7 +105,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter {
                     ? new DynamicRemoteSetExportFormat(el, documentURI)
                     : new DynamicCommandExportFormat(el, documentURI);
 
-            putWithCheck(guiUtils, result, ef.getFormatName(), () -> ef);
+            putWithCheck(guiUtils, result, ef.getName(), () -> ef);
         }
         return result;
     }
@@ -168,6 +169,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter {
         System.exit(exitcode);
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         argumentParser = new JCommander(commandLineArgs);
         argumentParser.setProgramName("DynamicRemoteSetExportFormatVersion");
@@ -252,7 +254,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter {
     }
 
     @Override
-    public String getFormatName() {
+    public String getName() {
         return formatName;
     }
 
@@ -272,8 +274,9 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter {
     }
 
     @Override
-    protected boolean isExecutable() {
-        return executable;
+    protected void possiblyMakeExecutable(File file) {
+        if (executable)
+            file.setExecutable(true, false);
     }
 
     @Override

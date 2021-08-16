@@ -19,9 +19,7 @@ package org.harctoolbox.irscrutinizer.exporter;
 
 import java.awt.Component;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

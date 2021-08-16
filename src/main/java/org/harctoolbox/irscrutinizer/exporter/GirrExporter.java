@@ -68,7 +68,7 @@ public class GirrExporter extends RemoteSetExporter {
     }
 
     @Override
-    public String getFormatName() {
+    public String getName() {
         return "Girr";
     }
 
@@ -85,10 +85,5 @@ public class GirrExporter extends RemoteSetExporter {
     @Override
     public DocumentFragment getDocumentation() {
         return documentation;
-    }
-
-    @Override
-    protected boolean isExecutable() {
-        return false;
     }
 }

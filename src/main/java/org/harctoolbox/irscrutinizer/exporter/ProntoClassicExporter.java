@@ -48,7 +48,7 @@ import org.w3c.dom.DocumentFragment;
  */
 public class ProntoClassicExporter extends RemoteSetExporter {
 
-    private static final int buttonLabelLength = 100;
+    private static final int BUTTONLABELLENGTH = 100;
     public static final String[] prontoModelNames;
     private static final DocumentFragment documentation = XmlUtils.stringToDocumentFragment("ProntoClassicExporter documentation not written yet.");
 
@@ -88,18 +88,13 @@ public class ProntoClassicExporter extends RemoteSetExporter {
     }
 
     @Override
-    public String getFormatName() {
+    public String getName() {
         return "ProntoClassic";
     }
 
     @Override
     public DocumentFragment getDocumentation() {
         return documentation;
-    }
-
-    @Override
-    protected boolean isExecutable() {
-        return false;
     }
 
     @Override
@@ -146,8 +141,8 @@ public class ProntoClassicExporter extends RemoteSetExporter {
 
                         Command cmd = it.next();
                         String buttonName = cmd.getName();
-                        if (buttonName.length() > buttonLabelLength)
-                            buttonName = buttonName.substring(0, buttonLabelLength);
+                        if (buttonName.length() > BUTTONLABELLENGTH)
+                            buttonName = buttonName.substring(0, BUTTONLABELLENGTH);
                         CCFButton b1 = panel.createButton(buttonName);
                         b1.setFont(CCFFont.SIZE_8);
                         b1.setTextAlignment(CCFNode.TEXT_RIGHT);

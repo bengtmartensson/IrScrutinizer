@@ -49,15 +49,14 @@ import org.xml.sax.SAXException;
 public abstract class Exporter {
 
     private static File lastSaveFile = null;
-    private static final String defaultDateFormatString = "yyyy-MM-dd_HH:mm:ss";
-    private static final String defaultDateFormatFileString = "yyyy-MM-dd_HH-mm-ss";
-    private static String dateFormatString = defaultDateFormatString;
-    private static String dateFormatFileString = defaultDateFormatFileString;
+    private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd_HH:mm:ss";
+    private static final String DEFAULT_DATE_FORMATFILE = "yyyy-MM-dd_HH-mm-ss";
+    private static String dateFormatString = DEFAULT_DATE_FORMAT;
+    private static String dateFormatFileString = DEFAULT_DATE_FORMATFILE;
     private static String creatingUser = System.getProperty("user.name");
     private static String encodingName = IrCoreUtils.UTF8_NAME;
     @SuppressWarnings("StaticNonFinalUsedInInitialization")
     private static Charset charset = Charset.forName(encodingName);
-
 
     /**
      * @param aDateFormatString the dateFormatString to set
@@ -151,8 +150,6 @@ public abstract class Exporter {
     }
 
     protected void possiblyMakeExecutable(File file) {
-        if (isExecutable())
-            file.setExecutable(true, false);
     }
 
     public String getDateFormatString() {
@@ -164,7 +161,7 @@ public abstract class Exporter {
     // Dummy
     public abstract String getPreferredFileExtension();
 
-    public abstract String getFormatName();
+    public abstract String getName();
 
     public abstract DocumentFragment getDocumentation();
 
@@ -172,11 +169,8 @@ public abstract class Exporter {
         return getDocument(getDocumentation());
     }
 
-    protected abstract boolean isExecutable();
-
-
     private File selectExportFile(Component parent, File exportDir) {
-        File answer = SelectFile.selectFile(parent, "Select file for " + getFormatName() + " export.",
+        File answer = SelectFile.selectFile(parent, "Select file for " + getName() + " export.",
                 exportDir.getPath(), true, false, JFileChooser.FILES_ONLY, getFileExtensions());
         if (answer != null && getPreferredFileExtension() != null && ! getPreferredFileExtension().isEmpty())
             answer = new File(IrCoreUtils.addExtensionIfNotPresent(answer.getPath(), getPreferredFileExtension()));
@@ -185,7 +179,7 @@ public abstract class Exporter {
 
     private File automaticFilename(File exportDir) throws IOException {
         checkExportDir(exportDir);
-        String cleanedFormatName = getFormatName().toLowerCase(Locale.US).replaceAll("[^a-z0-9_\\-\\.]", "_");
+        String cleanedFormatName = getName().toLowerCase(Locale.US).replaceAll("[^a-z0-9_\\-\\.]", "_");
         String name = cleanedFormatName + "_" + (new SimpleDateFormat(dateFormatFileString)).format(new Date());
         if (getPreferredFileExtension() != null)
             name += "." + getPreferredFileExtension();

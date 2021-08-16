@@ -60,7 +60,7 @@ public class TextExporter extends RemoteSetExporter {
     }
 
     @Override
-    public String getFormatName() {
+    public String getName() {
         return "Text";
     }
 
@@ -72,11 +72,6 @@ public class TextExporter extends RemoteSetExporter {
     @Override
     public DocumentFragment getDocumentation() {
         return documentation;
-    }
-
-    @Override
-    protected boolean isExecutable() {
-        return false;
     }
 
     @Override

@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.xml.transform.TransformerException;
 import org.harctoolbox.girr.Command;
-import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.IrCoreUtils;
 import org.harctoolbox.irp.IrpException;
@@ -39,7 +38,7 @@ import org.w3c.dom.Node;
  */
 public class DynamicCommandExportFormat extends Exporter {
 
-    private final String formatName;
+    private final String name;
     private final String extension;
     private final boolean simpleSequence;
     private final boolean binary;
@@ -51,7 +50,7 @@ public class DynamicCommandExportFormat extends Exporter {
         super();
         executable = Boolean.parseBoolean(el.getAttribute("executable"));
         documentation = DynamicRemoteSetExportFormat.extractDocumentation(el);
-        this.formatName = el.getAttribute("name");
+        this.name = el.getAttribute("name");
         this.extension = el.getAttribute("extension");
         this.simpleSequence = Boolean.parseBoolean(el.getAttribute("simpleSequence"));
         this.binary = Boolean.parseBoolean(el.getAttribute("binary"));
@@ -68,12 +67,12 @@ public class DynamicCommandExportFormat extends Exporter {
 
     @Override
     public String[][] getFileExtensions() {
-        return new String[][] { new String[] { formatName + " files (*." + extension + ")", extension } };
+        return new String[][] { new String[] { name + " files (*." + extension + ")", extension } };
     }
 
     @Override
-    public String getFormatName() {
-        return formatName;
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -86,9 +85,10 @@ public class DynamicCommandExportFormat extends Exporter {
         return documentation;
     }
 
-    @Override
-    protected boolean isExecutable() {
-        return executable;
+   @Override
+    protected void possiblyMakeExecutable(File file) {
+        if (executable)
+            file.setExecutable(true, false);
     }
 
     @Override

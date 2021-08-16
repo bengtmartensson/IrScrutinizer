@@ -76,7 +76,7 @@ public class WaveExporter extends Exporter {
     }
 
     @Override
-    public String getFormatName() {
+    public String getName() {
         return "Wave";
     }
 
@@ -93,11 +93,6 @@ public class WaveExporter extends Exporter {
     @Override
     public DocumentFragment getDocumentation() {
         return documentation;
-    }
-
-    @Override
-    protected boolean isExecutable() {
-        return false;
     }
 
     public void export(Command command, String source, String title, int repeatCount, File exportFile) throws FileNotFoundException, IrpException, IrCoreException {

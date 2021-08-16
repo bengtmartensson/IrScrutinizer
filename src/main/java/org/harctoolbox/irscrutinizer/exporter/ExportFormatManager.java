@@ -108,7 +108,7 @@ public class ExportFormatManager implements Serializable {
     }
 
     public String getFormatName(IExporterFactory format) {
-        return format.newExporter().getFormatName();
+        return format.newExporter().getName();
     }
 
     public String getFormatName() {

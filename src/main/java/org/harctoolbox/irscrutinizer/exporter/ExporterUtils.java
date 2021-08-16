@@ -21,11 +21,11 @@ package org.harctoolbox.irscrutinizer.exporter;
  * Static support functions intended to be called from XSLT transformations.
  */
 public class ExporterUtils {
-    private static final String formattingCode = "%02X";
-    public static final String longFormattingCode = "%016X";
+    private static final String FORMATTINGCODE = "%02X";
+    public static final String LONGFORMATTINGCODE = "%016X";
 
     public static String sixteenDigitHex(long n) {
-        return String.format(longFormattingCode, n);
+        return String.format(LONGFORMATTINGCODE, n);
     }
 
     private static String processBitFields(long... args) {
@@ -446,7 +446,7 @@ public class ExporterUtils {
     }
 
     public static String twoDigitHex(int n) {
-        return String.format(formattingCode, n);
+        return String.format(FORMATTINGCODE, n);
     }
 
     public static String twoDigitReverseHex(int n) {
