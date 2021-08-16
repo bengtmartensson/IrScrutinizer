@@ -201,6 +201,8 @@ public abstract class Exporter {
 
     public File export(Command command, String source, String title, int repeatCount, boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IOException, IrpException, IrCoreException, GirrException, TransformerException {
         File file = exportFilename(automaticFilenames, parent, exportDir);
+        if (file == null)
+            return null;
         export(command, source, title, repeatCount, file, charsetName);
         possiblyMakeExecutable(file);
         return file;

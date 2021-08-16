@@ -280,11 +280,11 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter {
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File saveFile, String encoding) throws IOException, TransformerException {
-        export(remoteSet, title, count, saveFile.getCanonicalPath(), encoding);
+    public void export(RemoteSet remoteSet, String title, File saveFile, String encoding) throws IOException, TransformerException {
+        export(remoteSet, title, saveFile.getCanonicalPath(), encoding);
     }
 
-    private void export(RemoteSet remoteSet, String title, int count, String fileName, String encoding) throws IOException, TransformerException {
+    private void export(RemoteSet remoteSet, String title, String fileName, String encoding) throws IOException, TransformerException {
         boolean oldInheritStatus = Command.isUseInheritanceForXml();
         Command.setUseInheritanceForXml(false);
         Document document = remoteSet.toDocument(title,

@@ -1355,7 +1355,7 @@ public final class GuiMain extends javax.swing.JFrame {
         }
 
         File file = exporter.export(commands, null, title, metaData,
-                properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
+                properties.getExportAutomaticFilenames(), this,
                 new File(properties.getExportDir()), properties.getExportCharsetName());
         return file;
     }

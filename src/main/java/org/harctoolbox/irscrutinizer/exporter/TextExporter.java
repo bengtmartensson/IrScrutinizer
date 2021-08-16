@@ -104,14 +104,14 @@ public class TextExporter extends RemoteSetExporter {
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName)
+    public void export(RemoteSet remoteSet, String title, File file, String charsetName)
             throws IOException, GirrException, IrCoreException, IrpException {
         open(file, charsetName);
         try {
             for (Remote remote : remoteSet)
                 for (CommandSet commandSet : remote)
                     for (Command command : commandSet)
-                        printStream.println(formatCommand(command, count));
+                        printStream.println(formatCommand(command, 1));
         } finally {
             close();
         }

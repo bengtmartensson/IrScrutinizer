@@ -50,9 +50,9 @@ public class GirrExporter extends RemoteSetExporter {
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException  {
+    public void export(RemoteSet remoteSet, String title, File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException  {
         for (Command.CommandTextFormat formatter : extraFormats)
-            remoteSet.addFormat(formatter, count);
+            remoteSet.addFormat(formatter, 1);
         Document document = remoteSet.toDocument(title, fatRaw, generateParameters, generateCcf, generateRaw);
         XmlUtils.printDOM(file, document, charsetName, null);
     }

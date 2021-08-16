@@ -98,7 +98,7 @@ public class ProntoClassicExporter extends RemoteSetExporter {
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File saveFile, String charsetName /* ignored */)
+    public void export(RemoteSet remoteSet, String title, File saveFile, String charsetName /* ignored */)
             throws IOException, GirrException, IrpException, IrCoreException {
         setup(remoteSet);
         ccf.save(saveFile.getPath());
