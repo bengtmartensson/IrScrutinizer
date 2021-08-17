@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.RemoteSet;
-import org.harctoolbox.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 
@@ -51,10 +50,14 @@ public class GirrExporter extends RemoteSetExporter {
 
     @Override
     public void export(RemoteSet remoteSet, String title, File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException  {
+        Document document = toDocument(remoteSet, title);
+        export(document, file, charsetName);
+    }
+
+    public Document toDocument(RemoteSet remoteSet, String title) {
         for (Command.CommandTextFormat formatter : extraFormats)
             remoteSet.addFormat(formatter, 1);
-        Document document = remoteSet.toDocument(title, fatRaw, generateParameters, generateCcf, generateRaw);
-        XmlUtils.printDOM(file, document, charsetName, null);
+        return remoteSet.toDocument(title, fatRaw, generateParameters, generateCcf, generateRaw);
     }
 
     @Override

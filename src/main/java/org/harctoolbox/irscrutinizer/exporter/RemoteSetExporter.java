@@ -20,6 +20,7 @@ package org.harctoolbox.irscrutinizer.exporter;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -101,23 +102,32 @@ public abstract class RemoteSetExporter extends Exporter {
     }
 
     public void export(Collection<Command> commands, String source, String title,
-            File saveFile, String charsetName) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+            File file, String charsetName) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
         Map<String, Command> cmds = new HashMap<>(32);
         commands.forEach((command) -> {
             cmds.put(command.getName(), command);
         });
 
-        export(cmds, source, title, new Remote.MetaData(), saveFile, charsetName);
+        export(cmds, source, title, new Remote.MetaData(), file, charsetName);
+    }
+
+    public void export(Command command, String source, String title, File file, String charsetName)
+            throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+//        if (repeatCount != 1)
+//            throw new IllegalArgumentException("This export format does not support a repeat count > 1.");
+        Map<String,Command> commands = new HashMap<>(1);
+        commands.put(command.getName(), command);
+        export(commands, source, title, new Remote.MetaData(Version.appName + "Export"), file, charsetName);
     }
 
     @Override
-    public void export(Command command, String source, String title, int repeatCount, File saveFile, String charsetName)
-            throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+    protected void export(Command command, String source, String title, int repeatCount, File file, String charsetName)
+            throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
         if (repeatCount != 1)
             throw new IllegalArgumentException("This export format does not support a repeat count > 1.");
-        Map<String,Command> commands = new HashMap<>(1);
-        commands.put(command.getName(), command);
-        export(commands, source, title, new Remote.MetaData(Version.appName + "Export"), saveFile, charsetName);
+        Collection<Command> coll = new ArrayList<>(1);
+        coll.add(command);
+        export(coll, source, title, file, charsetName);
     }
 
     public boolean supportsEmbeddedFormats() {

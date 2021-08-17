@@ -470,11 +470,15 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void loadExportFormats() throws ParserConfigurationException, SAXException, IOException {
-        exportFormatManager = new ExportFormatManager(guiUtils,
-                new File(properties.mkPathAbsolute(properties.getExportFormatFilePath())), //new File(properties.getExportDir()),
-                (String name1) -> {
-                    selectFormat(name1);
-                }, () -> newGirrExporter(), () -> exportAudioParametersBean.newWaveExporter(), () -> newTextExporter(), () -> newProntoClassicExporter());
+        exportFormatManager = new ExportFormatManager((String name1) -> {
+            selectFormat(name1);
+        });
+        exportFormatManager.add("Girr", () -> newGirrExporter());
+        exportFormatManager.add("Wave", () -> exportAudioParametersBean.newWaveExporter());
+        exportFormatManager.add("Text", () -> newTextExporter());
+        exportFormatManager.add("ProntoClassic", () -> newProntoClassicExporter());
+
+        exportFormatManager.addDynamicFormats(guiUtils, new File(properties.mkPathAbsolute(properties.getExportFormatFilePath())));
     }
 
     private void setupDecoder() throws IrpParseException {

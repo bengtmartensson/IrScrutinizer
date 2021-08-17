@@ -19,7 +19,10 @@ package org.harctoolbox.irscrutinizer.exporter;
 
 import java.awt.Component;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -197,14 +200,33 @@ public abstract class Exporter {
         return false;
     }
 
-    public abstract void export(Command command, String source, String title, int repeatCount, File exportFile, String charsetName) throws IOException, IrpException, IrCoreException, GirrException, TransformerException;
+    public void export(Document document, File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException {
+        XmlUtils.printDOM(file, document, charsetName, null);
+    }
 
-    public File export(Command command, String source, String title, int repeatCount, boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IOException, IrpException, IrCoreException, GirrException, TransformerException {
+    public void export(String payload, File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException {
+        try (PrintStream printStream = new PrintStream(file, charsetName)) {
+            printStream.println(payload);
+        }
+    }
+
+    public File export(String payload, boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IOException {
         File file = exportFilename(automaticFilenames, parent, exportDir);
-        if (file == null)
-            return null;
-        export(command, source, title, repeatCount, file, charsetName);
-        possiblyMakeExecutable(file);
+        export(payload, file, charsetName);
         return file;
     }
+//    private void export(Command command, String source, String title, int repeatCount, File file, String charsetName) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+
+    public File export(Command command, String source, String title,
+                int noRepeats, boolean automaticFilenames, Component component,
+                File exportDir, String charsetName) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+        File file = exportFilename(automaticFilenames, component, exportDir);
+        export(command, source, title, noRepeats, file, charsetName);
+        return file;
+    }
+
+    protected abstract void export(Command command, String source, String title, int noRepeats, File file, String charsetName)
+            throws IOException, TransformerException, IrCoreException, IrpException, GirrException;
 }

@@ -24,9 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.xml.transform.TransformerException;
 import org.harctoolbox.girr.Command;
-import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.IrCoreUtils;
-import org.harctoolbox.irp.IrpException;
 import org.harctoolbox.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
@@ -36,7 +34,7 @@ import org.w3c.dom.Node;
 /**
  * This class does something interesting and useful. Or not...
  */
-public class DynamicCommandExportFormat extends Exporter {
+public class DynamicCommandExportFormat extends CommandExporter {
 
     private final String name;
     private final String extension;
@@ -91,9 +89,9 @@ public class DynamicCommandExportFormat extends Exporter {
             file.setExecutable(true, false);
     }
 
-    @Override
     //  FIXME
-    public void export(Command command, String source, String title, int repeatCount, File exportFile, String charsetName) throws IOException, IrpException, IrCoreException, TransformerException {
+    @Override
+    public void export(Command command, String source, String title, int repeatCount, File exportFile, String charsetName) throws IOException, TransformerException {
         Document document = command.toDocument(title, true, true, true, true);
         export(document, exportFile.getCanonicalPath(), charsetName, repeatCount);
     }

@@ -19,7 +19,6 @@ package org.harctoolbox.irscrutinizer.exporter;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -37,7 +36,7 @@ import org.xml.sax.SAXException;
 /**
  * This class does something interesting and useful. Or not...
  */
-public class ExportFormatManager implements Serializable {
+public class ExportFormatManager {
 
     private final LinkedHashMap<String, IExporterFactory> exportFormats;
     private final IExportFormatSelector exportFormatSelector;
@@ -45,18 +44,18 @@ public class ExportFormatManager implements Serializable {
     private ButtonGroup buttonGroup;
     private IExporterFactory selected;
 
-    public ExportFormatManager(GuiUtils guiUtils, File exportFormatFile, IExportFormatSelector exportFormatSelector,
-            IExporterFactory girrExporter, IExporterFactory waveExporter, IExporterFactory textExporter,
-            IExporterFactory prontoExporter) throws ParserConfigurationException, SAXException, IOException {
+    public ExportFormatManager(IExportFormatSelector exportFormatSelector) {
         this.exportFormatSelector = exportFormatSelector;
         selected = null;
         exportFormats = new LinkedHashMap<>(32);
-        exportFormats.put("Girr", girrExporter);
-        exportFormats.put("Text", textExporter);
-        exportFormats.put("Wave", waveExporter);
-        exportFormats.put("ProntoClassic", prontoExporter);
+    }
 
-        exportFormats.putAll(DynamicRemoteSetExportFormat.parseExportFormats(guiUtils, exportFormatFile));
+    public void addDynamicFormats(GuiUtils guiUtils, File file) throws ParserConfigurationException, SAXException, IOException {
+        exportFormats.putAll(DynamicRemoteSetExportFormat.parseExportFormats(guiUtils, file));
+    }
+
+    public void add(String name, IExporterFactory factory) {
+         exportFormats.put(name, factory);
     }
 
     public IExporterFactory get(String name) {
@@ -141,7 +140,7 @@ public class ExportFormatManager implements Serializable {
         return list.toArray(new String[list.size()]);
     }
 
-    public interface IExportFormatSelector extends Serializable {
+    public interface IExportFormatSelector {
         public void select(String name);
     }
 }

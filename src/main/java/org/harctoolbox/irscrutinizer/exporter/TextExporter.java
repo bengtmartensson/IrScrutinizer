@@ -17,12 +17,9 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.exporter;
 
-import java.awt.Component;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.CommandSet;
 import org.harctoolbox.girr.GirrException;
@@ -43,7 +40,6 @@ public class TextExporter extends RemoteSetExporter {
     private final boolean generateCcf;
     private final boolean generateParameters;
     private final Command.CommandTextFormat[] extraFormatters;
-    private PrintStream printStream;
 
     public TextExporter(boolean generateRaw, boolean generateCcf,
             boolean generateParameters, Command.CommandTextFormat... extraFormatters) {
@@ -79,41 +75,14 @@ public class TextExporter extends RemoteSetExporter {
         return true;
     }
 
-    private void open(File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException {
-        printStream = new PrintStream(file, charsetName);
-    }
-
-    private void close() {
-        if (printStream != null)
-            printStream.close();
-    }
-
-    public void export(String payload, File exportFile, String charsetName) throws FileNotFoundException, UnsupportedEncodingException {
-        open(exportFile, charsetName);
-        try {
-            printStream.println(payload);
-        } finally {
-            printStream.close();
-        }
-    }
-
-    public File export(String payload, boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IOException {
-        File file = exportFilename(automaticFilenames, parent, exportDir);
-        export(payload, file, charsetName);
-        return file;
-    }
-
     @Override
     public void export(RemoteSet remoteSet, String title, File file, String charsetName)
             throws IOException, GirrException, IrCoreException, IrpException {
-        open(file, charsetName);
-        try {
+        try (PrintStream printStream = new PrintStream(file, charsetName)) {
             for (Remote remote : remoteSet)
                 for (CommandSet commandSet : remote)
                     for (Command command : commandSet)
                         printStream.println(formatCommand(command, 1));
-        } finally {
-            close();
         }
     }
 

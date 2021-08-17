@@ -29,9 +29,9 @@ import org.harctoolbox.xml.XmlUtils;
 import org.w3c.dom.DocumentFragment;
 
 /**
- * This class does something interesting and useful. Or not...
+ * This class exports a (single) Command to a wave file.
  */
-public class WaveExporter extends Exporter {
+public class WaveExporter extends CommandExporter {
     private static final DocumentFragment documentation = XmlUtils.stringToDocumentFragment("Wave exporter documentation not yet written.");
 
     private int sampleFrequency;
@@ -95,15 +95,14 @@ public class WaveExporter extends Exporter {
         return documentation;
     }
 
-    public void export(Command command, String source, String title, int repeatCount, File exportFile) throws FileNotFoundException, IrpException, IrCoreException {
-        export(command, source, title, repeatCount, exportFile, null);
+    @Override
+    public void export(Command command, String source, String title, int repeatCount, File file, String charsetName) throws IrpException, IrCoreException, FileNotFoundException {
+        ModulatedIrSequence seq = command.toIrSignal().toModulatedIrSequence(repeatCount);
+        export(seq, file);
+        possiblyMakeExecutable(file);
     }
 
-    @Override
-    public void export(Command command, String source /* ignored */, String title /* ignored */,
-            int repeatCount, File exportFile, String charsetName /* ignored */)
-            throws FileNotFoundException, IrpException, IrCoreException {
-        ModulatedIrSequence seq = command.toIrSignal().toModulatedIrSequence(repeatCount);
+    public void export(ModulatedIrSequence seq, File file) throws FileNotFoundException, IrpException, IrCoreException {
         Wave wave = new Wave(seq,
                 sampleFrequency,
                 sampleSize,
@@ -112,6 +111,10 @@ public class WaveExporter extends Exporter {
                 omitTail,
                 square,
                 divideCarrier);
-        wave.export(exportFile);
+        export(wave, file);
+    }
+
+    private void export(Wave wave, File file) {
+        wave.export(file);
     }
 }
