@@ -2403,20 +2403,23 @@ public final class GuiMain extends javax.swing.JFrame {
         exportRawRemoteButton = new javax.swing.JButton();
         exportSpecificOptionsTabbedPane = new javax.swing.JTabbedPane();
         girrExportOptionsPanel = new javax.swing.JPanel();
+        girrExportParmetersPanel = new javax.swing.JPanel();
         girrFatRawCheckBox = new javax.swing.JCheckBox();
         exportGirrHelpButton = new javax.swing.JButton();
         waveExportOptionsPanel = new javax.swing.JPanel();
+        waveExportParameterPanel = new javax.swing.JPanel();
         exportAudioParametersBean = new org.harctoolbox.guicomponents.AudioParametersBean(properties);
         exportWaveHelpButton = new javax.swing.JButton();
         prontoClassicExportOptionsPanel = new javax.swing.JPanel();
+        prontoClassicExportParameterPane = new javax.swing.JPanel();
         prontoModelComboBox = new javax.swing.JComboBox<>();
-        prontoExportScreenWidthTextField = new javax.swing.JTextField();
-        prontoExportScreenHeightTextField = new javax.swing.JTextField();
-        prontoExportButtonWidthTextField = new javax.swing.JTextField();
-        prontoExportButtonHeightTextField = new javax.swing.JTextField();
         jLabel22 = new javax.swing.JLabel();
         jLabel27 = new javax.swing.JLabel();
+        prontoExportScreenWidthTextField = new javax.swing.JTextField();
+        prontoExportScreenHeightTextField = new javax.swing.JTextField();
         jLabel31 = new javax.swing.JLabel();
+        prontoExportButtonWidthTextField = new javax.swing.JTextField();
+        prontoExportButtonHeightTextField = new javax.swing.JTextField();
         exportProntoHelpButton = new javax.swing.JButton();
         exportParametricRemoteButton = new javax.swing.JButton();
         exportGenerateSendIrCheckBox = new javax.swing.JCheckBox();
@@ -5057,7 +5060,7 @@ public final class GuiMain extends javax.swing.JFrame {
         importPanelLayout.setHorizontalGroup(
             importPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, importPanelLayout.createSequentialGroup()
-                .addComponent(importTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 993, Short.MAX_VALUE)
+                .addComponent(importTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 993, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
         importPanelLayout.setVerticalGroup(
@@ -5176,28 +5179,48 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
+        javax.swing.GroupLayout girrExportParmetersPanelLayout = new javax.swing.GroupLayout(girrExportParmetersPanel);
+        girrExportParmetersPanel.setLayout(girrExportParmetersPanelLayout);
+        girrExportParmetersPanelLayout.setHorizontalGroup(
+            girrExportParmetersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, girrExportParmetersPanelLayout.createSequentialGroup()
+                .addContainerGap(356, Short.MAX_VALUE)
+                .addComponent(exportGirrHelpButton)
+                .addGap(76, 76, 76))
+            .addGroup(girrExportParmetersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(girrExportParmetersPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(girrFatRawCheckBox)
+                    .addContainerGap(401, Short.MAX_VALUE)))
+        );
+        girrExportParmetersPanelLayout.setVerticalGroup(
+            girrExportParmetersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(girrExportParmetersPanelLayout.createSequentialGroup()
+                .addGap(33, 33, 33)
+                .addComponent(exportGirrHelpButton)
+                .addContainerGap(35, Short.MAX_VALUE))
+            .addGroup(girrExportParmetersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(girrExportParmetersPanelLayout.createSequentialGroup()
+                    .addGap(38, 38, 38)
+                    .addComponent(girrFatRawCheckBox)
+                    .addContainerGap(39, Short.MAX_VALUE)))
+        );
+
         javax.swing.GroupLayout girrExportOptionsPanelLayout = new javax.swing.GroupLayout(girrExportOptionsPanel);
         girrExportOptionsPanel.setLayout(girrExportOptionsPanelLayout);
         girrExportOptionsPanelLayout.setHorizontalGroup(
             girrExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(girrExportOptionsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(girrFatRawCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 743, Short.MAX_VALUE)
-                .addComponent(exportGirrHelpButton)
-                .addContainerGap())
+                .addGap(223, 223, 223)
+                .addComponent(girrExportParmetersPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(223, Short.MAX_VALUE))
         );
         girrExportOptionsPanelLayout.setVerticalGroup(
             girrExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(girrExportOptionsPanelLayout.createSequentialGroup()
-                .addGroup(girrExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(girrExportOptionsPanelLayout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addComponent(girrFatRawCheckBox))
-                    .addGroup(girrExportOptionsPanelLayout.createSequentialGroup()
-                        .addGap(50, 50, 50)
-                        .addComponent(exportGirrHelpButton)))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addGap(0, 12, Short.MAX_VALUE)
+                .addComponent(girrExportParmetersPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         exportSpecificOptionsTabbedPane.addTab("Girr", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/translate.png")), girrExportOptionsPanel); // NOI18N
@@ -5210,27 +5233,48 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
+        javax.swing.GroupLayout waveExportParameterPanelLayout = new javax.swing.GroupLayout(waveExportParameterPanel);
+        waveExportParameterPanel.setLayout(waveExportParameterPanelLayout);
+        waveExportParameterPanelLayout.setHorizontalGroup(
+            waveExportParameterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, waveExportParameterPanelLayout.createSequentialGroup()
+                .addContainerGap(486, Short.MAX_VALUE)
+                .addComponent(exportWaveHelpButton)
+                .addGap(142, 142, 142))
+            .addGroup(waveExportParameterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(waveExportParameterPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(exportAudioParametersBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(285, Short.MAX_VALUE)))
+        );
+        waveExportParameterPanelLayout.setVerticalGroup(
+            waveExportParameterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(waveExportParameterPanelLayout.createSequentialGroup()
+                .addGap(34, 34, 34)
+                .addComponent(exportWaveHelpButton)
+                .addContainerGap(34, Short.MAX_VALUE))
+            .addGroup(waveExportParameterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(waveExportParameterPanelLayout.createSequentialGroup()
+                    .addGap(21, 21, 21)
+                    .addComponent(exportAudioParametersBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(22, Short.MAX_VALUE)))
+        );
+
         javax.swing.GroupLayout waveExportOptionsPanelLayout = new javax.swing.GroupLayout(waveExportOptionsPanel);
         waveExportOptionsPanel.setLayout(waveExportOptionsPanelLayout);
         waveExportOptionsPanelLayout.setHorizontalGroup(
             waveExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(waveExportOptionsPanelLayout.createSequentialGroup()
-                .addContainerGap(866, Short.MAX_VALUE)
-                .addComponent(exportWaveHelpButton)
-                .addContainerGap())
-            .addGroup(waveExportOptionsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(exportAudioParametersBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(32, 32, 32)
+                .addComponent(waveExportParameterPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(218, Short.MAX_VALUE))
         );
         waveExportOptionsPanelLayout.setVerticalGroup(
             waveExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(waveExportOptionsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(exportAudioParametersBean, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(exportWaveHelpButton)
-                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, waveExportOptionsPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(waveExportParameterPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         exportSpecificOptionsTabbedPane.addTab("Wave", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/mix_audio.png")), waveExportOptionsPanel); // NOI18N
@@ -5242,6 +5286,10 @@ public final class GuiMain extends javax.swing.JFrame {
                 prontoModelComboBoxActionPerformed(evt);
             }
         });
+
+        jLabel22.setText("Pronto Model");
+
+        jLabel27.setText("Screen size");
 
         prontoExportScreenWidthTextField.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         prontoExportScreenWidthTextField.setText(Integer.toString(properties.getProntoScreenSizeX()));
@@ -5260,6 +5308,8 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
+        jLabel31.setText("Button size");
+
         prontoExportButtonWidthTextField.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         prontoExportButtonWidthTextField.setText(Integer.toString(properties.getProntoButtonSizeX()));
         prontoExportButtonWidthTextField.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -5276,12 +5326,6 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        jLabel22.setText("Pronto Model");
-
-        jLabel27.setText("Screen size");
-
-        jLabel31.setText("Button size");
-
         exportProntoHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         exportProntoHelpButton.setText("Help");
         exportProntoHelpButton.addActionListener(new java.awt.event.ActionListener() {
@@ -5290,57 +5334,83 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
+        javax.swing.GroupLayout prontoClassicExportParameterPaneLayout = new javax.swing.GroupLayout(prontoClassicExportParameterPane);
+        prontoClassicExportParameterPane.setLayout(prontoClassicExportParameterPaneLayout);
+        prontoClassicExportParameterPaneLayout.setHorizontalGroup(
+            prontoClassicExportParameterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(prontoClassicExportParameterPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(prontoClassicExportParameterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(prontoClassicExportParameterPaneLayout.createSequentialGroup()
+                        .addComponent(jLabel22)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(prontoModelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(prontoClassicExportParameterPaneLayout.createSequentialGroup()
+                        .addGroup(prontoClassicExportParameterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel27)
+                            .addComponent(jLabel31))
+                        .addGap(25, 25, 25)
+                        .addGroup(prontoClassicExportParameterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(prontoClassicExportParameterPaneLayout.createSequentialGroup()
+                                .addComponent(prontoExportScreenWidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(prontoExportScreenHeightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(prontoClassicExportParameterPaneLayout.createSequentialGroup()
+                                .addComponent(prontoExportButtonHeightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(prontoExportButtonWidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 533, Short.MAX_VALUE)
+                        .addComponent(exportProntoHelpButton)))
+                .addContainerGap())
+        );
+
+        prontoClassicExportParameterPaneLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {prontoExportButtonWidthTextField, prontoExportScreenWidthTextField});
+
+        prontoClassicExportParameterPaneLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {prontoExportButtonHeightTextField, prontoExportScreenHeightTextField});
+
+        prontoClassicExportParameterPaneLayout.setVerticalGroup(
+            prontoClassicExportParameterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(prontoClassicExportParameterPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(prontoClassicExportParameterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel22)
+                    .addComponent(prontoModelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(prontoClassicExportParameterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel27)
+                    .addComponent(prontoExportScreenWidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(prontoExportScreenHeightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(prontoClassicExportParameterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(prontoExportButtonWidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel31)
+                    .addComponent(prontoExportButtonHeightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(14, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, prontoClassicExportParameterPaneLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(exportProntoHelpButton)
+                .addContainerGap())
+        );
+
+        prontoClassicExportParameterPaneLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {prontoExportButtonHeightTextField, prontoExportButtonWidthTextField, prontoExportScreenHeightTextField, prontoExportScreenWidthTextField});
+
         javax.swing.GroupLayout prontoClassicExportOptionsPanelLayout = new javax.swing.GroupLayout(prontoClassicExportOptionsPanel);
         prontoClassicExportOptionsPanel.setLayout(prontoClassicExportOptionsPanelLayout);
         prontoClassicExportOptionsPanelLayout.setHorizontalGroup(
             prontoClassicExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(prontoClassicExportOptionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(prontoClassicExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(prontoClassicExportOptionsPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(exportProntoHelpButton))
-                    .addGroup(prontoClassicExportOptionsPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel22)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(prontoModelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel27)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(prontoExportScreenWidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(prontoExportScreenHeightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel31)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(prontoExportButtonWidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(prontoExportButtonHeightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-        );
-
-        prontoClassicExportOptionsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {prontoExportButtonWidthTextField, prontoExportScreenWidthTextField});
-
-        prontoClassicExportOptionsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {prontoExportButtonHeightTextField, prontoExportScreenHeightTextField});
-
-        prontoClassicExportOptionsPanelLayout.setVerticalGroup(
-            prontoClassicExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(prontoClassicExportOptionsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(prontoClassicExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel22)
-                    .addComponent(prontoModelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel27)
-                    .addComponent(prontoExportScreenWidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(prontoExportScreenHeightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel31)
-                    .addComponent(prontoExportButtonWidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(prontoExportButtonHeightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
-                .addComponent(exportProntoHelpButton)
+                .addComponent(prontoClassicExportParameterPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
-
-        prontoClassicExportOptionsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {prontoExportButtonHeightTextField, prontoExportButtonWidthTextField, prontoExportScreenHeightTextField, prontoExportScreenWidthTextField});
+        prontoClassicExportOptionsPanelLayout.setVerticalGroup(
+            prontoClassicExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, prontoClassicExportOptionsPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(prontoClassicExportParameterPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         exportSpecificOptionsTabbedPane.addTab("Pronto Classic", prontoClassicExportOptionsPanel);
 
@@ -5519,7 +5589,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(exportRawRemoteButton1)
                     .addComponent(openLastFileButton))
                 .addGap(23, 23, 23)
-                .addComponent(exportSpecificOptionsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
+                .addComponent(exportSpecificOptionsTabbedPane)
                 .addGap(0, 0, 0))
         );
 
@@ -9450,6 +9520,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem generateRawCheckBoxMenuItem;
     private javax.swing.JTextArea generateTextArea;
     private javax.swing.JPanel girrExportOptionsPanel;
+    private javax.swing.JPanel girrExportParmetersPanel;
     private javax.swing.JCheckBox girrFatRawCheckBox;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<GirrImporter> girrFileImporterBean;
     private javax.swing.JPanel girrImportPanel;
@@ -9683,6 +9754,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem printRawTableRowMenuItem;
     private javax.swing.JMenuItem printTableRowMenuItem;
     private javax.swing.JPanel prontoClassicExportOptionsPanel;
+    private javax.swing.JPanel prontoClassicExportParameterPane;
     private javax.swing.JTextField prontoExportButtonHeightTextField;
     private javax.swing.JTextField prontoExportButtonWidthTextField;
     private javax.swing.JTextField prontoExportScreenHeightTextField;
@@ -9806,6 +9878,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu usePopupsMenu;
     private javax.swing.JCheckBoxMenuItem verboseCheckBoxMenuItem;
     private javax.swing.JPanel waveExportOptionsPanel;
+    private javax.swing.JPanel waveExportParameterPanel;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<WaveImporter> waveFileImporterBean;
     private javax.swing.JPanel waveImportPanel;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<XcfImporter> xcfFileImporterBean;
