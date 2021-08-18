@@ -61,7 +61,7 @@ public class AudioTransmitterBean extends HardwareBean {
 
     /**
      * Creates new form AudioParametersBean
-     * @param properties
+     * @param guiUtils
      */
     public AudioTransmitterBean(GuiUtils guiUtils) {
         this(guiUtils, false, DEFAULT_SAMPLE_FREQUENCY, DEFAULT_CHANNELS, DEFAULT_SAMPLE_SIZE, false);
@@ -69,8 +69,12 @@ public class AudioTransmitterBean extends HardwareBean {
 
     /**
      * Creates new form AudioParametersBean
-     * @param properties
+     * @param guiUtils
      * @param verbose
+     * @param sampleFrequency
+     * @param channels
+     * @param sampleSize
+     * @param omitTrailingGap
      */
     public AudioTransmitterBean(GuiUtils guiUtils, boolean verbose, int sampleFrequency, int channels, int sampleSize, boolean omitTrailingGap) {
         super(guiUtils, verbose, 0);
