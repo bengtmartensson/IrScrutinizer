@@ -47,28 +47,28 @@ public abstract class ValueSet implements Iterable<Long> {
     public static ValueSet newValueSet(Long protocolMin, Long protocolMax, String s) throws ParseException, NameUnassignedException {
         if (s.contains("<<")) {
             String[] q = s.split("<<");
-            long min = IrCoreUtils.parseLong(q[0], true);
+            long min = IrCoreUtilsFix.parseLong(q[0], true);
             if (min == 0)
                 throw new IllegalArgumentException("Shifting 0 in " + s + " senseless.");
             long max = IrCoreUtils.parseUpper(q[0]);
-            int shift = (int) IrCoreUtils.parseLong(q[1], true);
+            int shift = (int) IrCoreUtilsFix.parseLong(q[1], true);
             return new ShiftValueSet(min, max, shift);
         } else if (s.contains("++")) {
             String[] q = s.split("\\+\\+");
             if (q.length != 2)
                 throw new ParseException("Could not parse value set " + s, 0);
-            long min = IrCoreUtils.parseLong(q[0], true);
+            long min = IrCoreUtilsFix.parseLong(q[0], true);
             long max = IrCoreUtils.parseUpper(q[0]);
-            int increment = (int) IrCoreUtils.parseLong(q[1], false);
+            int increment = (int) IrCoreUtilsFix.parseLong(q[1], false);
             return new IterationValueSet(min, max, increment);
         } else if (s.contains("#")) {
             if (protocolMin == null || protocolMax == null)
                 throw new NameUnassignedException("min or max not assigned");
 
             String[] q = s.split("#");
-            long min = q[0].trim().isEmpty() ? protocolMin : IrCoreUtils.parseLong(q[0], true);
+            long min = q[0].trim().isEmpty() ? protocolMin : IrCoreUtilsFix.parseLong(q[0], true);
             long max = q[0].trim().isEmpty() ? protocolMax : IrCoreUtils.parseUpper(q[0]);
-            int noRandoms = (int) IrCoreUtils.parseLong(q[1], true);
+            int noRandoms = (int) IrCoreUtilsFix.parseLong(q[1], true);
             return new RandomValueSet(min, max, noRandoms);
         } else if (s.startsWith("*")) {
             if (protocolMin == null || protocolMax == null)
@@ -76,7 +76,7 @@ public abstract class ValueSet implements Iterable<Long> {
 
             return new IterationValueSet(protocolMin, protocolMax, 1);
         } else {
-            long min = IrCoreUtils.parseLong(s, true);
+            long min = IrCoreUtilsFix.parseLong(s, true);
             long max = IrCoreUtils.parseUpper(s);
             return (max == IrCoreUtils.INVALID) ? new SingletonValueSet(min) : new IterationValueSet(min, max, 1);
         }

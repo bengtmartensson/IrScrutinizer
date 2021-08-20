@@ -171,7 +171,7 @@ public class InputVariableSetValues implements Iterable<LinkedHashMap<String, Lo
         String name = untrimmedName.trim();
 
         try {
-            val = IrCoreUtils.parseLong(value, true);
+            val = IrCoreUtilsFix.parseLong(value, true);
             // Ignore negative values, equivalent of not assigning.
             if (val < 0 && val != IrCoreUtils.ALL && val != IrCoreUtils.SOME)
                 return;
