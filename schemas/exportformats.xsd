@@ -45,7 +45,6 @@
                 <xs:element minOccurs="0" ref="documentation"/>
                 <xs:choice>
                     <xs:element ref="xsl:stylesheet"/>
-                    <xs:element ref="xsl:transform"/>
                     <xs:element ref="xi:include"/>
                 </xs:choice>
             </xs:sequence>
