@@ -97,6 +97,13 @@ public class GuiUtils implements Serializable {
         new ProcessBuilder(XDG_COMMAND, string).start();
     }
 
+    public static void browseStatic(URI uri) throws IOException {
+        if (useXdbOpen)
+            xdgOpen(uri.toURL().toString());
+        else
+            Desktop.getDesktop().browse(uri);
+    }
+
     private int maxGuiMessageLength = 200;
     private boolean usePopupsForErrors = false;
     private boolean usePopupsForHelp = false;

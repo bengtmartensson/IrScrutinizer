@@ -96,11 +96,15 @@ public class DynamicCommandExportFormat extends CommandExporter {
         export(document, exportFile.getCanonicalPath(), charsetName, repeatCount);
     }
 
-    void export(Document document, String fileName, String charsetName, int noRepeats) throws IOException, TransformerException {
+    private void export(Document document, String fileName, String charsetName, Map<String, String> parameters) throws IOException, TransformerException {
         try (OutputStream out = IrCoreUtils.getPrintStream(fileName, charsetName)) {
-            Map<String, String> parameters = new HashMap<>(1);
-            parameters.put("noRepeats", Integer.toString(noRepeats));
             XmlUtils.printDOM(out, document, charsetName, xslt, parameters, binary);
         }
+    }
+
+    void export(Document document, String fileName, String charsetName, int noRepeats) throws IOException, TransformerException {
+        Map<String, String> parameters = new HashMap<>(1);
+        parameters.put("noRepeats", Integer.toString(noRepeats));
+        export(document, fileName, charsetName, parameters);
     }
 }

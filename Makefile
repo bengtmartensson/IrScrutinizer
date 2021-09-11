@@ -18,6 +18,9 @@ UPLOADDIR_DIR := ftp://bengt-martensson.de/harctoolbox/
 VERSION=$(shell cat $(TOP)/target/$(MYPROG).version | cut  --delimiter=' ' -f 3)
 
 IRSCRUTINIZER_JAR := target/$(MYPROG)-jar-with-dependencies.jar
+EXPORT_FORMATS := src/main/config/exportformats.d
+EXPORT_MAIN := org.harctoolbox.irscrutinizer.exporter.DynamicRemoteSetExportFormatMain
+EXPORT_FORMATS_SCHEMA_LOCATION := http://www.harctoolbox.org/schemas/exportformats.xsd
 
 default: $(IRSCRUTINIZER_JAR)
 
@@ -68,6 +71,9 @@ upload-harctoolbox:
 		curl --netrc --upload-file $$file $(UPLOADDIR_DIR)/$$file;\
 	done )
 
+Arduino_Raw.ino: $(IRSCRUTINIZER_JAR)
+	$(JAVA) -cp "$<" $(EXPORT_MAIN) -c "$(EXPORT_FORMATS)"  -f "Arduino Raw" -s "$(EXPORT_FORMATS_SCHEMA_LOCATION)" -o "$@" src/test/girr/nec1-test-fat.girr
+
 # Only for Unix-like systems
 install: $(IRP_TRANSMOGRIFIER_JAR) | $(INSTALLDIR)
 	rm -rf $(INSTALLDIR)/*
@@ -78,6 +84,6 @@ $(INSTALLDIR):
 
 clean:
 	mvn clean
-	rm -rf $(GH_PAGES) pom.xml.versionsBackup
+	rm -rf $(GH_PAGES) pom.xml.versionsBackup Arduino_Raw.ino
 
 .PHONY: clean
