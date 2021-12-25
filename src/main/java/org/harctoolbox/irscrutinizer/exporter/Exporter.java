@@ -19,7 +19,11 @@ package org.harctoolbox.irscrutinizer.exporter;
 
 import java.awt.Component;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,8 +32,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import javax.swing.JFileChooser;
+import javax.xml.transform.TransformerException;
+import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.guicomponents.SelectFile;
+import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.IrCoreUtils;
+import org.harctoolbox.ircore.ThisCannotHappenException;
+import org.harctoolbox.irp.IrpException;
+import org.harctoolbox.xml.XmlUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  * This class is a common base class of all the exporters.
@@ -37,10 +52,14 @@ import org.harctoolbox.ircore.IrCoreUtils;
 public abstract class Exporter {
 
     private static File lastSaveFile = null;
-    private static final String defaultDateFormatString = "yyyy-MM-dd_HH:mm:ss";
-    private static final String defaultDateFormatFileString = "yyyy-MM-dd_HH-mm-ss";
-    private static String dateFormatString = defaultDateFormatString;
-    private static String dateFormatFileString = defaultDateFormatFileString;
+    private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd_HH:mm:ss";
+    private static final String DEFAULT_DATE_FORMATFILE = "yyyy-MM-dd_HH-mm-ss";
+    private static String dateFormatString = DEFAULT_DATE_FORMAT;
+    private static String dateFormatFileString = DEFAULT_DATE_FORMATFILE;
+    private static String creatingUser = System.getProperty("user.name");
+    private static String encodingName = IrCoreUtils.UTF8_NAME;
+    @SuppressWarnings("StaticNonFinalUsedInInitialization")
+    private static Charset charset = Charset.forName(encodingName);
 
     /**
      * @param aDateFormatString the dateFormatString to set
@@ -82,21 +101,58 @@ public abstract class Exporter {
         lastSaveFile = theLastSaveFile;
     }
 
-    private final boolean executable;
-    private final String encoding;
+    public static String getCreatingUser() {
+        return creatingUser;
+    }
 
-    protected Exporter(boolean executable, String encoding) {
-        this.executable = executable;
-        this.encoding = encoding;
+    public static void setCreatingUser(String newCreatingUser) {
+        creatingUser = newCreatingUser;
+    }
+
+    public final static String getEncoding() {
+        return encodingName;
+    }
+
+    public static Charset getCharset() {
+        return charset;
+    }
+
+    public static void setEncoding(String newEncoding) {
+        charset = Charset.forName(encodingName);
+        encodingName = newEncoding;
+    }
+
+    public static Document getDocument(DocumentFragment fragment) {
+        if (fragment == null)
+            return null;
+
+        Document doc = XmlUtils.newDocument();
+        Element root = doc.createElement("html");
+        doc.appendChild(root);
+        Element body = doc.createElement("body");
+        root.appendChild(body);
+        Element div = doc.createElement("div");
+        div.setAttribute("class", "documentation");
+        body.appendChild(div);
+        div.appendChild(doc.importNode(fragment, true));
+        return doc;
+    }
+
+    protected static DocumentFragment parseToDocumentFragment(String str) {
+        try {
+            Document doc = XmlUtils.parseStringToXmlDocument(str, true, true);
+            DocumentFragment fragment = doc.createDocumentFragment();
+            fragment.appendChild(doc.getDocumentElement());
+            return fragment;
+        } catch (SAXException ex) {
+            throw new ThisCannotHappenException(ex);
+        }
+    }
+
+    protected Exporter() {
     }
 
     protected void possiblyMakeExecutable(File file) {
-        if (executable)
-            file.setExecutable(true, false);
-    }
-
-    public String getEncoding() {
-        return encoding;
     }
 
     public String getDateFormatString() {
@@ -108,11 +164,16 @@ public abstract class Exporter {
     // Dummy
     public abstract String getPreferredFileExtension();
 
+    public abstract String getName();
 
-    public abstract String getFormatName();
+    public abstract DocumentFragment getDocumentation();
+
+    public Document getDocument() {
+        return getDocument(getDocumentation());
+    }
 
     private File selectExportFile(Component parent, File exportDir) {
-        File answer = SelectFile.selectFile(parent, "Select file for " + getFormatName() + " export.",
+        File answer = SelectFile.selectFile(parent, "Select file for " + getName() + " export.",
                 exportDir.getPath(), true, false, JFileChooser.FILES_ONLY, getFileExtensions());
         if (answer != null && getPreferredFileExtension() != null && ! getPreferredFileExtension().isEmpty())
             answer = new File(IrCoreUtils.addExtensionIfNotPresent(answer.getPath(), getPreferredFileExtension()));
@@ -121,7 +182,7 @@ public abstract class Exporter {
 
     private File automaticFilename(File exportDir) throws IOException {
         checkExportDir(exportDir);
-        String cleanedFormatName = getFormatName().toLowerCase(Locale.US).replaceAll("[^a-z0-9_\\-\\.]", "_");
+        String cleanedFormatName = getName().toLowerCase(Locale.US).replaceAll("[^a-z0-9_\\-\\.]", "_");
         String name = cleanedFormatName + "_" + (new SimpleDateFormat(dateFormatFileString)).format(new Date());
         if (getPreferredFileExtension() != null)
             name += "." + getPreferredFileExtension();
@@ -134,4 +195,38 @@ public abstract class Exporter {
             setLastSaveFile(file);
         return file;
     }
+
+    public boolean considersRepetitions() {
+        return false;
+    }
+
+    public void export(Document document, File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException {
+        XmlUtils.printDOM(file, document, charsetName, null);
+    }
+
+    public void export(String payload, File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException {
+        try (PrintStream printStream = new PrintStream(file, charsetName)) {
+            printStream.println(payload);
+        }
+    }
+
+    public File export(String payload, boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IOException {
+        File file = exportFilename(automaticFilenames, parent, exportDir);
+        export(payload, file, charsetName);
+        return file;
+    }
+//    private void export(Command command, String source, String title, int repeatCount, File file, String charsetName) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+
+    public File export(Command command, String source, String title,
+                int noRepeats, boolean automaticFilenames, Component component,
+                File exportDir, String charsetName) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+        File file = exportFilename(automaticFilenames, component, exportDir);
+        export(command, source, title, noRepeats, file, charsetName);
+        return file;
+    }
+
+    protected abstract void export(Command command, String source, String title, int noRepeats, File file, String charsetName)
+            throws IOException, TransformerException, IrCoreException, IrpException, GirrException;
 }

@@ -92,7 +92,7 @@ public class ExporterUtilsNGTest {
     @Test
     public void testSony12Data() {
         System.out.println("sony12Data");
-        assertEquals(ExporterUtils.sony12Data(3, 4), String.format(ExporterUtils.longFormattingCode, (16 << 5) + 24));
+        assertEquals(ExporterUtils.sony12Data(3, 4), String.format(ExporterUtils.LONGFORMATTINGCODE, (16 << 5) + 24));
     }
 
     /**
@@ -101,7 +101,7 @@ public class ExporterUtilsNGTest {
     @Test
     public void testSony15Data() {
         System.out.println("sony15Data");
-        assertEquals(ExporterUtils.sony15Data(3, 4), String.format(ExporterUtils.longFormattingCode, (16 << 8) + 0xC0));
+        assertEquals(ExporterUtils.sony15Data(3, 4), String.format(ExporterUtils.LONGFORMATTINGCODE, (16 << 8) + 0xC0));
     }
 
     /**
@@ -110,7 +110,7 @@ public class ExporterUtilsNGTest {
     @Test
     public void testSony20Data() {
         System.out.println("sony20Data");
-        assertEquals(ExporterUtils.sony20Data(3, 5, 4), String.format(ExporterUtils.longFormattingCode, (0x10 << 13) + (24 << 8) + 0xA0));
+        assertEquals(ExporterUtils.sony20Data(3, 5, 4), String.format(ExporterUtils.LONGFORMATTINGCODE, (0x10 << 13) + (24 << 8) + 0xA0));
     }
 
     /**

@@ -25,11 +25,14 @@ import org.harctoolbox.harchardware.ir.Wave;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.irp.IrpException;
+import org.harctoolbox.xml.XmlUtils;
+import org.w3c.dom.DocumentFragment;
 
 /**
- * This class does something interesting and useful. Or not...
+ * This class exports a (single) Command to a wave file.
  */
-public class WaveExporter extends CommandExporter implements ICommandExporter {
+public class WaveExporter extends CommandExporter {
+    private static final DocumentFragment documentation = XmlUtils.stringToDocumentFragment("Wave exporter documentation not yet written.");
 
     private int sampleFrequency;
     private int sampleSize;
@@ -73,7 +76,7 @@ public class WaveExporter extends CommandExporter implements ICommandExporter {
     }
 
     @Override
-    public String getFormatName() {
+    public String getName() {
         return "Wave";
     }
 
@@ -82,15 +85,24 @@ public class WaveExporter extends CommandExporter implements ICommandExporter {
         return "wav";
     }
 
-    public void export(Command command, String source, String title, int repeatCount, File exportFile) throws FileNotFoundException, IrpException, IrCoreException {
-        export(command, source, title, repeatCount, exportFile, null);
+    @Override
+    public boolean considersRepetitions() {
+        return true;
     }
 
     @Override
-    public void export(Command command, String source /* ignored */, String title /* ignored */,
-            int repeatCount, File exportFile, String charsetName /* ignored */)
-            throws FileNotFoundException, IrpException, IrCoreException {
+    public DocumentFragment getDocumentation() {
+        return documentation;
+    }
+
+    @Override
+    public void export(Command command, String source, String title, int repeatCount, File file, String charsetName) throws IrpException, IrCoreException, FileNotFoundException {
         ModulatedIrSequence seq = command.toIrSignal().toModulatedIrSequence(repeatCount);
+        export(seq, file);
+        possiblyMakeExecutable(file);
+    }
+
+    public void export(ModulatedIrSequence seq, File file) throws FileNotFoundException, IrpException, IrCoreException {
         Wave wave = new Wave(seq,
                 sampleFrequency,
                 sampleSize,
@@ -99,11 +111,10 @@ public class WaveExporter extends CommandExporter implements ICommandExporter {
                 omitTail,
                 square,
                 divideCarrier);
-        wave.export(exportFile);
+        export(wave, file);
     }
 
-    @Override
-    public boolean considersRepetitions() {
-        return true;
+    private void export(Wave wave, File file) {
+        wave.export(file);
     }
 }

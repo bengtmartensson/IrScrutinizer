@@ -17,12 +17,9 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.exporter;
 
-import java.awt.Component;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.CommandSet;
 import org.harctoolbox.girr.GirrException;
@@ -30,17 +27,19 @@ import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.irp.IrpException;
+import org.harctoolbox.xml.XmlUtils;
+import org.w3c.dom.DocumentFragment;
 
 /**
  * This class does something interesting and useful. Or not...
  */
-public class TextExporter extends RemoteSetExporter implements IRemoteSetExporter {
+public class TextExporter extends RemoteSetExporter {
+    private static final DocumentFragment documentation = XmlUtils.stringToDocumentFragment("TextExporter documentation not yet written.");
 
-    private boolean generateRaw;
-    private boolean generateCcf;
-    private boolean generateParameters;
-    private Command.CommandTextFormat[] extraFormatters;
-    private PrintStream printStream;
+    private final boolean generateRaw;
+    private final boolean generateCcf;
+    private final boolean generateParameters;
+    private final Command.CommandTextFormat[] extraFormatters;
 
     public TextExporter(boolean generateRaw, boolean generateCcf,
             boolean generateParameters, Command.CommandTextFormat... extraFormatters) {
@@ -51,17 +50,13 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
         this.extraFormatters = extraFormatters;
     }
 
-    public TextExporter() {
-        this(false, true, true, (Command.CommandTextFormat[]) null);
-    }
-
     @Override
     public String[][] getFileExtensions() {
         return new String[][]{ new String[] { "Text files (*.txt *.text)", "txt", "text" } };
     }
 
     @Override
-    public String getFormatName() {
+    public String getName() {
         return "Text";
     }
 
@@ -70,41 +65,24 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
         return "txt";
     }
 
-    private void open(File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException {
-        printStream = new PrintStream(file, charsetName);
-    }
-
-    private void close() {
-        if (printStream != null)
-            printStream.close();
-    }
-
-    public void export(String payload, File exportFile, String charsetName) throws FileNotFoundException, UnsupportedEncodingException {
-        open(exportFile, charsetName);
-        try {
-            printStream.println(payload);
-        } finally {
-            printStream.close();
-        }
-    }
-
-    public File export(String payload, boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IOException {
-        File file = exportFilename(automaticFilenames, parent, exportDir);
-        export(payload, file, charsetName);
-        return file;
+    @Override
+    public DocumentFragment getDocumentation() {
+        return documentation;
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName)
+    public boolean supportsEmbeddedFormats() {
+        return true;
+    }
+
+    @Override
+    public void export(RemoteSet remoteSet, String title, File file, String charsetName)
             throws IOException, GirrException, IrCoreException, IrpException {
-        open(file, charsetName);
-        try {
+        try (PrintStream printStream = new PrintStream(file, charsetName)) {
             for (Remote remote : remoteSet)
                 for (CommandSet commandSet : remote)
                     for (Command command : commandSet)
-                        printStream.println(formatCommand(command, count));
-        } finally {
-            close();
+                        printStream.println(formatCommand(command, 1));
         }
     }
 
@@ -132,10 +110,5 @@ public class TextExporter extends RemoteSetExporter implements IRemoteSetExporte
             str.append(command.getFormat(formatter.getName())).append(linefeed);
         }
         return str.toString();
-    }
-
-    @Override
-    public boolean supportsEmbeddedFormats() {
-        return true;
     }
 }

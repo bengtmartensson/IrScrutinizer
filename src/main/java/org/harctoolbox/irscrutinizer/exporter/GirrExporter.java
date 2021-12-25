@@ -18,33 +18,29 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.exporter;
 
 import java.io.File;
-import java.io.IOException;
-import javax.xml.transform.TransformerException;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.RemoteSet;
-import org.harctoolbox.xml.XmlUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 
 /**
  * This class does something interesting and useful. Or not...
  */
-public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporter {
+public class GirrExporter extends RemoteSetExporter {
 
-    private boolean fatRaw;
-    private boolean generateRaw;
-    private boolean generateCcf;
-    private boolean generateParameters;
-    private Command.CommandTextFormat[] extraFormats;
+    private final static DocumentFragment documentation = parseToDocumentFragment("<div>Girr documentation <b>not</b> yet <a href=\"http://www.harctoolbox.org\">written</a></div>");
 
-    private GirrExporter() {
-        super();
-    }
+    private final boolean fatRaw;
+    private final boolean generateRaw;
+    private final boolean generateCcf;
+    private final boolean generateParameters;
+    private final Command.CommandTextFormat[] extraFormats;
 
-    public GirrExporter(String creatingUser,
-            boolean fatRaw,
-            boolean generateRaw, boolean generateCcf,
+    public GirrExporter(boolean fatRaw, boolean generateRaw, boolean generateCcf,
             boolean generateParameters, Command.CommandTextFormat... extraFormats) {
-        super(creatingUser);
+        super();
         this.fatRaw = fatRaw;
         this.generateRaw = generateRaw;
         this.generateCcf = generateCcf;
@@ -53,13 +49,15 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     }
 
     @Override
-    public void export(RemoteSet remoteSet, String title, int count, File file, String charsetName) throws IOException, TransformerException {
+    public void export(RemoteSet remoteSet, String title, File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException  {
+        Document document = toDocument(remoteSet, title);
+        export(document, file, charsetName);
+    }
+
+    public Document toDocument(RemoteSet remoteSet, String title) {
         for (Command.CommandTextFormat formatter : extraFormats)
-            remoteSet.addFormat(formatter, count);
-        Document document = remoteSet.toDocument(title, fatRaw,
-                generateParameters, generateCcf, generateRaw);
-        XmlUtils.printDOM(file, document, charsetName, null);
-        //(new XmlExporter(document)).printDOM(file, charsetName);
+            remoteSet.addFormat(formatter, 1);
+        return remoteSet.toDocument(title, fatRaw, generateParameters, generateCcf, generateRaw);
     }
 
     @Override
@@ -73,7 +71,7 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     }
 
     @Override
-    public String getFormatName() {
+    public String getName() {
         return "Girr";
     }
 
@@ -85,5 +83,10 @@ public class GirrExporter extends RemoteSetExporter implements IRemoteSetExporte
     @Override
     public boolean supportsMetaData() {
         return true;
+    }
+
+    @Override
+    public DocumentFragment getDocumentation() {
+        return documentation;
     }
 }

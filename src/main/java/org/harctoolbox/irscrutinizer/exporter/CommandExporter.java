@@ -19,9 +19,10 @@ package org.harctoolbox.irscrutinizer.exporter;
 
 import java.awt.Component;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import javax.xml.transform.TransformerException;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.irp.IrpException;
 
@@ -31,25 +32,29 @@ import org.harctoolbox.irp.IrpException;
 public abstract class CommandExporter extends Exporter {
 
     protected CommandExporter() {
-        super(false, null);
+        super();
     }
 
-    protected CommandExporter(boolean executable, String encoding) {
-        super(executable, encoding);
-    }
+    @Override
+    protected abstract void export(Command command, String source, String title, int repeatCount, File file, String charsetName)
+            throws IOException, TransformerException, IrCoreException, IrpException;
 
-    public abstract void export(Command command, String source, String title, int repeatCount, File exportFile, String charsetName)
-            throws FileNotFoundException, IrpException, IrCoreException;
-
-    public File export(Command command, String source, String title, int repeatCount,
-            boolean automaticFilenames, Component parent, File exportDir, String charsetName) throws IOException, IrpException, IrCoreException {
+    @Override
+    public File export(Command command, String source, String title, int repeatCount, boolean automaticFilenames, Component parent, File exportDir, String charsetName)
+            throws IOException, IrpException, IrCoreException, GirrException, TransformerException {
         File file = exportFilename(automaticFilenames, parent, exportDir);
+        if (file == null)
+            return null;
         export(command, source, title, repeatCount, file, charsetName);
         possiblyMakeExecutable(file);
         return file;
     }
 
-    public boolean considersRepetitions() {
+    public boolean supportsEmbeddedFormats() {
+        return false;
+    }
+
+    public boolean supportsMetaData() {
         return false;
     }
 }
