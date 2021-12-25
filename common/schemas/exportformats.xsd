@@ -16,6 +16,7 @@
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
     <xs:import namespace="http://www.w3.org/1999/XSL/Transform" schemaLocation="https://www.w3.org/2007/schema-for-xslt20.xsd"/>
     <xs:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="https://www.w3.org/2001/XInclude/XInclude.xsd"/>
+    <xs:import namespace="http://www.w3.org/1999/xhtml" schemaLocation="http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd"/>
 
     <xs:element name="exportformats">
         <xs:complexType>
@@ -41,9 +42,9 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
+                <xs:element minOccurs="0" ref="documentation"/>
                 <xs:choice>
                     <xs:element ref="xsl:stylesheet"/>
-                    <xs:element ref="xsl:transform"/>
                     <xs:element ref="xi:include"/>
                 </xs:choice>
             </xs:sequence>
@@ -87,6 +88,19 @@
                     <xs:documentation>If given, an export MUST be using this text encoding. Only used for formats that understand only one encoding.</xs:documentation>
                 </xs:annotation>
             </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="documentation">
+        <xs:annotation>
+            <xs:documentation>Textual notes to the export format, possibly using formatting in (X)HTML.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+            </xs:sequence>
+            <xs:attribute ref="xml:lang" default="en"/>
+            <xs:attribute ref="xml:space" default="default"/>
         </xs:complexType>
     </xs:element>
 
