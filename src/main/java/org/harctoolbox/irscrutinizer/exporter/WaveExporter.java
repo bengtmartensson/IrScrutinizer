@@ -25,14 +25,13 @@ import org.harctoolbox.harchardware.ir.Wave;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.irp.IrpException;
-import org.harctoolbox.xml.XmlUtils;
 import org.w3c.dom.DocumentFragment;
 
 /**
  * This class exports a (single) Command to a wave file.
  */
 public class WaveExporter extends CommandExporter {
-    private static final DocumentFragment documentation = XmlUtils.stringToDocumentFragment("Wave exporter documentation not yet written.");
+    private static final DocumentFragment documentation = null;//XmlUtils.stringToDocumentFragment("Wave exporter documentation not yet written.");
 
     private int sampleFrequency;
     private int sampleSize;

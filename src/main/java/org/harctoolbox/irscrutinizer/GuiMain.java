@@ -1816,10 +1816,12 @@ public final class GuiMain extends javax.swing.JFrame {
         enableSubFormats(supportsEmbedded);
         boolean enableRepetitions = supportsEmbedded && exportGenerateSendIrCheckBox.isSelected() || exporter.considersRepetitions();
         exportRepeatComboBox.setVisible(enableRepetitions);
+        exportRepeatComboBox.setEnabled(enableRepetitions);
         exportNumberRepeatsLabel.setVisible(enableRepetitions);
         if (!formatName.equals(exportFormatComboBox.getSelectedItem()))
             exportFormatComboBox.setSelectedItem(formatName);
         exportFormatManager.setMenuSelection(formatName);
+        exportFormatDocumentationButton.setEnabled(exporter.getDocumentation() != null);
         enableProtocolParameters(formatName);
     }
 
@@ -5069,7 +5071,7 @@ public final class GuiMain extends javax.swing.JFrame {
         importPanelLayout.setHorizontalGroup(
             importPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, importPanelLayout.createSequentialGroup()
-                .addComponent(importTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 993, Short.MAX_VALUE)
+                .addComponent(importTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 993, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
         importPanelLayout.setVerticalGroup(
@@ -5118,6 +5120,7 @@ public final class GuiMain extends javax.swing.JFrame {
         jLabel8.setText("Export Format");
 
         exportSignalButton.setText("Export signal");
+        exportSignalButton.setToolTipText("Export the signal on the \"Scrutinize signal\" pane");
         exportSignalButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportSignalButtonActionPerformed(evt);
@@ -5125,7 +5128,8 @@ public final class GuiMain extends javax.swing.JFrame {
         });
 
         automaticExportFilenamesCheckBox.setSelected(properties.getExportAutomaticFilenames());
-        automaticExportFilenamesCheckBox.setText("Auto file names");
+        automaticExportFilenamesCheckBox.setText("Autogenerate file names");
+        automaticExportFilenamesCheckBox.setToolTipText("If checked, file names are generated automatically, otherwise the user must enter it.");
         automaticExportFilenamesCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 automaticExportFilenamesCheckBoxActionPerformed(evt);
@@ -5133,6 +5137,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
 
         openLastFileButton.setText("Open last file");
+        openLastFileButton.setToolTipText("Open the last file generated, if any.");
         openLastFileButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openLastFileButtonActionPerformed(evt);
@@ -5140,6 +5145,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
 
         exportRawRemoteButton.setText("Export raw remote");
+        exportRawRemoteButton.setToolTipText("Export the signals in the raw table of the \"Scrutinize remote\" pane.");
         exportRawRemoteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportRawRemoteButtonActionPerformed(evt);
@@ -5147,6 +5153,7 @@ public final class GuiMain extends javax.swing.JFrame {
         });
 
         exportParametricRemoteButton.setText("Export param. remote");
+        exportParametricRemoteButton.setToolTipText("Export the signals in the parametric table of \"Scrutinize remote\" pane.");
         exportParametricRemoteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportParametricRemoteButtonActionPerformed(evt);
@@ -5172,7 +5179,8 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        exportRawRemoteButton1.setText("Export generated");
+        exportRawRemoteButton1.setText("Export rendered");
+        exportRawRemoteButton1.setToolTipText("Export the signal(s) of the \"Render\" pane.");
         exportRawRemoteButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 generateExportButtonActionPerformed(evt);
@@ -5181,15 +5189,16 @@ public final class GuiMain extends javax.swing.JFrame {
 
         autoOpenExportsCheckBox.setSelected(properties.getAutoOpenExports());
         autoOpenExportsCheckBox.setText("Auto open exports");
-        autoOpenExportsCheckBox.setToolTipText("Ir checked, exports will be automatically opened.");
+        autoOpenExportsCheckBox.setToolTipText("If checked, exports will be automatically opened.");
         autoOpenExportsCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 autoOpenExportsCheckBoxActionPerformed(evt);
             }
         });
 
-        exportFormatDocumentationButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/info.png"))); // NOI18N
-        exportFormatDocumentationButton.setText("Format docu.");
+        exportFormatDocumentationButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/contents.png"))); // NOI18N
+        exportFormatDocumentationButton.setText("Format documentation");
+        exportFormatDocumentationButton.setToolTipText("Display documentation for the current export format");
         exportFormatDocumentationButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportFormatDocumentationButtonActionPerformed(evt);
@@ -5301,11 +5310,8 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(prontoClassicExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel31)
-                    .addGroup(prontoClassicExportOptionsPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, 0)
-                        .addGroup(prontoClassicExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel22)
-                            .addComponent(jLabel27))))
+                    .addComponent(jLabel22)
+                    .addComponent(jLabel27))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(prontoClassicExportOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(prontoClassicExportOptionsPanelLayout.createSequentialGroup()
@@ -5441,10 +5447,14 @@ public final class GuiMain extends javax.swing.JFrame {
             .addGroup(exportPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(subformatsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(exportPanelLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
                         .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(exportPanelLayout.createSequentialGroup()
+                                .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(automaticExportFilenamesCheckBox)
+                                    .addComponent(autoOpenExportsCheckBox))
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(exportPanelLayout.createSequentialGroup()
                                 .addComponent(exportSignalButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -5454,13 +5464,21 @@ public final class GuiMain extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(exportRawRemoteButton1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(openLastFileButton))
-                            .addGroup(exportPanelLayout.createSequentialGroup()
-                                .addComponent(exportNumberRepeatsLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(exportRepeatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(openLastFileButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(exportFormatParametersPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(exportHelpButton))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, exportPanelLayout.createSequentialGroup()
+                                .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(exportPanelLayout.createSequentialGroup()
+                                        .addComponent(exportNumberRepeatsLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(exportRepeatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(subformatsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
+                                .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(exportFormatDocumentationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(exportFormatParametersPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(50, 50, 50))))
                     .addGroup(exportPanelLayout.createSequentialGroup()
                         .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel8)
@@ -5468,22 +5486,14 @@ public final class GuiMain extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(exportPanelLayout.createSequentialGroup()
-                                .addComponent(exportFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(automaticExportFilenamesCheckBox)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(autoOpenExportsCheckBox)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(exportFormatDocumentationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(exportPanelLayout.createSequentialGroup()
                                 .addComponent(exportDirectoryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 637, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(exportDirSelectButton)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(exportDirOpenButton)
-                            .addComponent(exportHelpButton))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(exportDirSelectButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(exportDirOpenButton))
+                            .addComponent(exportFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         exportPanelLayout.setVerticalGroup(
             exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -5495,34 +5505,31 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(exportDirSelectButton)
                     .addComponent(exportDirOpenButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(exportHelpButton)
-                        .addComponent(exportFormatDocumentationButton))
-                    .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(exportFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel8)
-                        .addComponent(automaticExportFilenamesCheckBox)
-                        .addComponent(autoOpenExportsCheckBox)))
+                .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(exportFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8)
+                    .addComponent(exportFormatDocumentationButton))
+                .addGap(16, 16, 16)
                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(exportPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(subformatsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(exportNumberRepeatsLabel)
-                            .addComponent(exportRepeatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, Short.MAX_VALUE))
-                    .addGroup(exportPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(exportFormatParametersPane, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(exportRepeatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(exportFormatParametersPane, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 70, Short.MAX_VALUE)
+                .addComponent(automaticExportFilenamesCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(autoOpenExportsCheckBox)
+                .addGap(18, 18, 18)
                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportSignalButton)
                     .addComponent(exportParametricRemoteButton)
                     .addComponent(exportRawRemoteButton1)
                     .addComponent(openLastFileButton)
-                    .addComponent(exportRawRemoteButton))
+                    .addComponent(exportRawRemoteButton)
+                    .addComponent(exportHelpButton))
                 .addContainerGap())
         );
 

@@ -16,13 +16,33 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<exportformats:exportformat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<exportformats:exportformat xmlns="http://www.w3.org/1999/xhtml"
+                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
                             xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
                             name="Arduino Raw" extension="ino" multiSignal="true" simpleSequence="false">
-<!-- Limitations:supports only one remote (ignores all but the first one),
-     Does not support ending sequences (ignores them).
-    -->
+    <exportformats:documentation>
+        <div>This export format generates an <a href="https://www.arduino.cc/">Arduino</a> sketch file (.ino).
+        The raw format will be used. The following IR libraries are supported:
+        <ul>
+            <li>
+                <a href="https://github.com/bengtmartensson/Infrared4Arduino">Infrared4Arduino</a>  (see also <a href="http://www.harctoolbox.org/Infrared4Arduino.html">this</a>) (default),
+            </li>
+            <li>
+                <a href="https://github.com/Arduino-IRremote/Arduino-IRremote">IRremote</a>,
+            </li>
+            <li>
+                <a href="https://github.com/cyborg5/IRLib">IRLib</a> (version 1)
+            </li>
+        </ul>
+        </div>
+        <div>Limitations:<ul>
+            <li>Supports only one remote (ignores all but the first one),</li>
+            <li>Does not support ending sequences (ignores them).</li>
+            </ul>
+        </div>
+    </exportformats:documentation>
+
 <xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:java="http://xml.apache.org/xalan/java"
                 xmlns:cidentifierfactory="http://xml.apache.org/xalan/java/org.harctoolbox.irscrutinizer.exporter.CIdentifierFactory"
@@ -35,8 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // It supports:
 //
-// * IRremote https://github.com/z3t0/Arduino-IRremote
-//            http://z3t0.github.io/Arduino-IRremote/
+// * IRremote https://github.com/Arduino-IRremote/Arduino-IRremote
 // * IRLib    https://github.com/cyborg5/IRLib
 // * Infrared4Arduino https://github.com/bengtmartensson/Infrared4Arduino,
 //                    http://www.harctoolbox.org/Infrared4Arduino.html

@@ -40,7 +40,6 @@ import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.ircore.IrCoreException;
 import org.harctoolbox.irp.IrpException;
-import org.harctoolbox.xml.XmlUtils;
 import org.w3c.dom.DocumentFragment;
 
 /**
@@ -50,7 +49,7 @@ public class ProntoClassicExporter extends RemoteSetExporter {
 
     private static final int BUTTONLABELLENGTH = 100;
     public static final String[] prontoModelNames;
-    private static final DocumentFragment documentation = XmlUtils.stringToDocumentFragment("ProntoClassicExporter documentation not written yet.");
+    private static final DocumentFragment documentation = null;//XmlUtils.stringToDocumentFragment("ProntoClassicExporter documentation not written yet.");
 
     static {
         ProntoModel[] prontomodels = ProntoModel.getModels();

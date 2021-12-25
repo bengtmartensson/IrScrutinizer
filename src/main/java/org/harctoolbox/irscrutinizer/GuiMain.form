@@ -5279,13 +5279,19 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="subformatsPanel" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="automaticExportFilenamesCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              <Component id="autoOpenExportsCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                      </Group>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="exportSignalButton" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -5296,13 +5302,24 @@
                                           <Component id="exportRawRemoteButton1" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                           <Component id="openLastFileButton" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="exportNumberRepeatsLabel" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="exportRepeatComboBox" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="32767" attributes="0"/>
-                                          <Component id="exportFormatParametersPane" min="-2" max="-2" attributes="0"/>
+                                          <Component id="exportHelpButton" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Group type="102" alignment="1" attributes="0">
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="exportNumberRepeatsLabel" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="exportRepeatComboBox" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Component id="subformatsPanel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace pref="52" max="32767" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="exportFormatDocumentationButton" min="-2" pref="240" max="-2" attributes="0"/>
+                                              <Component id="exportFormatParametersPane" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -5314,28 +5331,18 @@
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" attributes="0">
-                                          <Component id="exportFormatComboBox" min="-2" pref="221" max="-2" attributes="0"/>
-                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Component id="automaticExportFilenamesCheckBox" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Component id="autoOpenExportsCheckBox" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="exportFormatDocumentationButton" min="-2" pref="165" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" attributes="0">
                                           <Component id="exportDirectoryTextField" min="-2" pref="637" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="exportDirSelectButton" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                          <Component id="exportDirOpenButton" min="-2" max="-2" attributes="0"/>
                                       </Group>
+                                      <Component id="exportFormatComboBox" min="-2" pref="246" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="exportDirOpenButton" min="-2" max="-2" attributes="0"/>
-                                      <Component id="exportHelpButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -5350,41 +5357,35 @@
                               <Component id="exportDirOpenButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="exportHelpButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="exportFormatDocumentationButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="exportFormatComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="automaticExportFilenamesCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="autoOpenExportsCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="exportFormatComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="exportFormatDocumentationButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="subformatsPanel" min="-2" pref="88" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">
                                       <Component id="exportNumberRepeatsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="exportRepeatComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace type="separate" max="32767" attributes="0"/>
                               </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="exportFormatParametersPane" min="-2" pref="127" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
+                              <Component id="exportFormatParametersPane" alignment="0" min="-2" pref="127" max="-2" attributes="0"/>
                           </Group>
+                          <EmptySpace type="separate" pref="70" max="32767" attributes="0"/>
+                          <Component id="automaticExportFilenamesCheckBox" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="autoOpenExportsCheckBox" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="exportSignalButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="exportParametricRemoteButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="exportRawRemoteButton1" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="openLastFileButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="exportRawRemoteButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="exportHelpButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -5450,6 +5451,7 @@
                 <Component class="javax.swing.JButton" name="exportSignalButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Export signal"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Export the signal on the &quot;Scrutinize signal&quot; pane"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportSignalButtonActionPerformed"/>
@@ -5460,7 +5462,8 @@
                     <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="properties.getExportAutomaticFilenames()" type="code"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Auto file names"/>
+                    <Property name="text" type="java.lang.String" value="Autogenerate file names"/>
+                    <Property name="toolTipText" type="java.lang.String" value="If checked, file names are generated automatically, otherwise the user must enter it."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="automaticExportFilenamesCheckBoxActionPerformed"/>
@@ -5469,6 +5472,7 @@
                 <Component class="javax.swing.JButton" name="openLastFileButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Open last file"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Open the last file generated, if any."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openLastFileButtonActionPerformed"/>
@@ -5477,6 +5481,7 @@
                 <Component class="javax.swing.JButton" name="exportRawRemoteButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Export raw remote"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Export the signals in the raw table of the &quot;Scrutinize remote&quot; pane."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportRawRemoteButtonActionPerformed"/>
@@ -5485,6 +5490,7 @@
                 <Component class="javax.swing.JButton" name="exportParametricRemoteButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Export param. remote"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Export the signals in the parametric table of &quot;Scrutinize remote&quot; pane."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportParametricRemoteButtonActionPerformed"/>
@@ -5542,7 +5548,8 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="exportRawRemoteButton1">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Export generated"/>
+                    <Property name="text" type="java.lang.String" value="Export rendered"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Export the signal(s) of the &quot;Render&quot; pane."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="generateExportButtonActionPerformed"/>
@@ -5554,7 +5561,7 @@
                       <Connection code="properties.getAutoOpenExports()" type="code"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Auto open exports"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Ir checked, exports will be automatically opened."/>
+                    <Property name="toolTipText" type="java.lang.String" value="If checked, exports will be automatically opened."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="autoOpenExportsCheckBoxActionPerformed"/>
@@ -5563,9 +5570,10 @@
                 <Component class="javax.swing.JButton" name="exportFormatDocumentationButton">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/info.png"/>
+                      <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/contents.png"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Format docu."/>
+                    <Property name="text" type="java.lang.String" value="Format documentation"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Display documentation for the current export format"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportFormatDocumentationButtonActionPerformed"/>
@@ -5645,13 +5653,8 @@
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="jLabel31" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Group type="102" attributes="0">
-                                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="jLabel22" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              <Component id="jLabel27" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                      </Group>
+                                      <Component id="jLabel22" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel27" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">

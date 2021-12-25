@@ -250,30 +250,31 @@ class HelpTexts {
 
     @SuppressWarnings("PackageVisibleField")
     public static String exportHelp
-            = "Using this pane, export files can be generated,  allowing "
+            = "<html>Using this pane, export files can be generated,  allowing "
             + "other programs to use the computed results. Single signals (from the "
             + "\"Scrutinize signal\" pane), collections of signals (from the \"Scrutinize remote\" "
             + "pane), or generated signals can be exported. Exports can be generated in a "
             + "number of different formats. Some (Girr (=XML) and text) can contain both "
             + "the Pronto format and the \"raw\" format (timings in "
             + "microseconds, positive for pulses, negative for gaps), as well as other "
-            + "formats. These formats, together with Wave, LIRC, and Pronto Classic, are "
+            + "formats. These formats, together with Wave and Pronto Classic, are "
             + "built-in in the program. However, it is possible to define new "
             + "export formats by extending a configuration file, see the documentation."
             + "The formats are, at the time of this writing:\n\n"
+            + "<div>"
             + "Girr:  "
-            + "The program's native format, based on XML. Very flexible and"
-            + "extensible. Can contain information like the raw format, CCF format, UEI"
-            + "learned format, and the Global Caché sendir format.\n"
+            + "The program's native format, based on XML. Very flexible and "
+            + "extensible. Can contain information like the raw format, Pronto Hex format "
+            + "and the Global Caché sendir format.</div>\n"
             + "Text:  "
             + "The text format is essentially the Girr format stripped of the XML markup information.\n"
             + "Wave:  "
             + "IR Sequences packed in wave files.\n "
-            + "LIRC:   "
+            + "Lirc Raw:   "
             + "The LIRC-exports are in lirc.conf-format using the raw LIRC format. They can be "
             + "concatenated together and used as the LIRC server data base. Can also be used with WinLirc.\n"
             + "Pronto Classic:   "
-            + "This format generates a CCF configuration file to be downloaded in a Pronto, or opened by a ProntoEdit program.\n"
+            + "This format generates a CCF configuration file to be downloaded in a Pronto Classoc, or opened by a ProntoEdit program.\n"
             + "IrTrans:   "
             + "This export format generates .rem files for the IrTrans system, using its CCF format.\n "
             + "Lintronic:   "
@@ -306,7 +307,7 @@ class HelpTexts {
             + "The character set used by the exports can be selected by Options -> Export options -> Character set..."
             + "However, some export formats ignore this."
             + "\n\n"
-            + "Some export formats have some more parameters, see the help in these sub panes.";
+            + "Some export formats have some more parameters, see the help in these sub panes.</html>";
 
     @SuppressWarnings("PackageVisibleField")
     public static String exportGirrHelp

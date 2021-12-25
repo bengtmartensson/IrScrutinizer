@@ -80,6 +80,10 @@ not to hold the author responsible.</warning>
 	  <td>2020-07-30</td>
 	  <td>Updated building instructions.</td>
 	</tr>
+        <tr>
+	  <td>2020-12-xx</td>
+	  <td>Updated for 2.4.0: ...</td>
+	</tr>
       </table>
 
 <section>
@@ -92,7 +96,7 @@ several different hardware sensors and senders are supported. IR Signals can be
 imported not only by capturing from one of the supported hardware
 sensors (among others: IrWidget, Global Caché, Command Fusion, and Arduino), but also from a
 number of different file formats (among others: Lirc, Wave, CML, Pronto Classic and
-professional, RMDU (partially), and different text based formats; not only from
+-professional, and different text based formats; not only from
 files, but also from the clipboard, from URLs, and from file hierarchies), as
 well as the Internet IR Databases by Global Caché and by IRDB. Imported signals
 can be decoded, analyzed, edited, and visualized. A collection of
@@ -492,7 +496,7 @@ href="#GUI+Elements+walkthrough">GUI Elements walk through</a></p>
 sequence.</p>
 
 <p>To capture IR Sequences from a hardware sensor, first set it up and open it,
-see Section <a href="#Capturing+Hardware">Capturing Hardware</a>. An IR Sequence
+see Section <a href="#Capturing+HardwareFIXME">Capturing Hardware</a>. An IR Sequence
 is captured by pressing the "Capture" button, and sending an IR signal to the
 selected hardware. Note that the hardware captures an <em><a
 href="Glossary.html#IrSequence">IR Sequence</a></em>, not an <a href="Glossary.html#IrSignal">IR Signal</a>. It
@@ -502,7 +506,7 @@ sometimes an <a href="Glossary.html#EndingSequence">ending sequence</a>.</p>
     </section>
 
 <section><title>Adding new export formats</title>
-<p>Only a few of the many export formats are  defined in the main Java code,
+<p>Only a few of the many export formats are  defined in the main Java code (<code>Girr</code>, <code>Text</code>, <code>Pronto Classic</code> and <code>Wave</code>),
 the rest are defined in files in the directory  <code>exportformats.d</code>,
 located in the root of the install directory. By adding a file here,
 the user can simply add his/her own export formats according to own
@@ -515,16 +519,18 @@ supposed to be read only when needed. Fundamental knowledge of XML and
 <a href="Glossary.html#XSLT">XSLT transformations</a> are assumed.</p>
 
 <section><title>Format of the files in <code>exportformats.d</code></title>
-<p>The file is an XML file read without validation. The syntax and semantics
-are believed to be essentially self explaining, or clear from the
+<p>The file is an XML file supposed to be a valid instance of the XML Schema,
+<code>exportformats.xsd</code>, although it is read without validation.
+The semantics is believed to be essentially self explaining, or clear from the
 examples already in there. An export format is
-packed in an element of type <code>exportformat</code>. It contains
+packed in an element of type <code>exportformats:exportformat</code>. It contains
 the following attributes:</p>
 <dl>
 <dt>name</dt><dd>Text string used for identifying the format.</dd>
 <dt>extension</dt><dd>Text string denoting preferred file extension (not including period)
 of generated files.</dd>
-<dt>multiSignal</dt><dd>Boolean (value: true and false). Denotes if
+<dt>multiSignal</dt>
+<dd>Boolean (value: <code>true</code> and <code>false</code>). Denotes if
 several signals can be represented in one export, or only one.</dd>
 <dt>simpleSequence</dt><dd>Boolean, (values <code>true</code> of
 <code>false</code>). If true, the export really describes an <a
@@ -542,13 +548,13 @@ href="Girr.html#Fat+Format">"fat" format</a>, with
 root element, into the desired text format. It may be advisable to use
 the already present formats as guide.</p>
 <p>
-    For testing and developing new export formats in this for, the main routine of
-    the class <code>org.harctoolbox.irscrutinizer.exporter.DynamicRemoteSetExportFormat</code>
-    may be used. It can be used to transform a Girr file(s) from the command line.
+    For testing and developing new export formats in this for, the <code>main</code> routine of
+    the class <code>org.harctoolbox.irscrutinizer.exporter.DynamicRemoteSetExportFormatMain</code>
+    may be used. It can be used to transform a Girr file from the command line.
 </p>
 
 <p>After editing or adding export format files, they can be reloaded either by re-starting the
-program, or by selecting Options -> Export formats database -> Reload.</p>
+    program, or by selecting <code>Options</code> -> <code>Export formats database</code> -> <code>Reload</code>.</p>
     </section>
 </section>
 <section>
@@ -1627,12 +1633,11 @@ wish list.
 
 <section>
     <title>What about the "fishy" icon?</title>
-    <p>It is a
-        Babel fish,
+    <p>It is a <a href="https://hitchhikers.fandom.com/wiki/Babel_Fish">Babel fish</a>,
         as found in <a href="http://en.wikipedia.org/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy">The Hitchhiker's Guide to the Galaxy</a>,
         having the property, that
         "... if you stick one in your ear, you can instantly understand anything said to you in any form of language".
-        This symbolizes the program's ability to "understand" a large number of different IR formats.
+        This symbolizes the program's ability to "understand" (read and write) a large number of different IR formats.
     </p>
 </section>
 
