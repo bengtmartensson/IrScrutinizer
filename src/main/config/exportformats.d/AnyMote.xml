@@ -20,6 +20,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
                             xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
                             name="AnyMote" extension="amsr" multiSignal="true" simpleSequence="false">
+    <exportformats:documentation>
+        <div>Animote is an remote control solution for Android, <a href="http://www.anymote.io/">now discontinued</a>.
+        The export format consists of a text file with raw IR signals.
+        </div>
+        <div>Limitations:<ul>
+            <!--li>Supports only one remote (ignores all but the first one),</li-->
+            <li>Does not support ending sequences (ignores them).</li>
+            </ul>
+        </div>
+    </exportformats:documentation>
     <xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr"
                     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
         <xsl:output method="text" />

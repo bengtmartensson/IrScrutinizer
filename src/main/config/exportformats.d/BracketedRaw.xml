@@ -24,6 +24,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
         <xsl:output method="text" />
 
+        <exportformats:documentation>
+            <div>This export format generates an text file of the command(s) in the
+                <a href="http://www.harctoolbox.org/IrpTransmogrifier.html#BracketedRawFormat">bracketed raw text format</a>.
+            </div>
+            <div>Limitations:
+                <ul>
+                    <li>Contains only a set of the commands; the containing <em>remote</em>(s) and their meta data are ignored,</li>
+                </ul>
+            </div>
+        </exportformats:documentation>
+
         <xsl:template match="/">
             <xsl:apply-templates select="//girr:command"/>
         </xsl:template>

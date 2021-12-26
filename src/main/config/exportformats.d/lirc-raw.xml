@@ -20,6 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
                             xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
                             name="Lirc Raw" extension="lircd.conf" multiSignal="true" simpleSequence="false" metadata="true">
+
+    <exportformats:documentation>
+        <div>
+            This export format generates a <a href="https://www.lirc.org">Lirc</a> configuration file containing the remotes of the export, and their contained commands,
+        all using the raw command format.
+        </div>
+    </exportformats:documentation>
+
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:girr="http://www.harctoolbox.org/Girr"
                 xmlns:java="http://xml.apache.org/xalan/java"

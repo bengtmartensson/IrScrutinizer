@@ -20,9 +20,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
                             xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
                             name="Arduino/Infrared4Arduino" extension="ino" multiSignal="true" simpleSequence="false">
-<!-- Limitations:supports only one remote (ignores all but the first one),
-     Does not support ending sequences (ignores them).
-    -->
+
+    <exportformats:documentation>
+        <div>This export format generates an <a href="https://www.arduino.cc/">Arduino</a> sketch file (.ino).
+        using the Arduino IR library <a href="https://github.com/bengtmartensson/Infrared4Arduino">Infrared4Arduino</a>
+        (see also <a href="http://www.harctoolbox.org/Infrared4Arduino.html">this</a>).</div>
+        <div>If the signals uses a protocol directly supported by Infrared4Arduino (presently NEC1 and RC5),
+            the parametrized form is used, otherwise the raw form.
+        </div>
+        <div>Limitations:<ul>
+            <li>Supports only one remote (ignores all but the first one),</li>
+            <li>Does not support ending sequences (ignores them).</li>
+            </ul>
+        </div>
+    </exportformats:documentation>
+
 <xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:java="http://xml.apache.org/xalan/java"
                 xmlns:cidentifierfactory="http://xml.apache.org/xalan/java/org.harctoolbox.irscrutinizer.exporter.CIdentifierFactory"

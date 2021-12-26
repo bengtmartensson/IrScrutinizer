@@ -23,7 +23,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr"
                     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
         <xsl:output method="text" />
-        <xsl:template match="/girr:remotes">
+
+        <exportformats:documentation>
+        <div>This export format generates a text file in ICT format, containing the commands of the export.
+            (ICT is the native format of IrScope. It can also be read by IrTransmogrifier.)
+        </div>
+    </exportformats:documentation>
+
+    <xsl:template match="/girr:remotes">
             <xsl:text>irscope 0
 carrier_frequency </xsl:text>
             <xsl:value-of select="girr:remote/girr:commandSet/girr:command/girr:raw/@frequency"/>

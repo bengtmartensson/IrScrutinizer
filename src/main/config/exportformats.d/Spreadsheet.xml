@@ -21,7 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             xsi:schemaLocation="http://www.harctoolbox.org/exportformats ../../../../common/schemas/exportformats.xsd"
                             name="Spreadsheet" extension="csv" multiSignal="true" simpleSequence="false">
     <exportformats:documentation>
-        This export format generates a simple csv spreadsheet.
+        <div>
+        This export format generates a simple csv spreadsheet of the commands as raw and as Pronto Hex.
+            This can be easily imported in a standard spreadsheet program, like Excel, LibreOffice and Gnumeric.
+        </div>
     </exportformats:documentation>
     <xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr"
                     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">

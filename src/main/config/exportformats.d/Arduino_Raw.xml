@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </ul>
         </div>
         <div>Limitations:<ul>
-            <li>Supports only one remote (ignores all but the first one),</li>
+            <!--li>Supports only one remote (ignores all but the first one),</li-->
             <li>Does not support ending sequences (ignores them).</li>
             </ul>
         </div>

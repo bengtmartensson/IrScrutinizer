@@ -20,7 +20,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
                             xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
                             name="Broadlink Python IR" extension="py" multiSignal="true" simpleSequence="false" executable="true">
-<!-- Limitations: just takes all commands, ignoring its enclosing remotes and command sets. -->
+
+    <exportformats:documentation>
+        <div>This export format generates a Python program utilizing the <a href="https://github.com/mjg59/python-broadlink">Python-Broadlink</a>
+            library. This is an interactive commandline program: it can either used by itself,
+            or used as a template for creating more elaborate Python applications.
+        </div>
+        <div>Limitations:
+            <ul>
+                <li>Contains only a set of the commands; the containing <em>remote</em>(s) and their meta data are ignored,</li>
+            </ul>
+        </div>
+    </exportformats:documentation>
+
 <xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:java="http://xml.apache.org/xalan/java"
                 xmlns:cidentifierfactory="http://xml.apache.org/xalan/java/org.harctoolbox.irscrutinizer.exporter.CIdentifierFactory"
