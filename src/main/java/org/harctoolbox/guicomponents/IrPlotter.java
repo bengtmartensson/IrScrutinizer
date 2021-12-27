@@ -48,7 +48,7 @@ public class IrPlotter extends HarcPanel {
             + "Project home page: http://www.harctoolbox.org";
 
     private final static int topMargin = 10;
-    private final static int bottomMargin = 40;
+    private final static int bottomMargin = 50;
     private final static int leftMargin = 15;
     private final static int rightMargin = 15;
     private final static int tickBarLength = 10;
