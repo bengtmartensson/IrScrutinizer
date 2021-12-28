@@ -165,7 +165,6 @@ public final class NamedCommandLauncher extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        copyPopupMenu = new org.harctoolbox.guicomponents.CopyPastePopupMenu();
         noSendsComboBox = new javax.swing.JComboBox<>();
         transmitterComboBox = new javax.swing.JComboBox<>();
         remoteComboBox = new javax.swing.JComboBox<>();
@@ -333,7 +332,6 @@ public final class NamedCommandLauncher extends JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> commandComboBox;
-    private org.harctoolbox.guicomponents.CopyPastePopupMenu copyPopupMenu;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

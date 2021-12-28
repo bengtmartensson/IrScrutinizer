@@ -25,7 +25,6 @@ import java.io.IOException;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.ircore.ModulatedIrSequence;
 
@@ -83,7 +82,6 @@ public class IrPlotter extends HarcPanel {
     private JMenu plotterWidthsMenu;
     private JPopupMenu plotterPopupMenu;
 
-    private boolean usePulseAsTiming = false;
     private boolean ignoreLast = false;
     private Double frequency;
 
@@ -173,17 +171,6 @@ public class IrPlotter extends HarcPanel {
 
     public boolean isEmpty() {
         return irdata == null || irdata.length == 0;
-    }
-
-    /**
-     * Shows the plot x-axis as a function of modulation periods, not as time. Not yet implemented.
-     * @param val true for pulses, false for time.
-     * @throws org.harctoolbox.ircore.InvalidArgumentException If pulses selected, but frequency is zero, making pulse time undefined.
-     */
-    public void setPulseAsTiming(boolean val) throws InvalidArgumentException {
-        if (val && frequency <= 0)
-            throw new InvalidArgumentException("");
-        usePulseAsTiming = val;
     }
 
     /**

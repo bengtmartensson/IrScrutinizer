@@ -162,7 +162,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private Props properties;
-    private String applicationHome;
+    private final String applicationHome;
     private IrpDatabase irpDatabase;
     private Decoder decoder;
     private Decoder.DecoderParameters decoderParameters;
@@ -541,15 +541,6 @@ public final class GuiMain extends javax.swing.JFrame {
         });
 
         ParametrizedIrSignal.setDecoder(decoder);
-        ParametrizedIrSignal.setGenerateCcf(properties.getGenerateCcf());
-        ParametrizedIrSignal.setGenerateRaw(properties.getGenerateRaw());
-
-        properties.addGenerateCcfChangeListener((String name1, Object oldValue, Object newValue) -> {
-            ParametrizedIrSignal.setGenerateCcf((Boolean) newValue);
-        });
-        properties.addGenerateRawChangeListener((String name1, Object oldValue, Object newValue) -> {
-            ParametrizedIrSignal.setGenerateRaw((Boolean) newValue);
-        });
 
         RawIrSignal.setDecoder(decoder);
         RawIrSignal.setInvokeAnalyzer(properties.getInvokeAnalyzer());

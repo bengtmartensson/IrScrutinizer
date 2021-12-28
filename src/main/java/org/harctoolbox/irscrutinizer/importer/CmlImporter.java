@@ -56,10 +56,6 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
         }
     }
 
-    // I have no idea of a/the correct character set in the CML files.
-    // Therefore, select the largest of the 8 bit character sets.
-    private final String defaultCharsetName = "WINDOWS-1252";
-
     private String charactersetName = null;
 
     public CmlImporter() {

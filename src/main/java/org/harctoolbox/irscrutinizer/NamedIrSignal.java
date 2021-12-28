@@ -41,7 +41,7 @@ import org.harctoolbox.irscrutinizer.exporter.NameUniquefier;
  *
  *
  */
-public abstract class NamedIrSignal {
+abstract class NamedIrSignal {
     private static int count = 0;
 
     private static synchronized int incrementCount() {
@@ -58,7 +58,7 @@ public abstract class NamedIrSignal {
     private String comment; // can be null
     private final int numeral;
 
-    public NamedIrSignal(String name, String comment) {
+    NamedIrSignal(String name, String comment) {
         numeral = incrementCount();
         date = new Date();
         this.name = name;
@@ -337,7 +337,7 @@ public abstract class NamedIrSignal {
             }
             return duplicates;
         }
-        
+
         public Set<String> getUniqueNames() {
             Set<String> names = new HashSet<>(getRowCount());
             for (int row = 0; row < getRowCount(); row++) {

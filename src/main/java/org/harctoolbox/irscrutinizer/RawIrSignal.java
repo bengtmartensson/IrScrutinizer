@@ -41,7 +41,7 @@ import org.harctoolbox.irscrutinizer.exporter.NameUniquefier;
  * Note: Editing of the sequences is not implemented (yet).
  *
  */
-public class RawIrSignal extends NamedIrSignal {
+class RawIrSignal extends NamedIrSignal {
 
     private static Decoder decoder = null;
 
@@ -139,25 +139,25 @@ public class RawIrSignal extends NamedIrSignal {
     private String analyzerString = null;
     private Decoder.AbstractDecodesCollection<? extends ElementaryDecode> decodes = null; // null: no decoding attempted; isEmpty: tried decoding, but no decode found
 
-    public RawIrSignal(IrSignal irSignal, String name, String comment) {
+    RawIrSignal(IrSignal irSignal, String name, String comment) {
         super(name, comment);
         setIrSignal(irSignal);
     }
 
-    public RawIrSignal(RawIrSignal old) {
+    RawIrSignal(RawIrSignal old) {
         this(old.getIrSignal(), old.getName(), old.getComment());
     }
 
-    public RawIrSignal(ModulatedIrSequence irSequence, String name, String comment) {
+    RawIrSignal(ModulatedIrSequence irSequence, String name, String comment) {
         super(name, comment);
         setIrSignal(irSequence);
     }
 
-    public RawIrSignal(Command command) throws IrpException, IrCoreException {
+    RawIrSignal(Command command) throws IrpException, IrCoreException {
         this(command.toIrSignal(), command.getName(), command.getComment());
     }
 
-    public RawIrSignal() {
+    RawIrSignal() {
         this(new IrSignal(), "", "");
     }
 

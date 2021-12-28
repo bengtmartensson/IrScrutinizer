@@ -364,8 +364,6 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
     private static abstract class IrTransCommand {
         String name;
 
-        private IrTransCommand() {}
-
         protected IrTransCommand(String name) {
             this.name = name;
         }

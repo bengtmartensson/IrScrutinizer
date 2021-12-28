@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextArea;
-import javax.swing.text.Document;
 
 /**
  * This class extends JTextArea with an undo function.
@@ -38,29 +37,6 @@ public class UndoableJTextArea extends JTextArea {
      */
     public UndoableJTextArea() {
         super();
-        history = new StringStack();
-    }
-
-    // Not supported
-    /**
-     * Constructs a new JTextArea with the given document model, and defaults
-     * for all of the other arguments (null, 0, 0).
-     */
-    private UndoableJTextArea(Document doc) {
-        history = new StringStack();
-    }
-
-    // Not supported
-    /**
-     * Constructs a new JTextArea with the specified number of rows and columns,
-     * and the given model.
-     *
-     * @param doc
-     * @param text
-     * @param rows
-     * @param columns
-     */
-    private UndoableJTextArea(Document doc, String text, int rows, int columns) {
         history = new StringStack();
     }
 

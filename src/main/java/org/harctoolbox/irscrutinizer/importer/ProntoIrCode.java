@@ -17,10 +17,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.importer;
 
-import org.harctoolbox.girr.Command;
-import org.harctoolbox.girr.GirrException;
-
-public class ProntoIrCode {
+class ProntoIrCode {
 
     private final static String[] prontoCharNames = {
         null, null, null, null, null, null, null, null, // 0x00-0x07
@@ -61,40 +58,7 @@ public class ProntoIrCode {
     public static String translateProntoFont(String name) {
         return name.length() == 1 ? prontoCharNames[name.charAt(0)] : name;
     }
-    private String ccf;
-    private String name;
-    private String comment;
 
-    private ProntoIrCode(String ccf, String name, String comment, boolean translateProntoFont) {
-        this.ccf = ccf;
-        this.name = translateProntoFont && name != null ? translateProntoFont(name) : name;
-        this.comment = comment;
-    }
-
-    private ProntoIrCode(String ccf, String name) {
-        this(ccf, name, null, true);
-    }
-
-    public String getCcf() {
-        return ccf;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public Command toCommand(boolean generateRaw, boolean decode) throws GirrException {
-        return new Command(name, comment, ccf);
-    }
-
-    @Override
-    public String toString() {
-        return name
-                + ((comment != null && !comment.isEmpty()) ? (" (" + comment + ")") : "")
-                + " " + ccf;
+    private ProntoIrCode() {
     }
 }

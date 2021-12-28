@@ -78,9 +78,6 @@ public class CsvRawImporter extends CsvImporter {
         this.includeTail = includeTail;
     }
 
-    private CsvRawImporter() { // ???
-        this(0, 0, false, 1, false);
-    }
     /**
      * @param codeColumn the codeColumn to set
      */

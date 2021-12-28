@@ -34,25 +34,9 @@ import org.harctoolbox.irp.IrpException;
  *
  *
  */
-public class ParametrizedIrSignal extends NamedIrSignal {
-    private static boolean generateRaw = true;
-    private static boolean generateCcf = true;
+class ParametrizedIrSignal extends NamedIrSignal {
     private static Decoder decoder = null;
     private static Decoder.DecoderParameters decoderParameters = null;
-
-    /**
-     * @param aGenerateRaw the generateRaw to set
-     */
-    public static void setGenerateRaw(boolean aGenerateRaw) {
-        generateRaw = aGenerateRaw;
-    }
-
-    /**
-     * @param aGenerateCcf the generateCcf to set
-     */
-    public static void setGenerateCcf(boolean aGenerateCcf) {
-        generateCcf = aGenerateCcf;
-    }
 
     /**
      *
@@ -84,24 +68,24 @@ public class ParametrizedIrSignal extends NamedIrSignal {
     private Map<String, Long>parameters;
     private String protocolName;
 
-    public ParametrizedIrSignal(Command command) throws IrpException, IrCoreException {
+    ParametrizedIrSignal(Command command) throws IrpException, IrCoreException {
         super(command.getName(), command.getComment());
         this.protocolName = command.getProtocolName();
         Map<String, Long> commandParams = command.getParameters();
         this.parameters = commandParams != null ? new HashMap<>(commandParams) : new HashMap<>(3);
     }
 
-    public ParametrizedIrSignal(String protocolName, Map<String, Long>parameters, String name, String comment) {
+    ParametrizedIrSignal(String protocolName, Map<String, Long>parameters, String name, String comment) {
         super(name, comment);
         this.parameters = parameters;
         this.protocolName = protocolName;
     }
 
-    public ParametrizedIrSignal(ParametrizedIrSignal old) {
+    ParametrizedIrSignal(ParametrizedIrSignal old) {
         this(old.getProtocol(), old.parameters, old.getName(), old.getComment());
     }
 
-    public ParametrizedIrSignal(String protocolName, long device, long subdevice, long function, String name, String comment) {
+    ParametrizedIrSignal(String protocolName, long device, long subdevice, long function, String name, String comment) {
         super(name, comment);
         parameters = new HashMap<>(3);
         setParameter("F", function);
@@ -110,31 +94,31 @@ public class ParametrizedIrSignal extends NamedIrSignal {
         this.protocolName = protocolName;
     }
 
-    public ParametrizedIrSignal(String protocolName, long device, long function, String name, String comment) {
+    ParametrizedIrSignal(String protocolName, long device, long function, String name, String comment) {
         this(protocolName, device, IrCoreUtils.INVALID, function, name, comment);
     }
 
-    public ParametrizedIrSignal(Decoder.Decode decode, String name, String comment) {
+    ParametrizedIrSignal(Decoder.Decode decode, String name, String comment) {
         this(decode.getName(), decode.getMap(), name, comment);
     }
 
-    public ParametrizedIrSignal(IrSignal irSignal, boolean ignoreT) throws NoDecodeException {
+    ParametrizedIrSignal(IrSignal irSignal, boolean ignoreT) throws NoDecodeException {
         this(irSignal, "", "", ignoreT);
     }
 
-    public ParametrizedIrSignal(ModulatedIrSequence irSequence, boolean ignoreT) throws NoDecodeException {
+    ParametrizedIrSignal(ModulatedIrSequence irSequence, boolean ignoreT) throws NoDecodeException {
         this(irSequence, "", "", ignoreT);
     }
 
-    public ParametrizedIrSignal(IrSignal irSignal, String name, String comment, boolean ignoreT) throws NoDecodeException {
+    ParametrizedIrSignal(IrSignal irSignal, String name, String comment, boolean ignoreT) throws NoDecodeException {
         this(decoder.decodeIrSignal(irSignal, decoderParameters), name, comment, ignoreT);
     }
 
-    public ParametrizedIrSignal(ModulatedIrSequence irSequence, String name, String comment, boolean ignoreT) throws NoDecodeException {
+    ParametrizedIrSignal(ModulatedIrSequence irSequence, String name, String comment, boolean ignoreT) throws NoDecodeException {
         this(new Decoder.SimpleDecodesSet(decoder.decode(irSequence, decoderParameters)), name, comment, ignoreT);
     }
 
-    public ParametrizedIrSignal(Decoder.SimpleDecodesSet decodes, String name, String comment, boolean ignoreT) throws NoDecodeException {
+    ParametrizedIrSignal(Decoder.SimpleDecodesSet decodes, String name, String comment, boolean ignoreT) throws NoDecodeException {
         super(name, comment);
         if (decodes.isEmpty()) {
             decrementCount();
