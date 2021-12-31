@@ -40,7 +40,7 @@ if [ $(basename "$0" ) = "irptransmogrifier" ] ; then
 fi
 
 # If called using a name of one of the tools, invoke that "program".
-if [ $(basename "$0" ) != "irscrutinizer" -a $(basename "$0" ) != "harchardware" ] ; then
+if [ $(basename "$0" .sh ) != "irscrutinizer" -a $(basename "$0" ) != "harchardware" ] ; then
     exec "${JAVA}" ${JVM_ARGS} -classpath "${FATJAT}" org.harctoolbox.guicomponents.$(basename "$0") "$@"
 fi
 
