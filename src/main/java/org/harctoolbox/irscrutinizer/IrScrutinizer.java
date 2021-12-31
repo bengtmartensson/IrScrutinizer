@@ -29,7 +29,14 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javax.xml.parsers.ParserConfigurationException;
+import org.harctoolbox.cmdline.LevelParser;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.Utils;
 import org.harctoolbox.ircore.IrCoreUtils;
@@ -74,6 +81,8 @@ public class IrScrutinizer {
             usage(IrpUtils.EXIT_USAGE_ERROR);
         }
 
+        setupLoggers();
+
         if (commandLineArgs.helpRequested)
             usage(IrpUtils.EXIT_SUCCESS);
 
@@ -117,6 +126,22 @@ public class IrScrutinizer {
             System.err.println(ex.getMessage());
             return null;
         }
+    }
+
+    // This is a simplified version of org.harctoolbox.cmdlind.CmdLineProgram.setupLoggers()
+    private static void setupLoggers() {
+        Logger topLevelLogger = Logger.getLogger("");
+        Formatter formatter = new SimpleFormatter();
+        Handler[] handlers = topLevelLogger.getHandlers();
+        for (Handler handler : handlers)
+            topLevelLogger.removeHandler(handler);
+
+        Handler handler = new ConsoleHandler();
+        handler.setFormatter(formatter);
+        topLevelLogger.addHandler(handler);
+
+        handler.setLevel(commandLineArgs.logLevel);
+        topLevelLogger.setLevel(commandLineArgs.logLevel);
     }
 
     private static void guiExecute(final String applicationHome, final String propsfilename,
@@ -168,6 +193,10 @@ public class IrScrutinizer {
 
         @Parameter(names = {"-H", "--home", "--applicationhome", "--apphome"}, description = "Set application home (where files are located)")
         private String applicationHome = null;
+
+        @Parameter(names = {"-l", "--loglevel"}, converter = LevelParser.class,
+            description = "Log level { OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL }")
+        public Level logLevel = Level.WARNING;
 
         @Parameter(names = {"--nuke-properties"}, description = "Get rid of present properties file")
         private boolean nukeProperties = false;
