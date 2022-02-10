@@ -8188,7 +8188,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void irpProtocolsSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpProtocolsSelectMenuItemActionPerformed
         String oldDir = new File(properties.mkPathAbsolute(properties.getIrpProtocolsPath())).getParent();
-        File f = SelectFile.selectFile(this, "Select protocol file IrpProtocol.ini", oldDir, false, false, "XML files (*.xml)", "xml");
+        File f = SelectFile.selectFile(this, "Select protocol file (typically IrpProtocols.xml)", oldDir, false, false, "XML files (*.xml)", "xml");
         if (f == null || f.getAbsolutePath().equals(properties.mkPathAbsolute(properties.getIrpProtocolsPath())))
             return;
 
