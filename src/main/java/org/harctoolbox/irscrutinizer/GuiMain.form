@@ -565,6 +565,35 @@
                 <Property name="toolTipText" type="java.lang.String" value="Transformations on the command names."/>
               </Properties>
               <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="lowercaseNameMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="To lowercase"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Transform names to lower case"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="lowercaseNameMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="upperCaseMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="To uppercase"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Transform names to upper case"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="upperCaseMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="captitalizeNameMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Capitalize names"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Transform names to Capitalized form."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="captitalizeNameMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator42">
+                </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="addNamePrefixMenuItem">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Add prefix..."/>

@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -435,10 +436,10 @@ abstract class NamedIrSignal {
             return ! (columnsFunc.uninterestingIfAllEqual(column) && isAllEqualColumn(column));
         }
 
-        public void namesTransform(String from, String to, Iterable<Integer> rows) {
+        public void namesTransform(Function<String, String> transformation, Iterable<Integer> rows) {
             rows.forEach((row) -> {
                 String oldName = (String) getValueAt(row, columnsFunc.getPosName());
-                String newName = oldName.replaceFirst(from, to);
+                String newName = transformation.apply(oldName);
                 setValueAt(newName, row, columnsFunc.getPosName());
             });
             fireTableDataChanged();

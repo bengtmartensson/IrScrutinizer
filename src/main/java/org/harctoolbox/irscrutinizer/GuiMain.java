@@ -49,6 +49,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 import javax.comm.DriverGenUnix;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -138,6 +139,10 @@ public final class GuiMain extends javax.swing.JFrame {
     private final static boolean decodeAllDecodes = false;
     private final static boolean decodeRecursive = false;
     private final static boolean decodeOverride = false;
+
+    // Locale used for transforming command names.
+    // One day this may be made user selectable...
+    private final static Locale namesLocale = Locale.getDefault();
 
     private static Proxy mkProxy(String hostName, int port) {
         return hostName == null || hostName.isEmpty()
@@ -2100,6 +2105,23 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }
 
+    private boolean checkRowsSelected(javax.swing.JTable table) {
+        if (table.getSelectionModel().isSelectionEmpty()) {
+            guiUtils.error("Nothing selected");
+            return false;
+        }
+        return true;
+    }
+
+    private void transformNameActionPerformed(javax.swing.JTable table, NamedIrSignal.LearnedIrSignalTableModel model, Function<String, String> transformation) {
+        List<Integer> rows = tableUtils.modelLinesSelected(table);
+        if (rows.isEmpty()) {
+            guiUtils.error("Nothing selected");
+            return;
+        }
+        model.namesTransform(transformation, rows);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -2182,6 +2204,10 @@ public final class GuiMain extends javax.swing.JFrame {
         unsetTMenuItem = new javax.swing.JMenuItem();
         setMiscParamsMenuItem = new javax.swing.JMenuItem();
         transformNamesMenu = new javax.swing.JMenu();
+        lowercaseNameMenuItem = new javax.swing.JMenuItem();
+        upperCaseMenuItem = new javax.swing.JMenuItem();
+        captitalizeNameMenuItem = new javax.swing.JMenuItem();
+        jSeparator42 = new javax.swing.JPopupMenu.Separator();
         addNamePrefixMenuItem = new javax.swing.JMenuItem();
         transformNameMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
@@ -3115,6 +3141,34 @@ public final class GuiMain extends javax.swing.JFrame {
 
         transformNamesMenu.setText("Name transformations");
         transformNamesMenu.setToolTipText("Transformations on the command names.");
+
+        lowercaseNameMenuItem.setText("To lowercase");
+        lowercaseNameMenuItem.setToolTipText("Transform names to lower case");
+        lowercaseNameMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lowercaseNameMenuItemActionPerformed(evt);
+            }
+        });
+        transformNamesMenu.add(lowercaseNameMenuItem);
+
+        upperCaseMenuItem.setText("To uppercase");
+        upperCaseMenuItem.setToolTipText("Transform names to upper case");
+        upperCaseMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                upperCaseMenuItemActionPerformed(evt);
+            }
+        });
+        transformNamesMenu.add(upperCaseMenuItem);
+
+        captitalizeNameMenuItem.setText("Capitalize names");
+        captitalizeNameMenuItem.setToolTipText("Transform names to Capitalized form.");
+        captitalizeNameMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                captitalizeNameMenuItemActionPerformed(evt);
+            }
+        });
+        transformNamesMenu.add(captitalizeNameMenuItem);
+        transformNamesMenu.add(jSeparator42);
 
         addNamePrefixMenuItem.setText("Add prefix...");
         addNamePrefixMenuItem.setToolTipText("Add a prefix to all names.");
@@ -8874,28 +8928,24 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_addMissingNamesMenuItemActionPerformed
 
     private void addNamePrefixMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNamePrefixMenuItemActionPerformed
-        List<Integer> rows = tableUtils.modelLinesSelected(parameterTable);
-        if (rows.isEmpty()) {
-            guiUtils.error("Nothing selected");
+        if (! checkRowsSelected(parameterTable))
             return;
-        }
+
         String prefix = guiUtils.getInput("Enter desired prefix", "Prefix inquiry", "cmd_");
         if (prefix != null)
-            parameterTableModel.namesTransform("^", prefix, rows);
+            transformNameActionPerformed(parameterTable, parameterTableModel, (String s) -> prefix + s);
     }//GEN-LAST:event_addNamePrefixMenuItemActionPerformed
 
     private void transformNameMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transformNameMenuItemActionPerformed
-        List<Integer> rows = tableUtils.modelLinesSelected(parameterTable);
-        if (rows.isEmpty()) {
-            guiUtils.error("Nothing selected");
+        if (! checkRowsSelected(parameterTable))
             return;
-        }
+
         String old = guiUtils.getInput("Enter string to be replaced (regular expression)", "String inquiry", "test");
         if (old == null)
             return;
         String replacement = guiUtils.getInput("Replace \"" + old + "\" by ...", "String inquiry", old);
         if (replacement != null)
-            parameterTableModel.namesTransform(old, replacement, rows);
+            transformNameActionPerformed(parameterTable, parameterTableModel, (String s) -> s.replaceFirst(old, replacement));
     }//GEN-LAST:event_transformNameMenuItemActionPerformed
 
     private void proxyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proxyMenuItemActionPerformed
@@ -9290,6 +9340,18 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.error("No documentation available for format " + name);
     }//GEN-LAST:event_exportFormatDocumentationButtonActionPerformed
 
+    private void lowercaseNameMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lowercaseNameMenuItemActionPerformed
+        transformNameActionPerformed(parameterTable, parameterTableModel, (String s) -> s.toLowerCase(namesLocale));
+    }//GEN-LAST:event_lowercaseNameMenuItemActionPerformed
+
+    private void upperCaseMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upperCaseMenuItemActionPerformed
+        transformNameActionPerformed(parameterTable, parameterTableModel, (String s) -> s.toUpperCase(namesLocale));
+    }//GEN-LAST:event_upperCaseMenuItemActionPerformed
+
+    private void captitalizeNameMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_captitalizeNameMenuItemActionPerformed
+        transformNameActionPerformed(parameterTable, parameterTableModel, (String s) -> s.substring(0, 1).toUpperCase(namesLocale) + s.substring(1).toLowerCase(namesLocale));
+    }//GEN-LAST:event_captitalizeNameMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9318,6 +9380,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JCheckBox autoOpenExportsCheckBox;
     private javax.swing.JCheckBox automaticExportFilenamesCheckBox;
     private javax.swing.JMenuItem beaconListenerMenuItem;
+    private javax.swing.JMenuItem captitalizeNameMenuItem;
     private javax.swing.JPanel captureIrWidgetPanel;
     private javax.swing.JButton captureTestButton;
     private javax.swing.JScrollPane capturedDataScrollPane;
@@ -9621,6 +9684,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator40;
     private javax.swing.JPopupMenu.Separator jSeparator41;
+    private javax.swing.JPopupMenu.Separator jSeparator42;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
@@ -9632,6 +9696,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<LircImporter> lircFileImporterBean;
     private javax.swing.JPanel lircImportPanel;
     private javax.swing.JMenu loadMenu;
+    private javax.swing.JMenuItem lowercaseNameMenuItem;
     private javax.swing.JMenuItem mainDocuMenuItem;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem minLeadoutMenuItem;
@@ -9798,6 +9863,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem undoDataMenuItem;
     private javax.swing.JMenuItem undoMenuItem;
     private javax.swing.JMenuItem unsetTMenuItem;
+    private javax.swing.JMenuItem upperCaseMenuItem;
     private javax.swing.JCheckBoxMenuItem usePopupsForErrorsCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem usePopupsForHelpCheckBoxMenuItem;
     private javax.swing.JMenu usePopupsMenu;
