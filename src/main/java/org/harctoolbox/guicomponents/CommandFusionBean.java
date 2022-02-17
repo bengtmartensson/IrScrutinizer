@@ -219,6 +219,7 @@ public final class CommandFusionBean extends SerialHardwareBean {
             guiUtils.error(ex);
         } finally {
             resetCursor(oldCursor);
+            openToggleButton.setSelected(isOpen());
         }
     }//GEN-LAST:event_openToggleButtonActionPerformed
 
