@@ -6,7 +6,7 @@ if [ $# -lt 1 ] ; then
 fi
 
 JAVA_ZIP=$1
-JAVA_MODULES=java.base,java.datatransfer,java.desktop,java.logging,java.xml
+JAVA_MODULES=java.base,java.datatransfer,java.desktop,java.logging,java.xml,jdk.crypto.ec
 JRE_DIR=jre-x86-windows
 
 rm -rf ${JRE_DIR}

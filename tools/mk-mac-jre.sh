@@ -12,7 +12,7 @@ fi
 
 JAVA_TAR_GZ=$1
 
-JAVA_MODULES=java.base,java.datatransfer,java.desktop,java.logging,java.xml
+JAVA_MODULES=java.base,java.datatransfer,java.desktop,java.logging,java.xml,jdk.crypto.ec
 JRE_DIR=jre-x64-macOS
 
 rm -rf ${JRE_DIR}
