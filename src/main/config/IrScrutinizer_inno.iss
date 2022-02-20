@@ -49,11 +49,7 @@ Name: modifypath; Description: &Add installation directory to path
 
 [Files]
 Source: "IrScrutinizer-jar-with-dependencies.jar"; DestName: "IrScrutinizer.jar"; DestDir: "{app}"; Flags: ignoreversion; AfterInstall: CreateWrapper
-Source: "..\native\Windows-x86\*"; DestDir: "{app}\Windows-x86"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\native\Windows-amd64\*"; DestDir: "{app}\Windows-amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "*.xml"; DestDir: "{app}"; Flags: ignoreversion
-;;;Source: "maven-shared-archive-resources/*.ini"; DestDir: "{app}"; Flags: ignoreversion
-;;;Source: "irscrutinizer.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "exportformats.d\*"; DestDir: "{app}\exportformats.d"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "contributed\import\*"; DestDir: "{app}\contributed\import"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "generated-documents\IrScrutinizer.html"; DestDir: "{app}\doc"; Flags: isreadme
@@ -65,7 +61,6 @@ Source: "HexCalculator.ico"; DestDir: "{app}"
 Source: "TimeFrequencyCalculator.ico"; DestDir: "{app}"
 Source: "AmxBeaconListener.ico"; DestDir: "{app}"
 Source: "jre-x86-windows\*"; DestDir: "{app}\jre-x86-windows"; Components: jvm; Flags:  ignoreversion recursesubdirs createallsubdirs
-;Source: "..\..\IrpMaster\target\generated-documents\IrpMaster.html"; DestDir: "{app}\doc"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppJarName}"; IconFilename: "{app}\{#MyAppName}.ico"; Components: not jvm
@@ -95,21 +90,6 @@ Root: HKCR; Subkey: "girrfile";                    ValueType: string; ValueName:
 Root: HKCR; Subkey: "girrfile\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\IrScrutinizer.ico";            Tasks: associateGirr
 ;;; Opens a pesky window :-(, but I do not know of a better solution. For example, writing the absolute pathname of javaw is not acceptable.
 Root: HKCR; Subkey: "girrfile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\irscrutinizer.bat"" ""%1"""; Tasks: associateGirr
-
-;[Code]
-;function JavaInstalled: boolean;
-;begin
-;  result := RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\JavaSoft\Java Runtime Environment') or
-;            RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\JavaSoft\Java Development Kit')
-;end;
-
-;[Code]
-;function InitializeSetup: boolean;
-;begin
-;  result := JavaInstalled;
-;  if not result then
-;    MsgBox('Please install Java before you install ' + ExpandConstant('{#MyAppName}') + '.', mbError, MB_OK);
-;end;
 
 [Code]
 function DllLibraryPath(): String;
