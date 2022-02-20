@@ -124,14 +124,15 @@ class HelpTexts {
 
     @SuppressWarnings("PackageVisibleField")
     public static String importControlTowerHelp
-            = "The support for the Control Tower Data base is limited. It can be used for browsing the data base "
+            = "<html>The support for the Control Tower Data base is limited. It can be used for browsing the data base "
             + "for devices and the contained commands, but it cannot retreive the very codes of the commands. "
-            + "For this, access http://irdb.globalcache.com, login there, and have the codes emailed. "
-            + "The received email can be parsed by Import -> Raw; use Name col. = 1 and Raw signal col. = 3 (or 2), Field separator \", (comma)\".";
+            + "For this, <a href=\"http://irdb.globalcache.com\">login there</a>, and have the codes emailed. "
+            + "The received email can be parsed by Import -> Raw; use Name col. = 1 and Raw signal col. = 3 (or 2), Field separator \", (comma)\"."
+            + "<p>Please observe the <a href=\"https://www.globalcache.com/files/docs/CT_tos_ver1.pdf\">Terms of service</a>.</p></html>";
 
     @SuppressWarnings("PackageVisibleField")
-    public static String importIrdbHelp
-            = "To use the IRDB data base, select, in order, a manufacturer, a device type, and a protocol/parameter combination, the latter possibly by trial-and-error.\n\n"
+    public static String remoteLocatorHelp
+            = "FIXME: To use the IRDB data base, select, in order, a manufacturer, a device type, and a protocol/parameter combination, the latter possibly by trial-and-error.\n\n"
             + "Pressing the \"Load all\" button transfers all present protocol/parameters combinations to the tree.\n\n"
             + "When pressing the \"Load\" button, " + treeHelp;
 
@@ -338,7 +339,15 @@ class HelpTexts {
 
     @SuppressWarnings("PackageVisibleField")
     public static String irWidgetHardwareHelp
-            = "Plug the IrWidget it into the computer. Check that the operating system has assigned a port to it, and note which one it is. On Windows: open the device manager, and check that there is one \"USB Serial Port\" under Ports. Note the port number (e.g. COM8). On a Linux system, it likely shows up as a device like /dev/ttyUSB0. If the port does not show up, a suitable driver needs to be installed. If the correct port is already visible in the combo box, just press \"Open\". Otherwise, press \"Refresh\", which makes the program determine the available serial ports. Select the correct one. Press \"Open\". which should now remain \"pressed\". The port can be closed again by a repeated press, but there is not much reason to do so, unless another capturing hardware should be used, or the IrWidget should be used from another program.";
+            = "Connect the IrWidget to the computer using a free USB-port. "
+            + "Check that the operating system has assigned a port to it, and note which one it is. "
+            + "On Windows: open the device manager, and check that there is one \"USB Serial Port\" under Ports. Note the port number (e.g. COM8). "
+            + "On a Linux system, it likely shows up as a device like /dev/ttyUSB0. If the port does not show up, a suitable driver needs to be installed. "
+            + "If the correct port is already visible in the combo box, just press \"Open\". "
+            + "Otherwise, press \"Refresh\", which makes the program determine the available serial ports. Select the correct one. "
+            + "Press \"Open\". which should now remain \"pressed\". "
+            + "The port can be closed again by a repeated press, but there is not much reason to do so, "
+            + "unless another capturing hardware should be used, or the IrWidget should be used from another program.";
 
     @SuppressWarnings("PackageVisibleField")
     public static String sendingHardwareHelp

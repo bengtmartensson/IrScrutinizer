@@ -3724,7 +3724,7 @@
                         </Component>
                       </SubComponents>
                     </Container>
-                    <Container class="javax.swing.JPanel" name="irdbPanel">
+                    <Container class="javax.swing.JPanel" name="remoteLocatorPanel">
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                           <JTabbedPaneConstraints tabName="RemoteLocator">
@@ -3744,18 +3744,18 @@
                                       <Group type="102" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="irdbManufacturerComboBox" min="-2" pref="201" max="-2" attributes="0"/>
+                                              <Component id="remoteLocatorManufacturerComboBox" min="-2" pref="201" max="-2" attributes="0"/>
                                               <Component id="jLabel45" alignment="0" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="irdbDeviceTypeComboBox" min="-2" pref="245" max="-2" attributes="0"/>
+                                              <Component id="remoteLocatorDeviceTypeComboBox" min="-2" pref="245" max="-2" attributes="0"/>
                                               <Component id="jLabel46" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Group type="102" attributes="0">
-                                                  <Component id="irdbCodeSetComboBox" max="32767" attributes="0"/>
+                                                  <Component id="remoteLocatorRemoteComboBox" max="32767" attributes="0"/>
                                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                               </Group>
                                               <Group type="102" alignment="0" attributes="0">
@@ -3770,15 +3770,15 @@
                                           <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
-                                          <Component id="irdbTreeImporter" pref="735" max="32767" attributes="0"/>
+                                          <Component id="remoteLocatorTreeImporter" pref="735" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="114" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="importIrdbHelpButton" linkSize="33" alignment="1" min="-2" pref="110" max="-2" attributes="0"/>
-                                      <Component id="irdbBrowseButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
-                                      <Component id="irdbBrowseRemoteButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
-                                      <Component id="irdbImportButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
+                                      <Component id="remoteLocatorHelpButton" linkSize="33" alignment="1" min="-2" pref="110" max="-2" attributes="0"/>
+                                      <Component id="remoteLocatorBrowseButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
+                                      <Component id="remoteLocatorBrowseRemoteButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
+                                      <Component id="remoteLocatorImportButton" linkSize="33" alignment="1" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                               </Group>
@@ -3788,13 +3788,13 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace min="-2" pref="75" max="-2" attributes="0"/>
-                                  <Component id="irdbImportButton" linkSize="34" min="-2" max="-2" attributes="0"/>
+                                  <Component id="remoteLocatorImportButton" linkSize="34" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="irdbBrowseRemoteButton" linkSize="34" min="-2" max="-2" attributes="0"/>
+                                  <Component id="remoteLocatorBrowseRemoteButton" linkSize="34" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="irdbBrowseButton" linkSize="34" min="-2" max="-2" attributes="0"/>
+                                  <Component id="remoteLocatorBrowseButton" linkSize="34" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace pref="104" max="32767" attributes="0"/>
-                                  <Component id="importIrdbHelpButton" linkSize="34" min="-2" max="-2" attributes="0"/>
+                                  <Component id="remoteLocatorHelpButton" linkSize="34" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" attributes="0">
@@ -3808,29 +3808,29 @@
                                   <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="irdbDeviceTypeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="irdbCodeSetComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="remoteLocatorDeviceTypeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="remoteLocatorRemoteComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="remoteLocatorImporterKindTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="irdbManufacturerComboBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="remoteLocatorManufacturerComboBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Component id="irdbTreeImporter" max="32767" attributes="0"/>
+                                  <Component id="remoteLocatorTreeImporter" max="32767" attributes="0"/>
                                   <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Component class="javax.swing.JButton" name="irdbBrowseButton">
+                        <Component class="javax.swing.JButton" name="remoteLocatorBrowseButton">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Visit Web site"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irdbBrowseButtonActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="remoteLocatorBrowseButtonActionPerformed"/>
                           </Events>
                         </Component>
-                        <Component class="javax.swing.JButton" name="irdbImportButton">
+                        <Component class="javax.swing.JButton" name="remoteLocatorImportButton">
                           <Properties>
                             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                               <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/reload.png"/>
@@ -3839,10 +3839,10 @@
                             <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irdbImportButtonActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="remoteLocatorImportButtonActionPerformed"/>
                           </Events>
                         </Component>
-                        <Component class="javax.swing.JComboBox" name="irdbManufacturerComboBox">
+                        <Component class="javax.swing.JComboBox" name="remoteLocatorManufacturerComboBox">
                           <Properties>
                             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                               <StringArray count="1">
@@ -3851,13 +3851,13 @@
                             </Property>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irdbManufacturerComboBoxActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="remoteLocatorManufacturerComboBoxActionPerformed"/>
                           </Events>
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                           </AuxValues>
                         </Component>
-                        <Component class="javax.swing.JComboBox" name="irdbDeviceTypeComboBox">
+                        <Component class="javax.swing.JComboBox" name="remoteLocatorDeviceTypeComboBox">
                           <Properties>
                             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                               <StringArray count="1">
@@ -3867,13 +3867,13 @@
                             <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irdbDeviceTypeComboBoxActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="remoteLocatorDeviceTypeComboBoxActionPerformed"/>
                           </Events>
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                           </AuxValues>
                         </Component>
-                        <Component class="javax.swing.JComboBox" name="irdbCodeSetComboBox">
+                        <Component class="javax.swing.JComboBox" name="remoteLocatorRemoteComboBox">
                           <Properties>
                             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                               <StringArray count="1">
@@ -3883,7 +3883,7 @@
                             <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irdbCodeSetComboBoxActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="remoteLocatorRemoteComboBoxActionPerformed"/>
                           </Events>
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -3904,22 +3904,22 @@
                             <Property name="text" type="java.lang.String" value="Remote Name"/>
                           </Properties>
                         </Component>
-                        <Component class="org.harctoolbox.irscrutinizer.importer.TreeImporter" name="irdbTreeImporter">
+                        <Component class="org.harctoolbox.irscrutinizer.importer.TreeImporter" name="remoteLocatorTreeImporter">
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.irscrutinizer.importer.TreeImporter(this.guiUtils)"/>
                           </AuxValues>
                         </Component>
-                        <Component class="javax.swing.JButton" name="irdbBrowseRemoteButton">
+                        <Component class="javax.swing.JButton" name="remoteLocatorBrowseRemoteButton">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Browse"/>
                             <Property name="toolTipText" type="java.lang.String" value="Load for all parameters and protocols"/>
                             <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irdbBrowseRemoteButtonActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="remoteLocatorBrowseRemoteButtonActionPerformed"/>
                           </Events>
                         </Component>
-                        <Component class="javax.swing.JButton" name="importIrdbHelpButton">
+                        <Component class="javax.swing.JButton" name="remoteLocatorHelpButton">
                           <Properties>
                             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                               <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/help.png"/>
@@ -3927,7 +3927,7 @@
                             <Property name="text" type="java.lang.String" value="Help"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importIrdbHelpButtonActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="remoteLocatorHelpButtonActionPerformed"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JTextField" name="remoteLocatorImporterKindTextField">
