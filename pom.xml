@@ -383,7 +383,7 @@
             <plugin>
                 <!-- Copy resources  in src/main/config to target dir. -->
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.7</version>
+                <version>3.1.0</version> <!-- 3.2.0 does not work for us -->
                 <executions>
                     <execution>
                         <id>copy-resources</id>
@@ -396,6 +396,7 @@
                             <resources>
                                 <resource>
                                     <directory>src/main/config</directory>
+                                    <include>*</include>
                                     <filtering>true</filtering>
                                 </resource>
                                 <resource>
@@ -405,6 +406,23 @@
                                 <resource>
                                     <directory>src/main/schemas</directory>
                                     <include>*.xsd</include>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-exportformats</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/exportformats.d</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/config/exportformats.d</directory>
+                                    <include>*</include>
+                                    <filtering>false</filtering>
                                 </resource>
                             </resources>
                         </configuration>
