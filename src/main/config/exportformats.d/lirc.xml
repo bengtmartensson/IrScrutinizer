@@ -8,7 +8,7 @@
             instead of something more elaborate.
 
             Generating program: IrpTransmogrifier version 1.2.11-SNAPSHOT
-            IRP database version: 2022-01-23
+            IRP database version: 2022-05-07
 -->
 <exportformats:exportformat xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
@@ -581,11 +581,16 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Amino omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol Amino-56 omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol Anthem omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol Anthem_relaxed omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol Apple omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol Amino omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol Amino-56 omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol Anthem omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol Anthem_relaxed omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol Apple omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol Archer ################ -->
       <!-- IRP:
@@ -630,8 +635,10 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol arctech omitted: Hierarchical BitspecIrStreams -->
-      <!-- Protocol arctech-38 omitted: Hierarchical BitspecIrStreams -->
+
+      <!-- Protocol arctech omitted: Hierarchical BitspecIrStreams.-->
+
+      <!-- Protocol arctech-38 omitted: Hierarchical BitspecIrStreams.-->
 
       <!-- ################## Protocol Audiovox ################ -->
       <!-- IRP:
@@ -680,8 +687,10 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol B&O omitted: Assignment cannot be done in the Lirc framework -->
-      <!-- Protocol B&O repeat omitted: Assignment cannot be done in the Lirc framework -->
+
+      <!-- Protocol B&O omitted: Assignment cannot be done in the Lirc framework.-->
+
+      <!-- Protocol B&O repeat omitted: Assignment cannot be done in the Lirc framework.-->
 
       <!-- ################## Protocol Barco ################ -->
       <!-- IRP:
@@ -730,7 +739,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Blaupunkt omitted: Interleaved bitfields and durations-->
+
+      <!-- Protocol Blaupunkt omitted: Interleaved bitfields and durations.-->
 
       <!-- ################## Protocol Bose ################ -->
       <!-- IRP:
@@ -822,8 +832,10 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol CanalSat omitted: Assignment cannot be done in the Lirc framework -->
-      <!-- Protocol CanalSatLD omitted: Assignment cannot be done in the Lirc framework -->
+
+      <!-- Protocol CanalSat omitted: Assignment cannot be done in the Lirc framework.-->
+
+      <!-- Protocol CanalSatLD omitted: Assignment cannot be done in the Lirc framework.-->
 
       <!-- ################## Protocol Canon ################ -->
       <!-- IRP:
@@ -913,7 +925,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Denon-K omitted: Expressions as bitfields not implemented yet -->
+
+      <!-- Protocol Denon-K omitted: Expressions as bitfields not implemented yet.-->
 
       <!-- ################## Protocol Denon{1} ################ -->
       <!-- IRP:
@@ -1113,13 +1126,20 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol DirecTV_3FG omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol DirecTV_P0 omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol DirecTV_P1 omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol DirecTV_P2 omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol DirecTV_P3 omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol DirecTV_P4 omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol DirecTV_P5 omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol DirecTV_3FG omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol DirecTV_P0 omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol DirecTV_P1 omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol DirecTV_P2 omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol DirecTV_P3 omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol DirecTV_P4 omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol DirecTV_P5 omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol Dish_Network ################ -->
       <!-- IRP:
@@ -1577,7 +1597,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol entone omitted: Hierarchical BitspecIrStreams -->
+
+      <!-- Protocol entone omitted: Hierarchical BitspecIrStreams.-->
 
       <!-- ################## Protocol Epson ################ -->
       <!-- IRP:
@@ -1646,6 +1667,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F2']/@value)"/>
          </xsl:call-template>
       </xsl:template>
+
+      <!-- Protocol Eufy omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol F12 ################ -->
       <!-- IRP:
@@ -1839,6 +1862,60 @@ end remote
          </xsl:call-template>
       </xsl:template>
 
+      <!-- ################## Protocol F12x ################ -->
+      <!-- IRP:
+            {37.9k,422}<1,-3|3,-1>((D:3,S:1,F:8,-16)*,(D:3,S:1,E:8,-16))[D:0..7,S:0..1,F:0..255,E:0..255]
+         -->
+      <xsl:template match="girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'f12x']">
+         <xsl:text># Warning: Protocol contains ending that cannot be expressed in Lirc
+</xsl:text>
+         <xsl:text xml:space="preserve">
+# Protocol name: F12x
+begin remote
+	name		</xsl:text>
+         <xsl:value-of select="translate(../../../@name, ' ', '_')"/>
+         <xsl:text>-F12x
+	bits		12
+	flags		SPACE_ENC
+	eps		30
+	aeps		100
+	zero		422	1266
+	one		1266	422
+	gap		6752
+	frequency	37900
+	begin codes
+</xsl:text>
+         <xsl:apply-templates select="/*//girr:command[girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'f12x']]"/>
+         <xsl:text>	end codes
+end remote
+</xsl:text>
+      </xsl:template>
+      <xsl:template name="command-f12x">
+         <xsl:param name="D"/>
+         <xsl:param name="S"/>
+         <xsl:param name="F"/>
+         <xsl:param name="E"/>
+         <xsl:text xml:space="preserve">		</xsl:text>
+         <xsl:value-of select="translate(@name, ' ', '_')"/>
+         <xsl:text>	0x</xsl:text>
+         <xsl:value-of select="exporterutils:processBitFields(false(), true(), $D, 3, 0, false(), true(), $S, 1, 0, false(), true(), $F, 8, 0)"/>
+         <xsl:text xml:space="preserve">
+</xsl:text>
+      </xsl:template>
+      <!-- Version without defaults -->
+      <xsl:template match="girr:command[translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='f12x']">
+         <xsl:call-template name="command-f12x">
+            <xsl:with-param name="D"
+                            select="number(girr:parameters/girr:parameter[@name='D']/@value)"/>
+            <xsl:with-param name="S"
+                            select="number(girr:parameters/girr:parameter[@name='S']/@value)"/>
+            <xsl:with-param name="F"
+                            select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
+            <xsl:with-param name="E"
+                            select="number(girr:parameters/girr:parameter[@name='E']/@value)"/>
+         </xsl:call-template>
+      </xsl:template>
+
       <!-- ################## Protocol F32 ################ -->
       <!-- IRP:
             {37.9k,422,msb}<1,-3|3,-1>(D:8,S:8,F:8,E:8,-100m)*  [D:0..255,S:0..255,F:0..255,E:0..255]
@@ -1956,7 +2033,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='E']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Fujitsu-128 omitted: Too many bits (128 > 64)"-->
+
+      <!-- Protocol Fujitsu-128 omitted: Too many bits (128 > 64)".-->
 
       <!-- ################## Protocol Fujitsu-56 ################ -->
       <!-- IRP:
@@ -2027,9 +2105,12 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='X']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Fujitsu_Aircon omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol Fujitsu_Aircon_old omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol G.I.4DTV omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol Fujitsu_Aircon omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol Fujitsu_Aircon_old omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol G.I.4DTV omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol G.I.4DTV_relaxed ################ -->
       <!-- IRP:
@@ -2081,7 +2162,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='C']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol G.I.Cable omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol G.I.Cable omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol GI RG ################ -->
       <!-- IRP:
@@ -2133,8 +2215,10 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Grundig16 omitted: not one of the simple types (pwm2, pwm4, biphase) -->
-      <!-- Protocol Grundig16-30 omitted: not one of the simple types (pwm2, pwm4, biphase) -->
+
+      <!-- Protocol Grundig16 omitted: not one of the simple types (pwm2, pwm4, biphase).-->
+
+      <!-- Protocol Grundig16-30 omitted: not one of the simple types (pwm2, pwm4, biphase).-->
 
       <!-- ################## Protocol GuangZhou ################ -->
       <!-- IRP:
@@ -2190,9 +2274,12 @@ end remote
             <xsl:with-param name="T" select="number(3)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol GwtS omitted: not one of the simple types (pwm2, pwm4, biphase) -->
-      <!-- Protocol GXB omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol Humax 4Phase omitted: Assignment cannot be done in the Lirc framework -->
+
+      <!-- Protocol GwtS omitted: not one of the simple types (pwm2, pwm4, biphase).-->
+
+      <!-- Protocol GXB omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol Humax 4Phase omitted: Assignment cannot be done in the Lirc framework.-->
 
       <!-- ################## Protocol InterVideo RC-201 ################ -->
       <!-- IRP:
@@ -2238,7 +2325,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol IODATAn omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol IODATAn omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol Jerrold ################ -->
       <!-- IRP:
@@ -2333,8 +2421,10 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol JVC-48 omitted: Expressions as bitfields not implemented yet -->
-      <!-- Protocol JVC-56 omitted: Expressions as bitfields not implemented yet -->
+
+      <!-- Protocol JVC-48 omitted: Expressions as bitfields not implemented yet.-->
+
+      <!-- Protocol JVC-56 omitted: Expressions as bitfields not implemented yet.-->
 
       <!-- ################## Protocol JVC_squashed ################ -->
       <!-- IRP:
@@ -2420,8 +2510,10 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Kaseikyo omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol Kaseikyo56 omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol Kaseikyo omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol Kaseikyo56 omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol Kathrein ################ -->
       <!-- IRP:
@@ -2472,7 +2564,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Keeprite A/C omitted: Too many bits (67 > 64)"-->
+
+      <!-- Protocol Keeprite omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol Konka ################ -->
       <!-- IRP:
@@ -2569,8 +2662,10 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Lumagen omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol Lutron omitted: not one of the simple types (pwm2, pwm4, biphase) -->
+
+      <!-- Protocol Lumagen omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol Lutron omitted: not one of the simple types (pwm2, pwm4, biphase).-->
 
       <!-- ################## Protocol Matsui ################ -->
       <!-- IRP:
@@ -2618,8 +2713,10 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol MCE omitted: Interleaved bitfields and durations-->
-      <!-- Protocol MCIR-2-kbd omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol MCE omitted: Interleaved bitfields and durations.-->
+
+      <!-- Protocol MCIR-2-kbd omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol MCIR-2-mouse ################ -->
       <!-- IRP:
@@ -2789,7 +2886,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Mitsubishi-K omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol Mitsubishi-K omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol NEC ################ -->
       <!-- IRP:
@@ -2919,7 +3017,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='E']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol NEC-Shirriff omitted: Variable number of bits -->
+
+      <!-- Protocol NEC-Shirriff omitted: Variable number of bits.-->
 
       <!-- ################## Protocol NEC-Shirriff-32 ################ -->
       <!-- IRP:
@@ -2965,7 +3064,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='data']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol NEC-Yamaha omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol NEC-Yamaha omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol NEC1 ################ -->
       <!-- IRP:
@@ -3160,7 +3260,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol NEC1-Yamaha omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol NEC1-Yamaha omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol NEC2 ################ -->
       <!-- IRP:
@@ -3761,7 +3862,7 @@ begin remote
 	bits		32
 	flags		RCMM|CONST_LENGTH
 	eps		4
-	aeps		80
+	aeps		50
 	zero		168	280
 	one		168	448
 	two		168	616
@@ -3820,7 +3921,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='X']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Nokia32_endframe omitted: Assignment cannot be done in the Lirc framework -->
+
+      <!-- Protocol Nokia32_endframe omitted: Assignment cannot be done in the Lirc framework.-->
 
       <!-- ################## Protocol Nova Pace ################ -->
       <!-- IRP:
@@ -3889,9 +3991,12 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol NRC16 omitted: Interleaved bitfields and durations-->
-      <!-- Protocol NRC16-32 omitted: Interleaved bitfields and durations-->
-      <!-- Protocol NRC17 omitted: Interleaved bitfields and durations-->
+
+      <!-- Protocol NRC16 omitted: Interleaved bitfields and durations.-->
+
+      <!-- Protocol NRC16-32 omitted: Interleaved bitfields and durations.-->
+
+      <!-- Protocol NRC17 omitted: Interleaved bitfields and durations.-->
 
       <!-- ################## Protocol Ortek_NEClike ################ -->
       <!-- IRP:
@@ -3944,8 +4049,10 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol OrtekMCE omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol OrtekMCE_relaxed omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol OrtekMCE omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol OrtekMCE_relaxed omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol PaceMSS ################ -->
       <!-- IRP:
@@ -3998,8 +4105,10 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Panasonic omitted: Expressions as bitfields not implemented yet -->
-      <!-- Protocol Panasonic2 omitted: Expressions as bitfields not implemented yet -->
+
+      <!-- Protocol Panasonic omitted: Expressions as bitfields not implemented yet.-->
+
+      <!-- Protocol Panasonic2 omitted: Expressions as bitfields not implemented yet.-->
 
       <!-- ################## Protocol Panasonic_Old ################ -->
       <!-- IRP:
@@ -4048,7 +4157,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol PCTV omitted: not one of the simple types (pwm2, pwm4, biphase) -->
+
+      <!-- Protocol PCTV omitted: not one of the simple types (pwm2, pwm4, biphase).-->
 
       <!-- ################## Protocol pid-0001 ################ -->
       <!-- IRP:
@@ -4183,7 +4293,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol pid-0083 omitted: not one of the simple types (pwm2, pwm4, biphase) -->
+
+      <!-- Protocol pid-0083 omitted: not one of the simple types (pwm2, pwm4, biphase).-->
 
       <!-- ################## Protocol Pioneer ################ -->
       <!-- IRP:
@@ -4607,14 +4718,22 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol RC5x omitted: Interleaved bitfields and durations-->
-      <!-- Protocol RC6 omitted: Hierarchical BitspecIrStreams -->
-      <!-- Protocol RC6-6-20 omitted: Hierarchical BitspecIrStreams -->
-      <!-- Protocol RC6-M-16 omitted: Hierarchical BitspecIrStreams -->
-      <!-- Protocol RC6-M-24 omitted: Hierarchical BitspecIrStreams -->
-      <!-- Protocol RC6-M-28 omitted: Hierarchical BitspecIrStreams -->
-      <!-- Protocol RC6-M-32 omitted: Hierarchical BitspecIrStreams -->
-      <!-- Protocol RC6-M-56 omitted: Hierarchical BitspecIrStreams -->
+
+      <!-- Protocol RC5x omitted: Interleaved bitfields and durations.-->
+
+      <!-- Protocol RC6 omitted: Hierarchical BitspecIrStreams.-->
+
+      <!-- Protocol RC6-6-20 omitted: Hierarchical BitspecIrStreams.-->
+
+      <!-- Protocol RC6-M-16 omitted: Hierarchical BitspecIrStreams.-->
+
+      <!-- Protocol RC6-M-24 omitted: Hierarchical BitspecIrStreams.-->
+
+      <!-- Protocol RC6-M-28 omitted: Hierarchical BitspecIrStreams.-->
+
+      <!-- Protocol RC6-M-32 omitted: Hierarchical BitspecIrStreams.-->
+
+      <!-- Protocol RC6-M-56 omitted: Hierarchical BitspecIrStreams.-->
 
       <!-- ################## Protocol RCA ################ -->
       <!-- IRP:
@@ -5055,7 +5174,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Replay omitted: Hierarchical BitspecIrStreams -->
+
+      <!-- Protocol Replay omitted: Hierarchical BitspecIrStreams.-->
 
       <!-- ################## Protocol Revox ################ -->
       <!-- IRP:
@@ -5179,9 +5299,12 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Rs200 omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol RTI_Relay omitted: Too many bits (75 > 64)"-->
-      <!-- Protocol RTI_Relay_alt omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol Rs200 omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol RTI_Relay omitted: Too many bits (75 > 64)".-->
+
+      <!-- Protocol RTI_Relay_alt omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol Sampo ################ -->
       <!-- IRP:
@@ -5437,8 +5560,10 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Sejin-1-38 omitted: Hierarchical BitspecIrStreams -->
-      <!-- Protocol Sejin-1-56 omitted: Hierarchical BitspecIrStreams -->
+
+      <!-- Protocol Sejin-1-38 omitted: Hierarchical BitspecIrStreams.-->
+
+      <!-- Protocol Sejin-1-56 omitted: Hierarchical BitspecIrStreams.-->
 
       <!-- ################## Protocol Sharp ################ -->
       <!-- IRP:
@@ -5486,7 +5611,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol SharpDVD omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol SharpDVD omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol Sharp{1} ################ -->
       <!-- IRP:
@@ -5637,8 +5763,10 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Solidtek16 omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol Somfy omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol Solidtek16 omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol Somfy omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol Sony12 ################ -->
       <!-- IRP:
@@ -5827,8 +5955,10 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol SonyDSP omitted: Expressions as bitfields not implemented yet -->
-      <!-- Protocol SonyDSP_relaxed omitted: Expressions as bitfields not implemented yet -->
+
+      <!-- Protocol SonyDSP omitted: Expressions as bitfields not implemented yet.-->
+
+      <!-- Protocol SonyDSP_relaxed omitted: Expressions as bitfields not implemented yet.-->
 
       <!-- ################## Protocol StreamZap ################ -->
       <!-- IRP:
@@ -5998,7 +6128,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol TCL_AC omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol TCL_AC omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol TDC-38 ################ -->
       <!-- IRP:
@@ -6099,7 +6230,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='F']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Teac-K omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol Teac-K omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol Thomson ################ -->
       <!-- IRP:
@@ -6349,7 +6481,8 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='T']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol Velodyne omitted: Non-constant definitions not yet implemented -->
+
+      <!-- Protocol Velodyne omitted: Non-constant definitions not yet implemented.-->
 
       <!-- ################## Protocol Viewstar ################ -->
       <!-- IRP:
@@ -6573,20 +6706,34 @@ end remote
                             select="number(girr:parameters/girr:parameter[@name='H']/@value)"/>
          </xsl:call-template>
       </xsl:template>
-      <!-- Protocol X10.n omitted: Assignment cannot be done in the Lirc framework -->
-      <!-- Protocol Xiaomi omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol XMP omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol XMP-1 omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol XMP-2 omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol XMPff omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol XMPff-1 omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol XMPff-2 omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol Zaptor-36 omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol Zaptor-56 omitted: Non-constant definitions not yet implemented -->
-      <!-- Protocol Zenith omitted: Hierarchical BitspecIrStreams -->
-      <!-- Protocol Zenith5 omitted: Hierarchical BitspecIrStreams -->
-      <!-- Protocol Zenith6 omitted: Hierarchical BitspecIrStreams -->
-      <!-- Protocol Zenith7 omitted: Hierarchical BitspecIrStreams -->
-      <!-- Protocol Zenith8 omitted: Hierarchical BitspecIrStreams -->
-   </xsl:stylesheet>
+
+      <!-- Protocol X10.n omitted: Assignment cannot be done in the Lirc framework.-->
+
+      <!-- Protocol Xiaomi omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol XMP omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol XMP-1 omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol XMP-2 omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol XMPff omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol XMPff-1 omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol XMPff-2 omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol Zaptor-36 omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol Zaptor-56 omitted: Non-constant definitions not yet implemented.-->
+
+      <!-- Protocol Zenith omitted: Hierarchical BitspecIrStreams.-->
+
+      <!-- Protocol Zenith5 omitted: Hierarchical BitspecIrStreams.-->
+
+      <!-- Protocol Zenith6 omitted: Hierarchical BitspecIrStreams.-->
+
+      <!-- Protocol Zenith7 omitted: Hierarchical BitspecIrStreams.-->
+
+      <!-- Protocol Zenith8 omitted: Hierarchical BitspecIrStreams.-->   </xsl:stylesheet>
 </exportformats:exportformat>
