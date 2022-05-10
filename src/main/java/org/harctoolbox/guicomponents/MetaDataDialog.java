@@ -38,6 +38,8 @@ public class MetaDataDialog extends javax.swing.JDialog {
             deviceClassTextField.setText(metaData.getDeviceClass());
             remoteNameTextField.setText(metaData.getRemoteName());
         }
+        if (nameTextField.getText().isEmpty())
+            nameTextField.setText(Remote.MetaData.DEFAULT_REMOTENAME);
     }
 
     public static Remote.MetaData inquireMetaData(Remote.MetaData initData, Frame parent) {
