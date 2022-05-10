@@ -30,9 +30,9 @@
         <inno_path>${basedir}/Inno_Setup_6/ISCC.exe</inno_path>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <IrpTransmogrifier.version>1.2.10</IrpTransmogrifier.version>
-        <Girr.version>2.2.10</Girr.version>
-        <Jirc.version>2.2.10</Jirc.version>
+        <IrpTransmogrifier.version>1.2.11-SNAPSHOT</IrpTransmogrifier.version>
+        <Girr.version>2.2.11-SNAPSHOT</Girr.version>
+        <Jirc.version>2.2.11-SNAPSHOT</Jirc.version>
         <HarcHardware.version>2.4.0-SNAPSHOT</HarcHardware.version>
     </properties>
 
@@ -356,7 +356,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.9.0</version>
+                <version>3.10.1</version>
                 <configuration>
                     <showDeprecation>true</showDeprecation>
                 </configuration>
@@ -668,12 +668,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>Jirc</artifactId> <!-- Includes Girr, which includes IrpTransmogrifier -->
-            <version>${Jirc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>RemoteLocator</artifactId>
+            <artifactId>RemoteLocator</artifactId> <!-- Includes Jirc, wich includes Girr, which includes IrpTransmogrifier, which includes JCommander -->
             <version>0.2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -684,7 +679,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>7.3.0</version>
+            <version>7.5</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
