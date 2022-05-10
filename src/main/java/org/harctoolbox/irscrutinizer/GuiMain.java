@@ -258,6 +258,8 @@ public final class GuiMain extends javax.swing.JFrame {
         Importer.setProperties(properties);
         HelpPopup.setBaseUrl(new URL("file", null, properties.mkPathAbsolute(properties.getProtocolDocfilePath())).toString());
         SelectFile.restoreFromString(properties.getFileselectordirs());
+        Exporter.setCreatingUser(properties.getCreatingUser());
+        Exporter.setEncoding(properties.getExportCharsetName());
     }
 
     private void setupFrame() {
@@ -7899,9 +7901,10 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_protocolColumnComboBoxActionPerformed
 
     private void creatingUserMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_creatingUserMenuItemActionPerformed
-        String s = guiUtils.getInput("Enter creating user name", "User name inquiry", properties.getCreatingUser());
-        if (s != null)
-            properties.setCreatingUser(s);
+        String creator = guiUtils.getInput("Enter creating user name (empty to be anonymous)", "User name inquiry", properties.getCreatingUser());
+        if (creator != null)
+            properties.setCreatingUser(creator);
+        Exporter.setCreatingUser(creator);
     }//GEN-LAST:event_creatingUserMenuItemActionPerformed
 
     private void csvRawSeparatorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_csvRawSeparatorComboBoxActionPerformed
@@ -8714,13 +8717,14 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_tutorialMenuItemActionPerformed
 
     private void exportCharsetMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportCharsetMenuItemActionPerformed
-        String s = guiUtils.getInput("Enter character set to be used for export (e.g. US-ASCII, UTF-8, ISO-8859-1, WINDOWS-1252)", "Export character set inquiry", properties.getExportCharsetName());
-        if (s == null)
+        String charSet = guiUtils.getInput("Enter character set to be used for export (e.g. US-ASCII, UTF-8, ISO-8859-1, WINDOWS-1252)", "Export character set inquiry", properties.getExportCharsetName());
+        if (charSet == null)
             return;
-        if (Charset.isSupported(s))
-            properties.setExportCharsetName(s);
-        else
-            guiUtils.error("Character set \"" + s + "\" is not supported");
+        if (Charset.isSupported(charSet)) {
+            properties.setExportCharsetName(charSet);
+            Exporter.setEncoding(charSet);
+        } else
+            guiUtils.error("Character set \"" + charSet + "\" is not supported");
     }//GEN-LAST:event_exportCharsetMenuItemActionPerformed
 
     private void importCharsetMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importCharsetMenuItemActionPerformed

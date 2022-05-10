@@ -118,8 +118,8 @@ public abstract class Exporter {
     }
 
     public static void setEncoding(String newEncoding) {
-        charset = Charset.forName(encodingName);
         encodingName = newEncoding;
+        charset = Charset.forName(encodingName);
     }
 
     public static Document getDocument(DocumentFragment fragment) {
