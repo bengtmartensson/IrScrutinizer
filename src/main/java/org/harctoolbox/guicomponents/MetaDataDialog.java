@@ -21,6 +21,7 @@ import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.Rectangle;
 import org.harctoolbox.girr.Remote;
+import static org.harctoolbox.girr.Remote.MetaData.DEFAULT_REMOTENAME;
 
 public class MetaDataDialog extends javax.swing.JDialog {
 
@@ -39,7 +40,7 @@ public class MetaDataDialog extends javax.swing.JDialog {
             remoteNameTextField.setText(metaData.getRemoteName());
         }
         if (nameTextField.getText().isEmpty())
-            nameTextField.setText(Remote.MetaData.DEFAULT_REMOTENAME);
+            nameTextField.setText(DEFAULT_REMOTENAME);
     }
 
     public static Remote.MetaData inquireMetaData(Remote.MetaData initData, Frame parent) {
