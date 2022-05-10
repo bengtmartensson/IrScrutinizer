@@ -23,7 +23,6 @@ import com.eclipsesource.json.JsonValue;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -45,7 +44,6 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
     public final static String globalCacheIrDatabaseHost = "irdatabase.globalcache.com";
     private final static String path = "/api/v1/";
     private final static String globalCacheDbOrigin = globalCacheIrDatabaseHost;
-    private static Proxy proxy = Proxy.NO_PROXY;
 
     private static String httpEncode(String s) throws UnsupportedEncodingException {
         return URLEncoder.encode(s, "utf-8").replaceAll("\\+", "%20");
@@ -66,10 +64,6 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
         }
     }
 
-    public static void setProxy(Proxy newProxy) {
-        proxy = newProxy;
-    }
-
     private boolean verbose = false;
 
     private final String apiKey;
@@ -87,11 +81,12 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
         this.verbose = verbose;
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private JsonArray getJsonArray(String str) throws IOException {
         URL url = new URL("http", globalCacheIrDatabaseHost, path + apiKey + "/" + str);
         if (verbose)
-            System.err.println("Opening " + url.toString() + " using proxy " + proxy);
-        URLConnection urlConnection = url.openConnection(proxy);
+            System.err.println("Opening " + url.toString());
+        URLConnection urlConnection = url.openConnection();
         return JsonArray.readFrom(new InputStreamReader(urlConnection.getInputStream(), Charset.forName("US-ASCII")));
     }
 

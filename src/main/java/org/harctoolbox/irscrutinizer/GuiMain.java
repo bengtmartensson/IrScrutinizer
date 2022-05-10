@@ -35,7 +35,6 @@ import java.beans.PropertyChangeEvent;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
-import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -144,12 +143,6 @@ public final class GuiMain extends javax.swing.JFrame {
     // One day this may be made user selectable...
     private final static Locale namesLocale = Locale.getDefault();
 
-    private static Proxy mkProxy(String hostName, int port) {
-        return hostName == null || hostName.isEmpty()
-                ? Proxy.NO_PROXY
-                : new Proxy(Proxy.Type.HTTP, new InetSocketAddress(hostName, port));
-    }
-
     private static File libraryFileName(String appHome, String libraryName) {
         String subFolderName = (System.getProperty("os.name").startsWith("Windows")
                 ? "Windows"
@@ -176,7 +169,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private Remote.MetaData metaData;
     private int dynamicExportFormatsMenuPosition;
     private TableUtils tableUtils;
-    private Proxy proxy;
     private CaptureThread captureThread = null;
     private LookAndFeelManager lookAndFeelManager;
     private GuiUtils guiUtils;
@@ -237,7 +229,6 @@ public final class GuiMain extends javax.swing.JFrame {
         girrImporter.setIrpRendererBean(irpMasterBean);
         tweakTables();
         tweakFrame();
-        setupProxy();
         setupRepeatFinder();
         setupHardware();
         setupRendering();
@@ -591,14 +582,6 @@ public final class GuiMain extends javax.swing.JFrame {
         dynamicExportFormatsMenuPosition = optionsMenu.getItemCount();
         optionsMenu.add(exportFormatManager.getMenu(properties.getExportFormatName()));
         optionsMenu.add(new Separator());
-    }
-
-    private void setupProxy() {
-        proxy = mkProxy(properties.getProxyHostName(), properties.getProxyPort());
-        RemoteLocatorImporter.setProxy(proxy);
-        ControlTowerIrDatabase.setProxy(proxy);
-        GlobalCacheIrDatabase.setProxy(proxy);
-        ReaderImporter.setProxy(proxy);
     }
 
     private void setupRepeatFinder() {
@@ -2597,7 +2580,6 @@ public final class GuiMain extends javax.swing.JFrame {
         parametrizedLearnIgnoreTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         removeDefaultedParametersCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ignoreLeadingGarbageCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        proxyMenuItem = new javax.swing.JMenuItem();
         irpProtocolsIniMenu = new javax.swing.JMenu();
         irpProtocolsEditMenuItem = new javax.swing.JMenuItem();
         irpProtocolsSelectMenuItem = new javax.swing.JMenuItem();
@@ -6685,15 +6667,6 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         optionsMenu.add(ignoreLeadingGarbageCheckBoxMenuItem);
 
-        proxyMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/Network Connection Manager.png"))); // NOI18N
-        proxyMenuItem.setText("Proxy Configuration ...");
-        proxyMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                proxyMenuItemActionPerformed(evt);
-            }
-        });
-        optionsMenu.add(proxyMenuItem);
-
         irpProtocolsIniMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/database.png"))); // NOI18N
         irpProtocolsIniMenu.setText("IRP protocol database");
 
@@ -7162,7 +7135,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_ccfRadioButtonMenuItemActionPerformed
 
     private void checkUpToDateMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkUpToDateMenuItemActionPerformed
-        guiUtils.checkUpToDate(Version.currentVersionUrl, Version.versionString, proxy);
+        guiUtils.checkUpToDate(Version.currentVersionUrl, Version.versionString);
     }//GEN-LAST:event_checkUpToDateMenuItemActionPerformed
 
     private void hexCalcMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hexCalcMenuItemActionPerformed
@@ -8945,11 +8918,6 @@ public final class GuiMain extends javax.swing.JFrame {
             transformNameActionPerformed(parameterTable, parameterTableModel, (String s) -> s.replaceFirst(old, replacement));
     }//GEN-LAST:event_transformNameMenuItemActionPerformed
 
-    private void proxyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proxyMenuItemActionPerformed
-        ProxyConfigDialog.inquireProxyConfig(this, properties);
-        setupProxy();
-    }//GEN-LAST:event_proxyMenuItemActionPerformed
-
     private void deleteDefaultedSignalsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteDefaultedSignalsMenuItemActionPerformed
         boolean isOk = guiUtils.confirm("This will delete all signal with automatically generated names.\n"
                 + "The operation cannot be undone. Consider saving first.\n\nDo you want to continue?");
@@ -9741,7 +9709,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem protocolDocuMenuItem;
     private javax.swing.JMenu protocolParametersMenu;
     private javax.swing.JMenuItem protocolSpecMenuItem;
-    private javax.swing.JMenuItem proxyMenuItem;
     private javax.swing.JMenuItem publicKeyMenuItem;
     private javax.swing.JMenuItem rawAddTestSignalMenuItem;
     private javax.swing.JMenuItem rawChopMenuItem;

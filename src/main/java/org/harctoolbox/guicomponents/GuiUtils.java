@@ -342,7 +342,7 @@ public class GuiUtils implements Serializable {
             System.err.println(helpText);
     }
 
-    public boolean checkUpToDate(String currentVersionUrl, String versionString, Proxy proxy) {
+    public boolean checkUpToDate(String currentVersionUrl, String versionString) {
         URL url;
         try {
             url = new URL(currentVersionUrl);
@@ -352,10 +352,10 @@ public class GuiUtils implements Serializable {
         }
 
         if (verbose)
-            trace("Opening " + url.toString() + " using proxy " + proxy);
+            trace("Opening " + url.toString());
 
         String current = null;
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openConnection(proxy).getInputStream(), "US-ASCII"))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream(), "US-ASCII"))) {
             String line = in.readLine();
             if (verbose)
                 trace("got: \"" + line + "\"");

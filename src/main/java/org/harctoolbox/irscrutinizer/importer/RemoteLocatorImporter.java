@@ -18,7 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.importer;
 
 import java.io.IOException;
-import java.net.Proxy;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
@@ -40,10 +39,6 @@ public final class RemoteLocatorImporter extends DatabaseImporter implements IRe
 
     public static URI getHomeUri() {
         return URI.create(CATALOG_HTML);
-    }
-
-    // FIXME
-    public static void setProxy(Proxy proxy) {
     }
 
     private final boolean verbose;

@@ -27,7 +27,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -50,7 +49,6 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
     public final static int portNo = 8081;
     public final static String path = "/api";
     private final static String globalCacheDbOrigin = controlTowerIrDatabaseHost;
-    private static Proxy proxy =  Proxy.NO_PROXY;
 
     private static String httpEncode(String s) throws UnsupportedEncodingException {
         String str = s.replaceAll("&", "xampx").replaceAll("/", "xfslx")
@@ -84,10 +82,6 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }
-    }
-
-    public static void setProxy(Proxy newProxy) {
-        proxy = newProxy;
     }
 
     private boolean verbose = false;
@@ -215,8 +209,8 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
     private InputStreamReader getReader(String str) throws IOException {
         URL url = new URL(protocol, controlTowerIrDatabaseHost, portNo, path + "/" + str);
         if (verbose)
-            System.err.println("Opening " + url + " using proxy " + proxy);
-        URLConnection urlConnection = url.openConnection(proxy);
+            System.err.println("Opening " + url);
+        URLConnection urlConnection = url.openConnection();
         InputStream is = urlConnection.getInputStream();
         InputStreamReader isr = new InputStreamReader(is, Charset.forName("US-ASCII"));
         return isr;

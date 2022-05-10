@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.MalformedURLException;
-import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
@@ -36,12 +35,6 @@ import org.harctoolbox.ircore.InvalidArgumentException;
  * This class extends the Importer with file/reader load functions.
  */
 public abstract class ReaderImporter extends FileImporter {
-
-    private static Proxy proxy = Proxy.NO_PROXY;
-
-    public static void setProxy(Proxy newProxy) {
-        proxy = newProxy;
-    }
 
     protected ReaderImporter() {
         super();
@@ -69,7 +62,7 @@ public abstract class ReaderImporter extends FileImporter {
     // There is no verbose option here...
     private void loadURL(String urlOrFilename, String charsetName) throws MalformedURLException, IOException, ParseException, InvalidArgumentException {
         URL url = new URL(urlOrFilename);
-        URLConnection urlConnection = url.openConnection(proxy);
+        URLConnection urlConnection = url.openConnection();
         try (InputStream inputStream = urlConnection.getInputStream()) {
             load(inputStream, urlOrFilename, charsetName);
         }
