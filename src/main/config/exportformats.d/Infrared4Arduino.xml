@@ -59,8 +59,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <IrSenderPwm.h>
 ]]></xsl:text>
 
-<xsl:apply-templates select="//girr:remote[1][//girr:parameters/@protocol='NEC1']" mode="includeNec1"/>
-<xsl:apply-templates select="//girr:remote[1][//girr:parameters/@protocol='RC5']" mode="includeRc5"/>
+<xsl:apply-templates select="//girr:remote[1][//girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'nec1']]" mode="includeNec1"/>
+<xsl:apply-templates select="//girr:remote[1][//girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'rc5']]" mode="includeRc5"/>
 <xsl:text>
 // Warnings on functions defined but not used are not really useful in
 // generated code, disable them.
@@ -73,10 +73,10 @@ IrSender *irsend = IrSenderPwm::getInstance(true);
 
 </xsl:text>
 <xsl:apply-templates select="//girr:remote[1]//girr:command" mode="definition"/>
-<xsl:apply-templates select="//girr:remote[1][//girr:parameters/@protocol='NEC1']" mode="definitionNec1"/>
+<xsl:apply-templates select="//girr:remote[1][//girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'nec1']]" mode="definitionNec1"/>
 <xsl:text>
 </xsl:text>
-<xsl:apply-templates select="//girr:remote[1][//girr:parameters/@protocol='RC5']" mode="definitionRc5"/>
+<xsl:apply-templates select="//girr:remote[1][//girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'rc5']]" mode="definitionRc5"/>
 
 <xsl:text><![CDATA[
 static void sendRaw(const microseconds_t intro_P[], size_t lengthIntro, const microseconds_t repeat_P[],
@@ -114,17 +114,17 @@ void loop() {
 </xsl:text>
     </xsl:template>
 
-    <xsl:template match="girr:remote[//girr:parameters/@protocol='NEC1']" mode="includeNec1">
+    <xsl:template match="girr:remote[//girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'nec1']]" mode="includeNec1">
         <xsl:text>#include &lt;Nec1Renderer.h&gt;
 </xsl:text>
     </xsl:template>
 
-    <xsl:template match="girr:remote[//girr:parameters/@protocol='RC5']" mode="includeRc5">
+    <xsl:template match="girr:remote[//girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'rc5']]" mode="includeRc5">
         <xsl:text>#include &lt;Rc5Renderer.h&gt;
 </xsl:text>
     </xsl:template>
 
-    <xsl:template match="girr:remote[//girr:parameters/@protocol='NEC1']" mode="definitionNec1">
+    <xsl:template match="girr:remote[//girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'nec1']]" mode="definitionNec1">
         <xsl:text>
 static void sendNec1(unsigned D, unsigned S, unsigned F, unsigned times) {
     const IrSignal *irSignal = Nec1Renderer::newIrSignal(D, S, F);
@@ -134,7 +134,7 @@ static void sendNec1(unsigned D, unsigned S, unsigned F, unsigned times) {
 </xsl:text>
     </xsl:template>
 
-    <xsl:template match="girr:remote[//girr:parameters/@protocol='RC5']" mode="definitionRc5">
+    <xsl:template match="girr:remote[//girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'rc5']]" mode="definitionRc5">
         <xsl:text>
 static void sendRc5(unsigned D, unsigned F, unsigned times) {
     const IrSignal *irSignal = Rc5Renderer::newIrSignal(D, F);
@@ -162,7 +162,8 @@ static void sendRc5(unsigned D, unsigned F, unsigned times) {
 </xsl:text>
     </xsl:template>
 
-    <xsl:template match="girr:command[girr:parameters[@protocol='NEC1' or @protocol='RC5']]" mode="definition">
+    <xsl:template match="girr:command[girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'nec1'
+                                                   or translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'rc5']]" mode="definition">
         <xsl:text>// Command #</xsl:text>
         <xsl:value-of select="position()"/>
         <xsl:text>: </xsl:text>
@@ -239,7 +240,7 @@ static void sendRc5(unsigned D, unsigned F, unsigned times) {
 
 
     <!-- version without S -->
-    <xsl:template match="girr:command[girr:parameters[@protocol='NEC1']]" mode="using">
+    <xsl:template match="girr:command[girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'nec1']]" mode="using">
         <xsl:text>    case </xsl:text>
         <xsl:value-of select="position()"/>
         <xsl:text>L:
@@ -254,7 +255,7 @@ static void sendRc5(unsigned D, unsigned F, unsigned times) {
     </xsl:template>
 
     <!-- version with S -->
-    <xsl:template match="girr:command[girr:parameters[@protocol='NEC1'][girr:parameter/@name='S']]" mode="using">
+    <xsl:template match="girr:command[girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')= 'nec1'][girr:parameter/@name='S']]" mode="using">
         <xsl:text>    case </xsl:text>
         <xsl:value-of select="position()"/>
         <xsl:text>L:
@@ -267,7 +268,7 @@ static void sendRc5(unsigned D, unsigned F, unsigned times) {
 </xsl:text>
     </xsl:template>
 
-    <xsl:template match="girr:command[girr:parameters/@protocol='RC5']" mode="using">
+    <xsl:template match="girr:command[girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'rc5']]" mode="using">
         <xsl:text>    case </xsl:text>
         <xsl:value-of select="position()"/>
         <xsl:text>L:
