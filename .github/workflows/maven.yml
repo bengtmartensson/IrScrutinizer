@@ -21,12 +21,12 @@ jobs:
       with:
         java-version: '8'
         distribution: 'adopt'
-#    - name: Build IrpTransmogrifier
-#      run: ./common/scripts/build-harctoolbox-project.sh IrpTransmogrifier
-#    - name: Build Girr
-#      run: ./common/scripts/build-harctoolbox-project.sh Girr
-#    - name: Build Jirc
-#      run: ./common/scripts/build-harctoolbox-project.sh Jirc
+    - name: Build IrpTransmogrifier
+      run: ./common/scripts/build-harctoolbox-project.sh IrpTransmogrifier
+    - name: Build Girr
+      run: ./common/scripts/build-harctoolbox-project.sh Girr
+    - name: Build Jirc
+      run: ./common/scripts/build-harctoolbox-project.sh Jirc
     - name: Build RemoteLocator
       run: ./common/scripts/build-harctoolbox-project.sh RemoteLocator
     - name: Build HarcHardware
