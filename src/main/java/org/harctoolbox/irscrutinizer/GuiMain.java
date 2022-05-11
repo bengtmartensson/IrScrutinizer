@@ -8325,27 +8325,32 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_signalExportButtonActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-//        if (!capturingHardwareManager.isReady()) {
-//            guiUtils.error("No capture device selected, aborting");
-//            return;
-//        }
-//        if (captureThreadRunning()) {
-//            guiUtils.error("A capture thread is running. This must first be ended.");
-//            return;
-//        }
-//        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
-//        try {
-//            ModulatedIrSequence modulatedIrSequence = captureIrSequence();
-//
-//            if (modulatedIrSequence != null)
-//                processIr(modulatedIrSequence);
-//            else
-//                guiUtils.message("no signal received");
-//        } catch (IOException | HarcHardwareException | InvalidArgumentException ex) {
-//            guiUtils.error(ex);
-//        } finally {
-//            busyWindow.unBusy();
-//        }
+        if (captureThreadRunning()) {
+            guiUtils.error("A capture thread is running. This must first be ended.");
+            return;
+        }
+        if (!hardwareManager.isReady()) {
+            guiUtils.error("Selected device not ready (not opened?).");
+            return;
+        }
+        if (!hardwareManager.canCapture()) {
+            guiUtils.error("Selected device cannot capture.");
+            return;
+        }
+
+        BusyWindow busyWindow = BusyWindow.mkBusyWindow(this);
+        try {
+            ModulatedIrSequence modulatedIrSequence = captureIrSequence();
+
+            if (modulatedIrSequence != null)
+                processIr(modulatedIrSequence);
+            else
+                guiUtils.message("no signal received");
+        } catch (IOException | HarcHardwareException | InvalidArgumentException | HardwareUnavailableException ex) {
+            guiUtils.error(ex);
+        } finally {
+            busyWindow.unBusy();
+        }
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void capturedDataTextAreaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_capturedDataTextAreaMouseReleased
@@ -8848,36 +8853,36 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_rawCodePasteMenuItemActionPerformed
 
     private void continuousCaptureButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_continuousCaptureButtonActionPerformed
-//        if (!capturingHardwareManager.isReady()) {
-//            guiUtils.error("No capture device selected, aborting");
-//            continuousCaptureButton.setSelected(false);
-//            return;
-//        }
-//        if (continuousCaptureButton.isSelected() && captureThreadRunning()) {
-//            guiUtils.error("Another capture thread is running. This must first be ended.");
-//            continuousCaptureButton.setSelected(false);
-//            return;
-//        }
-//
-//        if (continuousCaptureButton.isSelected()) {
-//            captureThread = new CaptureThread(new CaptureThreadClient() {
-//                @Override
-//                public JToggleButton getButton() {
-//                    return continuousCaptureButton;
-//                }
-//
-//                @Override
-//                public void processSequence(ModulatedIrSequence sequence) {
-//                    try {
-//                        processIr(sequence);
-//                    } catch (InvalidArgumentException ex) {
-//                    }
-//                }
-//            });
-//            captureThread.start();
-//            topLevelTabbedPane.setEnabled(false);
-//            jumpToLastPanelMenuItem.setEnabled(false);
-//        }
+        if (!hardwareManager.isReady()) {
+            guiUtils.error("No capture device selected, aborting");
+            continuousCaptureButton.setSelected(false);
+            return;
+        }
+        if (continuousCaptureButton.isSelected() && captureThreadRunning()) {
+            guiUtils.error("Another capture thread is running. This must first be ended.");
+            continuousCaptureButton.setSelected(false);
+            return;
+        }
+
+        if (continuousCaptureButton.isSelected()) {
+            captureThread = new CaptureThread(new CaptureThreadClient() {
+                @Override
+                public JToggleButton getButton() {
+                    return continuousCaptureButton;
+                }
+
+                @Override
+                public void processSequence(ModulatedIrSequence sequence) {
+                    try {
+                        processIr(sequence);
+                    } catch (InvalidArgumentException ex) {
+                    }
+                }
+            });
+            captureThread.start();
+            topLevelTabbedPane.setEnabled(false);
+            jumpToLastPanelMenuItem.setEnabled(false);
+        }
     }//GEN-LAST:event_continuousCaptureButtonActionPerformed
 
     private void checkTable(NamedIrSignal.LearnedIrSignalTableModel tableModel) {
