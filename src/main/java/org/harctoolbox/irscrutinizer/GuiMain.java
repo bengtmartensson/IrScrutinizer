@@ -767,9 +767,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 case HardwareBean.PROP_VERSION:
                 case HardwareBean.PROP_MODULE:
                 case HardwareBean.PROP_PROPS:
-                    break;
                 case HardwareBean.PROP_ISOPEN:
-                    guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
                     break;
                 default:
                     throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
