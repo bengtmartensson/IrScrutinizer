@@ -22,6 +22,7 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.DefaultComboBoxModel;
@@ -36,9 +37,8 @@ import org.harctoolbox.ircore.OddSequenceLengthException;
 
 public final class GirsClientBean extends HardwareBean {
 
-    public static final int DEFAULT_TIMEOUT         = 1000;
+    public static final int DEFAULT_TIMEOUT         = 12000; // 10 seconds + 2 s margin
     public static final int DEFAULT_BAUD            = 115200;
-    private static final int DEFAULT_SERIAL_TIMEOUT = 12000; // 10 seconds + margin
     public static final Type DEFAULT_TYPE           = Type.SERIAL;
     public static final String DEFAULT_PORTNAME     = "/dev/arduino";
     public static final String DEFAULT_IPNAME       = "arduino";
@@ -49,6 +49,7 @@ public final class GirsClientBean extends HardwareBean {
     private int portNumber;
     private String ipName;
     private Type type;
+    private List<String> portNames;
 
     public GirsClientBean() {
         this(null, false);
@@ -66,9 +67,10 @@ public final class GirsClientBean extends HardwareBean {
             initialPort = DEFAULT_PORTNAME;
         DefaultComboBoxModel<String> model;
         try {
-            List<String> portList = LocalSerialPort.getSerialPortNames(true);
-            model = new DefaultComboBoxModel<>(portList.toArray(new String[portList.size()]));
+            portNames = LocalSerialPort.getSerialPortNames(true);
+            model = new DefaultComboBoxModel<>(portNames.toArray(new String[portNames.size()]));
         } catch (IOException | LinkageError ex) {
+            portNames = new ArrayList<>(0);
             model =  new DefaultComboBoxModel<>(new String[]{ initialPort != null ? initialPort : NOT_INITIALIZED });
         }
 
@@ -121,7 +123,7 @@ public final class GirsClientBean extends HardwareBean {
             break;
             case TCP: {
                 try {
-                    TcpSocketPort comm = new TcpSocketPort(ipName, portNumber, DEFAULT_SERIAL_TIMEOUT, verbose, TcpSocketPort.ConnectionMode.keepAlive);
+                    TcpSocketPort comm = new TcpSocketPort(ipName, portNumber, timeout, verbose, TcpSocketPort.ConnectionMode.keepAlive);
                     hardware = new GirsClient<>(comm);
                 } catch (HarcHardwareException | IOException ex) {
                     guiUtils.error(ex);
@@ -182,12 +184,12 @@ public final class GirsClientBean extends HardwareBean {
      * @param portName the port to set
      */
     public void setPortName(String portName) {
-        if (portName == null || portName.isEmpty())
+        if (portName == null || portName.isEmpty() || !portNames.contains(portName))
             return;
 
         String oldPort = this.portName;
         this.portName = portName;
-
+        portComboBox.setSelectedItem(portName);
         propertyChangeSupport.firePropertyChange(PROP_PORTNAME, oldPort, portName);
     }
 
@@ -236,7 +238,7 @@ public final class GirsClientBean extends HardwareBean {
         if (hardware != null)
             hardware.close();
 
-        List<String> portNames = LocalSerialPort.getSerialPortNames(useCached);
+        portNames = LocalSerialPort.getSerialPortNames(useCached);
         portNames.add(0, "");
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(portNames.toArray(new String[portNames.size()]));
         portComboBox.setModel(model);
