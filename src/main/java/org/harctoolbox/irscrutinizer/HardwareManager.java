@@ -63,8 +63,9 @@ final class HardwareManager implements Iterable<String>, Closeable {
 
     void setVerbose(boolean verbose) {
         this.verbose = verbose;
-        if (selected != null)
-            selected.setVerbose(verbose);
+        map.values().forEach(bean -> {
+            bean.setVerbose(verbose);
+        });
     }
 
     public void add(HardwareBean hardwareBean) {

@@ -89,6 +89,8 @@ public abstract class HardwareBean extends JPanel implements Closeable {
      */
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
+        if (hardware != null)
+            hardware.setVerbose(verbose);
     }
 
     protected void openClose(boolean opening) throws IOException, HarcHardwareException {
