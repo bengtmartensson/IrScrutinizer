@@ -33,7 +33,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.io.*;
-import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -135,7 +133,6 @@ public final class GuiMain extends javax.swing.JFrame {
     // ... and some more preferences for the decoding, that should probably be
     // properties too. (See IrpTransmogrifier for the semantics.)
     private final static boolean decodeStrict = false;
-    private final static boolean decodeAllDecodes = false;
     private final static boolean decodeRecursive = false;
     private final static boolean decodeOverride = false;
 
@@ -485,7 +482,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
         decoder = new Decoder(irpDatabase);
         decoderParameters = new Decoder.DecoderParameters(decodeStrict,
-                decodeAllDecodes,
+                properties.getPrintAlternativeDecodes(),
                 properties.getRemoveDefaultedParameters(),
                 decodeRecursive,
                 properties.getFrequencyTolerance(),
@@ -512,6 +509,9 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         properties.addRemoveDefaultedParametersChangeListener((String name1, Object oldValue, Object newValue) -> {
             decoderParameters.setRemoveDefaultedParameters((Boolean) newValue);
+        });
+        properties.addPrintAlternativeDecodesChangeListener((String name1, Object oldValue, Object newValue) -> {
+            decoderParameters.setAllDecodes((Boolean) newValue);
         });
     }
 
@@ -1140,28 +1140,28 @@ public final class GuiMain extends javax.swing.JFrame {
 //    }
 
     private void setDecodeResult(Decoder.AbstractDecodesCollection<? extends ElementaryDecode> decodes) {
-        Iterator<? extends ElementaryDecode> iterator = decodes.iterator();
-        if (!iterator.hasNext()) {
+        if (decodes.isEmpty()) {
             decodeIRTextField.setText("");
             return;
         }
 
-        int index = 0;
         StringBuilder decodeString = new StringBuilder(40);
-        for (ElementaryDecode decode : decodes) {
-            if (index == 0)
-                decodeString.append(decode.toString());
-            if (properties.getPrintDecodesToConsole())
-                guiUtils.message(decode.toString());
-            index++;
-        }
+        ElementaryDecode preferedDecode = decodes.getPreferred();
+        decodeString.append(preferedDecode);
 
-        if (index == 2)
+        if (decodes.size() == 2)
             decodeString.append(" + one more decode");
-        else if (index > 2)
-            decodeString.append(" + ").append(Integer.toString(index - 1)).append(" more decodes");
+        else if (decodes.size() > 2)
+            decodeString.append(" + ").append(Integer.toString(decodes.size() - 1)).append(" more decodes");
 
         decodeIRTextField.setText(decodeString.toString());
+        if (properties.getPrintDecodesToConsole())
+            guiUtils.message(preferedDecode.toString());
+
+        if (properties.getPrintAlternativeDecodes())
+            for (ElementaryDecode decode : decodes)
+                if (decode != preferedDecode)
+                    guiUtils.message("Alternative decode: " + decode.toString());
     }
 
     private void clearAnalyzeParameters() {
@@ -2575,6 +2575,7 @@ public final class GuiMain extends javax.swing.JFrame {
         invokeAnalyzerCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         printAnalyzeIRPsToConsoleCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         printDecodesToConsoleCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        printAlternativeDecodesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         parametrizedLearnIgnoreTCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         removeDefaultedParametersCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ignoreLeadingGarbageCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -6635,6 +6636,16 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         optionsMenu.add(printDecodesToConsoleCheckBoxMenuItem);
 
+        printAlternativeDecodesCheckBoxMenuItem.setSelected(properties.getPrintAlternativeDecodes());
+        printAlternativeDecodesCheckBoxMenuItem.setText("Print alternative decodes");
+        printAlternativeDecodesCheckBoxMenuItem.setToolTipText("If an IrSignal/IrSequence has more than one decode, print the alternative ones to the console.");
+        printAlternativeDecodesCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printAlternativeDecodesCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        optionsMenu.add(printAlternativeDecodesCheckBoxMenuItem);
+
         parametrizedLearnIgnoreTCheckBoxMenuItem.setSelected(properties.getParametrizedLearnIgnoreT());
         parametrizedLearnIgnoreTCheckBoxMenuItem.setText("Ignore T on parametric learns");
         parametrizedLearnIgnoreTCheckBoxMenuItem.setToolTipText("If selected, the value of the T variable (if present) will discarded on captured variables.");
@@ -9320,6 +9331,10 @@ public final class GuiMain extends javax.swing.JFrame {
         transformNameActionPerformed(parameterTable, parameterTableModel, (String s) -> s.substring(0, 1).toUpperCase(namesLocale) + s.substring(1).toLowerCase(namesLocale));
     }//GEN-LAST:event_captitalizeNameMenuItemActionPerformed
 
+    private void printAlternativeDecodesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printAlternativeDecodesCheckBoxMenuItemActionPerformed
+        properties.setPrintAlternativeDecodes(this.printAlternativeDecodesCheckBoxMenuItem.isSelected());
+    }//GEN-LAST:event_printAlternativeDecodesCheckBoxMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9698,6 +9713,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem pasteToDataWindowMenuItem;
     private javax.swing.JScrollPane plotScrollPane;
     private javax.swing.JMenuItem plotterResetMenuItem;
+    private javax.swing.JCheckBoxMenuItem printAlternativeDecodesCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem printAnalyzeIRPsToConsoleCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem printDecodesToConsoleCheckBoxMenuItem;
     private javax.swing.JMenuItem printRawTableRowMenuItem;
