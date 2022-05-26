@@ -47,6 +47,10 @@
 	  <td>2019-12-25</td>
 	  <td>Yet another batch of minor updates.</td>
 	</tr>
+        <tr>
+	  <td>2022-05-13</td>
+	  <td>Some updates in the context of IrScrutinizer 2.4.0.</td>
+	</tr>
       </table>
 <section>
 <title>Glossary</title>
@@ -71,7 +75,9 @@ properties.</dd>
 <dt id="AnalysIR">AnalysIR</dt>
 <dd>Commercial infrared analyzer and decoder program for Windows.
     By its makers characterized as    "... the  leading  tool  available  for  analysing,  decoding  and
-reverse engineering infrared remote control protocols". <a href="http://www.analysir.com">Web site.</a>
+reverse engineering infrared remote control protocols".
+    Last release appears to be from July 2016.
+    <a href="http://www.analysir.com">Web site.</a>
 </dd>
 
 <dt id="Analyzer">Analyzer</dt>
@@ -133,7 +139,7 @@ See <a href="#NonDemodulatingIrReceiver">(Non-demodulating) IR receiver</a>. Cf.
 href="#ReceivingIrSignals">receiving IR signals</a>.</dd>
 
 <dt id="CCF">CCF (text signal format)</dt>
-<dd>Synonym for the <a href="#ProntoHex">Pronto Hex</a> format.
+<dd>Sometimes used as a synonym for the <a href="#ProntoHex">Pronto Hex</a> format.
 Not to be confused with the <a
 href="#ccfFileFormat">ccf file format</a> of the Pronto Classic
 remotes!</dd>
@@ -163,7 +169,7 @@ which is a huge database of IR codes maintaned by Glackowitz from the
 <dd>Here, an <a href="#IrSignal">IR signal</a> with a name, like "Play".</dd>
 
 <dt id="CIR">Consumer IR (CIR)</dt>
-<dd>Consumer IR deals with IR control of various devices. <a
+<dd>Consumer IR deals with IR control of various devices, often audio or video. <a
 href="http://en.wikipedia.org/wiki/Consumer_IR">Wikipedia
 article</a>. Not to be confused with <a
 href="#IRDA">IRDA</a>. Typically uses wave lengths of 940&ndash;950nm.</dd>
@@ -335,12 +341,12 @@ possibly with a few exceptions, unsuitable for <a href="#CIR">consumer IR</a>.</
 <dt id="IrLed">IR LED (light emitting diode)</dt>
 <dd>Semiconductor component capable of sending light with the desired IR
 wavelength. A typical representative is the <a
-				href="http://catalog.osram-os.com/catalogue/catalogue.do?act=showBookmark&amp;favOid=00000007000243890001003a">Osram
-SFH 4512</a>.</dd>
+				href="https://www.osram.com/ecat/Radial%20T1%203-4%20SFH%204546/com/en/class_pim_web_catalog_103489/prd_pim_device_2219773/">Osram
+SFH 4546</a>.</dd>
 
 
 <dt id="IrProtocol">(IR) Protocol</dt>
-<dd>An algorithm for turning a number of parameters into an <a
+<dd>An algorithm for turning a number of parameter values into an <a
 href="#IrSignal">IR signal</a>. It defines the necessary parameters and their
 allowed values. By convention, the most frequently changing parameter
 is called "F" (function number). Almost all protocols have a "device number"
@@ -391,6 +397,16 @@ for  <a href="#IrScrutinizer">IrScrutinizer</a>.</dd>
     IrScrutinizer is a powerful program for capturing, generating, analyzing,
 importing, and exporting of infrared signals. <a href="IrScrutinizer.html">Reference manual</a>.</dd>
 
+<dt id="irsend">irsend</dt>
+<dd>Program that implements a simple client for
+    the Lircd server daemon, for sending commands to a <a href="#lircd">lircd</a> server.
+    Contained in the Lirc package.
+    For a complete list or commands implemented, see its <a href="http://lirc.org/html/irsend.html">man page</a>.
+    <a href="#IrScrutinizer">IrScrutinizer</a> contains a GUI version with (approximately) the same functionality, under <code>Tools -> Named Command Sender</code>.
+                For a Python alternative, see <a href="https://github.com/bengtmartensson/Lirconian">Lirconian</a>.
+                For a Java alternative, see <a href="https://github.com/bengtmartensson/JavaLircClient">JavaLircClient</a>.
+</dd>
+
 	<dt id="IrSequence">IR Sequence</dt>
 	<dd>Sequence of time durations, in general in expressed microseconds, together with a <a href="#ModulationFrequency">modulation frequency</a>. The even numbered entries
 normally denote times when the IR light is on (modulated), called <a
@@ -423,12 +439,12 @@ href="http://dangerousprototypes.com/docs/USB_Infrared_Toy">product
 page</a>. Consists of a microprocessor PIC18F2550, a <a href="#DemodulatingIrReceiver">demodulating IR-receiver</a>,
 a <a href="#NonDemodulatingIrReceiver">non-demodulating IR-receiver</a>, an <a href="#IrLed">IR-LED</a>, and a USB-connector. Thus, is usable
 both for learning, including frequency measurements, receiving demodulated
-R-signals, and sending IR signals. Supported by IrScrutinizer.</dd>
+R-signals, and sending IR signals. Supported by IrScrutinizer up to and including 2.3.1, but not 2.4.0.</dd>
 
 <dt id="IrTrans">IrTrans</dt>
 <dd>A <a href="http://www.irtrans.com">series of IR products</a> from the firm
 with the same name. IrScrutinizer and IrMaster support the Ethernet models
-(preferably with the "IR data base"), for sending only.</dd>
+(preferably with the "IR data base"), for sending only. Not supported in the current version 2.4.0.</dd>
 
 <dt id="IrWidget">IrWidget</dt>
 <dd>An "open hardeware" project by Kevin Timmerman. <a
@@ -461,21 +477,20 @@ data, as an alternative to XML. See the <a
 href="http://en.wikipedia.org/wiki/Json">Wikipedia article</a>.</dd>
 
 <dt id="Lirc">Lirc</dt>
-<dd>An open source project for sending and receiving IR signals from Linux. <a
-href="http://www.lirc.org">Official web site</a>. First release in May
-1996, current version is 0.10.1, released in January 2019. IrScrutinizer supports
-sending through a Lirc server, patched with the <a
-    href="lirc_ccf.html">CCF patch</a>, and can also import and export files in <code>lircd.conf</code> format.</dd>
+<dd>An open source project for sending and receiving IR signals from Linux.
+    <a href="http://www.lirc.org">Official web site</a>. First release in May
+1996, current version is 0.10.1, released in September 2017.
+Also packaged in all major Linux distributions.
+IrScrutinizer supports
+sending named commands to a Lirc server,
+and can also import and export files in <code>lircd.conf</code> format.</dd>
 
 <dt id="Lircd">lircd</dt>
 <dd>The main daemon of the <a href="#Lirc">Lirc project</a>. Accepts
-commands on a Unix domain socket, as well as on a TCP socket, by
+commands on a Unix domain socket, alternatively on a TCP socket, by
 default 8765. Accepts commands to send IR signals in <a
-href="#RemoteCommandFormat">Remote/Command format</a> only. For a
-complete list or commands implemented, see the <a
-href="http://lirc.org/html/irsend.html">man page of
-<code>irsend</code></a>, a progam that implements a simple client for
-the Lircd server daemon.
+href="#RemoteCommandFormat">Remote/Command format</a> only.
+To send commands to a running lircd, often a program called <a href="#irsend">irsend</a> is used.
 </dd>
 
 <dt id="lircd.conf">lircd.conf</dt>
@@ -525,11 +540,10 @@ at least for "moderate" modulation frequencies (&lt; 60kHz).</dd>
 </dd>
 
 <dt id="ParametricIRSignal">Parametric IR signal</dt>
-<dd>An Ir Signal given as a protocol and a parameter assignment to its
-parameters. Of course, a <a href="#Generating">renderer</a> may compute the
-numerical IR Sequences, but these are <em>considered</em> secondary, it is
+<dd>An Ir Signal given as a protocol and an assignment to its
+    parameters. The opposite is a <a href="#RawIrSignal">raw signal</a>. Of course, a <a href="#Generating">renderer</a> may compute the
+raw, numerical IR Sequences, but these are <em>considered</em> secondary, it is
 <em>defined</em> by its protocol and parameters values.</dd>
-
 
 <dt id="PCF">PCF</dt>
 <dd>IR signal format, not to be confused with the <a href="#PCF">pcf file
@@ -576,10 +590,10 @@ but available for download at <a
 href="http://files.remotecentral.com/prontopro/index.html">RemoteCentral</a>.</dd>
 
 <dt id="ProntoFrequencyCode">Pronto frequency code</dt>
-<dd>The second number in the <a href="#ProntoSemantics">CCF representation</a>. For <em>f</em> in Hertz, this is the
+<dd>The second number in the <a href="#ProntoSemantics">Pronto hex representation</a>. For <em>f</em> in Hertz, this is the
 four-digit hexadecimal number given as 1000000/(<em>f</em>*0.241246). It can be
 conveniently computed by the Time/Frequency Calculator in IrScrutinizer,
-available under the Tools menu.</dd>
+available under its Tools menu.</dd>
 
 <dt id="ProntoNG">Pronto NG (New Generaton)</dt>
 <dd>Later generation of Pronto touch screen programmable remotes. Uses the <a
@@ -596,7 +610,7 @@ RC9001 (Marantz). Discontinued in 2010.</dd>
 
 <dt id="protocols.ini">protocols.ini</dt>
 <dd>Data base file for <a href="#RemoteMaster">RemoteMaster</a>. Despite the name,
-it does not descibe <a href="#IrProtocol">protocols</a> in our sense, but rather <a href="#Executor">executors</a>
+it does not descibe <a href="#IrProtocol">protocols</a> in our sense, but rather <a href="#Executor">executors</a>,
 their properties and parameterization.
 </dd>
 
@@ -651,16 +665,24 @@ uniquely.</dd>
 <dt id="RemoteMaster">RemoteMaster</dt>
 <dd>Powerful open-source tool for the programming of <a href="#Jp1Remote">JP1 remotes</a>.
 see <a href="http://www.hifi-remote.com/wiki/index.php?title=Remote_Master_Manual">Manual</a>.
+<a href="https://sourceforge.net/projects/controlremote/files/latest/download">Download</a> current released version.
+<a href="https://sourceforge.net/p/controlremote/code/HEAD/tree/">Sources</a>.
+Recent version can import and export <a href="#Girr">Girr files</a>.
 </dd>
 
 <dt id="rmdu">RMDU file</dt>
-<dd>Configuration file for <a href="#RemoteMaster">RemoteMaster</a>, describing the configuration
-of a (universal) remote for a particular device. Contains parametrized commands, unfortunatelly not
+<dd>Configuration file for "device update" for <a href="#RemoteMaster">RemoteMaster</a>, describing the configuration
+of a (universal) remote for one particular device. Contains parametrized commands, unfortunately not
 in the <a href="#IrProtocol">protocol/parameter form</a>, but parametrized by an <a href="#Executor">executor</a>
 and <em>its</em> parameters.
 </dd>
 
-<dt id="Scrutinize">scrutinize</dt>
+<dt id="rmir">RMIR file</dt>
+<dd>Configuration file for a complete remote configuration for <a href="#RemoteMaster">RemoteMaster</a>, describing the configuration
+of a (universal) remote, in general containing one or several <a href="rmdu">device updates</a>.
+and <em>its</em> parameters.</dd>
+
+<dt id="Scrutinize">scrutinize (verb)</dt>
 <dd>"To examine in detail with careful or critical attention."</dd>
 
 <dt id="sendir">sendir (Global Caché) format</dt>
@@ -751,7 +773,7 @@ can contain IR signals in different formats, like <a href="#CCF">CCF format</a>
 (usable!) and <a href="#PCF">PCF format</a> (encrypted, thus not usable).</dd>
 
 <dt id="XML">XML</dt>
-<dd>Here, a data base file in certain text file format.</dd>
+<dd>Here, a data base file in certain, marked up, text file format.</dd>
 
 <dt id="XMLSchema">XML Schema</dt>
 <dd>XML Schema (also called XSD, for "Xml Schema Language") is an XML language

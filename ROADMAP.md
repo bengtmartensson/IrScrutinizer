@@ -1,7 +1,7 @@
 # ROADMAP
 
 This is an attempt to a high-level "roadmap" (or wishlist :-)) for IrScrutinizer.
-The "low-level" issues are kept as [harctoolbox issues](https://github.com/bengtmartensson/IrScrutinizer/issues).
+The "low-level" issues are kept as [issues](https://github.com/bengtmartensson/IrScrutinizer/issues).
 
 ## Vocabulary
 * _IrScrutinizer_ denotes the interactive program, and the source packages `org.harctoolbox.irscrutinizer` and subordinate packages,
@@ -19,16 +19,6 @@ and the projects [JGirs](https://github.com/bengtmartensson/JGirs), [AGirs](http
 [dispatcher](https://github.com/bengtmartensson/dispatcher). Also note that
 HarcHardware is intended to be useful for those use cases.)
 
-## 1. "Object oriented" GUI with internal sub-frames.
-The current panes "Scrutinize signal", "Scrutinize remote/parameteric", "Scrutinize remote/raw", render, import,...
-should instead be sub-panes of a "desktop pane", where they can be individually positioned, resized, minimized, maximized etc.
-Also, there should then be the possibility of instantiating these "subtools" more than once, to the extent it makes sense.
-They should also communicate, so that it can be possible  to right click on a signal in a table or tree,
-selecting "scrutinize this", and a new "scrutinizer signal" internal frame comes up.
-There may possibly also be more subtools, cf. [issue #74](https://github.com/bengtmartensson/IrScrutinizer/issues/74).
-(Cf. [this remark from the manual](http://www.harctoolbox.org/IrScrutinizer.html#The+pane+interface+sucks.).)
-Here is an example of programming [internal frames in Java Swing](https://docs.oracle.com/javase/tutorial/uiswing/components/internalframe.html).
-
 ## 2. An advanced "abstract remote" editor.
 (By "abstract remote" I mean a collection of IR commands with (unique) names, but with no assignment of the commands to
 buttons on a physical remote.) This covers the issues
@@ -43,9 +33,6 @@ buttons on a physical remote.) This covers the issues
 [#52](https://github.com/bengtmartensson/IrScrutinizer/issues/52),
 [#48](https://github.com/bengtmartensson/IrScrutinizer/issues/48).
 
-## 5. Replace RXTX
-See [#20](https://github.com/bengtmartensson/IrScrutinizer/issues/20).
-
 ## 6. Documentation system
 See [#15](https://github.com/bengtmartensson/IrScrutinizer/issues/15). The
 [article on the web site](http://harctoolbox.org/IrScrutinizer.html) should be a "cool" article,
@@ -55,13 +42,8 @@ not a "dry" reference manual.
 ... to Android ([#81](https://github.com/bengtmartensson/IrScrutinizer/issues/81)),
 ARM/RPi ([#68](https://github.com/bengtmartensson/IrScrutinizer/issues/68)),
 misc systems ([#68](https://github.com/bengtmartensson/IrScrutinizer/issues/68)).
-Any way to build inno setups in Travis?
-
-## 8. Hardware support
-Have send- and capturing co-exist better;
-[#54](https://github.com/bengtmartensson/IrScrutinizer/issues/54)
-did not turn out to be a very good solution, new try: [#281](https://github.com/bengtmartensson/IrScrutinizer/issues/281).
-New devices, see [HarcHardware](https://github.com/bengtmartensson/HarcHardwareBundle/issues?q=is%3Aopen+is%3Aissue+label%3A%22new+hardware+support%22)
+Any way to build inno setups in Github actions?
+Flatpacks?
 
 ## 9. Advanced command line support.
 IrpTransmogrifier has a quite clean and powerful command line interface; should probably not touch or replace that.
@@ -73,11 +55,6 @@ Still, a finished concept is missing.
 
 ## 10. Testing
 I strive to have [TestNG](http://testng.org) based Java testing, integrated in Maven and Netbeans.
-
-## 11. Bulk analyze functions
-Should the functions of IrpTransmogrifier-GUI, in particular for bulk analyze of a set of functions, of
-[IrpTransmogrifier-GUI](https://github.com/bengtmartensson/IrpTransmogrifier-GUI)
-be integrated, or should it be a separate tool?
 
 ## -1. Internationalization
 This is not at all an important issue for me, at least not for the moment.

@@ -20,9 +20,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.nameLowercase>irscrutinizer</project.nameLowercase>
-        <!--project.icon>/usr/local/share/${project.nameLowercase}/${project.nameLowercase}.png</project.icon-->
-        <!--project.exepath>/usr/local/bin/${project.nameLowercase}</project.exepath-->
-        <project.installdir>/usr/local/share/${project.nameLowercase}</project.installdir> <!-- Where mvn deploy unpacks the bin.zip -->
         <bundledjdk_url_sans_file>https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.5%2B10/</bundledjdk_url_sans_file>
         <bundledjdk.linux>OpenJDK11U-jdk_x64_linux_hotspot_11.0.5_10.tar.gz</bundledjdk.linux>
         <bundledjdk.windows>OpenJDK11U-jdk_x86-32_windows_hotspot_11.0.5_10.zip</bundledjdk.windows>
@@ -30,9 +27,10 @@
         <inno_path>${basedir}/Inno_Setup_6/ISCC.exe</inno_path>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <IrpTransmogrifier.version>1.2.11-SNAPSHOT</IrpTransmogrifier.version>
-        <Girr.version>2.2.11-SNAPSHOT</Girr.version>
-        <Jirc.version>2.2.11-SNAPSHOT</Jirc.version>
+        <IrpTransmogrifier.version>1.2.11</IrpTransmogrifier.version>
+        <Girr.version>2.2.11</Girr.version>
+        <Jirc.version>${Girr.version}</Jirc.version>
+        <RemoteLocator.version>0.2.0-SNAPSHOT</RemoteLocator.version>
         <HarcHardware.version>2.4.0-SNAPSHOT</HarcHardware.version>
     </properties>
 
@@ -669,7 +667,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>RemoteLocator</artifactId> <!-- Includes Jirc, wich includes Girr, which includes IrpTransmogrifier, which includes JCommander -->
-            <version>0.2.0-SNAPSHOT</version>
+            <version>${RemoteLocator.version}</version>
         </dependency>
         <dependency>
             <groupId>com.mrallen</groupId>

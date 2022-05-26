@@ -3,92 +3,84 @@
 # Building from sources
 
 "IrScrutinizer" is one subproject within [harctoolbox.org](http://harctoolbox.org).
-    It depends on several other subprojects within harctoolbox. The repository `IrScrutinizer` consists
-    of this subproject.
+                It depends on several other subprojects within harctoolbox. The repository `IrScrutinizer` consists
+                of this subproject.
 
 The released versions are found on the [download page](https://github.com/bengtmartensson/IrScrutinizer/releases).
-    The development sources are maintained on [my GitHub repository](https://github.com/bengtmartensson/IrScrutinizer).
-    Forking and pull requests are welcome!
+                The development sources are maintained on [my GitHub repository](https://github.com/bengtmartensson/IrScrutinizer).
+                Forking and pull requests are welcome!
 
 I go to great lengths ensuring that the program runs equally well on all supported platforms.
-        I do not care too much that all aspects of the build runs equally well on all platforms.
-        I build with Linux (Fedora), the continuous integration build runs on Travis (Ubuntu).
-        Other platforms are treated step-motherly.
+                I do not care too much that all aspects of the build runs equally well on all platforms.
+                I build with Linux (Fedora), the continuous integration build runs on Travis (Ubuntu).
+                Other platforms are treated step-motherly.
 
 ## Dependencies
 As any program of substantial size, IrScrutinizer uses a number of third-party components.
-        All of these are also free software, carrying compatible licenses.
-        The dependent packages need to be installed also in
-        the host-local Maven repository in order for the build to work.
-        In some cases (basically the ones with a version not ending with `-SNAPSHOT`), the packages
-        are uploaded to [the Maven central repository](https://mvnrepository.com/repos/central),
-        and will be automatically downloaded to the local host by a Maven invocation.
-
+                    All of these are also free software, carrying compatible licenses.
+                    The dependent packages need to be installed also in
+                    the host-local Maven repository in order for the build to work.
+                    In some cases (basically the ones with a version not ending with `-SNAPSHOT`), the packages
+                    are uploaded to [the Maven central repository](https://mvnrepository.com/repos/central),
+                    and will be automatically downloaded to the local host by a Maven invocation.
+                
 
 There are some scripts to aid downloading and building, described next. It is assumed that
-    [git](https://git-scm.com/) and [Maven](https://maven.apache.org/)
-    are installed and available as commands `git` and `mvn` respectively.
+                    [git](https://git-scm.com/) and [Maven](https://maven.apache.org/)
+                    are installed and available as commands `git` and `mvn` respectively.
 
 Of course, it is also possible to manually download or clone these packages
-                from [my Github repositories](https://github.com/bengtmartensson?tab=repositories),
-                then build and install them locally by `mvn install`.
+                    from [my Github repositories](https://github.com/bengtmartensson?tab=repositories),
+                    then build and install them locally by `mvn install`.
 
 ### IrpTransmogrifier, Girr, HarcHardware, Jirc
 These are all Java packages that are required to build IrScrutinizer. HarcHardware requires RXTX.
-            They can be downloaded and built by the script `common/scripts/build-harctoolbox-project.sh`,
-            using an argument of
-            `IrpTransmogrifier`,
-            `Girr`,
-            `HarcHardwar`, or
-            `Jirc`.
-            See the file `.travis.yml` for the complete commands.
-
+                        They can be downloaded and built by the script `common/scripts/build-harctoolbox-project.sh`,
+                        using an argument of
+                        `IrpTransmogrifier`,
+                        `Girr`,
+                        `HarcHardwar`, or
+                        `Jirc`.
+                        See the file `.travis.yml` for the complete commands.
+                    
 
 ### DevSlashLirc
 This library is used to access `/dev/lirc`-hardware. It is used by the Linux version only.
-        It is a Java JNI library, written in Java and C++. It is written by myself,
-        and available [here](https://github.com/bengtmartensson/DevSlashLirc).
-        
+                        It is a Java JNI library, written in Java and C++. It is written by myself,
+                        and available [here](https://github.com/bengtmartensson/DevSlashLirc).
+                    
 
 The subdirectories `native/Linux-amd64`,
-        `native/Linux-i386`, and
-        `native/Linux-arm` contain compiled versions for the x86_64, x86_32, and ARM processors respectively.
+                        `native/Linux-i386`, and
+                        `native/Linux-arm` contain compiled versions for the x86_64, x86_32, and ARM processors respectively.
 
 The package can be downloaded, and the Java part built, by the script
-            `common/scripts/build-harctoolbox-project.sh` using the argument `DevSlashLirc`
-            (see `.travis.yml` for an example).
+                        `common/scripts/build-harctoolbox-project.sh` using the argument `DevSlashLirc`
+                        (see `.travis.yml` for an example).
 
-### RXTX
-The serial communication packate RXTX is also included in the source package. This builds a shared library and a jar file.
-    On Linux, if there is a system supported RXTX (`librxtxSerial` really), it should be preferred,
-    in particular since it knows the preferred lock direcory for the present operating system.
-    The distribution contains pre-compiled binaries for Linux, Windows, and Mac OS X, both in 32- and 64-bit versions.
-    To compile the C sources, see the sub-directory `rxtx-pre2h` and the instructions therein.
-
-Note that the system supplied RXTX jar on many system (e.g. Fedora 21) has some issues
-        (version number incompatible with the shared library, does not recognize
-        the `/dev/ttyACM*`-ports required by IrToy and many Arduinos, unflexible library loading),
-        so using our RXTX jar together with the system supplied shared library can be sensible.
+### nrjavaserial
+This is a fork of the legacy [RXTX](http://rxtx.qbang.org/wiki/index.php/Main_Page) library for serial communication with Java.
+                    Version 5.2.1 is used here. 
 
 ### JCommander, minimal-json
 Normally, these components are downloaded and installed automatically by maven.
 
 ### Tonto
 [Tonto](Glossary.html#Tonto) can be downloaded and installed by the script `common/scripts/build-tonto.sh`.
-    It requires the [Apache ant](https://ant.apache.org/) build system to be installed as the command `ant`.
-        (On Fedora, instead the command `sudo dnf install tonto` can be used.)
-        Note that the shared library `libjnijcomm`,
-        which is required by the Tonto program for communicating with a Pronto remote through a serial interface,
-        is not required for use with IrScrutinizer, and can therefore be left out.
-        Using the option `-n` to the script (see `.travis.yml` for an example),
-        the script will not try to build and install the shared library.
+                        It requires the [Apache ant](https://ant.apache.org/) build system to be installed as the command `ant`.
+                        (On Fedora, instead the command `sudo dnf install tonto` can be used.)
+                        Note that the shared library `libjnijcomm`,
+                        which is required by the Tonto program for communicating with a Pronto remote through a serial interface,
+                        is not required for use with IrScrutinizer, and can therefore be left out.
+                        Using the option `-n` to the script (see `.travis.yml` for an example),
+                        the script will not try to build and install the shared library.
 
 ## Building
 As of version 1.1.2, the [Maven](http://maven.apache.org/index.html) "software
-project management and comprehension tool" is used as building system.
-Modern IDEs like Netbeans and Eclips integrate Maven, so build etc can be initiated from the IDE.
-Of course, the shell command `mvn install` can also be used. It creates some artifacts which can
-be used to run IrScrutinizer in the `IrScrutinizer/target` directory.
+                    project management and comprehension tool" is used as building system.
+                    Modern IDEs like Netbeans and Eclips integrate Maven, so build etc can be initiated from the IDE.
+                    Of course, the shell command `mvn install` can also be used. It creates some artifacts which can
+                    be used to run IrScrutinizer in the `IrScrutinizer/target` directory.
 
 Two additional shell tools are needed. These are:
 
@@ -101,66 +93,66 @@ Two additional shell tools are needed. These are:
 
 ## Windows setup.exe creation
 For building the Windows setup.exe, the [Inno Installer version 6](http://www.jrsoftware.org/download.php/is.exe)
-    is needed. To build the Windows `setup.exe` file, preferably the work area should
-be mounted on a Windows computer. Then, on the Windows computer, open
-        the generated file `IrScrutinizer/target/IrScrutinizer_inno.iss` with
-        the Inno installer, and start the compile. This will generate the desired file
-    `IrScutinizer-`_version_`.exe`.
+                    is needed. To build the Windows `setup.exe` file, preferably the work area should
+                    be mounted on a Windows computer. Then, on the Windows computer, open
+                    the generated file `IrScrutinizer/target/IrScrutinizer_inno.iss` with
+                    the Inno installer, and start the compile. This will generate the desired file
+                    `IrScutinizer-`_version_`.exe`.
 
 Alternatively, the "compatibility layer capable of running
-    Windows applications" software application [Wine](https://www.winehq.org) (included in most Linux
-    distributions) can run the ISCC compiler of Inno. The Maven file
-    `IrScrutinizer/pom.xml` contains an
-    invocation along these lines, conditional upon the existence of the file `../Inno Setup 6/ISCC.exe`.
+                    Windows applications" software application [Wine](https://www.winehq.org) (included in most Linux
+                    distributions) can run the ISCC compiler of Inno. The Maven file
+                    `IrScrutinizer/pom.xml` contains an
+                    invocation along these lines, conditional upon the existence of the file `../Inno Setup 6/ISCC.exe`.
 
 ## Mac OS X app creation
 The Maven build creates a file
-`IrScrutinizer-`_version_`-macOS.dmg`.
-This file can be directly distributed to the users, to be installed according to
-[these instructions](http://harctoolbox.org/IrScrutinizer.html#Mac+OS+X+app).
+                    `IrScrutinizer-`_version_`-macOS.dmg`.
+                    This file can be directly distributed to the users, to be installed according to
+                    [these instructions](http://harctoolbox.org/IrScrutinizer.html#Mac+OS+X+app).
 
 The icon file `IrScrutinizer.icns` was produced from the Crystal-Clear
-icon `babelfish.png` in 128x128 resolution, using the procedure
-described
-[here](http://stackoverflow.com/questions/11770806/why-doesnt-icon-composer-2-4-support-the-1024x1024-size-icon-any-more).
-        
+                    icon `babelfish.png` in 128x128 resolution, using the procedure
+                    described
+                    [here](http://stackoverflow.com/questions/11770806/why-doesnt-icon-composer-2-4-support-the-1024x1024-size-icon-any-more).
+                
 
 ## AppImage creation
 To build the x86_64 AppImage, define `bundledjdk_url_sans_file`
-    and `bundledjdk` in `pom.xml` to point to a suitable JDK distrubution file.
-    If a file with name given by `bundledjdk`
-    is not present in the top level directory, it can be downloaded by the script `tools/get-jdk-tar.sh`.
-    Then the maven goal `make-appimage` (which will be invoked during a normal build) will build an appimage for x86_64.
-    
+                    and `bundledjdk` in `pom.xml` to point to a suitable JDK distrubution file.
+                    If a file with name given by `bundledjdk`
+                    is not present in the top level directory, it can be downloaded by the script `tools/get-jdk-tar.sh`.
+                    Then the maven goal `make-appimage` (which will be invoked during a normal build) will build an appimage for x86_64.
+                
 
 ## Test invocation
 For testing purposes, the programs can be invoked from their different target directories.
-        IrScrutinizer can be invoked as
+                    IrScrutinizer can be invoked as
 
 
     
-    $ java -jar target/IrScrutinizer-jar-with-dependencies.jar
-
+                    $ java -jar target/IrScrutinizer-jar-with-dependencies.jar
+                
 or, if the shared libraries are required, with _path-to-shared-libraries_ denoting the path to a directory containing
-the shared libraries.
+                    the shared libraries.
 
 
     
-    $ java -Djava.library.path=_path-to-shared-libraries_ -jar target/IrScrutinizer-jar-with-dependencies.jar
-
+                    $ java -Djava.library.path=_path-to-shared-libraries_ -jar target/IrScrutinizer-jar-with-dependencies.jar
+                
 IrScrutinizer can also be started by double clicking the mentioned jar file,
-    provided that the desktop has been configured to start executable jar with "java".
+                    provided that the desktop has been configured to start executable jar with a Java virtual machine.
 
 ## Installation
 Maven does not support something like `make install` for deployment installing a
-recently build program on the local host.
-Instead, the supplied `tools/Makefile` can
-install the program to normal Linux locations (in the Makefile `INSTALLDIR`),
+                    recently build program on the local host.
+                    Instead, the supplied `tools/Makefile` can
+                    install the program to normal Linux locations (in the Makefile `INSTALLDIR`),
 
 
     
-        sudo make -f tools/Makefile install
-    
+                    sudo make -f tools/Makefile install
+                
 Equivalently, the just created generic-binary package
-`IrScrutinizer/target/IrScrutinizer-*-bin.zip`) can be installed using [these instructions](http://harctoolbox.org/IrScrutinizer.html#Generic+Binary).
+                    `IrScrutinizer/target/IrScrutinizer-*-bin.zip`) can be installed using [these instructions](http://harctoolbox.org/IrScrutinizer.html#Generic+Binary).
 
