@@ -33,15 +33,18 @@ checkgroup()
     fi
 }
 
+# Remove what looks like a trailing version
+PROGNAME=$(basename "$0" .sh | sed -e 's/-[0-9\\.]*$//' )
+
 # If called using the name irptransmogrifier, invoke that "program".
 # Recall: exec does not return.
-if [ $(basename "$0" ) = "irptransmogrifier" ] ; then
+if [ ${PROGNAME} = "irptransmogrifier" ] ; then
     exec "${JAVA}" ${JVM_ARGS} -classpath "${FATJAT}" org.harctoolbox.irp.IrpTransmogrifier "$@"
 fi
 
 # If called using a name of one of the tools, invoke that "program".
-if [ $(basename "$0" .sh ) != "irscrutinizer" -a $(basename "$0" ) != "harchardware" ] ; then
-    exec "${JAVA}" ${JVM_ARGS} -classpath "${FATJAT}" org.harctoolbox.guicomponents.$(basename "$0") "$@"
+if [ ${PROGNAME} != "irscrutinizer" -a ${PROGNAME} != "harchardware" ] ; then
+    exec "${JAVA}" ${JVM_ARGS} -classpath "${FATJAT}" org.harctoolbox.guicomponents.${PROGNAME} "$@"
 fi
 
 # Check that the use is a member of some groups ...
@@ -65,7 +68,7 @@ if [ "x${MESSAGE}" != "x" ] ; then
     fi
 fi
 
-if [ $(basename "$0" ) = "harchardware" ] ; then
+if [ ${PROGNAME} = "harchardware" ] ; then
     exec "${JAVA}" ${JVM_ARGS} -classpath "${FATJAT}" org.harctoolbox.harchardware.Main --apphome "${IRSCRUTINIZERHOME}" "$@"
 fi
 
