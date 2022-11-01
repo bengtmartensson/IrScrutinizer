@@ -683,7 +683,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     properties.setGlobalCachePort((Integer) evt.getNewValue());
                     break;
                 case HardwareBean.PROP_ISOPEN:
-                    guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
+                    //guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
                     break;
                 default:
                     throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
@@ -804,7 +804,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     properties.setIrWidgetPortName((String) evt.getNewValue());
                     break;
                 case HardwareBean.PROP_ISOPEN:
-                    guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
+                    //guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
                     break;
                 default:
                     throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
