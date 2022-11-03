@@ -6008,7 +6008,6 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="1" attributes="0">
                                       <Group type="102" attributes="0">
-                                          <EmptySpace max="-2" attributes="0"/>
                                           <Component id="transmitScrutinizedButton" linkSize="24" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Component id="transmitGenerateButton2" linkSize="24" min="-2" max="-2" attributes="0"/>
@@ -6385,7 +6384,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.guicomponents.IrWidgetBean" name="irWidgetBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getVerbose(), properties.getCaptureBeginTimeout(), properties.getIrWidgetPortName())"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getVerbose(), properties.getCaptureBeginTimeout(), properties.getIrWidgetPortName(), properties.getIrWidgetLowerDtrRts())"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="irWidgetHelpButton">

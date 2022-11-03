@@ -44,6 +44,7 @@ public abstract class HardwareBean extends JPanel implements Closeable {
     public static final String PROP_MODULE      = "PROP_MODULE";
     public static final String PROP_PORT        = "PROP_PORT";
     public static final String PROP_TYPE        = "PROP_TYPE";
+    public static final String PROP_LOWER_DTR_RTS = "PROP_LOWER_DTR_RTS";
 
     protected static final String NOT_INITIALIZED = "not initialized";
     protected static final String NOT_CONNECTED   = "not connected";

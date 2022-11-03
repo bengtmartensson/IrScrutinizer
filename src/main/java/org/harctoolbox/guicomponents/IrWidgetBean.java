@@ -35,18 +35,19 @@ public final class IrWidgetBean extends SerialHardwareBean {
     }
 
     public IrWidgetBean(GuiUtils guiUtils) {
-        this(guiUtils, false, DEFAULT_BEGIN_TIMEOUT, null);
+        this(guiUtils, false, DEFAULT_BEGIN_TIMEOUT, null, true);
     }
 
-    public IrWidgetBean(GuiUtils guiUtils, boolean verbose, int timeout, String initialPort) {
+    public IrWidgetBean(GuiUtils guiUtils, boolean verbose, int timeout, String initialPort, boolean lowerDtrRts) {
         super(guiUtils, verbose, timeout);
         initComponents();
         setupPortComboBox(portComboBox, true, initialPort);
+        lowerDtrRtsCheckBox.setSelected(lowerDtrRts);
     }
 
     @Override
     protected void setupHardware() throws IOException, NonExistingPortException {
-        hardware = new IrWidget(portName, verbose, timeout);
+        hardware = new IrWidget(portName, verbose, timeout, lowerDtrRtsCheckBox.isSelected());
     }
 
     @Override
@@ -91,6 +92,7 @@ public final class IrWidgetBean extends SerialHardwareBean {
         refreshButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         openToggleButton = new javax.swing.JToggleButton();
+        lowerDtrRtsCheckBox = new javax.swing.JCheckBox();
 
         setPreferredSize(new java.awt.Dimension(800, 80));
 
@@ -122,6 +124,14 @@ public final class IrWidgetBean extends SerialHardwareBean {
             }
         });
 
+        lowerDtrRtsCheckBox.setText("lower DTR and RTS on opening");
+        lowerDtrRtsCheckBox.setToolTipText("Select if using the original PIC-based Tommy Tyler widget.");
+        lowerDtrRtsCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lowerDtrRtsCheckBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -135,8 +145,10 @@ public final class IrWidgetBean extends SerialHardwareBean {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(portComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lowerDtrRtsCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(openToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(281, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -147,8 +159,9 @@ public final class IrWidgetBean extends SerialHardwareBean {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(portComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(refreshButton)
-                    .addComponent(openToggleButton))
-                .addContainerGap(15, Short.MAX_VALUE))
+                    .addComponent(openToggleButton)
+                    .addComponent(lowerDtrRtsCheckBox))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -169,13 +182,20 @@ public final class IrWidgetBean extends SerialHardwareBean {
             guiUtils.error(ex);
         } finally {
             openToggleButton.setSelected(isOpen());
+            lowerDtrRtsCheckBox.setEnabled(!isOpen());
             //refreshButton.setEnabled(!hardware.isValid());
             resetCursor(oldCursor);
         }
     }//GEN-LAST:event_openToggleButtonActionPerformed
 
+    private void lowerDtrRtsCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lowerDtrRtsCheckBoxActionPerformed
+        boolean lowerDtrRts = lowerDtrRtsCheckBox.isSelected();
+        propertyChangeSupport.firePropertyChange(PROP_LOWER_DTR_RTS, ! lowerDtrRts, lowerDtrRts);
+    }//GEN-LAST:event_lowerDtrRtsCheckBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JCheckBox lowerDtrRtsCheckBox;
     private javax.swing.JToggleButton openToggleButton;
     private javax.swing.JComboBox<String> portComboBox;
     private javax.swing.JButton refreshButton;

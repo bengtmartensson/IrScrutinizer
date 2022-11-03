@@ -804,7 +804,9 @@ public final class GuiMain extends javax.swing.JFrame {
                     properties.setIrWidgetPortName((String) evt.getNewValue());
                     break;
                 case HardwareBean.PROP_ISOPEN:
-                    //guiUtils.message("PROP_ISOPEN received, now " + ((Boolean) evt.getNewValue() ? "open" : "closed"));
+                    break;
+                case HardwareBean.PROP_LOWER_DTR_RTS:
+                    properties.setIrWidgetLowerDtrRts((Boolean) evt.getNewValue());
                     break;
                 default:
                     throw new ThisCannotHappenException("Unhandled property: " + evt.getPropertyName());
@@ -2460,7 +2462,7 @@ public final class GuiMain extends javax.swing.JFrame {
         commandFusionBean = new org.harctoolbox.guicomponents.CommandFusionBean(guiUtils, properties.getVerbose(), properties.getCommandFusionPortName());
         sendingCommandFusionHelpButton = new javax.swing.JButton();
         captureIrWidgetPanel = new javax.swing.JPanel();
-        irWidgetBean = new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getVerbose(), properties.getCaptureBeginTimeout(), properties.getIrWidgetPortName());
+        irWidgetBean = new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getVerbose(), properties.getCaptureBeginTimeout(), properties.getIrWidgetPortName(), properties.getIrWidgetLowerDtrRts());
         irWidgetHelpButton = new javax.swing.JButton();
         noTransmitsComboBox = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
@@ -4961,7 +4963,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(miscParametersColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(csvParametrizedFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                    .addComponent(csvParametrizedFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 265, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, parametrizedCsvImportPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(importTextParametrizedHelpButton)
@@ -5824,7 +5826,6 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addGroup(sendingPanelLayout.createSequentialGroup()
                         .addGroup(sendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(sendingPanelLayout.createSequentialGroup()
-                                .addContainerGap()
                                 .addComponent(transmitScrutinizedButton)
                                 .addGap(18, 18, 18)
                                 .addComponent(transmitGenerateButton2)

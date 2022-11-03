@@ -30,10 +30,12 @@
                   <Group type="102" attributes="0">
                       <Component id="portComboBox" min="-2" pref="244" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="lowerDtrRtsCheckBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="openToggleButton" min="-2" pref="130" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="281" max="32767" attributes="0"/>
+              <EmptySpace pref="22" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -47,8 +49,9 @@
                   <Component id="portComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="refreshButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="openToggleButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lowerDtrRtsCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="15" max="32767" attributes="0"/>
+              <EmptySpace pref="13" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -96,6 +99,15 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openToggleButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="lowerDtrRtsCheckBox">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="lower DTR and RTS on opening"/>
+        <Property name="toolTipText" type="java.lang.String" value="Select if using the original PIC-based Tommy Tyler widget."/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="lowerDtrRtsCheckBoxActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

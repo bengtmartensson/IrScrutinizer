@@ -37,6 +37,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="girsClientTimeout" type="int" default='Integer.toString(org.harctoolbox.guicomponents.GirsClientBean.DEFAULT_TIMEOUT)' doc='Timeout for Girs communication.' />
     <property name="devLircName" type="string" default='"/dev/lirc0"' doc="Device name for /dev/lirc."/>
     <property name="devLircTimeout" type="int" default='"5000"' doc="Timeout when accessing /dev/lirc*."/>
+    <property name="irWidgetLowerDtrRts" type="boolean" default='"true"' doc="If true, serial port signals DTR and RTS are lowered for some time when opening the IrWidget."/>
     <property name="sorterOnParametrizedTable" type="boolean" default='"false"' />
     <property name="sorterOnRawTable" type="boolean" default='"false"' />
     <property name="removeDefaultedParameters" type="boolean" default='"true"' />
