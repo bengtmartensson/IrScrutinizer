@@ -437,7 +437,7 @@
                     This generates the generic binary distribution file, which is installed as described above.
                     Alternatively, it can be installed with the command</p>
                 <source>
-                    make -f tool/Makefile install
+                    make install
                 </source>
                 <p>
                     possibly with <code>sudo</code> or as root.</p>
