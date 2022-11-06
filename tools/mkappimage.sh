@@ -88,12 +88,12 @@ transmogrify()
 }
 
 # If basename \$0 equals "irptransmogrifier" invoke that program instead.
-if [ "\$(basename \$0)" == "irptransmogrifier" ] ; then
+if [ "\$(basename \$0)" = "irptransmogrifier" ] ; then
     transmogrify "\$@"
 fi
 
 # If \$1 equals "irptransmogrifier" invoke that program instead.
-if [ "\$1" == "irptransmogrifier" ] ; then
+if [ "\$1" = "irptransmogrifier" ] ; then
     shift
     transmogrify "\$@"
 fi
