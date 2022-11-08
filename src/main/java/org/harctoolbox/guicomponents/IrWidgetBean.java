@@ -22,6 +22,8 @@ import java.io.IOException;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.comm.NonExistingPortException;
 import static org.harctoolbox.harchardware.ir.IIrReader.DEFAULT_BEGIN_TIMEOUT;
+import static org.harctoolbox.harchardware.ir.IIrReader.DEFAULT_CAPTURE_MAXSIZE;
+import static org.harctoolbox.harchardware.ir.IIrReader.DEFAULT_ENDING_TIMEOUT;
 import org.harctoolbox.harchardware.ir.IrWidget;
 import org.harctoolbox.ircore.ModulatedIrSequence;
 
@@ -30,16 +32,21 @@ import org.harctoolbox.ircore.ModulatedIrSequence;
  */
 public final class IrWidgetBean extends SerialHardwareBean {
 
+    private int captureMaxSize;
+    private int endingTimeout;
+
     public IrWidgetBean() {
         this(null);
     }
 
     public IrWidgetBean(GuiUtils guiUtils) {
-        this(guiUtils, false, DEFAULT_BEGIN_TIMEOUT, null, true);
+        this(guiUtils, false, DEFAULT_BEGIN_TIMEOUT, DEFAULT_CAPTURE_MAXSIZE, DEFAULT_ENDING_TIMEOUT, null, true);
     }
 
-    public IrWidgetBean(GuiUtils guiUtils, boolean verbose, int timeout, String initialPort, boolean lowerDtrRts) {
-        super(guiUtils, verbose, timeout);
+    public IrWidgetBean(GuiUtils guiUtils, boolean verbose, int beginTimeout, int captureMaxSize, int endingTimeout, String initialPort, boolean lowerDtrRts) {
+        super(guiUtils, verbose, beginTimeout);
+        this.captureMaxSize = captureMaxSize;
+        this.endingTimeout = endingTimeout;
         initComponents();
         setupPortComboBox(portComboBox, true, initialPort);
         lowerDtrRtsCheckBox.setSelected(lowerDtrRts);
@@ -47,7 +54,25 @@ public final class IrWidgetBean extends SerialHardwareBean {
 
     @Override
     protected void setupHardware() throws IOException, NonExistingPortException {
-        hardware = new IrWidget(portName, verbose, timeout, lowerDtrRtsCheckBox.isSelected());
+        hardware = new IrWidget(portName, verbose, timeout, captureMaxSize, endingTimeout, lowerDtrRtsCheckBox.isSelected());
+    }
+
+    public void setBeginTimeout(int beginTimeout) {
+        this.timeout = beginTimeout;
+        if (hardware != null)
+            ((IrWidget) hardware).setBeginTimeout(beginTimeout);
+    }
+
+    public void setCaptureMaxSize(int captureMaxSize) {
+        this.captureMaxSize = captureMaxSize;
+        if (hardware != null)
+            ((IrWidget) hardware).setCaptureMaxSize(captureMaxSize);
+    }
+
+    public void setEndingTimeout(int endingTimeout) {
+        this.endingTimeout = endingTimeout;
+        if (hardware != null)
+            ((IrWidget) hardware).setEndingTimeout(endingTimeout);
     }
 
     @Override

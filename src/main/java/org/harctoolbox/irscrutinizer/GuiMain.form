@@ -6384,7 +6384,7 @@
                       <SubComponents>
                         <Component class="org.harctoolbox.guicomponents.IrWidgetBean" name="irWidgetBean">
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getVerbose(), properties.getCaptureBeginTimeout(), properties.getIrWidgetPortName(), properties.getIrWidgetLowerDtrRts())"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getVerbose(), properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndingTimeout(), properties.getIrWidgetPortName(), properties.getIrWidgetLowerDtrRts())"/>
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="irWidgetHelpButton">

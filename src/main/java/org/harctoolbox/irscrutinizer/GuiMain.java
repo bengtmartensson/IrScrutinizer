@@ -813,6 +813,18 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
+        properties.addCaptureBeginTimeoutChangeListener((String name1, Object oldValue, Object newValue) -> {
+            irWidgetBean.setBeginTimeout((Integer)newValue);
+        });
+
+        properties.addCaptureMaxSizeChangeListener((String name1, Object oldValue, Object newValue) -> {
+            irWidgetBean.setCaptureMaxSize((Integer)newValue);
+        });
+
+        properties.addCaptureEndingTimeoutChangeListener((String name1, Object oldValue, Object newValue) -> {
+            irWidgetBean.setEndingTimeout((Integer)newValue);
+        });
+
         hardwareManager.add(irWidgetBean);
     }
 
@@ -2462,7 +2474,7 @@ public final class GuiMain extends javax.swing.JFrame {
         commandFusionBean = new org.harctoolbox.guicomponents.CommandFusionBean(guiUtils, properties.getVerbose(), properties.getCommandFusionPortName());
         sendingCommandFusionHelpButton = new javax.swing.JButton();
         captureIrWidgetPanel = new javax.swing.JPanel();
-        irWidgetBean = new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getVerbose(), properties.getCaptureBeginTimeout(), properties.getIrWidgetPortName(), properties.getIrWidgetLowerDtrRts());
+        irWidgetBean = new org.harctoolbox.guicomponents.IrWidgetBean(guiUtils, properties.getVerbose(), properties.getCaptureBeginTimeout(), properties.getCaptureMaxSize(), properties.getCaptureEndingTimeout(), properties.getIrWidgetPortName(), properties.getIrWidgetLowerDtrRts());
         irWidgetHelpButton = new javax.swing.JButton();
         noTransmitsComboBox = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
