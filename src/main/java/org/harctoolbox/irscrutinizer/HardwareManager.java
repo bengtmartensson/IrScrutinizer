@@ -19,7 +19,6 @@ package org.harctoolbox.irscrutinizer;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -34,6 +33,7 @@ import org.harctoolbox.guicomponents.HardwareBean;
 import org.harctoolbox.guicomponents.HardwareBean.CannotCaptureException;
 import org.harctoolbox.guicomponents.HardwareBean.CannotSendException;
 import org.harctoolbox.harchardware.HarcHardwareException;
+import org.harctoolbox.harchardware.IHarcHardware;
 import org.harctoolbox.harchardware.TimeoutException;
 import org.harctoolbox.harchardware.ir.NoSuchTransmitterException;
 import org.harctoolbox.ircore.InvalidArgumentException;
@@ -41,7 +41,7 @@ import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.ircore.ThisCannotHappenException;
 
-final class HardwareManager implements Iterable<String>, Closeable {
+final class HardwareManager implements Iterable<String> {
     private static final int INITIAL_MAP_CAPACITY = 8;
     public static final String PROP_SELECTED_HARDWARE = "PROP_SELECTED_HARDWARE";
 
@@ -171,11 +171,17 @@ final class HardwareManager implements Iterable<String>, Closeable {
         return first.getName();
     }
 
-    @Override
+    /**
+     * This is called when exiting the program. It should thus close all
+     * hardware, but not reset any graphical state, (calling close()),
+     * since the GUI is being torn down already.
+     */
     public void close() {
-        map.values().forEach(hardware -> {
+        map.values().forEach(hardwareBean -> {
             try {
-                hardware.close();
+                IHarcHardware hardware = hardwareBean.getHardware();
+                if (hardware != null)
+                    hardware.close();
             } catch (IOException ex) {
                 guiUtils.error(ex);
             }
