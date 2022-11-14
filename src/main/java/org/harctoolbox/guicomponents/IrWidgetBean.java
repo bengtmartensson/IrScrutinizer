@@ -34,6 +34,10 @@ public final class IrWidgetBean extends SerialHardwareBean {
 
     private int captureMaxSize;
     private int endingTimeout;
+    /**
+     * Maximal endingTimeout that is accepted.
+     */
+    public static final int MAX_ENDING_TIMEOUT = 500;
 
     public IrWidgetBean() {
         this(null);
@@ -70,9 +74,14 @@ public final class IrWidgetBean extends SerialHardwareBean {
     }
 
     public void setEndingTimeout(int endingTimeout) {
-        this.endingTimeout = endingTimeout;
+        if (endingTimeout > MAX_ENDING_TIMEOUT) {
+            guiUtils.warning("The endingTimeout " + endingTimeout + " is larger than the maximally allowed for the IrWidget, " + MAX_ENDING_TIMEOUT + ". Instead, " + MAX_ENDING_TIMEOUT + " will be used.");
+            this.endingTimeout = MAX_ENDING_TIMEOUT;
+        } else
+            this.endingTimeout = endingTimeout;
+
         if (hardware != null)
-            ((IrWidget) hardware).setEndingTimeout(endingTimeout);
+            ((IrWidget) hardware).setEndingTimeout(this.endingTimeout);
     }
 
     @Override
