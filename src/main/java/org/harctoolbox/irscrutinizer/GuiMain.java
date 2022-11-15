@@ -118,6 +118,11 @@ public final class GuiMain extends javax.swing.JFrame {
     private final static int transmitSignalMouseButton = 2;
     public final static double chopThreshold = 100.0; // TODO should problably live somewhere else
 
+    /**
+     * Maximal endingTimeout that is accepted.
+     */
+    public final static int MAX_ENDING_TIMEOUT = 500;
+
     // Preferences for the analyzer. Possibly these should be made properties?
     private final static boolean analyzerEliminateConstantVars = false;
     private final static double analyzerMaxRoundingError = Burst.Preferences.DEFAULT_MAX_ROUNDING_ERROR;
@@ -7190,8 +7195,13 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void endingTimeoutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endingTimeoutMenuItemActionPerformed
         try {
-            Integer t = guiUtils.getIntegerInput("Require ending silence in milliseconds", properties.getCaptureEndingTimeout());
-            if (t != null)
+            Integer t = guiUtils.getIntegerInput("Require ending silence in milliseconds (max " + MAX_ENDING_TIMEOUT + ")", properties.getCaptureEndingTimeout());
+            if (t == null)
+                return;
+
+             if (t > MAX_ENDING_TIMEOUT)
+                guiUtils.error("endingTimeout must be \u2264 " + MAX_ENDING_TIMEOUT + ".");
+            else
                 properties.setCaptureEndingTimeout(t);
         } catch (NumberFormatException ex) {
             guiUtils.error("Invalid number: " + ex.getMessage());
