@@ -41,7 +41,7 @@ jobs:
       run: wget --quiet http://www.harctoolbox.org/downloads/jre-x64-macOS.tar.gz
     - name: Build with Maven
       run: |
-        sudo apt-get install -y dos2unix icoutils genisoimage
+        sudo apt-get install -y dos2unix icoutils genisoimage fuse
         mvn -B -V install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true package
 
 #  fetch-jre-x86-windows:
