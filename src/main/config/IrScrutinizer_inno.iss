@@ -16,7 +16,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-VersionInfoCopyright=Copyright (C) 2014-2020 Bengt Martensson.
+VersionInfoCopyright=Copyright (C) 2014-2022 Bengt Martensson.
 DefaultDirName={commonpf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
@@ -109,6 +109,19 @@ procedure CreateWrapper;
 var
    wrapperFilename: String;
 begin
+   wrapperFilename := ExpandConstant('{app}') + '\IrpTransmogrifier.bat';
+   SaveStringToFile(wrapperFilename, '@ECHO off' + #13#10, false);
+   SaveStringToFile(wrapperFilename, 'set IRSCRUTINIZERHOME=' + ExpandConstant('{app}') + #13#10, true);
+   if WizardSetupType(False) = 'with_jvm' then
+   begin
+      SaveStringToFile(wrapperFilename, 'set JAVA=%IRSCRUTINIZERHOME%\jre-x86-windows\bin\java' + #13#10, true);
+   end
+   else
+   begin
+      SaveStringToFile(wrapperFilename, 'set JAVA=java' + #13#10, true);
+   end;
+   SaveStringToFile(wrapperFilename, '"%JAVA%"' + ' -cp "%IRSCRUTINIZERHOME%\IrScrutinizer.jar" org.harctoolbox.irp.IrpTransmogrifier %1 %2 %3 %4 %5 %6 %7 %8 %9', true);
+
    wrapperFilename := ExpandConstant('{app}') + '\IrScrutinizer.bat';
    SaveStringToFile(wrapperFilename, '@ECHO off' + #13#10, false);
    SaveStringToFile(wrapperFilename, #13#10, true);
