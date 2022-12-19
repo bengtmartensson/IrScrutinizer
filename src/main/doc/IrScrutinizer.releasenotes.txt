@@ -4,8 +4,11 @@ Girr, HardHardware, DevSlashLirc, and Jirc.
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
-Version 2.4.0, released 2022-06-xx.
+Version 2.4.0, released 2022-12-20.
 
+* Re-installed the irptransmogrifire command on Windows/setup.exe. #468.
+* Fix HardwareManager.close() misbehavior when called during shutdown. #463.
+* IrWidget: Add option for not dropping DTR and RTS when opening the device. #462.
 * Uses IrpTransmogrifier 1.2.11, see IrpTransmogrifier.releasenotes.txt.
 * Option for reporting all decodes, corresponding to decode --all in IrpTransmogrifier. #457.
 * Remove incomplete HTTP proxy support. #456.
@@ -15,7 +18,6 @@ Version 2.4.0, released 2022-06-xx.
 * Updated export formats Lirc.
 * New command line option --loglevel, cf. IrpTransmogrifier.
 * Exportformats: better handling of export format parameters. Implemented export formats documentation. #323.
-* Say "render" instead of "generate". #402.
 * Some layout tweaks. #366, #401.
 * Remove Lirc as sending device (partially replaced by NamedCommandSender). Resolves #399.
 * Remove IrTrans support (except for the NamedCommandSender).
@@ -25,9 +27,6 @@ Version 2.4.0, released 2022-06-xx.
 * Remove "LIRC Mode 2" as capturing device. #378.
 * Redesign hardware configuration and selection. #281.
 * New tool for sending named commands "Named Command Sender". #128.
-
-=============================================================================
-Version 2.3.2: There has been no release 2.3.2.
 
 ==============================================================================
 Version 2.3.1, released 2021-07-04.

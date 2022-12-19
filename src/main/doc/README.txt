@@ -17,6 +17,6 @@ community can be generated.
 
 Written in Java (with the exception of one (on Linux two) native libraries),
 most of the functionality of the program is available on every Java platform.
-The native library (RXTX) is presently available for
+The native library (nrjavaserial, successor of RXTX) is presently available for
 32- and 64-bit versions of Windows, Linux (x86, amd-64, and arm), and
 MacOsX, and can with moderate effort be compiled for other platforms.

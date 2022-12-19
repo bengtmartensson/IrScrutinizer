@@ -86,6 +86,10 @@
                 <td>2022-05-13</td>
                 <td>Updated for 2.4.0: Considerable update and rewrite, for upcoming release 2.4.0.</td>
             </tr>
+            <tr>
+                <td>2022-12-19</td>
+                <td>Misc. fixes and updates.</td>
+            </tr>
         </table>
 
         <section>
@@ -330,7 +334,7 @@
                 <p>The installer will also install the command line program <a href="IrpTransmogrifier.html">IrpTransmogrifier</a>,
                     which can be called as <code>irptransmogrifier</code> from a command line window.</p>
 
-                <p>Sometimes, when starting the program for the first time, the Winndows Defender Firewall blocks some features in the program,
+                <p>Sometimes, when starting the program for the first time, the Windows Defender Firewall blocks some features in the program,
                     asking for permission to allow the Java virtual machine (typically ending with <code>javaw.exe</code>) access. This should be granted.</p>
                 <p>To uninstall, select the uninstall option from the Start menu, or (on Windows 10, right click <code>Start -> IrScrutinizer -> IrScrutinizer</code> and select Uninstall).
                     Or use the operating system's program management for de-installing (Settings -> Apps and Features).
@@ -345,6 +349,9 @@
                     to run on all modern, 64-bit x86 Linux distributions. Just download,
                     make executable, and double click (or start from the command line).
                     It comes with its own Java runtime.</p>
+
+                    <p>It called using the name <code>irptransmogrifier</code>, the <a href="IrpTransmogrifier.html">IrpTransmogrifier</a> program will be invoked,
+                    taking its usual command line arguments.</p>
 
                 <p>To uninstall, just delete.</p>
 
@@ -386,7 +393,7 @@
 
                 <p>The rest of this section applies to Unix/Linux.</p>
                 <p>
-                    There are a few additional steps, which the script <code>setup-irscrutinizer.sh</code>
+                    There are a few additional steps, which, on Unix/Linux the script <code>setup-irscrutinizer.sh</code>
                     can take care of. If this is not desired, or does not work,
                     these steps will be described next.</p>
 
@@ -472,7 +479,7 @@
                 window is re-sizeable. There is a context menu for the
                 console, accessible by pressing the right mouse button in it.</p>
             <p>In the upper row, there are six pull-down menus, named <code>File,
-                    Edit, Actions, Options, Tools</code>, and <code>Help</code>. Their usage is believed to be mainly
+                    Edit, Actions, Options, Tools</code> and <code>Help</code>. Their usage is believed to be mainly
                 self explanatory, with some the exceptions.</p>
 
             <p>Options to the program are in general found in the <code>Options</code> menu, or its
@@ -494,123 +501,27 @@
         </section>
 
         <section>
-            <title>Analyzing a single IR Sequence or IR Signal</title>
-            <p>The pane <code>Scrutinize Signal</code> is devoted to the analysis of one single IR
-                signal or -sequence.</p>
-
-            <p>To capture IR Sequences from a hardware sensor, first set it up and open it,
-                see Section <a href='#The+"Hardware"+pane'>Hardware</a>.
-                An IR Sequence
-                is captured by pressing the <code>Capture</code> button, and sending an IR signal to the
-                selected hardware. Note that the hardware captures an <em>
-                    <a
-                        href="Glossary.html#IrSequence">IR Sequence</a>
-                </em>, not an <a href="Glossary.html#IrSignal">IR Signal</a>. It
-                consists of an (sometimes empty) <a href="Glossary.html#StartSequence">start sequence</a>,
-                an unknown number of <a href="Glossary.html#RepeatSequence">repeat sequences</a>, and
-                sometimes an <a href="Glossary.html#EndingSequence">ending sequence</a>.</p>
-        </section>
-
-        <section>
-            <title>Adding new export formats</title>
-            <p>Only a few of the many export formats are  defined in the main Java code (<code>Girr</code>, <code>Text</code>, <code>Pronto Classic</code> and <code>Wave</code>),
-                the rest are defined in files in the directory  <code>exportformats.d</code>,
-                located in the root of the install directory. By adding a file here,
-                the user can simply add his/her own export formats according to own
-                needs. An export format consists of a number of properties, together
-                with a small "program" written in the transformation language <a href="Glossary.html#XSLT">XSLT</a>,
-                for transforming a Girr-XML-tree to the desired text format.</p>
-
-            <p>The rest of this section documents the format of these files, and is
-                supposed to be read only when needed. Fundamental knowledge of XML and
-                XSLT transformations are assumed.</p>
-
-            <section>
-                <title>Format of the files in <code>exportformats.d</code></title>
-                <p>The file is an XML file supposed to be a valid instance of the XML Schema
-                    <a href="http://www.harctoolbox.org/schemas/exportformats.xsd">
-                        <code>exportformats.xsd</code>
-                    </a>, although it is read without validation.
-                    The semantics is believed to be essentially self explaining, or clear from the
-                    examples already in there. An export format is
-                    packed in an element of type <code>exportformats:exportformat</code>. It contains
-                    the following attributes:</p>
-                <dl>
-                    <dt>
-                        <code>name</code>
-                    </dt>
-                    <dd>Text string used for identifying the format.</dd>
-                    <dt>
-                        <code>extension</code>
-                    </dt>
-                    <dd>Text string denoting preferred file extension (not including period)
-                        of generated files.</dd>
-                    <dt>
-                        <code>multiSignal</code>
-                    </dt>
-                    <dd>Boolean (value: <code>true</code> and <code>false</code>). Denotes if
-                        several signals can be represented in one export, or only one.</dd>
-                    <dt>
-                        <code>simpleSequence</code>
-                    </dt>
-                    <dd>Boolean, (values <code>true</code> of
-                        <code>false</code>). If true, the export really describes an <a
-                            href="Glossary.html#IrSequence">sequence</a> rather than am <a
-                            href="Glossary.html#IrSignal">signal</a> (with intro-, repeat- , and
-                        ending-sequences), therefore the user must explicitly state a particular number
-                        of repetitions for an export.</dd>
-                </dl>
-                <p>The element <code>exportformats:exportformat</code>contains as a child element the XSLT
-                    transformation, which is an element of type
-                    <code>xsl:stylesheet</code>, with attributes as in the examples.</p>
-                <p>The task of the transformaton is to transform a Girr XML DOM tree in the <a
-                        href="Girr.html#Fat+Format">"fat" format</a>, with
-                    <code>remotes</code> as
-                    root element, into the desired text format. It may be advisable to use
-                    the already present formats as guide.</p>
-                <p>
-                    For testing and developing new export formats in this for, the <code>main</code> routine of
-                    the class <code>org.harctoolbox.irscrutinizer.exporter.DynamicRemoteSetExportFormatMain</code>
-                    may be used. It can be used to transform a Girr file from the command line.
-                </p>
-
-                <p>After editing or adding export format files, they can be reloaded either by re-starting the
-                    program, or by selecting <code>Options</code> -> <code>Export formats database</code> -> <code>Reload</code>.</p>
-            </section>
-        </section>
-        <section>
-            <title>Properties</title>
-            <p>Under Windows, the persistent properties are stored in
-                <code><![CDATA[%LOCALAPPDATA%\IrScrutinizer\IrScrutinizer.properties.xml]]></code>
-                (typically <code>%HOME%\AppData\Local\IrScrutinizer\IrScrutinizer.properties.xml</code>).
-                Using other operating
-                systems, it is stored according to the <a href="https://specifications.freedesktop.org/basedir-spec/latest/index.html">FreeDesktop specification</a>.
-                Per default, this is <code>$HOME/.config/IrScrutinizer/properties.xml</code>. It is
-                not deleted by  un-install or by an update of the program.
-
-                If weird problems appear, for example after an update, try
-                deleting this file, from the GUI <code>File -> Set properties to default</code>.
-                There is also a command line option <code>--nuke-properties</code> that can be used to
-                conveniently delete the present property file, without remembering its exact path.
-            </p>
-        </section>
-        <section>
             <title>GUI Elements walk through</title>
             <section>
                 <title>The "Scrutinize signal" pane</title>
-                <p>This panel is devoted to the analysis of a <em>single <a href="Glossary.html#IrSignal">IR
+        <p>This panel is devoted to the analysis of a <em>single <a href="Glossary.html#IrSignal">IR
                             signal</a>
                     </em> or <a href="Glossary.html#IrSequence">IR sequence</a>. A (single)
                     signal is either read from hardware using the "Capture" button (requires that
-                    the capturing hardware has been set on the <code>Hardware</code> pane), imported
+                    the capturing hardware has been set up, see Section <a href='#The+"Hardware"+pane'>Hardware</a>, imported
                     from a file (using the context menu in the data window, or through <code>File ->
                         Import -> Import as single sequence</code>), or pasted from the clipboard. Also, some
-                    other panes can transfer data to this pane.
+                    other panes can transfer data to this pane.</p>
 
-                    The button <code>Capt. (cont.)</code> a program tread is started, that continuously captures signals
-                    from the hardware. Only the last signal is kept.
+                    <p>The button <code>Capt. (cont.)</code> a program tread is started, that continuously captures signals
+                    from the hardware. Only the last signal is kept.</p>
 
-                    For text
+                    <p>As shown, an IR signal
+                consists of an (sometimes empty) <a href="Glossary.html#StartSequence">start sequence</a> (red),
+                a (sometimes empty) <a href="Glossary.html#RepeatSequence">repeat sequences</a> (blue), and
+                sometimes an <a href="Glossary.html#EndingSequence">ending sequence</a> (green).</p>
+
+                    <p>For text
                     import, the signal can be in either Pronto Hex format or in raw format (indicated by
                     a leading "+"-sign).
                     The signal is printed in the
@@ -620,7 +531,7 @@
                     pressing the <code>Scrutinize</code> button. The signal may be sent to the sending
                     hardware by pressing the <code>Transmit</code> button.</p>
 
-                <p>Sometimes the "scrutinization" of a signal gives an unexpected result.
+                <p>Sometimes the "scrutinization" of a signal changes the numbers in an unexpected way.
                     If desired, the previous content of the data window is recalled by
                     <code>Actions -> Undo Scrutinizer data</code>.</p>
 
@@ -1074,7 +985,7 @@
                     number of different formats. Some (Girr and text) can contain both
                     the Pronto format and the "raw" format (timings in
                     microseconds, positive for pulses, negative for gaps), as well as other
-                    formats. These formats, together with Wave, Lirc, and Pronto Classic, are
+                    formats. These formats, together with Wave and Pronto Classic, are
                     built-in in the program. However, it is possible to define new
                     export formats by extending a configuration file, see <a
                         href="#Adding+new+export+formats">Adding new export formats</a>.</p>
@@ -1107,7 +1018,7 @@
                     <p>Some export formats have some more parameters, configured in sub panes.
                         These will be discussed in the context of the containing formats.</p>
 
-                    <p>The formats presently implemented will be described next, in alphabetical order.</p>
+                    <p>(Most of) the formats presently implemented will be described next, in alphabetical order.</p>
 
                     <section>
                         <title>AnyMote</title>
@@ -1139,7 +1050,13 @@
 
                     <section>
                         <title>Arduino/IRremote</title>
-                        <p>Like the preceding, but supports the IRremote library instead.</p>
+                        <p>Like the preceding, but supports the IRremote library instead. (Currently, needs update to the current IRremote library.)</p>
+                    </section>
+
+                    <section>
+                        <title>BracketedRaw</title>
+                        <p>This export format generates an text file of the command(s) in the
+                            <a href="http://www.harctoolbox.org/IrpTransmogrifier.html#BracketedRawFormat">bracketed raw text format</a>.</p>
                     </section>
 
                     <section>
@@ -1152,7 +1069,7 @@
                         <title>Girr</title>
                         <p>The program's native format, based on XML. Very flexible and
                             extensible. Can contain information like the raw format, CCF format, UEI
-                            learned format, and the Global Caché sendir format. <a href="Girr.html">Documentation</a>.
+                            learned format, and the Global Caché sendir format. <a href="Girr.html">Official documentation site</a>.
                             There are some extra parameters that can be configured in subpanes, described next:</p>
                         <section>
                             <title>The Girr sub-pane</title>
@@ -1168,10 +1085,15 @@
                     </section>
 
                     <section>
+                        <title>HTML></title>
+                        <p>The purpose with the HTML export is to generate a browse-able page, not something for other IR-programs to feed upon.</p>
+                    </section>
+
+                    <section>
                         <title>ICT</title>
                         <p>The ICT format, introduced by Kevin Timmerman's <a href="Glossary.html#IrScope">IrScope</a>,
                             contains the timing pattern, the modulation frequency, and optionally a
-                            name (<code>note</code>) of one or many IR signals.</p>
+                            name (<code>note</code>) of one or many IR signals. Can be imported by IrScope and RemoteMaster.</p>
                     </section>
 
                     <section>
@@ -1244,6 +1166,13 @@
                     </section>
 
                     <section>
+                        <title>Pronto Hex Oneshot</title>
+                        <p>This export format takes a single signal, makes a sequence of it consisting of the intro sequence,
+                            an arbitrary number of copies of the repeat sequence, and the (in general empty) ending sequence.
+                            This is packed into a Pronto Hex format, having the said sequence as its intro, and empty repeat.</p>
+                    </section>
+
+                    <section>
                         <title>Spreadsheet</title>
                         <p>Simple <a href="Glossary.html">tab separated value</a> export format for
                             importing in a spreadsheet program. This format is mainly meant to
@@ -1284,7 +1213,7 @@
                 <p>A opposed to versions earlier than 2.4.0, there is exactly one <em>selected device</em>,
                     corresponding to the the selected sub-pane of the <code>Hardware</code> pane.
                     This device is, if capable, used for both sending and capturing.
-                    The device may be opened or not. An opened device may be selected or not. There may be more than opened device.
+                    The selected device may be opened or not. An opened device may be selected or not. There may be more than opened device.
                     The hardware can also be selected from the tool bar, Options -&gt;
                     Capturing hardware.</p>
 
@@ -1299,9 +1228,10 @@
 
                 <section>
                     <title>Capturing parameters</title>
-                    <p>Capturing an IrSequence is governed by the parameters ...,
+                    <p>Capturing an IrSequence is governed by the parameters <code>beginTimeout</code>, <code>captureMaxSize</code>, <code>endingTimeout</code>,
                         which can be accessed in the <code>Options -> Timeouts</code> submenu.
-                        They all use the unit milli seconds. Unfortunately, not all hardware respect these parameters.
+                        <code>beginTimeout</code> and <code>endingTimeout</code> bothe use the unit milli seconds.
+                        Unfortunately, not all hardware respect these parameters.
                     </p>
                     <dl>
                         <dt>beginTimeout</dt>
@@ -1399,6 +1329,7 @@ to do otherwise), pressing the <code>Reload</code> button will update the Lirc s
                         within the realm of medium quality sound equipment, for example using mobile
                         devices.
                     </p>
+                    <p>It can only send, not receive/capture.</p>
                     <p>IrScrutinizer can generate these audio signals as wave files, which can be
                         exported from the export pane, or sent to the local computers sound card. There
                         are some settings available: Sample frequency (44100, 48000, 96000, 192000Hz),
@@ -1502,13 +1433,16 @@ module is then accessed using the UDP text mode.</p>
                   <p>Using this pane, the IrWidget can be used to capture IR signals.</p>
                   <p>After connecting the IrWidget to a USB  port, select the the actual (virtual) serial port in
                       the combo box, pressing <code>Refresh</code> if necessary. <code>Open</code> the port
-                      thereafter.</p>
+                      thereafter.
+                      If using the original Kevin Timmerman widget, for example built and sold by Tommy Tylor, the option <code>lower DTR abd RTS on opening</code>
+                  must be selected.</p>
               </section>
             </section>
 
             <section>
                 <title>Key bindings and accelerators</title>
-                <p>The GUI contains a number of key bindings and accelerators. These can be in menus and in the text of GUI elements.</p>
+                <p>The GUI contains a number of key bindings and accelerators. These can be found in menus and in the text of GUI elements.
+                A more substantial description is planned, but not yet written.</p>
             </section>
         </section>
         <section>
@@ -1530,7 +1464,8 @@ module is then accessed using the UDP text mode.</p>
                     href="http://www.gnu.org/prep/standards/html_node/Command_002dLine-Interfaces.html#Command_002dLine-Interfaces">GNU
                     coding standards for command line interfaces</a>. Use
                 the <code>--help</code>-command to see the complete list of command line parameters. The <code>-v/--verbose</code>
-                option set the verbose flag, causing commands like sending to IR
+                option set the verbose flag (which can also be accessed under the GUI as <code>Options -> verbose</code>,
+                causing commands like sending to IR
                 hardware printing some messages in the console.</p>
 
             <p>The option <code>--nuke-properties</code> makes the program delete the property file, and exit immediately.</p>
@@ -1545,7 +1480,93 @@ module is then accessed using the UDP text mode.</p>
 
             <p>The MacOS App does not support calling IrpTransmogrifier; install the generic binary version if needed.</p>
 
-            <p>The program delivers well defined and sensible exit codes.</p>
+            <p>The program delivers well defined and sensible exit codes, listed
+                <a href="https://github.com/bengtmartensson/IrpTransmogrifier/blob/master/src/main/java/org/harctoolbox/irp/IrpUtils.java">in the code</a>.</p>
+        </section>
+
+        <section>
+            <title>Adding new export formats</title>
+            <p>Only a few of the many export formats are  defined in the main Java code (<code>Girr</code>, <code>Text</code>, <code>Pronto Classic</code> and <code>Wave</code>),
+                the rest are defined in files in the directory  <code>exportformats.d</code>,
+                located in the root of the install directory. By adding a file here,
+                the user can simply add his/her own export formats according to own
+                needs. An export format consists of a number of properties, together
+                with a small "program" written in the transformation language <a href="Glossary.html#XSLT">XSLT</a>,
+                for transforming a Girr-XML-tree to the desired text format.</p>
+
+            <p>The rest of this section documents the format of these files, and is
+                supposed to be read only when needed. Fundamental knowledge of XML and
+                XSLT transformations are assumed.</p>
+
+            <section>
+                <title>Format of the files in <code>exportformats.d</code></title>
+                <p>The file is an XML file supposed to be a valid instance of the XML Schema
+                    <a href="http://www.harctoolbox.org/schemas/exportformats.xsd">
+                        <code>exportformats.xsd</code>
+                    </a>, although it is read without validation.
+                    The semantics is believed to be essentially self explaining, or clear from the
+                    examples already in there. An export format is
+                    packed in an element of type <code>exportformats:exportformat</code>. It contains
+                    the following attributes:</p>
+                <dl>
+                    <dt>
+                        <code>name</code>
+                    </dt>
+                    <dd>Text string used for identifying the format.</dd>
+                    <dt>
+                        <code>extension</code>
+                    </dt>
+                    <dd>Text string denoting preferred file extension (not including period)
+                        of generated files.</dd>
+                    <dt>
+                        <code>multiSignal</code>
+                    </dt>
+                    <dd>Boolean (value: <code>true</code> and <code>false</code>). Denotes if
+                        several signals can be represented in one export, or only one.</dd>
+                    <dt>
+                        <code>simpleSequence</code>
+                    </dt>
+                    <dd>Boolean, (values <code>true</code> of
+                        <code>false</code>). If true, the export really describes an <a
+                            href="Glossary.html#IrSequence">sequence</a> rather than am <a
+                            href="Glossary.html#IrSignal">signal</a> (with intro-, repeat- , and
+                        ending-sequences), therefore the user must explicitly state a particular number
+                        of repetitions for an export.</dd>
+                </dl>
+                <p>The element <code>exportformats:exportformat</code>contains as a child element the XSLT
+                    transformation, which is an element of type
+                    <code>xsl:stylesheet</code>, with attributes as in the examples.</p>
+                <p>The task of the transformaton is to transform a Girr XML DOM tree in the <a
+                        href="Girr.html#Fat+Format">"fat" format</a>, with
+                    <code>remotes</code> as
+                    root element, into the desired text format. It may be advisable to use
+                    the already present formats as guide.</p>
+                <p>
+                    For testing and developing new export formats in this for, the <code>main</code> routine of
+                    the class <code>org.harctoolbox.irscrutinizer.exporter.DynamicRemoteSetExportFormatMain</code>
+                    may be used. It can be used to transform a Girr file from the command line.
+                </p>
+
+                <p>After editing or adding export format files, they can be reloaded either by re-starting the
+                    program, or by selecting <code>Options</code> -> <code>Export formats database</code> -> <code>Reload</code>.</p>
+            </section>
+        </section>
+
+        <section>
+            <title>Properties</title>
+            <p>Under Windows, the persistent properties are stored in
+                <code><![CDATA[%LOCALAPPDATA%\IrScrutinizer\IrScrutinizer.properties.xml]]></code>
+                (typically <code>%HOME%\AppData\Local\IrScrutinizer\IrScrutinizer.properties.xml</code>).
+                Using other operating
+                systems, it is stored according to the <a href="https://specifications.freedesktop.org/basedir-spec/latest/index.html">FreeDesktop specification</a>.
+                Per default, this is <code>$HOME/.config/IrScrutinizer/properties.xml</code>. It is
+                not deleted by  un-install or by an update of the program.
+
+                If weird problems appear, for example after an update, try
+                deleting this file, from the GUI <code>File -> Set properties to default</code>.
+                There is also a command line option <code>--nuke-properties</code> that can be used to
+                conveniently delete the present property file, without remembering its exact path.
+            </p>
         </section>
 
         <section>
@@ -1585,8 +1606,9 @@ module is then accessed using the UDP text mode.</p>
 
             <section>
                 <title>Why have RemoteMaster Import and Export been removed?</title>
-                <p>The <a href="Glossary.html#RemoteMaster">RemoteMaster</a> export and import found in earlier versions (up to 2.3.0) of this program has been removed.
-                    The reason is that the current version of that program contains elaborate facilities for the import and export of Girr files.
+                <p>The <a href="Glossary.html#RemoteMaster">RemoteMaster</a> export and import found in earlier versions (up to 2.3.0) of this program have been removed.
+                    The reason is that the current version of that program contains elaborate facilities for the import and export of Girr files
+                    &mdash; the native format for IrScrutinizer.
                     As opposed to the previous import and export of the current program,
                     they contain elaborate rules for transforming between protocols and the <a href="Glossary.html#Executor">JP1 executors</a>.</p>
             </section>
@@ -1730,7 +1752,9 @@ module is then accessed using the UDP text mode.</p>
                     created, and then the serial hardware do not
                     work.</title>
                 <p>
-                    When starting IrScrutinizer, or by pressing the <code>Refresh</code> button,
+                    <em>This answer needs updating.</em>
+                </p>
+            <p>When starting IrScrutinizer, or by pressing the <code>Refresh</code> button,
                     error messages occur like</p>
                 <p>
                     <code>
@@ -1794,7 +1818,8 @@ module is then accessed using the UDP text mode.</p>
         <section id="building-from-sources">
             <title>Appendix. Building from sources</title>
             <p>"IrScrutinizer" is one subproject within <a href="http://harctoolbox.org">harctoolbox.org</a>.
-                It depends on several other subprojects within harctoolbox. The repository <code>IrScrutinizer</code> consists
+            It depends on several other subprojects within harctoolbox. The repository <a href="https://github.com/bengtmartensson/IrScrutinizer">IrScrutinizer</a>
+        consists
                 of this subproject.</p>
 
             <p>The released versions are found on the <a href="https://github.com/bengtmartensson/IrScrutinizer/releases">download page</a>.
@@ -1803,7 +1828,7 @@ module is then accessed using the UDP text mode.</p>
 
             <p>I go to great lengths ensuring that the program runs equally well on all supported platforms.
                 I do not care too much that all aspects of the build runs equally well on all platforms.
-                I build with Linux (Fedora), the continuous integration build runs on Travis (Ubuntu).
+                I build with Linux (Fedora), the continuous integration build runs on GitHub Actions (deploying Ubuntu).
                 Other platforms are treated step-motherly.</p>
             <section>
                 <title>Dependencies</title>
@@ -1825,14 +1850,15 @@ module is then accessed using the UDP text mode.</p>
 
                 <section>
                     <title>IrpTransmogrifier, Girr, HarcHardware, Jirc</title>
-                    <p>These are all Java packages that are required to build IrScrutinizer. HarcHardware requires RXTX.
+                    <p>These are all Java packages that are required to build IrScrutinizer. HarcHardware requires
+                        <a href="https://github.com/NeuronRobotics/nrjavaserial">nrjavaserial</a>.
                         They can be downloaded and built by the script <code>common/scripts/build-harctoolbox-project.sh</code>,
                         using an argument of
                         <code>IrpTransmogrifier</code>,
                         <code>Girr</code>,
                         <code>HarcHardwar</code>, or
                         <code>Jirc</code>.
-                        See the file <code>.travis.yml</code> for the complete commands.
+                        See the file <code>.github/workflows/maven.yml</code> for the complete commands.
                     </p>
                 </section>
 
@@ -1854,12 +1880,12 @@ module is then accessed using the UDP text mode.</p>
                 <section>
                     <title>nrjavaserial</title>
                     <p>This is a fork of the legacy <a href="http://rxtx.qbang.org/wiki/index.php/Main_Page">RXTX</a> library for serial communication with Java.
-                    Version 5.2.1 is used here. </p>
+                    Version 5.2.1 is currently used. </p>
                 </section>
 
                 <section>
                     <title>JCommander, minimal-json</title>
-                    <p>Normally, these components are downloaded and installed automatically by maven.</p>
+                    <p>Normally, these components are downloaded and installed automatically by Maven.</p>
                 </section>
 
                 <section>
@@ -1877,7 +1903,7 @@ module is then accessed using the UDP text mode.</p>
             </section>
             <section>
                 <title>Building</title>
-                <p>As of version 1.1.2, the <a href="http://maven.apache.org/index.html">Maven</a> "software
+                <p>The <a href="http://maven.apache.org/index.html">Maven</a> "software
                     project management and comprehension tool" is used as building system.
                     Modern IDEs like Netbeans and Eclips integrate Maven, so build etc can be initiated from the IDE.
                     Of course, the shell command <code>mvn install</code> can also be used. It creates some artifacts which can

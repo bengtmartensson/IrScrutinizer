@@ -3,7 +3,8 @@
 # Building from sources
 
 "IrScrutinizer" is one subproject within [harctoolbox.org](http://harctoolbox.org).
-                It depends on several other subprojects within harctoolbox. The repository `IrScrutinizer` consists
+            It depends on several other subprojects within harctoolbox. The repository [IrScrutinizer](https://github.com/bengtmartensson/IrScrutinizer)
+        consists
                 of this subproject.
 
 The released versions are found on the [download page](https://github.com/bengtmartensson/IrScrutinizer/releases).
@@ -12,7 +13,7 @@ The released versions are found on the [download page](https://github.com/bengtm
 
 I go to great lengths ensuring that the program runs equally well on all supported platforms.
                 I do not care too much that all aspects of the build runs equally well on all platforms.
-                I build with Linux (Fedora), the continuous integration build runs on Travis (Ubuntu).
+                I build with Linux (Fedora), the continuous integration build runs on GitHub Actions (deploying Ubuntu).
                 Other platforms are treated step-motherly.
 
 ## Dependencies
@@ -34,14 +35,15 @@ Of course, it is also possible to manually download or clone these packages
                     then build and install them locally by `mvn install`.
 
 ### IrpTransmogrifier, Girr, HarcHardware, Jirc
-These are all Java packages that are required to build IrScrutinizer. HarcHardware requires RXTX.
+These are all Java packages that are required to build IrScrutinizer. HarcHardware requires
+                        [nrjavaserial](https://github.com/NeuronRobotics/nrjavaserial).
                         They can be downloaded and built by the script `common/scripts/build-harctoolbox-project.sh`,
                         using an argument of
                         `IrpTransmogrifier`,
                         `Girr`,
                         `HarcHardwar`, or
                         `Jirc`.
-                        See the file `.travis.yml` for the complete commands.
+                        See the file `.github/workflows/maven.yml` for the complete commands.
                     
 
 ### DevSlashLirc
@@ -60,10 +62,10 @@ The package can be downloaded, and the Java part built, by the script
 
 ### nrjavaserial
 This is a fork of the legacy [RXTX](http://rxtx.qbang.org/wiki/index.php/Main_Page) library for serial communication with Java.
-                    Version 5.2.1 is used here. 
+                    Version 5.2.1 is currently used. 
 
 ### JCommander, minimal-json
-Normally, these components are downloaded and installed automatically by maven.
+Normally, these components are downloaded and installed automatically by Maven.
 
 ### Tonto
 [Tonto](Glossary.html#Tonto) can be downloaded and installed by the script `common/scripts/build-tonto.sh`.
@@ -76,7 +78,7 @@ Normally, these components are downloaded and installed automatically by maven.
                         the script will not try to build and install the shared library.
 
 ## Building
-As of version 1.1.2, the [Maven](http://maven.apache.org/index.html) "software
+The [Maven](http://maven.apache.org/index.html) "software
                     project management and comprehension tool" is used as building system.
                     Modern IDEs like Netbeans and Eclips integrate Maven, so build etc can be initiated from the IDE.
                     Of course, the shell command `mvn install` can also be used. It creates some artifacts which can
