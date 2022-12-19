@@ -30,8 +30,8 @@
         <IrpTransmogrifier.version>1.2.11</IrpTransmogrifier.version>
         <Girr.version>2.2.11</Girr.version>
         <Jirc.version>${Girr.version}</Jirc.version>
-        <RemoteLocator.version>0.2.0-SNAPSHOT</RemoteLocator.version>
-        <HarcHardware.version>2.4.0-SNAPSHOT</HarcHardware.version>
+        <RemoteLocator.version>0.2.0</RemoteLocator.version>
+        <HarcHardware.version>2.4.0</HarcHardware.version>
     </properties>
 
     <profiles>
