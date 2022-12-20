@@ -6,7 +6,8 @@ https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
 Version 2.4.0, released 2022-12-20.
 
-* Re-installed the irptransmogrifire command on Windows/setup.exe. #468.
+* Documentation improvements. #269.
+* Re-installed the irptransmogrifier command on Windows/setup.exe. #468.
 * Fix HardwareManager.close() misbehavior when called during shutdown. #463.
 * IrWidget: Add option for not dropping DTR and RTS when opening the device. #462.
 * Uses IrpTransmogrifier 1.2.11, see IrpTransmogrifier.releasenotes.txt.
@@ -19,7 +20,7 @@ Version 2.4.0, released 2022-12-20.
 * New command line option --loglevel, cf. IrpTransmogrifier.
 * Exportformats: better handling of export format parameters. Implemented export formats documentation. #323.
 * Some layout tweaks. #366, #401.
-* Remove Lirc as sending device (partially replaced by NamedCommandSender). Resolves #399.
+* Remove Lirc as sending device (partially replaced by NamedCommandSender). #399.
 * Remove IrTrans support (except for the NamedCommandSender).
 * Remove explicit IrToy sending/capturing support (in Linux, still indirectly supported through DevSlashLirc).
 * AppImage, Mac & Windows w/ embedded Java https bug fixed. #448.
