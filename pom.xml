@@ -7,7 +7,7 @@
     <groupId>org.harctoolbox</groupId>
     <artifactId>IrScrutinizer</artifactId>
     <packaging>jar</packaging>
-    <version>2.4.0</version>
+    <version>2.4.1-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <licenses>
         <license>
@@ -28,9 +28,9 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <IrpTransmogrifier.version>1.2.11</IrpTransmogrifier.version>
-        <Girr.version>2.2.11</Girr.version>
+        <Girr.version>2.2.12-SNAPSHOT</Girr.version>
         <Jirc.version>${Girr.version}</Jirc.version>
-        <RemoteLocator.version>0.2.0</RemoteLocator.version>
+        <RemoteLocator.version>0.2.1-SNAPSHOT</RemoteLocator.version>
         <HarcHardware.version>2.4.0</HarcHardware.version>
     </properties>
 
