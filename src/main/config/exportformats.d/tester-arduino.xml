@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2022 Bengt Martensson
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<exportformats:exportformat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                            xmlns:exportformats="http://www.harctoolbox.org/exportformats"
+                            xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
+                            name="tester-arduino" extension="sh" multiSignal="true" simpleSequence="false" executable="true">
+    <exportformats:documentation>
+        <div>This export format demonstrates how to turn a set if IR signals into a shell script.</div>
+    </exportformats:documentation>
+    <xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr"
+                    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+        <xsl:output method="text" />
+
+        <xsl:template match="/">
+            <xsl:text>#!/bin/sh
+
+JAVA=java
+IRSCRUTINIZERHOME=/usr/local/share/irscrutinizer
+SEND_CMD="${JAVA} -cp ${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar org.harctoolbox.harchardware.Main --apphome ${IRSCRUTINIZERHOME} --arduino transmit"
+</xsl:text>
+            <xsl:apply-templates select="//girr:command"/>
+        </xsl:template>
+
+        <xsl:template match="girr:command">
+            <xsl:text>
+
+# Sending remote "</xsl:text>
+            <xsl:value-of select="../../@name"/>
+            <xsl:text>", command "</xsl:text>
+            <xsl:value-of select="@name"/>
+            <xsl:text>"
+${SEND_CMD} </xsl:text>
+            <xsl:value-of select="girr:ccf/text()"/>
+        </xsl:template>
+
+        <xsl:template match="girr:ccf">
+            <xsl:value-of select="text()"/>
+        </xsl:template>
+    </xsl:stylesheet>
+</exportformats:exportformat>
