@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Installs IrScrutinizer on the local machine.
 
