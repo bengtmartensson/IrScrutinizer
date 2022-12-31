@@ -24,6 +24,8 @@ import org.harctoolbox.analyze.Cleaner;
 import org.harctoolbox.analyze.CleanerParser;
 import org.harctoolbox.analyze.RepeatFinder;
 import org.harctoolbox.analyze.RepeatFinderParser;
+import org.harctoolbox.harchardware.ir.BroadlinkBase64Parser;
+import org.harctoolbox.harchardware.ir.BroadlinkHexParser;
 import org.harctoolbox.harchardware.ir.GlobalCacheParser;
 import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrSignal;
@@ -66,6 +68,8 @@ public class InterpretString {
         List<IrSignalParser> parsers = MultiParser.ircoreParsersList(line);
         parsers.add(0, new GlobalCacheParser(line));
         parsers.add(1, new ShortProntoParser(line));
+        parsers.add(2, new BroadlinkBase64Parser(line));
+        parsers.add(3, new BroadlinkHexParser(line));
 
         // If it goes wrong with InvalidArgumentException, try again without repeat finder and cleaner.
         try {
