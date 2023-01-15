@@ -5336,15 +5336,8 @@
                                           <Component id="exportHelpButton" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Group type="102" alignment="0" attributes="0">
-                                                  <Component id="exportNumberRepeatsLabel" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace max="-2" attributes="0"/>
-                                                  <Component id="exportRepeatComboBox" min="-2" max="-2" attributes="0"/>
-                                              </Group>
-                                              <Component id="subformatsPanel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <EmptySpace pref="52" max="32767" attributes="0"/>
+                                          <Component id="subformatsPanel" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace pref="133" max="32767" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Component id="exportFormatDocumentationButton" min="-2" pref="240" max="-2" attributes="0"/>
                                               <Component id="exportFormatParametersPane" min="-2" max="-2" attributes="0"/>
@@ -5369,10 +5362,17 @@
                                       </Group>
                                       <Component id="exportFormatComboBox" min="-2" pref="246" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="107" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                          <Component id="exportNumberRepeatsLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="exportRepeatComboBox" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -5394,17 +5394,15 @@
                           </Group>
                           <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="subformatsPanel" min="-2" pref="88" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="exportNumberRepeatsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="exportRepeatComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <Component id="exportFormatParametersPane" alignment="0" min="-2" pref="127" max="-2" attributes="0"/>
+                              <Component id="exportFormatParametersPane" min="-2" pref="127" max="-2" attributes="0"/>
+                              <Component id="subformatsPanel" min="-2" pref="123" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace type="separate" pref="70" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="exportRepeatComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="exportNumberRepeatsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace pref="37" max="32767" attributes="0"/>
                           <Component id="automaticExportFilenamesCheckBox" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="autoOpenExportsCheckBox" min="-2" max="-2" attributes="0"/>
@@ -5922,7 +5920,7 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
                     <Property name="columns" type="int" value="2"/>
-                    <Property name="rows" type="int" value="3"/>
+                    <Property name="rows" type="int" value="4"/>
                   </Layout>
                   <SubComponents>
                     <Component class="javax.swing.JCheckBox" name="exportGenerateParametersCheckBox">
@@ -5936,15 +5934,15 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportGenerateParametersCheckBoxActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JCheckBox" name="exportGenerateSendIrCheckBox">
+                    <Component class="javax.swing.JCheckBox" name="exportGenerateShortCcfCheckBox">
                       <Properties>
                         <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                          <Connection code="properties.getExportGenerateSendIr()" type="code"/>
+                          <Connection code="properties.getExportGenerateShortCcf()" type="code"/>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="sendir"/>
+                        <Property name="text" type="java.lang.String" value="short Pronto Hex"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportGenerateSendIrCheckBoxActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportGenerateShortCcfCheckBoxActionPerformed"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="exportGenerateRawCheckBox">
@@ -5958,15 +5956,15 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportGenerateRawCheckBoxActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JCheckBox" name="exportGenerateShortCcfCheckBox">
+                    <Component class="javax.swing.JCheckBox" name="exportGenerateBroadlinkHexCheckBox">
                       <Properties>
                         <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                          <Connection code="properties.getExportGenerateShortCcf()" type="code"/>
+                          <Connection code="properties.getExportGenerateBroadlinkHex()" type="code"/>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="short Pronto Hex"/>
+                        <Property name="text" type="java.lang.String" value="Broadlink Hex"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportGenerateShortCcfCheckBoxActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportGenerateBroadlinkHexCheckBoxActionPerformed"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="exportGenerateCcfCheckBox">
@@ -5978,6 +5976,28 @@
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportGenerateCcfCheckBoxActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="exportGenerateBroadlinkBase64CheckBox">
+                      <Properties>
+                        <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                          <Connection code="properties.getExportGenerateBroadlinkBase64()" type="code"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Broadlink Base64"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportGenerateBroadlinkBase64CheckBoxActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="exportGenerateSendIrCheckBox">
+                      <Properties>
+                        <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                          <Connection code="properties.getExportGenerateSendIr()" type="code"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="sendir"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportGenerateSendIrCheckBoxActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>

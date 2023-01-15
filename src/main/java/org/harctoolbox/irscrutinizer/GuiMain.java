@@ -999,11 +999,15 @@ public final class GuiMain extends javax.swing.JFrame {
 //    }
 
     private Command.CommandTextFormat[] setupExtraTextFormats() {
-        ArrayList<Command.CommandTextFormat> formats = new ArrayList<>(8);
+        List<Command.CommandTextFormat> formats = new ArrayList<>(8);
         if (properties.getExportGenerateShortCcf())
             formats.add(new ShortCcfFormatter());
         if (properties.getExportGenerateSendIr())
             formats.add(new SendIrFormatter());
+        if (properties.getExportGenerateBroadlinkHex())
+            formats.add(new BroadlinkHexFormatter());
+        if (properties.getExportGenerateBroadlinkBase64())
+            formats.add(new BroadlinkBase64Formatter());
         return formats.toArray(new Command.CommandTextFormat[formats.size()]);
     }
 
@@ -1046,15 +1050,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private Exporter newExporter(String formatName) {
-        Exporter exporter = exportFormatManager.get(formatName).newExporter();
-        boolean supportsEmbedded = RemoteSetExporter.class.isInstance(exporter) && ((RemoteSetExporter) exporter).supportsEmbeddedFormats();
-        if (supportsEmbedded && !properties.getExportGenerateParameters()
-                && !properties.getExportGenerateCcf() && !properties.getExportGenerateRaw()) {
-            boolean answer = guiUtils.confirm("All of \"Parameters\", \"Raw\", and \"Pronto Hex\" deselected in the export. Continue?");
-            if (!answer)
-                return null;
-        }
-        return exporter;
+        return exportFormatManager.get(formatName).newExporter();
     }
 
     private IrSignal getCapturedIrSignal() throws InvalidArgumentException {
@@ -2457,10 +2453,12 @@ public final class GuiMain extends javax.swing.JFrame {
         exportAudioParametersBean = new org.harctoolbox.guicomponents.AudioParametersBean(properties);
         subformatsPanel = new javax.swing.JPanel();
         exportGenerateParametersCheckBox = new javax.swing.JCheckBox();
-        exportGenerateSendIrCheckBox = new javax.swing.JCheckBox();
-        exportGenerateRawCheckBox = new javax.swing.JCheckBox();
         exportGenerateShortCcfCheckBox = new javax.swing.JCheckBox();
+        exportGenerateRawCheckBox = new javax.swing.JCheckBox();
+        exportGenerateBroadlinkHexCheckBox = new javax.swing.JCheckBox();
         exportGenerateCcfCheckBox = new javax.swing.JCheckBox();
+        exportGenerateBroadlinkBase64CheckBox = new javax.swing.JCheckBox();
+        exportGenerateSendIrCheckBox = new javax.swing.JCheckBox();
         sendingPanel = new javax.swing.JPanel();
         sendingHardwareTabbedPane = new javax.swing.JTabbedPane();
         globalCachePanel = new javax.swing.JPanel();
@@ -5440,7 +5438,7 @@ public final class GuiMain extends javax.swing.JFrame {
         exportFormatParametersPane.add(waveExportOptionsPanel);
 
         subformatsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED), "Subformats"));
-        subformatsPanel.setLayout(new java.awt.GridLayout(3, 2));
+        subformatsPanel.setLayout(new java.awt.GridLayout(4, 2));
 
         exportGenerateParametersCheckBox.setSelected(properties.getExportGenerateParameters());
         exportGenerateParametersCheckBox.setText("Parameters");
@@ -5451,14 +5449,14 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         subformatsPanel.add(exportGenerateParametersCheckBox);
 
-        exportGenerateSendIrCheckBox.setSelected(properties.getExportGenerateSendIr());
-        exportGenerateSendIrCheckBox.setText("sendir");
-        exportGenerateSendIrCheckBox.addActionListener(new java.awt.event.ActionListener() {
+        exportGenerateShortCcfCheckBox.setSelected(properties.getExportGenerateShortCcf());
+        exportGenerateShortCcfCheckBox.setText("short Pronto Hex");
+        exportGenerateShortCcfCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportGenerateSendIrCheckBoxActionPerformed(evt);
+                exportGenerateShortCcfCheckBoxActionPerformed(evt);
             }
         });
-        subformatsPanel.add(exportGenerateSendIrCheckBox);
+        subformatsPanel.add(exportGenerateShortCcfCheckBox);
 
         exportGenerateRawCheckBox.setSelected(properties.getExportGenerateRaw());
         exportGenerateRawCheckBox.setText("Raw");
@@ -5469,14 +5467,14 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         subformatsPanel.add(exportGenerateRawCheckBox);
 
-        exportGenerateShortCcfCheckBox.setSelected(properties.getExportGenerateShortCcf());
-        exportGenerateShortCcfCheckBox.setText("short Pronto Hex");
-        exportGenerateShortCcfCheckBox.addActionListener(new java.awt.event.ActionListener() {
+        exportGenerateBroadlinkHexCheckBox.setSelected(properties.getExportGenerateBroadlinkHex());
+        exportGenerateBroadlinkHexCheckBox.setText("Broadlink Hex");
+        exportGenerateBroadlinkHexCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportGenerateShortCcfCheckBoxActionPerformed(evt);
+                exportGenerateBroadlinkHexCheckBoxActionPerformed(evt);
             }
         });
-        subformatsPanel.add(exportGenerateShortCcfCheckBox);
+        subformatsPanel.add(exportGenerateBroadlinkHexCheckBox);
 
         exportGenerateCcfCheckBox.setSelected(properties.getExportGenerateCcf());
         exportGenerateCcfCheckBox.setText("Pronto Hex");
@@ -5486,6 +5484,24 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         subformatsPanel.add(exportGenerateCcfCheckBox);
+
+        exportGenerateBroadlinkBase64CheckBox.setSelected(properties.getExportGenerateBroadlinkBase64());
+        exportGenerateBroadlinkBase64CheckBox.setText("Broadlink Base64");
+        exportGenerateBroadlinkBase64CheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportGenerateBroadlinkBase64CheckBoxActionPerformed(evt);
+            }
+        });
+        subformatsPanel.add(exportGenerateBroadlinkBase64CheckBox);
+
+        exportGenerateSendIrCheckBox.setSelected(properties.getExportGenerateSendIr());
+        exportGenerateSendIrCheckBox.setText("sendir");
+        exportGenerateSendIrCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportGenerateSendIrCheckBoxActionPerformed(evt);
+            }
+        });
+        subformatsPanel.add(exportGenerateSendIrCheckBox);
 
         javax.swing.GroupLayout exportPanelLayout = new javax.swing.GroupLayout(exportPanel);
         exportPanel.setLayout(exportPanelLayout);
@@ -5515,13 +5531,8 @@ public final class GuiMain extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(exportHelpButton))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, exportPanelLayout.createSequentialGroup()
-                                .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(exportPanelLayout.createSequentialGroup()
-                                        .addComponent(exportNumberRepeatsLabel)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(exportRepeatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(subformatsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
+                                .addComponent(subformatsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 133, Short.MAX_VALUE)
                                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(exportFormatDocumentationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(exportFormatParametersPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -5539,8 +5550,14 @@ public final class GuiMain extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(exportDirOpenButton))
                             .addComponent(exportFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 107, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(exportPanelLayout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addComponent(exportNumberRepeatsLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(exportRepeatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         exportPanelLayout.setVerticalGroup(
             exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -5558,14 +5575,13 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(exportFormatDocumentationButton))
                 .addGap(16, 16, 16)
                 .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(exportPanelLayout.createSequentialGroup()
-                        .addComponent(subformatsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(exportNumberRepeatsLabel)
-                            .addComponent(exportRepeatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(exportFormatParametersPane, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 70, Short.MAX_VALUE)
+                    .addComponent(exportFormatParametersPane, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(subformatsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(7, 7, 7)
+                .addGroup(exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(exportRepeatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportNumberRepeatsLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addComponent(automaticExportFilenamesCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(autoOpenExportsCheckBox)
@@ -8168,7 +8184,9 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void exportGenerateSendIrCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportGenerateSendIrCheckBoxActionPerformed
         properties.setExportGenerateSendIr(exportGenerateSendIrCheckBox.isSelected());
-        exportRepeatComboBox.setEnabled(exportGenerateSendIrCheckBox.isSelected());
+        exportRepeatComboBox.setEnabled(exportGenerateSendIrCheckBox.isSelected()
+                || exportGenerateBroadlinkHexCheckBox.isSelected()
+                || exportGenerateBroadlinkBase64CheckBox.isSelected());
     }//GEN-LAST:event_exportGenerateSendIrCheckBoxActionPerformed
 
     private void exportFormatComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportFormatComboBoxActionPerformed
@@ -9358,6 +9376,20 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setPrintAlternativeDecodes(this.printAlternativeDecodesCheckBoxMenuItem.isSelected());
     }//GEN-LAST:event_printAlternativeDecodesCheckBoxMenuItemActionPerformed
 
+    private void exportGenerateBroadlinkHexCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportGenerateBroadlinkHexCheckBoxActionPerformed
+        properties.setExportGenerateBroadlinkHex(exportGenerateBroadlinkHexCheckBox.isSelected());
+        exportRepeatComboBox.setEnabled(exportGenerateSendIrCheckBox.isSelected()
+                || exportGenerateBroadlinkHexCheckBox.isSelected()
+                || exportGenerateBroadlinkBase64CheckBox.isSelected());
+    }//GEN-LAST:event_exportGenerateBroadlinkHexCheckBoxActionPerformed
+
+    private void exportGenerateBroadlinkBase64CheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportGenerateBroadlinkBase64CheckBoxActionPerformed
+         properties.setExportGenerateBroadlinkBase64(exportGenerateBroadlinkBase64CheckBox.isSelected());
+        exportRepeatComboBox.setEnabled(exportGenerateSendIrCheckBox.isSelected()
+                || exportGenerateBroadlinkHexCheckBox.isSelected()
+                || exportGenerateBroadlinkBase64CheckBox.isSelected());
+    }//GEN-LAST:event_exportGenerateBroadlinkBase64CheckBoxActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9469,6 +9501,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu exportFormatsMenu;
     private javax.swing.JMenuItem exportFormatsReloadMenuItem;
     private javax.swing.JMenuItem exportFormatsSelectMenuItem;
+    private javax.swing.JCheckBox exportGenerateBroadlinkBase64CheckBox;
+    private javax.swing.JCheckBox exportGenerateBroadlinkHexCheckBox;
     private javax.swing.JCheckBox exportGenerateCcfCheckBox;
     private javax.swing.JCheckBox exportGenerateParametersCheckBox;
     private javax.swing.JCheckBox exportGenerateRawCheckBox;

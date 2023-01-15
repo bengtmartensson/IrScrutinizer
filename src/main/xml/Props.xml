@@ -99,6 +99,8 @@ this program. If not, see http://www.gnu.org/licenses/.
     <!--property name="exportGenerateUei" type="boolean" default='"false"' doc='Generate UEI learned format in exports.'/-->
     <property name="exportGenerateParameters" type="boolean" default='"false"' doc='Generate parameters and protocol name when exporting.'/>
     <property name="exportGenerateSendIr" type="boolean" default='"false"' doc='Generate GlobalCache sendir format in exports.'/>
+    <property name="exportGenerateBroadlinkHex" type="boolean" default='"false"' doc='Generate Broadlink Hex format in exports.'/>
+    <property name="exportGenerateBroadlinkBase64" type="boolean" default='"false"' doc='Generate Broadlink Base64 format in exports.'/>
     <property name="exportNoRepeats" type="int" default='"1"' doc="Repeat count for export formats supporting it."/>
     <property name="exportInquireDeviceData" type='boolean' default='"true"' doc='If true, inquire for device type etc before exporting commands.'/>
     <property name="exportCharsetName" type="string" default='"WINDOWS-1252"' doc='Character set used for exports'/>
