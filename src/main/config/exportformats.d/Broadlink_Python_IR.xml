@@ -65,6 +65,8 @@ TOKEN_POS = 0
 INTRO = 1
 REPEAT = 2
 ENDING = 3
+LENGTH_LSB_POS = 2
+LENGTH_MSB_POS = 3
 
 commands = {
 ]]></xsl:text>
@@ -80,33 +82,37 @@ def get_command_data(command_name, count):
     buffer.append(count - 1 if repeat_only else 0)
     seq = cmd[REPEAT] if repeat_only else mk_sequence(cmd, count)
     length = len(seq) if cmd[TOKEN_POS] == IR_TOKEN else len(seq) + 2
-    buffer.append(length % 256)
-    buffer.append(length // 256)
-    i = 0
-    for d in seq:
-        if i < len(seq) - 1:
-            t = round(d / TICK)
-            if t > 255:
-                buffer.append(0)
-                buffer.append(t // 256)
-            buffer.append(t % 256)
-        else:
-            if cmd[TOKEN_POS] == IR_TOKEN:
-                t = IR_LEADOUT
-                buffer.append(0)
-                buffer.append(t // 256)
-                buffer.append(t % 256)
+    buffer.append(0) # overwritten later
+    buffer.append(0) # overwritten later
+    intro_length = len(buffer) # = 4
 
-            else:
-                t = RF_433_LEADOUT
-                buffer.append(0)
-                buffer.append(t // 256)
-                buffer.append(t % 256)
-                buffer.append(0)
-                buffer.append(0)
-                buffer.append(0)
-                buffer.append(0)
-        i = i + 1
+    for d in seq:
+        t = round(d / TICK)
+        if t > 255:
+            buffer.append(0)
+            buffer.append(t // 256)
+        buffer.append(t % 256)
+
+    length = len(buffer) - intro_length
+    buffer[LENGTH_LSB_POS] = length % 256
+    buffer[LENGTH_MSB_POS] = length // 256;
+
+    if cmd[TOKEN_POS] == IR_TOKEN:
+        t = IR_LEADOUT
+        buffer.append(0)
+        buffer.append(t // 256)
+        buffer.append(t % 256)
+    else:
+        # Untested
+        t = RF_433_LEADOUT if cmd[TOKEN_POS] == RF_433_TOKEN else RF_315_LEADOUT;
+        buffer.append(0)
+        buffer.append(t // 256)
+        buffer.append(t % 256)
+        buffer.append(0)
+        buffer.append(0)
+        buffer.append(0)
+        buffer.append(0)
+
     return buffer
 
 
@@ -145,7 +151,7 @@ if __name__ == "__main__":
     dev = broadlink.gendevice(type, (host, 80), mac)
     dev.auth()
     payload = get_command_data(args.command, args.count)
-    print(binascii.hexlify(payload))
+    #print(binascii.hexlify(payload))
     dev.send_data(payload)
 ]]></xsl:text>
     </xsl:template>
