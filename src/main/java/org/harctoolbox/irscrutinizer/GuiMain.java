@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import javax.comm.DriverGenUnix;
 import javax.swing.DefaultComboBoxModel;
@@ -1313,11 +1314,15 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void saveSelectedSignals(JTable table) throws GirrException, IOException, TransformerException, IrCoreException, IrpException {
-        saveCommands(tableUtils.commandTableSelected(table), mkTitle(table), newRemoteExporter());
+        RemoteSetExporter remoteExporter = newRemoteExporter();
+        if (remoteExporter != null)
+            saveCommands(tableUtils.commandTableSelected(table), mkTitle(table), remoteExporter);
     }
 
     private void saveAllSignals(JTable table) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
-        saveAllSignals(table, newRemoteExporter());
+        RemoteSetExporter remoteExporter = newRemoteExporter();
+        if (remoteExporter != null)
+            saveAllSignals(table, remoteExporter);
     }
 
     private void saveAllSignals(JTable table, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
@@ -1359,23 +1364,26 @@ public final class GuiMain extends javax.swing.JFrame {
         return file;
     }
 
-    private File saveCommands(Map<String, Command> commands, String title, RemoteSetExporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+    private File saveCommands(Map<String, Command> commands, String title, Exporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+        Objects.requireNonNull(exporter);
         if (commands.isEmpty()) {
             guiUtils.error("Nothing to export");
+            return null;
+        }
+        if (commands.size() > 1 && ! RemoteSetExporter.class.isInstance(exporter) ) {
+            guiUtils.error("Selected exporter can only export one single signal, and there are several selected.");
             return null;
         }
 
         File savedFile;
         if (commands.size() == 1) {
             // exporting just a single command
-            savedFile = saveSignalWrite(commands.values().iterator().next(), title, newExporter());
+            savedFile = saveSignalWrite(commands.values().iterator().next(), title, exporter);
             if (savedFile != null)
                 guiUtils.message("File " + savedFile.getPath() + " successfully written with one signal.");
         } else {
-            //RemoteSetExporter exporter = newRemoteExporter();
-            if (exporter == null)
-                return null; // error has already been reported to the user.
-            savedFile = saveCommandsWrite(commands, title, exporter);
+            // I have checked that exporter is RemoteExporter already, so I can safely just cast it
+            savedFile = saveCommandsWrite(commands, title, (RemoteSetExporter) exporter);
             if (savedFile != null)
                 guiUtils.message("File " + savedFile.getPath() + " successfully written with " + commands.size() + " signals.");
         }
@@ -1406,8 +1414,9 @@ public final class GuiMain extends javax.swing.JFrame {
         if (!checkChangeExportDirectory(new File(exportDirectoryTextField.getText())))
             return null;
 
+        int numberRepeats = exportRepeatComboBox.isVisible() ? properties.getExportNoRepeats() : 1;
         return exporter.export(command, "IrScrutinizer captured signal", title,
-                properties.getExportNoRepeats(), properties.getExportAutomaticFilenames(), this,
+                numberRepeats, properties.getExportAutomaticFilenames(), this,
                 new File(properties.getExportDir()), properties.getExportCharsetName());
     }
 
@@ -8145,7 +8154,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void generateExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateExportButtonActionPerformed
         try {
-            saveCommands(irpMasterBean.getCommands(), Version.appName + " generated signals", newRemoteExporter());
+            saveCommands(irpMasterBean.getCommands(), Version.appName + " generated signals", newExporter());
         } catch (IOException | TransformerException | ParseException | GirrException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
         }
