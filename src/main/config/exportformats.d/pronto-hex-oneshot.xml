@@ -109,5 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </xsl:choose>
         </xsl:template>
 
+        <xsl:template match="girr:ccf"/>
+
     </xsl:stylesheet>
 </exportformats:exportformat>
