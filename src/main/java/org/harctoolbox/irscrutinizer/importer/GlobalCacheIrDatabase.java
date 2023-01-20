@@ -17,11 +17,9 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.importer;
 
-import com.eclipsesource.json.JsonArray;
-import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -31,6 +29,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
+import javax.json.stream.JsonParser;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
@@ -82,20 +85,32 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
-    private JsonArray getJsonArray(String str) throws IOException {
+    private InputStreamReader getReader(String str) throws IOException {
         URL url = new URL("http", globalCacheIrDatabaseHost, path + apiKey + "/" + str);
         if (verbose)
             System.err.println("Opening " + url.toString());
         URLConnection urlConnection = url.openConnection();
-        return JsonArray.readFrom(new InputStreamReader(urlConnection.getInputStream(), Charset.forName("US-ASCII")));
+        InputStreamReader reader = new InputStreamReader(urlConnection.getInputStream(), Charset.forName("US-ASCII"));
+        return reader;
+    }
+
+    private JsonValue readFrom(String str) throws IOException {
+        return readFrom(getReader(str));
+    }
+
+    private JsonValue readFrom(Reader reader) throws IOException {
+        JsonParser parser = Json.createParser(reader);
+        JsonParser.Event x = parser.next();
+        JsonValue obj = parser.getValue();
+        return obj;
     }
 
     private Map<String, String> getMap(String urlFragment, String keyName, String valueName) throws IOException {
-        JsonArray array = getJsonArray(urlFragment);
+        JsonArray array = readFrom(urlFragment).asJsonArray();
         Map<String,String> map = new HashMap<>(64);
         for (JsonValue val : array) {
-            JsonObject obj = val.asObject();
-            map.put(obj.get(keyName).asString(), obj.get(valueName).asString());
+            JsonObject obj = val.asJsonObject();
+            map.put(obj.getString(keyName), obj.getString(valueName));
         }
         return map;
     }
@@ -128,13 +143,13 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
         clearCommands();
         manufacturer = manufacturerKey;
         deviceType = deviceTypeKey;
-        JsonArray array = getJsonArray("manufacturers/" + httpEncode(manufacturerKey) + "/devicetypes/" + httpEncode(deviceTypeKey) + "/codesets/" + codeSet);
+        JsonArray array = readFrom("manufacturers/" + httpEncode(manufacturerKey) + "/devicetypes/" + httpEncode(deviceTypeKey) + "/codesets/" + codeSet).asJsonArray();
         for (JsonValue val : array) {
-            JsonObject obj = val.asObject();
-            String str = obj.get("IRCode").asString();
+            JsonObject obj = val.asJsonObject();
+            String str = obj.getString("IRCode");
             IrSignal irSignal =  GlobalCache.parse(GlobalCache.sendIrPrefix + ",1,1," + str);
             if (irSignal != null) {
-                String keyName = obj.get("KeyName").asString();
+                String keyName = obj.getString("KeyName");
                 Command cmd = new Command(keyName,
                         "GCDB: " + manufacturer + "/" + deviceType + "/" + codeSet, irSignal);
                 addCommand(cmd);

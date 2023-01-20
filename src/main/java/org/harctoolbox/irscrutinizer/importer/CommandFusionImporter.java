@@ -17,9 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.importer;
 
-import com.eclipsesource.json.JsonArray;
-import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
@@ -30,6 +27,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
+import javax.json.stream.JsonParser;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
@@ -56,8 +58,9 @@ public class CommandFusionImporter extends RemoteSetImporter implements IReaderI
     @Override
     public void load(Reader reader, String origin) throws IOException {
         prepareLoad(origin);
-        JsonObject jsonObject = JsonObject.readFrom(reader);
-
+        JsonParser parser = Json.createParser(reader);
+        JsonParser.Event x = parser.next();
+        JsonObject jsonObject = parser.getObject();
         Remote remote = parseRemote(jsonObject);
         remoteSet = new RemoteSet(getCreatingUser(),
                  origin, //java.lang.String source,
@@ -72,8 +75,8 @@ public class CommandFusionImporter extends RemoteSetImporter implements IReaderI
     }
 
     Remote parseRemote(JsonObject jsonObject) {
-        JsonObject remoteInfo = (JsonObject) jsonObject.get("RemoteInfo");
-        JsonArray remoteFunctions = (JsonArray) jsonObject.get("RemoteFunctions");
+        JsonObject remoteInfo = jsonObject.getJsonObject("RemoteInfo");
+        JsonArray remoteFunctions = jsonObject.getJsonArray("RemoteFunctions");
 
         Map<String, Command> commands = new LinkedHashMap<>(8);
         for (JsonValue c : remoteFunctions) {

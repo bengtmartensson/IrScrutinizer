@@ -17,13 +17,11 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer.importer;
 
-import com.eclipsesource.json.JsonArray;
-import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -36,6 +34,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
+import javax.json.stream.JsonParser;
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
@@ -58,6 +62,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         return URLEncoder.encode(str, "utf-8").replaceAll("\\+", "%20");
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         Props props = new Props(null);
         Importer.setProperties(props);
@@ -127,6 +132,29 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         this.verbose = verbose;
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
+    private InputStreamReader getReader(String str) throws IOException {
+        URL url = new URL(protocol, controlTowerIrDatabaseHost, portNo, path + "/" + str);
+        if (verbose)
+            System.err.println("Opening " + url);
+        URLConnection urlConnection = url.openConnection();
+        InputStream is = urlConnection.getInputStream();
+        InputStreamReader isr = new InputStreamReader(is, Charset.forName("US-ASCII"));
+        return isr;
+    }
+
+    private JsonValue readFrom(String str) throws IOException {
+        return readFrom(getReader(str));
+    }
+
+    private JsonValue readFrom(Reader reader) throws IOException {
+        JsonParser parser = Json.createParser(reader);
+        JsonParser.Event x = parser.next();
+        JsonValue obj = parser.getValue();
+        return obj;
+    }
+
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private JsonObject postAndGetObject(String str, String payload) throws MalformedURLException, IOException, LoginException {
         URL url = new URL(protocol, controlTowerIrDatabaseHost, portNo, path + str);
         if (verbose)
@@ -159,7 +187,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
 
         InputStream is = connection.getInputStream();
         InputStreamReader isr = new InputStreamReader(is, Charset.forName("US-ASCII"));
-        JsonObject response = JsonObject.readFrom(isr);
+        JsonObject response = readFrom(isr).asJsonObject();
         connection.disconnect();
         return response;
     }
@@ -169,9 +197,9 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
     }
 
     private void evaluateAccount(JsonObject acct) {
-        accountType = acct.get("AccountType").asString();
-        apiKey = acct.get("ApiKey").asString();
-        codesRequestedToday = acct.get("CodesRequestedToday").asInt();
+        accountType = acct.getString("AccountType");
+        apiKey = acct.getString("ApiKey");
+        codesRequestedToday = acct.getInt("CodesRequestedToday");
         //this.name = acct.get("Name").asString();
         //this.company = acct.get("Company").asString();
     }
@@ -182,17 +210,19 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         codesRequestedToday = -1;
     }
 
+    // UNTESTED!!
     public void login() throws MalformedURLException, IOException, LoginException {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.add("Email", email);
-        jsonObject.add("Password", password);
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        builder.add("Email", email);
+        builder.add("Password", password);
+        JsonObject jsonObject = builder.build();
         String payload = jsonObject.toString();
 
         JsonObject response = postAndGetObject("/account/login", payload);
-        String status = response.get("Status").asString();
+        String status = response.getString("Status");
         if (!status.equals("success"))
-            throw new LoginException(response.get("Message").asString());
-        JsonObject acct = response.get("Account").asObject();
+            throw new LoginException(response.getString("Message"));
+        JsonObject acct = response.getJsonObject("Account");
         evaluateAccount(acct);
     }
 
@@ -200,39 +230,28 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         if (apiKey == null)
             throw new LoginException("Not logged in");
         JsonObject response = postAndGetObject("/account/logout" + apiKeyString('?'), "");
-        String status = response.get("Status").asString();
+        String status = response.getString("Status");
         if (!status.equals("success"))
-            throw new LoginException(response.get("Message").asString());
+            throw new LoginException(response.getString("Message"));
         evaluateAccount();
     }
 
-    private InputStreamReader getReader(String str) throws IOException {
-        URL url = new URL(protocol, controlTowerIrDatabaseHost, portNo, path + "/" + str);
-        if (verbose)
-            System.err.println("Opening " + url);
-        URLConnection urlConnection = url.openConnection();
-        InputStream is = urlConnection.getInputStream();
-        InputStreamReader isr = new InputStreamReader(is, Charset.forName("US-ASCII"));
-        return isr;
-    }
 
     private JsonArray getJsonArray(String str) throws IOException {
-        JsonArray arr = JsonArray.readFrom(getReader(str));
-        return arr;
+        return readFrom(str).asJsonArray();
     }
+
 
     private JsonObject getJsonObject(String str) throws IOException {
-        JsonObject obj = JsonObject.readFrom(getReader(str));
-        return obj;
+        return readFrom(str).asJsonObject();
     }
-
 
     private Map<String, String> getMap(String urlFragment, String keyName, String valueName) throws IOException {
         JsonArray array = getJsonArray(urlFragment);
         Map<String,String> map = new HashMap<>(array.size());
         for (JsonValue val : array) {
-            JsonObject obj = val.asObject();
-            map.put(obj.get(keyName).asString(), obj.get(valueName).asString());
+            JsonObject obj = val.asJsonObject();
+            map.put(obj.getString(keyName), obj.getString(valueName));
         }
         return map;
     }
@@ -294,21 +313,22 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
                 "Function", "$id").keySet();
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void getCodeset(int setId, boolean email) throws IOException, LoginException {
         if (apiKey == null)
             throw new LoginException("Must be logged in");
         if (email) {
             JsonObject obj = getJsonObject("codesets/" + Integer.toString(setId) + "?output=email" + apiKeyString('&'));
-            if (!obj.get("Status").asString().equals("success")) {
-                System.err.println(obj.get("Message").asString());
+            if (!obj.getString("Status").equals("success")) {
+                System.err.println(obj.getString("Message"));
             }
             String str = obj.toString();
             System.out.println(str);
         } else {
             JsonObject obj = getJsonObject("codesets/" + Integer.toString(setId) + "?output=direct" + apiKeyString('&'));
             System.out.println(obj.toString());
-            if (!obj.get("Status").asString().equals("success")) {
-                System.err.println(obj.get("Message").asString());
+            if (!obj.getString("Status").equals("success")) {
+                System.err.println(obj.getString("Message"));
             }
             String str = obj.toString();
             System.out.println(str);
@@ -321,8 +341,8 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         deviceType = deviceTypeKey;
         JsonArray array = getJsonArray("codesets/" + codeSet + "/functions");
         for (JsonValue val : array) {
-            JsonObject obj = val.asObject();
-            String keyName = obj.get("Function").asString();
+            JsonObject obj = val.asJsonObject();
+            String keyName = obj.getString("Function");
             Command cmd = new Command(keyName);
             addCommand(cmd);
         }
@@ -380,10 +400,10 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         private final String notes;
 
         public Model(JsonObject obj) {
-            brand = obj.get("Brand").asString();
-            type = obj.get("Type").asString();
-            name = obj.get("Name").asString();
-            notes = obj.get("Notes").asString();
+            brand = obj.getString("Brand");
+            type = obj.getString("Type");
+            name = obj.getString("Name");
+            notes = obj.getString("Notes");
         }
 
         @Override
