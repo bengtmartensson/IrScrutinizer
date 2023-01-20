@@ -30,6 +30,14 @@ import org.harctoolbox.irscrutinizer.Version;
  * This class does something interesting and useful. Or not...
  */
 public abstract class RemoteSetImporter extends ReaderImporter implements IRemoteSetImporter {
+
+    protected static boolean hasCommands(Remote remote) {
+        for (CommandSet commandSet : remote)
+            if (!commandSet.isEmpty())
+                return true;
+        return false;
+    }
+
     protected RemoteSet remoteSet;
 
     protected RemoteSetImporter() {

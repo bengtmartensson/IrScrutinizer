@@ -52,6 +52,8 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
         importer.load(filename);
         return importer.remoteSet;
     }
+
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String args[]) {
         try {
             RemoteSet remoteSet = importCcf(args[0], "The Creator");
@@ -105,6 +107,7 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
         return remote;
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private ArrayList<Command> loadChildren(CCFChild children[], String deviceName, String panelName) {
         ArrayList<Command> commandList = new ArrayList<>(16);
         for (CCFChild child : children) {
@@ -169,17 +172,17 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
 
         for (CCFDevice dev = ccf.getFirstDevice(); dev != null; dev = dev.getNextDevice()) {
             Remote remote = loadDevice(dev);
-            if (!remote.getCommands().isEmpty())
+            if (hasCommands(remote))
                 remotes.put(remote.getName(), remote);
         }
         for (CCFDevice dev = ccf.getFirstHomeDevice(); dev != null; dev = dev.getNextDevice()) {
             Remote remote = loadDevice(dev);
-            if (!remote.getCommands().isEmpty())
+            if (hasCommands(remote))
                 remotes.put(remote.getName(), remote);
         }
         for (CCFDevice dev = ccf.getFirstMacroDevice(); dev != null; dev = dev.getNextDevice()) {
             Remote remote = loadDevice(dev);
-            if (!remote.getCommands().isEmpty())
+            if (hasCommands(remote))
                 remotes.put(remote.getName(), remote);
         }
         remoteSet = new RemoteSet(getCreatingUser(),

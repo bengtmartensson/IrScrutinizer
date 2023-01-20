@@ -200,7 +200,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
         Map<String,Remote> remotes = new HashMap<>(16);
 
-        moduleIndex.values().stream().map((module) -> loadModule(module)).filter((remote) -> (!remote.getCommands().isEmpty())).forEachOrdered((remote) -> {
+        moduleIndex.values().stream().map((module) -> loadModule(module)).filter((remote) -> (hasCommands(remote))).forEachOrdered((remote) -> {
             remotes.put(remote.getName(), remote);
         });
         remoteSet = new RemoteSet(getCreatingUser(), origin, //java.lang.String source,
