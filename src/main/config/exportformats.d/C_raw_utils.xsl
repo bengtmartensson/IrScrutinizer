@@ -99,12 +99,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <xsl:template match="girr:command" mode="using">
         <xsl:text>    case </xsl:text>
         <xsl:value-of select="position()"/>
-        <xsl:text>U:
+        <xsl:text>:
 </xsl:text>
     <xsl:text>        sendRaw(</xsl:text>
         <xsl:apply-templates select="girr:raw[1]" mode="arg"/>
         <xsl:value-of select="girr:raw[1]/@frequency"/>
-        <xsl:text>U, times);
+        <xsl:text>UL, times);
         break;
 </xsl:text>
     </xsl:template>

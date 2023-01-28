@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         This is available in the Arduino library manager under the name <em>Infrared</em>.
         </div>
         <div>Limitations:<ul>
-            <!--li>Supports only one remote (ignores all but the first one),</li-->
+            <li>Does not respect the remote/commandset structure; just throws all commands together.</li>
             <li>Does not support ending sequences (ignores them).</li>
             <li>Does not support toggling signals (includes only the first one).</li>
             <li>Does not detect obvious data duplication, like repeats that are all equal.</li>
@@ -77,11 +77,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define LOCATION /* nothing */
 #endif
 
-// For development
-#ifdef ARDUINO_ARCH_AVR
-#define MEMORY_TRACING
-#endif
-
 // Constants
 static constexpr unsigned long BAUD = 115200UL; // Change as desired
 
@@ -94,18 +89,6 @@ static IrSender *irsend = IrSenderPwm::getInstance(true);
 <xsl:apply-templates select="//girr:command" mode="definition"/>
 
 <xsl:text><![CDATA[
-#ifdef MEMORY_TRACING
-#ifndef ARDUINO_ARCH_AVR
-#error MEMORY_TRACING presently only works with AVR
-#endif
-
-unsigned long freeRam () {
-    extern int __heap_start, *__brkval;
-    int v;
-    return (unsigned long) &v - (__brkval == 0 ? (unsigned long) &__heap_start : (unsigned long) __brkval);
-}
-#endif // MEMORY_TRACING
-
 static void sendRaw
 #if HAS_FLASH_READ
 (const microseconds_t intro_P[], size_t lengthIntro, const microseconds_t repeat_P[],
@@ -145,10 +128,6 @@ void setup() {
 
 // A pretty silly main loop; just intended as an example.
 void loop() {
-#ifdef MEMORY_TRACING
-    Serial.print(F("Available memory: "));
-    Serial.println(freeRam());
-#endif
     Serial.print(F("Enter number of signal to send (1 .. ]]></xsl:text>
     <xsl:value-of select="count(//girr:command)"/>
     <xsl:text>): "));
