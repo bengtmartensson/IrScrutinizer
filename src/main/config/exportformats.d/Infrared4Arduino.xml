@@ -98,7 +98,7 @@ static IrSender *irsend = IrSenderPwm::getInstance(true);
 
 //////////////////// Command data ////////////////////////
 ]]></xsl:text>
-<xsl:apply-templates select="//girr:remote//girr:command" mode="definition"/>
+<xsl:apply-templates select="//girr:command" mode="definition"/>
 <xsl:apply-templates select="//girr:remote[//girr:parameters[translate(@protocol, $uppercase, $lowercase) = 'nec1']]" mode="definitionNec1"/>
 <xsl:text>
 </xsl:text>
@@ -141,30 +141,13 @@ void setup() {
     Serial.println(F("Running " __FILE__));
     Serial.println(F("using Infrared4Arduino version " VERSION));
 }
+]]></xsl:text>
+        <xsl:call-template name="loop"/>
+    </xsl:template>
 
-// A pretty silly main loop; just intended as an example.
-void loop() {
-    Serial.print(F("Enter number of signal to send (1 .. ]]></xsl:text>
-    <xsl:value-of select="count(//girr:command)"/>
-    <xsl:text>): "));
-    int commandno = (int) Serial.parseInt();
-    Serial.println(commandno);
-#ifdef NUMBER_OF_SENDS
-    unsigned int times = NUMBER_OF_SENDS;
-#else // ! NUMBER_OF_SENDS
-    Serial.print(F("Enter number of times to send it: "));
-    unsigned int times = (unsigned int) Serial.parseInt();
-    Serial.println(times);
-#endif // ! NUMBER_OF_SENDS
-    switch (commandno) {
-</xsl:text>
-        <xsl:apply-templates select="//girr:remote" mode="using"/>
-        <xsl:text>    default:
-        Serial.println(F("Invalid number entered, try again"));
-        break;
-    }
-}
-</xsl:text>
+    <xsl:template match="@frequency">
+        <xsl:value-of select="."/>
+        <xsl:text>UL</xsl:text>
     </xsl:template>
 
     <xsl:template match="girr:remote[//girr:parameters[translate(@protocol, $uppercase, $lowercase) = 'nec1']]" mode="includeNec1">

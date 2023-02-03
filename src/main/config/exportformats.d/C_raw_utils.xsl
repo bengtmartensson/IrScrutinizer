@@ -20,10 +20,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:java="http://xml.apache.org/xalan/java"
                 xmlns:cidentifierfactory="http://xml.apache.org/xalan/java/org.harctoolbox.irscrutinizer.exporter.CIdentifierFactory"
                 version="1.0">
+
     <xsl:variable name="cIdentifierFactory" select="cidentifierfactory:new()"/>
 
-    <xsl:template match="girr:remote" mode="using">
-        <xsl:apply-templates select="//girr:command" mode="using"/>
+    <xsl:template name="loop">
+        <xsl:text><![CDATA[
+// A pretty silly main loop; just intended as an example.
+void loop() {
+    Serial.print(F("Enter number of signal to send (1 .. ]]></xsl:text>
+    <xsl:value-of select="count(//girr:command)"/>
+    <xsl:text>): "));
+    long commandno = Serial.parseInt();
+    Serial.println(commandno);
+#ifdef NUMBER_OF_SENDS
+    unsigned int times = NUMBER_OF_SENDS;
+#else // ! NUMBER_OF_SENDS
+    Serial.println(F("Enter number of times to send it: "));
+    unsigned int times = (unsigned int) Serial.parseInt();
+    Serial.println(times);
+#endif // ! NUMBER_OF_SENDS
+    switch (commandno) {
+</xsl:text>
+        <xsl:apply-templates select="//girr:remote" mode="using"/>
+        <xsl:text>    default:
+        Serial.println(F("Invalid number entered, try again"));
+        break;
+    }
+}
+</xsl:text>
     </xsl:template>
 
     <xsl:template match="girr:command" mode="definition">
@@ -103,8 +127,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </xsl:text>
     <xsl:text>        sendRaw(</xsl:text>
         <xsl:apply-templates select="girr:raw[1]" mode="arg"/>
-        <xsl:value-of select="girr:raw[1]/@frequency"/>
-        <xsl:text>UL, times);
+        <xsl:apply-templates select="girr:raw[1]/@frequency"/>
+        <xsl:text>, times);
         break;
 </xsl:text>
     </xsl:template>
