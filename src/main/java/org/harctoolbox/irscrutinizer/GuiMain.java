@@ -109,6 +109,7 @@ import org.xml.sax.SAXException;
 public final class GuiMain extends javax.swing.JFrame {
 
     private final static String ISSUES_URL = "https://github.com/bengtmartensson/IrScrutinizer/issues";
+    private final static String DISCUSSIONS_URL = "https://github.com/bengtmartensson/IrScrutinizer/discussions";
     private final static String GIT_URL = "https://github.com/bengtmartensson/IrScrutinizer/";
     private final static String DOWNLOADS_URL = "https://github.com/bengtmartensson/IrScrutinizer/releases";
     private final static String UNIQUE_SEPARATOR = "#";
@@ -2658,6 +2659,7 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator35 = new javax.swing.JPopupMenu.Separator();
         downloadsMenuItem = new javax.swing.JMenuItem();
         gitMenuItem = new javax.swing.JMenuItem();
+        disussionsMenuItem = new javax.swing.JMenuItem();
         issuesMenuItem = new javax.swing.JMenuItem();
 
         rawCodeClearMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/eraser.png"))); // NOI18N
@@ -7102,6 +7104,17 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         helpMenu.add(gitMenuItem);
 
+        disussionsMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/mimetypes/news.png"))); // NOI18N
+        disussionsMenuItem.setMnemonic('U');
+        disussionsMenuItem.setText("Discussions (GitHub)");
+        disussionsMenuItem.setToolTipText("Participate in discussions or give/request help");
+        disussionsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                disussionsMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(disussionsMenuItem);
+
         issuesMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/idea.png"))); // NOI18N
         issuesMenuItem.setMnemonic('H');
         issuesMenuItem.setText("Issues (GitHub)");
@@ -9399,6 +9412,14 @@ public final class GuiMain extends javax.swing.JFrame {
                 || exportGenerateBroadlinkBase64CheckBox.isSelected());
     }//GEN-LAST:event_exportGenerateBroadlinkBase64CheckBoxActionPerformed
 
+    private void disussionsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disussionsMenuItemActionPerformed
+        try {
+            guiUtils.browse(new URI(DISCUSSIONS_URL));
+        } catch (URISyntaxException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_disussionsMenuItemActionPerformed
+
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9487,6 +9508,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem deleteMenuItem1;
     private org.harctoolbox.guicomponents.DevLircBean devLircBean;
     private javax.swing.JPanel devLircPanel;
+    private javax.swing.JMenuItem disussionsMenuItem;
     private javax.swing.JMenuItem downloadsMenuItem;
     private javax.swing.JMenuItem dummyGapMenuItem;
     private javax.swing.JMenuItem duplicateParametricMenuItem;
