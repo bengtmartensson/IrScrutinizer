@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (C) 2019 Bengt Martensson
+Copyright (C) 2019, 2023 Bengt Martensson
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
                             xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
                             name="Homeass-Broadlink IR" extension="yaml" multiSignal="true" simpleSequence="false" executable="false" metadata="true">
-    <!-- Limitations: just takes all commands, ignoring its enclosing remotes and command sets. -->
+    <!-- Limitation: ignores command sets (just merges them) -->
     <xsl:stylesheet  xmlns:girr="http://www.harctoolbox.org/Girr"
                     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:java="http://xml.apache.org/xalan/java"
                     xmlns:cidentifierfactory="http://xml.apache.org/xalan/java/org.harctoolbox.irscrutinizer.exporter.CIdentifierFactory"
@@ -32,29 +32,69 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <xsl:output method="text" />
 
     <xsl:template match="/">
-        <xsl:text>- platform: broadlink      ### RoomName = Rumpus
-  host: 192.168.255.255    ## IP Address of the Broadlink
-  mac: "78:0f:77:00:xx:xx" ## MAC Address of the Broadlink
-  timeout: 15
-  type: rm_mini            ## Broadlink type
-  switches:
+        <xsl:text># Export from IrScrutinizer
+# Suggested usage:
+# Put this file in a subdirectory broadlink, and !include_dir_merge_list broadlink
+# remote:
+#  - platform: broadlink
+#    host: 192.168.1.41 # IP Address of the Broadlink RM*
+#    mac: "34:ea:34:xx:yy:zz" ## MAC Address of the Broadlink
+#    timeout: 15
+#    type: rm_mini            ## Broadlink type
+#    devices: !include_dir_merge_list broadlink
+</xsl:text>
+        <xsl:apply-templates select=".//girr:remote"/>
+    </xsl:template>
+
+    <xsl:template match="girr:remote">
+        <xsl:text>    - name: "</xsl:text>
+        <xsl:value-of select="@name"/>
+        <xsl:text>"
+</xsl:text>
+    <xsl:apply-templates select="@manufacturer" />
+        <xsl:apply-templates select="@model" />
+        <xsl:apply-templates select="@deviceClass" />
+        <xsl:apply-templates select="@displayName" />
+        <xsl:text>      commands:
 </xsl:text>
         <xsl:apply-templates select=".//girr:command"/>
     </xsl:template>
 
+    <xsl:template match="@displayName">
+        <xsl:text>      # friendly_name: "</xsl:text>
+        <xsl:value-of select="."/>
+        <xsl:text>"
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="@manufacturer">
+        <xsl:text>      # Manufacturer: </xsl:text>
+        <xsl:value-of select="."/>
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="@deviceClass">
+        <xsl:text>      # Device Class: </xsl:text>
+        <xsl:value-of select="."/>
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="@model">
+        <xsl:text>      # Model: </xsl:text>
+        <xsl:value-of select="."/>
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+
     <xsl:template match="girr:command">
-        <xsl:text>    &apos;</xsl:text>
-        <xsl:value-of select="@name"/>
-        <xsl:text>&apos;:
-      friendly_name: "</xsl:text>
-        <xsl:value-of select="../../@name"/>
-        <xsl:text> </xsl:text>
+        <xsl:text>        - name: "</xsl:text>
         <xsl:value-of select="@name"/>
         <xsl:text>"
-      command_on: &apos;</xsl:text>
+          data: </xsl:text>
         <xsl:apply-templates select="girr:raw[1]" mode="broadlink"/>
-        <xsl:text>&apos;
-      command_off: &apos;&apos;
+        <xsl:text>
 
 </xsl:text>
     </xsl:template>
@@ -67,7 +107,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <xsl:with-param name="value" select="count(*/*)"/>
                 </xsl:call-template>
                 <xsl:text>00</xsl:text>
-                <xsl:apply-templates select="*/*" mode="broadlink"/>
+                <xsl:apply-templates select="*/*" mode="broadlink"/> <!-- concatenate everything into one sequence -->
             </xsl:with-param>
         </xsl:call-template>
     </xsl:template>
