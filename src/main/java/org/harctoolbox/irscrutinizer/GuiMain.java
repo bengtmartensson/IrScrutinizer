@@ -93,6 +93,7 @@ import org.harctoolbox.ircore.ThisCannotHappenException;
 import org.harctoolbox.irp.BitDirection;
 import org.harctoolbox.irp.Decoder;
 import org.harctoolbox.irp.ElementaryDecode;
+import org.harctoolbox.irp.FiniteBitField;
 import org.harctoolbox.irp.IrpDatabase;
 import org.harctoolbox.irp.IrpException;
 import org.harctoolbox.irp.IrpParseException;
@@ -134,7 +135,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private final static boolean analyzerLsb = false;
     private final static boolean analyzerExtent = false;
     private final static List<Integer> analyzerParameterWidths = new ArrayList<>(0);
-    private final static int analyzerMaxParameterWidth = 64;
+    private final static int analyzerMaxParameterWidth = FiniteBitField.MAXWIDTH;
     private final static boolean analyzerInvert = false;
 
     // ... and some more preferences for the decoding, that should probably be
