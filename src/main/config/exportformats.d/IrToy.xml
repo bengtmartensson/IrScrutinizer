@@ -28,14 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <xsl:param name="period" select="21.3333"/>
     <xsl:output method="text" />
 
-    <xsl:template match="/">
-        <xsl:apply-templates select="girr:remotes"/>
-    </xsl:template>
-
-    <xsl:template match="girr:remotes">
-        <xsl:apply-templates select="girr:remote[1]/girr:commandSet[1]/girr:command[1]"/>
-    </xsl:template>
-
     <xsl:template match="girr:command">
         <xsl:apply-templates select="girr:raw[1]"/>
     </xsl:template>

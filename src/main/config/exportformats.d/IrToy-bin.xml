@@ -35,8 +35,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </root>
     </xsl:template>
 
-    <xsl:template match="girr:command">
-        <xsl:apply-templates select="girr:raw[1]"/>
+    <xsl:template match="/girr:command">
+        <root> <!-- Just any element as root -->
+            <xsl:apply-templates select="girr:raw[1]"/>
+        </root>
     </xsl:template>
 
     <xsl:template match="girr:raw">
