@@ -730,7 +730,7 @@ public final class GuiMain extends javax.swing.JFrame {
         // devLircBean was constructed and setup in initComponents()
         devLircBean.addPropertyChangeListener((PropertyChangeEvent evt) -> {
             switch (evt.getPropertyName()) {
-                case HardwareBean.PROP_PORT:
+                case HardwareBean.PROP_PORTNAME:
                     properties.setDevLircName((String) evt.getNewValue());
                     break;
                 case HardwareBean.PROP_PROPS:
