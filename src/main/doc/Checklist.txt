@@ -1,6 +1,7 @@
 Checklist for release (for maintainer)
 
 0. Check in good code ;-). Check that tests run ok, javadoc is ok.
+   Make sure that all relevant source files are checked in.
 1. Update pom.xml and releasenotes, pom-deps.png, lirc.xml and checkin. Update versions of dependencies.
     For this, can use
    make setversion NEWVERSION=1.x.y.
