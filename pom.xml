@@ -28,8 +28,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <IrpTransmogrifier.version>1.2.13-SNAPSHOT</IrpTransmogrifier.version>
-        <Girr.version>2.2.12</Girr.version>
-        <Jirc.version>${Girr.version}</Jirc.version>
+        <Girr.version>2.2.13-SNAPSHOT</Girr.version>
         <RemoteLocator.version>0.2.1-SNAPSHOT</RemoteLocator.version>
         <HarcHardware.version>2.4.1-SNAPSHOT</HarcHardware.version>
     </properties>
