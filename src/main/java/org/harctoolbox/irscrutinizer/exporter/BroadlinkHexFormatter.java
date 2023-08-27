@@ -19,8 +19,8 @@ package org.harctoolbox.irscrutinizer.exporter;
 
 import org.harctoolbox.girr.Command;
 import org.harctoolbox.harchardware.ir.Broadlink;
-import org.harctoolbox.ircore.IrSequence;
 import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.ircore.ModulatedIrSequence;
 
 public class BroadlinkHexFormatter implements Command.CommandTextFormat {
 
@@ -37,7 +37,7 @@ public class BroadlinkHexFormatter implements Command.CommandTextFormat {
         if (irSignal.repeatOnly())
             return Broadlink.broadlinkHexString(irSignal.getRepeatSequence(), count);
 
-        IrSequence irSequence = irSignal.getRepeatLength() > 0 ? irSignal.toModulatedIrSequence(true, count, true) : irSignal.getIntroSequence();
+        ModulatedIrSequence irSequence = irSignal.getRepeatLength() > 0 ? irSignal.toModulatedIrSequence(true, count, true) : irSignal.getIntroSequence();
         return Broadlink.broadlinkHexString(irSequence, 1);
     }
 }
