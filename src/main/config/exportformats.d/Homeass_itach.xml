@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2023 Bengt Martensson
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<exportformats:exportformat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                            xmlns:exportformats="http://www.harctoolbox.org/exportformats"
+                            xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd
+"                            name="Homeassistant Global Cache iTach" extension="yaml" multiSignal="true" simpleSequence="false" executable="false" metadata="true">
+    <exportformats:documentation>
+        <div>This export format generates a YAML fragment for the Homeassistant iTach integration, as per <a href="https://www.home-assistant.io/integrations/itach">this page</a>.
+        </div>
+        <div>Limitations:<ul>
+            <li>Does not respect the remote/commandset structure; just throws all commands together.</li>
+            <li>Does not support ending sequences (ignores them).</li>
+            <li>Does not support toggling signals (includes only the first one).</li>
+            </ul>
+        </div>
+    </exportformats:documentation>
+
+
+    <xsl:stylesheet  xmlns:girr="http://www.harctoolbox.org/Girr" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                     version="1.0">
+        <xsl:output method="text" />
+
+    <xsl:template match="/">
+        <xsl:text># Export from IrScrutinizer
+# Suggested usage:
+# Put this file in a subdirectory itach, and !include_dir_merge_list itach
+# remote:
+#  - platform: itach
+#    host: 192.168.1.70 # IP Address of the Global Cache
+#    devices: !include_dir_merge_list itach
+</xsl:text>
+        <xsl:apply-templates select="//girr:remote"/>
+    </xsl:template>
+
+    <xsl:template match="girr:remote">
+        <xsl:text>    - name: "</xsl:text>
+        <xsl:value-of select="@name"/>
+        <xsl:text>"
+</xsl:text>
+    <xsl:apply-templates select="@manufacturer" />
+        <xsl:apply-templates select="@model" />
+        <xsl:apply-templates select="@deviceClass" />
+        <xsl:apply-templates select="@displayName" />
+        <xsl:text>      modaddr: 2
+      connaddr: 1
+      ir_count: 1
+      commands:
+</xsl:text>
+        <xsl:apply-templates select=".//girr:command"/>
+    </xsl:template>
+
+    <xsl:template match="girr:command">
+        <xsl:text>        - name: "</xsl:text>
+        <xsl:value-of select="@name"/>
+        <xsl:text>"
+</xsl:text>
+        <xsl:apply-templates select="girr:ccf[1]" />
+    </xsl:template>
+
+    <xsl:template match="@displayName">
+        <xsl:text>      # friendly_name: "</xsl:text>
+        <xsl:value-of select="."/>
+        <xsl:text>"
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="@manufacturer">
+        <xsl:text>      # Manufacturer: </xsl:text>
+        <xsl:value-of select="."/>
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="@deviceClass">
+        <xsl:text>      # Device Class: </xsl:text>
+        <xsl:value-of select="."/>
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="@model">
+        <xsl:text>      # Model: </xsl:text>
+        <xsl:value-of select="."/>
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:ccf">
+        <xsl:text>          data: "</xsl:text>
+        <xsl:value-of select="./text()"/>
+        <xsl:text>"
+</xsl:text>
+    </xsl:template>
+
+</xsl:stylesheet>
+</exportformats:exportformat>
