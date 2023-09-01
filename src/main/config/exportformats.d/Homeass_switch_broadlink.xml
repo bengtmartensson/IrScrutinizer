@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2019, 2023 Bengt Martensson
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<exportformats:exportformat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                            xmlns:exportformats="http://www.harctoolbox.org/exportformats"
+                            xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
+                            name="Homeassistant Broadlink Switch" extension="yaml" multiSignal="true" simpleSequence="false" executable="false" metadata="true">
+      <exportformats:documentation>
+        <div>This export format generates a YAML fragment for the Homeassistant Broadlink switch integration,
+            as per <a href="https://www.home-assistant.io/integrations/broadlink/#switch">this page</a>.
+            A "switch" is per definition a quite limited sort of remote: Only the commands named <code>power_on</code> and <code>power_off</code> are recognized,
+            and generate the <code>command_on</code> and <code>command_off</code> variables in Homeassistant respectively.
+            If this is too restrictive, consider using the Homeassistant Broadlink remote export format instead.
+        </div>
+        <div>
+            If the modulation frequency is non-zero, the Broadlink commands are IR signals, using the only IR modulation frequency Broadlink knows, 38kHz.
+            If the modulation frequency is zero (for example using the arctech protocol), instead 433MHz RF Broadlink signals will be generated.
+            (Presently, there is no way to generate 315MHz signals.)
+        </div>
+        <div>Limitations:<ul>
+            <li>All commands not named <code>power_on</code> or <code>power_off</code> are ignored &#x2014; due to the nature of a switch.</li>
+            <li>Does not respect the remote/commandset structure; just throws all commands together.</li>
+            <li>Does not support ending sequences (ignores them).</li>
+            <li>Does not support toggling signals (includes only the first one).</li>
+            </ul>
+        </div>
+    </exportformats:documentation>
+    <xsl:stylesheet  xmlns:girr="http://www.harctoolbox.org/Girr"
+                    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:java="http://xml.apache.org/xalan/java"
+                    xmlns:cidentifierfactory="http://xml.apache.org/xalan/java/org.harctoolbox.irscrutinizer.exporter.CIdentifierFactory"
+                    version="1.0">
+    <xsl:include href="broadlink.xsl"/>
+
+    <xsl:output method="text" />
+
+    <xsl:template match="/">
+        <xsl:text># Export from IrScrutinizer
+#
+# Suggested use (feel free to ignore if you know what you are doing):
+# Put the following lines in your configure.yaml
+
+#switch:
+#  - platform: broadlink
+#    mac: aa:bb:cc:dd:ee:ff # Adjust to fit your own device
+#    switches: !include_dir_merge_list broadlink/switch
+
+# and put this file in the directory broadlink/switch, using any name.
+
+</xsl:text>
+        <xsl:apply-templates select=".//girr:remote"/>
+    </xsl:template>
+
+    <xsl:template match="girr:remote">
+        <xsl:text>    - name: '</xsl:text>
+        <xsl:value-of select="@name"/>
+        <xsl:text>'
+</xsl:text>
+    <xsl:apply-templates select="@manufacturer" />
+        <xsl:apply-templates select="@model" />
+        <xsl:apply-templates select="@deviceClass" />
+        <xsl:apply-templates select=".//girr:command"/>
+    </xsl:template>
+
+    <xsl:template match="@manufacturer">
+        <xsl:text>      # Manufacturer: </xsl:text>
+        <xsl:value-of select="."/>
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="@deviceClass">
+        <xsl:text>      # Device Class: </xsl:text>
+        <xsl:value-of select="."/>
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="@model">
+        <xsl:text>      # Model: </xsl:text>
+        <xsl:value-of select="."/>
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:command"/>
+
+    <xsl:template match="girr:command[@name='power_on' or @name='power' or @name='POWER' or @name='KEY_POWER' or @name='KEY_POWERON']">
+        <xsl:text>      command_on:  </xsl:text>
+        <xsl:apply-templates select="girr:raw[1]" mode="broadlink"/>
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:command[@name='power_off' or @name='KEY_POWEROFF' or @name='POWEROFF']">
+        <xsl:text>      command_off: </xsl:text>
+        <xsl:apply-templates select="girr:raw[1]" mode="broadlink"/>
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+
+</xsl:stylesheet>
+</exportformats:exportformat>

@@ -19,47 +19,68 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <exportformats:exportformat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
                             xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
-                            name="Homeass-Broadlink IR" extension="yaml" multiSignal="true" simpleSequence="false" executable="false" metadata="true">
-    <!-- Limitation: ignores command sets (just merges them) -->
+                            name="Homeassistant Broadlink Remote" extension="yaml" multiSignal="true" simpleSequence="false" executable="false" metadata="true">
+
+    <exportformats:documentation>
+        <div>This export format generates a YAML fragment for the Homeassistant Broadlink switch integration,
+            as per <a href="https://www.home-assistant.io/integrations/broadlink/#switch">this page</a>.
+            A "switch" is per definition a quite limited sort of remote: Only the commands named <code>power_on</code> and <code>power_off</code> are recognized,
+            and generate the <code>command_on</code> and <code>command_off</code> variables in Homeassistant respectively.
+            If this is too restrictive, consider using the Homeassistant Broadlink remote export format instead.
+        </div>
+        <div>
+            If the modulation frequency is non-zero, the Broadlink commands are IR signals, using the only IR modulation frequency Broadlink knows, 38kHz.
+            If the modulation frequency is zero (for example using the arctech protocol), instead 433MHz RF Broadlink signals will be generated.
+            (Presently, there is no way to generate 315MHz signals.)
+        </div>
+        <div>Limitations:<ul>
+            <li>Does not respect the remote/commandset structure; just throws all commands together.</li>
+            <li>Does not support ending sequences (ignores them).</li>
+            <li>Does not support toggling signals (includes only the first one).</li>
+            </ul>
+        </div>
+    </exportformats:documentation>
+
     <xsl:stylesheet  xmlns:girr="http://www.harctoolbox.org/Girr"
                     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:java="http://xml.apache.org/xalan/java"
                     xmlns:cidentifierfactory="http://xml.apache.org/xalan/java/org.harctoolbox.irscrutinizer.exporter.CIdentifierFactory"
                     version="1.0">
-    <xsl:include href="base64.xsl"/>
-    <xsl:include href="hex_utils.xsl"/>
     <xsl:include href="broadlink.xsl"/>
 
     <xsl:output method="text" />
 
     <xsl:template match="/">
         <xsl:text># Export from IrScrutinizer
-# Suggested usage:
-# Put this file in a subdirectory broadlink, and !include_dir_merge_list broadlink
-# remote:
-#  - platform: broadlink
-#    host: 192.168.1.41 # IP Address of the Broadlink RM*
-#    mac: "34:ea:34:xx:yy:zz" ## MAC Address of the Broadlink
-#    timeout: 15
-#    type: rm_mini            ## Broadlink type
-#    devices: !include_dir_merge_list broadlink
+# Usage:
+# See https://www.home-assistant.io/integrations/broadlink#remote
+# This file should probably go into the .storage folder with a suitable name.
+
 </xsl:text>
         <xsl:apply-templates select=".//girr:remote"/>
     </xsl:template>
 
     <xsl:template match="girr:remote">
-        <xsl:text>    - name: "</xsl:text>
+        <xsl:text>{
+  "version": 1,
+  "minor_version": 1,
+  "key": "broadlink_remote_34ea34XXXXXX_codes"
+  "data": {
+    "</xsl:text>
         <xsl:value-of select="@name"/>
-        <xsl:text>"
+        <xsl:text>" : {
 </xsl:text>
-    <xsl:apply-templates select="@manufacturer" />
+        <!--xsl:apply-templates select="@manufacturer" />
         <xsl:apply-templates select="@model" />
         <xsl:apply-templates select="@deviceClass" />
-        <xsl:apply-templates select="@displayName" />
-        <xsl:text>      commands:
-</xsl:text>
+        <xsl:apply-templates select="@displayName" /-->
         <xsl:apply-templates select=".//girr:command"/>
-    </xsl:template>
+        <xsl:text>      }
+   }
+}
+</xsl:text>
 
+    </xsl:template>
+<!--
     <xsl:template match="@displayName">
         <xsl:text>      # friendly_name: "</xsl:text>
         <xsl:value-of select="."/>
@@ -87,36 +108,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <xsl:text>
 </xsl:text>
     </xsl:template>
-
+-->
     <xsl:template match="girr:command">
-        <xsl:text>        - name: "</xsl:text>
+        <xsl:text>      "</xsl:text>
         <xsl:value-of select="@name"/>
-        <xsl:text>"
-          data: </xsl:text>
+        <xsl:text>": "</xsl:text>
         <xsl:apply-templates select="girr:raw[1]" mode="broadlink"/>
-        <xsl:text>
-
+        <xsl:text>",
 </xsl:text>
-    </xsl:template>
-
-    <xsl:template match="girr:raw" mode="broadlink">
-        <xsl:call-template name="binary">
-            <xsl:with-param name="hex">
-                <xsl:text>26</xsl:text>
-                <xsl:call-template name="four-hex-digits">
-                    <xsl:with-param name="value" select="count(*/*)"/>
-                </xsl:call-template>
-                <xsl:text>00</xsl:text>
-                <xsl:apply-templates select="*/*" mode="broadlink"/> <!-- concatenate everything into one sequence -->
-            </xsl:with-param>
-        </xsl:call-template>
-    </xsl:template>
-
-    <xsl:template name="binary">
-        <xsl:param name="hex"/>
-        <xsl:call-template name="base64">
-            <xsl:with-param name="data" select="$hex"/>
-        </xsl:call-template>
     </xsl:template>
 
 </xsl:stylesheet>
