@@ -1061,7 +1061,7 @@ public final class GuiMain extends javax.swing.JFrame {
         if (str.trim().isEmpty())
             return null;
 
-        return InterpretString.interpretString(str, getFrequency(), properties.getDummyGap(),
+        return InterpretString.interpretString(str, null, properties.getDummyGap(),
                 properties.getInvokeRepeatFinder(), properties.getInvokeCleaner(),
                 properties.getAbsoluteTolerance(), properties.getRelativeTolerance(), properties.getMinRepeatLastGap());
     }
@@ -1115,7 +1115,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setFrequencyParameter(Double frequency) {
-        frequencyLabel.setText(frequency != null ? Long.toString(Math.round(frequency)) : "");
+        frequencyLabel.setText(frequency != null ? Long.toString(Math.round(frequency)) : "?");
     }
 
     private void setFrequencyParameter(IrSignal irSignal) {
