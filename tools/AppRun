@@ -23,7 +23,7 @@ fi
 # If this called with a name that does not end with AppImage,
 # consider that as a command to be invoked, otherwise extract from desktop file.
 case ${PROG_NAME} in
-    *AppImage)
+    *AppImage|*appimage|*APPIMAGE)
         EXEC=$(grep -e '^Exec=.*' "${APP_ROOT}"/*.desktop | head -n 1 | cut -d "=" -f 2 | cut -d " " -f 1)
         exec "${APP_ROOT}/usr/bin/${EXEC}" "$@"
         ;;
