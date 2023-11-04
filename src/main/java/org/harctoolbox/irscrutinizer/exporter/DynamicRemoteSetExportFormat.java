@@ -203,7 +203,8 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter {
 
     @Override
     public void export(RemoteSet remoteSet, String title, File saveFile, String encoding) throws IOException, TransformerException {
-        export(remoteSet, title, saveFile.getCanonicalPath(), encoding);
+        if (saveFile != null)
+            export(remoteSet, title, saveFile.getCanonicalPath(), encoding);
     }
 
     private void export(RemoteSet remoteSet, String title, String fileName, String encoding) throws IOException, TransformerException {

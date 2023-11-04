@@ -201,7 +201,8 @@ public abstract class Exporter {
     }
 
     public void export(Document document, File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException {
-        XmlUtils.printDOM(file, document, charsetName, null);
+        if (file != null)
+            XmlUtils.printDOM(file, document, charsetName, null);
     }
 
     public void export(String payload, File file, String charsetName) throws FileNotFoundException, UnsupportedEncodingException {

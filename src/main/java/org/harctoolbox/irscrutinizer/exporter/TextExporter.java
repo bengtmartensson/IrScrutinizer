@@ -78,12 +78,13 @@ public class TextExporter extends RemoteSetExporter {
     @Override
     public void export(RemoteSet remoteSet, String title, File file, String charsetName)
             throws IOException, GirrException, IrCoreException, IrpException {
-        try (PrintStream printStream = new PrintStream(file, charsetName)) {
-            for (Remote remote : remoteSet)
-                for (CommandSet commandSet : remote)
-                    for (Command command : commandSet)
-                        printStream.println(formatCommand(command, 1));
-        }
+        if (file != null)
+            try (PrintStream printStream = new PrintStream(file, charsetName)) {
+                for (Remote remote : remoteSet)
+                    for (CommandSet commandSet : remote)
+                        for (Command command : commandSet)
+                            printStream.println(formatCommand(command, 1));
+            }
     }
 
     private String formatCommand(Command command, int count) throws GirrException, IrpException, IrCoreException {
