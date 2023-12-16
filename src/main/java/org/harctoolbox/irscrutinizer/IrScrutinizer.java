@@ -101,7 +101,11 @@ public class IrScrutinizer {
         }
 
         String applicationHome = Utils.findApplicationHome(commandLineArgs.applicationHome, IrScrutinizer.class, Version.appName);
+        setupGrahamPrefixes();
+        guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.arguments);
+    }
 
+    private static void setupGrahamPrefixes() {
         Map<String, Integer> map = new LinkedHashMap<>(8);
         map.put("0b", 2);
         map.put("%", 2);
@@ -109,8 +113,6 @@ public class IrScrutinizer {
         map.put("0", 8);
         map.put("0x", 16);
         IrCoreUtils.setRadixPrefixes(map);
-
-        guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.arguments);
     }
 
     private static String nukeProperties(boolean verbose) {
