@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see http://www.gnu.org/licenses/.
 */
 
-package org.harctoolbox.harchardware;
+package org.harctoolbox.irscrutinizer;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +26,9 @@ import org.harctoolbox.cmdline.CmdLineProgram;
 import org.harctoolbox.cmdline.ProgramExitStatus;
 import org.harctoolbox.cmdline.UsageException;
 import org.harctoolbox.devslashlirc.LircHardware;
+import org.harctoolbox.harchardware.HarcHardwareException;
+import org.harctoolbox.harchardware.IHarcHardware;
+import org.harctoolbox.harchardware.Utils;
 import org.harctoolbox.harchardware.cmdline.CommandCapture;
 import org.harctoolbox.harchardware.cmdline.CommandCommonOptions;
 import org.harctoolbox.harchardware.cmdline.CommandGetCommands;
@@ -51,7 +54,7 @@ public final class Main extends CmdLineProgram {
 
     private static void main(String[] args, PrintStream out) {
         Main instance = new Main(out);
-        ProgramExitStatus status = instance.run(args);
+        ProgramExitStatus status = instance.run(args, true);
         status.die();
     }
 
@@ -60,7 +63,7 @@ public final class Main extends CmdLineProgram {
         main(args, System.out);
     }
 
-    private final CommandCommonOptions commandLineArgs;
+    private final IrScrutinizer.CommandLineArgs commandLineArgs;
     private final CommandTransmit commandTransmit = new CommandTransmit();
     private final CommandReceive commandReceive = new CommandReceive();
     private final CommandCapture commandCapture = new CommandCapture();
@@ -75,14 +78,14 @@ public final class Main extends CmdLineProgram {
     }
 
     public Main(PrintStream out) {
-        super(out, new CommandCommonOptions(), Version.appName);
+        super(out, new IrScrutinizer.CommandLineArgs(), Version.appName);
         setupCmds(commandTransmit,
                 commandReceive,
                 commandCapture,
                 commandGetRemotes,
                 commandGetCommands,
                 commandVersion);
-        commandLineArgs = (CommandCommonOptions) commandBasicOptions;
+        commandLineArgs = (IrScrutinizer.CommandLineArgs) commandBasicOptions;
     }
 
     @Override
@@ -96,11 +99,11 @@ public final class Main extends CmdLineProgram {
     @Override
     @SuppressWarnings("CallToPrintStackTrace")
     public ProgramExitStatus processCommand() {
-        try {
-            commandLineArgs.initialize();
-        } catch (UsageException ex) {
-            return new ProgramExitStatus(Version.appName, ProgramExitStatus.EXIT_USAGE_ERROR, ex.getLocalizedMessage());
-        }
+//        try {
+//            commandLineArgs.initialize();
+//        } catch (UsageException ex) {
+//            return new ProgramExitStatus(Version.appName, ProgramExitStatus.EXIT_USAGE_ERROR, ex.getLocalizedMessage());
+//        }
 
         try {
             LircHardware.loadLibrary(libDir); // Loads even if not needed :-(
@@ -112,9 +115,16 @@ public final class Main extends CmdLineProgram {
         try {
             LocalSerialPort.setLibraryDir(libDir);
         } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
 
+        if (command == null) {
+            IrScrutinizer.guiExecute(commandLineArgs);
+            return new ProgramExitStatus(Version.appName, ProgramExitStatus.EXIT_USAGE_ERROR, "Unknown command: " + command);
+        }
+        return null;
+
+/*
         try (IHarcHardware hardware = commandLineArgs.setupHardware()) {
 
             boolean done = commandLineArgs.listSerialDevices(out);
@@ -197,5 +207,6 @@ public final class Main extends CmdLineProgram {
         } catch (UnsatisfiedLinkError ex) {
             return new ProgramExitStatus(Version.appName, ProgramExitStatus.EXIT_DYNAMICLINK_ERROR, ex.getLocalizedMessage());
         }
+*/
     }
 }

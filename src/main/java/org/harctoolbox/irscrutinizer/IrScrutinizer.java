@@ -36,6 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import javax.xml.parsers.ParserConfigurationException;
+import org.harctoolbox.cmdline.CommandBasicOptions;
 import org.harctoolbox.cmdline.LevelParser;
 import org.harctoolbox.guicomponents.GuiUtils;
 import org.harctoolbox.harchardware.Utils;
@@ -69,6 +70,7 @@ public class IrScrutinizer {
 
     /**
      * @param args the command line arguments.
+     * @deprecated
      */
     public static void main(String[] args) {
         argumentParser = new JCommander(commandLineArgs);
@@ -83,8 +85,8 @@ public class IrScrutinizer {
 
         setupLoggers();
 
-        if (commandLineArgs.helpRequested)
-            usage(IrpUtils.EXIT_SUCCESS);
+//        if (commandLineArgs.helpRequested)
+//            usage(IrpUtils.EXIT_SUCCESS);
 
         if (commandLineArgs.versionRequested) {
             System.out.println(Version.versionString);
@@ -101,7 +103,6 @@ public class IrScrutinizer {
         }
 
         String applicationHome = Utils.findApplicationHome(commandLineArgs.applicationHome, IrScrutinizer.class, Version.appName);
-        setupGrahamPrefixes();
         guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.arguments);
     }
 
@@ -148,6 +149,7 @@ public class IrScrutinizer {
 
     private static void guiExecute(final String applicationHome, final String propsfilename,
             final boolean verbose, final List<String> arguments) {
+        setupGrahamPrefixes();
         java.awt.EventQueue.invokeLater(() -> {
             try {
                 new GuiMain(applicationHome, propsfilename, verbose, arguments).setVisible(true);
@@ -185,20 +187,25 @@ public class IrScrutinizer {
         });
     }
 
+    public static void guiExecute(CommandLineArgs commandLineArgs) {
+        String applicationHome = Utils.findApplicationHome(commandLineArgs.applicationHome, IrScrutinizer.class, Version.appName);
+        guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.arguments);
+    }
+
     private IrScrutinizer() {
     }
 
-    private final static class CommandLineArgs {
+    public final static class CommandLineArgs extends CommandBasicOptions {
 
-        @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
-        private boolean helpRequested = false;
+//        @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
+//        private boolean helpRequested = false;
 
         @Parameter(names = {"-H", "--home", "--applicationhome", "--apphome"}, description = "Set application home (where files are located)")
         private String applicationHome = null;
 
-        @Parameter(names = {"-l", "--loglevel"}, converter = LevelParser.class,
-            description = "Log level { OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL }")
-        public Level logLevel = Level.WARNING;
+//        @Parameter(names = {"-l", "--loglevel"}, converter = LevelParser.class,
+//            description = "Log level { OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL }")
+//        public Level logLevel = Level.WARNING;
 
         @Parameter(names = {"--nuke-properties"}, description = "Get rid of present properties file")
         private boolean nukeProperties = false;
@@ -206,13 +213,45 @@ public class IrScrutinizer {
         @Parameter(names = {"-p", "--properties"}, description = "Pathname of properties file")
         private String propertiesFilename = null;
 
-        @Parameter(names = {"-V", "--version"}, description = "Display version information")
-        private boolean versionRequested;
+//        @Parameter(names = {"-V", "--version"}, description = "Display version information")
+//        private boolean versionRequested;
 
         @Parameter(names = {"-v", "--verbose"}, description = "Have some commands executed verbosely")
         private boolean verbose;
 
         @Parameter(description = "Arguments to the program")
         private List<String> arguments = new ArrayList<>(4);
+//    }
+//
+//    public final static class CommandScrutinizer extends CommandBasicOptions {
+//
+////        @Parameter(names = {"-h", "--help", "-?"}, description = "Display help message")
+////        private boolean helpRequested = false;
+//
+//        @Parameter(names = {"-H", "--home", "--applicationhome", "--apphome"}, description = "Set application home (where files are located)")
+//        private String applicationHome = null;
+//
+////        @Parameter(names = {"-l", "--loglevel"}, converter = LevelParser.class,
+////            description = "Log level { OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL }")
+////        public Level logLevel = Level.WARNING;
+//
+//        @Parameter(names = {"--nuke-properties"}, description = "Get rid of present properties file")
+//        private boolean nukeProperties = false;
+//
+//        @Parameter(names = {"-p", "--properties"}, description = "Pathname of properties file")
+//        private String propertiesFilename = null;
+//
+////        @Parameter(names = {"-V", "--version"}, description = "Display version information")
+////        private boolean versionRequested;
+//
+//        @Parameter(names = {"-v", "--verbose"}, description = "Have some commands executed verbosely")
+//        private boolean verbose;
+//
+//        @Parameter(description = "Arguments to the program")
+//        private List<String> arguments = new ArrayList<>(4);
+
+        public String getAppHome(Class<?> mainClass) {
+            return Utils.findApplicationHome(applicationHome, mainClass, Version.appName);
+        }
     }
 }
