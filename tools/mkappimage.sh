@@ -143,12 +143,7 @@ fi
 
 cd \${IRSCRUTINIZERHOME}
 
-# Since the lock directory is sometimes different from /var/lock,
-# we prefer the system's rxtx (if existing) over our own,
-# which is why we put our own last in the path.
-# If it exists but is broken (Fedora 29-30, https://bugzilla.redhat.com/show_bug.cgi?id=1645856 )
-# the program just searches the following directories.
-exec "${JAVA_PATH}java" -Djava.library.path=/usr/local/lib:/usr/lib64/rxtx:/usr/lib64:/usr/lib/rxtx:/usr/lib:\${IRSCRUTINIZERHOME}/Linux-amd64 \
+exec "${JAVA_PATH}java" -Djava.library.path=/usr/local/lib:/usr/lib64:/usr/lib:\${IRSCRUTINIZERHOME}/Linux-amd64 \
      ${JAVA_QUICKSTART} -jar \${IRSCRUTINIZERHOME}/${APPNAME}-jar-with-dependencies.jar "\$@"
 EOF
 
