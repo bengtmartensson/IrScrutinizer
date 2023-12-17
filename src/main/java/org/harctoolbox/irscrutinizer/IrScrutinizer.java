@@ -100,17 +100,20 @@ public class IrScrutinizer {
             System.exit(IrpUtils.EXIT_SUCCESS);
         }
 
-        String applicationHome = Utils.findApplicationHome(commandLineArgs.applicationHome, IrScrutinizer.class, Version.appName);
+        setupRadixPrefixes();
 
-        Map<String, Integer> map = new LinkedHashMap<>(8);
+        String applicationHome = Utils.findApplicationHome(commandLineArgs.applicationHome, IrScrutinizer.class, Version.appName);
+        guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.arguments);
+    }
+
+    public static void setupRadixPrefixes() {
+       Map<String, Integer> map = new LinkedHashMap<>(8);
         map.put("0b", 2);
         map.put("%", 2);
         map.put("0q", 4);
         map.put("0", 8);
         map.put("0x", 16);
         IrCoreUtils.setRadixPrefixes(map);
-
-        guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.arguments);
     }
 
     private static String nukeProperties(boolean verbose) {
@@ -210,7 +213,7 @@ public class IrScrutinizer {
         @Parameter(names = {"-v", "--verbose"}, description = "Have some commands executed verbosely")
         private boolean verbose;
 
-        @Parameter(description = "Arguments to the program")
+        @Parameter(description = "Arguments...")
         private List<String> arguments = new ArrayList<>(4);
     }
 }
