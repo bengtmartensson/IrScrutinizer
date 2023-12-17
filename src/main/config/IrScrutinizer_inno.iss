@@ -78,7 +78,9 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppJarName}"; Tasks: 
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{#JVMPath}";            Tasks: desktopicon; IconFilename: "{app}\{#MyAppName}.ico"; Parameters: "-jar ""{app}\{#MyAppJarName}"""; Components: jvm
 
 [UninstallDelete]
+Type: files; Name: "{app}\IrScrutinizer.bat"
 Type: files; Name: "{app}\IrpTransmogrifier.bat"
+Type: files; Name: "{app}\HarcHardware.bat"
 
 [Run]
 Filename: "{app}\{#MyAppJarName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, "&", "&&")}}"; Parameters: ; Flags: shellexec postinstall skipifsilent; Components: not jvm
@@ -121,6 +123,19 @@ begin
       SaveStringToFile(wrapperFilename, 'set JAVA=java' + #13#10, true);
    end;
    SaveStringToFile(wrapperFilename, '"%JAVA%"' + ' -cp "%IRSCRUTINIZERHOME%\IrScrutinizer.jar" org.harctoolbox.irp.IrpTransmogrifier %1 %2 %3 %4 %5 %6 %7 %8 %9', true);
+
+   wrapperFilename := ExpandConstant('{app}') + '\HarcHardware.bat';
+   SaveStringToFile(wrapperFilename, '@ECHO off' + #13#10, false);
+   SaveStringToFile(wrapperFilename, 'set IRSCRUTINIZERHOME=' + ExpandConstant('{app}') + #13#10, true);
+   if WizardSetupType(False) = 'with_jvm' then
+   begin
+      SaveStringToFile(wrapperFilename, 'set JAVA=%IRSCRUTINIZERHOME%\jre-x86-windows\bin\java' + #13#10, true);
+   end
+   else
+   begin
+      SaveStringToFile(wrapperFilename, 'set JAVA=java' + #13#10, true);
+   end;
+   SaveStringToFile(wrapperFilename, '"%JAVA%"' + ' -cp "%IRSCRUTINIZERHOME%\IrScrutinizer.jar" org.harctoolbox.harchardware.Main %1 %2 %3 %4 %5 %6 %7 %8 %9', true);
 
    wrapperFilename := ExpandConstant('{app}') + '\IrScrutinizer.bat';
    SaveStringToFile(wrapperFilename, '@ECHO off' + #13#10, false);
