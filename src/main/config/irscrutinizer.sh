@@ -22,7 +22,7 @@ JVM_ARGS=-Dsun.java2d.uiScale=${SCALE_FACTOR:-1}
 
 # Where the programs are installed, adjust if required
 export IRSCRUTINIZERHOME="$(dirname -- "$(readlink -f -- "${0}")" )"
-FATJAT=${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar
+FATJAR=${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar
 
 checkgroup()
 {
@@ -39,12 +39,12 @@ PROGNAME=$(basename "$0" .sh | sed -e 's/-[0-9\\.]*$//' )
 # If called using the name irptransmogrifier, invoke that "program".
 # Recall: exec does not return.
 if [ ${PROGNAME} = "irptransmogrifier" ] ; then
-    exec "${JAVA}" ${JVM_ARGS} -classpath "${FATJAT}" org.harctoolbox.irp.IrpTransmogrifier "$@"
+    exec "${JAVA}" ${JVM_ARGS} -classpath "${FATJAR}" org.harctoolbox.irp.IrpTransmogrifier "$@"
 fi
 
 # If called using a name of one of the tools, invoke that "program".
 if [ ${PROGNAME} != "irscrutinizer" -a ${PROGNAME} != "harchardware" ] ; then
-    exec "${JAVA}" ${JVM_ARGS} -classpath "${FATJAT}" org.harctoolbox.guicomponents.${PROGNAME} "$@"
+    exec "${JAVA}" ${JVM_ARGS} -classpath "${FATJAR}" org.harctoolbox.guicomponents.${PROGNAME} "$@"
 fi
 
 # Check that the use is a member of some groups ...
@@ -62,14 +62,14 @@ if [ "x${MESSAGE}" != "x" ] ; then
     MESSAGETAIL+="Depending on your operating system, the command for fixing this is typically \"sudo usermod -aG $MESSAGE $USER\",\n"
     MESSAGETAIL+="after which you should logout and login again.\n\n"
     MESSAGETAIL+="Proceed anyhow?"
-    if ! "${JAVA}" ${JVM_ARGS} -classpath "${FATJAT}" \
+    if ! "${JAVA}" ${JVM_ARGS} -classpath "${FATJAR}" \
         org.harctoolbox.guicomponents.StandalonePopupAnnoyer "${MESSAGEPRE}${MESSAGE}${MESSAGETAIL}" "$@" ; then
         exit 1
     fi
 fi
 
 if [ ${PROGNAME} = "harchardware" ] ; then
-    exec "${JAVA}" ${JVM_ARGS} -classpath "${FATJAT}" org.harctoolbox.harchardware.Main --apphome "${IRSCRUTINIZERHOME}" "$@"
+    exec "${JAVA}" ${JVM_ARGS} -classpath "${FATJAR}" org.harctoolbox.harchardware.Main --apphome "${IRSCRUTINIZERHOME}" "$@"
 fi
 
-exec "${JAVA}" ${JVM_ARGS} -jar "${FATJAT}" --apphome "${IRSCRUTINIZERHOME}" "$@"
+exec "${JAVA}" ${JVM_ARGS} -jar "${FATJAR}" --apphome "${IRSCRUTINIZERHOME}" "$@"
