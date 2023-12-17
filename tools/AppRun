@@ -15,19 +15,19 @@ export GSETTINGS_SCHEMA_DIR="${APP_ROOT}/usr/share/glib-2.0/schemas/${GSETTINGS_
 export QT_PLUGIN_PATH="${APP_ROOT}/usr/lib/qt4/plugins/:${APP_ROOT}/usr/lib/i386-linux-gnu/qt4/plugins/:${APP_ROOT}/usr/lib/x86_64-linux-gnu/qt4/plugins/:${APP_ROOT}/usr/lib32/qt4/plugins/:${APP_ROOT}/usr/lib64/qt4/plugins/:${APP_ROOT}/usr/lib/qt5/plugins/:${APP_ROOT}/usr/lib/i386-linux-gnu/qt5/plugins/:${APP_ROOT}/usr/lib/x86_64-linux-gnu/qt5/plugins/:${APP_ROOT}/usr/lib32/qt5/plugins/:${APP_ROOT}/usr/lib64/qt5/plugins/${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
 
 if [ ! -z "${APPIMAGE}" ] ; then
-    PROG_NAME=$(basename "${ARGV0}")
+    PROG_NAME=$(echo $(basename "${ARGV0}") | tr '[:upper:]' '[:lower:]' )
 else
-    PROG_NAME=$(basename "$0")
+    PROG_NAME=$(echo $(basename "${0}") | tr '[:upper:]' '[:lower:]' )
 fi
 
 # If this called with a name that does not end with AppImage,
 # consider that as a command to be invoked, otherwise extract from desktop file.
 case ${PROG_NAME} in
-    *AppImage|*appimage|*APPIMAGE)
+    *appimage)
         EXEC=$(grep -e '^Exec=.*' "${APP_ROOT}"/*.desktop | head -n 1 | cut -d "=" -f 2 | cut -d " " -f 1)
         exec "${APP_ROOT}/usr/bin/${EXEC}" "$@"
         ;;
-    irscrutinizer|irptransmogrifier)
+    irscrutinizer|irptransmogrifier|harchardware)
         exec "${APP_ROOT}/usr/bin/${PROG_NAME}" "$@"
         ;;
     *)

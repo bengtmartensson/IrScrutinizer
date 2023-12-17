@@ -90,6 +90,10 @@
                 <td>2022-12-19</td>
                 <td>Misc. fixes and updates.</td>
             </tr>
+            <tr>
+                <td>2023-12-17</td>
+                <td>HarcHardware support from AppImages.</td>
+            </tr>
         </table>
 
         <section>
@@ -351,7 +355,8 @@
                     It comes with its own Java runtime.</p>
 
                     <p>It called using the name <code>irptransmogrifier</code>, the <a href="IrpTransmogrifier.html">IrpTransmogrifier</a> program will be invoked,
-                    taking its usual command line arguments.</p>
+                    taking its usual command line arguments.
+                    Similarly, if called using the name <code>harchardware</code>, the <a href="HarcHardware.html">HarcHardware</a> main routine will be invoked.</p>
 
                 <p>To uninstall, just delete.</p>
 
@@ -370,7 +375,7 @@
                     to "Anywhere".</p>
 
                 <p>To uninstall, just drag the program to the trash can.</p>
-                <p>The command line program <a href="IrpTransmogrifier.html">IrpTransmogrifier</a> is not supported in this mode.
+                <p>The command line programs <a href="IrpTransmogrifier.html">IrpTransmogrifier</a> and <a href="HarcHardware.html">HarcHardware</a> are not supported in this mode.
                     (For this, the <a href="#Generic+Binary">generic binary</a> distribution has to be used.)</p>
             </section>
 
@@ -418,8 +423,8 @@
                     <code>~/.local/share/applications</code>.</p>
 
                 <p>The program can now be started either as a desktop program, or by typing <code>irscrutinizer</code> on the command line.
-                    Also the command line program <a href="IrpTransmogrifier.html">IrpTransmogrifier</a> can be started
-                    by the command <code>irptransmogrifier</code>. It is also possible to start IrScrutinizer by double clicking
+                    Also the command line programs <a href="IrpTransmogrifier.html">IrpTransmogrifier</a> and <a href="HarcHardware.html">HarcHardware</a> can be started
+                    by the command <code>irptransmogrifier</code> and <code>harchardware</code> respectively. It is also possible to start IrScrutinizer by double clicking
                     on the jar file. In case this brings up the archive manager, the desktop needs to be taught
                     to open executable jar files with the "java" application (i.e. the JVM). For this, select a jar file the file browser,
                     select the properties, and select "java" as the application to "open with". (The details might vary.)</p>

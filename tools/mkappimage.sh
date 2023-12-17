@@ -98,6 +98,23 @@ if [ "\$1" = "irptransmogrifier" ] ; then
     transmogrify "\$@"
 fi
 
+harchardware()
+{
+    exec "${JAVA_PATH}java" -classpath "\${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
+        ${JAVA_QUICKSTART} org.harctoolbox.harchardware.Main "\$@"
+}
+
+# If basename \$0 equals "harchardware" invoke that program instead.
+if [ "\$(basename \$0)" = "harchardware" ] ; then
+    harchardware "\$@"
+fi
+
+# If \$1 equals "harchardware" invoke that program instead.
+if [ "\$1" = "harchardware" ] ; then
+    shift
+    harchardware "\$@"
+fi
+
 checkgroup()
 {
     if grep \$1 /etc/group > /dev/null ; then
@@ -137,6 +154,7 @@ EOF
 
 chmod 555 ${WRAPPER}
 ln -s ${MYPROG_LOWER} ${USR_BIN}/irptransmogrifier
+ln -s ${MYPROG_LOWER} ${USR_BIN}/harchardware
 
 # Invoke the builder
 #wget -c "https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage"
