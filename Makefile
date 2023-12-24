@@ -17,7 +17,7 @@ PROJECT_NAME := $(MYPROG)
 UPLOADDIR_DIR := ftp://bengt-martensson.de/harctoolbox/
 VERSION=$(shell cat $(TOP)/target/$(MYPROG).version | cut  --delimiter=' ' -f 3)
 
-IRSCRUTINIZER_JAR := target/$(MYPROG)-jar-with-dependencies.jar
+IRSCRUTINIZER_JAR := target/$(MYPROG)-$(VERSION)-jar-with-dependencies.jar
 EXPORT_FORMATS := src/main/config/exportformats.d
 EXPORT_MAIN := org.harctoolbox.irscrutinizer.exporter.DynamicRemoteSetExportFormatMain
 EXPORT_FORMATS_SCHEMA_LOCATION := http://www.harctoolbox.org/schemas/exportformats.xsd

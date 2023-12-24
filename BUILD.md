@@ -133,14 +133,14 @@ For testing purposes, the programs can be invoked from their different target di
 
 
     
-                    $ java -jar target/IrScrutinizer-jar-with-dependencies.jar
+                    $ java -jar target/IrScrutinizer-_version_-jar-with-dependencies.jar
                 
 or, if the shared libraries are required, with _path-to-shared-libraries_ denoting the path to a directory containing
                     the shared libraries.
 
 
     
-                    $ java -Djava.library.path=_path-to-shared-libraries_ -jar target/IrScrutinizer-jar-with-dependencies.jar
+                    $ java -Djava.library.path=_path-to-shared-libraries_ -jar target/IrScrutinizer-_version_-jar-with-dependencies.jar
                 
 IrScrutinizer can also be started by double clicking the mentioned jar file,
                     provided that the desktop has been configured to start executable jar with a Java virtual machine.

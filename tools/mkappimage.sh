@@ -31,6 +31,7 @@ USR=${APPDIR}/usr
 USR_BIN=${USR}/bin
 WRAPPER=${USR_BIN}/${MYPROG_LOWER}
 APPRUN=tools/AppRun
+FATJAR=${APPNAME}-${VERSION}-jar-with-dependencies.jar
 JAVA_MODULES=java.base,java.datatransfer,java.desktop,java.logging,java.xml,jdk.crypto.ec
 #,jdk.dynalink,jdk.editpad,jdk.hotspot.agent,jdk.httpserver,jdk.internal.ed,jdk.internal.jvmstat,jdk.internal.le,jdk.internal.opt,jdk.internal.vm.ci,jdk.internal.vm.compiler,jdk.internal.vm.compiler.management,jdk.jartool,jdk.javadoc,jdk.jcmd,jdk.jconsole,jdk.jdeps,jdk.jdi,jdk.jdwp.agent,jdk.jfr,jdk.jlink,jdk.jshell,jdk.jsobject,jdk.jstatd,jdk.localedata,jdk.management,jdk.management.agent,jdk.management.jfr,jdk.naming.dns,jdk.naming.rmi,jdk.net,jdk.pack,jdk.rmic,jdk.scripting.nashorn,jdk.scripting.nashorn.shell,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom,jdk.zipfs
 
@@ -47,7 +48,7 @@ fi
 
 # Copy stuff to MYPROG_HOME
 install -d ${MYPROG_HOME}
-install --mode=444 target/${APPNAME}-jar-with-dependencies.jar ${MYPROG_HOME}
+install --mode=444 target/${FATJAR} ${MYPROG_HOME}
 install --mode=444 target/maven-shared-archive-resources/*.xml ${MYPROG_HOME}
 #install --mode=444 target/maven-shared-archive-resources/girr.xml ${MYPROG_HOME}
 install -d ${MYPROG_HOME}/exportformats.d
@@ -83,7 +84,7 @@ IRSCRUTINIZERHOME=\${APP_ROOT}/usr/share/${MYPROG_LOWER}
 
 transmogrify()
 {
-    exec "${JAVA_PATH}java" -classpath "\${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
+    exec "${JAVA_PATH}java" -classpath "\${IRSCRUTINIZERHOME}/${FATJAR}" \
         ${JAVA_QUICKSTART} org.harctoolbox.irp.IrpTransmogrifier "\$@"
 }
 
@@ -100,7 +101,7 @@ fi
 
 harchardware()
 {
-    exec "${JAVA_PATH}java" -classpath "\${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
+    exec "${JAVA_PATH}java" -classpath "\${IRSCRUTINIZERHOME}/${FATJAR}" \
         ${JAVA_QUICKSTART} org.harctoolbox.harchardware.Main "\$@"
 }
 
@@ -135,7 +136,7 @@ if [ "x\${MESSAGE}" != "x" ] ; then
     MESSAGE=\$(echo \${MESSAGE} | sed -e "s/,\$//")
     MESSAGEPRE="You are not a member of the group(s) "
     MESSAGETAIL=", so you will probably not have access to some devices.\nYou probably want to correct this. Otherwise, functionality will be limited.\n\nDepending on your operating system, the command for fixing this may be \"sudo usermod -aG \${MESSAGE} \${USER}\".\n\nProceed anyhow?"
-    if ! "${JAVA_PATH}java" -classpath "\${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar" \
+    if ! "${JAVA_PATH}java" -classpath "\${IRSCRUTINIZERHOME}/${FATJAR}" \
            org.harctoolbox.guicomponents.StandalonePopupAnnoyer "\${MESSAGEPRE}\${MESSAGE}\${MESSAGETAIL}" "\$@" ; then
         exit 1
     fi
@@ -144,7 +145,7 @@ fi
 cd \${IRSCRUTINIZERHOME}
 
 exec "${JAVA_PATH}java" -Djava.library.path=/usr/local/lib:/usr/lib64:/usr/lib:\${IRSCRUTINIZERHOME}/Linux-amd64 \
-     ${JAVA_QUICKSTART} -jar \${IRSCRUTINIZERHOME}/${APPNAME}-jar-with-dependencies.jar "\$@"
+     ${JAVA_QUICKSTART} -jar \${IRSCRUTINIZERHOME}/${FATJAR} "\$@"
 EOF
 
 chmod 555 ${WRAPPER}

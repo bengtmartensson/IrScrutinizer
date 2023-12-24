@@ -22,7 +22,7 @@ JVM_ARGS=-Dsun.java2d.uiScale=${SCALE_FACTOR:-1}
 
 # Where the programs are installed, adjust if required
 export IRSCRUTINIZERHOME="$(dirname -- "$(readlink -f -- "${0}")" )"
-FATJAR=${IRSCRUTINIZERHOME}/IrScrutinizer-jar-with-dependencies.jar
+FATJAR=${IRSCRUTINIZERHOME}/IrScrutinizer-${project.version}-jar-with-dependencies.jar
 
 checkgroup()
 {

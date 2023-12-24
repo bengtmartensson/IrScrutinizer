@@ -1970,12 +1970,12 @@ module is then accessed using the UDP text mode.</p>
                 <p>For testing purposes, the programs can be invoked from their different target directories.
                     IrScrutinizer can be invoked as</p>
                 <source>
-                    $ java -jar target/IrScrutinizer-jar-with-dependencies.jar
+                    $ java -jar target/IrScrutinizer-<em>version</em>-jar-with-dependencies.jar
                 </source>
                 <p>or, if the shared libraries are required, with <em>path-to-shared-libraries</em> denoting the path to a directory containing
                     the shared libraries.</p>
                 <source>
-                    $ java -Djava.library.path=<em>path-to-shared-libraries</em> -jar target/IrScrutinizer-jar-with-dependencies.jar
+                    $ java -Djava.library.path=<em>path-to-shared-libraries</em> -jar target/IrScrutinizer-<em>version</em>-jar-with-dependencies.jar
                 </source>
 
                 <p>IrScrutinizer can also be started by double clicking the mentioned jar file,

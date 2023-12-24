@@ -318,7 +318,6 @@
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
-                            <finalName>${project.name}</finalName>
                         </configuration>
                     </execution>
                     <execution>
@@ -329,7 +328,6 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>${project.name}-${project.version}</finalName>
                             <descriptors>
                                 <descriptor>src/assembly/target.xml</descriptor>
                             </descriptors>

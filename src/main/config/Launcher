@@ -21,7 +21,7 @@ fi
 if [ -f "$JAVA" ] && [ -x "$JAVA" ] ; then
     cd ${RES}
     exec "${JAVA}" -Xdock:icon="${RES}/${project.artifactId}.icns" -Xdock:name="${project.artifactId}" \
-       -jar "${RES}/${project.artifactId}-jar-with-dependencies.jar" > "${HOME}/.${project.artifactId}.err" 2>&1
+       -jar "${RES}/${project.artifactId}-${project.version}-jar-with-dependencies.jar" > "${HOME}/.${project.artifactId}.err" 2>&1
 else
     # display error message with applescript
     osascript -e "tell application \"System Events\" to display dialog \"Error launching ${project.artifactId}.\n\nJava JDK (not just JRE) is needed.\nVisit http://java.com for more information...\" with title \"${project.artifactId}\" buttons {\" OK \"} default button 1"
