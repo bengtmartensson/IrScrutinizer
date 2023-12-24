@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-This XSLT 2 stylesheet can be used to transform a iRed2 xml file to an .rem file.
+This XSLT2 stylesheet can be used for translating an iRed2 plist
+to the IrTrans rem-format, which can be imported into IrScrutinizer.
+See http://www.hifi-remote.com/forums/viewtopic.php?t=100288
 -->
 <xsl:transform
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
