@@ -46,7 +46,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import javax.comm.DriverGenUnix;
 import javax.swing.DefaultComboBoxModel;
@@ -1337,12 +1336,12 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.error("No exporter");
             return null;
         }
-        
+
         if (commands.isEmpty()) {
             guiUtils.error("Nothing to export");
             return null;
         }
-        
+
         File savedFile;
         if (commands.size() == 1) {
             savedFile = saveSignalWrite(commands.values().iterator().next(), title, exporter);
@@ -1353,7 +1352,7 @@ public final class GuiMain extends javax.swing.JFrame {
             }
             savedFile = saveCommandsWrite(commands, title, (RemoteSetExporter) exporter);
         }
-        
+
         if (savedFile != null) {
             guiUtils.message("File " + savedFile + " was successfully written with " + commands.size() + (commands.size() == 1 ? " command." :  " commands."));
             if (properties.getAutoOpenExports())
@@ -1407,15 +1406,6 @@ public final class GuiMain extends javax.swing.JFrame {
         return exporter.export(command, "IrScrutinizer captured signal", title,
                 numberRepeats, properties.getExportAutomaticFilenames(), this,
                 new File(properties.getExportDir()), properties.getExportCharsetName());
-    }
-
-    private double getFrequency() {
-        try {
-            return Double.parseDouble(frequencyLabel.getText());
-        } catch (NumberFormatException | NullPointerException ex) {
-        }
-        double f = properties.getFallbackFrequency();
-        return f > 0 ? f : ModulatedIrSequence.DEFAULT_FREQUENCY;
     }
 
     private void reAnalyze() {
@@ -7414,8 +7404,8 @@ public final class GuiMain extends javax.swing.JFrame {
             Class<?> clazz = tableModel.getColumnClass(column);
             String str = editingTextField.getText();
             Object thing = str.trim().isEmpty() ? null
-                    : clazz == Integer.class ? Integer.parseInt(str)
-                    : clazz == Boolean.class ? Boolean.parseBoolean(str)
+                    : clazz == Integer.class ? Integer.valueOf(str)
+                    : clazz == Boolean.class ? Boolean.valueOf(str)
                     : str;
 
             Object oldValue = tableModel.getValueAt(r, c);

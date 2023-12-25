@@ -69,6 +69,7 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
         return imp.getCommands();
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         if (args.length == 0)
             process(System.in, System.out);
@@ -147,10 +148,10 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
             else if (chunks[0].equals("sample_count"))
                 sampleCount = Integer.parseInt(chunks[1]);
             else if (chunks[0].startsWith("+")) {
-                data.add(Integer.parseInt(chunks[0].substring(1)));
+                data.add(Integer.valueOf(chunks[0].substring(1)));
                 noSamples++;
             } else if (chunks[0].equals("pulse")) {
-                data.add(Integer.parseInt(chunks[1]));
+                data.add(Integer.valueOf(chunks[1]));
                 noSamples++;
             } else if (chunks[0].equals(IRSCOPE_ENDING_STRING)) {
                 data.add(IRSCOPE_ENDING_GAP);
@@ -172,13 +173,13 @@ public class IctImporter extends RemoteSetImporter implements IReaderImporter, S
             } else if (chunks[0].equals("irscope"))
                 ;
             else if (chunks[0].startsWith("-")) {
-                data.add(Integer.parseInt(chunks[0].substring(1)));
+                data.add(Integer.valueOf(chunks[0].substring(1)));
                 noSamples++;
             } else if (chunks[0].equals("space"))
                 if (data.isEmpty())
                     ; // Ignore leading gaps
                 else {
-                    data.add(Integer.parseInt(chunks[1]));
+                    data.add(Integer.valueOf(chunks[1]));
                     noSamples++;
                 }
             else if (chunks[0].startsWith("#"))

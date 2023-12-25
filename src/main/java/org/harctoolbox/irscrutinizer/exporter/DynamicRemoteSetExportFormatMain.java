@@ -64,7 +64,7 @@ public class DynamicRemoteSetExportFormatMain {
         System.exit(exitcode);
     }
 
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
+    @SuppressWarnings({"UseOfSystemOutOrSystemErr", "AccessingNonPublicFieldOfAnotherObject"})
     public static void main(String[] args) {
         argumentParser = new JCommander(commandLineArgs);
         argumentParser.setProgramName("DynamicRemoteSetExportFormatVersion");

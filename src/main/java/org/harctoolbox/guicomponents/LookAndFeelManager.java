@@ -122,6 +122,7 @@ public class LookAndFeelManager {
     /**
      * Allows for error reporting function and a set-property function of the caller.
      */
+    @SuppressWarnings("PublicInnerClass")
     public interface ILookAndFeelManagerCaller {
         /**
          * Used for error reporting through the caller.

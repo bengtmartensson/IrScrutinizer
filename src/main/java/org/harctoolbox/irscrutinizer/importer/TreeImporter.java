@@ -278,8 +278,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
             guiUtils.error("A command (not remote) has to be selected for this command.");
             return null;
         }
-        Command command = (Command) thing;
-        return command;
+        return (Command) thing;
     }
 
     private void checkGuiMain() {

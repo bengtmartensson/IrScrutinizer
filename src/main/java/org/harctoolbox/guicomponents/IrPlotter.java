@@ -100,6 +100,7 @@ public class IrPlotter extends HarcPanel {
         this(true);
     }
 
+    @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
     public IrPlotter(IrPlotter irPlotter, boolean zoomSupport) {
         this(zoomSupport);
         this.noIntroBursts = irPlotter.noIntroBursts;
@@ -319,6 +320,7 @@ public class IrPlotter extends HarcPanel {
         }
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private int[] getTickValues(int xmin, int xmax, int pixelWidth) {
         if (xmin == xmax)
             return new int[0];

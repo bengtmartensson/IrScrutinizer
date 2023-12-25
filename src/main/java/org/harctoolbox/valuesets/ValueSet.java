@@ -87,6 +87,7 @@ public abstract class ValueSet implements Iterable<Long> {
      *
      * @param args
      */
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         int seed = (int) IrCoreUtils.INVALID;
         int arg_i = 0;

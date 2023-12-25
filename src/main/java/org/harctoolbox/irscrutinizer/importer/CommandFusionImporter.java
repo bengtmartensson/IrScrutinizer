@@ -92,10 +92,9 @@ public class CommandFusionImporter extends RemoteSetImporter implements IReaderI
         Map<String, String> notes = new HashMap<>(1);
         notes.put("Description", remoteInfo.getString("Description", null));
 
-        Remote remote = new Remote(new Remote.MetaData(name, null, manufacturer, model, deviceClass, remoteName),
+        return new Remote(new Remote.MetaData(name, null, manufacturer, model, deviceClass, remoteName),
                 null /* String comment */, notes, commands,
                 null /* HashMap<String,HashMap<String,String>> applicationParameters*/);
-        return remote;
     }
 
 

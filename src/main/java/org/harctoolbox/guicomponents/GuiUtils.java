@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.net.MalformedURLException;
-import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -234,7 +233,7 @@ public class GuiUtils implements Serializable {
 
     public Integer getIntegerInput(String message, int oldValue) {
         String s = getInput(message, "Parameter input", Integer.toString(oldValue));
-        return s != null ? Integer.parseInt(s) : null;
+        return s != null ? Integer.valueOf(s) : null;
     }
 
     public Long getLongInput(String message, long oldValue) {
@@ -246,7 +245,7 @@ public class GuiUtils implements Serializable {
 
     public Double getDoubleInput(String message, double oldValue) {
         String s = getInput(message, "Parameter input", Double.toString(oldValue));
-        return s != null ? Double.parseDouble(s) : null;
+        return s != null ? Double.valueOf(s) : null;
     }
 
     public boolean confirm(String message) {
@@ -297,6 +296,7 @@ public class GuiUtils implements Serializable {
      * ... not omnipresent, use only this function.
      *
      * @param file file or directory to be opened/edited.
+     * @throws java.io.IOException
      */
     public void open(File file) throws IOException {
         if (useXdbOpen)
@@ -375,6 +375,7 @@ public class GuiUtils implements Serializable {
         return current != null && current.equals(versionString);
     }
 
+    @SuppressWarnings("PublicInnerClass")
     public interface EmergencyFixer {
         public void fix();
 

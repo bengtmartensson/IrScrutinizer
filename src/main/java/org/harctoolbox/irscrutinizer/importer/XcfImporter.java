@@ -85,6 +85,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         return importer.getRemoteSet();
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String args[]) {
         try {
             RemoteSet buttons = importXcf(args[0]);
@@ -228,13 +229,12 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
             NodeList nextpages = page.getElementsByTagName("Next");
             page = nextpages.getLength() > 0 ? pageIndex.get(((Element) nextpages.item(0)).getAttribute("id")) : null;
         }
-        Remote remote = new Remote(new Remote.MetaData(name),
+        return new Remote(new Remote.MetaData(name),
                 null, //java.lang.String comment,
                 null, //java.lang.String notes,
                 cmds,
                 null //java.util.HashMap<java.lang.String,java.util.HashMap<java.lang.String,java.lang.String>> applicationParameters)
                 );
-        return remote;
     }
 
     private Map<String,Command> loadPage(Element page) {
@@ -280,8 +280,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         if (nl.getLength() == 0)
             return null;
 
-        String ccf = nl.item(0).getTextContent();
-        return ccf;
+        return nl.item(0).getTextContent();
     }
 
     private String actionCodeName(Element action) {
@@ -309,6 +308,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         }
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private void setupActionIndex(Element element) {
         actionIndex = mkIndex(element, "ACTION");
         for (Element action : actionIndex.values()) {

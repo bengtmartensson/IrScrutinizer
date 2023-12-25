@@ -309,6 +309,7 @@ public class Console extends javax.swing.JScrollPane {
         //    return (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this).getTransferData(DataFlavor.stringFlavor);
         //}
     }
+    @SuppressWarnings("PublicInnerClass")
     public interface IErrorFunction {
         void err(Exception ex, String str);
 

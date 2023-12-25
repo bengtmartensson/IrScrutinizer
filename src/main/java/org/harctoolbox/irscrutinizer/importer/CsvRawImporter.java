@@ -43,6 +43,7 @@ import org.harctoolbox.irscrutinizer.InterpretString;
  *
  * Columns are numbered starting with 1.
  */
+@SuppressWarnings("serial")
 public class CsvRawImporter extends CsvImporter {
 
     public static Collection<Command> process(File file, String separator, int nameColumn, boolean nameMultiColumn, int codeColumn, boolean includeTail,
@@ -52,6 +53,7 @@ public class CsvRawImporter extends CsvImporter {
         return csvImportRaw.getCommands();
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         try {
             Collection<Command> signals = process(new File(args[0]), " ", 3, false, 6, true, true, true, true, "WINDOWS-1252");
@@ -150,6 +152,7 @@ public class CsvRawImporter extends CsvImporter {
         setupRemoteSet();
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private Command scrutinizeRaw(String[] chunks, boolean rejectNumbers) {
         String[] nameArray = gobbleString(chunks, nameColumn, nameMultiColumn, 16, "-", rejectNumbers);
         String name = join(nameArray);

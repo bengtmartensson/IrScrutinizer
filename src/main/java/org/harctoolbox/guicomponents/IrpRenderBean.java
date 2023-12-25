@@ -242,8 +242,7 @@ public final class IrpRenderBean extends javax.swing.JPanel {
 
     public IrSignal render() throws IrpException, IrCoreException, ParseException {
         Map<String, Long> parameters = getParameters();
-        IrSignal irSignal = protocol.toIrSignal(parameters);
-        return irSignal;
+        return protocol.toIrSignal(parameters);
     }
 
     public Map<String, Command> getCommands() throws IrCoreException, IrpException, ParseException, GirrException {

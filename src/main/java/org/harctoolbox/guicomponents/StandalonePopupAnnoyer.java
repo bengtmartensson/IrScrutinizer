@@ -38,6 +38,7 @@ public class StandalonePopupAnnoyer {
         return ans == 0;
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         try {
             boolean result = errorContinue(args[0]);

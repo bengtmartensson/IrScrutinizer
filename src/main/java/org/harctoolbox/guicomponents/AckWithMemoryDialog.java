@@ -28,6 +28,7 @@ public final class AckWithMemoryDialog extends javax.swing.JDialog {
     private final String message;
     private final String uSureMessage;
 
+    @SuppressWarnings("PublicInnerClass")
     public interface PropertyFlip {
         public boolean getProperty();
         public void setProperty(boolean value);
@@ -41,6 +42,7 @@ public final class AckWithMemoryDialog extends javax.swing.JDialog {
         initComponents();
     }
 
+    @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
     public static boolean ackWithMemoryDialog(String message, String uSure, PropertyFlip propertyFlip, Frame parent) {
         if (propertyFlip.getProperty())
             return true;

@@ -33,6 +33,7 @@ import org.harctoolbox.irscrutinizer.HardwareUnavailableException;
 /**
  * This is a superclass of all the hardware managing beans.
  */
+@SuppressWarnings("serial")
 public abstract class HardwareBean extends JPanel implements Closeable {
 
     public static final String PROP_VERSION     = "PROP_VERSION";
@@ -103,6 +104,7 @@ public abstract class HardwareBean extends JPanel implements Closeable {
 
     /**
      * Returns a somewhat friendly name of the class.
+     * @return name
      */
     @Override
     public String getName() {
@@ -158,6 +160,10 @@ public abstract class HardwareBean extends JPanel implements Closeable {
     /**
      * Default implementation, override whenever the subclass can capture.
      * @return ModulatedSequence captured, or null.
+     * @throws org.harctoolbox.guicomponents.HardwareBean.CannotCaptureException
+     * @throws HarcHardwareException
+     * @throws InvalidArgumentException
+     * @throws IOException
      */
     public ModulatedIrSequence capture() throws CannotCaptureException, HarcHardwareException, InvalidArgumentException, IOException {
         throw new CannotCaptureException(getName());
@@ -165,19 +171,29 @@ public abstract class HardwareBean extends JPanel implements Closeable {
 
     /**
      * Default implementation, override whenever the subclass can send.
-     * @return success of operation
+     *
+     * @param irSignal
+     * @param count
+     * @return  success of operation
+     * @throws NoSuchTransmitterException
+     * @throws IOException
+     * @throws HardwareUnavailableException
+     * @throws HarcHardwareException
+     * @throws InvalidArgumentException
      */
     public boolean sendIr(IrSignal irSignal, int count) throws NoSuchTransmitterException, IOException, HardwareUnavailableException, HarcHardwareException, InvalidArgumentException {
         throw new CannotSendException(getName());
     }
 
-   public static class CannotCaptureException extends HarcHardwareException {
+    @SuppressWarnings("PublicInnerClass")
+    public static class CannotCaptureException extends HarcHardwareException {
 
         private CannotCaptureException(String name) {
             super("Selected hardware " + name + " cannot capture.");
         }
     }
 
+    @SuppressWarnings("PublicInnerClass")
     public static class CannotSendException extends HarcHardwareException {
 
         public CannotSendException(String name) {

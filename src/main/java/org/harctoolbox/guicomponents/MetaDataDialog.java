@@ -43,6 +43,7 @@ public class MetaDataDialog extends javax.swing.JDialog {
             nameTextField.setText(DEFAULT_REMOTENAME);
     }
 
+    @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
     public static Remote.MetaData inquireMetaData(Remote.MetaData initData, Frame parent) {
         MetaDataDialog dialog = new MetaDataDialog(initData, parent);
         Rectangle parentCoords = parent.getBounds();

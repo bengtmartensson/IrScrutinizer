@@ -41,6 +41,7 @@ import org.harctoolbox.irscrutinizer.exporter.NameUniquefier;
  * Note: Editing of the sequences is not implemented (yet).
  *
  */
+@SuppressWarnings({"UseOfSystemOutOrSystemErr", "PackageVisibleInnerClass"})
 class RawIrSignal extends NamedIrSignal {
 
     private static Decoder decoder = null;
@@ -186,8 +187,7 @@ class RawIrSignal extends NamedIrSignal {
     }
 
     public Command toCommand() {
-        Command command = new Command(getName(), getComment(), irSignal);
-        return command;
+        return new Command(getName(), getComment(), irSignal);
     }
 
     public IrSignal getIrSignal() {

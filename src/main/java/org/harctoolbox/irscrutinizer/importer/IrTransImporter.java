@@ -51,6 +51,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
     public static final String defaultCharsetName = "windows-1252";
     private static final int dummyEndingGap = 50000;
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         IrTransImporter importer = new IrTransImporter();
         try {
@@ -66,6 +67,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         super();
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private Remote parseRemote(LineNumberReader reader) throws IOException, ParseException {
         String name = parseName(reader);
         if (name == null)
@@ -99,6 +101,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         return arr[1];
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private Map<String, IrTransCommand> parseCommands(LineNumberReader reader, List<Timing> timings) throws IOException, ParseException {
         gobbleTo(reader, "[COMMANDS]", true);
         Map<String, IrTransCommand> commands = new LinkedHashMap<>(32);
@@ -203,7 +206,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         return true;
     }
 
-    @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
+    @SuppressWarnings({"ValueOfIncrementOrDecrementUsed", "UseOfSystemOutOrSystemErr"})
     private List<Timing> parseTimings(LineNumberReader reader) throws IOException, ParseException {
         List<Timing> timings = new ArrayList<>(16);
         boolean hasTiming = gobbleTo(reader, "[TIMING]", false);

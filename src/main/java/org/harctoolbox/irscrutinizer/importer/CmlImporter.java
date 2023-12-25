@@ -125,6 +125,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
         }
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private Remote parseRemote(InputStream inputStream) throws IOException, InvalidArgumentException {
         long status = inputStream.skip(12);
         if (status != 12)
@@ -151,6 +152,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
         return new Remote(metaData, null, null, commands, null);
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private Command parseCommand(InputStream inputStream, String remoteName) throws IOException, InvalidArgumentException {
         byte[] x = getBytes(inputStream, 23);
         int wav = byte2unsigned(x[9]) + 256 * byte2unsigned(x[10]);
@@ -187,8 +189,7 @@ public class CmlImporter extends RemoteSetImporter implements IFileImporter, Ser
             return null;
         }
         IrSignal irSignal = new IrSignal(timingsMicroseconds, introLength, repeatLength, frequency);
-        Command command = new Command(commandName, null, irSignal);
-        return command;
+        return new Command(commandName, null, irSignal);
     }
 
 

@@ -37,6 +37,7 @@ import org.harctoolbox.irscrutinizer.InterpretString;
  */
 public class RawLineImporter extends RemoteSetImporter implements IReaderImporter {
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         RawLineImporter rli = new RawLineImporter();
         try {

@@ -25,6 +25,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class CopyClipboardText implements ClipboardOwner {
 
     public static String getSelection() {

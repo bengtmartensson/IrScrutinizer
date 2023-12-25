@@ -39,6 +39,7 @@ public class ValueSetList implements Iterable<Long> {
     /** For testing purposes only
      * @param args
      */
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         int seed = (int) IrCoreUtils.INVALID;
         int arg_i = 0;
@@ -98,7 +99,7 @@ public class ValueSetList implements Iterable<Long> {
 
             @Override
             public boolean hasNext() {
-                return valueSets.size() > 0
+                return !valueSets.isEmpty()
                         && (currentSetIndex == IrCoreUtils.INVALID
                         || setIterator.hasNext()
                         || currentSetIndex < valueSets.size() - 1);
@@ -119,8 +120,7 @@ public class ValueSetList implements Iterable<Long> {
                 if (setIterator == null)
                     setIterator = valueSets.get(currentSetIndex).iterator();
 
-                Long l = setIterator.next();
-                return l;
+                return setIterator.next();
             }
 
             @Override

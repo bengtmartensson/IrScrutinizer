@@ -46,6 +46,7 @@ public class WaveImporter extends FileImporter implements IModulatedIrSequenceIm
     }
 
     @Override
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void load(File file, String origin, String charsetName /* ignored */) throws IOException {
         try {
             Wave wave = new Wave(file);

@@ -139,8 +139,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
             System.err.println("Opening " + url);
         URLConnection urlConnection = url.openConnection();
         InputStream is = urlConnection.getInputStream();
-        InputStreamReader isr = new InputStreamReader(is, Charset.forName("US-ASCII"));
-        return isr;
+        return new InputStreamReader(is, Charset.forName("US-ASCII"));
     }
 
     private JsonValue readFrom(String str) throws IOException {
@@ -150,8 +149,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
     private JsonValue readFrom(Reader reader) throws IOException {
         JsonParser parser = Json.createParser(reader);
         JsonParser.Event x = parser.next();
-        JsonValue obj = parser.getValue();
-        return obj;
+        return parser.getValue();
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
@@ -388,11 +386,13 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         throw new ThisCannotHappenException();
     }
 
+    @SuppressWarnings("PublicInnerClass")
     public static class LoginException extends Exception {
         public LoginException(String message) {
             super(message);
         }
     }
+    @SuppressWarnings("PublicInnerClass")
     public static class Model {
         private final String brand;
         private final String type;

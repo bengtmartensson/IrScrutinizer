@@ -29,6 +29,7 @@ import org.harctoolbox.harchardware.comm.NonExistingPortException;
  *
  *
  */
+@SuppressWarnings("serial")
 public abstract class SerialHardwareBean extends HardwareBean {
 
     protected static DefaultComboBoxModel<String> createModel(boolean useCached) {
@@ -40,8 +41,7 @@ public abstract class SerialHardwareBean extends HardwareBean {
             portNames.add("");
         }
         //portNames.add(0, "");
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(portNames.toArray(new String[portNames.size()]));
-        return model;
+        return new DefaultComboBoxModel<>(portNames.toArray(new String[portNames.size()]));
     }
 
     protected String portName;

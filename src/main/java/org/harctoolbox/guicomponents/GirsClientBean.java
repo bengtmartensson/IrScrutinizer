@@ -59,6 +59,7 @@ public final class GirsClientBean extends HardwareBean {
         this(guiUtils, verbose, DEFAULT_TIMEOUT, DEFAULT_PORTNAME, DEFAULT_BAUD, DEFAULT_IPNAME, DEFAULT_PORT, DEFAULT_TYPE);
     }
 
+    @SuppressWarnings("AssignmentToMethodParameter")
     public GirsClientBean(GuiUtils guiUtils, boolean verbose, int timeout, String initialPort, int baud,
             String ipName, int portNumber, Type type) {
         super(guiUtils, verbose, timeout);
@@ -337,6 +338,7 @@ public final class GirsClientBean extends HardwareBean {
         displayVersion();
     }
 
+    @SuppressWarnings("PublicInnerClass")
     public static enum Type {
         SERIAL,
         TCP,

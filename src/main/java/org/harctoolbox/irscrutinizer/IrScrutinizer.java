@@ -70,6 +70,7 @@ public class IrScrutinizer {
     /**
      * @param args the command line arguments.
      */
+    @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
     public static void main(String[] args) {
         argumentParser = new JCommander(commandLineArgs);
         argumentParser.setProgramName(Version.appName);
@@ -116,6 +117,7 @@ public class IrScrutinizer {
         IrCoreUtils.setRadixPrefixes(map);
     }
 
+    @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
     private static String nukeProperties(boolean verbose) {
         Props properties = new Props(commandLineArgs.propertiesFilename, commandLineArgs.applicationHome);
         String filename = properties.getFilename();

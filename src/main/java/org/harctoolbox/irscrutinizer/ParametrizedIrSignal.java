@@ -34,6 +34,7 @@ import org.harctoolbox.irp.IrpException;
  *
  *
  */
+@SuppressWarnings({"PackageVisibleInnerClass", "serial", "AccessingNonPublicFieldOfAnotherObject"})
 class ParametrizedIrSignal extends NamedIrSignal {
     private static Decoder decoder = null;
     private static Decoder.DecoderParameters decoderParameters = null;

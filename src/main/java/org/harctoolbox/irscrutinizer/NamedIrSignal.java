@@ -42,6 +42,7 @@ import org.harctoolbox.irscrutinizer.exporter.NameUniquefier;
  *
  *
  */
+@SuppressWarnings({"PackageVisibleInnerClass", "serial", "UseOfSystemOutOrSystemErr"})
 abstract class NamedIrSignal {
     private static int count = 0;
 
@@ -225,6 +226,7 @@ abstract class NamedIrSignal {
     public abstract static class LearnedIrSignalTableModel extends DefaultTableModel {
         private final AbstractColumnFunction columnsFunc;
         private boolean scrollRequest = false;
+        @SuppressWarnings("PackageVisibleField")
         protected boolean unsavedChanges;
 
         protected LearnedIrSignalTableModel(AbstractColumnFunction columnFunc) {

@@ -56,6 +56,7 @@ public class CsvParametrizedImporter extends CsvImporter {
         return csvImportParametrized.getCommands();
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         try {
             Reader r = new InputStreamReader(new FileInputStream(args[0]), Charset.forName("US-ASCII"));
@@ -136,6 +137,7 @@ public class CsvParametrizedImporter extends CsvImporter {
     }
 
     @Override
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void load(Reader reader, String origin) throws IOException {
         prepareLoad(origin);
         boolean rejectNumbers = nameColumn < protocolColumn || nameColumn < dColumn
@@ -197,6 +199,7 @@ public class CsvParametrizedImporter extends CsvImporter {
         return null;
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private long gobbleLong(String[] chunks, int column, String name, int offset) {
         if (column == 0)
             return IrCoreUtils.INVALID;

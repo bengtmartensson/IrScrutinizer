@@ -85,7 +85,7 @@ public abstract class CsvImporter extends RemoteSetImporter implements IReaderIm
                 chunk = chunk.substring(2);
             if (rejectNumbers && chunk.length() > 1) {
                 try {
-                    Integer.parseInt(chunk, basis);
+                    Integer.valueOf(chunk, basis);
                     break;
                 } catch (NumberFormatException ex) {
                 }

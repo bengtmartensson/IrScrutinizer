@@ -90,8 +90,7 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
         if (verbose)
             System.err.println("Opening " + url.toString());
         URLConnection urlConnection = url.openConnection();
-        InputStreamReader reader = new InputStreamReader(urlConnection.getInputStream(), Charset.forName("US-ASCII"));
-        return reader;
+        return new InputStreamReader(urlConnection.getInputStream(), Charset.forName("US-ASCII"));
     }
 
     private JsonValue readFrom(String str) throws IOException {
@@ -101,8 +100,7 @@ public class GlobalCacheIrDatabase extends DatabaseImporter implements IRemoteSe
     private JsonValue readFrom(Reader reader) throws IOException {
         JsonParser parser = Json.createParser(reader);
         JsonParser.Event x = parser.next();
-        JsonValue obj = parser.getValue();
-        return obj;
+        return parser.getValue();
     }
 
     private Map<String, String> getMap(String urlFragment, String keyName, String valueName) throws IOException {

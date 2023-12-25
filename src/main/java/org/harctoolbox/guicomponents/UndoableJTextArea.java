@@ -155,6 +155,7 @@ public class UndoableJTextArea extends JTextArea {
         }
     }
 
+    @SuppressWarnings({"PublicInnerClass", "serial"})
     public static class UndoHistoryEmptyException extends Exception {
 
         public UndoHistoryEmptyException() {

@@ -100,8 +100,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter {
 
     static DocumentFragment extractDocumentation(Element el) {
         NodeList nodeList = el.getElementsByTagNameNS(EXPORTFORMAT_NAMESPACE, "documentation");
-        DocumentFragment doc = nodeList.getLength() > 0 ? nodeListToDocumentFragment(nodeList, true) : null;
-        return doc;
+        return nodeList.getLength() > 0 ? nodeListToDocumentFragment(nodeList, true) : null;
     }
 
     private static DocumentFragment nodeToDocumentFragment(Node node, boolean preserve) {

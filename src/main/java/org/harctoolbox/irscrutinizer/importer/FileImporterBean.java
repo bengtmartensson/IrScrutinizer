@@ -98,6 +98,7 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
         initComponents();
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     private boolean isSane() {
         if (guiUtils == null) {
             System.err.println("guiUtils is not setup in FileImporterBean");

@@ -98,13 +98,12 @@ public class CcfImporter extends RemoteSetImporter implements IFileImporter {
 
         Map<String, String> notes = new HashMap<>(1);
         notes.put("note", "Imported by IrScrutinizer");
-        Remote remote = new Remote(new Remote.MetaData(deviceName),
+        return new Remote(new Remote.MetaData(deviceName),
                 origin, //java.lang.String comment,
                 notes,//"Imported by IrScrutinizer", //java.lang.String notes,
                 commands,
                 null //java.util.HashMap<java.lang.String,java.util.HashMap<java.lang.String,java.lang.String>> applicationParameters)
         );
-        return remote;
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")

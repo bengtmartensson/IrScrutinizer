@@ -140,6 +140,7 @@ public class ExportFormatManager {
         return list.toArray(new String[list.size()]);
     }
 
+    @SuppressWarnings("PublicInnerClass")
     public interface IExportFormatSelector {
         public void select(String name);
     }
