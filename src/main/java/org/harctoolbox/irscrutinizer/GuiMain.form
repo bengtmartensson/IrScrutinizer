@@ -416,8 +416,8 @@
         <MenuItem class="javax.swing.JMenuItem" name="exportCookedMenuItem">
           <Properties>
             <Property name="mnemonic" type="int" value="69"/>
-            <Property name="text" type="java.lang.String" value="Export"/>
-            <Property name="toolTipText" type="java.lang.String" value="Export in the selected format"/>
+            <Property name="text" type="java.lang.String" value="Export all"/>
+            <Property name="toolTipText" type="java.lang.String" value="Export all signals in the selected format"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportCookedMenuItemActionPerformed"/>
@@ -3779,7 +3779,7 @@
                                           </Group>
                                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                               <Component id="remoteLocatorImporterKindTextField" max="32767" attributes="0"/>
-                                              <Component id="jLabel10" pref="50" max="32767" attributes="0"/>
+                                              <Component id="jLabel10" max="32767" attributes="0"/>
                                           </Group>
                                           <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                                       </Group>

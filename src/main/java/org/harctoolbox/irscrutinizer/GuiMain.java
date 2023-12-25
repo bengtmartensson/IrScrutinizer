@@ -1039,15 +1039,6 @@ public final class GuiMain extends javax.swing.JFrame {
                 buttonwidth, buttonheight, screenwidth, screenheight);
     }
 
-    private RemoteSetExporter newRemoteExporter() {
-        Exporter exporter = newExporter();
-        if (exporter != null && !RemoteSetExporter.class.isInstance(exporter)) {
-            guiUtils.error("Selected export format only supports single commands");
-            return null;
-        }
-        return (RemoteSetExporter) exporter;
-    }
-
     private Exporter newExporter() {
         return newExporter((String) exportFormatComboBox.getSelectedItem());
     }
@@ -1315,35 +1306,60 @@ public final class GuiMain extends javax.swing.JFrame {
         return Version.appName + ((table == parameterTable) ? " parametric export" : " raw export");
     }
 
-    private void saveSelectedSignals(JTable table) throws GirrException, IOException, TransformerException, IrCoreException, IrpException {
-        RemoteSetExporter remoteExporter = newRemoteExporter();
-        if (remoteExporter != null)
-            saveCommands(tableUtils.commandTableSelected(table), mkTitle(table), remoteExporter);
+    private void saveSelectedCommands(JTable table) throws GirrException, IOException, TransformerException, IrCoreException, IrpException {
+        saveCommands(table, tableUtils.commandTableSelected(table));
     }
 
-    private void saveAllSignals(JTable table) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
-        RemoteSetExporter remoteExporter = newRemoteExporter();
-        if (remoteExporter != null)
-            saveAllSignals(table, remoteExporter);
+    private void saveAllCommands(JTable table) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
+        saveAllCommands(table, newExporter());
     }
 
-    private void saveAllSignals(JTable table, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
-        NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
-        saveCommands(tableModel, mkTitle(table), exporter);
+    private void saveAllCommands(JTable table, Exporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+        saveCommands(table, ((NamedIrSignal.LearnedIrSignalTableModel) table.getModel()).getCommandsWithSanityCheck(guiUtils), exporter);
     }
 
-    private File saveCommands(NamedIrSignal.LearnedIrSignalTableModel tableModel, String title, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
-        Map<String, Command> commands = tableModel.getCommandsWithSanityCheck(guiUtils);
-        if (commands == null)
+    private void saveCommands(JTable table, Map<String, Command> commands) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+        saveCommands(table, commands, newExporter());
+    }
+
+    private void saveCommands(JTable table, Map<String, Command> commands, Exporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+        File file = saveCommands(commands, mkTitle(table), exporter);
+        if (file != null)
+            ((NamedIrSignal.LearnedIrSignalTableModel) table.getModel()).clearUnsavedChanges();
+    }
+
+    private File saveCommands(Map<String, Command> commands, String title) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+        return saveCommands(commands, title, newExporter());
+    }
+
+    private File saveCommands(Map<String, Command> commands, String title, Exporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
+        if (exporter == null) {
+            guiUtils.error("No exporter");
             return null;
-        File file = saveCommandsWrite(commands, title, exporter);
-        if (file != null) {
-            tableModel.clearUnsavedChanges();
-            guiUtils.message("File " + file + " was successfully written.");
-            if (properties.getAutoOpenExports())
-                guiUtils.open(file);
         }
-        return file;
+        
+        if (commands.isEmpty()) {
+            guiUtils.error("Nothing to export");
+            return null;
+        }
+        
+        File savedFile;
+        if (commands.size() == 1) {
+            savedFile = saveSignalWrite(commands.values().iterator().next(), title, exporter);
+        } else {
+            if (! RemoteSetExporter.class.isInstance(exporter)) {
+                guiUtils.error("Trying to export more than one signal, but the current export format only supports a single command");
+                return null;
+            }
+            savedFile = saveCommandsWrite(commands, title, (RemoteSetExporter) exporter);
+        }
+        
+        if (savedFile != null) {
+            guiUtils.message("File " + savedFile + " was successfully written with " + commands.size() + (commands.size() == 1 ? " command." :  " commands."));
+            if (properties.getAutoOpenExports())
+                guiUtils.open(savedFile);
+        }
+        return savedFile;
     }
 
     private File saveCommandsWrite(Map<String, Command> commands, String title, RemoteSetExporter exporter) throws IOException, TransformerException, GirrException, IrpException, IrCoreException {
@@ -1360,38 +1376,9 @@ public final class GuiMain extends javax.swing.JFrame {
         } else
             metaData = new Remote.MetaData();
 
-        File file = exporter.export(commands, null, title, metaData,
+        return exporter.export(commands, null, title, metaData,
                 properties.getExportAutomaticFilenames(), this,
                 new File(properties.getExportDir()), properties.getExportCharsetName());
-        return file;
-    }
-
-    private File saveCommands(Map<String, Command> commands, String title, Exporter exporter) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
-        Objects.requireNonNull(exporter);
-        if (commands.isEmpty()) {
-            guiUtils.error("Nothing to export");
-            return null;
-        }
-        if (commands.size() > 1 && ! RemoteSetExporter.class.isInstance(exporter) ) {
-            guiUtils.error("Selected exporter can only export one single signal, and there are several selected.");
-            return null;
-        }
-
-        File savedFile;
-        if (commands.size() == 1) {
-            // exporting just a single command
-            savedFile = saveSignalWrite(commands.values().iterator().next(), title, exporter);
-            if (savedFile != null)
-                guiUtils.message("File " + savedFile.getPath() + " successfully written with one signal.");
-        } else {
-            // I have checked that exporter is RemoteExporter already, so I can safely just cast it
-            savedFile = saveCommandsWrite(commands, title, (RemoteSetExporter) exporter);
-            if (savedFile != null)
-                guiUtils.message("File " + savedFile.getPath() + " successfully written with " + commands.size() + " signals.");
-        }
-        if (savedFile != null && properties.getAutoOpenExports())
-            guiUtils.open(savedFile);
-        return savedFile;
     }
 
     private void saveSignal(IrSignal irSignal) throws IOException, TransformerException, IrCoreException, IrpException, GirrException {
@@ -3012,8 +2999,8 @@ public final class GuiMain extends javax.swing.JFrame {
         parameterTablePopupMenu.add(parameterUniquefyMenuItem);
 
         exportCookedMenuItem.setMnemonic('E');
-        exportCookedMenuItem.setText("Export");
-        exportCookedMenuItem.setToolTipText("Export in the selected format");
+        exportCookedMenuItem.setText("Export all");
+        exportCookedMenuItem.setToolTipText("Export all signals in the selected format");
         exportCookedMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportCookedMenuItemActionPerformed(evt);
@@ -4349,7 +4336,7 @@ public final class GuiMain extends javax.swing.JFrame {
                                 .addGap(167, 167, 167)))
                         .addGroup(remoteLocatorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(remoteLocatorImporterKindTextField)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE))
+                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(26, 26, 26))
                     .addGroup(remoteLocatorPanelLayout.createSequentialGroup()
                         .addComponent(remoteLocatorTreeImporter, javax.swing.GroupLayout.DEFAULT_SIZE, 735, Short.MAX_VALUE)
@@ -4990,7 +4977,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(miscParametersColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(csvParametrizedFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 265, Short.MAX_VALUE)
+                    .addComponent(csvParametrizedFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, parametrizedCsvImportPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(importTextParametrizedHelpButton)
@@ -5128,7 +5115,7 @@ public final class GuiMain extends javax.swing.JFrame {
         importPanelLayout.setHorizontalGroup(
             importPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, importPanelLayout.createSequentialGroup()
-                .addComponent(importTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 993, Short.MAX_VALUE)
+                .addComponent(importTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 993, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
         importPanelLayout.setVerticalGroup(
@@ -7620,7 +7607,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void parametricOrRawExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parametricOrRawExportButtonActionPerformed
         try {
-            saveAllSignals(rawCookedTabbedPane.getSelectedComponent() == this.cookedPanel ? parameterTable : rawTable);
+            saveAllCommands(rawCookedTabbedPane.getSelectedComponent() == this.cookedPanel ? parameterTable : rawTable);
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -7773,7 +7760,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void exportParametricAsGirrMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportParametricAsGirrMenuItemActionPerformed
         try {
-            saveAllSignals(parameterTable, newGirrExporter());
+            saveAllCommands(parameterTable, newGirrExporter());
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -7781,7 +7768,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void exportSelectedCookedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSelectedCookedMenuItemActionPerformed
         try {
-            saveSelectedSignals(parameterTable);
+            saveSelectedCommands(parameterTable);
         } catch (GirrException | IOException | TransformerException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -7789,7 +7776,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void saveSelectedRawTableRowMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSelectedRawTableRowMenuItemActionPerformed
         try {
-            saveSelectedSignals(rawTable);
+            saveSelectedCommands(rawTable);
         } catch (GirrException | IOException | TransformerException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -7797,7 +7784,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void saveRawMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveRawMenuItemActionPerformed
         try {
-            saveAllSignals(rawTable);
+            saveAllCommands(rawTable);
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -7805,7 +7792,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void exportCookedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportCookedMenuItemActionPerformed
         try {
-            saveAllSignals(parameterTable);
+            saveAllCommands(parameterTable);
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -7836,7 +7823,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void exportRawAsGirrMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRawAsGirrMenuItemActionPerformed
         try {
-            saveAllSignals(rawTable, newGirrExporter());
+            saveAllCommands(rawTable, newGirrExporter());
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -8092,7 +8079,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void exportParametricRemoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportParametricRemoteButtonActionPerformed
         try {
-            saveAllSignals(parameterTable);
+            saveAllCommands(parameterTable);
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -8100,7 +8087,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void exportRawRemoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRawRemoteButtonActionPerformed
         try {
-            saveAllSignals(rawTable);
+            saveAllCommands(rawTable);
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -8168,7 +8155,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void generateExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateExportButtonActionPerformed
         try {
-            saveCommands(irpMasterBean.getCommands(), Version.appName + " generated signals", newExporter());
+            saveCommands(irpMasterBean.getCommands(), Version.appName + " generated signals");
         } catch (IOException | TransformerException | ParseException | GirrException | IrCoreException | IrpException ex) {
             guiUtils.error(ex);
         }
@@ -8187,7 +8174,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void exportParametricAsTextMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportParametricAsTextMenuItemActionPerformed
         try {
-            saveAllSignals(parameterTable, newTextExporter());
+            saveAllCommands(parameterTable, newTextExporter());
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
@@ -8195,7 +8182,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void exportRawAsTextMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRawAsTextMenuItemActionPerformed
         try {
-            saveAllSignals(rawTable, newTextExporter());
+            saveAllCommands(rawTable, newTextExporter());
         } catch (IOException | TransformerException | GirrException | IrpException | IrCoreException ex) {
             guiUtils.error(ex);
         }
