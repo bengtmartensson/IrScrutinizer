@@ -64,13 +64,12 @@ The package can be downloaded, and the Java part built, by the script
 This is a fork of the legacy [RXTX](http://rxtx.qbang.org/wiki/index.php/Main_Page) library for serial communication with Java.
                     Version 5.2.1 is currently used. 
 
-### JCommander, minimal-json
-Normally, these components are downloaded and installed automatically by Maven.
+### JCommander
+Normally, this component is downloaded and installed automatically by Maven.
 
 ### Tonto
 [Tonto](Glossary.html#Tonto) can be downloaded and installed by the script `common/scripts/build-tonto.sh`.
                         It requires the [Apache ant](https://ant.apache.org/) build system to be installed as the command `ant`.
-                        (On Fedora, instead the command `sudo dnf install tonto` can be used.)
                         Note that the shared library `libjnijcomm`,
                         which is required by the Tonto program for communicating with a Pronto remote through a serial interface,
                         is not required for use with IrScrutinizer, and can therefore be left out.

@@ -92,7 +92,11 @@
             </tr>
             <tr>
                 <td>2023-12-17</td>
-                <td>HarcHardware support from AppImages.</td>
+                <td>Accessing HarcHardware command line is now supported in AppImages.</td>
+            </tr>
+            <tr>
+                <td>2023-12-26</td>
+                <td>Removed leftover references to the "minimal json" as well as Fedore dnf tonto.</td>
             </tr>
         </table>
 
@@ -207,13 +211,6 @@
                                 v 2.1 license</a>. (This is a fork of the discontinued
                             <a href="http://rxtx.qbang.org/wiki/index.php/Main_Page">RXTX library</a>.)
                         </p>
-
-                        <p>JSON handling is implemented using
-                            the <a href="http://eclipsesource.com/blogs/2013/04/18/minimal-json-parser-for-java/">"fast
-                                and minimal JSON parser for Java"</a> by Ralf Sernberg, licensed under
-                            the <a href="http://www.eclipse.org/legal/epl-v10.html">Eclipse Eclipse Public
-                                License Version 1.0</a>.</p>
-
 
                         <p>
                             <a href="http://www.lirc.org">Lirc (Linux Infrared Remote Control)</a> is according
@@ -1889,8 +1886,8 @@ module is then accessed using the UDP text mode.</p>
                 </section>
 
                 <section>
-                    <title>JCommander, minimal-json</title>
-                    <p>Normally, these components are downloaded and installed automatically by Maven.</p>
+                    <title>JCommander</title>
+                    <p>Normally, this component is downloaded and installed automatically by Maven.</p>
                 </section>
 
                 <section>
@@ -1898,7 +1895,6 @@ module is then accessed using the UDP text mode.</p>
                     <p>
                         <a href="Glossary.html#Tonto">Tonto</a> can be downloaded and installed by the script <code>common/scripts/build-tonto.sh</code>.
                         It requires the <a href="https://ant.apache.org/">Apache ant</a> build system to be installed as the command <code>ant</code>.
-                        (On Fedora, instead the command <code>sudo dnf install tonto</code> can be used.)
                         Note that the shared library <code>libjnijcomm</code>,
                         which is required by the Tonto program for communicating with a Pronto remote through a serial interface,
                         is not required for use with IrScrutinizer, and can therefore be left out.
