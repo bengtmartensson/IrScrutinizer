@@ -450,6 +450,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setupGirrImporter() throws MalformedURLException {
+        Command.setAcceptEmptyCommands(properties.getAllowEmptyGirrCommands());
         girrImporter = new GirrImporter(properties.getGirrValidate(), new URL(properties.getGirrSchemaLocation()), irpDatabase);
         properties.addGirrSchemaLocationChangeListener((String name1, Object oldValue, Object newValue) -> {
             try {
@@ -2200,6 +2201,7 @@ public final class GuiMain extends javax.swing.JFrame {
         addMissingFsMenuItem = new javax.swing.JMenuItem();
         addMissingNamesMenuItem = new javax.swing.JMenuItem();
         deleteDefaultedSignalsMenuItem = new javax.swing.JMenuItem();
+        deleteEmptyParametrizedSignalsMenuItem = new javax.swing.JMenuItem();
         rawTablePopupMenu = new javax.swing.JPopupMenu();
         rawSorterCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator25 = new javax.swing.JPopupMenu.Separator();
@@ -2237,6 +2239,7 @@ public final class GuiMain extends javax.swing.JFrame {
         removeUnusedMenuItem1 = new javax.swing.JMenuItem();
         hideUninterestingColumnsMenuItem1 = new javax.swing.JMenuItem();
         clearRawCommentMenuItem = new javax.swing.JMenuItem();
+        deleteEmptyRawSignalsMenuItem = new javax.swing.JMenuItem();
         copyPastePopupMenu = new org.harctoolbox.guicomponents.CopyPastePopupMenu(true);
         copyPopupMenu = new org.harctoolbox.guicomponents.CopyPastePopupMenu();
         topLevelSplitPane = new javax.swing.JSplitPane();
@@ -2602,6 +2605,7 @@ public final class GuiMain extends javax.swing.JFrame {
         translateProntoFontCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         girrValidateCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         girrSchemaLocationMenuItem = new javax.swing.JMenuItem();
+        girrAcceptEmptyCommandsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         rejectLircCodeImports = new javax.swing.JCheckBoxMenuItem();
         exportOptionsMenu = new javax.swing.JMenu();
         exportCharsetMenuItem = new javax.swing.JMenuItem();
@@ -3205,6 +3209,15 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         parametrizedAdvancedMenu.add(deleteDefaultedSignalsMenuItem);
 
+        deleteEmptyParametrizedSignalsMenuItem.setText("Delete empty Signals");
+        deleteEmptyParametrizedSignalsMenuItem.setToolTipText("Remove all signals that do not have content.");
+        deleteEmptyParametrizedSignalsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteEmptyParametrizedSignalsMenuItemActionPerformed(evt);
+            }
+        });
+        parametrizedAdvancedMenu.add(deleteEmptyParametrizedSignalsMenuItem);
+
         parameterTablePopupMenu.add(parametrizedAdvancedMenu);
 
         rawSorterCheckBoxMenuItem.setSelected(properties.getSorterOnRawTable());
@@ -3457,6 +3470,15 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         rawTablePopupMenu.add(clearRawCommentMenuItem);
+
+        deleteEmptyRawSignalsMenuItem.setText("Delete empty Signals");
+        deleteEmptyRawSignalsMenuItem.setToolTipText("Remove all signals that do not have a content.");
+        deleteEmptyRawSignalsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteEmptyRawSignalsMenuItemActionPerformed(evt);
+            }
+        });
+        rawTablePopupMenu.add(deleteEmptyRawSignalsMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -6834,6 +6856,15 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         importOptionsMenu.add(girrSchemaLocationMenuItem);
 
+        girrAcceptEmptyCommandsCheckBoxMenuItem.setSelected(properties.getAllowEmptyGirrCommands());
+        girrAcceptEmptyCommandsCheckBoxMenuItem.setText("Accept empty Girr commands on import");
+        girrAcceptEmptyCommandsCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                girrAcceptEmptyCommandsCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        importOptionsMenu.add(girrAcceptEmptyCommandsCheckBoxMenuItem);
+
         rejectLircCodeImports.setSelected(properties.getRejectLircCodeImports());
         rejectLircCodeImports.setText("Reject Lirc Imports without timings");
         rejectLircCodeImports.addActionListener(new java.awt.event.ActionListener() {
@@ -9384,7 +9415,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_exportGenerateBroadlinkHexCheckBoxActionPerformed
 
     private void exportGenerateBroadlinkBase64CheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportGenerateBroadlinkBase64CheckBoxActionPerformed
-         properties.setExportGenerateBroadlinkBase64(exportGenerateBroadlinkBase64CheckBox.isSelected());
+        properties.setExportGenerateBroadlinkBase64(exportGenerateBroadlinkBase64CheckBox.isSelected());
         exportRepeatComboBox.setEnabled(exportGenerateSendIrCheckBox.isSelected()
                 || exportGenerateBroadlinkHexCheckBox.isSelected()
                 || exportGenerateBroadlinkBase64CheckBox.isSelected());
@@ -9397,6 +9428,26 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_disussionsMenuItemActionPerformed
+
+    private void girrAcceptEmptyCommandsCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_girrAcceptEmptyCommandsCheckBoxMenuItemActionPerformed
+        boolean status = girrAcceptEmptyCommandsCheckBoxMenuItem.isSelected();
+        properties.setAllowEmptyGirrCommands(status);
+        Command.setAcceptEmptyCommands(status);
+    }//GEN-LAST:event_girrAcceptEmptyCommandsCheckBoxMenuItemActionPerformed
+
+    private void deleteEmptyParametrizedSignalsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteEmptyParametrizedSignalsMenuItemActionPerformed
+        boolean isOk = guiUtils.confirm("This will delete all signal with no protocol and no parameters.\n"
+                + "The operation cannot be undone. Consider saving first.\n\nDo you want to continue?");
+        if (isOk)
+            parameterTableModel.deleteEmptySignals();
+    }//GEN-LAST:event_deleteEmptyParametrizedSignalsMenuItemActionPerformed
+
+    private void deleteEmptyRawSignalsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteEmptyRawSignalsMenuItemActionPerformed
+        boolean isOk = guiUtils.confirm("This will delete all signal with no non-empty sequences.\n"
+                + "The operation cannot be undone. Consider saving first.\n\nDo you want to continue?");
+        if (isOk)
+            rawTableModel.deleteEmptySignals();
+    }//GEN-LAST:event_deleteEmptyRawSignalsMenuItemActionPerformed
 
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -9482,6 +9533,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenu debugMenu;
     private javax.swing.JTextField decodeIRTextField;
     private javax.swing.JMenuItem deleteDefaultedSignalsMenuItem;
+    private javax.swing.JMenuItem deleteEmptyParametrizedSignalsMenuItem;
+    private javax.swing.JMenuItem deleteEmptyRawSignalsMenuItem;
     private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JMenuItem deleteMenuItem1;
     private org.harctoolbox.guicomponents.DevLircBean devLircBean;
@@ -9558,6 +9611,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel generatePanel;
     private javax.swing.JCheckBoxMenuItem generateRawCheckBoxMenuItem;
     private javax.swing.JTextArea generateTextArea;
+    private javax.swing.JCheckBoxMenuItem girrAcceptEmptyCommandsCheckBoxMenuItem;
     private javax.swing.JPanel girrExportOptionsPanel;
     private javax.swing.JCheckBox girrFatRawCheckBox;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<GirrImporter> girrFileImporterBean;

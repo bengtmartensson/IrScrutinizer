@@ -102,6 +102,8 @@ abstract class NamedIrSignal {
         return csvString(", ");
     }
 
+    public abstract boolean isEmpty();
+
     /**
      *
      */
@@ -512,5 +514,18 @@ abstract class NamedIrSignal {
         }
 
         abstract void duplicate(int modelRow);
+
+        abstract NamedIrSignal getNamedIrSignal(int row);
+
+        void deleteEmptySignals() {
+            for (int row = getRowCount() - 1; row >= 0; row--) {
+                NamedIrSignal sig = getNamedIrSignal(row);
+                if (sig.isEmpty())
+                    removeRow(row);
+            }
+            fireTableDataChanged();
+        }
+
+
     }
 }

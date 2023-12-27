@@ -165,7 +165,7 @@ class RawIrSignal extends NamedIrSignal {
     private void setIrSignal(IrSignal irSignal, Decoder.AbstractDecodesCollection<? extends ElementaryDecode> decodes) {
         this.irSignal = irSignal;
         this.decodes = decodes;
-        if (invokeAnalyzer) {
+        if (irSignal != null && invokeAnalyzer) {
             try {
                 Analyzer analyzer = new Analyzer(irSignal, absoluteTolerance, relativeTolerance);
                 Analyzer.AnalyzerParams analyzerParams = new Analyzer.AnalyzerParams(irSignal.getFrequency(), timeBaseString, bitDirection, useExtents, parameterWidths, invert);
@@ -179,7 +179,7 @@ class RawIrSignal extends NamedIrSignal {
     }
 
     private void setIrSignal(IrSignal irSignal) {
-        setIrSignal(irSignal, invokeDecoder ? decoder.decodeLoose(irSignal, decoderParameters) : null);
+        setIrSignal(irSignal, irSignal != null && invokeDecoder ? decoder.decodeLoose(irSignal, decoderParameters) : null);
     }
 
     private void setIrSignal(ModulatedIrSequence irSequence) {
@@ -263,6 +263,11 @@ class RawIrSignal extends NamedIrSignal {
         return csvString(", ");
     }
 
+    @Override
+    public boolean isEmpty() {
+        return irSignal == null || irSignal.isEmpty();
+    }
+
     private static class CapturedIrSignalColumns extends NamedIrSignal.AbstractColumnFunction {
 
         private static final int[] widths = {
@@ -338,14 +343,14 @@ class RawIrSignal extends NamedIrSignal {
             Object[] result = new Object[]{
                 cir.getNumeral(),
                 cir.getDate(),
-                ((IrSequence) irSignal.getIntroSequence()).toString(true, ","),
-                ((IrSequence) irSignal.getRepeatSequence()).toString(true, ","),
-                ((IrSequence) irSignal.getEndingSequence()).toString(true, ","),
+                irSignal != null ? ((IrSequence) irSignal.getIntroSequence()).toString(true, ",") : "",
+                irSignal != null ? ((IrSequence) irSignal.getRepeatSequence()).toString(true, ",") : "",
+                irSignal != null ? ((IrSequence) irSignal.getEndingSequence()).toString(true, ",") : "",
                 cir.getName(),
                 cir.getDecodeString(),
                 cir.getAnalyzerString(),
                 cir.getComment(),
-                Math.round(irSignal.getFrequency()),
+                irSignal != null ? Math.round(irSignal.getFrequency()) : null,
                 cir, // Analyze
                 null
             };
@@ -369,6 +374,11 @@ class RawIrSignal extends NamedIrSignal {
             return validRow(row)
                     ? (RawIrSignal) getValueAt(row, CapturedIrSignalColumns.posCapturedIrSignal)
                     : null;
+        }
+
+        @Override
+        NamedIrSignal getNamedIrSignal(int row) {
+            return getCapturedIrSignal(row);
         }
 
         @Override

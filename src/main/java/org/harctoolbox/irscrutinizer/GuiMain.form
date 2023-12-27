@@ -641,6 +641,15 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteDefaultedSignalsMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="deleteEmptyParametrizedSignalsMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Delete empty Signals"/>
+                <Property name="toolTipText" type="java.lang.String" value="Remove all signals that do not have content."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteEmptyParametrizedSignalsMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
       </SubComponents>
@@ -914,6 +923,15 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearRawCommentMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="deleteEmptyRawSignalsMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Delete empty Signals"/>
+            <Property name="toolTipText" type="java.lang.String" value="Remove all signals that do not have a content."/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteEmptyRawSignalsMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
       </SubComponents>
@@ -2077,6 +2095,17 @@
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="girrSchemaLocationMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="girrAcceptEmptyCommandsCheckBoxMenuItem">
+                  <Properties>
+                    <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="properties.getAllowEmptyGirrCommands()" type="code"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Accept empty Girr commands on import"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="girrAcceptEmptyCommandsCheckBoxMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="rejectLircCodeImports">

@@ -201,6 +201,11 @@ class ParametrizedIrSignal extends NamedIrSignal {
         return DefaultSignalNameFormatter.formatName(protocolName, parameters);
     }
 
+    @Override
+    public boolean isEmpty() {
+        return (protocolName == null || protocolName.isEmpty()) && (parameters == null || parameters.isEmpty());
+    }
+
     private static class ParameterIrSignalColumns extends NamedIrSignal.AbstractColumnFunction /*implements IColumn*/ {
 
         private static final int[] widths = {
@@ -322,6 +327,11 @@ class ParametrizedIrSignal extends NamedIrSignal {
             return validRow(row)
                     ? (ParametrizedIrSignal) getValueAt(row, ParameterIrSignalColumns.posParameterIrSignal)
                     : null;
+        }
+
+        @Override
+        NamedIrSignal getNamedIrSignal(int row) {
+            return getParameterIrSignal(row);
         }
 
         public void addSignal(ParametrizedIrSignal signal) {
