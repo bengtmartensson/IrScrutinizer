@@ -20,8 +20,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.nameLowercase>irscrutinizer</project.nameLowercase>
-        <bundledjdk_url_sans_file>https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.5%2B10/</bundledjdk_url_sans_file>
-        <bundledjdk.linux>OpenJDK11U-jdk_x64_linux_hotspot_11.0.5_10.tar.gz</bundledjdk.linux>
+        <bundledjdk_url_sans_file>https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1%2B12/</bundledjdk_url_sans_file>
+        <bundledjdk.linux>OpenJDK21U-jdk_x64_linux_hotspot_21.0.1_12.tar.gz</bundledjdk.linux>
         <bundledjdk.windows>OpenJDK11U-jdk_x86-32_windows_hotspot_11.0.5_10.zip</bundledjdk.windows>
         <bundledjdk.mac>OpenJDK11U-jdk_x64_mac_hotspot_11.0.5_10.tar.gz</bundledjdk.mac>
         <inno_path>${basedir}/Inno_Setup_6/ISCC.exe</inno_path>

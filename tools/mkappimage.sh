@@ -41,7 +41,7 @@ rm -rf ${APPDIR}
 if [ "x${JAVA_TAR_GZ}y" != "xy" -a -f "${JAVA_TAR_GZ}" ] ; then
     tar xf ${JAVA_TAR_GZ}
     JAVA_ROOT=`echo jdk*`
-    ${JAVA_ROOT}/bin/jlink --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ${JAVA_MODULES} --output ${USR}
+    ${JAVA_ROOT}/bin/jlink --no-header-files --no-man-pages --strip-debug --add-modules ${JAVA_MODULES} --output ${USR}
     rm -rf ${JAVA_ROOT}
     JAVA_PATH=\${APP_ROOT}/usr/bin/
 fi
