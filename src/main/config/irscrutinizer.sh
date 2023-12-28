@@ -8,17 +8,10 @@
 # When changing this file, or updating the programs, it may be a good idea to
 # delete the property file, normally ~/.config/IrScrutinizer/properties.xml.
 
-if [ "$1" = "-s" -o "$1" = "--scale" ] ; then
-    SCALE_FACTOR=$2
-    shift 2
-fi
-
 # Set to the preferred Java VM, with or without directory.
 JAVA=${JAVA:-java}
 
-# Modify for Hight DPI usage.
-# Not all JVMs recognize this; some only accept integer arguments.
-JVM_ARGS=-Dsun.java2d.uiScale=${SCALE_FACTOR:-1}
+JVM_ARGS=
 
 # Where the programs are installed, adjust if required
 export IRSCRUTINIZERHOME="$(dirname -- "$(readlink -f -- "${0}")" )"

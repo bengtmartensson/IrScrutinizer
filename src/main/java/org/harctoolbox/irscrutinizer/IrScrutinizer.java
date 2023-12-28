@@ -101,6 +101,9 @@ public class IrScrutinizer {
             System.exit(IrpUtils.EXIT_SUCCESS);
         }
 
+        if (commandLineArgs.scaling != null)
+            System.setProperty("sun.java2d.uiScale", commandLineArgs.scaling);
+
         setupRadixPrefixes();
 
         String applicationHome = Utils.findApplicationHome(commandLineArgs.applicationHome, IrScrutinizer.class, Version.appName);
@@ -208,6 +211,9 @@ public class IrScrutinizer {
 
         @Parameter(names = {"-p", "--properties"}, description = "Pathname of properties file")
         private String propertiesFilename = null;
+
+        @Parameter(names = {"-s", "--scale", "--scaling"}, description = "Set scaling of the GUI. Accepted values and their semantics depend on the JVM.")
+        private String scaling = null;
 
         @Parameter(names = {"-V", "--version"}, description = "Display version information")
         private boolean versionRequested;
