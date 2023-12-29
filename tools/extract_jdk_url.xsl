@@ -9,20 +9,22 @@
    </xsl:template>
 
    <xsl:template match="pom:properties">
-       <xsl:value-of select="pom:bundledjdk_url_sans_file"/>
        <xsl:choose>
-            <xsl:when test="$SYSTEM = 'linux'">
-                <xsl:value-of select="//pom:project/pom:properties/pom:bundledjdk.linux"/>
-            </xsl:when>
-            <xsl:when test="$SYSTEM = 'windows'">
-                <xsl:value-of select="//pom:project/pom:properties/pom:bundledjdk.windows"/>
-            </xsl:when>
-            <xsl:when test="$SYSTEM = 'mac'">
-                <xsl:value-of select="//pom:project/pom:properties/pom:bundledjdk.mac"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:text>ERROR</xsl:text>
-            </xsl:otherwise>
-        </xsl:choose>
+           <xsl:when test="$SYSTEM = 'linux'">
+               <xsl:value-of select="pom:bundledjdk_url_sans_file.linux"/>
+               <xsl:value-of select="pom:bundledjdk.linux"/>
+           </xsl:when>
+           <xsl:when test="$SYSTEM = 'windows'">
+               <xsl:value-of select="pom:bundledjdk_url_sans_file.windows"/>
+               <xsl:value-of select="//pom:project/pom:properties/pom:bundledjdk.windows"/>
+           </xsl:when>
+           <xsl:when test="$SYSTEM = 'mac'">
+               <xsl:value-of select="pom:bundledjdk_url_sans_file.mac"/>
+               <xsl:value-of select="//pom:project/pom:properties/pom:bundledjdk.mac"/>
+           </xsl:when>
+           <xsl:otherwise>
+               <xsl:text>ERROR</xsl:text>
+           </xsl:otherwise>
+       </xsl:choose>
    </xsl:template>
 </xsl:stylesheet>

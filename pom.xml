@@ -20,9 +20,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.nameLowercase>irscrutinizer</project.nameLowercase>
-        <bundledjdk_url_sans_file>https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1%2B12/</bundledjdk_url_sans_file>
+        <bundledjdk_url_sans_file.linux>https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1%2B12/</bundledjdk_url_sans_file.linux>
         <bundledjdk.linux>OpenJDK21U-jdk_x64_linux_hotspot_21.0.1_12.tar.gz</bundledjdk.linux>
-        <bundledjdk.windows>OpenJDK11U-jdk_x86-32_windows_hotspot_11.0.5_10.zip</bundledjdk.windows>
+        <bundledjdk_url_sans_file.windows>https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.9%2B9/</bundledjdk_url_sans_file.windows>
+        <bundledjdk.windows>OpenJDK17U-jdk_x86-32_windows_hotspot_17.0.9_9.zip</bundledjdk.windows>
+        <bundledjdk_url_sans_file.mac>*** Currently not working ***</bundledjdk_url_sans_file.mac>
         <bundledjdk.mac>OpenJDK11U-jdk_x64_mac_hotspot_11.0.5_10.tar.gz</bundledjdk.mac>
         <inno_path>${basedir}/Inno_Setup_6/ISCC.exe</inno_path>
         <maven.compiler.source>1.8</maven.compiler.source>
