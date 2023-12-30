@@ -2167,7 +2167,7 @@ public final class GuiMain extends javax.swing.JFrame {
         printTableRowMenuItem = new javax.swing.JMenuItem();
         clearSelectionParametricMenuItem = new javax.swing.JMenuItem();
         jSeparator14 = new javax.swing.JPopupMenu.Separator();
-        clearMenuItem1 = new javax.swing.JMenuItem();
+        deleteAllMenuItem = new javax.swing.JMenuItem();
         checkParametrizedSignalsMenuItem = new javax.swing.JMenuItem();
         parameterUniquefyMenuItem = new javax.swing.JMenuItem();
         exportCookedMenuItem = new javax.swing.JMenuItem();
@@ -2181,7 +2181,7 @@ public final class GuiMain extends javax.swing.JFrame {
         resetRawTableColumnsMenuItem1 = new javax.swing.JMenuItem();
         hideUnusedMenuItem = new javax.swing.JMenuItem();
         hideUninterestingColumnsMenuItem = new javax.swing.JMenuItem();
-        clearParametrizedCommentMenuItem = new javax.swing.JMenuItem();
+        deleteParametrizedCommentMenuItem = new javax.swing.JMenuItem();
         parametrizedAdvancedMenu = new javax.swing.JMenu();
         setProtocolMenuItem = new javax.swing.JMenuItem();
         setDMenuItem = new javax.swing.JMenuItem();
@@ -2224,7 +2224,7 @@ public final class GuiMain extends javax.swing.JFrame {
         copyToParametrizedMenuItem = new javax.swing.JMenuItem();
         clearSelectionRawMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
-        clearMenuItem = new javax.swing.JMenuItem();
+        deleteAllRawsMenuItem = new javax.swing.JMenuItem();
         checkRawCommandsMenuItem = new javax.swing.JMenuItem();
         rawUniquefyMenuItem = new javax.swing.JMenuItem();
         saveRawMenuItem = new javax.swing.JMenuItem();
@@ -2238,7 +2238,7 @@ public final class GuiMain extends javax.swing.JFrame {
         resetRawTableColumnsMenuItem = new javax.swing.JMenuItem();
         removeUnusedMenuItem1 = new javax.swing.JMenuItem();
         hideUninterestingColumnsMenuItem1 = new javax.swing.JMenuItem();
-        clearRawCommentMenuItem = new javax.swing.JMenuItem();
+        deleteRawCommentMenuItem = new javax.swing.JMenuItem();
         deleteEmptyRawSignalsMenuItem = new javax.swing.JMenuItem();
         copyPastePopupMenu = new org.harctoolbox.guicomponents.CopyPastePopupMenu(true);
         copyPopupMenu = new org.harctoolbox.guicomponents.CopyPastePopupMenu();
@@ -2655,7 +2655,7 @@ public final class GuiMain extends javax.swing.JFrame {
         CCFCodePopupMenu.add(rawCodeClearMenuItem);
 
         signalClearMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/delete.png"))); // NOI18N
-        signalClearMenuItem.setText("Clear signal");
+        signalClearMenuItem.setText("Delete signal");
         signalClearMenuItem.setToolTipText("Clear this window, the analysis window, and the plot.");
         signalClearMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2967,14 +2967,13 @@ public final class GuiMain extends javax.swing.JFrame {
         parameterTablePopupMenu.add(clearSelectionParametricMenuItem);
         parameterTablePopupMenu.add(jSeparator14);
 
-        clearMenuItem1.setMnemonic('C');
-        clearMenuItem1.setText("Clear all");
-        clearMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        deleteAllMenuItem.setText("Delete all");
+        deleteAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearMenuItem1ActionPerformed(evt);
+                deleteAllMenuItemActionPerformed(evt);
             }
         });
-        parameterTablePopupMenu.add(clearMenuItem1);
+        parameterTablePopupMenu.add(deleteAllMenuItem);
 
         checkParametrizedSignalsMenuItem.setText("Check commands");
         checkParametrizedSignalsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -3064,13 +3063,13 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         parameterTablePopupMenu.add(hideUninterestingColumnsMenuItem);
 
-        clearParametrizedCommentMenuItem.setText("Clear all comments");
-        clearParametrizedCommentMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        deleteParametrizedCommentMenuItem.setText("Delete all comments");
+        deleteParametrizedCommentMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearParametrizedCommentMenuItemActionPerformed(evt);
+                deleteParametrizedCommentMenuItemActionPerformed(evt);
             }
         });
-        parameterTablePopupMenu.add(clearParametrizedCommentMenuItem);
+        parameterTablePopupMenu.add(deleteParametrizedCommentMenuItem);
 
         parametrizedAdvancedMenu.setText("Advanced");
 
@@ -3367,14 +3366,13 @@ public final class GuiMain extends javax.swing.JFrame {
         rawTablePopupMenu.add(clearSelectionRawMenuItem);
         rawTablePopupMenu.add(jSeparator12);
 
-        clearMenuItem.setMnemonic('C');
-        clearMenuItem.setText("Clear all");
-        clearMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        deleteAllRawsMenuItem.setText("Delete all");
+        deleteAllRawsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearMenuItemActionPerformed(evt);
+                deleteAllRawsMenuItemActionPerformed(evt);
             }
         });
-        rawTablePopupMenu.add(clearMenuItem);
+        rawTablePopupMenu.add(deleteAllRawsMenuItem);
 
         checkRawCommandsMenuItem.setText("Check commands");
         checkRawCommandsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -3463,13 +3461,13 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         rawTablePopupMenu.add(hideUninterestingColumnsMenuItem1);
 
-        clearRawCommentMenuItem.setText("Clear all comments");
-        clearRawCommentMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        deleteRawCommentMenuItem.setText("Delete all comments");
+        deleteRawCommentMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearRawCommentMenuItemActionPerformed(evt);
+                deleteRawCommentMenuItemActionPerformed(evt);
             }
         });
-        rawTablePopupMenu.add(clearRawCommentMenuItem);
+        rawTablePopupMenu.add(deleteRawCommentMenuItem);
 
         deleteEmptyRawSignalsMenuItem.setText("Delete empty Signals");
         deleteEmptyRawSignalsMenuItem.setToolTipText("Remove all signals that do not have a content.");
@@ -5127,7 +5125,7 @@ public final class GuiMain extends javax.swing.JFrame {
         importPanelLayout.setHorizontalGroup(
             importPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, importPanelLayout.createSequentialGroup()
-                .addComponent(importTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 993, Short.MAX_VALUE)
+                .addComponent(importTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 993, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
         importPanelLayout.setVerticalGroup(
@@ -7467,9 +7465,9 @@ public final class GuiMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_deleteMenuItemActionPerformed
 
-    private void clearMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearMenuItemActionPerformed
+    private void deleteAllRawsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteAllRawsMenuItemActionPerformed
         tableUtils.clearTableConfirm(rawTable);
-    }//GEN-LAST:event_clearMenuItemActionPerformed
+    }//GEN-LAST:event_deleteAllRawsMenuItemActionPerformed
 
     private void moveUpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpMenuItemActionPerformed
         try {
@@ -7605,9 +7603,9 @@ public final class GuiMain extends javax.swing.JFrame {
         tableUtils.printTableSelectedRows(parameterTable);
     }//GEN-LAST:event_printTableRowMenuItemActionPerformed
 
-    private void clearMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearMenuItem1ActionPerformed
+    private void deleteAllMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteAllMenuItemActionPerformed
         tableUtils.clearTableConfirm(parameterTable);
-    }//GEN-LAST:event_clearMenuItem1ActionPerformed
+    }//GEN-LAST:event_deleteAllMenuItemActionPerformed
 
     private void hideColumnMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideColumnMenuItem1ActionPerformed
         int selectedColumn = parameterTable.getSelectedColumn();
@@ -8625,13 +8623,13 @@ public final class GuiMain extends javax.swing.JFrame {
         properties.setImportOpensZipFiles(openZipFilesCheckBoxMenuItem.isSelected());
     }//GEN-LAST:event_openZipFilesCheckBoxMenuItemActionPerformed
 
-    private void clearParametrizedCommentMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearParametrizedCommentMenuItemActionPerformed
+    private void deleteParametrizedCommentMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteParametrizedCommentMenuItemActionPerformed
         parameterTableModel.clearComment();
-    }//GEN-LAST:event_clearParametrizedCommentMenuItemActionPerformed
+    }//GEN-LAST:event_deleteParametrizedCommentMenuItemActionPerformed
 
-    private void clearRawCommentMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearRawCommentMenuItemActionPerformed
+    private void deleteRawCommentMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteRawCommentMenuItemActionPerformed
         rawTableModel.clearComment();
-    }//GEN-LAST:event_clearRawCommentMenuItemActionPerformed
+    }//GEN-LAST:event_deleteRawCommentMenuItemActionPerformed
 
     private void exportGenerateShortCcfCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportGenerateShortCcfCheckBoxActionPerformed
         properties.setExportGenerateShortCcf(exportGenerateShortCcfCheckBox.isSelected());
@@ -9492,10 +9490,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem chopThresholdMenuItem;
     private javax.swing.JCheckBoxMenuItem cleanerCheckBoxMenuItem;
     private javax.swing.JMenuItem clearConsoleMenuItem;
-    private javax.swing.JMenuItem clearMenuItem;
-    private javax.swing.JMenuItem clearMenuItem1;
-    private javax.swing.JMenuItem clearParametrizedCommentMenuItem;
-    private javax.swing.JMenuItem clearRawCommentMenuItem;
     private javax.swing.JMenuItem clearSelectionParametricMenuItem;
     private javax.swing.JMenuItem clearSelectionRawMenuItem;
     private javax.swing.JMenuItem clearSignalMenuItem;
@@ -9532,11 +9526,15 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem debugDecodeProtocolRegexpMenuItem;
     private javax.swing.JMenu debugMenu;
     private javax.swing.JTextField decodeIRTextField;
+    private javax.swing.JMenuItem deleteAllMenuItem;
+    private javax.swing.JMenuItem deleteAllRawsMenuItem;
     private javax.swing.JMenuItem deleteDefaultedSignalsMenuItem;
     private javax.swing.JMenuItem deleteEmptyParametrizedSignalsMenuItem;
     private javax.swing.JMenuItem deleteEmptyRawSignalsMenuItem;
     private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JMenuItem deleteMenuItem1;
+    private javax.swing.JMenuItem deleteParametrizedCommentMenuItem;
+    private javax.swing.JMenuItem deleteRawCommentMenuItem;
     private org.harctoolbox.guicomponents.DevLircBean devLircBean;
     private javax.swing.JPanel devLircPanel;
     private javax.swing.JMenuItem disussionsMenuItem;

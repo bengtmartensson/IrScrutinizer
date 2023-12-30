@@ -30,7 +30,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/delete.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Clear signal"/>
+            <Property name="text" type="java.lang.String" value="Delete signal"/>
             <Property name="toolTipText" type="java.lang.String" value="Clear this window, the analysis window, and the plot."/>
           </Properties>
           <Events>
@@ -388,13 +388,12 @@
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator14">
         </Component>
-        <MenuItem class="javax.swing.JMenuItem" name="clearMenuItem1">
+        <MenuItem class="javax.swing.JMenuItem" name="deleteAllMenuItem">
           <Properties>
-            <Property name="mnemonic" type="int" value="67"/>
-            <Property name="text" type="java.lang.String" value="Clear all"/>
+            <Property name="text" type="java.lang.String" value="Delete all"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearMenuItem1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteAllMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="checkParametrizedSignalsMenuItem">
@@ -488,12 +487,12 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hideUninterestingColumnsMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="clearParametrizedCommentMenuItem">
+        <MenuItem class="javax.swing.JMenuItem" name="deleteParametrizedCommentMenuItem">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Clear all comments"/>
+            <Property name="text" type="java.lang.String" value="Delete all comments"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearParametrizedCommentMenuItemActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteParametrizedCommentMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
         <Menu class="javax.swing.JMenu" name="parametrizedAdvancedMenu">
@@ -818,13 +817,12 @@
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator12">
         </Component>
-        <MenuItem class="javax.swing.JMenuItem" name="clearMenuItem">
+        <MenuItem class="javax.swing.JMenuItem" name="deleteAllRawsMenuItem">
           <Properties>
-            <Property name="mnemonic" type="int" value="67"/>
-            <Property name="text" type="java.lang.String" value="Clear all"/>
+            <Property name="text" type="java.lang.String" value="Delete all"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearMenuItemActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteAllRawsMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="checkRawCommandsMenuItem">
@@ -917,12 +915,12 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hideUninterestingColumnsMenuItem1ActionPerformed"/>
           </Events>
         </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="clearRawCommentMenuItem">
+        <MenuItem class="javax.swing.JMenuItem" name="deleteRawCommentMenuItem">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Clear all comments"/>
+            <Property name="text" type="java.lang.String" value="Delete all comments"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearRawCommentMenuItemActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteRawCommentMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="deleteEmptyRawSignalsMenuItem">

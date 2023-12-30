@@ -372,7 +372,7 @@ public class TreeImporter extends javax.swing.JPanel implements TreeExpansionLis
         popupMenu.add(sortAllMenuItem);
         popupMenu.add(jSeparator4);
 
-        clearMenuItem.setText("Clear");
+        clearMenuItem.setText("Delete all");
         clearMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clearMenuItemActionPerformed(evt);
