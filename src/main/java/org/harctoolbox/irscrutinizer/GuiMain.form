@@ -443,6 +443,20 @@
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator27">
         </Component>
+        <MenuItem class="javax.swing.JMenuItem" name="searchParametrizedMenuItem">
+          <Properties>
+            <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+              <KeyStroke key="Ctrl+F"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Search name..."/>
+            <Property name="toolTipText" type="java.lang.String" value="Selects all commands containing a particular string"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchParametrizedMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator43">
+        </Component>
         <MenuItem class="javax.swing.JMenuItem" name="parametrizedPasteColumnMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" value="Paste in column"/>
@@ -867,6 +881,20 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rawCopySelectionMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator44">
+        </Component>
+        <MenuItem class="javax.swing.JMenuItem" name="searchRawMenuItem">
+          <Properties>
+            <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+              <KeyStroke key="Ctrl+F"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Search name..."/>
+            <Property name="toolTipText" type="java.lang.String" value="Select all commands which names contain a given string"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchRawMenuItemActionPerformed"/>
           </Events>
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator39">
@@ -3013,6 +3041,7 @@
                               </Properties>
                               <Events>
                                 <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="parameterTableMouseReleased"/>
+                                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="parameterTableKeyReleased"/>
                               </Events>
                               <AuxValues>
                                 <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="GuiMain_parameterTable"/>
@@ -3079,6 +3108,7 @@
                               <Events>
                                 <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="rawTableMousePressed"/>
                                 <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="rawTableMouseReleased"/>
+                                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="rawTableKeyReleased"/>
                               </Events>
                             </Component>
                           </SubComponents>

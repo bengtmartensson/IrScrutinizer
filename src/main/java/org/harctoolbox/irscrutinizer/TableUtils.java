@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -192,6 +193,30 @@ public class TableUtils {
             String str = tableModel.toPrintString(modelRow);
             guiUtils.message(str);
         }
+    }
+
+    void searchNameInTable(JTable table, String fragment) {
+        // assumes table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        table.clearSelection();
+        NamedIrSignal.LearnedIrSignalTableModel tableModel = (NamedIrSignal.LearnedIrSignalTableModel) table.getModel();
+        for (int i = 0; i < table.getRowCount(); i++) {
+            NamedIrSignal cmd = tableModel.getNamedIrSignal(i);
+            String name = cmd.getName();
+            if (name.toUpperCase(Locale.US).contains(fragment.toUpperCase(Locale.US))) {
+                int viewRow = table.convertRowIndexToView(i);
+                table.addRowSelectionInterval(viewRow, viewRow);
+            }
+        }
+        int selected = table.getSelectedRow();
+        if (selected != -1)
+            table.scrollRectToVisible(table.getCellRect(selected, 0, true));
+    }
+
+    void searchNameInTable(JTable table) {
+        String fragment = guiUtils.getInput("Enter string to seach for", "Search request", "");
+        if (fragment == null) // Cancel pressed
+            return;
+        searchNameInTable(table, fragment);
     }
 
     Command commandTableSelectedRow(JTable table) throws ErroneousSelectionException, GirrException {

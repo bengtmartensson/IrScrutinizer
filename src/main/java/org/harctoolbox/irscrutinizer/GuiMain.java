@@ -28,6 +28,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -2175,6 +2176,8 @@ public final class GuiMain extends javax.swing.JFrame {
         parametrizedCopyAllMenuItem = new javax.swing.JMenuItem();
         parametrizedCopySelectionMenuItem = new javax.swing.JMenuItem();
         jSeparator27 = new javax.swing.JPopupMenu.Separator();
+        searchParametrizedMenuItem = new javax.swing.JMenuItem();
+        jSeparator43 = new javax.swing.JPopupMenu.Separator();
         parametrizedPasteColumnMenuItem = new javax.swing.JMenuItem();
         jSeparator40 = new javax.swing.JPopupMenu.Separator();
         hideColumnMenuItem1 = new javax.swing.JMenuItem();
@@ -2231,6 +2234,8 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator28 = new javax.swing.JPopupMenu.Separator();
         rawCopyAllMenuItem = new javax.swing.JMenuItem();
         rawCopySelectionMenuItem = new javax.swing.JMenuItem();
+        jSeparator44 = new javax.swing.JPopupMenu.Separator();
+        searchRawMenuItem = new javax.swing.JMenuItem();
         jSeparator39 = new javax.swing.JPopupMenu.Separator();
         rawPasteColumnMenuItem = new javax.swing.JMenuItem();
         jSeparator29 = new javax.swing.JPopupMenu.Separator();
@@ -3020,6 +3025,17 @@ public final class GuiMain extends javax.swing.JFrame {
         parameterTablePopupMenu.add(parametrizedCopySelectionMenuItem);
         parameterTablePopupMenu.add(jSeparator27);
 
+        searchParametrizedMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        searchParametrizedMenuItem.setText("Search name...");
+        searchParametrizedMenuItem.setToolTipText("Selects all commands containing a particular string");
+        searchParametrizedMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchParametrizedMenuItemActionPerformed(evt);
+            }
+        });
+        parameterTablePopupMenu.add(searchParametrizedMenuItem);
+        parameterTablePopupMenu.add(jSeparator43);
+
         parametrizedPasteColumnMenuItem.setText("Paste in column");
         parametrizedPasteColumnMenuItem.setToolTipText("Paste clipboard into column, starting with selected row");
         parametrizedPasteColumnMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -3416,6 +3432,17 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         rawTablePopupMenu.add(rawCopySelectionMenuItem);
+        rawTablePopupMenu.add(jSeparator44);
+
+        searchRawMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        searchRawMenuItem.setText("Search name...");
+        searchRawMenuItem.setToolTipText("Select all commands which names contain a given string");
+        searchRawMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchRawMenuItemActionPerformed(evt);
+            }
+        });
+        rawTablePopupMenu.add(searchRawMenuItem);
         rawTablePopupMenu.add(jSeparator39);
 
         rawPasteColumnMenuItem.setText("Paste in column");
@@ -3759,6 +3786,11 @@ public final class GuiMain extends javax.swing.JFrame {
                 parameterTableMouseReleased(evt);
             }
         });
+        parameterTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                parameterTableKeyReleased(evt);
+            }
+        });
         parameterTableScrollPane.setViewportView(parameterTable);
         parameterTable.setColumnModel(parameterTableColumnModel);
 
@@ -3789,6 +3821,11 @@ public final class GuiMain extends javax.swing.JFrame {
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 rawTableMouseReleased(evt);
+            }
+        });
+        rawTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                rawTableKeyReleased(evt);
             }
         });
         rawTableScrollPane.setViewportView(rawTable);
@@ -9447,6 +9484,27 @@ public final class GuiMain extends javax.swing.JFrame {
             rawTableModel.deleteEmptySignals();
     }//GEN-LAST:event_deleteEmptyRawSignalsMenuItemActionPerformed
 
+    private void searchParametrizedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchParametrizedMenuItemActionPerformed
+        tableUtils.searchNameInTable(parameterTable);
+    }//GEN-LAST:event_searchParametrizedMenuItemActionPerformed
+
+    private void parameterTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_parameterTableKeyReleased
+        tableKeyReleased(parameterTable, evt);
+    }//GEN-LAST:event_parameterTableKeyReleased
+
+    private void rawTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_rawTableKeyReleased
+        tableKeyReleased(rawTable, evt);
+    }//GEN-LAST:event_rawTableKeyReleased
+
+    private void searchRawMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchRawMenuItemActionPerformed
+        tableUtils.searchNameInTable(rawTable);
+    }//GEN-LAST:event_searchRawMenuItemActionPerformed
+
+    private void tableKeyReleased(JTable table, KeyEvent evt) {
+        if (evt.getModifiersEx() == java.awt.event.InputEvent.CTRL_DOWN_MASK) {
+            tableUtils.searchNameInTable(table);
+        }
+    }
     //<editor-fold defaultstate="collapsed" desc="Automatic variable declarations">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPopupMenu CCFCodePopupMenu;
@@ -9777,6 +9835,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator40;
     private javax.swing.JPopupMenu.Separator jSeparator41;
     private javax.swing.JPopupMenu.Separator jSeparator42;
+    private javax.swing.JPopupMenu.Separator jSeparator43;
+    private javax.swing.JPopupMenu.Separator jSeparator44;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
@@ -9915,6 +9975,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton scrutinizeRemoteHelpButton;
     private javax.swing.JButton scrutinizeSignalHelpButton;
     private javax.swing.JMenuItem scrutinizeSignalProtocolDocuMenuItem;
+    private javax.swing.JMenuItem searchParametrizedMenuItem;
+    private javax.swing.JMenuItem searchRawMenuItem;
     private javax.swing.JMenuItem sendMenuItem;
     private javax.swing.JButton sendingCommandFusionHelpButton;
     private javax.swing.JButton sendingDevLircHardwareHelpButton;
