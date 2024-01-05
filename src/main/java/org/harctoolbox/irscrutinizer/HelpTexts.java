@@ -116,13 +116,6 @@ class HelpTexts {
             + "For the export and the transfer to the \"scrutinize remote\" tables, not only a single parameter value can be selected, but whole sets. The complete syntax and semantics is given in the IrpMaster documentation. Here we just mention that e.g. 12:34 means all numbers between 12 and 34, and * denotes all possible values.";
 
     @SuppressWarnings("PackageVisibleField")
-    public static String importGlobalCacheHelp
-            = "To use the Global Caché data base, an API key has be be entered. A such can be obtained by logging in to http://irdatabase.globalcache.com from a Facebook, Google, or Yahoo account.\n\n"
-            + "After pressing the \"APIKey\" button, the API key is entered in the pop-up window. It is subsequently saved to the program's properties.\n\n"
-            + "To use, select, in order, a manufacturer, a device type, and a setup code, the latter possibly by trial-and-error.\n\n"
-            + "When pressing the \"Load\" button, " + treeHelp;
-
-    @SuppressWarnings("PackageVisibleField")
     public static String importControlTowerHelp
             = "<html>The support for the Control Tower Data base is limited. It can be used for browsing the data base "
             + "for devices and the contained commands, but it cannot retreive the very codes of the commands. "

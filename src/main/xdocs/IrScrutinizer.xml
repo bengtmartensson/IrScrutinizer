@@ -98,6 +98,10 @@
                 <td>2023-12-26</td>
                 <td>Removed leftover references to the "minimal json" as well as Fedore dnf tonto.</td>
             </tr>
+            <tr>
+                <td>2024-01-05</td>
+                <td>Removed GlobalCache IR database.</td>
+            </tr>
         </table>
 
         <section>
@@ -745,22 +749,6 @@
                 </section>
                 <section>
                     <title>Data bases</title>
-                    <section>
-                        <title>Global Caché Database</title>
-                        <p>Global Caché maintains a <a href="http://irdatabase.globalcache.com/">data base
-                                of IR signals</a>, made available free of charge. "Contains over 100,000
-                            Infrared codes for over 2,000 different remotes from over 500 manufacturers".
-                            To use from IrScrutinizer, an API Key has be be retrieved. This can be done from
-                            a Facebook, Google, or Yahoo account. After pressing the <code>APIKey</code> button, the
-                            API key is entered in the pop-up window. It is subsequently saved to the
-                            program's properties.
-                            To use, first select <code>Select me to load</code> to load the list of the manufacturers.
-                            Then select, in order, a manufacturer, a <a href="Glossary.html#DeviceType">device
-                                type</a>, and a <a href="Glossary.html#setupCode">setup code</a>, the latter possibly by
-                            trial-and-error.</p>
-                        <p>This data base is no longer maintained; replaced by the "Control Tower data base", described next.</p>
-                    </section>
-
                     <section>
                         <title>Global Caché's Control Tower data base</title>
                         <p>This is <a href="https://irdb.globalcache.com/">the new data base from Global Caché</a>. Unfortunately,
