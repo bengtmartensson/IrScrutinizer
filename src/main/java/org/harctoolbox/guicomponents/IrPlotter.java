@@ -378,11 +378,11 @@ public class IrPlotter extends HarcPanel {
         String str = Integer.toString(useMilliSeconds ? x/1000 : x);
         graphics.setColor(numberColor);
         int strLength = charWidth*str.length(); // silly, but accurate enough here
-        int xcoord = x2screenX(x) - strLength/2 < leftMargin ? leftMargin
-                : x2screenX(x) + strLength/2 > getWidth() - rightMargin ? getWidth() - rightMargin - strLength
-                : x2screenX(x) - strLength/2;
-
-        graphics.drawString(str, xcoord, offY+numberOffset);
+        int xUnclipped = x2screenX(x) - strLength/2;
+        int xLeftclipped = Math.max(xUnclipped, leftMargin);
+        if (xLeftclipped < getWidth() - rightMargin)
+            graphics.drawString(str, xLeftclipped, offY+numberOffset);
+        // otherwise too far right, just ignore, since it would probably overwrite something
     }
 
     private void initializeMouse() {
