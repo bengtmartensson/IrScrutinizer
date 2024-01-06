@@ -3716,7 +3716,7 @@ public final class GuiMain extends javax.swing.JFrame {
         plotScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
         irPlotter.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        irPlotter.setToolTipText("Plot of captured IR signal. Press right mouse button for a menu.");
+        irPlotter.setToolTipText("Plot of IR signal above. Press right mouse button for a menu, mouse wheel to zoom, left mouse buttol + drag to zoom selection.");
         irPlotter.setAutoscrolls(true);
         irPlotter.setPreferredSize(new java.awt.Dimension(749, 100));
 

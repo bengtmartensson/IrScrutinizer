@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.io.IOException;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -67,6 +68,10 @@ public class IrPlotter extends HarcPanel {
     private final static Color repeatColor = Color.BLUE;
     private final static Color endingColor = Color.GREEN;
     private final static int invalid = -1;
+
+    private final static int RESET_MOUSE_BUTTON = 6;
+    private final static double BASIS = 1.05;
+    private final static double LOGBASIS = Math.log(BASIS);
 
     /** max horizontal coordinate, in microseconds */
     private int xmin = 0;
@@ -193,7 +198,8 @@ public class IrPlotter extends HarcPanel {
 
     private void setDragEnd(int x) {
         if (dragBeginX != invalid && Math.abs(dragBeginX - x) > dragThreshold) {
-            xmin = screenX2x(Math.min(dragBeginX, x));
+            // Nothing interesting is going on for negative x's, so force xmin non-negative
+            xmin = Math.max(screenX2x(Math.min(dragBeginX, x)), 0);
             xmax = screenX2x(Math.max(dragBeginX, x));
             //System.err.println("End: " + x + " " + screenX2x(x));
         }
@@ -329,7 +335,7 @@ public class IrPlotter extends HarcPanel {
         int tickWidth = rounder((int)Math.round(goalWidth));
         useMilliSeconds = tickWidth >= 5000;
         int newXmin = xmin/tickWidth*tickWidth;
-        this.xmin = newXmin;
+        //this.xmin = newXmin;
         int noTicks = (int) Math.ceil(((double)(xmax-newXmin))/tickWidth) + 1;
         if (noTicks <= 0) {
             System.err.println(">>>>>>>>>>>>>>" + xmax + " " + newXmin + " " + tickWidth + " " + goalWidth);
@@ -398,12 +404,36 @@ public class IrPlotter extends HarcPanel {
 
             @Override
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                if (evt.getButton() == MouseEvent.BUTTON1)
-                    setDragEnd(evt.getX());
-                else if (evt.getButton() == MouseEvent.BUTTON3)
-                    if (evt.isPopupTrigger())
-                        plotterPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+                switch (evt.getButton()) {
+                    case MouseEvent.BUTTON1:
+                        setDragEnd(evt.getX());
+                        break;
+                    case MouseEvent.BUTTON3:
+                        if (evt.isPopupTrigger())
+                            plotterPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+                        break;
+                    case RESET_MOUSE_BUTTON:
+                        reset();
+                        break;
+                    default:
+                            ; // nothing
+                }
             }
+        });
+
+        addMouseWheelListener((MouseWheelEvent evt) -> {
+            int screenX = evt.getX();
+            int myX = screenX2x(screenX);
+            double length = xmax - xmin;
+            double frac = (myX - xmin) / length;
+            double noClicks = evt.getPreciseWheelRotation();
+            double factor = Math.exp(noClicks * LOGBASIS);
+            double toReduce = (factor - 1.0) * length;
+            double left = toReduce * frac;
+            double right = toReduce * (1.0 - frac);
+            xmin += (int) left;
+            xmax -= (int) right;
+            repaint();
         });
 
         addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
