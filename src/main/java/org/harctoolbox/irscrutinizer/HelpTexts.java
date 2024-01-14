@@ -387,12 +387,6 @@ class HelpTexts {
     public static String sendingCommandFusionHelp = "With this pane, a CommandFusion Learner can be used for transmitting IR signals.";
 
     @SuppressWarnings("PackageVisibleField")
-    public static String capturingGirsHelp = "TODO";
-
-    @SuppressWarnings("PackageVisibleField")
-    public static String capturingCommandFusionHelp = "With this pane, a CommandFusion Learner can be used for capturing IR signals.";
-
-    @SuppressWarnings("PackageVisibleField")
     public static String devLircHelp = "Using this pane, the Lirc /dev/lirc device can be used to send and capture IR signals. "
             + "This requires a so-called mode2 device connected, capable of sending.";
 
