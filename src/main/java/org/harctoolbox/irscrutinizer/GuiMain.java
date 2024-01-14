@@ -9362,7 +9362,8 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_irpProtocolsReloadMenuItemActionPerformed
 
     private void tableKeyReleased(JTable table, KeyEvent evt) {
-        if (evt.getModifiersEx() == java.awt.event.InputEvent.CTRL_DOWN_MASK) {
+        if (evt.getModifiersEx() == java.awt.event.InputEvent.CTRL_DOWN_MASK
+                && evt.getExtendedKeyCode() == java.awt.event.KeyEvent.VK_F ) {
             tableUtils.searchNameInTable(table);
         }
     }
