@@ -48,6 +48,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.comm.DriverGenUnix;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -223,7 +225,7 @@ public final class GuiMain extends javax.swing.JFrame {
         loadLibraries();
         setupGuiUtils();
         setupTables();
-        setupIrpDatabase();
+        setupIrpDatabase(); // must come before initComponents
         setupImporters();
         setupDecoder();
         loadExportFormats(); // must come before initComponents
@@ -322,9 +324,14 @@ public final class GuiMain extends javax.swing.JFrame {
         tableUtils = new TableUtils(guiUtils);
     }
 
-    // must come before initComponents
     private void setupIrpDatabase() throws IOException, IrpParseException, SAXException {
-        irpDatabase = new IrpDatabase(properties.mkPathAbsolute(properties.getIrpProtocolsPath()));
+        List<File> configFiles = new ArrayList<>(4);
+        configFiles.add(new File(properties.mkPathAbsolute(properties.getIrpProtocolsPath())));
+        String secondary = properties.getSecondaryIrpProtocolsPath();
+        if (!secondary.isEmpty())
+            configFiles.add(new File(secondary));
+
+        irpDatabase = new IrpDatabase(configFiles);
         Command.setIrpDatabase(irpDatabase);
     }
 
@@ -2580,9 +2587,13 @@ public final class GuiMain extends javax.swing.JFrame {
         removeDefaultedParametersCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ignoreLeadingGarbageCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         irpProtocolsIniMenu = new javax.swing.JMenu();
-        irpProtocolsEditMenuItem = new javax.swing.JMenuItem();
         irpProtocolsSelectMenuItem = new javax.swing.JMenuItem();
-        irpFormatsIniReloadMenuItem = new javax.swing.JMenuItem();
+        irpProtocolsEditMenuItem = new javax.swing.JMenuItem();
+        jSeparator45 = new javax.swing.JPopupMenu.Separator();
+        secondaryIrpProtocolsSelectMenuItem = new javax.swing.JMenuItem();
+        secondaryIrpProtocolsEditMenuItem = new javax.swing.JMenuItem();
+        jSeparator46 = new javax.swing.JPopupMenu.Separator();
+        irpProtocolsReloadMenuItem = new javax.swing.JMenuItem();
         exportFormatsMenu = new javax.swing.JMenu();
         exportFormatsEditMenuItem = new javax.swing.JMenuItem();
         exportFormatsSelectMenuItem = new javax.swing.JMenuItem();
@@ -6621,17 +6632,9 @@ public final class GuiMain extends javax.swing.JFrame {
         irpProtocolsIniMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/database.png"))); // NOI18N
         irpProtocolsIniMenu.setText("IRP protocol database");
 
-        irpProtocolsEditMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/edit.png"))); // NOI18N
-        irpProtocolsEditMenuItem.setText("Open...");
-        irpProtocolsEditMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                irpProtocolsEditMenuItemActionPerformed(evt);
-            }
-        });
-        irpProtocolsIniMenu.add(irpProtocolsEditMenuItem);
-
         irpProtocolsSelectMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/fileopen.png"))); // NOI18N
         irpProtocolsSelectMenuItem.setText("Select...");
+        irpProtocolsSelectMenuItem.setToolTipText("Select IrpProtocols.xml to use.");
         irpProtocolsSelectMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 irpProtocolsSelectMenuItemActionPerformed(evt);
@@ -6639,11 +6642,46 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         irpProtocolsIniMenu.add(irpProtocolsSelectMenuItem);
 
-        irpFormatsIniReloadMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/reload.png"))); // NOI18N
-        irpFormatsIniReloadMenuItem.setText("Reload");
-        irpFormatsIniReloadMenuItem.setToolTipText("Reload data base (not yet implemented)");
-        irpFormatsIniReloadMenuItem.setEnabled(false);
-        irpProtocolsIniMenu.add(irpFormatsIniReloadMenuItem);
+        irpProtocolsEditMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/edit.png"))); // NOI18N
+        irpProtocolsEditMenuItem.setText("Edit...");
+        irpProtocolsEditMenuItem.setToolTipText("Edit selected IrpProtocols.xml.");
+        irpProtocolsEditMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                irpProtocolsEditMenuItemActionPerformed(evt);
+            }
+        });
+        irpProtocolsIniMenu.add(irpProtocolsEditMenuItem);
+        irpProtocolsIniMenu.add(jSeparator45);
+
+        secondaryIrpProtocolsSelectMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/fileopen.png"))); // NOI18N
+        secondaryIrpProtocolsSelectMenuItem.setText("Select secondary...");
+        secondaryIrpProtocolsSelectMenuItem.setToolTipText("Select a private version of IrpProtocols. to extend the standard one.");
+        secondaryIrpProtocolsSelectMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                secondaryIrpProtocolsSelectMenuItemActionPerformed(evt);
+            }
+        });
+        irpProtocolsIniMenu.add(secondaryIrpProtocolsSelectMenuItem);
+
+        secondaryIrpProtocolsEditMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/edit.png"))); // NOI18N
+        secondaryIrpProtocolsEditMenuItem.setText("Edit secondary...");
+        secondaryIrpProtocolsEditMenuItem.setToolTipText("Edit the private extension file for IrpProtocols.xml");
+        secondaryIrpProtocolsEditMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                secondaryIrpProtocolsEditMenuItemActionPerformed(evt);
+            }
+        });
+        irpProtocolsIniMenu.add(secondaryIrpProtocolsEditMenuItem);
+        irpProtocolsIniMenu.add(jSeparator46);
+
+        irpProtocolsReloadMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/reload.png"))); // NOI18N
+        irpProtocolsReloadMenuItem.setText("Reload");
+        irpProtocolsReloadMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                irpProtocolsReloadMenuItemActionPerformed(evt);
+            }
+        });
+        irpProtocolsIniMenu.add(irpProtocolsReloadMenuItem);
 
         optionsMenu.add(irpProtocolsIniMenu);
 
@@ -8119,11 +8157,15 @@ public final class GuiMain extends javax.swing.JFrame {
     private void irpProtocolsSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpProtocolsSelectMenuItemActionPerformed
         String oldDir = new File(properties.mkPathAbsolute(properties.getIrpProtocolsPath())).getParent();
         File f = SelectFile.selectFile(this, "Select protocol file (typically IrpProtocols.xml)", oldDir, false, false, "XML files (*.xml)", "xml");
-        if (f == null || f.getAbsolutePath().equals(properties.mkPathAbsolute(properties.getIrpProtocolsPath())))
+        if (f == null)
             return;
 
         properties.setIrpProtocolsPath(f.getAbsolutePath());
-        guiUtils.warning("The program must be restarted for the changes to take effect.");
+        try {
+            setupIrpDatabase();
+        } catch (IOException | IrpParseException | SAXException ex) {
+            guiUtils.error(ex);
+        }
     }//GEN-LAST:event_irpProtocolsSelectMenuItemActionPerformed
 
     private void exportFormatsEditMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportFormatsEditMenuItemActionPerformed
@@ -9278,6 +9320,47 @@ public final class GuiMain extends javax.swing.JFrame {
         tableUtils.searchNameInTable(rawTable);
     }//GEN-LAST:event_searchRawMenuItemActionPerformed
 
+    private void secondaryIrpProtocolsSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_secondaryIrpProtocolsSelectMenuItemActionPerformed
+        String secondary = properties.getSecondaryIrpProtocolsPath();
+        String selectorStartDir = secondary.isEmpty() ? System.getProperty("user.home") : new File(properties.mkPathAbsolute(secondary)).getParent();
+        File f = SelectFile.selectFile(this, "Select secondary protocol file", selectorStartDir, false, false, "XML files (*.xml)", "xml");
+        if (f == null)
+            return;
+        if (f.toString().equals("/dev/null") || f.toString().equalsIgnoreCase("NULL:")) {
+            properties.setSecondaryIrpProtocolsPath("");
+            guiUtils.message("secondary IrpProtocol was removed.");
+        } else {
+            properties.setSecondaryIrpProtocolsPath(f.getAbsolutePath());
+        }
+        try {
+            setupIrpDatabase();
+        } catch (IOException | IrpParseException | SAXException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_secondaryIrpProtocolsSelectMenuItemActionPerformed
+
+    private void secondaryIrpProtocolsEditMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_secondaryIrpProtocolsEditMenuItemActionPerformed
+        try {
+            String secondary = properties.getSecondaryIrpProtocolsPath();
+            if (secondary.isEmpty()) {
+                guiUtils.error("No secondary IrpProtocol selected. Nothing to edit.");
+                return;
+            }
+            guiUtils.open(new File(properties.mkPathAbsolute(secondary)));
+            guiUtils.warning("If editing the file, changes will not take effect before you save the file, select \"reload\", (or restart the program).");
+        } catch (IOException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_secondaryIrpProtocolsEditMenuItemActionPerformed
+
+    private void irpProtocolsReloadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpProtocolsReloadMenuItemActionPerformed
+        try {
+            setupIrpDatabase();
+        } catch (IOException | IrpParseException | SAXException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_irpProtocolsReloadMenuItemActionPerformed
+
     private void tableKeyReleased(JTable table, KeyEvent evt) {
         if (evt.getModifiersEx() == java.awt.event.InputEvent.CTRL_DOWN_MASK) {
             tableUtils.searchNameInTable(table);
@@ -9521,10 +9604,10 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton irTransWebButton;
     private org.harctoolbox.guicomponents.IrWidgetBean irWidgetBean;
     private javax.swing.JButton irWidgetHelpButton;
-    private javax.swing.JMenuItem irpFormatsIniReloadMenuItem;
     private org.harctoolbox.guicomponents.IrpRenderBean irpMasterBean;
     private javax.swing.JMenuItem irpProtocolsEditMenuItem;
     private javax.swing.JMenu irpProtocolsIniMenu;
+    private javax.swing.JMenuItem irpProtocolsReloadMenuItem;
     private javax.swing.JMenuItem irpProtocolsSelectMenuItem;
     private javax.swing.JMenuItem irpTransmogrifierHelpMenuItem;
     private javax.swing.JPanel irtransImportPanel;
@@ -9603,6 +9686,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator42;
     private javax.swing.JPopupMenu.Separator jSeparator43;
     private javax.swing.JPopupMenu.Separator jSeparator44;
+    private javax.swing.JPopupMenu.Separator jSeparator45;
+    private javax.swing.JPopupMenu.Separator jSeparator46;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
@@ -9743,6 +9828,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem scrutinizeSignalProtocolDocuMenuItem;
     private javax.swing.JMenuItem searchParametrizedMenuItem;
     private javax.swing.JMenuItem searchRawMenuItem;
+    private javax.swing.JMenuItem secondaryIrpProtocolsEditMenuItem;
+    private javax.swing.JMenuItem secondaryIrpProtocolsSelectMenuItem;
     private javax.swing.JMenuItem sendMenuItem;
     private javax.swing.JButton sendingCommandFusionHelpButton;
     private javax.swing.JButton sendingDevLircHardwareHelpButton;

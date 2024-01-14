@@ -1956,37 +1956,68 @@
                 <Property name="text" type="java.lang.String" value="IRP protocol database"/>
               </Properties>
               <SubComponents>
-                <MenuItem class="javax.swing.JMenuItem" name="irpProtocolsEditMenuItem">
-                  <Properties>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/edit.png"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Open..."/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irpProtocolsEditMenuItemActionPerformed"/>
-                  </Events>
-                </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="irpProtocolsSelectMenuItem">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/fileopen.png"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Select..."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Select IrpProtocols.xml to use."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irpProtocolsSelectMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JMenuItem" name="irpFormatsIniReloadMenuItem">
+                <MenuItem class="javax.swing.JMenuItem" name="irpProtocolsEditMenuItem">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/edit.png"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Edit..."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Edit selected IrpProtocols.xml."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irpProtocolsEditMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator45">
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="secondaryIrpProtocolsSelectMenuItem">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/fileopen.png"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Select secondary..."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Select a private version of IrpProtocols. to extend the standard one."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="secondaryIrpProtocolsSelectMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="secondaryIrpProtocolsEditMenuItem">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/edit.png"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Edit secondary..."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Edit the private extension file for IrpProtocols.xml"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="secondaryIrpProtocolsEditMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator46">
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="irpProtocolsReloadMenuItem">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/reload.png"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Reload"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Reload data base (not yet implemented)"/>
-                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irpProtocolsReloadMenuItemActionPerformed"/>
+                  </Events>
                 </MenuItem>
               </SubComponents>
             </Menu>
