@@ -488,7 +488,13 @@ public final class GuiMain extends javax.swing.JFrame {
         exportFormatManager.add("Text", () -> newTextExporter());
         exportFormatManager.add("ProntoClassic", () -> newProntoClassicExporter());
 
-        exportFormatManager.addDynamicFormats(guiUtils, new File(properties.mkPathAbsolute(properties.getExportFormatFilePath())));
+        addDynamicExportFormats(properties.getExportFormatFilePath());
+        addDynamicExportFormats(properties.getSecondaryExportFormatFilePath());
+    }
+
+    private void addDynamicExportFormats(String file) throws ParserConfigurationException, SAXException, IOException {
+        if (!file.isEmpty())
+            exportFormatManager.addDynamicFormats(guiUtils, new File(properties.mkPathAbsolute(file)));
     }
 
     private void setupDecoder() throws IrpParseException {
@@ -2597,6 +2603,10 @@ public final class GuiMain extends javax.swing.JFrame {
         exportFormatsMenu = new javax.swing.JMenu();
         exportFormatsEditMenuItem = new javax.swing.JMenuItem();
         exportFormatsSelectMenuItem = new javax.swing.JMenuItem();
+        jSeparator47 = new javax.swing.JPopupMenu.Separator();
+        secondaryExportFormatsEditMenuItem = new javax.swing.JMenuItem();
+        secondaryExportFormatsSelectMenuItem = new javax.swing.JMenuItem();
+        jSeparator48 = new javax.swing.JPopupMenu.Separator();
         exportFormatsReloadMenuItem = new javax.swing.JMenuItem();
         jSeparator20 = new javax.swing.JPopupMenu.Separator();
         importOptionsMenu = new javax.swing.JMenu();
@@ -6705,6 +6715,28 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         exportFormatsMenu.add(exportFormatsSelectMenuItem);
+        exportFormatsMenu.add(jSeparator47);
+
+        secondaryExportFormatsEditMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/edit.png"))); // NOI18N
+        secondaryExportFormatsEditMenuItem.setText("Open secondary...");
+        secondaryExportFormatsEditMenuItem.setToolTipText("Edit the private export formats file or directory.");
+        secondaryExportFormatsEditMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                secondaryExportFormatsEditMenuItemActionPerformed(evt);
+            }
+        });
+        exportFormatsMenu.add(secondaryExportFormatsEditMenuItem);
+
+        secondaryExportFormatsSelectMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/fileopen.png"))); // NOI18N
+        secondaryExportFormatsSelectMenuItem.setText("Select secondary...");
+        secondaryExportFormatsSelectMenuItem.setToolTipText("Select a private export formats file or directory.");
+        secondaryExportFormatsSelectMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                secondaryExportFormatsSelectMenuItemActionPerformed(evt);
+            }
+        });
+        exportFormatsMenu.add(secondaryExportFormatsSelectMenuItem);
+        exportFormatsMenu.add(jSeparator48);
 
         exportFormatsReloadMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/reload.png"))); // NOI18N
         exportFormatsReloadMenuItem.setText("Reload");
@@ -9326,7 +9358,7 @@ public final class GuiMain extends javax.swing.JFrame {
         File f = SelectFile.selectFile(this, "Select secondary protocol file", selectorStartDir, false, false, "XML files (*.xml)", "xml");
         if (f == null)
             return;
-        if (f.toString().equals("/dev/null") || f.toString().equalsIgnoreCase("NULL:")) {
+        if (f.toString().equals("/dev/null") || f.getName().equalsIgnoreCase("NULL:")) {
             properties.setSecondaryIrpProtocolsPath("");
             guiUtils.message("secondary IrpProtocol was removed.");
         } else {
@@ -9360,6 +9392,36 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_irpProtocolsReloadMenuItemActionPerformed
+
+    private void secondaryExportFormatsEditMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_secondaryExportFormatsEditMenuItemActionPerformed
+        try {
+            String secondary = properties.getSecondaryExportFormatFilePath();
+            if (secondary.isEmpty()) {
+                guiUtils.error("No secondary export format selected. Nothing to edit.");
+                return;
+            }
+            guiUtils.open(new File(properties.mkPathAbsolute(secondary)));
+            guiUtils.warning("If editing, changes will not take effect before reloading.");
+        } catch (IOException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_secondaryExportFormatsEditMenuItemActionPerformed
+
+    private void secondaryExportFormatsSelectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_secondaryExportFormatsSelectMenuItemActionPerformed
+        String secondary = properties.getSecondaryExportFormatFilePath();
+        String selectorStartDir = secondary.isEmpty() ? System.getProperty("user.home") : new File(properties.mkPathAbsolute(secondary)).getParent();
+        File f = SelectFile.selectFile(this, "Select secondary export format file/directory", selectorStartDir, false, false, JFileChooser.FILES_AND_DIRECTORIES, "XML files (*.xml)", "xml");
+
+        if (f == null)
+            return;
+        if (f.toString().equals("/dev/null") || f.getName().equalsIgnoreCase("NULL:")) {
+            properties.setSecondaryExportFormatFilePath("");
+            guiUtils.message("secondary export format removed.");
+        } else {
+            properties.setSecondaryExportFormatFilePath(f.getAbsolutePath());
+        }
+        loadExportFormatsGuiRefresh();
+    }//GEN-LAST:event_secondaryExportFormatsSelectMenuItemActionPerformed
 
     private void tableKeyReleased(JTable table, KeyEvent evt) {
         if (evt.getModifiersEx() == java.awt.event.InputEvent.CTRL_DOWN_MASK
@@ -9689,6 +9751,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator44;
     private javax.swing.JPopupMenu.Separator jSeparator45;
     private javax.swing.JPopupMenu.Separator jSeparator46;
+    private javax.swing.JPopupMenu.Separator jSeparator47;
+    private javax.swing.JPopupMenu.Separator jSeparator48;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
@@ -9829,6 +9893,8 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem scrutinizeSignalProtocolDocuMenuItem;
     private javax.swing.JMenuItem searchParametrizedMenuItem;
     private javax.swing.JMenuItem searchRawMenuItem;
+    private javax.swing.JMenuItem secondaryExportFormatsEditMenuItem;
+    private javax.swing.JMenuItem secondaryExportFormatsSelectMenuItem;
     private javax.swing.JMenuItem secondaryIrpProtocolsEditMenuItem;
     private javax.swing.JMenuItem secondaryIrpProtocolsSelectMenuItem;
     private javax.swing.JMenuItem sendMenuItem;

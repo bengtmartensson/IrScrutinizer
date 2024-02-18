@@ -2051,6 +2051,34 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportFormatsSelectMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
+                <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator47">
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="secondaryExportFormatsEditMenuItem">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/edit.png"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Open secondary..."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Edit the private export formats file or directory."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="secondaryExportFormatsEditMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="secondaryExportFormatsSelectMenuItem">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/fileopen.png"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Select secondary..."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Select a private export formats file or directory."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="secondaryExportFormatsSelectMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator48">
+                </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="exportFormatsReloadMenuItem">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">

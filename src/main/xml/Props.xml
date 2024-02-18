@@ -19,8 +19,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 <!-- All relative file names are relative to IRSCRUTINIZERHOME = applicationHome -->
 <properties package="org.harctoolbox.irscrutinizer" useXml = "true" appName="Version.appName" home-environment-var="IRSCRUTINIZERHOME">
-    <import class="org.harctoolbox.harchardware.ir.IrTrans"/>
-    <!--import class="org.harctoolbox.harchardware.ir.LircClient"/-->
     <import class="org.harctoolbox.ircore.IrCoreUtils"/>
     <import class="org.harctoolbox.ircore.IrSequence"/>
     <property name="autoOpenExports" type="boolean" default='"false"' />
@@ -66,6 +64,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="exportDir" type="string" default='System.getProperty("user.home") + File.separator + "Documents" + File.separator + "IrScrutinizer"' doc='Directory to which to write exports.'/>
     <property name="defaultImportDir" type="string" default='"testfiles"' doc='Just the starting directory for file selectors.'/>
     <property name="exportFormatFilePath" type="string" default='"exportformats.d"' doc='File or directory containing export format descriptions.'/>
+    <property name="secondaryExportFormatFilePath" type="string" default='""' doc='Path to secondary export formats (file or directory).' />
     <property name="exportFormatName" type="string" default='"Girr"' doc='Name of currenty selected export file format' />
     <property name="globalCacheIpName" type="string" default='org.harctoolbox.harchardware.ir.GlobalCache.DEFAULT_IP' doc="IP Name or Address of GlobalCache to use (transmitting)."/>
     <property name="globalCacheModule" type="int" default='"2"' doc='Module number of Global Cache to use, see its documentation.'/>
