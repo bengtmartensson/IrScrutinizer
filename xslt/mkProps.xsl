@@ -39,6 +39,7 @@ import java.util.Properties;
 /**
  * This class handles the properties of the program, saved to a file between program invocations.
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public final class Props {
     private final static boolean useXml = </xsl:text><xsl:value-of select="@useXml"/><xsl:text><![CDATA[;
 
@@ -190,8 +191,10 @@ public final class Props {
         return filename;
     }
 
-    private String mkPathRelative(String path) {
-        return path.replace(applicationHome, "");
+    private String mkPathRelative(String pathName) {
+        File path = new File(pathName);
+        String parent = path.getParent();
+        return parent != null && parent.equals(applicationHome) ? path.getName() : pathName;
     }
 
     public String mkPathAbsolute(String path) {
@@ -427,9 +430,10 @@ public final class Props {
 <xsl:apply-templates select="@doc" mode="string-setter"/>
     public void set<xsl:apply-templates select="@name" mode="capitalize"/>(String str) {
         String oldValue = props.getProperty("<xsl:value-of select="@name"/>");
-        if (!oldValue.equals(str)) {
-            props.setProperty("<xsl:value-of select="@name"/>", mkPathRelative(str));
-            firePropertyChange("<xsl:value-of select="@name"/>", oldValue, str);
+        String newValue = mkPathRelative(str);
+        if (!oldValue.equals(newValue)) {
+            props.setProperty("<xsl:value-of select="@name"/>", newValue);
+            firePropertyChange("<xsl:value-of select="@name"/>", oldValue, newValue);
             needSave = true;
         }
     }
