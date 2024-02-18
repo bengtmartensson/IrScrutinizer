@@ -6,6 +6,7 @@ update-irp-protocols.xsd:
 
 update-girr:
 	wget -O schemas/girr_ns-1.1.xsd https://raw.githubusercontent.com/bengtmartensson/Girr/master/src/main/schemas/girr_ns-1.1.xsd
+	wget -O schemas/girr_ns-1.2.xsd https://raw.githubusercontent.com/bengtmartensson/Girr/master/src/main/schemas/girr_ns-1.2.xsd
 	wget -O schemas/girr_ns.xsd https://raw.githubusercontent.com/bengtmartensson/Girr/master/src/main/schemas/girr_ns.xsd
 	wget -O schemas/girr.xsd https://raw.githubusercontent.com/bengtmartensson/Girr/master/src/main/schemas/girr.xsd
 
