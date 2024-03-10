@@ -2193,17 +2193,6 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="girrAcceptEmptyCommandsCheckBoxMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="rejectLircCodeImports">
-                  <Properties>
-                    <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="properties.getRejectLircCodeImports()" type="code"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Reject Lirc Imports without timings"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rejectLircCodeImportsActionPerformed"/>
-                  </Events>
-                </MenuItem>
               </SubComponents>
             </Menu>
             <Menu class="javax.swing.JMenu" name="exportOptionsMenu">

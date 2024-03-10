@@ -142,7 +142,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="importOpensZipFiles" type="boolean" default='"false"' doc="If selected, the import facitilty will also open zip files."/>
     <property name="importPaneSelectedIndex" type="int" default='"2"' doc="Index of the selected pane in the importer"/>
     <property name="parametrizedRawTabbedPaneSelectedIndex" type="int" default='"0"' doc="Index of the selected pane in the CSV importer"/>
-    <property name="rejectLircCodeImports" type="boolean" default='"true"' doc="If true, Lirc files without timing information are rejected."/>
+    <!--property name="rejectLircCodeImports" type="boolean" default='"true"' doc="If true, Lirc files without timing information are rejected."/-->
     <property name="allowEmptyGirrCommands" type="boolean" default='"false"' doc="If true, empty Girr Commands are accepted, with just a name. Otherwise they are silently ignored."/>
     <property name="chopIctImports" type="boolean" default='"false"' doc="If true, ICT imports are chopped according to the chopThreshold parameter."/>
     <property name="prontoModelIndex" type="int" default='"4"' doc="Index of selected Pronto Classic model."/>

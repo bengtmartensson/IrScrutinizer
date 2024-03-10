@@ -145,6 +145,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private final static boolean decodeStrict = false;
     private final static boolean decodeRecursive = false;
     private final static boolean decodeOverride = false;
+    private final static boolean rejectLircCodeImports = true;
 
     // Locale used for transforming command names.
     // One day this may be made user selectable...
@@ -351,10 +352,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void setupLircImporter() {
         lircImporter = new LircImporter();
-        lircImporter.setRejectLircCode(properties.getRejectLircCodeImports());
-        properties.addRejectLircCodeImportsChangeListener((String name1, Object oldValue, Object newValue) -> {
-            lircImporter.setRejectLircCode((Boolean) newValue);
-        });
+        lircImporter.setRejectLircCode(rejectLircCodeImports);
     }
 
     private void setupIrTransImporter() {
@@ -2619,7 +2617,6 @@ public final class GuiMain extends javax.swing.JFrame {
         girrValidateCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         girrSchemaLocationMenuItem = new javax.swing.JMenuItem();
         girrAcceptEmptyCommandsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        rejectLircCodeImports = new javax.swing.JCheckBoxMenuItem();
         exportOptionsMenu = new javax.swing.JMenu();
         exportCharsetMenuItem = new javax.swing.JMenuItem();
         creatingUserMenuItem = new javax.swing.JMenuItem();
@@ -6832,15 +6829,6 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         importOptionsMenu.add(girrAcceptEmptyCommandsCheckBoxMenuItem);
 
-        rejectLircCodeImports.setSelected(properties.getRejectLircCodeImports());
-        rejectLircCodeImports.setText("Reject Lirc Imports without timings");
-        rejectLircCodeImports.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rejectLircCodeImportsActionPerformed(evt);
-            }
-        });
-        importOptionsMenu.add(rejectLircCodeImports);
-
         optionsMenu.add(importOptionsMenu);
 
         exportOptionsMenu.setText("Export options");
@@ -8716,10 +8704,6 @@ public final class GuiMain extends javax.swing.JFrame {
         HelpPopup.newHelpPopup(this, HelpTexts.devLircHelp);
     }//GEN-LAST:event_sendingDevLircHardwareHelpButtonActionPerformed
 
-    private void rejectLircCodeImportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rejectLircCodeImportsActionPerformed
-        properties.setRejectLircCodeImports(rejectLircCodeImports.isSelected());
-    }//GEN-LAST:event_rejectLircCodeImportsActionPerformed
-
     private void importMode2HelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importMode2HelpButtonActionPerformed
         HelpPopup.newHelpPopup(this, HelpTexts.importMode2Help);
     }//GEN-LAST:event_importMode2HelpButtonActionPerformed
@@ -9854,7 +9838,6 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem rawUniquefyMenuItem;
     private javax.swing.JRadioButtonMenuItem rawWithoutSignsRadioButtonMenuItem;
     private javax.swing.JMenuItem reAnalyzeMenuItem;
-    private javax.swing.JCheckBoxMenuItem rejectLircCodeImports;
     private javax.swing.JMenuItem relToleranceMenuItem;
     private javax.swing.JMenuItem releaseNotesMenuItem;
     private javax.swing.JButton remoteLocatorBrowseButton;
