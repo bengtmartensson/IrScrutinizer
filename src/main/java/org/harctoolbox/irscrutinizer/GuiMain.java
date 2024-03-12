@@ -48,8 +48,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.comm.DriverGenUnix;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -1022,7 +1020,7 @@ public final class GuiMain extends javax.swing.JFrame {
             formats.add(new BroadlinkHexFormatter());
         if (properties.getExportGenerateBroadlinkBase64())
             formats.add(new BroadlinkBase64Formatter());
-        return formats.toArray(new Command.CommandTextFormat[formats.size()]);
+        return formats.toArray(new Command.CommandTextFormat[0]);
     }
 
     private GirrExporter newGirrExporter() {
@@ -8738,7 +8736,7 @@ public final class GuiMain extends javax.swing.JFrame {
             if (controlTowerIrDatabase == null) {
                 controlTowerIrDatabase = new ControlTowerIrDatabase(properties.getVerbose());
                 Collection<String> manufacturers = controlTowerIrDatabase.getManufacturers();
-                String[] arr = manufacturers.toArray(new String[manufacturers.size()]);
+                String[] arr = manufacturers.toArray(new String[0]);
                 //resetCursor(oldCursor);
                 Arrays.sort(arr, String.CASE_INSENSITIVE_ORDER);
                 DefaultComboBoxModel dcbm = new DefaultComboBoxModel(arr);
@@ -8747,7 +8745,7 @@ public final class GuiMain extends javax.swing.JFrame {
             } else {
                 String manufacturer = (String) controlTowerManufacturerComboBox.getSelectedItem();
                 Collection<String> devTypes = controlTowerIrDatabase.getDeviceTypes(manufacturer);
-                String[] arr = devTypes.toArray(new String[devTypes.size()]);
+                String[] arr = devTypes.toArray(new String[0]);
                 Arrays.sort(arr, String.CASE_INSENSITIVE_ORDER);
                 DefaultComboBoxModel dcbm = new DefaultComboBoxModel(arr);
                 controlTowerDeviceTypeComboBox.setModel(dcbm);

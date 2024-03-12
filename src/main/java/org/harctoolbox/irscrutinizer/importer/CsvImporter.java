@@ -92,7 +92,7 @@ public abstract class CsvImporter extends RemoteSetImporter implements IReaderIm
             }
             arrayList.add(chunk);
         }
-        return arrayList.toArray(new String[arrayList.size()]);
+        return arrayList.toArray(new String[0]);
     }
     protected static String join(String[] arr) {
         if (arr == null)

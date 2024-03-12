@@ -132,7 +132,7 @@ public class CsvRawImporter extends CsvImporter {
             }
             chunks.add(chunk.trim());
         }
-        return chunks.toArray(new String[chunks.size()]);
+        return chunks.toArray(new String[0]);
     }
 
     @Override

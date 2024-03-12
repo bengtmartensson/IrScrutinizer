@@ -152,6 +152,7 @@ public abstract class Exporter {
     protected Exporter() {
     }
 
+    @SuppressWarnings("NoopMethodInAbstractClass")
     protected void possiblyMakeExecutable(File file) {
     }
 

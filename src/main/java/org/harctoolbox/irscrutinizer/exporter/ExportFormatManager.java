@@ -137,7 +137,7 @@ public class ExportFormatManager {
     public String[] toArray() {
         ArrayList<String> list = new ArrayList<>(exportFormats.keySet());
         Collections.sort(list, String.CASE_INSENSITIVE_ORDER);
-        return list.toArray(new String[list.size()]);
+        return list.toArray(new String[0]);
     }
 
     @SuppressWarnings("PublicInnerClass")

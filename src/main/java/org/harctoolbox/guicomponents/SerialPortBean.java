@@ -216,7 +216,7 @@ public final class SerialPortBean extends javax.swing.JPanel {
 
         List<String> portNames = LocalSerialPort.getSerialPortNames(useCached);
         portNames.add(0, null);
-        DefaultComboBoxModel model = new DefaultComboBoxModel(portNames.toArray(new String[portNames.size()]));
+        DefaultComboBoxModel model = new DefaultComboBoxModel(portNames.toArray(new String[0]));
         portComboBox.setModel(model);
     }
 

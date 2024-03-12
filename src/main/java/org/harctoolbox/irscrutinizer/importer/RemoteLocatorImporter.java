@@ -76,7 +76,7 @@ public final class RemoteLocatorImporter extends DatabaseImporter implements IRe
     public String[] getManufacturers() throws IOException, SAXException {
         assertDatabase();
         List<String> manufacturer = remoteDatabase.getManufacturers();
-        return manufacturer.toArray(new String[manufacturer.size()]);
+        return manufacturer.toArray(new String[0]);
     }
 
     @Override
@@ -100,12 +100,12 @@ public final class RemoteLocatorImporter extends DatabaseImporter implements IRe
 
     public String[] getDeviceClasses(String manufacturer) throws NotFoundException {
         List<String> deviceClasses = remoteDatabase.getDeviceTypes(manufacturer);
-        return deviceClasses.toArray(new String[deviceClasses.size()]);
+        return deviceClasses.toArray(new String[0]);
     }
 
     public String[] getRemotes(String manufacturer, String deviceType) throws NotFoundException {
         List<String> remotes = remoteDatabase.getRemotes(manufacturer, deviceType);
-        return remotes.toArray(new String[remotes.size()]);
+        return remotes.toArray(new String[0]);
     }
 
     public void load(String manufacturer, String deviceType, String remoteName) throws NotFoundException {

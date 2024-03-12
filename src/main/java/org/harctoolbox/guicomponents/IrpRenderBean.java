@@ -144,7 +144,7 @@ public final class IrpRenderBean extends javax.swing.JPanel {
         if (irpDatabase == null)
             return new String[]{"--"};
 
-        String[] protocolList = irpDatabase.getNames().toArray(new String[irpDatabase.getNames().size()]);
+        String[] protocolList = irpDatabase.getNames().toArray(new String[0]);
         java.util.Arrays.sort(protocolList, String.CASE_INSENSITIVE_ORDER);
         return protocolList;
     }

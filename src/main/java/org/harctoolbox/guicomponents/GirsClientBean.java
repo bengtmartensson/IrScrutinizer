@@ -69,7 +69,7 @@ public final class GirsClientBean extends HardwareBean {
         DefaultComboBoxModel<String> model;
         try {
             portNames = LocalSerialPort.getSerialPortNames(true);
-            model = new DefaultComboBoxModel<>(portNames.toArray(new String[portNames.size()]));
+            model = new DefaultComboBoxModel<>(portNames.toArray(new String[0]));
         } catch (IOException | LinkageError ex) {
             portNames = new ArrayList<>(0);
             model =  new DefaultComboBoxModel<>(new String[]{ initialPort != null ? initialPort : NOT_INITIALIZED });
@@ -241,7 +241,7 @@ public final class GirsClientBean extends HardwareBean {
 
         portNames = LocalSerialPort.getSerialPortNames(useCached);
         portNames.add(0, "");
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(portNames.toArray(new String[portNames.size()]));
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(portNames.toArray(new String[0]));
         portComboBox.setModel(model);
     }
 

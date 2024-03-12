@@ -41,7 +41,7 @@ public abstract class SerialHardwareBean extends HardwareBean {
             portNames.add("");
         }
         //portNames.add(0, "");
-        return new DefaultComboBoxModel<>(portNames.toArray(new String[portNames.size()]));
+        return new DefaultComboBoxModel<>(portNames.toArray(new String[0]));
     }
 
     protected String portName;

@@ -121,11 +121,11 @@ public final class GlobalCacheManager {
     }
 
     public InetAddress[] getManual() {
-        return manualGlobalCaches.toArray(new InetAddress[manualGlobalCaches.size()]);
+        return manualGlobalCaches.toArray(new InetAddress[0]);
     }
 
     public InetAddress[] getAutomatic() {
-        return automaticGlobalCaches.toArray(new InetAddress[automaticGlobalCaches.size()]);
+        return automaticGlobalCaches.toArray(new InetAddress[0]);
     }
 
     public String[] getAllNames() {

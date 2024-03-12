@@ -95,6 +95,7 @@ public class IrTransImporter extends RemoteSetImporter implements IReaderImporte
         String line = reader.readLine();
         if (line == null)
             throw new ParseException("[NAME] not found.", reader.getLineNumber());
+        @SuppressWarnings("SingleCharRegex")
         String[] arr = line.trim().split("]");
         if (!arr[0].equals("[NAME"))
             throw new ParseException("[NAME] not found.", reader.getLineNumber());
