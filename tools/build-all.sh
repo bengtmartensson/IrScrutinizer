@@ -18,5 +18,6 @@ done
 
 for proj in ${SUBPROJECTS} ; do
     (cd $proj ; \
-    xpath -e "/project/version/text()" -q  pom.xml )
+     xsltproc common/xslt/extract_project_version.xsl  pom.xml ;
+     echo "" )
 done
