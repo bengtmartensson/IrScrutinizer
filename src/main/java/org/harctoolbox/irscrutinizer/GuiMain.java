@@ -252,7 +252,7 @@ public final class GuiMain extends javax.swing.JFrame {
         if (verbose)
             properties.setVerbose(true);
         Importer.setProperties(properties);
-        HelpPopup.setBaseUrl(new URL("file", null, properties.mkPathAbsolute(properties.getProtocolDocfilePath())).toString());
+        HelpPopup.setBaseUrl(new File(properties.mkPathAbsolute(properties.getProtocolDocfilePath())).toURI().toURL().toString());
         SelectFile.restoreFromString(properties.getFileselectordirs());
         Exporter.setCreatingUser(properties.getCreatingUser());
         Exporter.setEncoding(properties.getExportCharsetName());
