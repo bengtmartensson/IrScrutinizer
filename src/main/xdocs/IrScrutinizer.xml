@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="xdoc2html.xsl"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "https://forrest.apache.org/dtd/document-v20.dtd">
 <document>
     <header>
         <title>IrScrutinizer documentation</title>
@@ -101,6 +101,10 @@
             <tr>
                 <td>2024-01-05</td>
                 <td>Removed GlobalCache IR database.</td>
+            </tr>
+            <tr>
+                <td>2024-03-12</td>
+                <td>Added link to Lirc imports with and without timing info. Updated command line parameters. Misc fixes and updates.</td>
             </tr>
         </table>
 
@@ -337,7 +341,9 @@
                     be opened by double clicking them.</p>
 
                 <p>The installer will also install the command line program <a href="IrpTransmogrifier.html">IrpTransmogrifier</a>,
-                    which can be called as <code>irptransmogrifier</code> from a command line window.</p>
+                    which can be called as <code>irptransmogrifier</code> from a command line window.
+                    This also goes for <a href="HarcHardware.html">HarcHardware</a>.
+                </p>
 
                 <p>Sometimes, when starting the program for the first time, the Windows Defender Firewall blocks some features in the program,
                     asking for permission to allow the Java virtual machine (typically ending with <code>javaw.exe</code>) access. This should be granted.</p>
@@ -411,6 +417,7 @@
                 <source>
                     ln -s /usr/local/share/irscrutinizer/irscrutinizer.sh /usr/local/bin/irscrutinizer
                     ln -s /usr/local/share/irscrutinizer/irscrutinizer.sh /usr/local/bin/irptransmogrifier
+                    ln -s /usr/local/share/irscrutinizer/irscrutinizer.sh /usr/local/bin/harchardware
                 </source>
 <!--p>If your system comes with a natively and working RXTX, you should preferably use that. However, Fedora currently
     <a href="https://bugzilla.redhat.com/show_bug.cgi?id=1645856">ships with unusable RXTX</a>. See
@@ -458,7 +465,9 @@
             <section>
                 <title>Linux/Unix Serial device access</title>
                 <p>To access serial devices, including "serial" devices connected over USB, most current Linuxes
-                    require the current user to be a member of the group <code>dialout</code>, in some cases (e.g. Fedora) also
+                    require the current user to be a member of the group <code>dialout</code>
+                    (some distributions use the legacy name <code>uucp</code>),
+                    in some cases (e.g. Fedora) also
                     the group <code>lock</code>. To grant user <code>$USER</code> this membership, typically a
                     command like
                     <code>sudo usermod -aG dialout $USER</code>, and/or <code>sudo usermod -aG lock $USER</code> is used.
@@ -866,11 +875,14 @@
                     <section>
                         <title>Lirc</title>
                         <p>The <a href="Glossary.html#Lirc">Lirc</a> import feature is based upon <a
-                                href="https://github.com/bengtmartensson/Jirc">Jirc</a>, which is basically a subset of Lirc translated into Java.
+                                href="https://github.com/bengtmartensson/Jirc">Jirc</a>, which is basically a subset of Lirc 0.9.0 translated to Java.
                             The Lirc importer can even import a file
                             system hierarchy by selecting the top directory as File/URL. (Importing the
                             entire lirc.org database with over 100000 commands takes around 1 minute and 1GB
                             of memory.)</p>
+
+                            <p>Only Lirc remotes with timing information can be imported, not the so-called lircccode remotes.
+                                See <a href="https://github.com/bengtmartensson/IrScrutinizer/discussions/521">this article</a> for a more extensive discussion.</p>
                     </section>
 
                     <section>
@@ -1458,20 +1470,26 @@ module is then accessed using the UDP text mode.</p>
                 causing commands like sending to IR
                 hardware printing some messages in the console.</p>
 
+            <p>Using the option <code>--properties</code> (or <code>-p</code>), an alternative property file can be used.
+                If installing more than one version of the program, this is recommended practice.</p>
+
             <p>The option <code>--nuke-properties</code> makes the program delete the property file, and exit immediately.</p>
+
+            <p>The option <code>--scaling</code> (or <code>-s</code>, <code>--scale</code>)
+                set the scaling of the GUI. Accepted values and their semantics depend on the JVM used.</p>
+
+            <p>IrpTransmogrifier as well as <a href="HarcHardware.html">HarcHardware</a> as command line program can be invoked with the AppImage installation by
+                calling it using the name <code>irptransmogrifier</code> or <code>harchardware</code> (through copying or linking).</p>
+
+            <p>The MacOS App does not support calling IrpTransmogrifier or HarcHardware; install the generic binary version if needed.</p>
+
+            <p>The program delivers well defined and sensible exit codes, listed
+                <a href="https://github.com/bengtmartensson/IrpTransmogrifier/blob/master/src/main/java/org/harctoolbox/irp/IrpUtils.java">in the code</a>.</p>
 
             <p>For automating tasks, or for integrating in build processes or Makefiles or
                 the like, it
                 is probably a better idea to use IrpTransmogrifier instead, which has a
                 reasonably complete <a href="IrpTransmogrifier.html#Usage+of+the+program+from+the+command+line">command line interface</a>.</p>
-
-            <p>IrpTransmogrifier as command line program can be invoked with the AppImage installation by
-                calling it using the name <code>irptransmogrifier</code> (through copying or linking).</p>
-
-            <p>The MacOS App does not support calling IrpTransmogrifier; install the generic binary version if needed.</p>
-
-            <p>The program delivers well defined and sensible exit codes, listed
-                <a href="https://github.com/bengtmartensson/IrpTransmogrifier/blob/master/src/main/java/org/harctoolbox/irp/IrpUtils.java">in the code</a>.</p>
         </section>
 
         <section>
@@ -1634,7 +1652,7 @@ module is then accessed using the UDP text mode.</p>
                 <ul>
                     <li>For GlobalCache this is TCP port 4998. Its discovery beacon uses UDP port 9131.</li>
                     <li>Lirc uses a TCP port, per default 8765.</li>
-                    <li>IrTrans uses a UDP port, per default 21000.</li>
+                    <!--li>IrTrans uses a UDP port, per default 21000.</li-->
                     <li>AGirs on an ethernet connected board uses a TCP port, per default 33333.</li>
                 </ul>
                 <!--p>TODO: describe configuration of firewall/packet filter on Windows and others. (Help welcome!)</p-->
@@ -1800,10 +1818,10 @@ module is then accessed using the UDP text mode.</p>
                     Exactly the same thing goes for the raw table. So, it is not "multiple", it may be at most two;
                     they are not identical (but very similar). There is also a "Do not ask this again" checkbox.</p>
             </section>
-            <section>
+            <!--section>
                 <title>Do you solicit or accept donations?</title>
                 <p>No.</p>
-            </section>
+            </section-->
         </section>
         <section id="building-from-sources">
             <title>Appendix. Building from sources</title>
@@ -1930,7 +1948,7 @@ module is then accessed using the UDP text mode.</p>
                     <em>version</em>
                     <code>-macOS.dmg</code>.
                     This file can be directly distributed to the users, to be installed according to
-                    <a href="#Mac+OS+X+app">these instructions</a>.</p>
+                    <a href="#MacOS+app">these instructions</a>.</p>
 
                 <p>The icon file <code>IrScrutinizer.icns</code> was produced from the Crystal-Clear
                     icon <code>babelfish.png</code> in 128x128 resolution, using the procedure

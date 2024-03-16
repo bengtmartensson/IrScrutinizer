@@ -38,24 +38,6 @@ See [#15](https://github.com/bengtmartensson/IrScrutinizer/issues/15). The
 [article on the web site](http://harctoolbox.org/IrScrutinizer.html) should be a "cool" article,
 not a "dry" reference manual.
 
-## 7. Porting/packaging
-... to Android ([#81](https://github.com/bengtmartensson/IrScrutinizer/issues/81)),
-ARM/RPi ([#68](https://github.com/bengtmartensson/IrScrutinizer/issues/68)),
-misc systems ([#68](https://github.com/bengtmartensson/IrScrutinizer/issues/68)).
-Any way to build inno setups in Github actions?
-Flatpacks?
-
-## 9. Advanced command line support.
-IrpTransmogrifier has a quite clean and powerful command line interface; should probably not touch or replace that.
-Presently, import files in Girr format can be given on the command line.
-Should incorporate hardware support, see [#11 of HarcHardware](https://github.com/bengtmartensson/HarcHardwareBundle/issues/11).
-Should allow for some use cases, that naturally leads themselvs for non-interactive
-exection, see [this discussion](https://github.com/bengtmartensson/IrScrutinizer/issues/26#issuecomment-431651739).
-Still, a finished concept is missing.
-
-## 10. Testing
-I strive to have [TestNG](http://testng.org) based Java testing, integrated in Maven and Netbeans.
-
 ## -1. Internationalization
 This is not at all an important issue for me, at least not for the moment.
 (Despite being Swedish native speaker, and speaking German at work.) Sometimes, however,

@@ -26,7 +26,7 @@ The format of text files follows the requirement of portability:
 * Text files that are only of interest for Windows (e.g.
 <code>IrScrutinizer_inno.iss</code>) should use CRLF,
 * Text files that a Windows user may open with Textedit
-(e.g. <code>IrpProtocols.ini</code>)  should use CRLF, unless this creates other problems,
+should use CRLF, unless this creates other problems,
 * Otherwise LF.
 
 ## Build process
@@ -45,19 +45,3 @@ belongs to Netbeans are clearly marked as such, and may not be hand
 edited. (Some GUI files has been initially created by Netbeans, but
 then "de-Netbeanized", identified by the lack of a .form file. The
 paragraph does not apply to these, of course.)
-
-## Git branches
-
-(This section stolen from LIRC, with minor editing.)  We basically use the branching
-scheme described
-[here](http://nvie.com/posts/a-successful-git-branching-model). However,
-what is called 'devel' in that document we call 'master'. Likewise,
-what is called 'master' there we call 'release'. In short:
-
-* master is the current development, from time to time unstable.
-* release contains the last stable version, and also all tagged releases.
-* When a release is upcoming, we fork a release branch from master. This
-is kept stable, only bug fixes are allowed. Eventually it is merged into
-release and tagged.
-* Other branches are feature branches for test and review. They can not
-be trusted, and are often rewritten.

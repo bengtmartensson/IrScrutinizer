@@ -1,8 +1,52 @@
 Release notes for IrScrutinizer, including IrpMaster/IrpTransmogrifier,
-Girr, HardHardware, DevSlashLirc, and Jirc.
+Girr, HardHardware, RemoteLocator, DevSlashLirc and Jirc.
 
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/IrScrutinizer/issues
+==============================================================================
+Version 2.4.1, released 2024-03-16.
+
+* Use IrpTransmogrifier 1.2.14, Girr 2.2.14, Jirc 2.2.14, RemoteLocator 0.x.y, HarcHardware 2.4.1.
+* Bugfix: Helptext links failed if the IrpProtocols pathname contained spaces.
+* Remove option "Reject Lirc imports without timing". Resolves #522.
+* Implemented secondary export formats file/directory. Resolves #294.
+* Bugfix for files located within the directory applicationHome.
+* Installation message windows (post_install.txt) update.
+* Fix bug in Ctrl-F handling in tables. #387.
+* Implemented secondary IrpProtocols file. #294.
+* IrPlotter: improved mouse-based zooming. Resolves #361.
+* Minor tweaks in IrPlotter: Fix glitch in plot scales, leading to overlapping text. #291.
+* Remove GlobalCache IR database (old) importer. #516.
+* Parametric and raw remote table now has search. #387.
+* Say "delete", not "clear" on signals on some popup menus.
+* Update the embedded Java JVM on Windows. #515.
+* Update Java JVM for AppImage. #514.
+* Option  --scale now handled in the Java code, not in a wrapper. #513.
+* Allow empty commands to be imported in Girr through Options -> Import options -> Accept empty Girr commands on import. #511.
+* Windows: install wrapper for HarcHardware.
+* AppImage: do not include /usr/lib/rxtx and /usr/lib64/lib any more, not used anymore.
+* AppImage can now invoke HarcHardware's  main routine, just as IrpTransmogrifier's. #464.
+* Silly case sensitivity fixed. #498.
+* Export signal: check savefile for null-ness. #506.
+* Robustness fix for appimages, see #498.
+* Do not take frequency from GUI for signals without explicit frequency. #496.
+* Two new/fixed export formats: Homeassistant Broadlink Switch and Homeassistant Broadlink remote. #477.
+* New export format Homeassistant ITach (GlobalCache). Resolves #478.
+* Fixes to Broadlink*formatter, to accomplish to RF support.
+* Fix incorrect propertly name with lirc config (Thanks Bill Ryder)
+* Export formats  IrToy and IrToy-bin fixed. #482.
+* Fix GuiMain.analyzerMaxParameterWidth for changes in IrpTransmogrifier, #234.
+* Partial fix of the Homeassistant-Broadlink export format, #477.
+* Added Discussions item under Help menu.
+* Some Arduino export fixes. #476, #413, #444, #476
+* Do not use deprecated Girr functions. #474.
+* Replace minimal-json library. #473.
+* Robustness fixes for export GUI.
+* Delete original pronto hex in the pronto oneshot export.
+* Misc Broadlink signals fixes, both hex and base64. #375, #472.
+* New export format tester-arduino.
+* Change she-bang of setup-irscrutinizer.sh to say /bin/bash explicitly. #470.
+
 ==============================================================================
 Version 2.4.0, released 2022-12-20.
 

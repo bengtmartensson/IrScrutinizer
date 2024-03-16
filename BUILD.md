@@ -110,7 +110,7 @@ Alternatively, the "compatibility layer capable of running
 The Maven build creates a file
                     `IrScrutinizer-`_version_`-macOS.dmg`.
                     This file can be directly distributed to the users, to be installed according to
-                    [these instructions](http://harctoolbox.org/IrScrutinizer.html#Mac+OS+X+app).
+                    [these instructions](http://harctoolbox.org/IrScrutinizer.html#MacOS+app).
 
 The icon file `IrScrutinizer.icns` was produced from the Crystal-Clear
                     icon `babelfish.png` in 128x128 resolution, using the procedure
