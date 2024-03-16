@@ -36,6 +36,7 @@ import javax.swing.JOptionPane;
 import org.harctoolbox.ircore.IrCoreUtils;
 
 // Interfaces to Desktop
+@SuppressWarnings("serial")
 public class GuiUtils implements Serializable {
 
     @SuppressWarnings("FieldMayBeFinal")
@@ -260,8 +261,12 @@ public class GuiUtils implements Serializable {
     // rationale: too easy to confuse file names and URLs,
     // thereby too error prone.
 
-    public void browse(File file) throws MalformedURLException, URISyntaxException {
+    public void browse(File file) {
         browse(file.toURI());
+    }
+
+    public void browse(URL url) throws URISyntaxException {
+        browse(url.toURI());
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
@@ -300,7 +305,7 @@ public class GuiUtils implements Serializable {
      */
     public void open(File file) throws IOException {
         if (useXdbOpen)
-            xdgOpen(file.getAbsolutePath());
+            xdgOpen(file.toURI().toString());
         else if (Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
             try {
                 Desktop.getDesktop().open(file);
