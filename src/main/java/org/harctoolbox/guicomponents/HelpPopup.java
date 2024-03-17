@@ -43,10 +43,14 @@ import org.w3c.dom.Document;
  */
 public class HelpPopup extends javax.swing.JDialog {
 
-    private static String baseUrl = null;
+    private static URL baseUrl = null;
 
-    public static void setBaseUrl(String newBaseUrl) {
+    public static void setBaseUrl(URL newBaseUrl) {
         baseUrl = newBaseUrl;
+    }
+
+    public static void setBaseUrl(File file) throws MalformedURLException {
+        setBaseUrl(file.toURI().toURL());
     }
 
     private final String payload;
@@ -71,10 +75,8 @@ public class HelpPopup extends javax.swing.JDialog {
             textPane.addHyperlinkListener((HyperlinkEvent e) -> {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     try {
-                        URL url = e.getURL();
-                        if (url == null)
-                            url = new URL(baseUrl + e.getDescription());
-                        guiUtils.browse(url.toURI());
+                        URL url = e.getURL() != null ? e.getURL() : new URL(baseUrl, e.getDescription());
+                        guiUtils.browse(url);
                     } catch (URISyntaxException | MalformedURLException ex) {
                         guiUtils.error(ex);
                     }
@@ -82,7 +84,7 @@ public class HelpPopup extends javax.swing.JDialog {
             });
         }
     }
-    
+
     /**
      * Creates a help popup.
      *

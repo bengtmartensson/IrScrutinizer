@@ -252,7 +252,7 @@ public final class GuiMain extends javax.swing.JFrame {
         if (verbose)
             properties.setVerbose(true);
         Importer.setProperties(properties);
-        HelpPopup.setBaseUrl(new File(properties.mkPathAbsolute(properties.getProtocolDocfilePath())).toURI().toURL().toString());
+        HelpPopup.setBaseUrl(new File(properties.mkPathAbsolute(properties.getProtocolDocfilePath())));
         SelectFile.restoreFromString(properties.getFileselectordirs());
         Exporter.setCreatingUser(properties.getCreatingUser());
         Exporter.setEncoding(properties.getExportCharsetName());
@@ -7125,19 +7125,11 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_homePageMenuItemActionPerformed
 
     private void mainDocuMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainDocuMenuItemActionPerformed
-        try {
-            guiUtils.browse(new File(properties.mkPathAbsolute(properties.getHelpfilePath())));
-        } catch (MalformedURLException | URISyntaxException ex) {
-            guiUtils.error(ex);
-        }
+        guiUtils.browse(new File(properties.mkPathAbsolute(properties.getHelpfilePath())));
     }//GEN-LAST:event_mainDocuMenuItemActionPerformed
 
     private void protocolSpecMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolSpecMenuItemActionPerformed
-        try {
-            guiUtils.browse(new File(properties.mkPathAbsolute(properties.getProtocolDocfilePath())));
-        } catch (MalformedURLException | URISyntaxException ex) {
-            guiUtils.error(ex);
-        }
+        guiUtils.browse(new File(properties.mkPathAbsolute(properties.getProtocolDocfilePath())));
     }//GEN-LAST:event_protocolSpecMenuItemActionPerformed
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
@@ -8589,11 +8581,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_importIrTransHelpButtonActionPerformed
 
     private void releaseNotesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_releaseNotesMenuItemActionPerformed
-        try {
-            guiUtils.browse(new File(properties.mkPathAbsolute(properties.getReleaseNotesPath())));
-        } catch (URISyntaxException | MalformedURLException ex) {
-            guiUtils.error(ex);
-        }
+        guiUtils.browse(new File(properties.mkPathAbsolute(properties.getReleaseNotesPath())));
     }//GEN-LAST:event_releaseNotesMenuItemActionPerformed
 
     private void importSignalAsMode2MenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importSignalAsMode2MenuItemActionPerformed
@@ -8975,19 +8963,11 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_downloadsMenuItemActionPerformed
 
     private void irpTransmogrifierHelpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpTransmogrifierHelpMenuItemActionPerformed
-        try {
-            guiUtils.browse(new File(properties.mkPathAbsolute(properties.getIrpTransmogrifierHelpfilePath())));
-        } catch (MalformedURLException | URISyntaxException ex) {
-            guiUtils.error(ex);
-        }
+        guiUtils.browse(new File(properties.mkPathAbsolute(properties.getIrpTransmogrifierHelpfilePath())));
     }//GEN-LAST:event_irpTransmogrifierHelpMenuItemActionPerformed
 
     private void glossaryMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_glossaryMenuItemActionPerformed
-        try {
-            guiUtils.browse(new File(properties.mkPathAbsolute(properties.getGlossaryFilePath())));
-        } catch (MalformedURLException | URISyntaxException ex) {
-            guiUtils.error(ex);
-        }
+        guiUtils.browse(new File(properties.mkPathAbsolute(properties.getGlossaryFilePath())));
     }//GEN-LAST:event_glossaryMenuItemActionPerformed
 
     private void rawAddTestSignalMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawAddTestSignalMenuItemActionPerformed
