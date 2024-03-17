@@ -6,7 +6,7 @@ https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
 Version 2.4.1, released 2024-03-16.
 
-* Use IrpTransmogrifier 1.2.14, Girr 2.2.14, Jirc 2.2.14, RemoteLocator 0.x.y, HarcHardware 2.4.1.
+* Use IrpTransmogrifier 1.2.14, Girr 2.2.14, Jirc 2.2.14, RemoteLocator 0.2.1, HarcHardware 2.4.1.
 * Bugfix: Helptext links failed if the IrpProtocols pathname contained spaces.
 * Remove option "Reject Lirc imports without timing". Resolves #522.
 * Implemented secondary export formats file/directory. Resolves #294.
