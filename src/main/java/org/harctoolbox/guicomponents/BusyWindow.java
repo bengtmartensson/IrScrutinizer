@@ -33,6 +33,8 @@ public class BusyWindow {
      * @return newly constructed BusyWindow.
      */
     public static BusyWindow mkBusyWindow(Window window) {
+        if (window == null)
+            return null;
         BusyWindow busyWindow = new BusyWindow(window);
         busyWindow.busy();
         return busyWindow;
