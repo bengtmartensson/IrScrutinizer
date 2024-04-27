@@ -15,5 +15,5 @@ jar xf ${JAVA_ZIP}
 JAVA_ROOT=`echo jdk*`
 
 WINEDEBUG=-all; export WINEDEBUG
-wine ${JAVA_ROOT}/bin/jlink --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ${JAVA_MODULES} --output jre-x86-windows
+wine ${JAVA_ROOT}/bin/jlink.exe --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules ${JAVA_MODULES} --output jre-x86-windows
 rm -rf ${JAVA_ROOT}
