@@ -1344,7 +1344,7 @@ public final class GuiMain extends javax.swing.JFrame {
             return null;
         }
 
-        if (commands.isEmpty()) {
+        if (commands == null || commands.isEmpty()) {
             guiUtils.error("Nothing to export");
             return null;
         }
