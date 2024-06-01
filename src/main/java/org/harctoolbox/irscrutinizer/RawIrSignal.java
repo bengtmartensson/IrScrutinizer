@@ -179,7 +179,7 @@ class RawIrSignal extends NamedIrSignal {
     }
 
     private void setIrSignal(IrSignal irSignal) {
-        setIrSignal(irSignal, irSignal != null && invokeDecoder ? decoder.decodeLoose(irSignal, decoderParameters) : null);
+        setIrSignal(irSignal, irSignal != null && invokeDecoder ? decoder.decodeIrSignalWithFallback(irSignal, decoderParameters) : null);
     }
 
     private void setIrSignal(ModulatedIrSequence irSequence) {

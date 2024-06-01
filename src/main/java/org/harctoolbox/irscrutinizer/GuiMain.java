@@ -1137,7 +1137,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private void setDecodeIrParameters(IrSignal irSignal) {
-        Decoder.AbstractDecodesCollection<? extends ElementaryDecode> decodes = decoder.decodeLoose(irSignal, decoderParameters);
+        Decoder.AbstractDecodesCollection<? extends ElementaryDecode> decodes = decoder.decodeIrSignalWithFallback(irSignal, decoderParameters);
         setDecodeResult(decodes);
     }
 
