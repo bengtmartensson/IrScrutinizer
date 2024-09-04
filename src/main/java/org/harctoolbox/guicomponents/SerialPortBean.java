@@ -48,6 +48,42 @@ public final class SerialPortBean extends javax.swing.JPanel {
     public static final String PROP_PARITY = "PROP_PARITY";
     public static final String PROP_STOPBITS = "PROP_STOPBITS";
     //public static final String PROP_PORT = "PROP_PORT";
+    public static final Integer[] KNOWN_BAUD_RATES = { // from nrjavaserial
+        50,
+        75,
+        110,
+        134,
+        150,
+        200,
+        300,
+        600,
+        1200,
+        1800,
+        2400,
+        4800,
+        9600,
+        14400,
+        19200,
+        28800,
+        38400,
+        57600,
+        115200,
+        128000,
+        230400,
+        256000,
+        460800,
+        500000,
+        576000,
+        921600,
+        1000000,
+        1152000,
+        1500000,
+        2000000,
+        2500000,
+        3000000,
+        3500000,
+        4000000
+    };
 
     /**
      * Creates new form SerialPortSimpleBean
@@ -240,7 +276,7 @@ public final class SerialPortBean extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        baudComboBox = new javax.swing.JComboBox<>();
+        baudComboBox = new javax.swing.JComboBox<Integer>();
         jLabel7 = new javax.swing.JLabel();
         openToggleButton = new javax.swing.JToggleButton();
 
@@ -298,8 +334,9 @@ public final class SerialPortBean extends javax.swing.JPanel {
 
         jLabel5.setText("stop bits");
 
-        baudComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "115200", "57600", "38400", "19200", "9600", "4800", "2400", "1200" }));
-        baudComboBox.setSelectedItem("9600");
+        baudComboBox.setModel(new DefaultComboBoxModel<Integer>(KNOWN_BAUD_RATES)
+        );
+        baudComboBox.setSelectedItem(9600);
         baudComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 baudComboBoxActionPerformed(evt);
@@ -428,7 +465,7 @@ public final class SerialPortBean extends javax.swing.JPanel {
     }//GEN-LAST:event_openToggleButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> baudComboBox;
+    private javax.swing.JComboBox<Integer> baudComboBox;
     private javax.swing.JComboBox<String> bitsComboBox;
     private javax.swing.JComboBox<String> flowControlComboBox;
     private javax.swing.JLabel jLabel1;

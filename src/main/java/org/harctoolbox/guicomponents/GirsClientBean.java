@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.DefaultComboBoxModel;
+import static org.harctoolbox.guicomponents.SerialPortBean.KNOWN_BAUD_RATES;
 import org.harctoolbox.harchardware.HarcHardwareException;
 import org.harctoolbox.harchardware.comm.LocalSerialPort;
 import org.harctoolbox.harchardware.comm.LocalSerialPortBuffered;
@@ -204,7 +205,7 @@ public final class GirsClientBean extends HardwareBean {
     public void setBaud(int baud) {
         int oldBaud = this.baud;
         this.baud = baud;
-        this.baudComboBox.setSelectedItem(Integer.toString(baud));
+        this.baudComboBox.setSelectedItem(baud);
         propertyChangeSupport.firePropertyChange(PROP_BAUD, oldBaud, baud);
     }
 
@@ -402,7 +403,7 @@ public final class GirsClientBean extends HardwareBean {
             }
         });
 
-        baudComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "115200", "57600", "38400", "19200", "9600", "4800", "2400", "1200" }));
+        baudComboBox.setModel(new DefaultComboBoxModel<Integer>(KNOWN_BAUD_RATES));
         baudComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 baudComboBoxActionPerformed(evt);
@@ -584,7 +585,7 @@ public final class GirsClientBean extends HardwareBean {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(serialTcpTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 535, Short.MAX_VALUE)
+                        .addComponent(serialTcpTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 535, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -640,7 +641,7 @@ public final class GirsClientBean extends HardwareBean {
     }//GEN-LAST:event_portComboBoxActionPerformed
 
     private void baudComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baudComboBoxActionPerformed
-        setBaud(Integer.parseInt((String) baudComboBox.getSelectedItem()));
+        setBaud((Integer) baudComboBox.getSelectedItem());
     }//GEN-LAST:event_baudComboBoxActionPerformed
 
     private void ipNameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ipNameTextFieldActionPerformed
@@ -701,7 +702,7 @@ public final class GirsClientBean extends HardwareBean {
     }//GEN-LAST:event_useReceiveForCaptureCheckBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> baudComboBox;
+    private javax.swing.JComboBox<Integer> baudComboBox;
     private javax.swing.JLabel baudRateLabel;
     private javax.swing.JButton browseButton;
     private javax.swing.JPanel ethernetPanel;
