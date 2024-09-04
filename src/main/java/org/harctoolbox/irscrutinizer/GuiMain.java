@@ -215,8 +215,12 @@ public final class GuiMain extends javax.swing.JFrame {
      * @throws org.harctoolbox.irp.IrpParseException
      */
     public GuiMain(String applicationHome, String propsfilename, boolean verbose, List<String> arguments) throws IOException, ParserConfigurationException, SAXException, IrpParseException {
+        this(applicationHome, new Props(propsfilename, applicationHome), verbose, arguments);
+    }
+
+    GuiMain(String applicationHome, Props props, boolean verbose, List<String> arguments) throws IOException, ParserConfigurationException, SAXException, IrpParseException {
         this.applicationHome = applicationHome;
-        setupProperties(propsfilename, verbose);
+        setupProperties(props, verbose);
         setupFrame();
         loadLibraries();
         setupGuiUtils();
@@ -244,8 +248,23 @@ public final class GuiMain extends javax.swing.JFrame {
         processArguments(arguments);
     }
 
-    private void setupProperties(String propsfilename, boolean verbose) throws MalformedURLException {
-        properties = new Props(propsfilename, this.applicationHome);
+    /**
+     * Just for testing.
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws IrpParseException 
+     */
+    GuiMain() throws IOException, ParserConfigurationException, SAXException, IrpParseException {
+        this(System.getProperty("user.dir") + "/target");
+    }
+
+    GuiMain(String applicationhome) throws IOException, ParserConfigurationException, SAXException, IrpParseException {
+        this(applicationhome, new Props(applicationhome), false, new ArrayList<String>(0));
+    }
+
+    private void setupProperties(Props props, boolean verbose) throws MalformedURLException {
+        properties = props;
         if (verbose)
             properties.setVerbose(true);
         Importer.setProperties(properties);
@@ -1415,7 +1434,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 new File(properties.getExportDir()), properties.getExportCharsetName());
     }
 
-    private void reAnalyze() {
+    private void scrutinizeSignal() {
         try {
             IrSignal irSignal = getCapturedIrSignal();
             if (irSignal != null)
@@ -1429,6 +1448,17 @@ public final class GuiMain extends javax.swing.JFrame {
             // ??? Can be many different causes
             guiUtils.error("Unspecified error: \"" + ex.getMessage() + "\", please report.");
         }
+    }
+    
+    /**
+     * Invoke the decoding on the string given as argument.
+     * Meant for testing only-
+     * @param irString String to scrutinize, as IrSignal/IrSequence
+     */
+    String scrutinizeSignal(String irString) {
+        capturedDataTextArea.setText(irString);
+        scrutinizeSignal();
+        return decodeIRTextField.getText();
     }
 
     private void saveCapturedDataAsText() {
@@ -7230,7 +7260,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_plotterResetMenuItemActionPerformed
 
     private void reAnalyzeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reAnalyzeMenuItemActionPerformed
-        reAnalyze();
+        scrutinizeSignal();
     }//GEN-LAST:event_reAnalyzeMenuItemActionPerformed
 
     private void analysisToClipboardMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_analysisToClipboardMenuItemActionPerformed
@@ -8025,12 +8055,12 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_transmitGenerateButton2ActionPerformed
 
     private void rawCodeAnalyzeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawCodeAnalyzeMenuItemActionPerformed
-        reAnalyze();
+        scrutinizeSignal();
     }//GEN-LAST:event_rawCodeAnalyzeMenuItemActionPerformed
 
     private void rawCodePasteAnalyzeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawCodePasteAnalyzeMenuItemActionPerformed
         setCapturedDataTextAreaFromClipboard();
-        reAnalyze();
+        scrutinizeSignal();
     }//GEN-LAST:event_rawCodePasteAnalyzeMenuItemActionPerformed
 
     private void signalClearMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signalClearMenuItemActionPerformed
@@ -8039,7 +8069,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void pasteScrutinizeToDataWindowMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pasteScrutinizeToDataWindowMenuItemActionPerformed
         setCapturedDataTextAreaFromClipboard();
-        reAnalyze();
+        scrutinizeSignal();
     }//GEN-LAST:event_pasteScrutinizeToDataWindowMenuItemActionPerformed
 
     private void irpProtocolsEditMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpProtocolsEditMenuItemActionPerformed
@@ -8275,12 +8305,12 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_rawSorterCheckBoxMenuItemActionPerformed
 
     private void transmitSignalButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transmitSignalButton1ActionPerformed
-        reAnalyze();
+        scrutinizeSignal();
     }//GEN-LAST:event_transmitSignalButton1ActionPerformed
 
     private void pasteAnalyzeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pasteAnalyzeButtonActionPerformed
         setCapturedDataTextAreaFromClipboard();
-        reAnalyze();
+        scrutinizeSignal();
     }//GEN-LAST:event_pasteAnalyzeButtonActionPerformed
 
     private void sendingHardwareHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendingHardwareHelpButtonActionPerformed
