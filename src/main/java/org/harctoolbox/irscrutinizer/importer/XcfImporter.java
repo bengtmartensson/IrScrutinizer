@@ -26,9 +26,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.harctoolbox.girr.Command;
+import org.harctoolbox.girr.CommandSet;
 import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
@@ -48,24 +51,23 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
     private static final String XCF_XML_FILENAME = "ConfigEdit.xml";
     private static final String DEFAULT_CHARSETNAME = "WINDOWS-1252";
+    
+    private final static Logger logger = Logger.getLogger(XcfImporter.class.getName());
 
     private static Document openConfig(File filename) throws SAXException, IOException {
-        ZipFile zipFile = null;
-        Document doc = null;
-        try {
-            zipFile = new ZipFile(filename);
-            ZipEntry entry = zipFile.getEntry(XCF_XML_FILENAME);
-            if (entry == null)
-                entry = zipFile.getEntry("/" + XCF_XML_FILENAME);
-            if (entry == null)
-                throw new IOException("Cannot read " + filename.getCanonicalPath() + " as XCF file." );
-            InputStream stream = zipFile.getInputStream(entry);
-            doc = XmlUtils.openXmlStream(stream, null, false, false);
-        } finally {
-            if (zipFile != null)
-                zipFile.close();
+        if (filename.getName().endsWith(".xml"))
+            return XmlUtils.openXmlFile(filename);
+        else {
+            try (ZipFile zipFile = new ZipFile(filename)) {
+                ZipEntry entry = zipFile.getEntry(XCF_XML_FILENAME);
+                if (entry == null)
+                    entry = zipFile.getEntry("/" + XCF_XML_FILENAME);
+                if (entry == null)
+                    throw new IOException("Cannot read " + filename.getCanonicalPath() + " as XCF file.");
+                InputStream stream = zipFile.getInputStream(entry);
+                return XmlUtils.openXmlStream(stream, null, false, false);
+            }
         }
-        return doc;
     }
 
     private static LinkedHashMap<String, Element> mkIndex(Element element, String tagId) {
@@ -88,10 +90,11 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String args[]) {
         try {
-            RemoteSet buttons = importXcf(args[0]);
-            buttons.getRemotes().forEach((button) -> {
-                System.out.println(button.toString());
-            });
+            RemoteSet remoteSet = importXcf(args[0]);
+            for (Remote remote : remoteSet)
+                for (CommandSet commandSet : remote)
+                    for (Command command : commandSet)
+                        System.out.println(command.toString());
         } catch (IOException | ParseException | InvalidArgumentException | SAXException ex) {
             System.err.println(ex.getMessage());
         }
@@ -139,7 +142,6 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
                 : s;
     }
 
-    @SuppressWarnings("empty-statement")
     private void load(Document doc) throws ParseException {
         learnedIrCodeIndex = 1;
         nameIndex = null;
@@ -150,10 +152,18 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
         Element root = doc.getDocumentElement();
         String version = root.getAttribute("Version");
-        if (version.charAt(0) == '5')
-            load5(root);
-        else
-            load4(root);
+        logger.log(Level.INFO, "Loaded XCF file with Version {0}", version);
+        
+        switch (version.charAt(0)) {
+            case '4':
+                load4(root);
+                break;
+            case '5':
+                load5(root);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported XCF version " + version);
+        }
     }
 
     @SuppressWarnings("empty-statement")
@@ -405,7 +415,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
 
     @Override
     public String[][] getFileExtensions() {
-        return new String[][]{ new String[]{ "Pronto professional files (*.xcf)", "xcf" }};
+        return new String[][]{ new String[]{ "Pronto professional files (*.xcf)", "xcf" }, new String[]{"ConfigEdit.xml files (*.xml)", "xml" }};
     }
 
     @Override
