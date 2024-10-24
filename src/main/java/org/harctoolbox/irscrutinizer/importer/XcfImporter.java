@@ -159,6 +159,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
                 load4(root);
                 break;
             case '5':
+            case '6':
                 load5(root);
                 break;
             default:
