@@ -167,7 +167,7 @@ public class FileImporterBean<T extends IFileImporter & IImporter>  extends java
         try {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             String payload = (new CopyClipboardText(null)).fromClipboard();
-            if (payload == null) {
+            if (payload == null || payload.trim().isEmpty()) {
                 guiUtils.error("No usable clipboard content");
                 return null;
             }
