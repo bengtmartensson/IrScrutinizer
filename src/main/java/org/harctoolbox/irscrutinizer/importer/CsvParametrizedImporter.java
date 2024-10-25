@@ -43,9 +43,11 @@ import org.harctoolbox.irp.NameUnassignedException;
  *
  * Columns are numbered starting with 1.
  */
+@SuppressWarnings("serial")
 public class CsvParametrizedImporter extends CsvImporter {
 
     private static final String protocolFallback = "NEC1"; // FIXME: make configurable!!
+    private static final String NONE = "none";
 
     public static Collection<Command> process(Reader reader,
             String separator, int nameColumn, boolean nameMultiColumn, String filename, boolean verbose, int base, int Fcolumn, int Dcolumn,
@@ -208,7 +210,8 @@ public class CsvParametrizedImporter extends CsvImporter {
         if (colIndex < chunks.length) {
             try {
                 String num = chunks[colIndex];
-                return IrCoreUtils.parseLong(num.trim(), numberBase);
+                return num.trim().equalsIgnoreCase(NONE) ? IrCoreUtils.INVALID
+                        : IrCoreUtils.parseLong(num.trim(), numberBase);
             } catch (NumberFormatException ex) {
                 if (isVerbose()) {
                     System.err.println("Errors parsing " + name + " (= " + chunks[colIndex] + ") in line " + lineNo);
