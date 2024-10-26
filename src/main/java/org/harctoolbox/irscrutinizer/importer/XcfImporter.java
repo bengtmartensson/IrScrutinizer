@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2009, 2013, 2014 Bengt Martensson.
+Copyright (C) 2009, 2013, 2014, 2024 Bengt Martensson.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,9 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,6 +38,9 @@ import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrCoreException;
+import org.harctoolbox.ircore.ThisCannotHappenException;
+import org.harctoolbox.irp.IrpException;
 import org.harctoolbox.irscrutinizer.Version;
 import org.harctoolbox.xml.XmlUtils;
 import org.w3c.dom.Document;
@@ -105,6 +110,23 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         if (nl.getLength() == 0)
             return null;
         return nl.item(0).getTextContent();
+    }
+
+    private static void putUnique(Map<String, Command> map, Command command) {
+        String origName = command.getName();
+        String name = origName;
+        int i = 0;
+        while (map.containsKey(name)) {
+            i++;
+            name = origName + "$" + Integer.toString(i);
+        }
+
+        try {
+            Command newCommand = new Command(name, i == 0 ? null : "Renamed from " + origName, command.getProntoHex());
+            map.put(name, newCommand);
+        } catch (GirrException | IrpException | IrCoreException ex) {
+            throw new ThisCannotHappenException();
+        }
     }
 
     private boolean translateProntoFont = true;
@@ -197,10 +219,6 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
                 case "Modules":
                     moduleIndex = mkIndex(element, "MODULE");
                     break;
-                    //else if (element.getTagName().equals("Strings"))
-                    //    setupNamesIndex(element);
-                    //else if (element.getTagName().equals("Items"))
-                    //    itemIndex = mkIndex(element, "ITEM");
                 default:
                     break;
             }
@@ -230,34 +248,38 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         NodeList names = module.getElementsByTagName("Name");
         String nameId = ((Element) names.item(0)).getAttribute("id");
         String name = nameIndex.get(nameId);
-        //System.out.println(id + "\t" + nameId + "\t" + name);
         Map<String,Command> cmds = new HashMap<>(32);
+        List<CommandSet> commandSets = new ArrayList<>(16);
         NodeList firstPages = module.getElementsByTagName("FirstPage");
         Element page = firstPages.getLength() > 0 ? pageIndex.get(((Element) firstPages.item(0)).getAttribute("id")) : null;
         while (page != null) {
-            //System.out.print(page.getAttribute("id") + " ");
-            cmds.putAll(loadPage(page));
+            CommandSet pageCommands = loadPage(page);
+            if (!pageCommands.isEmpty())
+                commandSets.add(pageCommands);
             NodeList nextpages = page.getElementsByTagName("Next");
             page = nextpages.getLength() > 0 ? pageIndex.get(((Element) nextpages.item(0)).getAttribute("id")) : null;
         }
         return new Remote(new Remote.MetaData(name),
                 null, //java.lang.String comment,
                 null, //java.lang.String notes,
-                cmds,
+                commandSets,
                 null //java.util.HashMap<java.lang.String,java.util.HashMap<java.lang.String,java.lang.String>> applicationParameters)
                 );
     }
 
-    private Map<String,Command> loadPage(Element page) {
-        Map<String,Command> cmds = new HashMap<>(16);
+    private CommandSet loadPage(Element page) {
+        Map<String,Command> cmds = new LinkedHashMap<>(64);
         NodeList items = page.getElementsByTagName("Item");
         for (int i = 0; i < items.getLength(); i++) {
             Element item = (Element) items.item(i);
             Command command = loadItem(item);
             if (command != null)
-                cmds.put(command.getName(), command);
+                putUnique(cmds, command);
         }
-        return cmds;
+        NodeList nl = page.getElementsByTagName("Name");
+        String nameId = ((Element) nl.item(0)).getAttribute("id");
+        String pageName = nameIndex.get(nameId);
+        return new CommandSet(pageName, null, cmds, null, null);
     }
 
     private Command loadItem(Element item) {
@@ -382,7 +404,7 @@ public class XcfImporter extends RemoteSetImporter implements IReaderImporter {
         for (int i = 0; i < functions.getLength(); i++) {
             Command command = parseFunction((Element) functions.item(i));
             if (command != null)
-                commands.put(command.getName(), command);
+                putUnique(commands, command);
         }
 
         Remote.MetaData metaData = parseMetaData(device);
