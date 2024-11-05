@@ -348,6 +348,9 @@ public final class GuiMain extends javax.swing.JFrame {
 
         irpDatabase = new IrpDatabase(configFiles);
         Command.setIrpDatabase(irpDatabase);
+        properties.addSecondaryIrpProtocolsPathChangeListener((String name1, Object oldValue, Object newValue) -> {
+            secondaryRemoveMenuItem.setEnabled(!((String) newValue).isEmpty());
+        });
     }
 
     private void setupImporters() throws MalformedURLException, IrpParseException {
@@ -2610,6 +2613,7 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator45 = new javax.swing.JPopupMenu.Separator();
         secondaryIrpProtocolsSelectMenuItem = new javax.swing.JMenuItem();
         secondaryIrpProtocolsEditMenuItem = new javax.swing.JMenuItem();
+        secondaryRemoveMenuItem = new javax.swing.JMenuItem();
         jSeparator46 = new javax.swing.JPopupMenu.Separator();
         irpProtocolsReloadMenuItem = new javax.swing.JMenuItem();
         exportFormatsMenu = new javax.swing.JMenu();
@@ -6545,7 +6549,7 @@ public final class GuiMain extends javax.swing.JFrame {
         irpProtocolsIniMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/database.png"))); // NOI18N
         irpProtocolsIniMenu.setText("IRP protocol database");
 
-        irpProtocolsSelectMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/fileopen.png"))); // NOI18N
+        irpProtocolsSelectMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/database.png"))); // NOI18N
         irpProtocolsSelectMenuItem.setText("Select...");
         irpProtocolsSelectMenuItem.setToolTipText("Select IrpProtocols.xml to use.");
         irpProtocolsSelectMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -6566,7 +6570,7 @@ public final class GuiMain extends javax.swing.JFrame {
         irpProtocolsIniMenu.add(irpProtocolsEditMenuItem);
         irpProtocolsIniMenu.add(jSeparator45);
 
-        secondaryIrpProtocolsSelectMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/fileopen.png"))); // NOI18N
+        secondaryIrpProtocolsSelectMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/db_add.png"))); // NOI18N
         secondaryIrpProtocolsSelectMenuItem.setText("Select secondary...");
         secondaryIrpProtocolsSelectMenuItem.setToolTipText("Select a private version of IrpProtocols. to extend the standard one.");
         secondaryIrpProtocolsSelectMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -6585,10 +6589,21 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         irpProtocolsIniMenu.add(secondaryIrpProtocolsEditMenuItem);
+
+        secondaryRemoveMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/db_remove.png"))); // NOI18N
+        secondaryRemoveMenuItem.setText("Remove secondary");
+        secondaryRemoveMenuItem.setToolTipText("Remove the secondary data base. Does not delete any disk files.");
+        secondaryRemoveMenuItem.setEnabled(!properties.getSecondaryIrpProtocolsPath().isEmpty());
+        secondaryRemoveMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                secondaryRemoveMenuItemActionPerformed(evt);
+            }
+        });
+        irpProtocolsIniMenu.add(secondaryRemoveMenuItem);
         irpProtocolsIniMenu.add(jSeparator46);
 
         irpProtocolsReloadMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/reload.png"))); // NOI18N
-        irpProtocolsReloadMenuItem.setText("Reload");
+        irpProtocolsReloadMenuItem.setText("Reload IRP data base");
         irpProtocolsReloadMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 irpProtocolsReloadMenuItemActionPerformed(evt);
@@ -9162,9 +9177,10 @@ public final class GuiMain extends javax.swing.JFrame {
             return;
         if (f.toString().equals("/dev/null") || f.getName().equalsIgnoreCase("NULL:")) {
             properties.setSecondaryIrpProtocolsPath("");
-            guiUtils.message("secondary IrpProtocol was removed.");
+            guiUtils.message("Secondary IrpProtocol file removed.");
         } else {
             properties.setSecondaryIrpProtocolsPath(f.getAbsolutePath());
+            guiUtils.message("Secondary IrpProtocol file set to " + f.getAbsolutePath() + ".");
         }
         try {
             setupIrpDatabase();
@@ -9228,6 +9244,11 @@ public final class GuiMain extends javax.swing.JFrame {
     private void ControlTowerBrowserMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ControlTowerBrowserMenuItemActionPerformed
         HarcletFrame.newHarcletFrame(this, new ControlTowerBrowser(), false, lookAndFeelManager.getCurrentLAFClassName());
     }//GEN-LAST:event_ControlTowerBrowserMenuItemActionPerformed
+
+    private void secondaryRemoveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_secondaryRemoveMenuItemActionPerformed
+        properties.setSecondaryIrpProtocolsPath("");
+        guiUtils.message("Secondary IrpProtocol file removed.");
+    }//GEN-LAST:event_secondaryRemoveMenuItemActionPerformed
 
     private void tableKeyReleased(JTable table, KeyEvent evt) {
         if (evt.getModifiersEx() == java.awt.event.InputEvent.CTRL_DOWN_MASK
@@ -9692,6 +9713,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem secondaryExportFormatsSelectMenuItem;
     private javax.swing.JMenuItem secondaryIrpProtocolsEditMenuItem;
     private javax.swing.JMenuItem secondaryIrpProtocolsSelectMenuItem;
+    private javax.swing.JMenuItem secondaryRemoveMenuItem;
     private javax.swing.JMenuItem sendMenuItem;
     private javax.swing.JButton sendingCommandFusionHelpButton;
     private javax.swing.JButton sendingDevLircHardwareHelpButton;

@@ -1959,7 +1959,7 @@
                 <MenuItem class="javax.swing.JMenuItem" name="irpProtocolsSelectMenuItem">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/fileopen.png"/>
+                      <Image iconType="3" name="/icons/Crystal-Clear/22x22/apps/database.png"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Select..."/>
                     <Property name="toolTipText" type="java.lang.String" value="Select IrpProtocols.xml to use."/>
@@ -1985,7 +1985,7 @@
                 <MenuItem class="javax.swing.JMenuItem" name="secondaryIrpProtocolsSelectMenuItem">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/fileopen.png"/>
+                      <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/db_add.png"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Select secondary..."/>
                     <Property name="toolTipText" type="java.lang.String" value="Select a private version of IrpProtocols. to extend the standard one."/>
@@ -2006,6 +2006,21 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="secondaryIrpProtocolsEditMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="secondaryRemoveMenuItem">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/db_remove.png"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Remove secondary"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Remove the secondary data base. Does not delete any disk files."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="secondaryRemoveMenuItemActionPerformed"/>
+                  </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="secondaryRemoveMenuItem.setEnabled(!properties.getSecondaryIrpProtocolsPath().isEmpty());&#xa;"/>
+                  </AuxValues>
+                </MenuItem>
                 <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator46">
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="irpProtocolsReloadMenuItem">
@@ -2013,7 +2028,7 @@
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/icons/Crystal-Clear/22x22/actions/reload.png"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Reload"/>
+                    <Property name="text" type="java.lang.String" value="Reload IRP data base"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="irpProtocolsReloadMenuItemActionPerformed"/>
