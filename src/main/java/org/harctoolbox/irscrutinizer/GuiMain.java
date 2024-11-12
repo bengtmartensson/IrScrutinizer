@@ -106,6 +106,7 @@ import org.harctoolbox.remotelocator.Girrable;
 import org.harctoolbox.remotelocator.NotFoundException;
 import org.xml.sax.SAXException;
 
+@SuppressWarnings("serial")
 public final class GuiMain extends javax.swing.JFrame {
 
     private final static String ISSUES_URL = "https://github.com/bengtmartensson/IrScrutinizer/issues";
@@ -225,14 +226,12 @@ public final class GuiMain extends javax.swing.JFrame {
         loadLibraries();
         setupGuiUtils();
         setupTables();
-        setupIrpDatabase(); // must come before initComponents
+        setupIrpDatabaseAndDecoder(); // must come before initComponents
         setupImporters();
-        setupDecoder();
         loadExportFormats(); // must come before initComponents
         initComponents();
         if (!LircHardware.isLibraryLoaded())
             sendingHardwareTabbedPane.remove(devLircPanel);
-        girrImporter.setIrpRendererBean(irpMasterBean);
         tweakTables();
         tweakFrame();
         setupRepeatFinder();
@@ -253,7 +252,7 @@ public final class GuiMain extends javax.swing.JFrame {
      * @throws IOException
      * @throws ParserConfigurationException
      * @throws SAXException
-     * @throws IrpParseException 
+     * @throws IrpParseException
      */
     GuiMain() throws IOException, ParserConfigurationException, SAXException, IrpParseException {
         this(System.getProperty("user.dir") + "/target");
@@ -339,18 +338,24 @@ public final class GuiMain extends javax.swing.JFrame {
         tableUtils = new TableUtils(guiUtils);
     }
 
-    private void setupIrpDatabase() throws IOException, IrpParseException, SAXException {
+    private void setupIrpDatabaseAndDecoder() throws IOException, IrpParseException, SAXException {
         List<File> configFiles = new ArrayList<>(4);
         configFiles.add(new File(properties.mkPathAbsolute(properties.getIrpProtocolsPath())));
         String secondary = properties.getSecondaryIrpProtocolsPath();
         if (!secondary.isEmpty())
             configFiles.add(new File(secondary));
 
-        irpDatabase = new IrpDatabase(configFiles);
-        Command.setIrpDatabase(irpDatabase);
+        IrpDatabase newIrpDatabase = new IrpDatabase(configFiles);
         properties.addSecondaryIrpProtocolsPathChangeListener((String name1, Object oldValue, Object newValue) -> {
             secondaryRemoveMenuItem.setEnabled(!((String) newValue).isEmpty());
         });
+        setupIrpDatabaseAndDecoder(newIrpDatabase);
+    }
+
+    private void setupIrpDatabaseAndDecoder(IrpDatabase newIrpDatabase) throws IrpParseException {
+        irpDatabase = newIrpDatabase;
+        setupDecoder();
+        Command.setIrpDatabase(irpDatabase);
     }
 
     private void setupImporters() throws MalformedURLException, IrpParseException {
@@ -473,7 +478,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void setupGirrImporter() throws MalformedURLException {
         Command.setAcceptEmptyCommands(properties.getAllowEmptyGirrCommands());
-        girrImporter = new GirrImporter(properties.getGirrValidate(), new URL(properties.getGirrSchemaLocation()), irpDatabase);
+        girrImporter = new GirrImporter(properties.getGirrValidate(), new URL(properties.getGirrSchemaLocation()), this);
         properties.addGirrSchemaLocationChangeListener((String name1, Object oldValue, Object newValue) -> {
             try {
                 girrImporter.setUrl(new URL((String)newValue));
@@ -1452,7 +1457,7 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.error("Unspecified error: \"" + ex.getMessage() + "\", please report.");
         }
     }
-    
+
     /**
      * Invoke the decoding on the string given as argument.
      * Meant for testing only-
@@ -1483,10 +1488,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
     GuiUtils getGuiUtils() {
         return guiUtils;
-    }
-
-    IrpDatabase getIrpDatabase() {
-        return this.irpDatabase;
     }
 
     private void updateOutputFormat(OutputTextFormat format) {
@@ -2146,6 +2147,19 @@ public final class GuiMain extends javax.swing.JFrame {
             return;
         }
         model.namesTransform(transformation, rows);
+    }
+
+    public void patchProtocols(IrpDatabase newProtocols) {
+        if (newProtocols.isEmpty())
+            return;
+        irpDatabase.patch(newProtocols);
+        irpMasterBean.updateProtocols();
+        try {
+            setupDecoder();
+            Command.setIrpDatabase(irpDatabase);
+        } catch (IrpParseException ex) {
+            guiUtils.error(ex);
+        }
     }
 
     /**
@@ -7045,6 +7059,7 @@ public final class GuiMain extends javax.swing.JFrame {
             aboutBox = new AboutPopup(this, false);
             aboutBox.setLocationRelativeTo(this);
         }
+        aboutBox.setVersion(irpDatabase.getVersion());
         aboutBox.setVisible(true);
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
@@ -8104,7 +8119,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
         properties.setIrpProtocolsPath(f.getAbsolutePath());
         try {
-            setupIrpDatabase();
+            setupIrpDatabaseAndDecoder();
         } catch (IOException | IrpParseException | SAXException ex) {
             guiUtils.error(ex);
         }
@@ -9183,7 +9198,7 @@ public final class GuiMain extends javax.swing.JFrame {
             guiUtils.message("Secondary IrpProtocol file set to " + f.getAbsolutePath() + ".");
         }
         try {
-            setupIrpDatabase();
+            setupIrpDatabaseAndDecoder();
         } catch (IOException | IrpParseException | SAXException ex) {
             guiUtils.error(ex);
         }
@@ -9205,7 +9220,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void irpProtocolsReloadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irpProtocolsReloadMenuItemActionPerformed
         try {
-            setupIrpDatabase();
+            setupIrpDatabaseAndDecoder();
         } catch (IOException | IrpParseException | SAXException ex) {
             guiUtils.error(ex);
         }

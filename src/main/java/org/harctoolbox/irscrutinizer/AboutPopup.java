@@ -20,11 +20,13 @@ package org.harctoolbox.irscrutinizer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.harctoolbox.guicomponents.GuiUtils;
+import org.harctoolbox.ircore.ThisCannotHappenException;
 
 /**
  * The mandatory about popup ;-).
  *
  */
+@SuppressWarnings("serial")
 public final class AboutPopup extends javax.swing.JDialog {
 
     private GuiUtils guiUtils;
@@ -39,13 +41,19 @@ public final class AboutPopup extends javax.swing.JDialog {
     public AboutPopup(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         if (!(parent instanceof GuiMain))
-            throw new RuntimeException("Programming error");
+            throw new ThisCannotHappenException("Programming error");
 
         GuiMain guiMain = (GuiMain) parent;
         guiUtils = guiMain.getGuiUtils();
         irpTransmogrifierVersion = "IrpTransmogrifier version " + org.harctoolbox.irp.Version.version
-                + "; Database version " + guiMain.getIrpDatabase().getVersion();
+                + "; Database version ?";
         initComponents();
+    }
+
+    public void setVersion(String irpDatabaseVersion) {
+        irpTransmogrifierVersion = "IrpTransmogrifier version " + org.harctoolbox.irp.Version.version
+                + "; Database version " + irpDatabaseVersion;
+        versionLabel2.setText(irpTransmogrifierVersion);
     }
 
     /** This method is called from within the constructor to

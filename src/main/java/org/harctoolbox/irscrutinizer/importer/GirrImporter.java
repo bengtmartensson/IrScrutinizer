@@ -18,7 +18,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 package org.harctoolbox.irscrutinizer.importer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -35,10 +34,10 @@ import org.harctoolbox.girr.GirrException;
 import org.harctoolbox.girr.Remote;
 import org.harctoolbox.girr.RemoteSet;
 import org.harctoolbox.girr.XmlStatic;
-import org.harctoolbox.guicomponents.IrpRenderBean;
 import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrCoreUtils;
 import org.harctoolbox.irp.IrpDatabase;
+import org.harctoolbox.irscrutinizer.GuiMain;
 import org.harctoolbox.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -51,22 +50,19 @@ import org.xml.sax.SAXParseException;
  */
 public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
     public static final String homeUrl = "http://www.harctoolbox.org/girr";
-
     private static final Logger logger = Logger.getLogger(GirrImporter.class.getName());
 
     private transient Schema schema;
     private URL url;
     private boolean validate;
-    private final IrpDatabase irpDatabase;
-    //private final Set<String>accumulatedProtocols = new HashSet<>(4);
-    private IrpRenderBean irpMasterBean;
+    private final GuiMain guiMain;
 
-    public GirrImporter(boolean validate, URL url, IrpDatabase irpDatabase) {
+    public GirrImporter(boolean validate, URL url, GuiMain guiMain) {
         super();
         schema = null;
         this.url = url;
         this.validate = validate;
-        this.irpDatabase = irpDatabase;
+        this.guiMain = guiMain;
     }
 
     /**
@@ -231,32 +227,13 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
         return "Girr";
     }
 
-    public RemoteSet getRemoteSet(File file) throws IOException, FileNotFoundException, ParseException, InvalidArgumentException {
+    public RemoteSet getRemoteSet(File file) throws IOException, ParseException, InvalidArgumentException {
         possiblyZipLoad(file, IrCoreUtils.UTF8_NAME);
         return remoteSet;
     }
 
     private void accumulateProtocols(String origin) {
         IrpDatabase newProtocols = remoteSet.getIrpDatabase();
-        // This for branch IrpTransmogrifier/setProtocolDocumentation, i.e. IrpTransmogrifier 1.3.*
-//        for (NamedProtocol p : newProtocols) {
-//            DocumentFragment doc = p.getDocumentation();
-//            if (doc == null) {
-//                try {
-//                    newProtocols.setDocumentation(p.getName(), "Protocol imported from " + origin);
-//                } catch (UnknownProtocolException ex) {
-//                    throw new ThisCannotHappenException(ex);
-//                }
-//            }
-//        }
-        if (!newProtocols.isEmpty()) {
-//            accumulatedProtocols.addAll(newProtocols.getKeys());
-            irpDatabase.patch(newProtocols);
-            irpMasterBean.updateProtocols();
-        }
-    }
-
-    public void setIrpRendererBean(IrpRenderBean irpMasterBean) {
-        this.irpMasterBean = irpMasterBean;
+        guiMain.patchProtocols(newProtocols);
     }
 }
