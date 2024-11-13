@@ -37,6 +37,12 @@ public final class RemoteLocatorImporter extends DatabaseImporter implements IRe
     public static final String CATALOG_URL = CATALOG + ".xml";
     public static final String CATALOG_HTML = CATALOG + ".html";
 
+    private static String catalog = CATALOG_URL;
+
+    public static void setCatalog(String newCatalog) {
+        catalog = newCatalog;
+    }
+
     public static URI getHomeUri() {
         return URI.create(CATALOG_HTML);
     }
@@ -48,7 +54,7 @@ public final class RemoteLocatorImporter extends DatabaseImporter implements IRe
     private RemoteSet remoteSet;
 
     public RemoteLocatorImporter(boolean verbose) throws IOException {
-        super(CATALOG_URL);
+        super(catalog);
         this.verbose = verbose;
         remoteDatabase = null;
         clear();
@@ -58,9 +64,9 @@ public final class RemoteLocatorImporter extends DatabaseImporter implements IRe
     private void assertDatabase() throws IOException, SAXException {
         if (remoteDatabase == null) {
             try {
-                remoteDatabase = new RemoteDatabase(CATALOG_URL);
+                remoteDatabase = new RemoteDatabase(catalog);
                 if (verbose)
-                    System.err.println("Successfully loaded RemoteLocator from " + CATALOG_URL);
+                    System.err.println("Successfully loaded RemoteLocator catalog from " + catalog);
             } catch (RemoteDatabase.FormatVersionMismatchException ex) {
                 throw new IOException(ex.getLocalizedMessage());
             }

@@ -42,6 +42,7 @@ import org.harctoolbox.harchardware.Utils;
 import org.harctoolbox.ircore.IrCoreUtils;
 import org.harctoolbox.irp.IrpParseException;
 import org.harctoolbox.irp.IrpUtils;
+import org.harctoolbox.irscrutinizer.importer.RemoteLocatorImporter;
 import org.xml.sax.SAXException;
 
 /**
@@ -103,6 +104,9 @@ public class IrScrutinizer {
 
         if (commandLineArgs.scaling != null)
             System.setProperty("sun.java2d.uiScale", commandLineArgs.scaling);
+
+        if (commandLineArgs.remoteLocatorUrl != null)
+            RemoteLocatorImporter.setCatalog(commandLineArgs.remoteLocatorUrl);
 
         setupRadixPrefixes();
 
@@ -211,6 +215,9 @@ public class IrScrutinizer {
 
         @Parameter(names = {"-p", "--properties"}, description = "Pathname of properties file")
         private String propertiesFilename = null;
+
+        @Parameter(names = {"-r", "--remotelocator"}, description = "Set RemoteLocator xml catalog (URL or file name).")
+        private String remoteLocatorUrl = null;
 
         @Parameter(names = {"-s", "--scale", "--scaling"}, description = "Set scaling of the GUI. Accepted values and their semantics depend on the JVM.")
         private String scaling = null;
