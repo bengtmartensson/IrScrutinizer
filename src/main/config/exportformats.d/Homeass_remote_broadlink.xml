@@ -22,11 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             name="Homeassistant Broadlink Remote" extension="yaml" multiSignal="true" simpleSequence="false" executable="false" metadata="true">
 
     <exportformats:documentation>
-        <div>This export format generates a YAML fragment for the Homeassistant Broadlink switch integration,
-            as per <a href="https://www.home-assistant.io/integrations/broadlink/#switch">this page</a>.
-            A "switch" is per definition a quite limited sort of remote: Only the commands named <code>power_on</code> and <code>power_off</code> are recognized,
-            and generate the <code>command_on</code> and <code>command_off</code> variables in Homeassistant respectively.
-            If this is too restrictive, consider using the Homeassistant Broadlink remote export format instead.
+        <div>This export format generates a YAML fragment for the Homeassistant Broadlink remote integration,
+            as per <a href="https://www.home-assistant.io/integrations/broadlink/#remote">this page</a>.
         </div>
         <div>
             If the modulation frequency is non-zero, the Broadlink commands are IR signals, using the only IR modulation frequency Broadlink knows, 38kHz.
