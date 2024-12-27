@@ -83,7 +83,7 @@ class ParametrizedIrSignal extends NamedIrSignal {
     }
 
     ParametrizedIrSignal(ParametrizedIrSignal old) {
-        this(old.getProtocol(), old.parameters, old.getName(), old.getComment());
+        this(old.getProtocol(), new HashMap<String, Long>(old.parameters), old.getName(), old.getComment());
     }
 
     ParametrizedIrSignal(String protocolName, long device, long subdevice, long function, String name, String comment) {
