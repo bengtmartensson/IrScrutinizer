@@ -194,6 +194,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private GirrImporter girrImporter;
     private LircImporter lircImporter;
     private IrTransImporter irTransImporter;
+    private FlipperImporter flipperImporter;
     private WaveImporter waveImporter;
 
     private RawIrSignal.RawTableColumnModel rawTableColumnModel;
@@ -361,6 +362,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void setupImporters() throws MalformedURLException, IrpParseException {
         setupLircImporter();
         setupIrTransImporter();
+        setupFlipperImporter();
         setupCmlImporter();
         setupCommandFusionImporter();
         setupProntoClassicImporter();
@@ -379,6 +381,10 @@ public final class GuiMain extends javax.swing.JFrame {
 
     private void setupIrTransImporter() {
         irTransImporter = new IrTransImporter();
+    }
+    
+    private void setupFlipperImporter() {
+        flipperImporter = new FlipperImporter();
     }
 
     private void setupCmlImporter() {
@@ -2381,6 +2387,10 @@ public final class GuiMain extends javax.swing.JFrame {
         irTransWebButton = new javax.swing.JButton();
         irTransFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, irTransImporter);
         importIrTransHelpButton = new javax.swing.JButton();
+        flipperImportPanel = new javax.swing.JPanel();
+        flipperWebButton = new javax.swing.JButton();
+        flipperFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, flipperImporter);
+        importFlipperHelpButton = new javax.swing.JButton();
         ccfImportPanel = new javax.swing.JPanel();
         ccfFileImporterBean = new org.harctoolbox.irscrutinizer.importer.FileImporterBean<>(guiUtils, properties, ccfImporter);
         importProntoClassicHelpButton = new javax.swing.JButton();
@@ -3547,7 +3557,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
         topLevelSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
-        console.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         topLevelSplitPane.setBottomComponent(console);
 
         topLevelTabbedPane.setToolTipText("This tabbed pane selects between different use cases.");
@@ -3560,7 +3569,6 @@ public final class GuiMain extends javax.swing.JFrame {
         signalScrutinizerPanel.setToolTipText("This panel is devoted to the use case of capturing and analyzing ONE infrared signal.");
         signalScrutinizerPanel.setPreferredSize(new java.awt.Dimension(1016, 300));
 
-        capturedDataTextArea.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         capturedDataTextArea.setColumns(20);
         capturedDataTextArea.setLineWrap(true);
         capturedDataTextArea.setToolTipText("This is the data window, where the captured data goes. It may be edited. Press right mouse button for a menu.");
@@ -3766,7 +3774,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
         plotScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
-        irPlotter.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         irPlotter.setToolTipText("Plot of IR signal above. Press right mouse button for a menu, mouse wheel to zoom, left mouse buttol + drag to zoom selection.");
         irPlotter.setAutoscrolls(true);
         irPlotter.setPreferredSize(new java.awt.Dimension(749, 100));
@@ -4001,11 +4008,8 @@ public final class GuiMain extends javax.swing.JFrame {
         generateTextArea.setRows(5);
         generateTextArea.setToolTipText("The generated signal, in the output format preferred, is given here.");
         generateTextArea.setWrapStyleWord(true);
-        generateTextArea.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         generateTextArea.setComponentPopupMenu(copyPopupMenu);
         jScrollPane1.setViewportView(generateTextArea);
-
-        irpMasterBean.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
         generateButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/gear.png"))); // NOI18N
         generateButton.setText("Render");
@@ -4211,7 +4215,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addComponent(remoteLocatorBrowseRemoteButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(remoteLocatorBrowseButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 116, Short.MAX_VALUE)
                 .addComponent(remoteLocatorHelpButton)
                 .addContainerGap())
             .addGroup(remoteLocatorPanelLayout.createSequentialGroup()
@@ -4276,7 +4280,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(importGirrSignalHelpButton)
                 .addContainerGap())
-            .addComponent(girrFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+            .addComponent(girrFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
         );
 
         importTabbedPane.addTab("Girr", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/translate.png")), girrImportPanel); // NOI18N
@@ -4315,7 +4319,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
         lircImportPanelLayout.setVerticalGroup(
             lircImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lircFileImporterBean, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+            .addComponent(lircFileImporterBean, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lircImportPanelLayout.createSequentialGroup()
                 .addGap(53, 53, 53)
                 .addComponent(jButton20)
@@ -4357,7 +4361,7 @@ public final class GuiMain extends javax.swing.JFrame {
         );
         irtransImportPanelLayout.setVerticalGroup(
             irtransImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(irTransFileImporterBean, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+            .addComponent(irTransFileImporterBean, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, irtransImportPanelLayout.createSequentialGroup()
                 .addGap(53, 53, 53)
                 .addComponent(irTransWebButton)
@@ -4367,6 +4371,48 @@ public final class GuiMain extends javax.swing.JFrame {
         );
 
         importTabbedPane.addTab("IrTrans", new javax.swing.ImageIcon(getClass().getResource("/icons/irtrans/favicon.png")), irtransImportPanel); // NOI18N
+
+        flipperWebButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/flipper/logo16.png"))); // NOI18N
+        flipperWebButton.setText("Web site");
+        flipperWebButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                flipperWebButtonActionPerformed(evt);
+            }
+        });
+
+        importFlipperHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
+        importFlipperHelpButton.setText("Help");
+        importFlipperHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importFlipperHelpButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout flipperImportPanelLayout = new javax.swing.GroupLayout(flipperImportPanel);
+        flipperImportPanel.setLayout(flipperImportPanelLayout);
+        flipperImportPanelLayout.setHorizontalGroup(
+            flipperImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(flipperImportPanelLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(flipperFileImporterBean, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 162, Short.MAX_VALUE)
+                .addGroup(flipperImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(importFlipperHelpButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(flipperWebButton, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        flipperImportPanelLayout.setVerticalGroup(
+            flipperImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(flipperFileImporterBean, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, flipperImportPanelLayout.createSequentialGroup()
+                .addGap(53, 53, 53)
+                .addComponent(flipperWebButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(importFlipperHelpButton)
+                .addGap(12, 12, 12))
+        );
+
+        importTabbedPane.addTab("Flipper", new javax.swing.ImageIcon(getClass().getResource("/icons/flipper/logo16.png")), flipperImportPanel); // NOI18N
 
         importProntoClassicHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
         importProntoClassicHelpButton.setText("Help");
@@ -4392,7 +4438,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(importProntoClassicHelpButton)
                 .addContainerGap())
-            .addComponent(ccfFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+            .addComponent(ccfFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
         );
 
         importTabbedPane.addTab("Pronto Classic (.ccf)", ccfImportPanel);
@@ -4421,7 +4467,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(importProntoProfessionalHelpButton)
                 .addContainerGap())
-            .addComponent(xcfFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+            .addComponent(xcfFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
         );
 
         importTabbedPane.addTab("Pronto Prof (.xcf)", xcfImportPanel);
@@ -4462,7 +4508,7 @@ public final class GuiMain extends javax.swing.JFrame {
             .addGroup(ictImportPanelLayout.createSequentialGroup()
                 .addComponent(chopIctImportCheckBox)
                 .addGap(4, 4, 4)
-                .addComponent(ictFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE))
+                .addComponent(ictFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ictImportPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(importIctHelpButton)
@@ -4501,7 +4547,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addGap(6, 6, 6)
                 .addComponent(jLabel17)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(mode2FileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE))
+                .addComponent(mode2FileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mode2ImportPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(importMode2HelpButton)
@@ -4649,7 +4695,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(rawLineCsvImportPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(rawLineCsvFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE))
+                .addComponent(rawLineCsvFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE))
         );
 
         parametrizedRawTabbedPane.addTab("Raw, line-based", rawLineCsvImportPanel);
@@ -4828,7 +4874,7 @@ public final class GuiMain extends javax.swing.JFrame {
                     .addComponent(miscParametersColumnComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(parametrizedCsvImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(csvParametrizedFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                    .addComponent(csvParametrizedFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, parametrizedCsvImportPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(importTextParametrizedHelpButton)
@@ -4925,7 +4971,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(importCmlHelpButton)
                 .addContainerGap())
-            .addComponent(cmlFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+            .addComponent(cmlFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
         );
 
         importTabbedPane.addTab("CML (RTI)", cmlImportPanel);
@@ -4954,7 +5000,7 @@ public final class GuiMain extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(importCommandFusionHelpButton)
                 .addContainerGap())
-            .addComponent(commandFusionFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+            .addComponent(commandFusionFileImporterBean, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
         );
 
         importTabbedPane.addTab("CommandFusion", commandFusionImportPanel);
@@ -4971,7 +5017,7 @@ public final class GuiMain extends javax.swing.JFrame {
         );
         importPanelLayout.setVerticalGroup(
             importPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(importTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(importTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
         );
 
         importTabbedPane.getAccessibleContext().setAccessibleName("importTabbedPane");
@@ -5100,7 +5146,7 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        exportFormatParametersPane.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED), "Protocol Parameters"));
+        exportFormatParametersPane.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null));
         exportFormatParametersPane.setLayout(new javax.swing.OverlayLayout(exportFormatParametersPane));
 
         exportGirrHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
@@ -5287,7 +5333,7 @@ public final class GuiMain extends javax.swing.JFrame {
         exportFormatParametersPane.setLayer(waveExportOptionsPanel, javax.swing.JLayeredPane.MODAL_LAYER);
         exportFormatParametersPane.add(waveExportOptionsPanel);
 
-        subformatsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED), "Subformats"));
+        subformatsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null));
         subformatsPanel.setLayout(new java.awt.GridLayout(4, 2));
 
         exportGenerateParametersCheckBox.setSelected(properties.getExportGenerateParameters());
@@ -5448,7 +5494,6 @@ public final class GuiMain extends javax.swing.JFrame {
 
         topLevelTabbedPane.addTab("Export", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/fileexport.png")), exportPanel); // NOI18N
 
-        sendingHardwareTabbedPane.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         sendingHardwareTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 sendingHardwareTabbedPaneStateChanged(evt);
@@ -9265,6 +9310,18 @@ public final class GuiMain extends javax.swing.JFrame {
         guiUtils.message("Secondary IrpProtocol file removed.");
     }//GEN-LAST:event_secondaryRemoveMenuItemActionPerformed
 
+    private void flipperWebButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flipperWebButtonActionPerformed
+        try {
+            guiUtils.browse(new URI(FlipperImporter.homeUrl));
+        } catch (URISyntaxException ex) {
+            guiUtils.error(ex);
+        }
+    }//GEN-LAST:event_flipperWebButtonActionPerformed
+
+    private void importFlipperHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importFlipperHelpButtonActionPerformed
+        HelpPopup.newHelpPopup(this, HelpTexts.importFlipperHelp);
+    }//GEN-LAST:event_importFlipperHelpButtonActionPerformed
+
     private void tableKeyReleased(JTable table, KeyEvent evt) {
         if (evt.getModifiersEx() == java.awt.event.InputEvent.CTRL_DOWN_MASK
                 && evt.getExtendedKeyCode() == java.awt.event.KeyEvent.VK_F ) {
@@ -9411,6 +9468,9 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> fColumnComboBox;
     private javax.swing.JMenuItem fallbackFrequencyMenuItem;
     private javax.swing.JMenu fileMenu;
+    private org.harctoolbox.irscrutinizer.importer.FileImporterBean<FlipperImporter> flipperFileImporterBean;
+    private javax.swing.JPanel flipperImportPanel;
+    private javax.swing.JButton flipperWebButton;
     private javax.swing.JLabel frequencyLabel;
     private javax.swing.JMenuItem frequencyToleranceMenuItem;
     private javax.swing.JButton generateButton;
@@ -9457,6 +9517,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JButton importCommandFusionHelpButton;
     private javax.swing.JMenuItem importCommandFusionMenuItem;
     private javax.swing.JMenuItem importCommandFusionMenuItem2;
+    private javax.swing.JButton importFlipperHelpButton;
     private javax.swing.JMenuItem importGirrMenuItem;
     private javax.swing.JMenuItem importGirrMenuItem1;
     private javax.swing.JButton importGirrSignalHelpButton;

@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2025 Bengt Martensson
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<exportformats:exportformat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                            xmlns:exportformats="http://www.harctoolbox.org/exportformats"
+                            xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
+                            name="Flipper One IR" extension="ir" multiSignal="true" simpleSequence="false" metadata="true">
+    <exportformats:documentation>
+        <div>This export format generates an IR file for the <a href="https://flipperzero.one/">Flipper Zero</a> in its <a href="https://developer.flipper.net/flipperzero/doxygen/infrared_file_format.html">IR format.</a>.
+        Some, not all, of the protocols are recognized, and generates the "parsed" protocol. All others are exported in the "raw" format.
+        </div>
+        <div>Limitations:<ul>
+            <li>Does not respect the remote/commandset structure; just throws all commands together.</li>
+            <li>For raw exports, does not support the intro/repeat/ending structure; just joins the sequences in a single data statment.</li>
+            <li>Does not support toggling signals (unless using a parsed protocol).</li>
+            </ul>
+        </div>
+    </exportformats:documentation>
+<xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr" exclude-result-prefixes="girr"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
+                xmlns:exporterutils="http://xml.apache.org/xalan/java/org.harctoolbox.irscrutinizer.exporter.ExporterUtils">
+    <xsl:output method="text"/>
+
+    <xsl:template match="/girr:remotes">
+        <xsl:text>Filetype: IR signals file
+Version: 1
+# </xsl:text>
+<!--
+    <xsl:value-of select="@title"/>
+    <xsl:text>
+#</xsl:text>
+    <xsl:text>
+#
+# Creating tool: </xsl:text>
+         <xsl:value-of select="$creatingTool"/>
+         <xsl:text>
+# Creating user: </xsl:text>
+         <xsl:value-of select="$creatingUser"/>
+         <xsl:text>
+# Creating date: </xsl:text>
+         <xsl:value-of select="$creatingDate"/>
+         <xsl:text>
+# Encoding: </xsl:text>
+         <xsl:value-of select="$encoding"/>
+-->
+        <xsl:apply-templates select="girr:remote[1]"/>
+    </xsl:template>
+
+    <xsl:template match="girr:remote">
+        <xsl:if test="@manufacturer">
+            <xsl:text>
+# Manufacturer: </xsl:text>
+            <xsl:value-of select="@manufacturer"/>
+        </xsl:if>
+
+        <xsl:if test="@model">
+            <xsl:text>
+# Model: </xsl:text>
+             <xsl:value-of select="@model"/>
+        </xsl:if>
+
+         <xsl:if test="@displayName">
+             <xsl:text>
+# Displayname: </xsl:text>
+             <xsl:value-of select="@displayName"/>
+         </xsl:if>
+
+         <xsl:if test="@deviceClass">
+            <xsl:text>
+# Device Class: </xsl:text>
+            <xsl:value-of select="@deviceClass"/>
+         </xsl:if>
+
+         <xsl:if test="@remoteName">
+             <xsl:text>
+# Remotename: </xsl:text>
+             <xsl:value-of select="@remoteName"/>
+         </xsl:if>
+         <xsl:text>
+</xsl:text>
+
+        <xsl:apply-templates select="girr:commandSet"/>
+    </xsl:template>
+
+    <xsl:template match="girr:commandSet">
+        <xsl:apply-templates select="girr:command"/>
+    </xsl:template>
+
+    <!-- Generic case, raw -->
+    <xsl:template match="girr:command">
+        <xsl:apply-templates select="@name"/>
+        <xsl:apply-templates select="girr:raw"/>
+    </xsl:template>
+
+    <xsl:template match="@name">
+ <xsl:text>#
+name: </xsl:text>
+        <xsl:value-of select="."/>
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:raw">
+        <xsl:text>type: raw
+frequency: </xsl:text>
+        <xsl:value-of select="@frequency"/>
+        <xsl:text>
+duty_cycle: </xsl:text>
+        <xsl:value-of select="@dutyCycle"/>
+        <xsl:if test="not(@dutyCycle)">
+            <xsl:text>0.33</xsl:text>
+        </xsl:if>
+        <xsl:text>
+data: </xsl:text>
+        <xsl:apply-templates select="girr:intro"/>
+        <xsl:apply-templates select="girr:repeat"/>
+        <xsl:apply-templates select="girr:ending"/>
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:intro|girr:repeat|girr:ending">
+        <xsl:apply-templates select="*"/>
+    </xsl:template>
+
+    <xsl:template match="girr:flash|girr:gap">
+        <xsl:value-of select="."/>
+        <xsl:text> </xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:parameter" mode="eightbit">
+        <!--xsl:value-of select="exporterutils:twoDigitHex(number(@value))"/-->
+        <xsl:value-of select="exporterutils:processBitFieldsTwoHexDigits(false(), false(), number(@value), 8, 0)"/>
+        <xsl:text> </xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:parameter" mode="sixbit">
+        <xsl:value-of select="exporterutils:processBitFieldsTwoHexDigits(false(), false(), number(@value), 6, 0)"/>
+        <xsl:text> </xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:parameters" mode="D">
+        <xsl:text>
+address: </xsl:text>
+        <xsl:apply-templates select="girr:parameter[@name='D']" mode="eightbit"/>
+        <xsl:text>00 00 00</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:parameters" mode="DF">
+        <xsl:text>
+address: </xsl:text>
+        <xsl:apply-templates select="girr:parameter[@name='D']" mode="eightbit"/>
+        <xsl:text>00 00 00</xsl:text>
+        <xsl:apply-templates select="." mode="F"/>
+    </xsl:template>
+
+    <xsl:template match="girr:parameters" mode="DSF">
+        <xsl:text>
+address: </xsl:text>
+        <xsl:apply-templates select="girr:parameter[@name='D']" mode="eightbit"/>
+        <xsl:apply-templates select="girr:parameter[@name='S']" mode="eightbit"/>
+        <xsl:text>00 00</xsl:text>
+        <xsl:apply-templates select="." mode="F"/>
+    </xsl:template>
+
+    <xsl:template match="girr:parameters" mode="F">
+       <xsl:text>
+command: </xsl:text>
+        <xsl:apply-templates select="girr:parameter[@name='F']" mode="eightbit"/>
+        <xsl:text>00 00 00
+</xsl:text>
+    </xsl:template>
+
+    <!-- Nec1 general case with S -->
+    <xsl:template match="girr:command[@master='parameters'
+                                      and
+				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'nec1']">
+        <xsl:apply-templates select="@name"/>
+        <xsl:text>type: parsed
+protocol: NECext</xsl:text>
+        <xsl:apply-templates select="girr:parameters" mode="DSF"/>
+    </xsl:template>
+
+    <!-- Special case, Nec1 without an S -->
+    <xsl:template match="girr:command[@master='parameters'
+                                      and translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'nec1'
+                                      and (
+                                                not(girr:parameters/girr:parameter[@name='S'])
+                                            or (number(girr:parameters/girr:parameter[@name='S']/@value) = 255 - number(girr:parameters/girr:parameter[@name='D']/@value))
+                                           )]">
+        <xsl:apply-templates select="@name"/>
+        <xsl:text>type: parsed
+protocol: NEC</xsl:text>
+        <xsl:apply-templates select="girr:parameters" mode="DF"/>
+    </xsl:template>
+
+    <xsl:template match="girr:command[@master='parameters'
+                                      and
+				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'rc5']">
+        <xsl:apply-templates select="@name"/>
+        <xsl:text>type: parsed
+protocol: RC5</xsl:text>
+        <xsl:if test="number(girr:parameters/girr:parameter[@name='F']/@value) &gt; 63">
+            <xsl:text>X</xsl:text>
+        </xsl:if>
+        <xsl:apply-templates select="girr:parameters" mode="D"/>
+        <xsl:text>
+command: </xsl:text>
+        <xsl:apply-templates select="girr:parameters/girr:parameter[@name='F']" mode="sixbit"/>
+        <xsl:text>00 00 00
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="girr:command[@master='parameters'
+                                      and
+				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'rc6']">
+        <xsl:apply-templates select="@name"/>
+        <xsl:text>type: parsed
+protocol: RC6</xsl:text>
+        <xsl:apply-templates select="girr:parameters" mode="DF"/>
+    </xsl:template>
+
+    <xsl:template match="girr:command[@master='parameters'
+                                      and
+				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'aiwa']">
+        <xsl:apply-templates select="@name"/>
+        <xsl:text>type: parsed
+protocol = NEC42</xsl:text>
+        <xsl:apply-templates select="girr:parameters" mode="DSF"/>
+    </xsl:template>
+    <!--
+            case "Samsung32":
+                protocol = "Samsung32";
+                parameters.put("D", address >> 24L);
+                parameters.put("S", (address >> 16L) & 0xFFL);
+                parameters.put("F", cmd >> 24L);
+                parameters.put("E", (cmd >> 16L) & 0xFFL);
+                break;
+-->
+    <xsl:template match="girr:command[@master='parameters'
+                                      and
+				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'sony12']">
+        <xsl:apply-templates select="@name"/>
+        <xsl:text>type: parsed
+protocol = SIRC</xsl:text>
+        <xsl:apply-templates select="girr:parameters" mode="DF"/>
+    </xsl:template>
+
+    <xsl:template match="girr:command[@master='parameters'
+                                      and
+				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'sony15']">
+        <xsl:apply-templates select="@name"/>
+        <xsl:text>type: parsed
+protocol = SIRC15</xsl:text>
+        <xsl:apply-templates select="girr:parameters" mode="DF"/>
+    </xsl:template>
+
+    <xsl:template match="girr:command[@master='parameters'
+                                      and
+				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'sony20']">
+        <xsl:apply-templates select="@name"/>
+        <xsl:text>type: parsed
+protocol = SIRC20</xsl:text>
+        <xsl:apply-templates select="girr:parameters" mode="DSF"/>
+    </xsl:template>
+
+    <xsl:template match="girr:command[@master='parameters'
+                                      and
+				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'pioneer']">
+        <xsl:apply-templates select="@name"/>
+        <xsl:text>type: parsed
+protocol = Pioneer</xsl:text>
+        <xsl:apply-templates select="girr:parameters" mode="DSF"/>
+    </xsl:template>
+
+    <xsl:template match="girr:command[@master='parameters'
+                                      and
+				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'rca']">
+        <xsl:apply-templates select="@name"/>
+        <xsl:text>type: parsed
+protocol = RCA</xsl:text>
+        <xsl:apply-templates select="girr:parameters" mode="DF"/>
+    </xsl:template>
+
+    <xsl:template match="girr:command[@master='parameters'
+                                      and
+				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'denon-k']">
+        <xsl:apply-templates select="@name"/>
+        <xsl:text>type: parsed
+protocol = Kaseikyo</xsl:text>
+        <xsl:apply-templates select="girr:parameters" mode="DSF"/> <!-- FIXME -->
+    </xsl:template>
+
+    <xsl:template match="girr:command[@master='parameters'
+                                      and
+				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'kaseikyo']">
+        <xsl:apply-templates select="@name"/>
+        <xsl:text>type: parsed
+protocol = Kaseikyo</xsl:text>
+        <xsl:apply-templates select="girr:parameters" mode="DSF"/> <!-- FIXME -->
+    </xsl:template>
+
+</xsl:stylesheet>
+
+</exportformats:exportformat>

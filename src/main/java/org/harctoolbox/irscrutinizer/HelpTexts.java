@@ -142,6 +142,13 @@ class HelpTexts {
             + fileUrlImportHelp + "\n\n"
             + treeHelpReaderImporterIntro
             + treeHelp;
+    
+    @SuppressWarnings("PackageVisibleField")
+    public static String importFlipperHelp
+            = "Flipper IR files can be imported here.\n\n"
+            + fileUrlImportHelp + "\n\n"
+            + treeHelpReaderImporterIntro
+            + treeHelp;
 
     @SuppressWarnings("PackageVisibleField")
     public static String importLircHelp

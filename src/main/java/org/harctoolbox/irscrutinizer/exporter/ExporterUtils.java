@@ -57,6 +57,11 @@ public class ExporterUtils {
         return payload & mkMask(length);
     }
 
+    public static String processBitFieldsTwoHexDigits(boolean complement, boolean reverse, int data, int length, int chop) {
+        long bf = processFiniteBitFieldLong(complement, reverse, data, length, chop);
+        return String.format(FORMATTINGCODE, bf);
+    }
+
     public static String processBitFields(boolean complement, boolean reverse, int data, int length, int chop) {
         long bf = processFiniteBitFieldLong(complement, reverse, data, length, chop);
         return processBitFields(bf, length);
