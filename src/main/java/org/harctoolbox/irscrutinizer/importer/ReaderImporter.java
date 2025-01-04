@@ -30,6 +30,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
 import org.harctoolbox.ircore.InvalidArgumentException;
+import static org.harctoolbox.ircore.IrCoreUtils.UTF8_NAME;
 
 /**
  * This class extends the Importer with file/reader load functions.
@@ -47,6 +48,10 @@ public abstract class ReaderImporter extends FileImporter {
         try (InputStream inputStream = new FileInputStream(file)) {
             load(inputStream, origin, charsetName);
         }
+    }
+
+    public void load(File file) throws IOException, ParseException, InvalidArgumentException {
+        load(file, file.getCanonicalPath(), UTF8_NAME);
     }
 
     public void load(String charsetName) throws IOException, ParseException, InvalidArgumentException {

@@ -227,11 +227,6 @@ public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
         return "Girr";
     }
 
-    public RemoteSet getRemoteSet(File file) throws IOException, ParseException, InvalidArgumentException {
-        possiblyZipLoad(file, IrCoreUtils.UTF8_NAME);
-        return remoteSet;
-    }
-
     private void accumulateProtocols(String origin) {
         IrpDatabase newProtocols = remoteSet.getIrpDatabase();
         guiMain.patchProtocols(newProtocols);
