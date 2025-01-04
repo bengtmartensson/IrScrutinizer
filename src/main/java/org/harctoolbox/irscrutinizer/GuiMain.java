@@ -382,7 +382,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private void setupIrTransImporter() {
         irTransImporter = new IrTransImporter();
     }
-    
+
     private void setupFlipperImporter() {
         flipperImporter = new FlipperImporter();
     }
@@ -1031,7 +1031,8 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private int importGirr(File file, boolean raw) throws ParseException, InvalidArgumentException, IOException {
-        return importCommands(girrImporter.getRemoteSet(file), girrImporter.getMetaData(), raw);
+        girrImporter.load(file);
+        return importCommands(girrImporter.getRemoteSet(), girrImporter.getRemoteSet().iterator().next().getMetaData(), raw);
     }
 
 //    private void selectSenderHardware(HardwareBean panel) {
