@@ -34,8 +34,8 @@ public final class RemoteLocatorImporter extends DatabaseImporter implements IRe
 
     public static final String CATALOG = "http://www.harctoolbox.org/downloads/remotelocator";
     // public static final String CATALOG = "http://www.harctoolbox.org/downloads/remotelocator.html";
-    public static final String CATALOG_URL = CATALOG + ".xml";
-    public static final String CATALOG_HTML = CATALOG + ".html";
+    public static final String CATALOG_URL = CATALOG + "-" + RemoteDatabase.FORMATVERSION + ".xml";
+    public static final String CATALOG_HTML = CATALOG + "-" + RemoteDatabase.FORMATVERSION + ".html";
 
     private static String catalog = CATALOG_URL;
 

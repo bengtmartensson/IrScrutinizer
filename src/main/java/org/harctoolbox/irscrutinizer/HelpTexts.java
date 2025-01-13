@@ -116,16 +116,9 @@ class HelpTexts {
             + "For the export and the transfer to the \"scrutinize remote\" tables, not only a single parameter value can be selected, but whole sets. The complete syntax and semantics is given in the IrpMaster documentation. Here we just mention that e.g. 12:34 means all numbers between 12 and 34, and * denotes all possible values.";
 
     @SuppressWarnings("PackageVisibleField")
-    public static String importControlTowerHelp
-            = "<html>The support for the Control Tower Data base is limited. It can be used for browsing the data base "
-            + "for devices and the contained commands, but it cannot retreive the very codes of the commands. "
-            + "For this, <a href=\"http://irdb.globalcache.com\">login there</a>, and have the codes emailed. "
-            + "The received email can be parsed by Import -> Raw; use Name col. = 1 and Raw signal col. = 3 (or 2), Field separator \", (comma)\"."
-            + "<p>Please observe the <a href=\"https://www.globalcache.com/files/docs/CT_tos_ver1.pdf\">Terms of service</a>.</p></html>";
-
-    @SuppressWarnings("PackageVisibleField")
     public static String remoteLocatorHelp
-            = "FIXME: To use the IRDB data base, select, in order, a manufacturer, a device type, and a protocol/parameter combination, the latter possibly by trial-and-error.\n\n"
+            = "To use the RemoteLocator, select, in order, a manufacturer, a device type,"
+            + " and a model (or, in the case of IRDB,aprotocol/parameter combination), possibly by trial-and-error.\n\n"
             + "Pressing the \"Load all\" button transfers all present protocol/parameters combinations to the tree.\n\n"
             + "When pressing the \"Load\" button, " + treeHelp;
 
@@ -142,7 +135,7 @@ class HelpTexts {
             + fileUrlImportHelp + "\n\n"
             + treeHelpReaderImporterIntro
             + treeHelp;
-    
+
     @SuppressWarnings("PackageVisibleField")
     public static String importFlipperHelp
             = "Flipper IR files can be imported here.\n\n"
