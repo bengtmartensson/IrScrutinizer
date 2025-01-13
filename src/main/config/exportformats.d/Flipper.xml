@@ -144,7 +144,6 @@ data: </xsl:text>
     </xsl:template>
 
     <xsl:template match="girr:parameter" mode="eightbit">
-        <!--xsl:value-of select="exporterutils:twoDigitHex(number(@value))"/-->
         <xsl:value-of select="exporterutils:processBitFieldsTwoHexDigits(false(), false(), number(@value), 8, 0)"/>
         <xsl:text> </xsl:text>
     </xsl:template>
@@ -209,6 +208,7 @@ protocol: NEC</xsl:text>
         <xsl:apply-templates select="girr:parameters" mode="DF"/>
     </xsl:template>
 
+    <!-- RC5 -->
     <xsl:template match="girr:command[@master='parameters'
                                       and
 				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'rc5']">
@@ -226,6 +226,7 @@ command: </xsl:text>
 </xsl:text>
     </xsl:template>
 
+    <!-- RC6 -->
     <xsl:template match="girr:command[@master='parameters'
                                       and
 				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'rc6']">
@@ -235,84 +236,136 @@ protocol: RC6</xsl:text>
         <xsl:apply-templates select="girr:parameters" mode="DF"/>
     </xsl:template>
 
+    <!-- Aiwa -->
     <xsl:template match="girr:command[@master='parameters'
                                       and
 				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'aiwa']">
         <xsl:apply-templates select="@name"/>
         <xsl:text>type: parsed
-protocol = NEC42</xsl:text>
+protocol: NEC42</xsl:text>
         <xsl:apply-templates select="girr:parameters" mode="DSF"/>
     </xsl:template>
-    <!--
-            case "Samsung32":
-                protocol = "Samsung32";
-                parameters.put("D", address >> 24L);
-                parameters.put("S", (address >> 16L) & 0xFFL);
-                parameters.put("F", cmd >> 24L);
-                parameters.put("E", (cmd >> 16L) & 0xFFL);
-                break;
--->
+
+    <!-- NECx1 = Samsung32 -->
+    <xsl:template match="girr:command[@master='parameters'
+                                      and
+				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'necx1']">
+        <xsl:apply-templates select="@name"/>
+        <xsl:text>type: parsed
+protocol: Samsung32</xsl:text>
+        <xsl:apply-templates select="girr:parameters" mode="DSF"/>
+    </xsl:template>
+
+    <!-- Sony12 -->
     <xsl:template match="girr:command[@master='parameters'
                                       and
 				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'sony12']">
         <xsl:apply-templates select="@name"/>
         <xsl:text>type: parsed
-protocol = SIRC</xsl:text>
+protocol: SIRC</xsl:text>
         <xsl:apply-templates select="girr:parameters" mode="DF"/>
     </xsl:template>
 
+    <!-- Sony15 -->
     <xsl:template match="girr:command[@master='parameters'
                                       and
 				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'sony15']">
         <xsl:apply-templates select="@name"/>
         <xsl:text>type: parsed
-protocol = SIRC15</xsl:text>
+protocol: SIRC15</xsl:text>
         <xsl:apply-templates select="girr:parameters" mode="DF"/>
     </xsl:template>
 
+    <!-- Sony20 -->
     <xsl:template match="girr:command[@master='parameters'
                                       and
 				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'sony20']">
         <xsl:apply-templates select="@name"/>
         <xsl:text>type: parsed
-protocol = SIRC20</xsl:text>
+protocol: SIRC20</xsl:text>
         <xsl:apply-templates select="girr:parameters" mode="DSF"/>
     </xsl:template>
 
+    <!-- Pioneer -->
     <xsl:template match="girr:command[@master='parameters'
                                       and
 				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'pioneer']">
         <xsl:apply-templates select="@name"/>
         <xsl:text>type: parsed
-protocol = Pioneer</xsl:text>
+protocol: Pioneer</xsl:text>
         <xsl:apply-templates select="girr:parameters" mode="DSF"/>
     </xsl:template>
 
+    <!-- RCA -->
     <xsl:template match="girr:command[@master='parameters'
                                       and
 				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'rca']">
         <xsl:apply-templates select="@name"/>
         <xsl:text>type: parsed
-protocol = RCA</xsl:text>
+protocol: RCA</xsl:text>
         <xsl:apply-templates select="girr:parameters" mode="DF"/>
     </xsl:template>
 
+    <!-- No rule for generic Kaseikyo -->
+
+    <!-- Denon-K, Panasonic, JVC-48 -->
     <xsl:template match="girr:command[@master='parameters'
-                                      and
-				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'denon-k']">
+                                      and (
+				           translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'panasonic'
+				        or translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'jvc-48'
+                                        or translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'denon-k'
+                                           )]">
         <xsl:apply-templates select="@name"/>
         <xsl:text>type: parsed
-protocol = Kaseikyo</xsl:text>
-        <xsl:apply-templates select="girr:parameters" mode="DSF"/> <!-- FIXME -->
+protocol: Kaseikyo
+address: </xsl:text>
+         <xsl:apply-templates select="girr:parameters" />
     </xsl:template>
 
-    <xsl:template match="girr:command[@master='parameters'
-                                      and
-				      translate(girr:parameters/@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'kaseikyo']">
-        <xsl:apply-templates select="@name"/>
-        <xsl:text>type: parsed
-protocol = Kaseikyo</xsl:text>
-        <xsl:apply-templates select="girr:parameters" mode="DSF"/> <!-- FIXME -->
+    <!-- Denon-K -->
+    <xsl:template match="girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'denon-k']">
+        <xsl:value-of select="exporterutils:processBitFieldsOneHexDigit(false(), false(), number(girr:parameter[@name='D']/@value), 4, 0)"/>
+        <xsl:value-of select="exporterutils:processBitFieldsOneHexDigit(false(), false(), number(girr:parameter[@name='S']/@value), 4, 0)"/>
+        <xsl:text> 54 32 </xsl:text>
+        <xsl:value-of select="exporterutils:processBitFieldsTwoHexDigits(false(), false(), number(girr:parameter[@name='F']/@value), 8, 10)"/>
+        <xsl:text>
+command: </xsl:text>
+        <xsl:apply-templates select="girr:parameter[@name='F']" mode="eightbit"/>
+        <xsl:value-of select="exporterutils:processBitFieldsTwoHexDigits(false(), false(), number(girr:parameter[@name='F']/@value), 2, 8)"/>
+        <xsl:text> 00 00
+</xsl:text>
+    </xsl:template>
+
+    <!-- Panasonic -->
+    <xsl:template match="girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'panasonic']">
+        <xsl:value-of select="exporterutils:processBitFieldsOneHexDigit(false(), false(), number(girr:parameter[@name='D']/@value), 4, 4)"/>
+        <xsl:value-of select="exporterutils:processBitFieldsOneHexDigit(false(), false(), number(girr:parameter[@name='S']/@value), 4, 0)"/>
+        <xsl:text> 02 20 </xsl:text>
+        <xsl:value-of select="exporterutils:processBitFieldsTwoHexDigits(false(), false(), number(girr:parameter[@name='F']/@value), 8, 6)"/>
+        <xsl:text>
+command: </xsl:text>
+        <xsl:value-of select="exporterutils:processBitFieldsOneHexDigit(false(), false(), number(girr:parameter[@name='F']/@value), 4, 0)"/>
+        <xsl:value-of select="exporterutils:processBitFieldsOneHexDigit(false(), false(), number(girr:parameter[@name='S']/@value), 4, 4)"/>
+        <xsl:text> 0</xsl:text>
+        <xsl:value-of select="exporterutils:processBitFieldsOneHexDigit(false(), false(), number(girr:parameter[@name='F']/@value), 2, 4)"/>
+        <xsl:text> 00 00
+</xsl:text>
+    </xsl:template>
+
+    <!-- JVC-48 -->
+    <xsl:template match="girr:parameters[translate(@protocol, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'jvc-48']">
+        <xsl:value-of select="exporterutils:processBitFieldsOneHexDigit(false(), false(), number(girr:parameter[@name='D']/@value), 4, 4)"/>
+        <xsl:value-of select="exporterutils:processBitFieldsOneHexDigit(false(), false(), number(girr:parameter[@name='S']/@value), 4, 0)"/>
+        <xsl:text> 03 01 </xsl:text>
+        <xsl:value-of select="exporterutils:processBitFieldsTwoHexDigits(false(), false(), number(girr:parameter[@name='F']/@value), 8, 6)"/>
+        <xsl:text>
+command: </xsl:text>
+        <xsl:value-of select="exporterutils:processBitFieldsOneHexDigit(false(), false(), number(girr:parameter[@name='F']/@value), 4, 0)"/>
+        <xsl:value-of select="exporterutils:processBitFieldsOneHexDigit(false(), false(), number(girr:parameter[@name='S']/@value), 4, 4)"/>
+        <xsl:text> 0</xsl:text>
+        <xsl:value-of select="exporterutils:processBitFieldsOneHexDigit(false(), false(), number(girr:parameter[@name='F']/@value), 2, 4)"/>
+        <xsl:text> 00 00
+</xsl:text>
     </xsl:template>
 
 </xsl:stylesheet>
