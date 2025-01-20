@@ -32,19 +32,14 @@ import org.xml.sax.SAXException;
 
 public final class RemoteLocatorImporter extends DatabaseImporter implements IRemoteSetImporter {
 
-    public static final String CATALOG = "http://www.harctoolbox.org/downloads/remotelocator";
-    // public static final String CATALOG = "http://www.harctoolbox.org/downloads/remotelocator.html";
-    public static final String CATALOG_URL = CATALOG + "-" + RemoteDatabase.FORMATVERSION + ".xml";
-    public static final String CATALOG_HTML = CATALOG + "-" + RemoteDatabase.FORMATVERSION + ".html";
-
-    private static String catalog = CATALOG_URL;
+    private static String catalog = RemoteDatabase.REMOTELOCATOR_CATALOG_URL;
 
     public static void setCatalog(String newCatalog) {
         catalog = newCatalog;
     }
 
     public static URI getHomeUri() {
-        return URI.create(CATALOG_HTML);
+        return URI.create(catalog.replace(".xml", ".html"));
     }
 
     private final boolean verbose;
