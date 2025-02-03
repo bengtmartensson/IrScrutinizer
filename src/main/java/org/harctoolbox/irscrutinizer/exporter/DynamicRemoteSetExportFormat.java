@@ -72,10 +72,7 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter {
                 });
             } catch (ParserConfigurationException | SAXException | IOException ex) {
                 String message = "Export formats file \"" + f.getPath() + "\" could not be read, ignoring it. " + ex.getLocalizedMessage();
-                if (guiUtils != null)
-                    guiUtils.warning(message);
-                else
-                    System.err.println(message);
+                warning(guiUtils, message);
             }
         }
         return result;
@@ -135,8 +132,15 @@ public class DynamicRemoteSetExportFormat extends RemoteSetExporter {
 
     private static void putWithCheck(GuiUtils guiUtils, Map<String, IExporterFactory> result, String formatName, IExporterFactory iExporterFactory) {
         if (result.containsKey(formatName))
-            guiUtils.warning("Export format \"" + formatName + "\" present more than once; keeping the last.");
+            warning(guiUtils, "Export format \"" + formatName + "\" present more than once; keeping the last.");
         result.put(formatName, iExporterFactory);
+    }
+
+    private static void warning(GuiUtils guiUtils, String message) {
+        if (guiUtils != null)
+            guiUtils.warning(message);
+        else
+            System.err.println(message);
     }
 
     private final String formatName;
