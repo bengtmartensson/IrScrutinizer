@@ -104,6 +104,7 @@ import org.harctoolbox.irscrutinizer.exporter.*;
 import org.harctoolbox.irscrutinizer.importer.*;
 import org.harctoolbox.remotelocator.Girrable;
 import org.harctoolbox.remotelocator.NotFoundException;
+import org.harctoolbox.xml.XmlUtils;
 import org.xml.sax.SAXException;
 
 @SuppressWarnings("serial")
@@ -516,6 +517,10 @@ public final class GuiMain extends javax.swing.JFrame {
 
         addDynamicExportFormats(properties.getExportFormatFilePath());
         addDynamicExportFormats(properties.getSecondaryExportFormatFilePath());
+        XmlUtils.setDebug(properties.getXsltDebug());
+        properties.addXsltDebugChangeListener((String name1, Object oldValue, Object newValue) -> {
+            XmlUtils.setDebug((Boolean) newValue);
+        });
     }
 
     private void addDynamicExportFormats(String file) throws ParserConfigurationException, SAXException, IOException {
@@ -2667,8 +2672,9 @@ public final class GuiMain extends javax.swing.JFrame {
         jSeparator22 = new javax.swing.JPopupMenu.Separator();
         debugMenu = new javax.swing.JMenu();
         offerStackTraceCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        debugCodeMenuItem = new javax.swing.JMenuItem();
+        xsltDebugMenuItem = new javax.swing.JCheckBoxMenuItem();
         debugDecodeProtocolRegexpMenuItem = new javax.swing.JMenuItem();
+        debugCodeMenuItem = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         hexCalcMenuItem = new javax.swing.JMenuItem();
         timeFrequencyCalcMenuItem = new javax.swing.JMenuItem();
@@ -3558,6 +3564,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
         topLevelSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
+        console.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         topLevelSplitPane.setBottomComponent(console);
 
         topLevelTabbedPane.setToolTipText("This tabbed pane selects between different use cases.");
@@ -3570,6 +3577,7 @@ public final class GuiMain extends javax.swing.JFrame {
         signalScrutinizerPanel.setToolTipText("This panel is devoted to the use case of capturing and analyzing ONE infrared signal.");
         signalScrutinizerPanel.setPreferredSize(new java.awt.Dimension(1016, 300));
 
+        capturedDataTextArea.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         capturedDataTextArea.setColumns(20);
         capturedDataTextArea.setLineWrap(true);
         capturedDataTextArea.setToolTipText("This is the data window, where the captured data goes. It may be edited. Press right mouse button for a menu.");
@@ -3775,6 +3783,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
         plotScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
+        irPlotter.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         irPlotter.setToolTipText("Plot of IR signal above. Press right mouse button for a menu, mouse wheel to zoom, left mouse buttol + drag to zoom selection.");
         irPlotter.setAutoscrolls(true);
         irPlotter.setPreferredSize(new java.awt.Dimension(749, 100));
@@ -4009,8 +4018,11 @@ public final class GuiMain extends javax.swing.JFrame {
         generateTextArea.setRows(5);
         generateTextArea.setToolTipText("The generated signal, in the output format preferred, is given here.");
         generateTextArea.setWrapStyleWord(true);
+        generateTextArea.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         generateTextArea.setComponentPopupMenu(copyPopupMenu);
         jScrollPane1.setViewportView(generateTextArea);
+
+        irpMasterBean.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
         generateButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/gear.png"))); // NOI18N
         generateButton.setText("Render");
@@ -5147,7 +5159,7 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
 
-        exportFormatParametersPane.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null));
+        exportFormatParametersPane.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED), "Protocol Parameters"));
         exportFormatParametersPane.setLayout(new javax.swing.OverlayLayout(exportFormatParametersPane));
 
         exportGirrHelpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/help.png"))); // NOI18N
@@ -5334,7 +5346,7 @@ public final class GuiMain extends javax.swing.JFrame {
         exportFormatParametersPane.setLayer(waveExportOptionsPanel, javax.swing.JLayeredPane.MODAL_LAYER);
         exportFormatParametersPane.add(waveExportOptionsPanel);
 
-        subformatsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, null));
+        subformatsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED), "Subformats"));
         subformatsPanel.setLayout(new java.awt.GridLayout(4, 2));
 
         exportGenerateParametersCheckBox.setSelected(properties.getExportGenerateParameters());
@@ -5495,6 +5507,7 @@ public final class GuiMain extends javax.swing.JFrame {
 
         topLevelTabbedPane.addTab("Export", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/actions/fileexport.png")), exportPanel); // NOI18N
 
+        sendingHardwareTabbedPane.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         sendingHardwareTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 sendingHardwareTabbedPaneStateChanged(evt);
@@ -6856,13 +6869,15 @@ public final class GuiMain extends javax.swing.JFrame {
         });
         debugMenu.add(offerStackTraceCheckBoxMenuItem);
 
-        debugCodeMenuItem.setText("Debug Code...");
-        debugCodeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        xsltDebugMenuItem.setSelected(properties.getXsltDebug());
+        xsltDebugMenuItem.setText("XSLT debug");
+        xsltDebugMenuItem.setToolTipText("If selected, some debugging files for XSLT based exports are generated in the current working directory.");
+        xsltDebugMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                debugCodeMenuItemActionPerformed(evt);
+                xsltDebugMenuItemActionPerformed(evt);
             }
         });
-        debugMenu.add(debugCodeMenuItem);
+        debugMenu.add(xsltDebugMenuItem);
 
         debugDecodeProtocolRegexpMenuItem.setText("Debug Decode Protocol Regexp");
         debugDecodeProtocolRegexpMenuItem.setToolTipText("For debugging only");
@@ -6872,6 +6887,15 @@ public final class GuiMain extends javax.swing.JFrame {
             }
         });
         debugMenu.add(debugDecodeProtocolRegexpMenuItem);
+
+        debugCodeMenuItem.setText("Debug Code...");
+        debugCodeMenuItem.setEnabled(false);
+        debugCodeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                debugCodeMenuItemActionPerformed(evt);
+            }
+        });
+        debugMenu.add(debugCodeMenuItem);
 
         optionsMenu.add(debugMenu);
 
@@ -9323,6 +9347,10 @@ public final class GuiMain extends javax.swing.JFrame {
         HelpPopup.newHelpPopup(this, HelpTexts.importFlipperHelp);
     }//GEN-LAST:event_importFlipperHelpButtonActionPerformed
 
+    private void xsltDebugMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xsltDebugMenuItemActionPerformed
+        properties.setXsltDebug(xsltDebugMenuItem.isSelected());
+    }//GEN-LAST:event_xsltDebugMenuItemActionPerformed
+
     private void tableKeyReleased(JTable table, KeyEvent evt) {
         if (evt.getModifiersEx() == java.awt.event.InputEvent.CTRL_DOWN_MASK
                 && evt.getExtendedKeyCode() == java.awt.event.KeyEvent.VK_F ) {
@@ -9850,6 +9878,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JPanel waveImportPanel;
     private org.harctoolbox.irscrutinizer.importer.FileImporterBean<XcfImporter> xcfFileImporterBean;
     private javax.swing.JPanel xcfImportPanel;
+    private javax.swing.JCheckBoxMenuItem xsltDebugMenuItem;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
 }

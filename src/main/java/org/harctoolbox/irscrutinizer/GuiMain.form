@@ -2265,12 +2265,16 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="offerStackTraceCheckBoxMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JMenuItem" name="debugCodeMenuItem">
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="xsltDebugMenuItem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Debug Code..."/>
+                    <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="properties.getXsltDebug()" type="code"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="XSLT debug"/>
+                    <Property name="toolTipText" type="java.lang.String" value="If selected, some debugging files for XSLT based exports are generated in the current working directory."/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="debugCodeMenuItemActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="xsltDebugMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="debugDecodeProtocolRegexpMenuItem">
@@ -2280,6 +2284,15 @@
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="debugDecodeProtocolRegexpMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="debugCodeMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Debug Code..."/>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="debugCodeMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
               </SubComponents>

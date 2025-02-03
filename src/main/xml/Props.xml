@@ -84,7 +84,8 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="usePopupsForErrors" type="boolean" default='"true"' doc='If true, use popups for help. Otherwise the console will be used.'/>
     <property name="usePopupsForHelp" type="boolean" default='"true"' doc='If true, use popups for help. Otherwise the console will be used.'/>
     <property name="offerStackTrace" type="boolean" default='"false"' doc='If true, error popups resulting from exceptions will have an option to dump the corresponging stack trace to the console.'/>
-    <property name="printDecodesToConsole" type="boolean" default='"false"' doc='If true, print all decodes to the console, in addition to other outputs.'/>
+    <property name="xsltDebug" type="boolean" default='"false"' doc='If true, generate debugging files for XSLT based export formats in the current directory.'/>
+   <property name="printDecodesToConsole" type="boolean" default='"false"' doc='If true, print all decodes to the console, in addition to other outputs.'/>
     <property name="printAlternativeDecodes" type="boolean" default='"false"' doc='If true, print alternative decodes to the console.'/>
     <property name="printAnalyzerIRPsToConsole" type="boolean" default='"false"' doc='If true, print all IRPs from the analyzer to the console, in addition to other outputs.'/>
     <property name="invokeDecoder" type="boolean" default='"true"' doc='Invoke decoder when importing, even when not required.'/>
