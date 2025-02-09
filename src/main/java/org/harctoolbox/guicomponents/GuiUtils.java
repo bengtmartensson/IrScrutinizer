@@ -331,9 +331,9 @@ public class GuiUtils implements Serializable {
 
     public void browseOrEdit(String urlOrFilename) throws IOException {
         try {
-            URL url = new URL(urlOrFilename);
-            browse(url.toURI());
-        } catch (MalformedURLException | URISyntaxException ex) {
+            URI uri = new URI(urlOrFilename);
+            browse(uri);
+        } catch (URISyntaxException ex) {
             open(new File(urlOrFilename));
         }
     }
@@ -349,9 +349,8 @@ public class GuiUtils implements Serializable {
     public boolean checkUpToDate(String currentVersionUrl, String versionString) {
         URL url;
         try {
-            url = new URL(currentVersionUrl);
-        } catch (MalformedURLException ex) {
-            //throw new ThisCannotHappenException(ex);
+            url = new URI(currentVersionUrl).toURL();
+        } catch (URISyntaxException | MalformedURLException ex) {
             return false;
         }
 

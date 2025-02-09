@@ -83,7 +83,7 @@ public class DynamicRemoteSetExportFormatMain {
         String formatName = commandLineArgs.formatName;
 
         try {
-            Schema schema = commandLineArgs.schemaUrl != null ? XmlUtils.readSchema(new URL(commandLineArgs.schemaUrl)) : null;
+            Schema schema = commandLineArgs.schemaUrl != null ? XmlUtils.readSchema(new URI(commandLineArgs.schemaUrl).toURL()) : null;
             Map<String, IExporterFactory> exportFormats = DynamicRemoteSetExportFormat.parseExportFormats(null, configFile, schema);
             //Schema schema = (SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)).newSchema(new URL("http://www.harctoolbox.org/schemas/exportformats.xsd"));
 

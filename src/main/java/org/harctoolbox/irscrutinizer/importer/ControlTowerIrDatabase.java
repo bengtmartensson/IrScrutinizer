@@ -25,6 +25,8 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -84,7 +86,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
             Logger.getLogger(ControlTowerIrDatabase.class.getName()).log(Level.SEVERE, null, ex);
         } catch (LoginException ex) {
             System.err.println("Login failed: " + ex.getMessage());
-        } catch (IOException ex) {
+        } catch (IOException | URISyntaxException ex) {
             System.err.println(ex.getMessage());
         }
     }
@@ -133,8 +135,8 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
-    private InputStreamReader getReader(String str) throws IOException {
-        URL url = new URL(protocol, controlTowerIrDatabaseHost, portNo, path + "/" + str);
+    private InputStreamReader getReader(String str) throws IOException, URISyntaxException {
+        URL url = new URI(protocol, null, controlTowerIrDatabaseHost, portNo, path + "/" + str, null, null).toURL();
         if (verbose)
             System.err.println("Opening " + url);
         URLConnection urlConnection = url.openConnection();
@@ -142,7 +144,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         return new InputStreamReader(is, Charset.forName("US-ASCII"));
     }
 
-    private JsonValue readFrom(String str) throws IOException {
+    private JsonValue readFrom(String str) throws IOException, URISyntaxException {
         return readFrom(getReader(str));
     }
 
@@ -153,8 +155,8 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
-    private JsonObject postAndGetObject(String str, String payload) throws MalformedURLException, IOException, LoginException {
-        URL url = new URL(protocol, controlTowerIrDatabaseHost, portNo, path + str);
+    private JsonObject postAndGetObject(String str, String payload) throws MalformedURLException, IOException, LoginException, URISyntaxException {
+        URL url = new URI(protocol, null, controlTowerIrDatabaseHost, portNo, path + str, null, null).toURL();
         if (verbose)
             System.err.println("Opening (POST) " + url.toString());
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -209,7 +211,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
     }
 
     // UNTESTED!!
-    public void login() throws MalformedURLException, IOException, LoginException {
+    public void login() throws MalformedURLException, IOException, LoginException, URISyntaxException {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         builder.add("Email", email);
         builder.add("Password", password);
@@ -224,7 +226,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         evaluateAccount(acct);
     }
 
-    public void logout() throws MalformedURLException, IOException, LoginException {
+    public void logout() throws MalformedURLException, IOException, LoginException, URISyntaxException {
         if (apiKey == null)
             throw new LoginException("Not logged in");
         JsonObject response = postAndGetObject("/account/logout" + apiKeyString('?'), "");
@@ -235,16 +237,16 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
     }
 
 
-    private JsonArray getJsonArray(String str) throws IOException {
+    private JsonArray getJsonArray(String str) throws IOException, URISyntaxException {
         return readFrom(str).asJsonArray();
     }
 
 
-    private JsonObject getJsonObject(String str) throws IOException {
+    private JsonObject getJsonObject(String str) throws IOException, URISyntaxException {
         return readFrom(str).asJsonObject();
     }
 
-    private Map<String, String> getMap(String urlFragment, String keyName, String valueName) throws IOException {
+    private Map<String, String> getMap(String urlFragment, String keyName, String valueName) throws IOException, URISyntaxException {
         JsonArray array = getJsonArray(urlFragment);
         Map<String,String> map = new HashMap<>(array.size());
         for (JsonValue val : array) {
@@ -254,15 +256,15 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         return map;
     }
 
-    private void loadManufacturers() throws IOException {
+    private void loadManufacturers() throws IOException, URISyntaxException {
         manufacturerMap = getMap("brands", "Name", "$id");
     }
 
-    private void loadTypes() throws IOException {
+    private void loadTypes() throws IOException, URISyntaxException {
         typesMap = getMap("types", "Name", "$id");
     }
 
-    public String getStatus() throws IOException {
+    public String getStatus() throws IOException, URISyntaxException {
         if (apiKey == null)
             return "Not logged in";
         JsonObject obj = getJsonObject("account" + apiKeyString('?'));
@@ -270,49 +272,49 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         return obj.toString();
     }
 
-    public Collection<String> getManufacturers() throws IOException {
+    public Collection<String> getManufacturers() throws IOException, URISyntaxException {
         if (manufacturerMap == null)
             loadManufacturers();
         return manufacturerMap.keySet();
     }
 
-    public Collection<String> getDeviceTypes() throws IOException {
+    public Collection<String> getDeviceTypes() throws IOException, URISyntaxException {
         if (typesMap == null)
             loadTypes();
         return typesMap.keySet();
     }
 
-    public Collection<String> getDeviceTypes(String manufacturerKey) throws IOException {
+    public Collection<String> getDeviceTypes(String manufacturerKey) throws IOException, URISyntaxException {
         return getMap("brands/" + httpEncode(manufacturerKey) + "/types", "Type", "$id").keySet();
     }
 
     // Note: This call is not optimized, it may not perform as well as a call to
     //“api/brands/{brand}/types”.
-    public Collection<String> getManufacturers(String type) throws IOException {
+    public Collection<String> getManufacturers(String type) throws IOException, URISyntaxException {
         return getMap("types/" + httpEncode(type) + "/brands", "Brand", "$id").keySet();
     }
 
-    public Map<String, String> getModels(String manufacturer, String type) throws IOException {
+    public Map<String, String> getModels(String manufacturer, String type) throws IOException, URISyntaxException {
         return getMap("brands/" + httpEncode(manufacturer) + "/types/" + httpEncode(type) + "/models", "Name", "ID");
     }
 
-    public Model getModel(int setId) throws IOException {
+    public Model getModel(int setId) throws IOException, URISyntaxException {
         JsonObject obj = getJsonObject("/codesets/" + Integer.toString(setId) + "/models");
         return new Model(obj);
     }
 
-    public Map<String, String> getCodesetTable(String manufacturerKey, String deviceTypeKey) throws IOException {
+    public Map<String, String> getCodesetTable(String manufacturerKey, String deviceTypeKey) throws IOException, URISyntaxException {
         return getMap("brands/" + httpEncode(manufacturerKey) + "/types/" + httpEncode(deviceTypeKey) + "/models",
                 "Name", "ID");
     }
 
-    public Collection<String> getCommands(int setId) throws IOException {
+    public Collection<String> getCommands(int setId) throws IOException, URISyntaxException {
         return getMap("codesets/" + Integer.toString(setId) + "/functions",
                 "Function", "$id").keySet();
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
-    public void getCodeset(int setId, boolean email) throws IOException, LoginException {
+    public void getCodeset(int setId, boolean email) throws IOException, LoginException, URISyntaxException {
         if (apiKey == null)
             throw new LoginException("Must be logged in");
         if (email) {
@@ -333,7 +335,7 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
         }
     }
 
-    public void load(String manufacturerKey, String deviceTypeKey, String codeSet) throws IOException {
+    public void load(String manufacturerKey, String deviceTypeKey, String codeSet) throws IOException, URISyntaxException {
         clearCommands();
         manufacturer = manufacturerKey;
         deviceType = deviceTypeKey;

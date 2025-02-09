@@ -23,6 +23,7 @@ import com.beust.jcommander.ParameterException;
 import java.awt.HeadlessException;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -187,7 +188,7 @@ public class IrScrutinizer {
                         return null;
                     }
                 });
-            } catch (ParserConfigurationException ex) {
+            } catch (ParserConfigurationException | URISyntaxException ex) {
                 GuiUtils.fatal(ex, IrpUtils.EXIT_INTERNAL_FAILURE);
             } catch (SAXException ex) {
                 GuiUtils.fatal(ex, IrpUtils.EXIT_XML_ERROR);

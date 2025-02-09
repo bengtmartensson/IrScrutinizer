@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import javax.swing.SwingUtilities;
@@ -43,14 +44,14 @@ import org.w3c.dom.Document;
  */
 public class HelpPopup extends javax.swing.JDialog {
 
-    private static URL baseUrl = null;
+    private static URI baseUri = null;
 
-    public static void setBaseUrl(URL newBaseUrl) {
-        baseUrl = newBaseUrl;
+    public static void setBaseUri(URI newBaseUri) {
+        baseUri = newBaseUri;
     }
 
-    public static void setBaseUrl(File file) throws MalformedURLException {
-        setBaseUrl(file.toURI().toURL());
+    public static void setBaseUri(File file) {
+        setBaseUri(file.toURI());
     }
 
     private final String payload;
@@ -75,7 +76,7 @@ public class HelpPopup extends javax.swing.JDialog {
             textPane.addHyperlinkListener((HyperlinkEvent e) -> {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     try {
-                        URL url = e.getURL() != null ? e.getURL() : new URL(baseUrl, e.getDescription());
+                        URL url = e.getURL() != null ? e.getURL() : baseUri.resolve(e.getDescription()).toURL();
                         guiUtils.browse(url);
                     } catch (URISyntaxException | MalformedURLException ex) {
                         guiUtils.error(ex);

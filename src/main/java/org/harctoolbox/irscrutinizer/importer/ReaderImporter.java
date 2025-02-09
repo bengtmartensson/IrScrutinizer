@@ -25,7 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
@@ -65,8 +66,8 @@ public abstract class ReaderImporter extends FileImporter {
     }
 
     // There is no verbose option here...
-    private void loadURL(String urlOrFilename, String charsetName) throws MalformedURLException, IOException, ParseException, InvalidArgumentException {
-        URL url = new URL(urlOrFilename);
+    private void loadURL(String urlOrFilename, String charsetName) throws IOException, ParseException, InvalidArgumentException, URISyntaxException {
+        URL url = new URI(urlOrFilename).toURL();
         URLConnection urlConnection = url.openConnection();
         try (InputStream inputStream = urlConnection.getInputStream()) {
             load(inputStream, urlOrFilename, charsetName);
@@ -83,7 +84,7 @@ public abstract class ReaderImporter extends FileImporter {
 
         try {
            loadURL(urlOrFilename, charsetName);
-        } catch (MalformedURLException ex) {
+        } catch (URISyntaxException | InvalidArgumentException ex) {
             if (zip)
                 possiblyZipLoad(new File(urlOrFilename), charsetName);
             else

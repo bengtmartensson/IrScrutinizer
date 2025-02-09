@@ -216,12 +216,13 @@ public final class GuiMain extends javax.swing.JFrame {
      * @throws SAXException
      * @throws IOException
      * @throws org.harctoolbox.irp.IrpParseException
+     * @throws java.net.URISyntaxException
      */
-    public GuiMain(String applicationHome, String propsfilename, boolean verbose, List<String> arguments) throws IOException, ParserConfigurationException, SAXException, IrpParseException {
+    public GuiMain(String applicationHome, String propsfilename, boolean verbose, List<String> arguments) throws IOException, ParserConfigurationException, SAXException, IrpParseException, URISyntaxException {
         this(applicationHome, new Props(propsfilename, applicationHome), verbose, arguments);
     }
 
-    GuiMain(String applicationHome, Props props, boolean verbose, List<String> arguments) throws IOException, ParserConfigurationException, SAXException, IrpParseException {
+    GuiMain(String applicationHome, Props props, boolean verbose, List<String> arguments) throws IOException, ParserConfigurationException, SAXException, IrpParseException, URISyntaxException {
         this.applicationHome = applicationHome;
         setupProperties(props, verbose);
         setupFrame();
@@ -255,12 +256,13 @@ public final class GuiMain extends javax.swing.JFrame {
      * @throws ParserConfigurationException
      * @throws SAXException
      * @throws IrpParseException
+     * @throws URISyntaxException
      */
-    GuiMain() throws IOException, ParserConfigurationException, SAXException, IrpParseException {
+    GuiMain() throws IOException, ParserConfigurationException, SAXException, IrpParseException, URISyntaxException {
         this(System.getProperty("user.dir") + "/target");
     }
 
-    GuiMain(String applicationhome) throws IOException, ParserConfigurationException, SAXException, IrpParseException {
+    GuiMain(String applicationhome) throws IOException, ParserConfigurationException, SAXException, IrpParseException, URISyntaxException {
         this(applicationhome, new Props(applicationhome), false, new ArrayList<String>(0));
     }
 
@@ -269,7 +271,7 @@ public final class GuiMain extends javax.swing.JFrame {
         if (verbose)
             properties.setVerbose(true);
         Importer.setProperties(properties);
-        HelpPopup.setBaseUrl(new File(properties.mkPathAbsolute(properties.getProtocolDocfilePath())));
+        HelpPopup.setBaseUri(new File(properties.mkPathAbsolute(properties.getProtocolDocfilePath())));
         SelectFile.restoreFromString(properties.getFileselectordirs());
         Exporter.setCreatingUser(properties.getCreatingUser());
         Exporter.setEncoding(properties.getExportCharsetName());
@@ -360,7 +362,7 @@ public final class GuiMain extends javax.swing.JFrame {
         Command.setIrpDatabase(irpDatabase);
     }
 
-    private void setupImporters() throws MalformedURLException, IrpParseException {
+    private void setupImporters() throws MalformedURLException, IrpParseException, URISyntaxException {
         setupLircImporter();
         setupIrTransImporter();
         setupFlipperImporter();
@@ -483,13 +485,13 @@ public final class GuiMain extends javax.swing.JFrame {
         ictImporter.setChop(properties.getChopIctImports());
     }
 
-    private void setupGirrImporter() throws MalformedURLException {
+    private void setupGirrImporter() throws MalformedURLException, URISyntaxException {
         Command.setAcceptEmptyCommands(properties.getAllowEmptyGirrCommands());
-        girrImporter = new GirrImporter(properties.getGirrValidate(), new URL(properties.getGirrSchemaLocation()), this);
+        girrImporter = new GirrImporter(properties.getGirrValidate(), new URI(properties.getGirrSchemaLocation()).toURL(), this);
         properties.addGirrSchemaLocationChangeListener((String name1, Object oldValue, Object newValue) -> {
             try {
-                girrImporter.setUrl(new URL((String)newValue));
-            } catch (MalformedURLException ex) {
+                girrImporter.setUrl(new URI((String)newValue).toURL());
+            } catch (MalformedURLException | URISyntaxException ex) {
                 guiUtils.error(ex);
             }
         });

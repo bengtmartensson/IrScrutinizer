@@ -231,7 +231,7 @@ public class ControlTowerBrowser extends HarcPanel {
             controlTowerCodeSetComboBox.setModel(dcbm);
             controlTowerCodeSetComboBox.setEnabled(true);
             controlTowerImportButton.setEnabled(true);
-        } catch (IOException ex) {
+        } catch (IOException | URISyntaxException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_controlTowerDeviceTypeComboBoxActionPerformed
@@ -257,7 +257,7 @@ public class ControlTowerBrowser extends HarcPanel {
                 controlTowerDeviceTypeComboBox.setEnabled(true);
             }
             controlTowerTreeImporter.clear();
-        } catch (IOException ex) {
+        } catch (IOException | URISyntaxException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_controlTowerManufacturerComboBoxActionPerformed
@@ -270,7 +270,7 @@ public class ControlTowerBrowser extends HarcPanel {
             String codeSet = controlTowerCodesetTable.get(modelName);
             controlTowerIrDatabase.load(manufacturer, deviceType, codeSet);
             controlTowerTreeImporter.setRemoteSet(controlTowerIrDatabase.getRemoteSet(), "Control Tower");
-        } catch (IOException ex) {
+        } catch (IOException | URISyntaxException ex) {
             guiUtils.error(ex);
         }
     }//GEN-LAST:event_controlTowerImportButtonActionPerformed
