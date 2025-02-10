@@ -20,10 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
                             xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
-                            name="Arduino-IRremote-Raw" extension="ino" multiSignal="true" simpleSequence="false">
+                            name="Arduino-IRremote-Raw-Byte" extension="ino" multiSignal="true" simpleSequence="false">
     <exportformats:documentation>
         <div>This export format generates an <a href="https://www.arduino.cc/">Arduino</a> sketch file (.ino).
-        The raw format will be used. It uses the IR library
+        The raw format, using durations in ticks and bytes as data format, will be used. It uses the IR library
                 <a href="https://github.com/Arduino-IRremote/Arduino-IRremote">IRremote</a> version 4.
                 Earlier versions are not supported.
         </div>
@@ -42,6 +42,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     version="1.0">
         <xsl:output method="text" />
         <xsl:include href="IRremote_utils.xsl"/>
-        <xsl:variable name="raw-data-type" select="'static const uint16_t'" />
+
+        <xsl:variable name="raw-data-type" select="'static const uint8_t'" />
+
+    <!-- Note (to myself and others): an extra comma in the initializer list is allowed in the specitication.-->
+    <xsl:template match="girr:flash|girr:gap">
+        <xsl:if test=". &gt; 12750">
+            <xsl:text>255</xsl:text>
+        </xsl:if>
+        <xsl:if test=". &lt;= 12750">
+            <xsl:value-of select="round(. div 50)"/>
+        </xsl:if>
+        <xsl:text>U, </xsl:text>
+    </xsl:template>
+
     </xsl:stylesheet>
 </exportformats:exportformat>
