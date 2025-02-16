@@ -4,9 +4,38 @@ Girr, HardHardware, RemoteLocator, DevSlashLirc and Jirc.
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
+Version 2.4.2, released 2025-02-xx.
+
+* Use IrpTransmogrifier 1.2.14, Girr 2.2.14, Jirc 2.2.14, RemoteLocator 1.0.0, HarcHardware 2.4.2.
+* Fixes to IRremote export (several dialects). #444.
+* Some URL/URI related fixes.
+* New GUI option Options -> Debug -> XSLT Debug.
+* Fix bug when calling DynamicRemoteSetExportFormat.main() without GUI.
+* Improvements of RemoteLocatorImporter.
+* Ensure that meta data in girr files on the command line are read.
+* Support import and export of Flipper *.ir files.
+* Fixed bug in Girr export of certain combinations of parameter inheritance and defaults. Girr #539.
+* Fix bug in "duplicate" in Parametric Remote table. #544.
+* Minor cleanup of documentation of export format.
+* New command line option: --remotelocator.
+* Fix some problems in importing Girr files with embedded IRP protocol. #542.
+* GUI option for removing secondary IRP data base. Resolves #540.
+* Some tweaks on icons and help texts.
+* XCF import: Handle duplicated function names by renaming,
+  In Version 4, support pages; they now map to CommandSets. Resolves #538.
+* CsvParametrizedImporter: Handle parameter value "none" more gracefully.
+* Reject empty clipboards when importing remotes.
+* Support import XCF version 6 import. Resolves #537.
+* Reorganized baud rate setting in GirsClientBean. Resolves #534,
+* Minor fix to handling of propertiesfile.
+* Restructured reAnalyze/scrutinizeSignal.
+* Fix decoding bug. #531.
+* Relocate ControlTower "Importer" to Tools. #525.
+
+==============================================================================
 Version 2.4.1, released 2024-03-16.
 
-* Use IrpTransmogrifier 1.2.14, Girr 2.2.14, Jirc 2.2.14, RemoteLocator 0.2.1, HarcHardware 2.4.1.
+* Use IrpTransmogrifier 1.2.13, Girr 2.2.13, Jirc 2.2.13, RemoteLocator 0.2.1, HarcHardware 2.4.1.
 * Bugfix: Helptext links failed if the IrpProtocols pathname contained spaces.
 * Remove option "Reject Lirc imports without timing". Resolves #522.
 * Implemented secondary export formats file/directory. Resolves #294.

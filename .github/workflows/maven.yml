@@ -27,8 +27,8 @@ jobs:
 #      run: ./common/scripts/build-harctoolbox-project.sh Girr
 #    - name: Build Jirc
 #      run: ./common/scripts/build-harctoolbox-project.sh Jirc
-    - name: Build RemoteLocator
-      run: ./common/scripts/build-harctoolbox-project.sh RemoteLocator
+#    - name: Build RemoteLocator
+#      run: ./common/scripts/build-harctoolbox-project.sh RemoteLocator
     - name: Build HarcHardware
       run: ./common/scripts/build-harctoolbox-project.sh HarcHardware
     - name: Build Tonto
