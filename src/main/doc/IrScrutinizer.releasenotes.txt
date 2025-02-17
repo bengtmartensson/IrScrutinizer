@@ -4,7 +4,7 @@ Girr, HardHardware, RemoteLocator, DevSlashLirc and Jirc.
 The notation #n refers to issues number n at
 https://github.com/bengtmartensson/IrScrutinizer/issues
 ==============================================================================
-Version 2.4.2, released 2025-02-xx.
+Version 2.4.2, released 2025-02-17.
 
 * Use IrpTransmogrifier 1.2.14, Girr 2.2.14, Jirc 2.2.14, RemoteLocator 1.0.0, HarcHardware 2.4.2.
 * Fixes to IRremote export (several dialects). #444.
