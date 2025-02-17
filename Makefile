@@ -11,6 +11,9 @@ TOP := $(realpath $(MYDIR))
 
 include $(MYDIR)/common/makefiles/paths.mk
 
+# This file is not public ;-)
+-include $(MYDIR)/../RemoteLocator/upload_location.mk
+
 GH_PAGES := $(TOP)/gh-pages
 ORIGINURL := $(shell git remote get-url origin)
 PROJECT_NAME := $(MYPROG)
@@ -58,8 +61,8 @@ tag:
 	git tag -a Version-$(VERSION) -m "Tagging Version-$(VERSION)"
 	git push origin Version-$(VERSION)
 
-upload-version:
-	curl --netrc -T target/$(MYPROG).version ftp://bengt-martensson.de/harctoolbox/downloads/$(MYPROG).version
+upload-version: target/$(MYPROG).version
+	scp $< $(UPLOAD_LOCATION)
 
 upload-harctoolbox:
 	@(cd $(TOP)/../www.harctoolbox.org ; \
