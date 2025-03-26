@@ -84,7 +84,7 @@ public abstract class ReaderImporter extends FileImporter {
 
         try {
            loadURL(urlOrFilename, charsetName);
-        } catch (URISyntaxException | InvalidArgumentException ex) {
+        } catch (URISyntaxException | InvalidArgumentException | IllegalArgumentException ex) {
             if (zip)
                 possiblyZipLoad(new File(urlOrFilename), charsetName);
             else
