@@ -6,15 +6,15 @@
 
     <!-- Our own DTDs -->
     <public publicId="-//harctoolbox.org//version//en" uri="../dtds/version.dtd"/>
-    <system systemId="http://www.harctoolbox.org/dtds/version.dtd" uri="../dtds/version.dtd"/>
+    <system systemId="https://www.harctoolbox.org/dtds/version.dtd" uri="../dtds/version.dtd"/>
     <public publicId="-//harctoolbox.org//properties//en" uri="../dtds/properties.dtd"/>
-    <system systemId="http://www.harctoolbox.org/dtds/properties.dtd" uri="../dtds/properties.dtd"/>
+    <system systemId="https://www.harctoolbox.org/dtds/properties.dtd" uri="../dtds/properties.dtd"/>
 
     <!-- Our own schemas -->
-    <system systemId="http://www.harctoolbox.org/schemas/exportformats.xsd" uri="./exportformats.xsd"/>
-    <system systemId="http://www.harctoolbox.org/schemas/girr_ns.xsd" uri="./girr_ns.xsd"/>
-    <system systemId="http://www.harctoolbox.org/schemas/girr.xsd" uri="./girr.xsd"/>
-    <system systemId="http://www.harctoolbox.org/schemas/irp-protocols.xsd" uri="./irp-protocols.xsd"/>
+    <system systemId="https://www.harctoolbox.org/schemas/exportformats.xsd" uri="./exportformats.xsd"/>
+    <system systemId="https://www.harctoolbox.org/schemas/girr_ns.xsd" uri="./girr_ns.xsd"/>
+    <system systemId="https://www.harctoolbox.org/schemas/girr.xsd" uri="./girr.xsd"/>
+    <system systemId="https://www.harctoolbox.org/schemas/irp-protocols.xsd" uri="./irp-protocols.xsd"/>
 
     <!-- Apache Forrest, used by the documentation files -->
     <!--public publicId="-//APACHE//DTD DocumentationV2.0//en" uri="./document-v20.dtd"/-->

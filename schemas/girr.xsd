@@ -15,7 +15,7 @@
         <xs:documentation>
             <html:div>
                 The Girr format
-                is documented at <html:a href="http://www.harctoolbox.org/Girr.html">www.harctoolbox.org/Girr.html</html:a>
+                is documented at <html:a href="https://www.harctoolbox.org/Girr.html">www.harctoolbox.org/Girr.html</html:a>
             </html:div>
         </xs:documentation>
     </xs:annotation>
