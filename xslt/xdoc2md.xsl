@@ -81,12 +81,12 @@
 
     <!-- Fix up local references; they won't be local any more -->
     <xsl:template match="@href[not(starts-with(., 'http'))]">
-        <xsl:text>http://harctoolbox.org/</xsl:text>
+        <xsl:text>https://harctoolbox.org/</xsl:text>
         <xsl:value-of select="."/>
     </xsl:template>
 
     <xsl:template match="@href[substring(.,1,1)='#']">
-        <xsl:text>http://harctoolbox.org/Girr.html</xsl:text>
+        <xsl:text>https://harctoolbox.org/Girr.html</xsl:text>
         <xsl:value-of select="."/>
     </xsl:template>
 
