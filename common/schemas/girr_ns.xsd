@@ -18,7 +18,7 @@
         <xs:documentation>
             <html:div>
                 The Girr format
-                is documented at <html:a href="http://www.harctoolbox.org/Girr.html">www.harctoolbox.org/Girr.html</html:a>
+                is documented at <html:a href="https://www.harctoolbox.org/Girr.html">www.harctoolbox.org/Girr.html</html:a>
             </html:div>
         </xs:documentation>
     </xs:annotation>
@@ -26,7 +26,7 @@
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
     <xs:import namespace="http://www.w3.org/1999/xhtml" schemaLocation="http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd"/>
     <xs:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="https://www.w3.org/2001/XInclude/XInclude.xsd"/>
-    <xs:import namespace="http://www.harctoolbox.org/irp-protocols" schemaLocation="http://www.harctoolbox.org/schemas/irp-protocols.xsd"/>
+    <xs:import namespace="http://www.harctoolbox.org/irp-protocols" schemaLocation="https://www.harctoolbox.org/schemas/irp-protocols.xsd"/>
 
     <xs:simpleType name="masterEnum">
         <xs:annotation>

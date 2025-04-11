@@ -16,13 +16,13 @@
         <xs:documentation>
             <html:div>
                 This document determines and documents the format of the protocol data base <html:code>IrpProtocols.xml</html:code> as used in
-                <html:a href="http://www.harctoolbox.org/IrpTransmogrifier.html">IrpTransmogrifier</html:a>,
+                <html:a href="https://www.harctoolbox.org/IrpTransmogrifier.html">IrpTransmogrifier</html:a>,
                 (and possibly other programs).
                 It is maintained in the repository
                 <html:a href="https://github.com/bengtmartensson/IrpTransmogrifier">https://github.com/bengtmartensson/IrpTransmogrifier"</html:a>
                 with path <html:a href="https://raw.githubusercontent.com/bengtmartensson/IrpTransmogrifier/master/src/main/schemas/irp-protocols.xsd">
                     main/schemas/irp-protocols.xsd</html:a>, and can be used with <html:code>schemaLocation</html:code>
-                    <html:a href="http://www.harctoolbox.org/schemas/irp-protocols.xsd">http://www.harctoolbox.org/schemas/irp-protocols.xsd</html:a>.
+                    <html:a href="https://www.harctoolbox.org/schemas/irp-protocols.xsd">https://www.harctoolbox.org/schemas/irp-protocols.xsd</html:a>.
             </html:div>
         </xs:documentation>
     </xs:annotation>

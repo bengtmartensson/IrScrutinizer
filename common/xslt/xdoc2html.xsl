@@ -63,7 +63,7 @@
    <xsl:template match="/document/body/table">
        <p>For the revision history of this document, see
            the original document on the
-           <a><xsl:attribute name="href">http://www.harctoolbox.org</xsl:attribute>web site</a>.
+           <a><xsl:attribute name="href">https://www.harctoolbox.org</xsl:attribute>web site</a>.
        </p>
    </xsl:template>
 
@@ -143,7 +143,7 @@
                                 or starts-with(.,'IrpTransmogrifier')
                                 or starts-with(.,'Glossary'))]">
         <xsl:attribute name="href">
-            <xsl:text>http://www.harctoolbox.org/</xsl:text>
+            <xsl:text>https://www.harctoolbox.org/</xsl:text>
             <xsl:value-of select="."/>
         </xsl:attribute>
     </xsl:template>
