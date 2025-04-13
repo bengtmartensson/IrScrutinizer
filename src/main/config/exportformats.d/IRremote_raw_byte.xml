@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <exportformats:exportformat xmlns="http://www.w3.org/1999/xhtml"
                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
-                            xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
+                            xsi:schemaLocation="http://www.harctoolbox.org/exportformats https://www.harctoolbox.org/schemas/exportformats.xsd"
                             name="Arduino-IRremote-Raw-Byte" extension="ino" multiSignal="true" simpleSequence="false">
     <exportformats:documentation>
         <div>This export format generates an <a href="https://www.arduino.cc/">Arduino</a> sketch file (.ino).

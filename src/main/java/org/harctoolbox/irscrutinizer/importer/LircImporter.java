@@ -32,8 +32,8 @@ import org.harctoolbox.jirc.IrRemote;
  * This class is basically a wrapper around Jirc.
  */
 public class LircImporter extends RemoteSetImporter implements IReaderImporter, Serializable {
-    public static final String remotesUrl = "http://lirc.sourceforge.net/remotes/";
-    public static final String homeUrl = "http://www.lirc.org/";
+    public static final String remotesUrl = "https://lirc.sourceforge.net/remotes/";
+    public static final String homeUrl = "https://www.lirc.org/";
 
     /** We ignore LircCode remotes. */
     private boolean rejectLircCode = false;

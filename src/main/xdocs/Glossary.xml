@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="glossary2html.xsl"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "https://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
     <title>Glossary and terms</title>
@@ -51,6 +51,10 @@
 	  <td>2022-05-13</td>
 	  <td>Some updates in the context of IrScrutinizer 2.4.0.</td>
 	</tr>
+        <tr>
+            <td>2025-04-11</td>
+            <td>Changed most <code>http:</code> to <code>https:</code></td>
+        </tr>
       </table>
 <section>
 <title>Glossary</title>
@@ -77,7 +81,7 @@ properties.</dd>
     By its makers characterized as    "... the  leading  tool  available  for  analysing,  decoding  and
 reverse engineering infrared remote control protocols".
     Last release appears to be from July 2016.
-    <a href="http://www.analysir.com">Web site.</a>
+    <a href="https://www.analysir.com">Web site.</a>
 </dd>
 
 <dt id="Analyzer">Analyzer</dt>
@@ -99,7 +103,7 @@ From a grammar, ANTLR generates a parser that can build and walk parse trees."
 <dt id="Arduino">Arduino</dt>
 <dd>A single-board micro-controller, based upon a 8-bit Atmel AVR
 micro-controller, or a 32-bit Atmel ARM. <a
-href="http://www.arduino.cc">Official site</a>. Can be used for
+href="https://www.arduino.cc">Official site</a>. Can be used for
 implementing sending and/or capturing of infrared signals with
 additional hardware attached to its IO-pins, see for example <a href="arduino_nano.html">this project</a>.
 The main components of the Arduino eco systems are:
@@ -158,19 +162,19 @@ can import and export ccf files, using the said API.</dd>
 Often combined with a <a href="#RepeatFinder">repeat finder</a>.</dd>
 
 <dt id="CML">CML</dt>
-<dd>Proprietary binary format by <a href="http://www.rticorp.com/">RTI</a> for their IR database files.
+<dd>Proprietary binary format by <a href="https://www.rticorp.com/">RTI</a> for their IR database files.
 Has been reverse engineered; IrScrutinizer can import it.
 One well known CML file is the
-<a href="http://files.remotecentral.com/collection/66-1/index.html">Mega List Database</a>,
+<a href="https://files.remotecentral.com/collection/66-1/index.html">Mega List Database</a>,
 which is a huge database of IR codes maintaned by Glackowitz from the
-<a href="http://www.remotecentral.com/">Remote Central Forums</a>.</dd>
+<a href="https://www.remotecentral.com/">Remote Central Forums</a>.</dd>
 
 <dt id="Command">Command</dt>
 <dd>Here, an <a href="#IrSignal">IR signal</a> with a name, like "Play".</dd>
 
 <dt id="CIR">Consumer IR (CIR)</dt>
 <dd>Consumer IR deals with IR control of various devices, often audio or video. <a
-href="http://en.wikipedia.org/wiki/Consumer_IR">Wikipedia
+href="https://en.wikipedia.org/wiki/Consumer_IR">Wikipedia
 article</a>. Not to be confused with <a
 href="#IRDA">IRDA</a>. Typically uses wave lengths of 940&ndash;950nm.</dd>
 
@@ -209,7 +213,7 @@ signal with the modulation removed.  The modulation frequency of the signal
 must "match" the frequency of the demodulator. Receiver chips are typically marked TSMP<em>XXYY</em>,
 where <em>XX</em> (two or three digits) denotes a vendor specific type, and <em>YY</em>
 the modulation frequency in kHz.
-(<a href="http://www.vishay.com/docs/82460/tsop45.pdf">Data sheet</a> for a typical
+(<a href="https://www.vishay.com/docs/82460/tsop45.pdf">Data sheet</a> for a typical
 product.)
 Not suited for <a href="#Capturing">capturing</a> of unknown
 signals, since it removes the modulation frequency without identifying it.</dd>
@@ -255,7 +259,7 @@ by D in <a href="#IrpNotation">IRP protocols</a>.</dd>
 tool for MS Windows. It can use different input devices like infrared
 or wireless remote controls to trigger macros, that on their part
 control a computer and its attached hardware." Licensed under GPL2. <a
-href="http://www.eventghost.net">Home page</a>.</dd>
+href="https://www.eventghost.net">Home page</a>.</dd>
 
 <dt id="ExchangeIr">ExchangeIR</dt>
 <dd>Library for IR signal analysis and exchange by Graham Dixon. Licensed under the <a
@@ -264,7 +268,7 @@ Some interesting parts are an <a href="#Analyzer">Analyzer</a>, a <a
 href="#RepeatFinder">repeat finder</a>, and functions for the <a href="#UEILearnedFormat">UEI
 learned format</a>. These parts  has been
 translated to Java by myself: <a
-href="http://sourceforge.net/p/controlremote/code/HEAD/tree/trunk/exchangeir/">source</a>.</dd>
+href="https://sourceforge.net/p/controlremote/code/HEAD/tree/trunk/exchangeir/">source</a>.</dd>
 
 <dt id="Executor">Executor</dt>
 <dd>An embedded program fragment for the <a href="#Generating">rendering</a> and transmission of one
@@ -304,12 +308,12 @@ like <a href="#sendir">Global Caché sendir</a>. For a full description, see <a 
 
 <dt id="GlobalCache">Global Caché</dt>
 <dd>Manufacturer of IR sending hardware, in some cases with learning and/or receiving possibilities.
-    <a href="http://www.globalcache.com/">Web site</a>.
+    <a href="https://www.globalcache.com/">Web site</a>.
     Supported in <a href="#IrScrutinizer">IrScrutinizer</a>.
 </dd>
 
 <dt id="GPL3">GPL3 license</dt>
-<dd>The current version of the <a href="http://www.gnu.org/licenses/">GNU
+<dd>The current version of the <a href="https://www.gnu.org/licenses/">GNU
 General Public License</a>. Used by my software projects (with some
 exceptions), and many so-called open-source software projects. The basic idea
 is the licensee is allowed to use, enhance etc. the software (also in a
@@ -321,17 +325,17 @@ commerical product and context), but is not allowed to turn it, or a derived pro
 </dd>
 
 <dt id="IR">IR (Infrared light)</dt>
-<dd>According to <a href="http://en.wikipedia.org/wiki/Infrared">Wikipedia</a>,
+<dd>According to <a href="https://en.wikipedia.org/wiki/Infrared">Wikipedia</a>,
 infrared light are light (electromagnetic radiation) of wavelength between
 700nm and 1mm. For control of consumer electronics (CIR), according to
-<a href="http://en.wikipedia.org/wiki/Consumer_IR">Wikipedia</a>, wavelengths
+<a href="https://en.wikipedia.org/wiki/Consumer_IR">Wikipedia</a>, wavelengths
 around 870 nm and 930-950 nm (latter preferred), in comparison to IrDA
 (850-900nm) are used. Almost always generated by an <a
 href="#IrLed">IR LED</a>.<!-- Dave Houston: CIR: 940nm -->
       </dd>
 
 <dt id="IRDA">IrDA</dt>
-<dd><a href="http://en.wikipedia.org/wiki/Infrared_Data_Association">IrDA</a> is a
+<dd><a href="https://en.wikipedia.org/wiki/Infrared_Data_Association">IrDA</a> is a
 method for data exchange between PCs and portable devices. It is no longer to
 be considered as state-or-the-art, and has been almost completely replaced by
 Bluetooth and WiFi. Many devices with IrDA hardware are still around, but they are,
@@ -401,7 +405,7 @@ importing, and exporting of infrared signals. <a href="IrScrutinizer.html">Refer
 <dd>Program that implements a simple client for
     the Lircd server daemon, for sending commands to a <a href="#lircd">lircd</a> server.
     Contained in the Lirc package.
-    For a complete list or commands implemented, see its <a href="http://lirc.org/html/irsend.html">man page</a>.
+    For a complete list or commands implemented, see its <a href="https://lirc.org/html/irsend.html">man page</a>.
     <a href="#IrScrutinizer">IrScrutinizer</a> contains a GUI version with (approximately) the same functionality, under <code>Tools -> Named Command Sender</code>.
                 For a Python alternative, see <a href="https://github.com/bengtmartensson/Lirconian">Lirconian</a>.
                 For a Java alternative, see <a href="https://github.com/bengtmartensson/JavaLircClient">JavaLircClient</a>.
@@ -448,7 +452,7 @@ with the same name. IrScrutinizer and IrMaster support the Ethernet models
 
 <dt id="IrWidget">IrWidget</dt>
 <dd>An "open hardeware" project by Kevin Timmerman. <a
-href="http://www.compendiumarcana.com/irwidget/">Project page</a>. That page
+href="https://www.compendiumarcana.com/irwidget/">Project page</a>. That page
 presents many different versions, but the most spread version
 (<a href="http://www.hifi-remote.com/forums/viewtopic.php?t=16285">commercially available</a>  by Tommy Tyler; unknown if still active) consists of
 a micro processor PIC12F629, a non-demodulating sensor (QSE15x), and a USB serial
@@ -458,7 +462,7 @@ IrScrutinizer.</dd>
 <dt id="JNI">Java Native Interface (JNI)</dt>
 <dd>A technique for having a Java program calling a native shared library (DLL
 in Windows, "Shared object" (<code>.so</code>) in other operating systems). See
-the <a href="http://en.wikipedia.org/wiki/JNI">Wikipedia article</a>.</dd>
+the <a href="https://en.wikipedia.org/wiki/JNI">Wikipedia article</a>.</dd>
 
 <dt id="JP1">JP1</dt>
 <dd>Community for customizing <a href="#Jp1Remote">JP1 Remotes</a>.
@@ -474,11 +478,11 @@ The main tool for this is <a href="#RemoteMaster">RemoteMaster</a>.
 <dt id="JSON">JSON</dt>
 <dd>A standard for using human readable text to transfer structured
 data, as an alternative to XML. See the <a
-href="http://en.wikipedia.org/wiki/Json">Wikipedia article</a>.</dd>
+href="https://en.wikipedia.org/wiki/Json">Wikipedia article</a>.</dd>
 
 <dt id="Lirc">Lirc</dt>
 <dd>An open source project for sending and receiving IR signals from Linux.
-    <a href="http://www.lirc.org">Official web site</a>. First release in May
+    <a href="https://www.lirc.org">Official web site</a>. First release in May
 1996, current version is 0.10.1, released in September 2017.
 Also packaged in all major Linux distributions.
 IrScrutinizer supports
@@ -498,7 +502,7 @@ To send commands to a running lircd, often a program called <a href="#irsend">ir
     The main Lirc configuration file; a data base of <a href="#Remote">remotes</a> and its contained <a href="#Command">commands</a>.
     Typically residing in <code> /etc/lirc/lircd.conf</code>. Also used to denote the file format.
     The files in the Lirc data base are in this format. Although its syntax and semantics
-    <a href="http://lirc.org/html/lircd.conf.html">is documentated</a>, should not be
+    <a href="https://lirc.org/html/lircd.conf.html">is documentated</a>, should not be
     considered a viable exchange format. Can be imported by IrScrutinizer &mdash; since it contains a substantial amount
     of <a href="#Lircd">Lircd</a>, translated to Java.
 </dd>
@@ -507,14 +511,14 @@ To send commands to a running lircd, often a program called <a href="#irsend">ir
 <dd>A predecessor to IrpMaster. Adheres to an earlier version ("Version 1") of the <a href="#IrpNotation">IRP Notation</a>. For the original C++ program by John Fine, neither a GUI nor a command line
 interface are present; the parameters are given to the program by editing the
 data base files. A Java translation (by myself) exists, which has a command line interface, <a
-href="http://sourceforge.net/p/controlremote/code/HEAD/tree/trunk/makehex/">available
+href="https://sourceforge.net/p/controlremote/code/HEAD/tree/trunk/makehex/">available
 here</a>.</dd>
 
 <dt id="Mode2">Mode2</dt>
 <dd>
     <ol>
         <li>A simple test format consisting of interleaved <a href="#Flash">"on-</a> (<code>pulse</code>) and <a href="#Gap">off-durations</a> (<code>space</code>).</li>
-        <li>A simple <a href="http://www.lirc.org/html/mode2.html">program</a> contained in Lirc, printing the mode2 text format of received IR sequences to standard output.</li>
+        <li>A simple <a href="https://www.lirc.org/html/mode2.html">program</a> contained in Lirc, printing the mode2 text format of received IR sequences to standard output.</li>
         <li>In Lirc, notation for drivers/plugins capable of generating/evaluating data containing timing information.</li>
     </ol>
     </dd>
@@ -587,7 +591,7 @@ the open-source program <a href="#Tonto">Tonto</a>. </dd>
 <dd>Windows program for programming the Pronto remotes. Exists in different
 versions for different Pronto series. From its owner Philips now discontinued,
 but available for download at <a
-href="http://files.remotecentral.com/prontopro/index.html">RemoteCentral</a>.</dd>
+href="https://files.remotecentral.com/prontopro/index.html">RemoteCentral</a>.</dd>
 
 <dt id="ProntoFrequencyCode">Pronto frequency code</dt>
 <dd>The second number in the <a href="#ProntoSemantics">Pronto hex representation</a>. For <em>f</em> in Hertz, this is the
@@ -739,7 +743,7 @@ a selection is meaningful.</dd>
 <dd>"To change or alter greatly and often with grotesque or humorous effect"</dd>
 
 <dt id="UEILearnedFormat">UEI learned format</dt>
-<dd>Proprietary internal format for a single IR signal from <a href="http://www.uei.com/">Universal Electronics Inc.</a>
+<dd>Proprietary internal format for a single IR signal from <a href="https://www.uei.com/">Universal Electronics Inc.</a>
 By convention formatted as a sequence of two-digit hexadecimal numbers.
 Has been reverse engineered in <a href="#ExchangeIr">ExchangeIR</a>.
 Supported in previous versions of IrScrutinizer, but not in the current.
@@ -758,7 +762,7 @@ IrScrutinizer supports both the
 generation of wave files, as well as its import and analysis.</dd>
 
 <dt id="WinLirc">WinLirc</dt>
-<dd>According to its <a href="http://winlirc.sourceforge.net/">its web
+<dd>According to its <a href="https://winlirc.sourceforge.net/">its web
 site</a>, it "...is the Windows equivalent of <a
 href="#Lirc">Lirc</a>". It is not a port of Lirc, nor does it share
 any code with Lirc. Appears currently not to be maintained; last release was 0.9.0i released in May 2014.
@@ -778,12 +782,12 @@ can contain IR signals in different formats, like <a href="#CCF">CCF format</a>
 <dt id="XMLSchema">XML Schema</dt>
 <dd>XML Schema (also called XSD, for "Xml Schema Language") is an XML language
 for describing the syntax of XML documents. See the <a
-href="http://en.wikipedia.org/wiki/XML_Schema_%28W3C%29">Wikipedia article</a>.</dd>
+href="https://en.wikipedia.org/wiki/XML_Schema_%28W3C%29">Wikipedia article</a>.</dd>
 
 <dt id="XSLT">XSLT (Extensible Stylesheet Language Transformations)</dt>
 <dd>XSLT is an XML language for transforming XML documents into other XML
 documents, HTML-pages, or plain text. See the <a
-href="http://en.wikipedia.org/wiki/Xslt">Wikipedia article</a>. The programs
+href="https://en.wikipedia.org/wiki/Xslt">Wikipedia article</a>. The programs
 here use only XSLT version 1.0.</dd>
       </dl>
     </section>

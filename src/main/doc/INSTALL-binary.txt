@@ -3,4 +3,4 @@ Linux (including Raspberry Pi), Windows, Macs,
 and probably on other similar systems as well.
 
 For installation instructions, see 
-http://www.harctoolbox.org/IrScrutinizer.html#Generic+Binary .
+https://www.harctoolbox.org/IrScrutinizer.html#Generic+Binary .

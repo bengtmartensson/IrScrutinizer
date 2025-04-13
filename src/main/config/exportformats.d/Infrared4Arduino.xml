@@ -19,13 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <exportformats:exportformat xmlns="http://www.w3.org/1999/xhtml"
                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
-                            xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
+                            xsi:schemaLocation="http://www.harctoolbox.org/exportformats https://www.harctoolbox.org/schemas/exportformats.xsd"
                             name="Infrared4Arduino" extension="ino" multiSignal="true" simpleSequence="false">
 
     <exportformats:documentation>
         <div>This export format generates an <a href="https://www.arduino.cc/">Arduino</a> sketch file (.ino).
         using the Arduino IR library <a href="https://github.com/bengtmartensson/Infrared4Arduino">Infrared4Arduino</a>
-        (see also <a href="http://www.harctoolbox.org/Infrared4Arduino.html">this</a>).</div>
+        (see also <a href="https://www.harctoolbox.org/Infrared4Arduino.html">this</a>).</div>
         <div>If the signals uses a protocol directly supported by Infrared4Arduino (presently NEC1 and RC5),
             the parametrized form is used, otherwise the raw form.
         </div>
@@ -52,7 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // using the export format "Infrared4Arduino".
 // It supports Infrared4Arduino
 // https://github.com/bengtmartensson/Infrared4Arduino,
-// see also http://www.harctoolbox.org/Infrared4Arduino.html.
+// see also https://www.harctoolbox.org/Infrared4Arduino.html.
 // It is available in the Arduino library manager using the name "Infrared".
 
 // For problems, bugs, and suggestions, please open an issue at

@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <exportformats:exportformat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
-                            xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
+                            xsi:schemaLocation="http://www.harctoolbox.org/exportformats https://www.harctoolbox.org/schemas/exportformats.xsd"
                             name="AnyMote" extension="amsr" multiSignal="true" simpleSequence="false">
     <exportformats:documentation>
         <div>Animote is an remote control solution for Android, <a href="http://www.anymote.io/">now discontinued</a>.

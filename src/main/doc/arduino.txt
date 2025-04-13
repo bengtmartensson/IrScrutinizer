@@ -1,5 +1,5 @@
 For using Arduino in IrScrutinizer, see e.g. 
-http://www.harctoolbox.org/arduino_nano.html .
+https://www.harctoolbox.org/arduino_nano.html .
 For the firmware, use the Arduino libraries AGirs and InfraredArduino
 (available in the Arduino library manager), compile 
 and flash the AGirs "example" Girs.

@@ -45,7 +45,7 @@ public class IrPlotter extends HarcPanel {
             "IrPlotter version " + versionString + ".\n"
             + "Copyright 2013-2015 by Bengt Martensson.\n\n"
             + "License: GPL3.\n\n"
-            + "Project home page: http://www.harctoolbox.org";
+            + "Project home page: https://www.harctoolbox.org";
 
     private final static int topMargin = 10;
     private final static int bottomMargin = 50;

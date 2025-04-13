@@ -291,7 +291,7 @@ public class HelpPopup extends javax.swing.JDialog {
     */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> {
-            HelpPopup dialog = newHelpPopup(new javax.swing.JFrame(), "<html><body>The best defense against logic is <i>ignorance</i>. <a href=\"http://www.harctoolbox.org\">Project site.</a></body></html>", "Helpful help");
+            HelpPopup dialog = newHelpPopup(new javax.swing.JFrame(), "<html><body>The best defense against logic is <i>ignorance</i>. <a href=\"https://www.harctoolbox.org\">Project site.</a></body></html>", "Helpful help");
             dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 
                 @Override

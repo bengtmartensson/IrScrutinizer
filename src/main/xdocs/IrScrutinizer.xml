@@ -106,6 +106,10 @@
                 <td>2024-03-12</td>
                 <td>Added link to Lirc imports with and without timing info. Updated command line parameters. Misc fixes and updates.</td>
             </tr>
+            <tr>
+                <td>2025-04-11</td>
+                <td>Changed most <code>http:</code> to <code>https:</code></td>
+            </tr>
         </table>
 
         <section>
@@ -139,7 +143,7 @@
                 knowledge either from the <a
                     href="http://www.hifi-remote.com/wiki/index.php?title=Main_Page">JP1
                     Wiki</a>
-                or, e.g., <a href="http://www.sbprojects.net/knowledge/ir">this
+                or, e.g., <a href="https://www.sbprojects.net/knowledge/ir">this
                     link</a>.
             </p>
 
@@ -188,7 +192,7 @@
                 <p>The program, as well as this document, is copyright by myself. My
                     copyright does not extend to the embedded "components", like Jirc.
                     IrpTransmogrifier is using ANTLR4 and depends on the run time functions of ANTLR4, which
-                    is <a href="http://www.antlr.org/license.html">free software with BSD license</a>.</p>
+                    is <a href="https://www.antlr.org/license.html">free software with BSD license</a>.</p>
                 <p>
                     The "database file" <code>IrpProtocols.xml</code> is derived from <a
                         href="http://www.hifi-remote.com/wiki/index.php?title=DecodeIR">DecodeIR.html</a>,
@@ -196,21 +200,21 @@
                     thus I do not claim copyright.
                 </p>
                 <p>The program uses <a
-                        href="http://jcommander.org">JCommander</a> by  Cédric Beust to parse the
+                        href="https://jcommander.org">JCommander</a> by  Cédric Beust to parse the
                     command line arguments. It is free software with <a
                         href="https://github.com/cbeust/jcommander/blob/master/license.txt">Apache
                         2</a> license.</p>
 
-                        <p>Icons by <a href="http://www.everaldo.com">Everaldo Coelho</a> from the
-                            Crystal project are used; these are released under the <a href="http://www.gnu.org/licenses/lgpl.html">LGPL license</a>.</p>
+                        <p>Icons by <!-- Domain nonexisting   a href="http://www.everaldo.com"-->Everaldo Coelho from the
+                            Crystal project are used; these are released under the <a href="https://www.gnu.org/licenses/lgpl.html">LGPL license</a>.</p>
 
                         <p>The Windows installer was built with <a
-                                href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a>, which is <a
-                                href="http://www.jrsoftware.org/files/is/license.txt">free software</a> by
+                                href="https://www.jrsoftware.org/isinfo.php">Inno Setup</a>, which is <a
+                                href="https://www.jrsoftware.org/files/is/license.txt">free software</a> by
                             <a
-                                href="http://www.jrsoftware.org">Jordan Russel</a>.  To modify the user's path in Windows, the Inno extension <code>
+                                href="https://www.jrsoftware.org">Jordan Russel</a>.  To modify the user's path in Windows, the Inno extension <code>
                                 modpath</code> by Jared Breland, distributed under
-                            the <a href="http://www.gnu.org/licenses/lgpl.html">GNU Lesser General Public
+                            the <a href="https://www.gnu.org/licenses/lgpl.html">GNU Lesser General Public
                                 License (LGPL), version 3</a>.</p>
 
                         <p>Serial communication is handled by
@@ -221,10 +225,10 @@
                         </p>
 
                         <p>
-                            <a href="http://www.lirc.org">Lirc (Linux Infrared Remote Control)</a> is according
+                            <a href="https://www.lirc.org">Lirc (Linux Infrared Remote Control)</a> is according
                             to its web site copyright 1999 by Karsten Scheibler
                             and Christoph Bartelmus (with contribution of may others), and is licensed
-                            under <a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html">GPL2</a>. The parts used here have been translated to Java by myself,
+                            under <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html">GPL2</a>. The parts used here have been translated to Java by myself,
                             available with the name <a href="https://github.com/bengtmartensson/Jirc">Jirc</a>.</p>
 
                         <p>For Pronto Classic support, <a href="https://github.com/stewartoallen/tonto">Tonto</a> by Stewart Allen was used. It is licensed under the
@@ -237,7 +241,7 @@
 
                         <p>
                             The program and its documentation are licensed under the <a
-                                href="http://www.gnu.org/licenses/gpl.html">GNU General Public License version
+                                href="https://www.gnu.org/licenses/gpl.html">GNU General Public License version
                                 3</a>, making everyone free to use, study, improve, etc., under certain
                             conditions.</p>
 
@@ -354,7 +358,7 @@
 
             <section>
                 <title>AppImage for 64-bit Linux</title>
-                <p>An <a href="http://appimage.org/">AppImage</a> is a distribution consisting of
+                <p>An <a href="https://appimage.org/">AppImage</a> is a distribution consisting of
                     one large monolithic executable file that is downloaded, made executable, and run, without any
                     installation in the classical sense. At this moment, only 64-bit x86 Linux is supported. It is believed
                     to run on all modern, 64-bit x86 Linux distributions. Just download,
@@ -795,7 +799,7 @@
                                 <a href="https://sourceforge.net/projects/lirc-remotes/">Lirc remotes</a>
                             </dt>
                             <dd>
-                                <a href="http://lirc.org">Lirc</a>'s collection of remotes, which are collected in the Sourceforge project.
+                                <a href="https://lirc.org">Lirc</a>'s collection of remotes, which are collected in the Sourceforge project.
                                 This format also contains no meta information.
                                 The manufacturer information is gleaned from the file path; however there are no information on device class,
                                 so all the Lirc remotes have device class "unknown" in the generated list.
@@ -804,18 +808,18 @@
                                 <a href="https://github.com/bengtmartensson/GirrLib">GirrLib</a>
                             </dt>
                             <dd>
-                                <a href="http://harctoolbox.org/Girr.html">Girr</a> is a very versatile format for IR remotes.
+                                <a href="https://harctoolbox.org/Girr.html">Girr</a> is a very versatile format for IR remotes.
                                 It is the native format for IrScrutinizer, and also supported by main program
-                                <a href="https://sourceforge.net/projects/controlremote/">RMIR</a> of the <a href="http://hifi-remote.com/forums/index.php">JP1 project</a>.
+                                <a href="https://sourceforge.net/projects/controlremote/">RMIR</a> of the <a href="https://hifi-remote.com/forums/index.php">JP1 project</a>.
                                 Meta information, including manufacturer and device class, is contained in the Girr file.
                                 There is a small collection (Girrlib),
                                 which is more of a proof-of-concept than a sizeable collection of remotes.</dd>
                             <dt>
-                                <a href="http://hifi-remote.com/forums/index.php">JP1</a>
+                                <a href="https://hifi-remote.com/forums/index.php">JP1</a>
                             </dt>
                             <dd>
                                 The JP1 project has a large collection of "device upgrades". These are summarized in
-                                <a href="http://www.hifi-remote.com/forums/dload.php?action=file&amp;file_id=26089">an Excel file</a>.
+                                <a href="https://www.hifi-remote.com/forums/dload.php?action=file&amp;file_id=26089">an Excel file</a>.
                                 This list also contains meta information such as manufacturer and device class.
                                 It can be read into the program, and used to browse the therein contained remotes (or rather, "device upgrades").
                                 These can however not be directly loaded, but can with some manual work be translated to Girr files.
@@ -840,7 +844,7 @@
 
                     <p>For file/URL based imports, there is a text field, named File or
                         File/URL. For the latter case, an URL (like
-                        <code>http://lirc.sourceforge.net/remotes/yamaha/RX-V995</code>) can be
+                        <code>https://lirc.sourceforge.net/remotes/yamaha/RX-V995</code>) can be
                         entered, for subsequent import without downloading to a local disc. By pressing
                         the <code>...</code>-Button, a file selector allows the selection of a local file. For
                         files and URLs, the <code>Edit/Browse</code> button allows to examine the selected
@@ -889,8 +893,8 @@
                         <title>CML</title>
                         <p>The CML format is the format used by the RTI Integration Designer software.
                             Many CML files are available in Internet, in particular on
-                            <a href="http://files.remotecentral.com/rti/index.html">RemoteCentral</a>.
-                            Particularly noteworthy is the <a href="http://files.remotecentral.com/collection/66-1/index.html">"megalist" by Glackowitz</a>.
+                            <a href="https://files.remotecentral.com/rti/index.html">RemoteCentral</a>.
+                            Particularly noteworthy is the <a href="https://files.remotecentral.com/collection/66-1/index.html">"megalist" by Glackowitz</a>.
                             IrScrutinizer can import these files to its import tree, making every remote a nodes in the tree.
                             Note that there is no need to unzip such a file; IrScrutinizer will unzip it on the fly.
                         </p>
@@ -905,7 +909,7 @@
                         <title>Pronto Classic (CCF format)</title>
                         <p>Many <a href="Glossary.html#ccfFileFormat">Pronto CCF files</a> are available in Internet,
                             in particular by <a
-                                href="http://files.remotecentral.com/pronto/index.html">Remote
+                                href="https://files.remotecentral.com/pronto/index.html">Remote
                                 Central</a>. IrScrutinizer can read in these files to its import tree, even
                             preserving the Pronto "devices" as nodes in the tree.</p>
                     </section>
@@ -915,7 +919,7 @@
                         <p>
                             <a href="Glossary.html#xcfFileFormat">Pronto Professional XCF</a> files are
                             found for example at <a
-                                href="http://files.remotecentral.com/prontopro/index.html">Remote
+                                href="https://files.remotecentral.com/prontopro/index.html">Remote
                                 Central</a>. IrScrutinizer can read in these files to its import tree, even
                             preserving the Pronto "devices" as nodes in the tree.</p>
                         <p>This is not extensively tested.</p>
@@ -1025,7 +1029,7 @@
                     <section>
                         <title>AnyMote</title>
 
-                        <p>Generates a configuration file for the <a href="http://www.colortiger.com/">AnyMote IR remote control app</a>
+                        <p>Generates a configuration file for the <!-- Domain seems nonexistent a href="http://www.colortiger.com/"-->AnyMote IR remote control app
                             for Android and iOS.
                         </p>
                     </section>
@@ -1036,7 +1040,7 @@
                             This uses one of the three Arduino Infrared libraries
                             <a href="https://github.com/z3t0/Arduino-IRremote">IRremote</a>,
                             <a href="https://github.com/cyborg5/IRLib">IRLib</a>,
-                            and <a href="http://harctoolbox.org/Infrared4Arduino.html">Infrared4Arduino</a>.
+                            and <a href="https://harctoolbox.org/Infrared4Arduino.html">Infrared4Arduino</a>.
                             As the name suggests, the <a href="Glossary.html#RawIrSignal">raw form of the signals</a> are used.
                         </p>
                     </section>
@@ -1046,7 +1050,7 @@
                         <p>Generates a similar C++ sketch for the Arduino as in the raw case, but tries to
                             use the <a href="Glossary.html#ParametricIRSignal">parametric form</a> whenever possible, i.e.,
                             whenever the protocol is one that can be generated by the underlying infrared library. This version supports
-                            <a href="http://harctoolbox.org/Infrared4Arduino.html">Infrared4Arduino</a> only.
+                            <a href="https://harctoolbox.org/Infrared4Arduino.html">Infrared4Arduino</a> only.
                         </p>
                     </section>
 
@@ -1058,7 +1062,7 @@
                     <section>
                         <title>BracketedRaw</title>
                         <p>This export format generates an text file of the command(s) in the
-                            <a href="http://www.harctoolbox.org/IrpTransmogrifier.html#BracketedRawFormat">bracketed raw text format</a>.</p>
+                            <a href="https://www.harctoolbox.org/IrpTransmogrifier.html#BracketedRawFormat">bracketed raw text format</a>.</p>
                     </section>
 
                     <section>
@@ -1136,7 +1140,7 @@
                             </a>- raw format.
                             These use the raw Lirc format, except for a few well known protocol (presently NEC1 and RC5). They can be
                             concatenated together and used as the Lirc server data base. Can also be used with <a
-                                href="http://winlirc.sourceforge.net/">WinLirc</a>.
+                                href="https://winlirc.sourceforge.net/">WinLirc</a>.
                         </p>
                     </section>
 
@@ -1189,7 +1193,7 @@
                     <section>
                         <title>TV-B-Gone</title>
                         <p>Variant of the C format, this format generates C code for the  <a
-                                href="http://en.wikipedia.org/wiki/TV-B-Gone">TV-B-Gone</a>.</p>
+                                href="https://en.wikipedia.org/wiki/TV-B-Gone">TV-B-Gone</a>.</p>
                     </section>
 
                     <section>
@@ -1254,7 +1258,7 @@
 
                     <p>The user can select one of the thus available Global Caché units, together with
                         IR-module and IR-port (see <a
-                            href="http://www.globalcache.com/files/docs/API-GC-100.pdf">the
+                            href="https://www.globalcache.com/files/docs/API-GC-100.pdf">the
                             Global Caché API specification</a> for the exact meaning of these
                         terms).</p>
 
@@ -1275,12 +1279,12 @@
 able to cope with CCF signal not residing in the local data base, but sent from
 a client like IrScrutinizer, thus mimicking the function of e.g. a
 Global Caché. The needed modification ("patch") is in detail described <a
-    href="http://www.harctoolbox.org/lirc_ccf.xml">here</a>, sources <a href="https://sourceforge.net/u/bengtmartensson/lirc/ci/ccf/tree/">here</a>.
+    href="https://www.harctoolbox.org/lirc_ccf.xml">here</a>, sources <a href="https://sourceforge.net/u/bengtmartensson/lirc/ci/ccf/tree/">here</a>.
     However, even without
 this patch, the configuration page can be used to send the predefined commands
 (i.e. residing it its data base <code>lirc.conf</code>). It can be considered
 as a GUI version of
-the <a href="http://www.lirc.org/html/irsend.html"><code>irsend</code>
+the <a href="https://www.lirc.org/html/irsend.html"><code>irsend</code>
 command</a>.</p>
 <p>The Lirc server needs to be started in network listening mode with
 the <code>-l</code> or <code>- -listen</code> option. Default TCP port is
@@ -1310,7 +1314,7 @@ to do otherwise), pressing the <code>Reload</code> button will update the Lirc s
                         in e.g. Fedora this is the case for member of the group <code>lirc</code>.</p>
 
                     <p>After opening the device, its properties will be listed.
-                        See the man page <a href="http://lirc.org/html/lirc.html">lirc(4)</a> for an explanation.</p>
+                        See the man page <a href="https://lirc.org/html/lirc.html">lirc(4)</a> for an explanation.</p>
                     <p>Although not a priori impossible, to my knowledge no <code>/dev/lirc</code> device  implements frequency measurement.</p>
                 </section>
                 <section>
@@ -1319,7 +1323,7 @@ to do otherwise), pressing the <code>Reload</code> button will update the Lirc s
                         As additional "hardware sending device", IrScrutinizer can generate wave files, that can be
                         used to control IR-LEDs. This technique has been described many times in the
                         Internet the last few years, see for example <a
-                            href="http://lirc.org/html/audio.html">this page</a> within the Lirc
+                            href="https://lirc.org/html/audio.html">this page</a> within the Lirc
                         project. The hardware consists of a pair of anti-parallel IR-LEDs, preferably
                         in series with a resistor. Theoretically, this corresponds to a full wave
                         rectification of a sine wave. Taking advantage of the fact that the LEDs are
@@ -1400,7 +1404,7 @@ module is then accessed using the UDP text mode.</p>
 
               <section>
                   <title>The "Girs Client" (previously "Arduino") Pane</title>
-                  <p>Using this pane, a <a href="http://www.harctoolbox.org/Girs.html">Girs server</a>
+                  <p>Using this pane, a <a href="https://www.harctoolbox.org/Girs.html">Girs server</a>
                       (e.g. running on an Arduino equipped with a suitable hardware) can be used to
                       transmit and capture IR signals. The server can be connected to a serial port,
                       or through Ethernet to the local area network, connected by a TCP socket. For the Arduino, the <a href="https://github.com/bengtmartensson/AGirs">
@@ -1463,7 +1467,7 @@ module is then accessed using the UDP text mode.</p>
             <p>
                 The options <code>--version</code> and <code>--help</code> work as they are
                 expected to work in the <a
-                    href="http://www.gnu.org/prep/standards/html_node/Command_002dLine-Interfaces.html#Command_002dLine-Interfaces">GNU
+                    href="https://www.gnu.org/prep/standards/html_node/Command_002dLine-Interfaces.html#Command_002dLine-Interfaces">GNU
                     coding standards for command line interfaces</a>. Use
                 the <code>--help</code>-command to see the complete list of command line parameters. The <code>-v/--verbose</code>
                 option set the verbose flag (which can also be accessed under the GUI as <code>Options -> verbose</code>,
@@ -1509,7 +1513,7 @@ module is then accessed using the UDP text mode.</p>
             <section>
                 <title>Format of the files in <code>exportformats.d</code></title>
                 <p>The file is an XML file supposed to be a valid instance of the XML Schema
-                    <a href="http://www.harctoolbox.org/schemas/exportformats.xsd">
+                    <a href="https://www.harctoolbox.org/schemas/exportformats.xsd">
                         <code>exportformats.xsd</code>
                     </a>, although it is read without validation.
                     The semantics is believed to be essentially self explaining, or clear from the
@@ -1590,7 +1594,7 @@ module is then accessed using the UDP text mode.</p>
                 <p>To prevent from tampering of <em>both</em> the program files <em>and</em> the checksum files,
                     the checksum files are also PGP signed with the cryptograph key
                     for <code>Bengt Martensson &lt;barf@bengt-martensson.de&gt;</code>,  finger print <code> 5F492CB76BEB2E6B1CAA63A3EE1F17D4ECF8AF9C</code>.
-                    The full key can be downloaded <a href="http://harctoolbox.org/downloads/harctoolbox.gpg">here</a>,
+                    The full key can be downloaded <a href="https://harctoolbox.org/downloads/harctoolbox.gpg">here</a>,
                     or found in the program as <code>Tools -> Author&apos;s Public PGP key</code>.
                     (For practical reasons, the shapshot releases are, in general, not signed.)
                 </p>
@@ -1714,7 +1718,7 @@ module is then accessed using the UDP text mode.</p>
             <section>
                 <title>What about the "fishy" icon?</title>
                 <p>It is a <a href="https://hitchhikers.fandom.com/wiki/Babel_Fish">Babel fish</a>,
-                    as found in <a href="http://en.wikipedia.org/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy">The Hitchhiker's Guide to the Galaxy</a>,
+                    as found in <a href="https://en.wikipedia.org/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy">The Hitchhiker's Guide to the Galaxy</a>,
                     having the property, that
                     "... if you stick one in your ear, you can instantly understand anything said to you in any form of language".
                     This symbolizes the program's ability to "understand" (read and write) a large number of different IR formats.
@@ -1805,9 +1809,9 @@ module is then accessed using the UDP text mode.</p>
             </section>
             <section>
                 <title>What is on the splash screen?</title>
-                <p>From left to right, a <a href="http://www.globalcache.com/products/itachflex/">Global Caché iTach Flex</a>,
+                <p>From left to right, a <a href="https://www.globalcache.com/products/itachflex/">Global Caché iTach Flex</a>,
                     an <a href="http://www.seeedstudio.com/depot/usb-infrared-toy-v2-p-831.html?cPath=174">IrToy</a>,
-                    and a low-cost clone of an <a href="http://arduino.cc/en/Main/ArduinoBoardNano">Arduino Nano</a>,
+                    and a low-cost clone of an <a href="https://arduino.cc/en/Main/ArduinoBoardNano">Arduino Nano</a>,
                     the latter equipped with a non-demodulating IR detector (TSMP4138) for capturing and an IR diode (SFH415) for sending.
                     These are all hardware which work well with IrScrutinizer, both for sending and capturing.</p>
             </section>
@@ -1825,7 +1829,7 @@ module is then accessed using the UDP text mode.</p>
         </section>
         <section id="building-from-sources">
             <title>Appendix. Building from sources</title>
-            <p>"IrScrutinizer" is one subproject within <a href="http://harctoolbox.org">harctoolbox.org</a>.
+            <p>"IrScrutinizer" is one subproject within <a href="https://harctoolbox.org">harctoolbox.org</a>.
             It depends on several other subprojects within harctoolbox. The repository <a href="https://github.com/bengtmartensson/IrScrutinizer">IrScrutinizer</a>
         consists
                 of this subproject.</p>
@@ -1910,7 +1914,7 @@ module is then accessed using the UDP text mode.</p>
             </section>
             <section>
                 <title>Building</title>
-                <p>The <a href="http://maven.apache.org/index.html">Maven</a> "software
+                <p>The <a href="https://maven.apache.org/index.html">Maven</a> "software
                     project management and comprehension tool" is used as building system.
                     Modern IDEs like Netbeans and Eclips integrate Maven, so build etc can be initiated from the IDE.
                     Of course, the shell command <code>mvn install</code> can also be used. It creates some artifacts which can
@@ -1925,7 +1929,7 @@ module is then accessed using the UDP text mode.</p>
 
             <section>
                 <title>Windows setup.exe creation</title>
-                <p>For building the Windows setup.exe, the <a href="http://www.jrsoftware.org/download.php/is.exe">Inno Installer version 6</a>
+                <p>For building the Windows setup.exe, the <a href="https://www.jrsoftware.org/download.php/is.exe">Inno Installer version 6</a>
                     is needed. To build the Windows <code>setup.exe</code> file, preferably the work area should
                     be mounted on a Windows computer. Then, on the Windows computer, open
                     the generated file <code>IrScrutinizer/target/IrScrutinizer_inno.iss</code> with
@@ -1953,7 +1957,7 @@ module is then accessed using the UDP text mode.</p>
                 <p>The icon file <code>IrScrutinizer.icns</code> was produced from the Crystal-Clear
                     icon <code>babelfish.png</code> in 128x128 resolution, using the procedure
                     described
-                    <a href="http://stackoverflow.com/questions/11770806/why-doesnt-icon-composer-2-4-support-the-1024x1024-size-icon-any-more">here</a>.
+                    <a href="https://stackoverflow.com/questions/11770806/why-doesnt-icon-composer-2-4-support-the-1024x1024-size-icon-any-more">here</a>.
                 </p>
             </section>
 

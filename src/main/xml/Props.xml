@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE properties PUBLIC  "-//harctoolbox.org//properties//en" "http://www.harctoolbox.org/dtds/properties.dtd">
+<!DOCTYPE properties PUBLIC  "-//harctoolbox.org//properties//en" "https://www.harctoolbox.org/dtds/properties.dtd">
 <!--
 Copyright (C) 2011, 2012, 2013, 2014 Bengt Martensson.
 
@@ -126,7 +126,7 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name='parametricNumberBaseIndex' type="int" default='"2"' doc='Number base (index) for interpreting parametric files.'/>
     <property name="parametricSeparatorIndex" type="int" default='"0"' doc='Field separator for parsing parametric files.'/>
 
-    <property name="girrSchemaLocation" type="string" default='"http://www.harctoolbox.org/schemas/girr_ns.xsd"' doc='URL for schema for girr (for validating import).' /><!-- FIXME -->
+    <property name="girrSchemaLocation" type="string" default='"https://www.harctoolbox.org/schemas/girr_ns.xsd"' doc='URL for schema for girr (for validating import).' /><!-- FIXME -->
     <property name="girrValidate" type="boolean" default='"false"' doc='If true, girr instances are validated against the schema selected.'/>
 
     <property name="irpMasterCurrentProtocol" type="string" default='"nec1"' doc='Selected protocol for generator.'/>

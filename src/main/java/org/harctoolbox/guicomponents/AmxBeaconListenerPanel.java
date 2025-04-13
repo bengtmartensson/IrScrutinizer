@@ -34,7 +34,7 @@ public class AmxBeaconListenerPanel extends HarcPanel {
             "AmxBeaconListener version " + versionString + ".\n"
             + "Copyright 2013 by Bengt Martensson.\n\n"
             + "License: GPL3.\n\n"
-            + "Project home page: http://www.harctoolbox.org";
+            + "Project home page: https://www.harctoolbox.org";
 
     public static void main(String args[]) {
         HarcletFrame.run("AmxBeaconListenerPanel", args);

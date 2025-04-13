@@ -2,7 +2,7 @@
 
 # Building from sources
 
-"IrScrutinizer" is one subproject within [harctoolbox.org](http://harctoolbox.org).
+"IrScrutinizer" is one subproject within [harctoolbox.org](https://harctoolbox.org).
             It depends on several other subprojects within harctoolbox. The repository [IrScrutinizer](https://github.com/bengtmartensson/IrScrutinizer)
         consists
                 of this subproject.
@@ -77,7 +77,7 @@ Normally, this component is downloaded and installed automatically by Maven.
                         the script will not try to build and install the shared library.
 
 ## Building
-The [Maven](http://maven.apache.org/index.html) "software
+The [Maven](https://maven.apache.org/index.html) "software
                     project management and comprehension tool" is used as building system.
                     Modern IDEs like Netbeans and Eclips integrate Maven, so build etc can be initiated from the IDE.
                     Of course, the shell command `mvn install` can also be used. It creates some artifacts which can
@@ -93,7 +93,7 @@ Two additional shell tools are needed. These are:
 
 
 ## Windows setup.exe creation
-For building the Windows setup.exe, the [Inno Installer version 6](http://www.jrsoftware.org/download.php/is.exe)
+For building the Windows setup.exe, the [Inno Installer version 6](https://www.jrsoftware.org/download.php/is.exe)
                     is needed. To build the Windows `setup.exe` file, preferably the work area should
                     be mounted on a Windows computer. Then, on the Windows computer, open
                     the generated file `IrScrutinizer/target/IrScrutinizer_inno.iss` with
@@ -115,7 +115,7 @@ The Maven build creates a file
 The icon file `IrScrutinizer.icns` was produced from the Crystal-Clear
                     icon `babelfish.png` in 128x128 resolution, using the procedure
                     described
-                    [here](http://stackoverflow.com/questions/11770806/why-doesnt-icon-composer-2-4-support-the-1024x1024-size-icon-any-more).
+                    [here](https://stackoverflow.com/questions/11770806/why-doesnt-icon-composer-2-4-support-the-1024x1024-size-icon-any-more).
                 
 
 ## AppImage creation

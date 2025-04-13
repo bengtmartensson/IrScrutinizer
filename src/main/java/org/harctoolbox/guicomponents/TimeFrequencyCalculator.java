@@ -37,7 +37,7 @@ public class TimeFrequencyCalculator extends HarcPanel {
             "HexCalculator version " + versionString + ".\n"
             + "Copyright 2012, 2013 by Bengt Martensson.\n\n"
             + "License: GPL3.\n\n"
-            + "Project home page: http://www.harctoolbox.org";
+            + "Project home page: https://www.harctoolbox.org";
 
     private final static int seconds2microseconds = 1000000;
 

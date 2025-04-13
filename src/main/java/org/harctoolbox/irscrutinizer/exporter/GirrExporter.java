@@ -30,7 +30,7 @@ import org.w3c.dom.DocumentFragment;
  */
 public class GirrExporter extends RemoteSetExporter {
 
-    private final static DocumentFragment documentation = parseToDocumentFragment("<div>Girr documentation <b>not</b> yet <a href=\"http://www.harctoolbox.org\">written</a></div>");
+    private final static DocumentFragment documentation = parseToDocumentFragment("<div>Girr documentation <b>not</b> yet <a href=\"https://www.harctoolbox.org\">written</a></div>");
 
     private final boolean fatRaw;
     private final boolean generateRaw;

@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <exportformats:exportformat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                             xmlns:exportformats="http://www.harctoolbox.org/exportformats"
-                            xsi:schemaLocation="http://www.harctoolbox.org/exportformats http://www.harctoolbox.org/schemas/exportformats.xsd"
+                            xsi:schemaLocation="http://www.harctoolbox.org/exportformats https://www.harctoolbox.org/schemas/exportformats.xsd"
                             name="BracketedRaw" extension="txt" multiSignal="true" simpleSequence="false">
     <xsl:stylesheet xmlns:girr="http://www.harctoolbox.org/Girr"
                     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <exportformats:documentation>
             <div>This export format generates an text file of the command(s) in the
-                <a href="http://www.harctoolbox.org/IrpTransmogrifier.html#BracketedRawFormat">bracketed raw text format</a>.
+                <a href="https://www.harctoolbox.org/IrpTransmogrifier.html#BracketedRawFormat">bracketed raw text format</a>.
             </div>
             <div>Limitations:
                 <ul>

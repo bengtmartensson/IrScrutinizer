@@ -41,7 +41,7 @@ public class ControlTowerBrowser extends HarcPanel {
             "ControlTowerBrowser version " + versionString + ".\n"
             + "Copyright 2024 by Bengt Martensson.\n\n"
             + "License: GPL3.\n\n"
-            + "Project home page: http://www.harctoolbox.org";
+            + "Project home page: https://www.harctoolbox.org";
 
     //private static final String invalidString = "****";
 

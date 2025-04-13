@@ -162,7 +162,7 @@ class HelpTexts {
     @SuppressWarnings("PackageVisibleField")
     public static String importCmlHelp
             = "Many CML files are available in Internet, in particular by RemoteCentral. "
-            + "Particularly noteworthy is the \"megalist\", http://files.remotecentral.com/collection/66-1/index.html. "
+            + "Particularly noteworthy is the \"megalist\", https://files.remotecentral.com/collection/66-1/index.html. "
             + "IrScrutinizer can import these files to its import tree, "
             + "making every remote a nodes in the tree.\n\n"
             + fileImportHelp + "\n\n"

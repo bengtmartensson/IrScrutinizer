@@ -49,7 +49,7 @@ import org.xml.sax.SAXParseException;
  *
  */
 public class GirrImporter extends RemoteSetImporter implements IReaderImporter {
-    public static final String homeUrl = "http://www.harctoolbox.org/girr";
+    public static final String homeUrl = "https://www.harctoolbox.org/girr";
     private static final Logger logger = Logger.getLogger(GirrImporter.class.getName());
 
     private transient Schema schema;
