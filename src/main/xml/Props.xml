@@ -60,7 +60,6 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="verbose" type="boolean" default='"false"' doc='If true, execute some commands more verbosely' />
     <property name="invokeRepeatFinder" type="boolean" default='"true"' doc="Determines if the repeatfinder is invoked on captures and clipboard."/>
     <property name="invokeCleaner" type="boolean" default='"true"' doc="Determines if the signal cleaner is invoked on captures and clipboard."/>
-    <!--property name="disregardRepeatMins" type="boolean" default='"false"' doc='Value of the "disregard repeat mins" parameter. See IrpMaster documentation for the semantic.'/-->
     <property name="exportDir" type="string" default='System.getProperty("user.home") + File.separator + "Documents" + File.separator + "IrScrutinizer"' doc='Directory to which to write exports.'/>
     <property name="defaultImportDir" type="string" default='"testfiles"' doc='Just the starting directory for file selectors.'/>
     <property name="exportFormatFilePath" type="string" default='"exportformats.d"' doc='File or directory containing export format descriptions.'/>
@@ -73,19 +72,16 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="helpfilePath" type="string" default='"doc" + File.separator + "IrScrutinizer.html"' doc='Path name for help file.'/>
     <property name="irpTransmogrifierHelpfilePath" type="string" default='"doc" + File.separator + "IrpTransmogrifier.html"' doc='Path name for IrpTransmogrifier help file.'/>
     <property name="GlossaryFilePath"              type="string" default='"doc" + File.separator + "Glossary.html"' doc='Path name for Glossary file.'/>
-    <property name="protocolDocfilePath" type="string" default='"doc" + File.separator + "IrpProtocols.html"' doc='Path name for protocl documentation file.'/>
+    <property name="protocolDocfilePath" type="string" default='"doc" + File.separator + "IrpProtocols.html"' doc='Path name for protocol documentation file.'/>
     <property name="releaseNotesPath" type="string" default='"doc" + File.separator + "IrScrutinizer.releasenotes.txt"' doc='Path name for release notes.'/>
     <property name="tutorialUrl" type="string" default='"http://www.hifi-remote.com/wiki/index.php?title=IrScrutinizer_Guide"' doc='URL for tutorial.'/>
     <property name="selectedHardware" type="string" default='"Audio Port"' doc="Name of selected hardware."/>
-    <!--property name="lircIpName" type="string" default='LircClient.defaultLircIP' doc='IP name or address of LIRC server.'/>
-    <property name="lircPort" type="int" default='Integer.toString(LircClient.lircDefaultPort)' doc='TCP port number of LIRC server, typically 8765.'/>
-    <property name="lircTimeout" type="int" default='"5000"' doc="Timeout for connecting to TCP Lirc server" /-->
     <property name="lookAndFeel" type="int" default='"0"' doc='Look and feel, as integer index in table. Semantics is system dependent.'/>
     <property name="usePopupsForErrors" type="boolean" default='"true"' doc='If true, use popups for help. Otherwise the console will be used.'/>
     <property name="usePopupsForHelp" type="boolean" default='"true"' doc='If true, use popups for help. Otherwise the console will be used.'/>
     <property name="offerStackTrace" type="boolean" default='"false"' doc='If true, error popups resulting from exceptions will have an option to dump the corresponging stack trace to the console.'/>
     <property name="xsltDebug" type="boolean" default='"false"' doc='If true, generate debugging files for XSLT based export formats in the current directory.'/>
-   <property name="printDecodesToConsole" type="boolean" default='"false"' doc='If true, print all decodes to the console, in addition to other outputs.'/>
+    <property name="printDecodesToConsole" type="boolean" default='"false"' doc='If true, print all decodes to the console, in addition to other outputs.'/>
     <property name="printAlternativeDecodes" type="boolean" default='"false"' doc='If true, print alternative decodes to the console.'/>
     <property name="printAnalyzerIRPsToConsole" type="boolean" default='"false"' doc='If true, print all IRPs from the analyzer to the console, in addition to other outputs.'/>
     <property name="invokeDecoder" type="boolean" default='"true"' doc='Invoke decoder when importing, even when not required.'/>
@@ -95,7 +91,6 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="exportGenerateRaw" type="boolean" default='"false"' doc='Generate raw form when exporting, even when not required.'/>
     <property name="exportGenerateCcf" type="boolean" default='"true"' doc='Generate CCF form when exporting, even when not required.'/>
     <property name="exportGenerateShortCcf" type="boolean" default='"false"' doc='Generate the short CCF form when exporting.'/>
-    <!--property name="exportGenerateUei" type="boolean" default='"false"' doc='Generate UEI learned format in exports.'/-->
     <property name="exportGenerateParameters" type="boolean" default='"false"' doc='Generate parameters and protocol name when exporting.'/>
     <property name="exportGenerateSendIr" type="boolean" default='"false"' doc='Generate GlobalCache sendir format in exports.'/>
     <property name="exportGenerateBroadlinkHex" type="boolean" default='"false"' doc='Generate Broadlink Hex format in exports.'/>
@@ -104,7 +99,6 @@ this program. If not, see http://www.gnu.org/licenses/.
     <property name="exportInquireDeviceData" type='boolean' default='"true"' doc='If true, inquire for device type etc before exporting commands.'/>
     <property name="exportCharsetName" type="string" default='"WINDOWS-1252"' doc='Character set used for exports'/>
     <property name="importCharsetName" type="string" default='"WINDOWS-1252"' doc='Character set used for imports'/>
-    <!--property name="exportPersistentParams" type='boolean' default='"false"' doc='If true, parameters declared persistent in the IRP protocol (typically toggle T) are included in the parameteric export, omitted otherwise.'/-->
     <property name="translateProntoFont" type="boolean" default='"true"' doc='If true, one-character Pronto button names, likely using the Pronto font, are tranlated to readable strings.'/>
     <property name="irpProtocolsPath" type="string" default='"IrpProtocols.xml"' doc='Path to IrpProtocols.xml' />
     <property name="secondaryIrpProtocolsPath" type="string" default='""' doc='Path to secondary IrpProtocols.xml' />
