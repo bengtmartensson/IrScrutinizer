@@ -8334,6 +8334,7 @@ public final class GuiMain extends javax.swing.JFrame {
             CCFCodePopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         else if (evt.getButton() == MouseEvent.BUTTON2) { // X-Windows type paste
             String selection = CopyClipboardText.getSelection();
+            @SuppressWarnings("deprecation")
             int where = capturedDataTextArea.viewToModel(evt.getPoint());
             capturedDataTextArea.insert(selection, where);
         }

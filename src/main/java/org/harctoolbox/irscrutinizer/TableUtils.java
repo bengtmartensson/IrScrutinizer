@@ -17,7 +17,6 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 package org.harctoolbox.irscrutinizer;
 
-import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -51,7 +50,7 @@ public class TableUtils {
     }
 
     public void fixKeyMappings(JTable table) {
-        addKey(table, "move up", KeyEvent.VK_UP, Event.CTRL_MASK, new AbstractAction("move up") {
+        addKey(table, "move up", KeyEvent.VK_UP, ActionEvent.CTRL_MASK, new AbstractAction("move up") {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 try {
@@ -62,7 +61,7 @@ public class TableUtils {
             }
         });
 
-        addKey(table, "move down", KeyEvent.VK_DOWN, Event.CTRL_MASK, new AbstractAction("move down") {
+        addKey(table, "move down", KeyEvent.VK_DOWN, ActionEvent.CTRL_MASK, new AbstractAction("move down") {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 try {
@@ -73,7 +72,7 @@ public class TableUtils {
             }
         });
 
-        addKey(table, "delete row", KeyEvent.VK_DELETE, Event.CTRL_MASK, new AbstractAction("delete row") {
+        addKey(table, "delete row", KeyEvent.VK_DELETE, ActionEvent.CTRL_MASK, new AbstractAction("delete row") {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 try {
@@ -84,7 +83,7 @@ public class TableUtils {
             }
         });
 
-        addKey(table, "delete all", KeyEvent.VK_DELETE, Event.CTRL_MASK | Event.SHIFT_MASK, new AbstractAction("delete all") {
+        addKey(table, "delete all", KeyEvent.VK_DELETE, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK, new AbstractAction("delete all") {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 clearTableConfirm(table);
