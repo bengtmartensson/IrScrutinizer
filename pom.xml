@@ -211,7 +211,7 @@
                             <includes>
                                 <include>Props.xml</include>
                             </includes>
-                            <stylesheet>${basedir}/common/xslt/mkProps.xsl</stylesheet>
+                            <stylesheet>${basedir}/tools/mkProps.xsl</stylesheet>
                             <fileMappers>
                                 <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
                                     <targetExtension>.java</targetExtension>
