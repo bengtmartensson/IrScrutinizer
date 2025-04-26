@@ -209,7 +209,7 @@ public final class GuiMain extends javax.swing.JFrame {
      * install the files than for me to write code for semi-working in semi-broken situations.
      *
      * @param applicationHome
-     * @param propsfilename Name of properties file. Null for system default.
+     * @param propsfilename Name of properties file. If null, do not read any file, but just use defaults.
      * @param verbose Verbose execution of some commands, dependent on invoked programs.
      * @param arguments
      * @throws ParserConfigurationException
@@ -252,18 +252,15 @@ public final class GuiMain extends javax.swing.JFrame {
 
     /**
      * Just for testing.
+     * Runs with default Props; does not read the user's files.
      * @throws IOException
      * @throws ParserConfigurationException
      * @throws SAXException
      * @throws IrpParseException
      * @throws URISyntaxException
      */
-    GuiMain() throws IOException, ParserConfigurationException, SAXException, IrpParseException, URISyntaxException {
-        this(System.getProperty("user.dir") + "/target");
-    }
-
-    GuiMain(String applicationhome) throws IOException, ParserConfigurationException, SAXException, IrpParseException, URISyntaxException {
-        this(applicationhome, new Props(applicationhome), false, new ArrayList<String>(0));
+    GuiMain(String appDir) throws IOException, ParserConfigurationException, SAXException, IrpParseException, URISyntaxException {
+        this(appDir, new Props(appDir), false, new ArrayList<String>(0));
     }
 
     private void setupProperties(Props props, boolean verbose) throws MalformedURLException {

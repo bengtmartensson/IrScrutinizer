@@ -73,20 +73,23 @@ public final class Props {
      */
     public Props(String filename, String applicationHome) {
         this(applicationHome);
-        this.filename = getFilename(filename);
-        try (FileInputStream f = new FileInputStream(this.filename)) {
-            if (useXml)
-                props.loadFromXML(f);
-            else
-                props.load(f);
-        } catch (IOException ex) {
-            System.err.println("Property File " + this.filename + " not found or could not be read, using builtin defaults.");
-            needSave = true;
+        this.filename = filename;
+        if (filename != null && ! filename.isEmpty()) {
+            try (FileInputStream f = new FileInputStream(this.filename)) {
+                if (useXml)
+                    props.loadFromXML(f);
+                else
+                    props.load(f);
+            } catch (IOException ex) {
+                System.err.println("Property File " + this.filename + " not found or could not be read, using builtin defaults.");
+                needSave = true;
+            }
         }
     }
 
     /**
-     * Sets up a Props instance from system default file name.
+     * Sets up a Props instance from system defaults.
+     * Does not read a user's file.
      * @param applicationHome
      */
     public Props(String applicationHome) {
@@ -102,50 +105,6 @@ public final class Props {
         wasReset = false;
         props = new Properties();
         setupDefaults();
-    }
-
-    private static String getFilename(String filename) {
-        if (filename != null && !filename.isEmpty())
-            return filename;
-
-        return isWindows ? defaultPropsFilenameWindows() : defaultPropsFilenameNonWindows();
-    }
-
-    private static String defaultPropsFilenameWindows() {
-        String dir = System.getenv("LOCALAPPDATA"); // Win Vista and later
-        if (dir == null) {
-            dir = System.getenv("APPDATA"); // Win < Vista
-        }
-        if (dir != null) {
-            dir = dir + File.separator + Version.appName;
-            if (!(new File(dir)).isDirectory()) {
-                boolean status = (new File(dir)).mkdirs();
-                if (!status) {
-                    System.err.println("Cannot create directory " + dir + ", using home directory instead.");
-                }
-            }
-        }
-        return (dir != null)
-                ? (dir + File.separator + Version.appName + ".properties.xml")
-                : System.getProperty("user.home") + File.separator + "." + Version.appName + ".properties.xml";
-    }
-
-    private static String defaultPropsFilenameNonWindows() {
-        // Adhere to Freedesktop standard
-        // http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
-        String base = System.getenv("XDG_CONFIG_HOME");
-        if (base == null || base.isEmpty() || !(new File(base)).isAbsolute())
-            base = System.getProperty("user.home") + File.separator + ".config";
-        File baseFile = new File(base + File.separator + Version.appName);
-        if (!baseFile.exists()) {
-            boolean status = baseFile.mkdirs();
-            if (!status) {
-                System.err.println("Could not create directory " + baseFile.getAbsolutePath()
-                        + ", saving properites in home direcory");
-                baseFile = new File(System.getProperty("user.home")); // emergency
-            }
-        }
-        return baseFile.getAbsolutePath() + File.separator + "properties.xml";
     }
 
     private String ifWindows(String windows, String nonWindows) {
@@ -167,7 +126,7 @@ public final class Props {
     }
 
     private void setupDefaults() {
-            ]]></xsl:text>
+]]></xsl:text>
 <xsl:apply-templates select="property" mode="defaults"/>
 <xsl:text><![CDATA[
     }

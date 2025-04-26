@@ -69,6 +69,49 @@ public class IrScrutinizer {
         System.exit(exitcode);
     }
 
+    private static String getFilename(String filename) {
+        return filename != null && !filename.isEmpty() ? filename
+                : System.getProperty("os.name").startsWith("Windows") ? defaultPropsFilenameWindows()
+                : defaultPropsFilenameNonWindows();
+    }
+
+    private static String defaultPropsFilenameWindows() {
+                String dir = System.getenv("LOCALAPPDATA"); // Win Vista and later
+                if (dir == null) {
+                    dir = System.getenv("APPDATA"); // Win < Vista
+                }
+                if (dir != null) {
+                    dir = dir + File.separator + Version.appName;
+                    if (!(new File(dir)).isDirectory()) {
+                        boolean status = (new File(dir)).mkdirs();
+                        if (!status) {
+                            System.err.println("Cannot create directory " + dir + ", using home directory instead.");
+                        }
+                    }
+                }
+        return (dir != null)
+                        ? (dir + File.separator + Version.appName + ".properties.xml")
+                        : System.getProperty("user.home") + File.separator + "." + Version.appName + ".properties.xml";
+    }
+
+    private static String defaultPropsFilenameNonWindows() {
+        // Adhere to Freedesktop standard
+        // http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
+        String base = System.getenv("XDG_CONFIG_HOME");
+        if (base == null || base.isEmpty() || !(new File(base)).isAbsolute())
+            base = System.getProperty("user.home") + File.separator + ".config";
+        File baseFile = new File(base + File.separator + Version.appName);
+        if (!baseFile.exists()) {
+            boolean status = baseFile.mkdirs();
+            if (!status) {
+                System.err.println("Could not create directory " + baseFile.getAbsolutePath()
+                    + ", saving properites in home direcory");
+                    baseFile = new File(System.getProperty("user.home")); // emergency
+            }
+        }
+        return baseFile.getAbsolutePath() + File.separator + "properties.xml";
+    }
+
     /**
      * @param args the command line arguments.
      */
@@ -112,7 +155,8 @@ public class IrScrutinizer {
         setupRadixPrefixes();
 
         String applicationHome = Utils.findApplicationHome(commandLineArgs.applicationHome, IrScrutinizer.class, Version.appName);
-        guiExecute(applicationHome, commandLineArgs.propertiesFilename, commandLineArgs.verbose, commandLineArgs.arguments);
+        String propertiesFilename = getFilename(commandLineArgs.propertiesFilename);
+        guiExecute(applicationHome, propertiesFilename, commandLineArgs.verbose, commandLineArgs.arguments);
     }
 
     public static void setupRadixPrefixes() {

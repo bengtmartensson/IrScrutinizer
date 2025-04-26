@@ -61,7 +61,8 @@ public class GuiMainNGTest {
 
     public void testScrutinizeSignal() throws Exception {
         System.out.println("scrutinizeSignal");
-        GuiMain instance = new GuiMain();
+        String testDir = System.getProperty("user.dir") + "/target";
+        GuiMain instance = new GuiMain(testDir);
         String decode = instance.scrutinizeSignal(NEC1_PRONTO);
         assertEquals(decode, "NEC1: {D=12,S=34,F=56}");
         decode = instance.scrutinizeSignal(NEC1_AS_SEQUENCE);
