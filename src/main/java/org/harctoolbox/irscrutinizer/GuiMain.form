@@ -6278,35 +6278,18 @@
                 </Container>
                 <Component class="javax.swing.JComboBox" name="noTransmitsComboBox">
                   <Properties>
-                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                      <StringArray count="16">
-                        <StringItem index="0" value="1"/>
-                        <StringItem index="1" value="2"/>
-                        <StringItem index="2" value="3"/>
-                        <StringItem index="3" value="4"/>
-                        <StringItem index="4" value="5"/>
-                        <StringItem index="5" value="6"/>
-                        <StringItem index="6" value="7"/>
-                        <StringItem index="7" value="10"/>
-                        <StringItem index="8" value="12"/>
-                        <StringItem index="9" value="15"/>
-                        <StringItem index="10" value="20"/>
-                        <StringItem index="11" value="30"/>
-                        <StringItem index="12" value="40"/>
-                        <StringItem index="13" value="50"/>
-                        <StringItem index="14" value="70"/>
-                        <StringItem index="15" value="100"/>
-                      </StringArray>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="new javax.swing.DefaultComboBoxModel&lt;&gt;(NO_SENDS_ARRAY)" type="code"/>
                     </Property>
                     <Property name="selectedItem" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="Integer.toString(properties.getTransmitGeneratedCount())" type="code"/>
+                      <Connection code="properties.getTransmitGeneratedCount()" type="code"/>
                     </Property>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="noTransmitsComboBoxActionPerformed"/>
                   </Events>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Integer&gt;"/>
                   </AuxValues>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel5">

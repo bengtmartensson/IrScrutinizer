@@ -115,6 +115,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private final static String GIT_URL = "https://github.com/bengtmartensson/IrScrutinizer/";
     private final static String DOWNLOADS_URL = "https://github.com/bengtmartensson/IrScrutinizer/releases";
     private final static String UNIQUE_SEPARATOR = "#";
+    private final static Integer[] NO_SENDS_ARRAY = new Integer[] { 1, 2, 3, 4, 5, 6, 7, 10, 12, 15, 20, 30, 40, 50, 70, 100 };
 
     // Stuff that may turn properties in the future
     private final static int importSequenceAskThreshold = 3;
@@ -1795,7 +1796,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }
 
     private boolean transmit(IrSignal irSignal) throws IOException, HardwareUnavailableException, HarcHardwareException, NoSuchTransmitterException, InvalidArgumentException, CannotSendException {
-        return hardwareManager.sendIr(irSignal, Integer.parseInt((String)noTransmitsComboBox.getSelectedItem()));
+        return hardwareManager.sendIr(irSignal, (int) noTransmitsComboBox.getSelectedItem());
     }
 
     public boolean transmit(Command command) throws IrpException, IrCoreException, IOException, HardwareUnavailableException, HarcHardwareException, NoSuchTransmitterException, InvalidArgumentException, CannotSendException {
@@ -5710,8 +5711,8 @@ public final class GuiMain extends javax.swing.JFrame {
 
         sendingHardwareTabbedPane.addTab("IrWidget", new javax.swing.ImageIcon(getClass().getResource("/icons/Crystal-Clear/22x22/apps/usb.png")), captureIrWidgetPanel); // NOI18N
 
-        noTransmitsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "10", "12", "15", "20", "30", "40", "50", "70", "100" }));
-        noTransmitsComboBox.setSelectedItem(Integer.toString(properties.getTransmitGeneratedCount()));
+        noTransmitsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(NO_SENDS_ARRAY));
+        noTransmitsComboBox.setSelectedItem(properties.getTransmitGeneratedCount());
         noTransmitsComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 noTransmitsComboBoxActionPerformed(evt);
@@ -8582,7 +8583,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_parameterTableMouseReleased
 
     private void noTransmitsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noTransmitsComboBoxActionPerformed
-        properties.setTransmitGeneratedCount(Integer.parseInt((String) noTransmitsComboBox.getSelectedItem()));
+        properties.setTransmitGeneratedCount((Integer) noTransmitsComboBox.getSelectedItem());
     }//GEN-LAST:event_noTransmitsComboBoxActionPerformed
 
     private void irTransWebButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irTransWebButtonActionPerformed
@@ -9699,7 +9700,7 @@ public final class GuiMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem moveUpMenuItem;
     private javax.swing.JMenuItem moveUpMenuItem1;
     private javax.swing.JLabel noRepsLabel;
-    private javax.swing.JComboBox<String> noTransmitsComboBox;
+    private javax.swing.JComboBox<Integer> noTransmitsComboBox;
     private javax.swing.JCheckBoxMenuItem offerStackTraceCheckBoxMenuItem;
     private javax.swing.JMenuItem openLastExportFileMenuItem;
     private javax.swing.JButton openLastFileButton;
