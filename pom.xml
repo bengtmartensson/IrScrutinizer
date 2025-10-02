@@ -16,7 +16,7 @@
         </license>
     </licenses>
     <description>Program for capturing, generating, analyzing, importing, and exporting of infrared signals.</description>
-    <url>http://www.harctoolbox.org</url>
+    <url>https://www.harctoolbox.org</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.nameLowercase>irscrutinizer</project.nameLowercase>
