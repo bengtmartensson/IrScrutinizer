@@ -29,7 +29,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashMap;
@@ -56,12 +55,13 @@ public class ControlTowerIrDatabase extends DatabaseImporter implements IRemoteS
     public final static String path = "/api";
     private final static String globalCacheDbOrigin = controlTowerIrDatabaseHost;
 
+    // See https://www.globalcache.com/files/docs/API-GlobalIRDB_ver1.pdf page 6f.
     private static String httpEncode(String s) throws UnsupportedEncodingException {
         String str = s.replaceAll("&", "xampx").replaceAll("/", "xfslx")
                 .replaceAll(">", "xgtx").replaceAll("<", "xltx")
                 .replaceAll(":", "xcolx").replaceAll("\\?", "xquex")
                 .replaceAll("%", "xmodx").replaceAll("\\+", "xaddx");
-        return URLEncoder.encode(str, "utf-8").replaceAll("\\+", "%20");
+        return str;
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
