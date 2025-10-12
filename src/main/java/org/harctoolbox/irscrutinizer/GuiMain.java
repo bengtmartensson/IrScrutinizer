@@ -9328,7 +9328,7 @@ public final class GuiMain extends javax.swing.JFrame {
     }//GEN-LAST:event_secondaryExportFormatsSelectMenuItemActionPerformed
 
     private void ControlTowerBrowserMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ControlTowerBrowserMenuItemActionPerformed
-        HarcletFrame.newHarcletFrame(this, new ControlTowerBrowser(), false, lookAndFeelManager.getCurrentLAFClassName());
+        HarcletFrame.newHarcletFrame(this, new ControlTowerBrowser(properties.getVerbose()), false, lookAndFeelManager.getCurrentLAFClassName());
     }//GEN-LAST:event_ControlTowerBrowserMenuItemActionPerformed
 
     private void secondaryRemoveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_secondaryRemoveMenuItemActionPerformed

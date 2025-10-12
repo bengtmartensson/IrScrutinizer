@@ -27,7 +27,7 @@ import javax.swing.DefaultComboBoxModel;
 import org.harctoolbox.irscrutinizer.importer.ControlTowerIrDatabase;
 
 public class ControlTowerBrowser extends HarcPanel {
-    private static final String versionString = "0.3.0";
+    private static final String versionString = "0.3.1";
     private static final String helpText
             ="The support for the Control Tower Data base is limited. It can be used for browsing the data base\n"
             + "for devices and the contained commands, but it cannot download the codes of the commands.\n"
@@ -51,15 +51,21 @@ public class ControlTowerBrowser extends HarcPanel {
 
     private final GuiUtils guiUtils;
     private ControlTowerIrDatabase controlTowerIrDatabase = null;
-    private final static boolean verbose = false;
+    private final boolean verbose;
     private Map<String, String> controlTowerCodesetTable = null;
 
     /**
      * Creates new form ControlTowerBrowser.
+     * @param verbose
      */
-    public ControlTowerBrowser() {
+    public ControlTowerBrowser(boolean verbose) {
+        this.verbose = verbose;
         initComponents();
         guiUtils = new GuiUtils(this);
+    }
+    
+    public ControlTowerBrowser() {
+        this(false);
     }
 
     @Override
