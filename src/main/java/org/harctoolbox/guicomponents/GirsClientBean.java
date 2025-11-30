@@ -278,7 +278,11 @@ public final class GirsClientBean extends HardwareBean {
 
     @Override
     public boolean canCapture() {
-        return isOpen() && ((GirsClient<?>) hardware).hasCaptureModule();
+        GirsClient<?> girs = (GirsClient<?>) hardware;
+        if (girs == null)
+            return false;
+
+        return isOpen() && girs.canCapture();
     }
 
     @Override
@@ -697,7 +701,7 @@ public final class GirsClientBean extends HardwareBean {
             try {
                 ((GirsClient<?>) hardware).setUseReceiveForCapture(useReceiveForCaptureCheckBox.isSelected());
         } catch (HarcHardwareException ex) {
-            guiUtils.error("Girs server does not support capture");
+            guiUtils.error("Girs server does not support setting receive for capture");
         }
     }//GEN-LAST:event_useReceiveForCaptureCheckBoxActionPerformed
 
