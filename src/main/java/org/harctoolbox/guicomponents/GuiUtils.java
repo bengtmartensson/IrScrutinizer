@@ -332,10 +332,13 @@ public class GuiUtils implements Serializable {
     public void browseOrEdit(String urlOrFilename) throws IOException {
         try {
             URI uri = new URI(urlOrFilename);
-            browse(uri);
+            if (uri.isAbsolute()) {
+                browse(uri);
+                return;
+            }
         } catch (URISyntaxException ex) {
-            open(new File(urlOrFilename));
         }
+        open(new File(urlOrFilename));
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
