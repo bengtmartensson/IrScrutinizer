@@ -3,13 +3,15 @@
 # Create a directory for AppImage, populate it, and call appimagetool.
 # Should be called from the IrScrutinizer top directory.
 
+ARCH=x86_64; export ARCH
+
 if [ $# -lt 2 ] ; then
     echo -e "Usage:\n$0 [-v] <appname> <version> [<JDK-file>]" >&2
     exit 1
 fi
 
-if [ "`uname -m`" != "x86_64" ] ; then
-    echo "Presently, AppImages can only be built on x86_64, quitting." >&2
+if [ "`uname -m`" != "${ARCH}" ] ; then
+    echo "Presently, AppImages can only be built on ${ARCH}, quitting." >&2
     exit 1
 fi
 
@@ -23,8 +25,14 @@ APPNAME=$1
 export VERSION=$2
 JAVA_TAR_GZ=$3
 
+# Parameters that should be taken from the command line,
+# but I do not care enough, at least not right now.
+GROUPID=org.harctoolbox
+SIGNKEY=EE1F17D4ECF8AF9C
+
 MYPROG_LOWER=$(echo ${APPNAME} | tr A-Z a-z)
-APPIMAGE=target/${APPNAME}-${VERSION}-x86_64.AppImage
+METAINFO=${GROUPID}.${MYPROG_LOWER}.metainfo.xml
+APPIMAGE=target/${APPNAME}-${VERSION}-${ARCH}.AppImage
 APPDIR=target/AppDir
 MYPROG_HOME=${APPDIR}/usr/share/${MYPROG_LOWER}
 USR=${APPDIR}/usr
@@ -38,7 +46,7 @@ JAVA_MODULES=java.base,java.datatransfer,java.desktop,java.logging,java.xml,jdk.
 rm -rf ${APPDIR}
 
 # If possible, bundle a subset of Java
-if [ "x${JAVA_TAR_GZ}y" != "xy" -a -f "${JAVA_TAR_GZ}" ] ; then
+if [ -n "${JAVA_TAR_GZ}" -a -f "${JAVA_TAR_GZ}" ] ; then
     tar xf ${JAVA_TAR_GZ}
     JAVA_ROOT=`echo jdk*`
     ${JAVA_ROOT}/bin/jlink --no-header-files --no-man-pages --strip-debug --add-modules ${JAVA_MODULES} --output ${USR}
@@ -65,12 +73,16 @@ chmod +x ${MYPROG_HOME}/contributed/*/*.sh
 # Top level
 install --mode=555 ${APPRUN} ${APPDIR}
 install --mode=444 target/${APPNAME}.png ${APPDIR}/${MYPROG_LOWER}.png
+install -d ${USR}/share/metainfo
+install -d ${USR}/share/applications
 sed -e "s|Exec=.*|Exec=${MYPROG_LOWER}|" \
     -e "s|Icon=.*|Icon=${MYPROG_LOWER}|" \
-    -e "s|Name=.*|Name=${APPNAME}|" < target/${MYPROG_LOWER}.desktop > ${APPDIR}/${MYPROG_LOWER}.desktop
-chmod 444 ${APPDIR}/${MYPROG_LOWER}.desktop
-install -d ${USR}/share/metainfo
-install --mode=444 src/main/config/${MYPROG_LOWER}.appdata.xml ${USR}/share/metainfo/${MYPROG_LOWER}.appdata.xml
+    -e "s|Name=.*|Name=${APPNAME}|" < target/${MYPROG_LOWER}.desktop > ${USR}/share/applications/${MYPROG_LOWER}.desktop
+chmod 444 ${USR}/share/applications/${MYPROG_LOWER}.desktop
+ln -s usr/share/applications/${MYPROG_LOWER}.desktop ${APPDIR}
+install --mode=444 src/main/config/${MYPROG_LOWER}.appdata.xml ${USR}/share/metainfo/${METAINFO}
+#install --mode=444 src/main/config/${MYPROG_LOWER}.appdata.xml ${USR}/share/metainfo/${MYPROG_LOWER}.appdata.xml
+#ln -s  ${METAINFO} ${USR}/share/metainfo/${MYPROG_LOWER}.appdata.xml
 
 # Fill "usr/bin"
 install -d ${USR_BIN}
@@ -153,19 +165,13 @@ ln -s ${MYPROG_LOWER} ${USR_BIN}/irptransmogrifier
 ln -s ${MYPROG_LOWER} ${USR_BIN}/harchardware
 
 # Invoke the builder
-#wget -c "https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage"
-#chmod +x ./appimagetool-x86_64.AppImage
 
-# Invocation of appstreamcli breaks on many systems, see
-# https://github.com/AppImage/AppImageKit/issues/856
-# Until that is fixed, must use --no-appstream
+# appstreamcli sometimes makes problems; if so uncomment following line
+#NOAPPSTREAM=--no-appstream
 
-# Signing does not work at Travis, since it does not have access to the private key,
-# but this is handled gracefully, so no need to handle special cases.
-
-ARCH=x86_64; export ARCH
-if [ -n "${VERBOSE}" ] ; then
-    tools/appimagetool-x86_64.AppImage -v --sign --no-appstream ${APPDIR} ${APPIMAGE}
-else
-    tools/appimagetool-x86_64.AppImage --sign --no-appstream ${APPDIR} ${APPIMAGE} > /dev/null
+# Signing does not work at GitHub, since it does not have access to the private key.
+if [ -z "$CI" ] ; then
+    SIGN="--sign --sign-key ${SIGNKEY}"
 fi
+
+tools/appimagetool-${ARCH}.AppImage ${VERBOSE} ${NOAPPSTREAM} ${SIGN} ${APPDIR} ${APPIMAGE}

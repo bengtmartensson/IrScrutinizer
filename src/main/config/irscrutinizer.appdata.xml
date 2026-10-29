@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-    <id>irscrutinizer</id>
+    <id>org.harctoolbox.irscrutinizer</id>
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0+</project_license>
     <name>IrScrutinizer</name>
-    <summary>Powerful program for capturing, generating, analyzing, importing, and exporting of infrared (IR) signals</summary>
+    <summary>Powerful program for capturing, generating and manipulation of infrared (IR) signals</summary>
     <description>
         <p>
             IrScrutinizer is a powerful program for capturing, generating, analyzing,
@@ -31,14 +31,19 @@
             generated.
         </p>
     </description>
+    <developer id="org.harctoolbox.irscrutinizer">
+        <name>Bengt Martensson</name>
+    </developer>
+    <content_rating type="oars-1.0"/>
     <launchable type="desktop-id">irscrutinizer.desktop</launchable>
     <url type="homepage">https://harctoolbox.org/IrScrutinizer.html</url>
     <screenshots>
         <screenshot type="default">
+            <caption>Typical appearance of the IrScrutinizer.</caption>
             <image>https://raw.githubusercontent.com/bengtmartensson/IrScrutinizer/master/screenshot.png</image>
         </screenshot>
     </screenshots>
     <provides>
-        <id>irscrutinizer.desktop</id>
+        <id>org.harctoolbox.irscrutinizer.desktop</id>
     </provides>
 </component>
