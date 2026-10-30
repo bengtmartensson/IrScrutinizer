@@ -75,4 +75,4 @@ jobs:
     - name: Upload
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: common/scripts/upload.sh target/*bin.zip target/*.dmg target/*AppImage
+      run: common/scripts/upload.sh target/*bin.zip target/*.dmg target/*AppImage target/checksums*
